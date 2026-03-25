@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elite Menu</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap');
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Orbitron',sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  background:#000;
+}
+
+/* FIX: BIAR TIDAK NUTUP KLIK */
+canvas{
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:0;
+  pointer-events:none;
+}
+
+/* CONTAINER */
+.container{
+  position:relative;
+  z-index:2;
+  padding:40px 30px;
+  border-radius:20px;
+  text-align:center;
+  background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(10px);
+  border:2px solid transparent;
+  box-shadow:0 0 20px rgba(0,0,0,0.8);
+}
+
+.container::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:20px;
+  padding:2px;
+  background:linear-gradient(45deg,#00c6ff,#ff00cc,#00c6ff);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  animation:borderGlow 4s linear infinite;
+}
+
+@keyframes borderGlow{
+  0%{filter:hue-rotate(0deg);}
+  100%{filter:hue-rotate(360deg);}
+}
+
+/* JUDUL */
+.title{
+  margin-bottom:30px;
+  padding:15px;
+  border-radius:12px;
+  background:url('https://i.ibb.co.com/KxZVC74M/ac92cb77-ceff-431e-b60e-c869f8db130f.jpg') center/cover no-repeat;
+  position:relative;
+}
+
+.title::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  border-radius:12px;
+}
+
+.title h1{
+  position:relative;
+  color:white;
+  font-size:30px;
+  text-shadow:0 0 15px #00c6ff;
+}
+
+/* MENU */
+.menu{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  align-items:center;
+}
+
+.btn{
+  width:230px;
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  color:white;
+  transition:0.3s;
+}
+
+.hitung{
+  background:linear-gradient(135deg,#00c6ff,#0072ff);
+  box-shadow:0 0 15px #00c6ff;
+}
+
+.hitung:hover{
+  transform:scale(1.08);
+  box-shadow:0 0 30px #00c6ff;
+}
+
+.berita{
+  background:linear-gradient(135deg,#ff512f,#dd2476);
+  box-shadow:0 0 15px #ff512f;
+}
+
+.berita:hover{
+  transform:scale(1.08);
+  box-shadow:0 0 30px #ff512f;
+}
+
+@media(max-width:500px){
+  .btn{
+    width:180px;
+    font-size:14px;
+  }
+  .title h1{
+    font-size:22px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="galaxy"></canvas>
+
+<div class="container">
+  <div class="title">
+    <h1>ELITE MENU</h1>
+  </div>
+
+  <div class="menu">
+    <button class="btn hitung" onclick="goHitung()">Hitung Uang</button>
+    <button class="btn berita" onclick="goBerita()">Berita</button>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById("galaxy");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+/* GALAXY HD */
+let stars = [];
+
+for(let i=0;i<250;i++){
+  stars.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    size:Math.random()*2,
+    speed:Math.random()*0.5 + 0.2
+  });
+}
+
+function draw(){
+  ctx.fillStyle = "rgba(0,0,0,0.4)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  for(let i=0;i<stars.length;i++){
+    let s = stars[i];
+
+    s.y += s.speed;
+    if(s.y > canvas.height){
+      s.y = 0;
+      s.x = Math.random()*canvas.width;
+    }
+
+    /* glow bintang */
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+    ctx.fillStyle = "white";
+    ctx.shadowColor = "white";
+    ctx.shadowBlur = 8;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+}
+
+setInterval(draw, 30);
+
+/* RESPONSIVE */
+window.addEventListener("resize", ()=>{
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+<script>
+function goHitung(){
+  window.location.href = "hitung.html";
+}
+
+function goBerita(){
+  window.location.href = "https://xx.com";
+}
+</script>
+
+</body>
+</html>
