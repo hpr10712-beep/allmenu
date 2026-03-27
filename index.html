@@ -95,29 +95,27 @@ canvas{
 .btn{
   width:200px;
   padding:14px;
-  border-radius:12px;
+  border-radius:14px;
   font-size:15px;
   font-weight:700;
   cursor:pointer;
   color:white;
 
-  /* WARNA DASAR */
-  background:rgba(0,0,0,0.4);
+  /* GRADIENT HALUS (INI YANG BIKIN BAGUS) */
+  background:linear-gradient(135deg, rgba(0,240,255,0.25), rgba(0,0,0,0.6));
 
-  /* GARIS TEPI SAMA KAYAK TITLE */
-  border:2px solid rgba(0,255,255,0.7);
+  /* GARIS TIPIS */
+  border:1.5px solid rgba(0,255,255,0.6);
 
-  /* EFEK KACA */
-  backdrop-filter:blur(6px);
+  backdrop-filter:blur(8px);
 
-  /* GLOW */
+  /* SHADOW LEBIH SOFT */
   box-shadow:
-    0 0 10px rgba(0,255,255,0.7),
-    0 0 20px rgba(0,255,255,0.5),
-    inset 0 0 10px rgba(0,0,0,0.8);
+    0 0 8px rgba(0,255,255,0.5),
+    0 0 15px rgba(0,255,255,0.3);
 
-  transition:0.3s;
-  }
+  transition:0.25s;
+}
   
 .btn:hover{
   transform:scale(1.07);
@@ -128,12 +126,7 @@ canvas{
     0 0 15px #00f0ff,
     0 0 30px #00f0ff,
     0 0 45px rgba(0,255,255,0.8);
-}
-
-/* EFEK KLIK */
-.btn:active{
-  transform:scale(0.95);
-}
+    }
 </style>
 </head>
 
