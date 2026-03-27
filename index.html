@@ -82,47 +82,35 @@ canvas{
 }
 
 /* TOMBOL */
+/* TOMBOL (SEMUA SAMA) */
 .btn{
   width:200px;
-  padding:13px;
+  padding:14px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   font-size:15px;
   font-weight:700;
   cursor:pointer;
   color:white;
-  transition:0.25s;
+  background:linear-gradient(135deg,#00f0ff,#8a2eff,#ff00c8);
+  background-size:200% 200%;
+  transition:0.3s;
+  box-shadow:0 0 10px rgba(0,255,255,0.4);
 }
 
-/* HITUNG */
-.hitung{
-  background:linear-gradient(135deg,#00c6ff,#0072ff);
+/* EFEK HOVER */
+.btn:hover{
+  transform:scale(1.07);
+  background-position:right center;
+  box-shadow:
+    0 0 15px #00f0ff,
+    0 0 25px #8a2eff,
+    0 0 35px #ff00c8;
 }
 
-.hitung:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 20px #00c6ff;
-}
-
-/* BERITA */
-.berita{
-  background:linear-gradient(135deg,#ff512f,#dd2476);
-}
-
-.berita:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 20px #ff512f;
-}
-
-/* RESPONSIVE */
-@media(max-width:500px){
-  .btn{
-    width:170px;
-    font-size:13px;
-  }
-  .title h1{
-    font-size:20px;
-  }
+/* EFEK KLIK */
+.btn:active{
+  transform:scale(0.95);
 }
 </style>
 </head>
