@@ -615,9 +615,9 @@ input[type="text"]:focus, textarea:focus {
             if(isMyStory) document.getElementById('storyUpload').click();
         }
     });
-},
-    
             },
+
+            
             openMyStory: () => {
                 get(ref(db, `users/${myID}/profile`)).then(snap => {
                     const p = snap.val() || {};
