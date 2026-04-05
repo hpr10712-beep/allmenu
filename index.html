@@ -808,22 +808,213 @@ input[type="text"]:focus, textarea:focus {
 
         // 1. Letakkan di sini (di luar objek window.app)
         window.showToast = (message, icon = 'check-circle') => {
-            let toast = document.querySelector('.toast-msg');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.className = 'toast-msg';
-                document.body.appendChild(toast);
-            }
-            toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
-            // Pastikan pakai offsetParent atau delay kecil agar transisi muncul
-            setTimeout(() => toast.classList.add('show'), 10);
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        };
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue, get, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+    const firebaseConfig = {
+        apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+        authDomain: "mybro-9ba5f.firebaseapp.com",
+        databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+        projectId: "mybro-9ba5f"
+    };
+    const app_fire = initializeApp(firebaseConfig);
+    const db = getDatabase(app_fire);
+
+    if ("Notification" in window) { Notification.requestPermission(); }
+
+    let myID = localStorage.getItem('mybro_id');
+    if(!myID) {
+        myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
+        localStorage.setItem('mybro_id', myID);
+        set(ref(db, `users/${myID}/profile`), { id: myID, name: "User " + myID.split('-')[1], pfp: "", bio: "Hey ada di MyBro!" });
+    }
+    document.getElementById('displayID').innerText = myID;
+
+    let activeTarget = null;
+    let pfpBase64 = "";
+    let currentStoryQueue = [], currentStoryIndex = 0, storyTimer, viewingStoryOf = null;
+    let unreadCountGlobal = 0;
+    let selectedMsgId = null; 
+    let isSelectedMsgPinned = false;
+
+    // --- UTILS ---
+    window.showTab = (id, el) => {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        el.classList.add('active');
+    };
     
-    </script>
+    window.toggleOverlay = (id, show) => { 
+        const el = document.getElementById(id); 
+        if(show) { el.classList.add('active'); el.style.display = 'flex'; } 
+        else { el.classList.remove('active'); setTimeout(() => el.style.display = 'none', 300); } 
+    };
+
+    window.closeOverlay = (e) => { if(e.target.classList.contains('overlay')) toggleOverlay(e.target.id, false); };
+    
+    window.showToast = (message, icon = 'check-circle') => {
+        let toast = document.querySelector('.toast-msg') || document.createElement('div');
+        if(!toast.parentElement) { toast.className = 'toast-msg'; document.body.appendChild(toast); }
+        toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    };
+
+    window.copyID = () => { navigator.clipboard.writeText(myID); window.showToast("ID Disalin!", "copy"); };
+
+    const formatTime = (ts) => {
+        const d = new Date(ts);
+        return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
+    };
+
+    // --- CORE APP LOGIC ---
+    window.app = {
+        handlePfp: (input) => {
+            const reader = new FileReader(); 
+            reader.onload = () => { pfpBase64 = reader.result; document.getElementById('pfpEdit').src = pfpBase64; };
+            reader.readAsDataURL(input.files[0]);
+        },
+        updateProfile: () => {
+            const updates = { name: document.getElementById('editName').value, bio: document.getElementById('editBio').value };
+            if(pfpBase64) updates.pfp = pfpBase64; 
+            update(ref(db, `users/${myID}/profile`), updates); 
+            toggleOverlay('popProfile', false);
+            window.showToast("Profil diperbarui!");
+        },
+        addFriend: () => {
+            const tid = document.getElementById('targetID').value.trim().toUpperCase();
+            if(!tid || tid === myID) return;
+            set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid, archived: false }); 
+            toggleOverlay('popAdd', false);
+            window.showToast("Kontak ditambahkan!");
+        },
+        openChat: (id, name, pfp) => {
+            activeTarget = id;
+            document.getElementById('chatName').innerText = name; 
+            document.getElementById('chatPfp').src = pfp;
+            document.getElementById('chatPanel').classList.add('active');
+            
+            const room = [myID, id].sort().join("_");
+            onValue(ref(db, `chats/${room}`), (snap) => {
+                const area = document.getElementById('msgArea');
+                area.innerHTML = "";
+                let pinnedMsg = null;
+
+                snap.forEach(child => {
+                    const m = child.val();
+                    if(m.from !== myID && m.status !== 'read') update(ref(db, `chats/${room}/${child.key}`), {status: 'read'});
+                    if(m.pinned) pinnedMsg = m;
+
+                    let mediaHTML = "";
+                    if(m.type === 'image') mediaHTML = `<img src="${m.media}">`;
+                    else if(m.type === 'video') mediaHTML = `<video src="${m.media}" controls></video>`;
+                    else if(m.type === 'file') mediaHTML = `<div class="file-box"><i class="fas fa-file-alt"></i> <div>${m.fileName}<br><a href="${m.media}" download="${m.fileName}" style="color:var(--accent)">Unduh</a></div></div>`;
+
+                    let tick = m.from === myID ? (m.status === 'read' ? '<i class="fas fa-check-double tick-read"></i>' : '<i class="fas fa-check"></i>') : '';
+
+                    area.innerHTML += `
+                        <div class="bubble ${m.from === myID ? 'sent' : 'received'}" oncontextmenu="window.app.msgMenu('${child.key}', ${m.pinned}, event)">
+                            ${mediaHTML} ${m.text ? `<div>${m.text}</div>` : ''}
+                            <div class="msg-meta">${formatTime(m.time)} ${tick}</div>
+                        </div>`;
+                });
+                area.scrollTop = area.scrollHeight;
+                document.getElementById('pinnedMsgContainer').style.display = pinnedMsg ? 'block' : 'none';
+                if(pinnedMsg) document.getElementById('pinnedMsgText').innerText = pinnedMsg.text || "Media";
+            });
+        },
+        closeChat: () => { document.getElementById('chatPanel').classList.remove('active'); activeTarget = null; },
+        send: (text = null, media = null, type = 'text', name = '') => {
+            const val = text || document.getElementById('msgIn').value;
+            if(!val && !media) return;
+            const room = [myID, activeTarget].sort().join("_");
+            push(ref(db, `chats/${room}`), { from: myID, text: val, media: media||"", type: type, fileName: name, time: Date.now(), status: 'sent', pinned: false });
+            document.getElementById('msgIn').value = "";
+        },
+        sendMedia: (input) => {
+            const file = input.files[0]; if(!file) return;
+            const reader = new FileReader();
+            reader.onload = () => { 
+                let type = file.type.startsWith('image') ? 'image' : (file.type.startsWith('video') ? 'video' : 'file');
+                window.app.send("", reader.result, type, file.name); 
+            };
+            reader.readAsDataURL(file);
+        },
+        msgMenu: (id, pinned, e) => {
+            e.preventDefault(); selectedMsgId = id; isSelectedMsgPinned = pinned;
+            toggleOverlay('msgOptionsMenu', true);
+        },
+        deleteMessage: () => {
+            const room = [myID, activeTarget].sort().join("_");
+            remove(ref(db, `chats/${room}/${selectedMsgId}`));
+            toggleOverlay('msgOptionsMenu', false);
+        },
+        uploadStory: (input) => {
+            const file = input.files[0]; if(!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                push(ref(db, `stories/${myID}`), { media: reader.result, type: file.type.startsWith('video')?'video':'image', time: Date.now(), views: 0 });
+                window.showToast("Status diunggah!");
+            };
+            reader.readAsDataURL(file);
+        },
+        openStory: (uid, name, pfp) => {
+            get(ref(db, `stories/${uid}`)).then(snap => {
+                currentStoryQueue = [];
+                snap.forEach(c => { if(Date.now() - c.val().time < 86400000) currentStoryQueue.push({...c.val(), id: c.key}); });
+                if(currentStoryQueue.length > 0) {
+                    viewingStoryOf = uid; currentStoryIndex = 0;
+                    document.getElementById('svName').innerText = name;
+                    document.getElementById('svPfp').src = pfp;
+                    document.getElementById('storyViewer').style.display = 'flex';
+                    window.app.renderCurrentStory();
+                }
+            });
+        },
+        renderCurrentStory: () => {
+            if(currentStoryIndex >= currentStoryQueue.length) return window.app.closeStory();
+            const s = currentStoryQueue[currentStoryIndex];
+            const container = document.getElementById('svMediaContainer');
+            container.innerHTML = s.type === 'video' ? `<video src="${s.media}" autoplay playsinline></video>` : `<img src="${s.media}">`;
+            
+            const bar = document.getElementById('storyProgress');
+            bar.style.transition = 'none'; bar.style.width = '0%';
+            setTimeout(() => { bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 50);
+            
+            clearTimeout(storyTimer);
+            storyTimer = setTimeout(() => window.app.nextStory(), 5000);
+        },
+        nextStory: () => { currentStoryIndex++; window.app.renderCurrentStory(); },
+        closeStory: () => { clearTimeout(storyTimer); document.getElementById('storyViewer').style.display = 'none'; },
+        openMyStory: () => { window.app.openStory(myID, "Saya", document.getElementById('myStatusPfp').src); }
+    };
+
+    // --- LISTENERS ---
+    onValue(ref(db, `users/${myID}/profile`), (snap) => {
+        const d = snap.val(); if(!d) return;
+        document.getElementById('vProfileName').innerText = d.name;
+        document.getElementById('myStatusPfp').src = d.pfp || `https://ui-avatars.com/api/?name=${d.name}`;
+    });
+
+    onValue(ref(db, `users/${myID}/contacts`), (snap) => {
+        const list = document.getElementById('chatList');
+        list.innerHTML = "";
+        snap.forEach(child => {
+            const cid = child.key;
+            get(ref(db, `users/${cid}/profile`)).then(pSnap => {
+                const p = pSnap.val();
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<img src="${p.pfp || ''}" class="pfp"><div><b>${p.name}</b></div>`;
+                card.onclick = () => window.app.openChat(cid, p.name, p.pfp);
+                list.appendChild(card);
+            });
+        });
+    });
+
+</script>
+
 </body>
 </html>
