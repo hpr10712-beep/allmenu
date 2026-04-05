@@ -420,8 +420,8 @@ input[type="text"]:focus, textarea:focus {
             else { el.classList.remove('active'); setTimeout(() => el.style.display = 'none', 300); } 
         }
         window.closeOverlay = (e) => { if(e.target.classList.contains('overlay')) toggleOverlay(e.target.id, false); }
-        window.copyID = () => { navigator.clipboard.writeText(myID); alert("ID Disalin: " + myID); }
-        
+        window.copyID = () => { navigator.clipboard.writeText(myID); window.showToast("ID Berhasil Disalin!", "copy"); }
+
         window.toggleArchived = () => {
             const list = document.getElementById('archivedList');
             list.style.display = list.style.display === 'none' ? 'block' : 'none';
@@ -648,12 +648,12 @@ input[type="text"]:focus, textarea:focus {
                 inp.value = ""; window.app.closeStory(); alert("Balasan dikirim!");
             },
                         deleteStory: (storyId) => { 
-                if(confirm("Hapus status ini?")) {
-                    set(ref(db, `stories/${myID}/${storyId}`), null);
-                    window.app.closeStory();
-                    window.showToast("Status berhasil dihapus", "trash");
-                }
-            },
+    // Langsung eksekusi hapus agar tidak muncul pop-up jelek
+    set(ref(db, `stories/${myID}/${storyId}`), null);
+    window.app.closeStory();
+    window.showToast("Status berhasil dihapus", "trash");
+},
+
             scrollToPinned: () => {
                 const pinned = document.querySelector('.bubble[style*="border"]');
                 if(pinned) pinned.scrollIntoView({ behavior: 'smooth' });
