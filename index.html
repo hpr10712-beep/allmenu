@@ -201,15 +201,6 @@ input[type="text"]:focus, textarea:focus {
     transform: translateX(-50%) translateY(0);
 }
 
-        /* Efek Glow Centang Biru Premium */
-.verified-badge {
-    color: #3b82f6; 
-    font-size: 0.9rem; 
-    margin-left: 5px;
-    filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.6));
-    vertical-align: middle;
-}
-
     
  </style>
 </head>
@@ -459,96 +450,20 @@ input[type="text"]:focus, textarea:focus {
             // --- CHAT & MEDIA SYSTEM ---
             openChat: (id, name, pfp) => {
                 activeTarget = id;
-// --- PERBAIKAN WATCHER KONTAK & CHAT ---
-onValue(ref(db, `users/${myID}/contacts`), (snap) => {
-    const cList = document.getElementById('contactList'); 
-    const rList = document.getElementById('chatList'); 
-    const aList = document.getElementById('archivedList');
-    
-    // Bersihkan daftar agar tidak duplikat saat ada update
-    cList.innerHTML = ""; 
-    rList.innerHTML = "";
-    aList.innerHTML = "";
-    unreadCountGlobal = 0;
-
-    if(!snap.exists()) {
-        rList.innerHTML = `<div style="text-align:center; color:var(--text-dim); margin-top:50px;">Belum ada obrolan.<br>Tambah teman untuk memulai!</div>`;
-        return;
-    }
-
-    snap.forEach(child => {
-        const cid = child.key; 
-        const isArchived = child.val().archived || false;
-        const room = [myID, cid].sort().join("_");
-        
-        // Ambil Profil Target
-        get(ref(db, `users/${cid}/profile`)).then((pSnap) => {
-            const p = pSnap.val() || { name: cid, pfp: "" };
-            const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}&background=1e293b&color=fff`;
-
-            // Render ke Tab Kontak
-            const cCard = document.createElement('div'); 
-            cCard.className = 'card';
-            cCard.innerHTML = `<img src="${pfp}" class="pfp" style="width:45px;height:45px"><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">${p.bio || ''}</div></div>`;
-            cCard.onclick = () => window.app.openChat(cid, p.name, pfp); 
-            cList.appendChild(cCard);
-
-            // Pantau Pesan Terakhir & Unread di Chat List
-            onValue(ref(db, `chats/${room}`), (msgSnap) => {
-                let lastMsgObj = null;
-                let unreadCount = 0;
-
-                msgSnap.forEach(m => {
-                    lastMsgObj = m.val();
-                    if(lastMsgObj.from !== myID && lastMsgObj.status !== 'read') unreadCount++;
-                });
+                document.getElementById('chatName').innerText = name; document.getElementById('chatPfp').src = pfp;
+                document.getElementById('chatPanel').classList.add('active');
                 
-                let lastMsgText = "Mulai obrolan...";
-                let lastTime = "";
-                let tickHTML = "";
-
-                if(lastMsgObj) {
-                    if(lastMsgObj.type === 'image') lastMsgText = '📷 Foto';
-                    else if(lastMsgObj.type === 'video') lastMsgText = '🎥 Video';
-                    else lastMsgText = lastMsgObj.text;
-                    lastTime = formatTime(lastMsgObj.time);
-                    if(lastMsgObj.from === myID) {
-                        tickHTML = lastMsgObj.status === 'read' ? `<i class="fas fa-check-double tick-read"></i> ` : `<i class="fas fa-check"></i> `;
-                    }
-                }
-
-                const isVerified = p.isVerified || false;
-                const badge = isVerified ? `<i class="fas fa-check-circle verified-badge"></i>` : '';
-
-                const chatHTML = `
-                    <div class="pfp-wrap"><img src="${pfp}" class="pfp"></div>
-                    <div class="card-info">
-                        <div class="card-header-flex">
-                            <div class="card-name">${p.name} ${badge}</div>
-                            <div class="card-time">${lastTime}</div>
-                        </div>
-                        <div class="card-msg">${tickHTML}${lastMsgText}</div>
-                    </div>
-                    ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
-                `;
-
-                // Update atau Buat elemen chat
-                let rCard = document.getElementById(`chat-${cid}`);
-                if(!rCard) {
-                    rCard = document.createElement('div');
-                    rCard.id = `chat-${cid}`;
-                    rCard.className = 'card';
-                    rCard.onclick = () => window.app.openChat(cid, p.name, pfp);
-                }
-                rCard.innerHTML = chatHTML;
-
-                if(isArchived) aList.appendChild(rCard); 
-                else rList.appendChild(rCard);
-            });
-        });
-    });
-});
-
+                // Set Archive Status for Menu
+                get(ref(db, `users/${myID}/contacts/${id}`)).then(snap => {
+                    const isArchived = snap.val()?.archived || false;
+                    const archBtn = document.getElementById('archiveMenuBtn');
+                    archBtn.innerHTML = isArchived ? `<i class="fas fa-box-open"></i> Buka Arsip` : `<i class="fas fa-archive"></i> Arsipkan Obrolan`;
+                    archBtn.onclick = () => {
+                        update(ref(db, `users/${myID}/contacts/${id}`), { archived: !isArchived });
+                        toggleOverlay('chatOptionsMenu', false);
+                        window.app.closeChat();
+                    };
+                });
 
                 const room = [myID, id].sort().join("_");
                 onValue(ref(db, `chats/${room}`), (snap) => {
@@ -795,12 +710,7 @@ onValue(ref(db, `users/${myID}/contacts`), (snap) => {
             document.getElementById('pfpEdit').src = pfp;
             document.getElementById('myStatusPfp').src = pfp;
             document.getElementById('vProfilePfp').src = pfp;
-            const isMyVerified = d.isVerified || false;
-document.getElementById('vProfileName').innerHTML = `
-    ${d.name} ${isMyVerified ? '<i class="fas fa-check-circle" style="color:#3b82f6; margin-left:5px;"></i>' : ''}
-`;
-
-
+            document.getElementById('vProfileName').innerText = d.name;
             document.getElementById('vProfileBio').innerText = d.bio;
         });
 
@@ -861,29 +771,14 @@ document.getElementById('vProfileName').innerHTML = `
                             let hasStory = false; const now = Date.now();
                             if(storySnap.exists()) storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
 
-                            // Pastikan variabel 'p' sudah berisi data profil (termasuk isVerified)
-// Ambil status verified dari profil 'p'
-const isVerified = p.isVerified || false;
-const badge = isVerified ? `<i class="fas fa-check-circle verified-badge"></i>` : '';
-
-const htmlChat = `
-    <div class="pfp-wrap ${hasStory ? 'has-story' : ''}">
-        <img src="${pfp}" class="pfp">
-    </div>
-    <div class="card-info">
-        <div class="card-header-flex">
-            <div class="card-name">
-                ${p.name} ${badge}
-            </div>
-            <div class="card-time">${lastTime}</div>
-        </div>
-        <div class="card-msg">${tickHTML} ${lastMsgText}</div>
-    </div>
-    ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
-`;
-
-
-
+                            const htmlChat = `
+                                <div class="pfp-wrap ${hasStory ? 'has-story' : ''}"><img src="${pfp}" class="pfp"></div>
+                                <div class="card-info">
+                                    <div class="card-header-flex"><div class="card-name">${p.name}</div><div class="card-time">${lastTime}</div></div>
+                                    <div class="card-msg">${tickHTML} ${lastMsgText}</div>
+                                </div>
+                                ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
+                            `;
                             
                             let existingCard = document.getElementById(`chat-${cid}`);
                             if(existingCard) {
@@ -1059,4 +954,4 @@ if (myID) {
     
     </script>
 </body>
-</html>
+    </html>
