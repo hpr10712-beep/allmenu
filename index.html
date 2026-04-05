@@ -783,25 +783,22 @@ document.getElementById('vProfileName').innerHTML = `
                             let hasStory = false; const now = Date.now();
                             if(storySnap.exists()) storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
 
-                            // Pastikan variabel p.isVerified sudah ada dari profil yang diambil
-const isVerified = p.isVerified || false;
+                            // Pastikan variabel 'p' sudah berisi data profil (termasuk isVerified)
+// Cek apakah user tersebut verified
+const verifiedIcon = p.isVerified ? '<i class="fas fa-check-circle" style="color:#3b82f6; font-size:0.85rem; margin-left:4px;"></i>' : '';
 
 const htmlChat = `
     <div class="pfp-wrap ${hasStory ? 'has-story' : ''}"><img src="${pfp}" class="pfp"></div>
     <div class="card-info">
         <div class="card-header-flex">
-            <div class="card-name">
-                ${p.name} ${isVerified ? '<i class="fas fa-check-circle" style="color:#3b82f6; font-size:0.85rem; margin-left:3px;"></i>' : ''}
-            </div>
+            <div class="card-name">${p.name} ${verifiedIcon}</div>
             <div class="card-time">${lastTime}</div>
         </div>
         <div class="card-msg">${tickHTML} ${lastMsgText}</div>
     </div>
-    ...
+    ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
 `;
 
-                                ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
-                            `;
                             
                             let existingCard = document.getElementById(`chat-${cid}`);
                             if(existingCard) {
