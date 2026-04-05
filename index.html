@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MyBro - Enterprise</title>
+    <title>MyBro - Ultimate</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -14,6 +14,7 @@
             --panel-hover: #334155;
             --accent: #10b981;
             --accent-glow: rgba(16, 185, 129, 0.2);
+            --blue-tick: #3b82f6;
             --text: #f8fafc;
             --text-dim: #94a3b8;
             --border: rgba(255, 255, 255, 0.08);
@@ -34,7 +35,7 @@
         .my-id-tag { background: var(--panel); padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; cursor: pointer; border: 1px solid var(--border); }
 
         /* CONTENT VIEWS */
-        .content { flex: 1; overflow-y: auto; padding: 15px 15px 90px; }
+        .content { flex: 1; overflow-y: auto; padding: 15px 15px 90px; scroll-behavior: smooth; }
         .view { display: none; animation: fadeIn 0.3s ease; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -44,13 +45,12 @@
         /* CARDS (CHAT & CONTACT) */
         .card { 
             background: transparent; border-radius: 12px; padding: 12px; margin-bottom: 5px; 
-            display: flex; align-items: center; gap: 15px; transition: 0.2s; cursor: pointer;
+            display: flex; align-items: center; gap: 15px; transition: 0.2s; cursor: pointer; position: relative;
         }
         .card:hover, .card:active { background: var(--panel); }
         
-        /* STORY RING PFP */
-        .pfp-wrap { position: relative; width: 52px; height: 52px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
-        .pfp-wrap.has-story { background: linear-gradient(45deg, var(--accent), #3b82f6); padding: 2px; }
+        .pfp-wrap { position: relative; width: 52px; height: 52px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        .pfp-wrap.has-story { background: linear-gradient(45deg, var(--accent), #3b82f6); padding: 2.5px; }
         .pfp-wrap.has-story img { border: 2px solid var(--bg); }
         .pfp { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: var(--panel); }
 
@@ -58,11 +58,10 @@
         .card-header-flex { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
         .card-name { font-weight: 600; font-size: 1rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card-time { font-size: 0.75rem; color: var(--text-dim); flex-shrink: 0; }
-        .card-msg { font-size: 0.85rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        /* ADD STORY BUTTON */
-        .my-story-btn { background: var(--panel); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; cursor: pointer; }
-        .add-story-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--accent-glow); color: var(--accent); display: flex; justify-content: center; align-items: center; font-size: 1.2rem; }
+        .card-msg { font-size: 0.85rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px; }
+        
+        /* UNREAD BADGE */
+        .unread-badge { background: var(--accent); color: white; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; min-width: 20px; text-align: center; }
 
         /* MODALS */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: none; z-index: 1000; align-items: flex-end; }
@@ -70,38 +69,56 @@
         .sheet { background: var(--bg); width: 100%; border-radius: 20px 20px 0 0; padding: 25px 20px 40px; transform: translateY(100%); transition: 0.3s ease; border-top: 1px solid var(--border); }
         .overlay.active .sheet { transform: translateY(0); }
 
-        /* INPUTS & BUTTONS */
         input[type="text"], textarea { width: 100%; padding: 14px 16px; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--panel); color: white; outline: none; transition: 0.2s; }
-        input[type="text"]:focus { border-color: var(--accent); }
         .btn-fill { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--accent); color: white; font-weight: 600; font-size: 1rem; cursor: pointer; }
 
-        /* STORY VIEWER (FULLSCREEN) */
+        /* STORY VIEWER (FULLSCREEN HD) */
         #storyViewer { position: fixed; inset: 0; background: #000; z-index: 3000; display: none; flex-direction: column; }
         .story-progress-container { display: flex; gap: 4px; padding: calc(10px + var(--safe-top)) 10px 10px; position: absolute; top: 0; left: 0; right: 0; z-index: 10; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
         .story-progress-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
         .story-progress-fill { height: 100%; background: white; width: 0%; transition: width 0.1s linear; }
         .story-header { position: absolute; top: 40px; left: 0; right: 0; padding: 10px 15px; display: flex; align-items: center; gap: 10px; z-index: 10; }
-        .story-media { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
-        .story-media img, .story-media video { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .story-footer { padding: 15px; display: flex; gap: 10px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); align-items: center; }
-        .story-views { font-size: 0.8rem; color: white; display: flex; align-items: center; gap: 5px; margin-bottom: 10px; position: absolute; bottom: 70px; left: 15px; }
+        .story-media { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; width: 100%; height: 100%; overflow: hidden; }
+        /* HD Story Fix */
+        .story-media img, .story-media video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+        
+        .story-footer { padding: 15px; display: flex; gap: 10px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); align-items: center; position: absolute; bottom: 0; left: 0; right: 0; }
+        .story-views { font-size: 0.8rem; color: white; display: flex; align-items: center; gap: 5px; position: absolute; bottom: 80px; left: 15px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 15px; }
 
         /* CHAT PANEL */
         #chatPanel { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; transform: translateX(100%); transition: 0.3s ease; }
         #chatPanel.active { transform: translateX(0); }
         .chat-header { padding: calc(10px + var(--safe-top)) 15px 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; background: rgba(11, 17, 32, 0.95); backdrop-filter: blur(10px); }
+        
+        /* CHAT BUBBLES & MEDIA */
         #msgArea { flex: 1; padding: 20px 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .bubble { padding: 10px 14px; border-radius: 16px; max-width: 78%; font-size: 0.95rem; line-height: 1.4; word-wrap: break-word; position: relative; }
-        .bubble .time { display: block; font-size: 0.65rem; margin-top: 4px; text-align: right; opacity: 0.7; }
+        .bubble { padding: 10px 14px; border-radius: 16px; max-width: 80%; font-size: 0.95rem; line-height: 1.4; word-wrap: break-word; position: relative; display: flex; flex-direction: column; }
+        .bubble img, .bubble video { max-width: 100%; border-radius: 8px; margin-bottom: 5px; }
+        .bubble .file-box { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; display: flex; align-items: center; gap: 10px; margin-bottom: 5px; font-size: 0.85rem; }
+        
+        .msg-meta { display: flex; justify-content: flex-end; align-items: center; gap: 5px; font-size: 0.65rem; margin-top: 4px; opacity: 0.8; }
+        
+        /* READ RECEIPTS COLORS */
         .sent { align-self: flex-end; background: var(--accent); color: white; border-bottom-right-radius: 4px; }
         .received { align-self: flex-start; background: var(--panel); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
-        .chat-input-area { padding: 12px 15px 25px; display: flex; gap: 10px; background: var(--bg); border-top: 1px solid var(--border); }
+        
+        .tick { font-size: 0.7rem; }
+        .tick-read { color: var(--blue-tick); text-shadow: 0 0 2px rgba(255,255,255,0.5); }
+        .tick-sent { color: rgba(255,255,255,0.8); }
+
+        /* CHAT INPUT AREA */
+        .chat-input-area { padding: 12px 15px 25px; display: flex; align-items: center; gap: 10px; background: var(--bg); border-top: 1px solid var(--border); }
+        .attach-btn { background: none; border: none; color: var(--text-dim); font-size: 1.3rem; padding: 10px; cursor: pointer; transition: 0.2s; }
+        .attach-btn:hover { color: var(--accent); }
+        .chat-input-area input[type="text"] { margin: 0; background: var(--panel); flex: 1; }
+        .send-btn { background: var(--accent); border: none; width: 48px; height: 48px; border-radius: 12px; color: white; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; flex-shrink: 0; }
 
         /* NAV BOTTOM */
         nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: rgba(11, 17, 32, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border); display: flex; z-index: 500; }
-        .nav-link { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; color: var(--text-dim); font-size: 0.7rem; font-weight: 500; cursor: pointer; transition: 0.2s; }
+        .nav-link { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; color: var(--text-dim); font-size: 0.7rem; font-weight: 500; cursor: pointer; transition: 0.2s; position: relative; }
         .nav-link i { font-size: 1.3rem; margin-bottom: 2px; }
         .nav-link.active { color: var(--accent); }
+        .nav-badge { position: absolute; top: 10px; right: 25%; background: red; width: 8px; height: 8px; border-radius: 50%; display: none; }
     </style>
 </head>
 <body>
@@ -113,20 +130,19 @@
 
     <div class="content">
         <div id="v-chats" class="view active">
-            <h4>Pesan Terbaru</h4>
             <div id="chatList"></div>
         </div>
 
         <div id="v-status" class="view">
             <h4>Status Saya</h4>
-            <div class="my-story-btn" onclick="document.getElementById('storyUpload').click()">
-                <div class="add-story-icon"><i class="fas fa-plus"></i></div>
+            <div class="card" onclick="document.getElementById('storyUpload').click()" style="margin-bottom: 20px;">
+                <div class="pfp-wrap" style="background: var(--accent-glow); color: var(--accent); font-size: 1.5rem;"><i class="fas fa-plus"></i></div>
                 <div class="card-info">
                     <div class="card-name">Tambah Status</div>
-                    <div class="card-msg">Ketuk untuk membagikan foto/video</div>
+                    <div class="card-msg">Ketuk untuk berbagi foto/video</div>
                 </div>
             </div>
-            <input type="file" id="storyUpload" accept="image/*,video/mp4,video/webm" style="display:none" onchange="window.app.uploadStory(this)">
+            <input type="file" id="storyUpload" accept="image/*,video/*" style="display:none" onchange="window.app.uploadStory(this)">
             
             <h4>Pembaruan Teman</h4>
             <div id="storyList"></div>
@@ -142,55 +158,30 @@
     </div>
 
     <nav>
-        <div class="nav-link active" onclick="showTab('v-chats', this)"><i class="fas fa-comment-dots"></i><span>Obrolan</span></div>
+        <div class="nav-link active" onclick="showTab('v-chats', this)"><i class="fas fa-comment-dots"></i><span>Obrolan</span><div class="nav-badge" id="chatBadge"></div></div>
         <div class="nav-link" onclick="showTab('v-status', this)"><i class="fas fa-circle-notch"></i><span>Status</span></div>
         <div class="nav-link" onclick="showTab('v-contacts', this)"><i class="fas fa-users"></i><span>Teman</span></div>
         <div class="nav-link" onclick="toggleOverlay('popProfile', true)"><i class="fas fa-user"></i><span>Profil</span></div>
     </nav>
 
-    <div class="overlay" id="popAdd" onclick="closeOverlay(event)">
-        <div class="sheet">
-            <h3 style="margin-bottom: 15px;">Tambah Teman</h3>
-            <input type="text" id="targetID" placeholder="Masukkan ID (Contoh: BRO-1234)">
-            <button class="btn-fill" onclick="window.app.addFriend()">Simpan Kontak</button>
-        </div>
-    </div>
-
-    <div class="overlay" id="popProfile" onclick="closeOverlay(event)">
-        <div class="sheet">
-            <h3 style="margin-bottom: 20px; text-align:center;">Edit Profil</h3>
-            <div style="text-align:center; margin-bottom:20px;">
-                <div class="pfp-wrap" style="width:90px; height:90px; margin:0 auto;">
-                    <img id="pfpEdit" src="" class="pfp">
-                </div>
-                <button onclick="document.getElementById('filePfp').click()" style="background:none; border:none; color:var(--accent); margin-top:10px; font-weight:600; cursor:pointer;">Ubah Foto</button>
-                <input type="file" id="filePfp" accept="image/*,video/*" style="display:none" onchange="window.app.handlePfp(this)">
-            </div>
-            <input type="text" id="editName" placeholder="Nama Lengkap">
-            <textarea id="editBio" placeholder="Bio singkat..." rows="2"></textarea>
-            <button class="btn-fill" onclick="window.app.updateProfile()">Simpan Profil</button>
-        </div>
-    </div>
-
     <div id="storyViewer">
         <div class="story-progress-container"><div class="story-progress-bar"><div class="story-progress-fill" id="storyProgress"></div></div></div>
         <div class="story-header">
-            <i class="fas fa-arrow-left" onclick="window.app.closeStory()" style="color:white; font-size:1.2rem; cursor:pointer; text-shadow:0 1px 3px rgba(0,0,0,0.5);"></i>
-            <img id="svPfp" src="" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
-            <div style="flex:1">
-                <div id="svName" style="color:white; font-weight:600; font-size:0.95rem; text-shadow:0 1px 3px rgba(0,0,0,0.5);">Nama</div>
-                <div id="svTime" style="color:rgba(255,255,255,0.8); font-size:0.75rem;">Waktu</div>
+            <i class="fas fa-arrow-left" onclick="window.app.closeStory()" style="color:white; font-size:1.2rem; cursor:pointer; text-shadow:0 1px 3px rgba(0,0,0,0.8); z-index:20;"></i>
+            <img id="svPfp" src="" style="width:40px; height:40px; border-radius:50%; object-fit:cover; z-index:20; border:1px solid rgba(255,255,255,0.5);">
+            <div style="flex:1; z-index:20;">
+                <div id="svName" style="color:white; font-weight:600; font-size:1rem; text-shadow:0 1px 3px rgba(0,0,0,0.8);">Nama</div>
+                <div id="svTime" style="color:rgba(255,255,255,0.9); font-size:0.75rem; text-shadow:0 1px 3px rgba(0,0,0,0.8);">Waktu</div>
             </div>
         </div>
         
-        <div class="story-media" id="svMediaContainer" onclick="window.app.nextStory()">
-            </div>
+        <div class="story-media" id="svMediaContainer" onclick="window.app.nextStory()"></div>
 
         <div class="story-views" id="svViews" style="display:none;"><i class="fas fa-eye"></i> <span id="svViewCount">0</span></div>
 
         <div class="story-footer" id="svFooter">
-            <input type="text" id="storyReplyInp" placeholder="Balas status ini..." style="margin:0; background:rgba(255,255,255,0.2); border:none; backdrop-filter:blur(5px); color:white;">
-            <button onclick="window.app.replyStory()" style="background:var(--accent); border:none; width:45px; height:45px; border-radius:12px; color:white;"><i class="fas fa-paper-plane"></i></button>
+            <input type="text" id="storyReplyInp" placeholder="Balas status..." style="margin:0; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(10px); color:white; border-radius:20px; padding:12px 20px;">
+            <button onclick="window.app.replyStory()" class="send-btn" style="border-radius:50%; width:45px; height:45px;"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
@@ -205,8 +196,31 @@
         </div>
         <div id="msgArea"></div>
         <div class="chat-input-area">
-            <input type="text" id="msgIn" placeholder="Ketik pesan..." style="margin:0; background:var(--panel);">
-            <button onclick="window.app.send()" style="background:var(--accent); border:none; width:48px; height:48px; border-radius:12px; color:white;"><i class="fas fa-paper-plane"></i></button>
+            <button class="attach-btn" onclick="document.getElementById('chatMedia').click()"><i class="fas fa-paperclip"></i></button>
+            <input type="file" id="chatMedia" style="display:none" onchange="window.app.sendMedia(this)">
+            <input type="text" id="msgIn" placeholder="Ketik pesan..." onkeypress="if(event.key === 'Enter') window.app.send()">
+            <button class="send-btn" onclick="window.app.send()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <div class="overlay" id="popAdd" onclick="closeOverlay(event)">
+        <div class="sheet">
+            <h3 style="margin-bottom: 15px;">Tambah Teman</h3>
+            <input type="text" id="targetID" placeholder="Masukkan ID (Contoh: BRO-1234)">
+            <button class="btn-fill" onclick="window.app.addFriend()">Simpan</button>
+        </div>
+    </div>
+    <div class="overlay" id="popProfile" onclick="closeOverlay(event)">
+        <div class="sheet">
+            <h3 style="margin-bottom: 20px; text-align:center;">Edit Profil</h3>
+            <div style="text-align:center; margin-bottom:20px;">
+                <img id="pfpEdit" src="" class="pfp" style="width:90px; height:90px; margin:0 auto;">
+                <br><button onclick="document.getElementById('filePfp').click()" style="background:none; border:none; color:var(--accent); margin-top:10px; font-weight:600; cursor:pointer;">Ubah Foto</button>
+                <input type="file" id="filePfp" accept="image/*" style="display:none" onchange="window.app.handlePfp(this)">
+            </div>
+            <input type="text" id="editName" placeholder="Nama Lengkap">
+            <textarea id="editBio" placeholder="Bio singkat..."></textarea>
+            <button class="btn-fill" onclick="window.app.updateProfile()">Simpan</button>
         </div>
     </div>
 
@@ -223,281 +237,258 @@
         const app_fire = initializeApp(firebaseConfig);
         const db = getDatabase(app_fire);
 
-        // -- STATE --
+        // Req Notification Permission
+        if ("Notification" in window) { Notification.requestPermission(); }
+
         let myID = localStorage.getItem('mybro_id');
         if(!myID) {
             myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
             localStorage.setItem('mybro_id', myID);
-            set(ref(db, `users/${myID}/profile`), { id: myID, name: "User " + myID.split('-')[1], pfp: "", bio: "Hello!" });
+            set(ref(db, `users/${myID}/profile`), { id: myID, name: "User " + myID.split('-')[1], pfp: "", bio: "Hey ada di MyBro!" });
         }
         document.getElementById('displayID').innerText = myID;
 
         let activeTarget = null;
         let pfpBase64 = "";
-        
-        // Story State
-        let currentStoryQueue = [];
-        let currentStoryIndex = 0;
-        let storyTimer;
-        let viewingStoryOf = null;
+        let currentStoryQueue = [], currentStoryIndex = 0, storyTimer, viewingStoryOf = null;
+        let unreadCountGlobal = 0;
 
-        // -- UTILS --
         window.showTab = (id, el) => {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             el.classList.add('active');
         }
-        window.toggleOverlay = (id, show) => {
-            const el = document.getElementById(id);
-            if(show) { el.classList.add('active'); el.style.display = 'flex'; }
-            else { el.classList.remove('active'); setTimeout(() => el.style.display = 'none', 300); }
-        }
+        window.toggleOverlay = (id, show) => { const el = document.getElementById(id); if(show) { el.classList.add('active'); el.style.display = 'flex'; } else { el.classList.remove('active'); setTimeout(() => el.style.display = 'none', 300); } }
         window.closeOverlay = (e) => { if(e.target.classList.contains('overlay')) toggleOverlay(e.target.id, false); }
         window.copyID = () => { navigator.clipboard.writeText(myID); alert("ID Disalin: " + myID); }
         
         const formatTime = (ts) => {
             const d = new Date(ts);
-            const now = new Date();
-            if(d.getDate() === now.getDate() && d.getMonth() === now.getMonth()) {
-                return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
-            }
-            return d.getDate() + "/" + (d.getMonth()+1);
+            return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
         }
 
-        // -- CORE LOGIC --
         window.app = {
-            // PROFILE
             handlePfp: (input) => {
-                const file = input.files[0];
-                if(!file) return;
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => {
-                    pfpBase64 = reader.result; // Accepts all photo/video formats supported by browser
-                    document.getElementById('pfpEdit').src = pfpBase64;
-                }
+                const reader = new FileReader(); reader.readAsDataURL(input.files[0]);
+                reader.onload = () => { pfpBase64 = reader.result; document.getElementById('pfpEdit').src = pfpBase64; }
             },
             updateProfile: () => {
                 const updates = { name: document.getElementById('editName').value, bio: document.getElementById('editBio').value };
-                if(pfpBase64) updates.pfp = pfpBase64;
-                update(ref(db, `users/${myID}/profile`), updates);
-                toggleOverlay('popProfile', false);
+                if(pfpBase64) updates.pfp = pfpBase64; update(ref(db, `users/${myID}/profile`), updates); toggleOverlay('popProfile', false);
             },
             addFriend: () => {
                 const tid = document.getElementById('targetID').value.trim().toUpperCase();
                 if(!tid || tid === myID) return;
-                set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid });
-                toggleOverlay('popAdd', false);
+                set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid }); toggleOverlay('popAdd', false);
             },
 
-            // CHAT SYSTEM
+            // --- CHAT & MEDIA SYSTEM ---
             openChat: (id, name, pfp) => {
                 activeTarget = id;
-                document.getElementById('chatName').innerText = name;
-                document.getElementById('chatPfp').src = pfp;
+                document.getElementById('chatName').innerText = name; document.getElementById('chatPfp').src = pfp;
                 document.getElementById('chatPanel').classList.add('active');
                 
                 const room = [myID, id].sort().join("_");
                 onValue(ref(db, `chats/${room}`), (snap) => {
                     const area = document.getElementById('msgArea');
                     area.innerHTML = "";
+                    let updates = {}; let hasUpdates = false;
+
                     snap.forEach(child => {
                         const m = child.val();
+                        
+                        // Mark as Read Logic (Jika pesan dari orang lain dan status belum read)
+                        if(m.from !== myID && m.status !== 'read') {
+                            updates[`${child.key}/status`] = 'read'; hasUpdates = true;
+                        }
+
+                        // Render Media
+                        let mediaHTML = "";
+                        if(m.type === 'image') mediaHTML = `<img src="${m.media}">`;
+                        else if(m.type === 'video') mediaHTML = `<video src="${m.media}" controls></video>`;
+                        else if(m.type === 'file') mediaHTML = `<div class="file-box"><i class="fas fa-file-alt fa-2x"></i> <div>${m.fileName || 'File'}<br><a href="${m.media}" download="${m.fileName || 'file'}" style="color:var(--accent); font-size:0.7rem;">Download</a></div></div>`;
+
+                        // Render Ticks (Sent = 1 tick, Read = 2 blue ticks)
+                        let tickHTML = "";
+                        if(m.from === myID) {
+                            if(m.status === 'read') tickHTML = `<i class="fas fa-check-double tick tick-read"></i>`;
+                            else tickHTML = `<i class="fas fa-check tick tick-sent"></i>`; // Default Sent
+                        }
+
                         area.innerHTML += `
                             <div class="bubble ${m.from === myID ? 'sent' : 'received'}">
-                                ${m.text}
-                                <span class="time">${formatTime(m.time)}</span>
+                                ${mediaHTML}
+                                ${m.text ? `<div>${m.text}</div>` : ''}
+                                <div class="msg-meta"><span>${formatTime(m.time)}</span> ${tickHTML}</div>
                             </div>`;
                     });
+                    
+                    if(hasUpdates) update(ref(db, `chats/${room}`), updates);
                     area.scrollTop = area.scrollHeight;
                 });
             },
-            closeChat: () => {
-                document.getElementById('chatPanel').classList.remove('active');
-                activeTarget = null;
-            },
-            send: (customText = null) => {
+            closeChat: () => { document.getElementById('chatPanel').classList.remove('active'); activeTarget = null; },
+            send: (customText = null, mediaData = null, type = 'text', fileName = '') => {
                 const inp = document.getElementById('msgIn');
-                const text = customText || inp.value;
-                if(!text || !activeTarget) return;
+                const text = customText !== null ? customText : inp.value;
+                if((!text && !mediaData) || !activeTarget) return;
+                
                 const room = [myID, activeTarget].sort().join("_");
-                push(ref(db, `chats/${room}`), { from: myID, text: text, time: Date.now() });
-                if(!customText) inp.value = "";
+                push(ref(db, `chats/${room}`), { 
+                    from: myID, text: text, time: Date.now(), status: 'sent', 
+                    type: type, media: mediaData || "", fileName: fileName
+                });
+                inp.value = "";
+            },
+            sendMedia: (input) => {
+                const file = input.files[0]; if(!file) return;
+                if(file.size > 3 * 1024 * 1024) return alert("Batas ukuran file 3MB untuk demo Base64 ini.");
+                
+                let type = 'file';
+                if(file.type.startsWith('image/')) type = 'image';
+                if(file.type.startsWith('video/')) type = 'video';
+
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = () => { window.app.send("", reader.result, type, file.name); }
             },
 
-            // STORY SYSTEM
+            // --- HD STORY SYSTEM ---
             uploadStory: (input) => {
-                const file = input.files[0];
-                if(!file) return;
-                if(file.size > 5 * 1024 * 1024) return alert("Maksimal ukuran file 5MB untuk versi ini.");
-                
+                const file = input.files[0]; if(!file) return;
+                if(file.size > 3 * 1024 * 1024) return alert("Maksimal 3MB.");
                 const type = file.type.startsWith('video') ? 'video' : 'image';
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => {
-                    push(ref(db, `stories/${myID}`), {
-                        media: reader.result, type: type, time: Date.now(), views: 0
-                    });
-                    alert("Status berhasil diunggah!");
-                }
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = () => { push(ref(db, `stories/${myID}`), { media: reader.result, type: type, time: Date.now(), views: 0 }); alert("Status Berhasil Diunggah!"); }
             },
             openStory: (userId, userName, userPfp, isMyStory) => {
                 get(ref(db, `stories/${userId}`)).then(snap => {
                     if(!snap.exists()) return;
-                    currentStoryQueue = [];
-                    const now = Date.now();
+                    currentStoryQueue = []; const now = Date.now();
                     snap.forEach(child => {
-                        const s = child.val();
-                        if(now - s.time < 24 * 60 * 60 * 1000) { // Only 24h stories
-                            currentStoryQueue.push({ id: child.key, ...s });
-                        }
+                        if(now - child.val().time < 24 * 60 * 60 * 1000) currentStoryQueue.push({ id: child.key, ...child.val() });
                     });
                     if(currentStoryQueue.length === 0) return;
                     
                     viewingStoryOf = userId;
-                    document.getElementById('svName').innerText = userName;
-                    document.getElementById('svPfp').src = userPfp;
+                    document.getElementById('svName').innerText = userName; document.getElementById('svPfp').src = userPfp;
                     document.getElementById('storyViewer').style.display = 'flex';
                     
-                    if(isMyStory) {
-                        document.getElementById('svFooter').style.display = 'none';
-                        document.getElementById('svViews').style.display = 'flex';
-                    } else {
-                        document.getElementById('svFooter').style.display = 'flex';
-                        document.getElementById('svViews').style.display = 'none';
-                    }
+                    document.getElementById('svFooter').style.display = isMyStory ? 'none' : 'flex';
+                    document.getElementById('svViews').style.display = isMyStory ? 'flex' : 'none';
 
-                    currentStoryIndex = 0;
-                    window.app.renderCurrentStory();
+                    currentStoryIndex = 0; window.app.renderCurrentStory();
                 });
             },
             renderCurrentStory: () => {
                 if(currentStoryIndex >= currentStoryQueue.length) return window.app.closeStory();
-                
                 const s = currentStoryQueue[currentStoryIndex];
                 document.getElementById('svTime').innerText = formatTime(s.time);
                 
                 const container = document.getElementById('svMediaContainer');
-                container.innerHTML = "";
-                
-                if(s.type === 'video') {
-                    container.innerHTML = `<video src="${s.media}" autoplay playsinline></video>`;
-                } else {
-                    container.innerHTML = `<img src="${s.media}">`;
-                }
+                // Render HD Video or Image
+                if(s.type === 'video') container.innerHTML = `<video src="${s.media}" autoplay playsinline loop></video>`;
+                else container.innerHTML = `<img src="${s.media}">`;
 
-                // Increment View
                 if(viewingStoryOf !== myID) {
-                    get(ref(db, `stories/${viewingStoryOf}/${s.id}/views`)).then(snap => {
-                        update(ref(db, `stories/${viewingStoryOf}/${s.id}`), { views: (snap.val() || 0) + 1 });
-                    });
-                } else {
-                    document.getElementById('svViewCount').innerText = s.views || 0;
-                }
+                    get(ref(db, `stories/${viewingStoryOf}/${s.id}/views`)).then(snap => { update(ref(db, `stories/${viewingStoryOf}/${s.id}`), { views: (snap.val() || 0) + 1 }); });
+                } else { document.getElementById('svViewCount').innerText = s.views || 0; }
 
-                // Progress Bar Animation
                 const bar = document.getElementById('storyProgress');
                 bar.style.transition = 'none'; bar.style.width = '0%';
-                setTimeout(() => {
-                    bar.style.transition = 'width 5s linear'; // 5s per story
-                    bar.style.width = '100%';
-                }, 50);
+                setTimeout(() => { bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 50);
 
-                clearTimeout(storyTimer);
-                storyTimer = setTimeout(() => window.app.nextStory(), 5000);
+                clearTimeout(storyTimer); storyTimer = setTimeout(() => window.app.nextStory(), 5000);
             },
             nextStory: () => { currentStoryIndex++; window.app.renderCurrentStory(); },
-            closeStory: () => {
-                clearTimeout(storyTimer);
-                document.getElementById('storyViewer').style.display = 'none';
-                viewingStoryOf = null;
-            },
+            closeStory: () => { clearTimeout(storyTimer); document.getElementById('storyViewer').style.display = 'none'; viewingStoryOf = null; },
             replyStory: () => {
-                const inp = document.getElementById('storyReplyInp');
-                if(!inp.value || !viewingStoryOf) return;
-                activeTarget = viewingStoryOf;
-                window.app.send(`Membahas status: "${inp.value}"`);
-                inp.value = "";
-                window.app.closeStory();
-                alert("Balasan dikirim!");
+                const inp = document.getElementById('storyReplyInp'); if(!inp.value || !viewingStoryOf) return;
+                activeTarget = viewingStoryOf; window.app.send(`Membahas status: "${inp.value}"`);
+                inp.value = ""; window.app.closeStory(); alert("Balasan dikirim!");
             }
         };
 
-        // -- DATA SYNC WATCHERS --
-        
-        // 1. Profil Sendiri
+        // --- GLOBAL WATCHERS ---
         onValue(ref(db, `users/${myID}/profile`), (snap) => {
             const d = snap.val(); if(!d) return;
-            document.getElementById('editName').value = d.name;
-            document.getElementById('editBio').value = d.bio;
+            document.getElementById('editName').value = d.name; document.getElementById('editBio').value = d.bio;
             if(d.pfp) document.getElementById('pfpEdit').src = d.pfp;
         });
 
-        // 2. Daftar Chat & Kontak (Realtime Last Message)
         onValue(ref(db, `users/${myID}/contacts`), (snap) => {
-            const cList = document.getElementById('contactList');
-            const rList = document.getElementById('chatList');
-            const sList = document.getElementById('storyList');
-            cList.innerHTML = ""; rList.innerHTML = ""; sList.innerHTML = "";
+            const cList = document.getElementById('contactList'); const rList = document.getElementById('chatList'); const sList = document.getElementById('storyList');
+            cList.innerHTML = ""; rList.innerHTML = ""; sList.innerHTML = ""; unreadCountGlobal = 0;
 
             snap.forEach(child => {
-                const cid = child.key;
-                const room = [myID, cid].sort().join("_");
+                const cid = child.key; const room = [myID, cid].sort().join("_");
                 
                 onValue(ref(db, `users/${cid}/profile`), (pSnap) => {
                     const p = pSnap.val() || { name: cid, pfp: "" };
                     const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}&background=1e293b&color=fff`;
 
-                    // Generate Contact Card
                     const cCard = document.createElement('div'); cCard.className = 'card';
-                    cCard.innerHTML = `<img src="${pfp}" class="pfp" style="width:45px;height:45px"><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">${p.bio || 'Ada!'}</div></div>`;
-                    cCard.onclick = () => window.app.openChat(cid, p.name, pfp);
-                    cList.appendChild(cCard);
+                    cCard.innerHTML = `<img src="${pfp}" class="pfp" style="width:45px;height:45px"><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">${p.bio}</div></div>`;
+                    cCard.onclick = () => window.app.openChat(cid, p.name, pfp); cList.appendChild(cCard);
 
-                    // Fetch Last Message for Chat List
-                    const q = query(ref(db, `chats/${room}`), orderByChild('time'), limitToLast(1));
-                    onValue(q, (msgSnap) => {
-                        let lastMsg = "Mulai obrolan", lastTime = "";
-                        msgSnap.forEach(m => { lastMsg = m.val().text; lastTime = formatTime(m.val().time); });
+                    // Fetch Messages for Chat List & Unread Notifications
+                    onValue(ref(db, `chats/${room}`), (msgSnap) => {
+                        let lastMsgObj = null, unreadCount = 0;
+                        msgSnap.forEach(m => {
+                            lastMsgObj = m.val();
+                            if(lastMsgObj.from !== myID && lastMsgObj.status !== 'read') unreadCount++;
+                        });
                         
-                        // Check if user has active story
-                        get(ref(db, `stories/${cid}`)).then(storySnap => {
-                            let hasStory = false;
-                            const now = Date.now();
-                            if(storySnap.exists()) {
-                                storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
+                        let lastMsgText = "Mulai obrolan", lastTime = "", tickHTML = "";
+                        if(lastMsgObj) {
+                            if(lastMsgObj.type === 'image') lastMsgText = '📷 Foto';
+                            else if(lastMsgObj.type === 'video') lastMsgText = '🎥 Video';
+                            else if(lastMsgObj.type === 'file') lastMsgText = '📄 Dokumen';
+                            else lastMsgText = lastMsgObj.text;
+                            
+                            lastTime = formatTime(lastMsgObj.time);
+                            
+                            if(lastMsgObj.from === myID) {
+                                tickHTML = lastMsgObj.status === 'read' ? `<i class="fas fa-check-double tick tick-read"></i>` : `<i class="fas fa-check tick tick-sent"></i>`;
                             }
 
-                            // Generate Chat Card
-                            const existingChatCard = document.getElementById(`chat-${cid}`);
+                            // Trigger Browser Notification for new msg
+                            if(unreadCount > 0 && Notification.permission === "granted" && activeTarget !== cid) {
+                                new Notification(`Pesan baru dari ${p.name}`, { body: lastMsgText, icon: pfp });
+                            }
+                        }
+                        
+                        // Update Global Badge
+                        unreadCountGlobal += unreadCount;
+                        document.getElementById('chatBadge').style.display = unreadCountGlobal > 0 ? 'block' : 'none';
+
+                        get(ref(db, `stories/${cid}`)).then(storySnap => {
+                            let hasStory = false; const now = Date.now();
+                            if(storySnap.exists()) storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
+
                             const htmlChat = `
                                 <div class="pfp-wrap ${hasStory ? 'has-story' : ''}"><img src="${pfp}" class="pfp"></div>
                                 <div class="card-info">
                                     <div class="card-header-flex"><div class="card-name">${p.name}</div><div class="card-time">${lastTime}</div></div>
-                                    <div class="card-msg">${lastMsg}</div>
+                                    <div class="card-msg">${tickHTML} ${lastMsgText}</div>
                                 </div>
+                                ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
                             `;
                             
-                            if(existingChatCard) {
-                                existingChatCard.innerHTML = htmlChat;
-                            } else {
-                                const rCard = document.createElement('div');
-                                rCard.className = 'card'; rCard.id = `chat-${cid}`;
-                                rCard.innerHTML = htmlChat;
-                                rCard.onclick = () => window.app.openChat(cid, p.name, pfp);
+                            let existingCard = document.getElementById(`chat-${cid}`);
+                            if(existingCard) existingCard.innerHTML = htmlChat;
+                            else {
+                                const rCard = document.createElement('div'); rCard.className = 'card'; rCard.id = `chat-${cid}`;
+                                rCard.innerHTML = htmlChat; rCard.onclick = () => window.app.openChat(cid, p.name, pfp);
                                 rList.appendChild(rCard);
                             }
 
-                            // Generate Story Card if has story
                             if(hasStory) {
-                                const existingStoryCard = document.getElementById(`story-${cid}`);
-                                if(!existingStoryCard) {
-                                    const sCard = document.createElement('div');
-                                    sCard.className = 'card'; sCard.id = `story-${cid}`;
+                                let sCard = document.getElementById(`story-${cid}`);
+                                if(!sCard) {
+                                    sCard = document.createElement('div'); sCard.className = 'card'; sCard.id = `story-${cid}`;
                                     sCard.innerHTML = `<div class="pfp-wrap has-story"><img src="${pfp}" class="pfp"></div><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">Pembaruan baru</div></div>`;
-                                    sCard.onclick = () => window.app.openStory(cid, p.name, pfp, false);
-                                    sList.appendChild(sCard);
+                                    sCard.onclick = () => window.app.openStory(cid, p.name, pfp, false); sList.appendChild(sCard);
                                 }
                             }
                         });
@@ -505,7 +496,6 @@
                 });
             });
         });
-
     </script>
 </body>
 </html>
