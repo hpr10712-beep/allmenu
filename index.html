@@ -450,7 +450,15 @@ input[type="text"]:focus, textarea:focus {
             // --- CHAT & MEDIA SYSTEM ---
             openChat: (id, name, pfp) => {
                 activeTarget = id;
-                document.getElementById('chatName').innerText = name; document.getElementById('chatPfp').src = pfp;
+                // Ambil status verifikasi dari database user yang sedang diajak chat
+onValue(ref(db, `users/${id}/isVerified`), (vSnap) => {
+    const verified = vSnap.val() || false;
+    document.getElementById('chatName').innerHTML = `
+        ${name} ${verified ? '<i class="fas fa-check-circle" style="color:#3b82f6; font-size:0.9rem; margin-left:4px;"></i>' : ''}
+    `;
+});
+document.getElementById('chatPfp').src = pfp;
+
                 document.getElementById('chatPanel').classList.add('active');
                 
                 // Set Archive Status for Menu
@@ -710,7 +718,11 @@ input[type="text"]:focus, textarea:focus {
             document.getElementById('pfpEdit').src = pfp;
             document.getElementById('myStatusPfp').src = pfp;
             document.getElementById('vProfilePfp').src = pfp;
-            document.getElementById('vProfileName').innerText = d.name;
+            const myVerified = d.isVerified || false;
+document.getElementById('vProfileName').innerHTML = `
+    ${d.name} ${myVerified ? '<i class="fas fa-check-circle" style="color:#3b82f6; margin-left:5px;"></i>' : ''}
+`;
+
             document.getElementById('vProfileBio').innerText = d.bio;
         });
 
@@ -771,12 +783,23 @@ input[type="text"]:focus, textarea:focus {
                             let hasStory = false; const now = Date.now();
                             if(storySnap.exists()) storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
 
-                            const htmlChat = `
-                                <div class="pfp-wrap ${hasStory ? 'has-story' : ''}"><img src="${pfp}" class="pfp"></div>
-                                <div class="card-info">
-                                    <div class="card-header-flex"><div class="card-name">${p.name}</div><div class="card-time">${lastTime}</div></div>
-                                    <div class="card-msg">${tickHTML} ${lastMsgText}</div>
-                                </div>
+                            // Pastikan variabel p.isVerified sudah ada dari profil yang diambil
+const isVerified = p.isVerified || false;
+
+const htmlChat = `
+    <div class="pfp-wrap ${hasStory ? 'has-story' : ''}"><img src="${pfp}" class="pfp"></div>
+    <div class="card-info">
+        <div class="card-header-flex">
+            <div class="card-name">
+                ${p.name} ${isVerified ? '<i class="fas fa-check-circle" style="color:#3b82f6; font-size:0.85rem; margin-left:3px;"></i>' : ''}
+            </div>
+            <div class="card-time">${lastTime}</div>
+        </div>
+        <div class="card-msg">${tickHTML} ${lastMsgText}</div>
+    </div>
+    ...
+`;
+
                                 ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
                             `;
                             
