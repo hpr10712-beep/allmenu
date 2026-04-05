@@ -909,47 +909,7 @@ onValue(ref(db, `chats/${room}`), (msgSnap) => {
                             let hasStory = false; const now = Date.now();
                             if(storySnap.exists()) storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
 
-                                  onValue(ref(db, `users/${myID}/contacts`), (snap) => {
-            const cList = document.getElementById('contactList'); 
-            const rList = document.getElementById('chatList'); 
-            const sList = document.getElementById('storyList'); 
-            const aList = document.getElementById('archivedList');
-            
-            cList.innerHTML = ""; 
-            unreadCountGlobal = 0;
-
-            snap.forEach(child => {
-                const cid = child.key; 
-                const isArchived = child.val().archived;
-                const room = [myID, cid].sort().join("_");
-                
-                onValue(ref(db, `users/${cid}/profile`), (pSnap) => {
-                    const p = pSnap.val() || { name: cid, pfp: "" };
-                    const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}&background=1e293b&color=fff`;
-
-                    // FIX: Pindahkan listener pesan ke sini agar variabel 'p' dan 'pfp' terbaca
-                    onValue(ref(db, `chats/${room}`), (msgSnap) => {
-                        let lastMsgObj = null, unreadCount = 0;
-                        
-                        msgSnap.forEach(m => {
-                            lastMsgObj = m.val();
-                            const msgKey = m.key;
-                            
-                            if(lastMsgObj.from !== myID) {
-                                if(lastMsgObj.status === 'sent') {
-                                    update(ref(db, `chats/${room}/${msgKey}`), { status: 'delivered' });
-                                }
-                                
-                                if(lastMsgObj.status !== 'read') {
-                                    unreadCount++;
-                                    if(lastMsgObj.time > appStartTime && !notifiedMessages.has(msgKey) && activeTarget !== cid) {
-                                        notifiedMessages.add(msgKey);
-                                        let notifText = lastMsgObj.text || "Mengirim media";
-                                        window.showFloatingNotif(p.name, notifText, pfp, cid);
-                                    }
-                                }
-                            }
-                        });
+                        }
 
                         let lastMsgText = "Mulai obrolan", lastTime = "", tickHTML = "";
                         if(lastMsgObj) {
