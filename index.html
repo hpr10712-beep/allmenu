@@ -827,52 +827,84 @@ input[type="text"]:focus, textarea:focus {
                 toast.classList.remove('show');
             }, 3000);
         };
-// --- LOGIKA PENGECEKAN BAN SEMENTARA ---
-// Gunakan myID yang sudah didefinisikan di awal script aplikasi Anda
+// --- TAMPILAN BAN PREMIUM (DARK GLASSMORPHISM) ---
 if (myID) {
     onValue(ref(db, `users/${myID}/isBanned`), (snapshot) => {
         if (snapshot.exists() && snapshot.val() === true) {
-            // Hapus semua elemen body dan ganti dengan tampilan Banned
             document.body.innerHTML = `
-                <div style="position:fixed; inset:0; background:#0f172a; display:flex; align-items:center; justify-content:center; z-index:10000; font-family:'Inter', sans-serif; padding:20px;">
-                    <div style="background:white; padding:40px 30px; border-radius:30px; text-align:center; max-width:400px; width:100%; box-shadow:0 20px 50px rgba(0,0,0,0.3);">
-                        <div style="width:80px; height:80px; background:#fff1f2; color:#ef4444; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:35px;">
-                            <i class="fas fa-user-slash"></i>
+                <div style="position:fixed; inset:0; background:radial-gradient(circle at center, #1e293b 0%, #020617 100%); display:flex; align-items:center; justify-content:center; z-index:100000; font-family:'Inter', sans-serif; padding:20px;">
+                    
+                    <div style="position:absolute; width:300px; height:300px; background:rgba(239, 68, 68, 0.1); filter:blur(100px); border-radius:50%; top:20%; left:10%;"></div>
+                    <div style="position:absolute; width:200px; height:200px; background:rgba(37, 99, 235, 0.1); filter:blur(80px); border-radius:50%; bottom:10%; right:10%;"></div>
+
+                    <div style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px 30px; border-radius: 32px; text-align: center; max-width: 420px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+                        
+                        <div style="width: 90px; height: 90px; background: rgba(239, 68, 68, 0.15); color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; font-size: 40px; box-shadow: 0 0 30px rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.3);">
+                            <i class="fas fa-shield-slash"></i>
                         </div>
-                        <h2 style="color:#1e293b; margin-bottom:12px; font-weight:800; font-size:1.5rem;">Akun Dinonaktifkan</h2>
-                        <p style="color:#64748b; line-height:1.6; margin-bottom:25px; font-size:0.95rem;">
-                            Mohon maaf, akun Anda dengan ID <b>${myID}</b> telah <b>dinonaktifkan sementara</b> oleh pihak <b>MyBro</b>.
+
+                        <h2 style="color: #ffffff; margin-bottom: 12px; font-weight: 800; font-size: 1.6rem; letter-spacing: -0.5px;">Akses Dibatasi</h2>
+                        
+                        <p style="color: #94a3b8; line-height: 1.6; margin-bottom: 30px; font-size: 0.95rem;">
+                            Sistem mendeteksi aktivitas yang melanggar ketentuan. Akun <span style="color: #ef4444; font-weight: 600;">${myID}</span> telah dinonaktifkan sementara oleh tim <b>MyBro</b>.
                         </p>
                         
-                        <div style="margin-bottom:20px; text-align:left;">
-                            <label style="font-size:0.8rem; font-weight:700; color:#1e293b; margin-bottom:8px; display:block;">Ajukan Banding:</label>
-                            <textarea id="appealText" placeholder="Tulis alasan mengapa akun Anda harus diaktifkan kembali..." style="width:100%; height:100px; padding:12px; border-radius:12px; border:1px solid #e2e8f0; font-size:0.85rem; outline:none; background:#f8fafc; resize:none;"></textarea>
+                        <div style="margin-bottom: 25px; text-align: left;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                                <label style="font-size: 0.75rem; font-weight: 700; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px;">Pesan Banding</label>
+                                <span style="font-size: 0.7rem; color: #64748b;">Opsional</span>
+                            </div>
+                            <textarea id="appealText" placeholder="Berikan alasan atau penjelasan Anda..." 
+                                style="width: 100%; height: 110px; padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); background: rgba(15, 23, 42, 0.6); color: white; font-size: 0.9rem; outline: none; transition: 0.3s; resize: none;"></textarea>
                         </div>
                         
-                        <button onclick="sendAppeal()" style="width:100%; padding:15px; background:#2563eb; color:white; border:none; border-radius:12px; font-weight:700; cursor:pointer; transition:0.3s;">
-                            Kirim Banding
+                        <button id="btnAppeal" onclick="sendAppeal()" 
+                            style="width: 100%; padding: 16px; background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: white; border: none; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);">
+                            Kirim Pengajuan Banding
                         </button>
+
+                        <div style="margin-top: 25px; font-size: 0.75rem; color: #64748b;">
+                            ID Sesi: <span style="color: #94a3b8;">${Date.now()}</span>
+                        </div>
                     </div>
                 </div>
             `;
+            
+            // Tambahkan efek fokus pada textarea
+            const tx = document.getElementById('appealText');
+            tx.onfocus = () => { tx.style.borderColor = '#ef4444'; tx.style.boxShadow = '0 0 15px rgba(239, 68, 68, 0.1)'; };
+            tx.onblur = () => { tx.style.borderColor = 'rgba(255,255,255,0.1)'; tx.style.boxShadow = 'none'; };
         }
     });
 }
 
-// Fungsi kirim banding ke Admin
+// Fungsi kirim banding dengan efek loading
 window.sendAppeal = () => {
     const text = document.getElementById('appealText').value.trim();
-    if(!text) return alert("Harap isi pesan banding!");
+    const btn = document.getElementById('btnAppeal');
+    
+    if(!text) {
+        alert("Harap tuliskan alasan banding Anda.");
+        return;
+    }
+    
+    btn.innerText = "Mengirim...";
+    btn.style.opacity = "0.7";
+    btn.disabled = true;
     
     update(ref(db, `users/${myID}`), {
-        appealMessage: text
+        appealMessage: text,
+        appealTime: Date.now()
     }).then(() => {
-        alert("Pesan banding telah dikirim ke Admin. Harap tunggu proses peninjauan.");
-        document.querySelector('button').innerText = "Banding Terkirim";
-        document.querySelector('button').disabled = true;
-        document.querySelector('button').style.background = "#94a3b8";
+        btn.innerText = "Banding Terkirim";
+        btn.style.background = "#1e293b";
+        btn.style.color = "#94a3b8";
+        document.getElementById('appealText').disabled = true;
+        document.getElementById('appealText').style.opacity = "0.5";
+        alert("Banding Anda telah diterima. Tim Admin MyBro akan segera meninjau akun Anda.");
     });
 };
+
 
     
     </script>
