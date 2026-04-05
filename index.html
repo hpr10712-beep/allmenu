@@ -827,6 +827,35 @@ input[type="text"]:focus, textarea:focus {
                 toast.classList.remove('show');
             }, 3000);
         };
+// Pasang kode ini di file index.html atau main.js aplikasi USER Anda
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const userId = localStorage.getItem("mybro_user_id"); // Ganti sesuai cara Anda simpan ID login
+const db = getDatabase();
+
+if (userId) {
+    onValue(ref(db, `users/${userId}/isBanned`), (snapshot) => {
+        if (snapshot.exists() && snapshot.val() === true) {
+            // Tampilkan Pop-up Ban
+            document.body.innerHTML = `
+                <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; display:flex; align-items:center; justify-content:center; z-index:10000; font-family:'Plus Jakarta Sans',sans-serif;">
+                    <div style="background:white; padding:40px; border-radius:30px; text-align:center; max-width:85%; box-shadow:0 20px-50px rgba(0,0,0,0.5);">
+                        <div style="width:80px; height:80px; background:#fff1f2; color:#ef4444; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:30px;">
+                            <i class="fas fa-user-slash"></i>
+                        </div>
+                        <h2 style="color:#1e293b; margin-bottom:10px; font-weight:800;">Akun Dinonaktifkan</h2>
+                        <p style="color:#64748b; line-height:1.6; margin-bottom:25px;">
+                            Mohon maaf, akun Anda telah <b>dinonaktifkan sementara</b> oleh pihak <b>MyBro</b> karena melanggar ketentuan layanan.
+                        </p>
+                        <div style="font-size:12px; color:#94a3b8; border-top:1px solid #f1f5f9; pt:15px;">
+                            Hubungi admin untuk banding.
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    });
+}
 
     
     </script>
