@@ -2,173 +2,205 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MyBro - Ultimate Fix</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MyBro - Premium Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --bg: #0b101a; --panel: #161e2e; --accent: #00ffa3; --text: #f1f5f9; --text-dim: #94a3b8;
-            --border: rgba(255, 255, 255, 0.1);
+            --bg: #090c10;
+            --card: #161b22;
+            --accent: #00ffa3;
+            --accent-soft: rgba(0, 255, 163, 0.1);
+            --text: #f0f6fc;
+            --text-dim: #8b949e;
+            --border: rgba(255, 255, 255, 0.08);
+            --danger: #ff4d4d;
         }
+
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
 
-        header { padding: 15px 20px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-        .id-badge { background: rgba(0,255,163,0.1); padding: 5px 12px; border-radius: 10px; font-size: 0.8rem; color: var(--accent); font-weight: bold; border: 1px solid var(--accent); }
+        /* --- HEADER --- */
+        header { 
+            padding: 20px; background: rgba(13, 17, 23, 0.8); 
+            backdrop-filter: blur(15px); border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; z-index: 100;
+        }
+        .brand { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; }
+        .brand span { color: var(--accent); }
+        .my-status-head { display: flex; align-items: center; gap: 10px; background: var(--card); padding: 5px 12px; border-radius: 100px; border: 1px solid var(--border); }
 
-        .view-container { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 90px; }
-        .view { display: none; }
-        .view.active { display: block; animation: fadeIn 0.2s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* --- CONTENT AREA --- */
+        .main-container { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
+        .view { display: none; opacity: 0; transform: translateY(10px); transition: 0.3s ease; }
+        .view.active { display: block; opacity: 1; transform: translateY(0); }
 
-        /* NAV BAWAH */
-        nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-dim); cursor: pointer; padding: 10px; width: 25%; }
-        .nav-item.active { color: var(--accent); }
-        .nav-item i { font-size: 1.3rem; margin-bottom: 4px; }
-        .nav-item span { font-size: 0.7rem; font-weight: 600; }
+        /* --- STORY SECTION --- */
+        .story-wrapper { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 20px; scrollbar-width: none; }
+        .story-wrapper::-webkit-scrollbar { display: none; }
+        .story-circle { 
+            min-width: 68px; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; 
+        }
+        .story-img-frame { 
+            width: 64px; height: 64px; border-radius: 22px; padding: 2px;
+            border: 2px solid var(--accent); position: relative;
+        }
+        .story-img-frame img { width: 100%; height: 100%; border-radius: 18px; object-fit: cover; }
+        .story-add-icon { 
+            position: absolute; bottom: -2px; right: -2px; background: var(--accent); 
+            color: #000; width: 20px; height: 20px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border: 2px solid var(--bg);
+        }
 
-        /* LIST & AVATAR */
-        .list-card { display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
-        .avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: #262f3f; }
+        /* --- CARD LIST --- */
+        .item-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 20px; padding: 14px; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 14px; transition: 0.2s;
+        }
+        .item-card:active { transform: scale(0.97); background: rgba(255,255,255,0.03); }
+        .avatar-main { width: 52px; height: 52px; border-radius: 16px; object-fit: cover; background: #30363d; }
+        .item-info { flex: 1; }
+        .item-name { font-weight: 600; font-size: 1rem; margin-bottom: 2px; }
+        .item-sub { color: var(--text-dim); font-size: 0.8rem; }
+
+        /* --- MODALS (POPUP) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: flex-end; z-index: 1000;
+        }
+        .modal-sheet {
+            background: #1c2128; width: 100%; max-width: 450px; 
+            border-radius: 30px 30px 0 0; padding: 25px; 
+            transform: translateY(100%); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-top: 1px solid var(--border);
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-overlay.active .modal-sheet { transform: translateY(0); }
+
+        .handle { width: 40px; height: 4px; background: var(--border); border-radius: 10px; margin: -10px auto 20px; }
         
-        /* STORY HORIZONTAL */
-        .story-scroll { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 10px; scrollbar-width: none; }
-        .story-scroll::-webkit-scrollbar { display: none; }
-        .story-item { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 65px; cursor: pointer; }
-        .story-avatar { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); padding: 2px; }
-        .story-add { border: 2px dashed var(--text-dim); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-dim); }
+        input, textarea {
+            width: 100%; padding: 15px; margin: 10px 0; border-radius: 14px;
+            border: 1px solid var(--border); background: #0d1117; color: white; outline: none;
+        }
+        .btn-action {
+            width: 100%; padding: 16px; border-radius: 16px; border: none;
+            background: var(--accent); color: #000; font-weight: 700; cursor: pointer;
+            margin-top: 10px; font-size: 1rem;
+        }
 
-        /* MODALS */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 2000; }
-        .modal-content { background: var(--panel); width: 90%; max-width: 350px; padding: 25px; border-radius: 20px; position: relative; }
-        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 1.2rem; cursor: pointer; color: var(--text-dim); padding: 5px; }
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 80px;
+            background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding-bottom: 15px;
+        }
+        .nav-btn {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-dim); cursor: pointer; transition: 0.3s; flex: 1;
+        }
+        .nav-btn.active { color: var(--accent); }
+        .nav-btn i { font-size: 1.4rem; margin-bottom: 5px; }
+        .nav-btn span { font-size: 0.7rem; font-weight: 600; }
 
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #262f3f; background: #0b101a; color: white; outline: none; }
-        .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: var(--accent); color: #000; font-weight: bold; cursor: pointer; margin-top: 10px; }
-
-        /* SW VIEWER (STORY) */
-        #swViewer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
-        .sw-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(rgba(0,0,0,0.8), transparent); position: absolute; top: 0; width: 100%; }
-        .sw-footer { padding: 15px; display: flex; gap: 10px; position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.8)); }
-        #swImgDisplay { width: 100%; height: 100%; object-fit: contain; }
-
-        /* CHAT PANEL */
-        #chatPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1500; transform: translateX(100%); transition: 0.3s ease; display: flex; flex-direction: column; }
-        #chatPanel.open { transform: translateX(0); }
-        .chat-header { padding: 15px; background: var(--panel); display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--border); }
-        #msgArea { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .bubble { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 0.95rem; }
-        .me { align-self: flex-end; background: var(--accent); color: #000; border-bottom-right-radius: 0; }
-        .them { align-self: flex-start; background: #262f3f; color: #fff; border-bottom-left-radius: 0; }
-        
-        .fab { position: absolute; bottom: 20px; right: 0; background: var(--accent); color: black; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 10px rgba(0,255,163,0.3); }
+        /* --- CHAT VIEW --- */
+        #chatViewFull {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 2000; display: none; flex-direction: column;
+        }
+        .chat-head { padding: 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+        #msgContainer { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .msg-bubble { padding: 12px 16px; border-radius: 18px; max-width: 80%; font-size: 0.95rem; line-height: 1.4; }
+        .msg-me { align-self: flex-end; background: var(--accent); color: #000; border-bottom-right-radius: 4px; }
+        .msg-them { align-self: flex-start; background: var(--card); color: #fff; border-bottom-left-radius: 4px; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
     <header>
-        <div style="font-size: 1.4rem; font-weight: bold;">My<span style="color:var(--accent)">Bro</span></div>
-        <div id="topID" class="id-badge">ID: --</div>
+        <div class="brand">My<span>Bro</span>.</div>
+        <div class="my-status-head" onclick="openProfileEdit()">
+            <img id="headAvatar" src="https://ui-avatars.com/api/?name=User" style="width:28px; height:28px; border-radius:8px; object-fit:cover;">
+            <span id="headID" style="font-size:0.75rem; font-weight:700;">BRO-xxxx</span>
+        </div>
     </header>
 
-    <div class="view-container">
-        <div id="tab-chats" class="view active">
-            <h4 style="margin-top:0">Status Terbaru</h4>
-            <div class="story-scroll" id="storyRow">
-                <div class="story-item" onclick="document.getElementById('swUpload').click()">
-                    <div class="story-avatar story-add"><i class="fas fa-plus"></i></div>
-                    <small>Tambah</small>
+    <div class="main-container">
+        <div id="view-chats" class="view active">
+            <div class="story-wrapper" id="storyList">
+                <div class="story-circle" onclick="document.getElementById('fileStory').click()">
+                    <div class="story-img-frame" style="border-style: dashed; border-color: var(--text-dim);">
+                        <img id="myStoryThumb" src="https://ui-avatars.com/api/?name=Me">
+                        <div class="story-add-icon"><i class="fas fa-plus"></i></div>
+                    </div>
+                    <small style="color:var(--text-dim); font-size:0.7rem; margin-top:4px;">Status</small>
                 </div>
-                </div>
-            
-            <h4 style="margin-top:20px; border-bottom:1px solid var(--border); padding-bottom:10px;">Obrolan</h4>
-            <div id="recentChatsList"></div>
+            </div>
+            <h4 style="margin: 25px 0 15px; font-weight: 700; color: var(--text-dim);">Obrolan Terbaru</h4>
+            <div id="recentChats"></div>
         </div>
 
-        <div id="tab-contacts" class="view">
-            <div style="position:relative; padding-bottom: 20px;">
-                <h4 style="margin-top:0">Daftar Teman</h4>
-                <div id="contactList"></div>
-                <button class="fab" onclick="window.openModal('modalAddFriend')"><i class="fas fa-user-plus"></i></button>
+        <div id="view-contacts" class="view">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h4 style="margin:0;">Daftar Kontak</h4>
+                <button onclick="openPopup('popAddContact')" style="background:var(--accent-soft); border:1px solid var(--accent); color:var(--accent); padding:6px 12px; border-radius:10px; font-weight:700;">+ Teman</button>
             </div>
+            <div id="contactList"></div>
         </div>
     </div>
 
     <nav>
-        <div class="nav-item active" onclick="window.switchTab('chats', this)"><i class="fas fa-comment-dots"></i><span>Pesan</span></div>
-        <div class="nav-item" onclick="window.switchTab('contacts', this)"><i class="fas fa-users"></i><span>Kontak</span></div>
-        <div class="nav-item" onclick="window.openMyProfile()"><i class="fas fa-user-gear"></i><span>Profil</span></div>
+        <div class="nav-btn active" onclick="switchView('chats', this)"><i class="fas fa-comment-dots"></i><span>Chat</span></div>
+        <div class="nav-btn" onclick="switchView('contacts', this)"><i class="fas fa-address-book"></i><span>Kontak</span></div>
+        <div class="nav-btn" onclick="openProfileEdit()"><i class="fas fa-user-circle"></i><span>Profil</span></div>
     </nav>
 
-    <div id="modalAddFriend" class="modal-overlay">
-        <div class="modal-content">
-            <i class="fas fa-times close-btn" onclick="window.closeModal()"></i>
-            <h3>Tambah Teman</h3>
-            <input type="text" id="targetID" placeholder="ID Teman (Contoh: BRO-1234)">
-            <button class="btn" onclick="window.addContact()">Simpan Kontak</button>
-        </div>
-    </div>
-
-    <div id="modalProfile" class="modal-overlay">
-        <div class="modal-content">
-            <i class="fas fa-times close-btn" onclick="window.closeModal()"></i>
-            <div style="text-align: center; margin-bottom: 15px;">
-                <img id="myProfImg" src="https://ui-avatars.com/api/?name=Me" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:2px solid var(--accent); margin-bottom:10px;">
+    <div id="overlay" class="modal-overlay" onclick="closePopup(event)">
+        <div id="popProfile" class="modal-sheet" style="display:none;">
+            <div class="handle"></div>
+            <h3 style="margin-top:0">Pengaturan Profil</h3>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img id="editProfImg" src="" style="width:100px; height:100px; border-radius:30px; border:2px solid var(--accent); object-fit:cover;">
                 <br>
-                <button onclick="document.getElementById('profUpload').click()" style="background:transparent; border:1px solid var(--accent); color:var(--accent); padding:5px 15px; border-radius:20px;">Ganti Foto</button>
+                <button onclick="document.getElementById('fileAvatar').click()" style="margin-top:10px; background:transparent; border:1px solid var(--accent); color:var(--accent); padding:5px 15px; border-radius:10px; font-size:0.8rem;">Ganti Foto</button>
             </div>
-            <input type="text" id="myProfName" placeholder="Nama Anda">
-            <textarea id="myProfBio" placeholder="Bio Singkat..." rows="2"></textarea>
-            <button class="btn" onclick="window.saveProfile()">Simpan Profil</button>
+            <input type="text" id="editName" placeholder="Nama Tampilan">
+            <textarea id="editBio" placeholder="Bio singkat kamu..." rows="2"></textarea>
+            <button class="btn-action" onclick="saveProfileData()">Simpan Perubahan</button>
+        </div>
+
+        <div id="popAddContact" class="modal-sheet" style="display:none;">
+            <div class="handle"></div>
+            <h3>Tambah Teman Baru</h3>
+            <p style="color:var(--text-dim); font-size:0.85rem;">Masukkan ID MyBro teman kamu untuk memulai obrolan.</p>
+            <input type="text" id="targetIDInput" placeholder="Contoh: BRO-1234">
+            <button class="btn-action" onclick="addContactAction()">Tambah ke Kontak</button>
         </div>
     </div>
 
-    <div id="modalViewProfile" class="modal-overlay">
-        <div class="modal-content" style="text-align: center;">
-            <i class="fas fa-times close-btn" onclick="window.closeModal()"></i>
-            <img id="viewImg" src="" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:3px solid var(--accent); margin-bottom:15px;">
-            <h2 id="viewName" style="margin:5px 0;">Nama</h2>
-            <div class="id-badge" id="viewID" style="display:inline-block; margin-bottom:15px;">ID: --</div>
-            <div style="background:#0b101a; padding:15px; border-radius:10px; border:1px solid var(--border); text-align:left;">
-                <small style="color:var(--accent);">Bio:</small>
-                <p id="viewBio" style="margin:5px 0 0;">-</p>
+    <div id="chatViewFull">
+        <div class="chat-head">
+            <i class="fas fa-chevron-left" onclick="closeFullChat()" style="font-size:1.2rem; padding:10px;"></i>
+            <img id="chatTargetImg" src="" class="avatar-main" style="width:40px; height:40px;">
+            <div style="flex:1">
+                <div id="chatTargetName" style="font-weight:700;">Nama</div>
+                <div style="font-size:0.7rem; color:var(--accent);">Online</div>
             </div>
+            <i class="fas fa-info-circle" style="color:var(--text-dim);"></i>
         </div>
-    </div>
-
-    <div id="swViewer">
-        <div class="sw-header">
-            <i class="fas fa-arrow-left" style="font-size:1.5rem; cursor:pointer;" onclick="window.closeSW()"></i>
-            <div style="text-align:right;">
-                <strong id="swOwnerName">Nama</strong><br>
-                <small><i class="fas fa-eye"></i> <span id="swViewsCount">0</span> Tayangan</small>
-            </div>
-        </div>
-        <img id="swImgDisplay" src="">
-        <div class="sw-footer" id="swReplyArea">
-            <input type="text" id="swReplyInput" placeholder="Balas status..." style="margin:0;">
-            <button onclick="window.sendReplySW()" style="background:var(--accent); border:none; width:50px; border-radius:10px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
-        </div>
-    </div>
-
-    <div id="chatPanel">
-        <div class="chat-header">
-            <i class="fas fa-arrow-left" style="font-size:1.3rem; cursor:pointer;" onclick="window.closeChat()"></i>
-            <img id="chatHeaderImg" src="" class="avatar" style="width:40px;height:40px; cursor:pointer;" onclick="window.seeTargetProfile()">
-            <strong id="chatHeaderName" style="cursor:pointer;" onclick="window.seeTargetProfile()">Nama Target</strong>
-        </div>
-        <div id="msgArea"></div>
-        <div style="padding:15px; background:var(--panel); display:flex; gap:10px;">
+        <div id="msgContainer"></div>
+        <div style="padding:15px; background:#161b22; display:flex; gap:10px; align-items:center;">
             <input type="text" id="msgInput" placeholder="Ketik pesan..." style="margin:0;">
-            <button onclick="window.sendChatMsg()" style="background:var(--accent); border:none; width:50px; border-radius:10px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
+            <button onclick="sendChatMessage()" style="background:var(--accent); border:none; width:50px; height:50px; border-radius:15px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <input type="file" id="profUpload" accept="image/*" style="display:none;" onchange="window.compressImage(this, 'profile')">
-    <input type="file" id="swUpload" accept="image/*" style="display:none;" onchange="window.compressImage(this, 'sw')">
+    <input type="file" id="fileAvatar" accept="image/*" style="display:none;" onchange="handleImage(this, 'avatar')">
+    <input type="file" id="fileStory" accept="image/*" style="display:none;" onchange="handleImage(this, 'story')">
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -183,39 +215,40 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // 1. Inisialisasi ID dan Paksa Buat Profil Default (Agar tidak error saat ditambahkan)
-        let myID = localStorage.getItem('mybro_id');
+        let myID = localStorage.getItem('mybro_uid');
         if(!myID) {
             myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
-            localStorage.setItem('mybro_id', myID);
-            // Default profil
-            set(ref(db, `users/${myID}/profile`), { name: "User " + myID, id: myID, bio: "Halo, saya pakai MyBro!", photo: "" });
+            localStorage.setItem('mybro_uid', myID);
+            // Auto Register
+            set(ref(db, `users/${myID}/profile`), { id: myID, name: "User "+myID, photo: "", bio: "Available" });
         }
-        document.getElementById('topID').innerText = "ID: " + myID;
+        document.getElementById('headID').innerText = myID;
 
-        // State Global
-        let activeChatID = null;
-        let activeSWData = null; // Menyimpan data story yang sedang dibuka
-        let tempBase64 = "";
+        let currentActiveChat = null;
+        let imgTemp = "";
 
-        // --- FUNGSI UI DASAR (MENGGUNAKAN WINDOW AGAR BISA DIKLIK DI HTML) ---
-        window.switchTab = (tab, el) => {
+        // --- UI NAVIGATION ---
+        window.switchView = (view, el) => {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('tab-' + tab).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('view-'+view).classList.add('active');
             el.classList.add('active');
         };
 
-        window.openModal = (id) => {
-            document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
-            document.getElementById(id).style.display = 'flex';
+        window.openPopup = (id) => {
+            document.getElementById('overlay').classList.add('active');
+            document.querySelectorAll('.modal-sheet').forEach(s => s.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
         };
-        window.closeModal = () => { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); tempBase64 = ""; };
 
-        // --- FUNGSI KOMPRESI GAMBAR (PENTING AGAR TIDAK LAG) ---
-        window.compressImage = (input, type) => {
+        window.closePopup = (e) => {
+            if(e && e.target.id !== 'overlay') return;
+            document.getElementById('overlay').classList.remove('active');
+        };
+
+        // --- IMAGE HANDLING ---
+        window.handleImage = (input, type) => {
             const file = input.files[0];
-            if(!file) return;
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = (e) => {
@@ -223,219 +256,138 @@
                 img.src = e.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const maxW = 500; const scale = maxW / img.width;
-                    canvas.width = maxW; canvas.height = img.height * scale;
+                    const max = 400; const scale = max / Math.max(img.width, img.height);
+                    canvas.width = img.width * scale; canvas.height = img.height * scale;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    tempBase64 = canvas.toDataURL('image/jpeg', 0.6); // Kompres 60%
+                    imgTemp = canvas.toDataURL('image/jpeg', 0.7);
                     
-                    if(type === 'sw') {
-                        window.postSW();
-                    } else if (type === 'profile') {
-                        document.getElementById('myProfImg').src = tempBase64;
-                    }
+                    if(type === 'avatar') document.getElementById('editProfImg').src = imgTemp;
+                    if(type === 'story') uploadStoryAction();
                 };
             };
         };
 
-        // --- PROFIL SAYA ---
-        window.openMyProfile = async () => {
+        // --- PROFILE LOGIC ---
+        window.openProfileEdit = async () => {
             const snap = await get(ref(db, `users/${myID}/profile`));
-            if(snap.exists()) {
-                const d = snap.val();
-                document.getElementById('myProfName').value = d.name;
-                document.getElementById('myProfBio').value = d.bio || "";
-                if(d.photo) document.getElementById('myProfImg').src = d.photo;
+            const d = snap.val() || {};
+            document.getElementById('editName').value = d.name || "";
+            document.getElementById('editBio').value = d.bio || "";
+            document.getElementById('editProfImg').src = d.photo || `https://ui-avatars.com/api/?name=${d.name}`;
+            window.openPopup('popProfile');
+        };
+
+        window.saveProfileData = () => {
+            const name = document.getElementById('editName').value;
+            const bio = document.getElementById('editBio').value;
+            const data = { id: myID, name, bio };
+            if(imgTemp) data.photo = imgTemp;
+            else data.photo = document.getElementById('editProfImg').src.includes('base64') ? document.getElementById('editProfImg').src : "";
+
+            update(ref(db, `users/${myID}/profile`), data).then(() => {
+                alert("Profil diperbarui!");
+                window.closePopup();
+                imgTemp = "";
+            });
+        };
+
+        // Sinkronkan Foto Profil di Header Secara Real-time
+        onValue(ref(db, `users/${myID}/profile`), (snap) => {
+            const d = snap.val();
+            if(d && d.photo) {
+                document.getElementById('headAvatar').src = d.photo;
+                document.getElementById('myStoryThumb').src = d.photo;
             }
-            window.openModal('modalProfile');
-        };
+        });
 
-        window.saveProfile = () => {
-            const name = document.getElementById('myProfName').value || myID;
-            const bio = document.getElementById('myProfBio').value;
-            const data = { name, bio, id: myID };
-            
-            // Cek jika foto diganti
-            if(tempBase64 !== "") data.photo = tempBase64;
-            else data.photo = document.getElementById('myProfImg').src.includes("ui-avatars") ? "" : document.getElementById('myProfImg').src;
-
-            set(ref(db, `users/${myID}/profile`), data);
-            alert("Profil berhasil disimpan!");
-            window.closeModal();
-        };
-
-        // --- PROFIL ORANG LAIN ---
-        window.seeTargetProfile = async () => {
-            if(!activeChatID) return;
-            const snap = await get(ref(db, `users/${activeChatID}/profile`));
-            const d = snap.val() || { name: activeChatID, bio: "-", photo: "" };
-            
-            document.getElementById('viewImg').src = d.photo || `https://ui-avatars.com/api/?name=${d.name}`;
-            document.getElementById('viewName').innerText = d.name;
-            document.getElementById('viewID').innerText = "ID: " + activeChatID;
-            document.getElementById('viewBio').innerText = d.bio || "Tidak ada bio.";
-            window.openModal('modalViewProfile');
-        };
-
-        // --- KONTAK ---
-        window.addContact = async () => {
-            const tid = document.getElementById('targetID').value.trim();
-            if(!tid || tid === myID) return alert("ID tidak valid!");
-            
-            // Simpan langsung, jika target belum buka app, profilnya mungkin kosong tapi tetap bisa dichat
+        // --- CONTACT LOGIC ---
+        window.addContactAction = async () => {
+            const tid = document.getElementById('targetIDInput').value.trim();
+            if(!tid || tid === myID) return alert("ID Tidak Valid");
             set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid });
-            alert("Kontak ditambahkan!");
-            window.closeModal();
+            alert("Kontak Berhasil Ditambahkan!");
+            window.closePopup();
         };
 
-        window.deleteContact = (id) => {
-            if(confirm("Hapus kontak?")) remove(ref(db, `users/${myID}/contacts/${id}`));
-        };
-
-        // Render Kontak & Obrolan Terbaru
         onValue(ref(db, `users/${myID}/contacts`), (snap) => {
             const cList = document.getElementById('contactList');
-            const rList = document.getElementById('recentChatsList');
+            const rList = document.getElementById('recentChats');
             cList.innerHTML = ""; rList.innerHTML = "";
-            
             snap.forEach(child => {
                 const cid = child.key;
                 onValue(ref(db, `users/${cid}/profile`), (pSnap) => {
                     const p = pSnap.val() || { name: cid, photo: "" };
-                    const img = p.photo || `https://ui-avatars.com/api/?name=${p.name}`;
-                    
-                    const htmlContact = `
-                        <div class="list-card">
-                            <img src="${img}" class="avatar" onclick="window.openChat('${cid}', '${p.name}', '${img}')">
-                            <div style="flex:1" onclick="window.openChat('${cid}', '${p.name}', '${img}')">
-                                <strong>${p.name}</strong><br><small style="color:var(--text-dim)">${cid}</small>
+                    const avatar = p.photo || `https://ui-avatars.com/api/?name=${p.name}`;
+                    const html = `
+                        <div class="item-card" onclick="openFullChat('${cid}', '${p.name}', '${avatar}')">
+                            <img src="${avatar}" class="avatar-main">
+                            <div class="item-info">
+                                <div class="item-name">${p.name}</div>
+                                <div class="item-sub">${cid}</div>
                             </div>
-                            <i class="fas fa-trash" style="color:#ef4444;" onclick="window.deleteContact('${cid}')"></i>
+                            <i class="fas fa-chevron-right" style="color:var(--border)"></i>
                         </div>`;
-                    cList.innerHTML += htmlContact;
-
-                    const htmlRecent = `
-                        <div class="list-card" onclick="window.openChat('${cid}', '${p.name}', '${img}')">
-                            <img src="${img}" class="avatar">
-                            <div><strong>${p.name}</strong><br><small style="color:var(--text-dim)">Ketuk untuk membuka chat</small></div>
-                        </div>`;
-                    rList.innerHTML += htmlRecent;
+                    cList.innerHTML += html;
+                    rList.innerHTML += html;
                 });
             });
         });
 
-        // --- STORY (SW) ---
-        window.postSW = () => {
-            if(!tempBase64) return;
-            const newSWRef = push(ref(db, 'stories'));
-            set(newSWRef, { id: newSWRef.key, img: tempBase64, owner: myID, time: Date.now() });
-            tempBase64 = "";
-            alert("Status terkirim!");
-        };
+        // --- STORY LOGIC ---
+        function uploadStoryAction() {
+            if(!imgTemp) return;
+            const sRef = push(ref(db, 'stories'));
+            set(sRef, { id: sRef.key, img: imgTemp, owner: myID, time: Date.now() });
+            imgTemp = "";
+            alert("Status berhasil diposting!");
+        }
 
-        // Render Story Horizontal
         onValue(ref(db, 'stories'), (snap) => {
-            const row = document.getElementById('storyRow');
-            // Hapus isi selain tombol Tambah
-            const addBtn = row.firstElementChild.outerHTML;
-            row.innerHTML = addBtn;
-
-            snap.forEach(child => {
-                const s = child.val();
-                if(Date.now() - s.time < 86400000) { // Hanya 24 jam terakhir
+            const list = document.getElementById('storyList');
+            const myBtn = list.firstElementChild.outerHTML;
+            list.innerHTML = myBtn;
+            snap.forEach(c => {
+                const s = c.val();
+                if(Date.now() - s.time < 86400000) {
                     get(ref(db, `users/${s.owner}/profile`)).then(pSnap => {
-                        const p = pSnap.val() || { name: s.owner, photo: "" };
-                        const thumb = p.photo || `https://ui-avatars.com/api/?name=${p.name}`;
-                        
-                        // Cek jika kita sudah melihatnya
-                        const viewsCount = s.views ? Object.keys(s.views).length : 0;
-                        const isMine = s.owner === myID;
-                        const label = isMine ? "Anda" : p.name.split(" ")[0];
-
-                        row.innerHTML += `
-                            <div class="story-item" onclick="window.openSW('${s.id}', '${s.img}', '${s.owner}', '${p.name}')">
-                                <img src="${thumb}" class="story-avatar" style="${isMine ? 'border-color:gray' : ''}">
-                                <small style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60px;">${label}</small>
-                            </div>
-                        `;
+                        const p = pSnap.val() || { name: s.owner };
+                        list.innerHTML += `
+                            <div class="story-circle">
+                                <div class="story-img-frame"><img src="${s.img}"></div>
+                                <small style="font-size:0.65rem; color:var(--text-dim); margin-top:4px;">${p.name.split(' ')[0]}</small>
+                            </div>`;
                     });
                 }
             });
         });
 
-        // Buka Story, Tambah Views, dan Siapkan Reply
-        window.openSW = (swID, img, ownerID, ownerName) => {
-            document.getElementById('swImgDisplay').src = img;
-            document.getElementById('swOwnerName').innerText = ownerName;
-            
-            // Catat data story aktif
-            activeSWData = { swID, ownerID };
-
-            // Atur input balas (sembunyikan jika story kita sendiri)
-            const replyArea = document.getElementById('swReplyArea');
-            if(ownerID === myID) {
-                replyArea.style.display = 'none';
-            } else {
-                replyArea.style.display = 'flex';
-                // Tambah ke viewer
-                update(ref(db, `stories/${swID}/views`), { [myID]: true });
-            }
-
-            // Realtime hitung views
-            onValue(ref(db, `stories/${swID}/views`), (vSnap) => {
-                document.getElementById('swViewsCount').innerText = vSnap.exists() ? Object.keys(vSnap.val()).length : 0;
-            });
-
-            document.getElementById('swViewer').style.display = 'flex';
-        };
-
-        window.closeSW = () => { document.getElementById('swViewer').style.display = 'none'; activeSWData = null; };
-
-        // Balas Story
-        window.sendReplySW = () => {
-            const inp = document.getElementById('swReplyInput');
-            if(!inp.value || !activeSWData) return;
-            
-            const chatID = [myID, activeSWData.ownerID].sort().join("_");
-            push(ref(db, `chats/${chatID}`), { 
-                from: myID, 
-                text: "📸 *Membalas Status:* " + inp.value, 
-                time: Date.now() 
-            });
-            
-            inp.value = "";
-            alert("Balasan dikirim!");
-            window.closeSW();
-            // Otomatis buka chat
-            window.openChat(activeSWData.ownerID, document.getElementById('swOwnerName').innerText, "");
-        };
-
         // --- CHAT LOGIC ---
-        window.openChat = (id, name, img) => {
-            activeChatID = id;
-            document.getElementById('chatHeaderName').innerText = name;
-            document.getElementById('chatHeaderImg').src = img || `https://ui-avatars.com/api/?name=${name}`;
-            document.getElementById('chatPanel').classList.add('open');
+        window.openFullChat = (id, name, img) => {
+            currentActiveChat = id;
+            document.getElementById('chatTargetName').innerText = name;
+            document.getElementById('chatTargetImg').src = img;
+            document.getElementById('chatViewFull').style.display = 'flex';
             
             const chatID = [myID, id].sort().join("_");
             onValue(ref(db, `chats/${chatID}`), (snap) => {
-                const area = document.getElementById('msgArea');
+                const area = document.getElementById('msgContainer');
                 area.innerHTML = "";
                 snap.forEach(m => {
                     const d = m.val();
-                    const cls = d.from === myID ? 'me' : 'them';
-                    area.innerHTML += `<div class="bubble ${cls}">${d.text}</div>`;
+                    const cls = d.from === myID ? 'msg-me' : 'msg-them';
+                    area.innerHTML += `<div class="msg-bubble ${cls}">${d.text}</div>`;
                 });
-                area.scrollTop = area.scrollHeight; // Scroll ke bawah
+                area.scrollTop = area.scrollHeight;
             });
         };
 
-        window.closeChat = () => { document.getElementById('chatPanel').classList.remove('open'); activeChatID = null; };
+        window.closeFullChat = () => { document.getElementById('chatViewFull').style.display = 'none'; currentActiveChat = null; };
 
-        window.sendChatMsg = () => {
+        window.sendChatMessage = () => {
             const inp = document.getElementById('msgInput');
-            if(!inp.value || !activeChatID) return;
-            const chatID = [myID, activeChatID].sort().join("_");
+            if(!inp.value || !currentActiveChat) return;
+            const chatID = [myID, currentActiveChat].sort().join("_");
             push(ref(db, `chats/${chatID}`), { from: myID, text: inp.value, time: Date.now() });
             inp.value = "";
         };
