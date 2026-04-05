@@ -616,28 +616,7 @@ input[type="text"]:focus, textarea:focus {
         }
     });
 },
-
-    if(hasStory) {
-        let sCard = document.getElementById(`story-${cid}`);
-        if(!sCard) {
-            sCard = document.createElement('div');
-            sCard.className = 'card';
-            sCard.id = `story-${cid}`;
-            
-            // KLIK AREA LUAS (Nama & Profil)
-            sCard.onclick = () => window.app.openStory(cid, p.name, pfp, false);
-            
-            sCard.innerHTML = `
-                <div class="pfp-wrap has-story"><img src="${pfp}" class="pfp"></div>
-                <div class="card-info">
-                    <div class="card-name">${p.name}</div>
-                    <div class="card-msg">Pembaruan baru</div>
-                </div>
-            `;
-            sList.appendChild(sCard);
-        }
-    }
-});                 
+    
             },
             openMyStory: () => {
                 get(ref(db, `users/${myID}/profile`)).then(snap => {
