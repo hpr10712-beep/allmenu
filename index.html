@@ -878,32 +878,65 @@ if (myID) {
     });
 }
 
-// Fungsi kirim banding dengan efek loading
-window.sendAppeal = () => {
-    const text = document.getElementById('appealText').value.trim();
-    const btn = document.getElementById('btnAppeal');
-    
-    if(!text) {
-        alert("Harap tuliskan alasan banding Anda.");
-        return;
-    }
-    
-    btn.innerText = "Mengirim...";
-    btn.style.opacity = "0.7";
-    btn.disabled = true;
-    
-    update(ref(db, `users/${myID}`), {
-        appealMessage: text,
-        appealTime: Date.now()
-    }).then(() => {
-        btn.innerText = "Banding Terkirim";
-        btn.style.background = "#1e293b";
-        btn.style.color = "#94a3b8";
-        document.getElementById('appealText').disabled = true;
-        document.getElementById('appealText').style.opacity = "0.5";
-        alert("Banding Anda telah diterima. Tim Admin MyBro akan segera meninjau akun Anda.");
+// --- TAMPILAN BAN PREMIUM DENGAN IKON FIX ---
+if (myID) {
+    onValue(ref(db, `users/${myID}/isBanned`), (snapshot) => {
+        if (snapshot.exists() && snapshot.val() === true) {
+            // Load Font Awesome secara paksa di dalam body agar ikon tidak hilang
+            document.body.innerHTML = `
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                <style>
+                    @keyframes pulse-red {
+                        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+                        70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+                        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+                    }
+                    .icon-box {
+                        width: 90px; height: 90px; 
+                        background: rgba(239, 68, 68, 0.1); 
+                        color: #ef4444; border-radius: 50%; 
+                        display: flex; align-items: center; justify-content: center; 
+                        margin: 0 auto 25px; font-size: 40px; 
+                        border: 1px solid rgba(239, 68, 68, 0.3);
+                        animation: pulse-red 2s infinite;
+                    }
+                </style>
+
+                <div style="position:fixed; inset:0; background:#020617; display:flex; align-items:center; justify-content:center; z-index:100000; font-family:'Inter', sans-serif; padding:20px; overflow:hidden;">
+                    
+                    <div style="position:absolute; width:400px; height:400px; background:rgba(239, 68, 68, 0.05); filter:blur(100px); border-radius:50%; top:-100px; right:-100px;"></div>
+
+                    <div style="background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px 25px; border-radius: 35px; text-align: center; max-width: 400px; width: 100%; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+                        
+                        <div class="icon-box">
+                            <i class="fas fa-ban"></i>
+                        </div>
+
+                        <h2 style="color: #ffffff; margin-bottom: 10px; font-weight: 800; font-size: 1.7rem; letter-spacing: -1px;">Akses Terbatas</h2>
+                        
+                        <p style="color: #94a3b8; line-height: 1.6; margin-bottom: 30px; font-size: 0.9rem;">
+                            Akun <span style="color: #ef4444; font-weight: 700;">${myID}</span> ditangguhkan karena melanggar kebijakan komunitas MyBro.
+                        </p>
+                        
+                        <div style="margin-bottom: 25px; text-align: left;">
+                            <textarea id="appealText" placeholder="Tulis alasan banding Anda di sini..." 
+                                style="width: 100%; height: 100px; padding: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.1); background: rgba(15, 23, 42, 0.8); color: white; font-size: 0.9rem; outline: none; transition: 0.3s; resize: none;"></textarea>
+                        </div>
+                        
+                        <button id="btnAppeal" onclick="sendAppeal()" 
+                            style="width: 100%; padding: 16px; background: #ef4444; color: white; border: none; border-radius: 18px; font-weight: 800; font-size: 1rem; cursor: pointer; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);">
+                            Ajukan Banding
+                        </button>
+
+                        <p style="margin-top: 25px; font-size: 0.7rem; color: #475569; text-transform: uppercase; letter-spacing: 1px;">
+                            Keamanan Sistem MyBro &copy; 2026
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
     });
-};
+}
 
 
     
