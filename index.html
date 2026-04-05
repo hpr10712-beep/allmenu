@@ -629,70 +629,209 @@ input[type="text"]:focus, textarea:focus {
         nextStory: () => { currentStoryIndex++; window.app.renderCurrentStory(); },
         closeStory: () => { clearTimeout(storyTimer); document.getElementById('storyViewer').style.display = 'none'; },
         deleteStory: (sid) => { set(ref(db, `stories/${myID}/${sid}`), null); window.app.closeStory(); },
-        openMyStory: () => {
-            get(ref(db, `users/${myID}/profile`)).then(snap => {
-                const p = snap.val() || {};
-                window.app.openStory(myID, "Status Saya", p.pfp || `https://ui-avatars.com/api/?name=Me`, true);
+        openMyStory: () => <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue, get, update, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    // --- KONFIGURASI FIREBASE ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+        authDomain: "mybro-9ba5f.firebaseapp.com",
+        databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+        projectId: "mybro-9ba5f"
+    };
+
+    const app_fire = initializeApp(firebaseConfig);
+    const db = getDatabase(app_fire);
+
+    // --- INISIALISASI USER ---
+    let myID = localStorage.getItem('mybro_id');
+    if(!myID) {
+        myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
+        localStorage.setItem('mybro_id', myID);
+        // Set profil awal jika user baru
+        set(ref(db, `users/${myID}/profile`), { 
+            id: myID, 
+            name: "User " + myID.split('-')[1], 
+            pfp: "", 
+            bio: "Hey, saya menggunakan MyBro!",
+            status: "online",
+            lastSeen: serverTimestamp()
+        });
+    }
+    document.getElementById('displayID').innerText = myID;
+
+    // --- STATE APP ---
+    const appStartTime = Date.now();
+    const notifiedMessages = new Set();
+    let activeTarget = null;
+    let pfpBase64 = "";
+
+    // --- NOTIFIKASI SISTEM ---
+    if ("Notification" in window) {
+        Notification.requestPermission().then(permission => {
+            console.log("Izin Notifikasi:", permission);
+        });
+    }
+
+    // --- UTILS ---
+    window.showToast = (message, icon = 'check-circle') => {
+        let toast = document.querySelector('.toast-msg');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.className = 'toast-msg';
+            document.body.appendChild(toast);
+        }
+        toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    };
+
+    const formatTime = (ts) => {
+        if(!ts) return "";
+        const d = new Date(ts);
+        return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
+    };
+
+    // --- PRESENCE (STATUS ONLINE) ---
+    onValue(ref(db, '.info/connected'), (snap) => {
+        if (snap.val() === true) {
+            const statusRef = ref(db, `users/${myID}/profile/status`);
+            const lastSeenRef = ref(db, `users/${myID}/profile/lastSeen`);
+            set(statusRef, 'online');
+            onDisconnect(statusRef).set('offline');
+            onDisconnect(lastSeenRef).set(serverTimestamp());
+        }
+    });
+
+    // --- CORE LOGIC ---
+    window.app = {
+        // Upload & Simpan Profil
+        handlePfp: (input) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(input.files[0]);
+            reader.onload = () => { 
+                pfpBase64 = reader.result; 
+                document.getElementById('pfpEdit').src = pfpBase64; 
+            };
+        },
+        updateProfile: () => {
+            const newName = document.getElementById('editName').value;
+            const newBio = document.getElementById('editBio').value;
+            const updates = { name: newName, bio: newBio };
+            if(pfpBase64) updates.pfp = pfpBase64;
+
+            update(ref(db, `users/${myID}/profile`), updates)
+                .then(() => {
+                    window.showToast("Profil Berhasil Disimpan!");
+                    window.toggleOverlay('popProfile', false);
+                })
+                .catch(err => alert("Gagal update: " + err.message));
+        },
+
+        // Chat & Pesan
+        openChat: (id, name, pfp) => {
+            activeTarget = id;
+            document.getElementById('chatName').innerText = name;
+            document.getElementById('chatPfp').src = pfp;
+            document.getElementById('chatPanel').classList.add('active');
+
+            const room = [myID, id].sort().join("_");
+            const chatRef = ref(db, `chats/${room}`);
+
+            onValue(chatRef, (snap) => {
+                const area = document.getElementById('msgArea');
+                area.innerHTML = "";
+                snap.forEach(child => {
+                    const m = child.val();
+                    // Mark as read jika pesan dari lawan bicara
+                    if(m.from !== myID && m.status !== 'read') {
+                        update(ref(db, `chats/${room}/${child.key}`), { status: 'read' });
+                    }
+
+                    const isMe = m.from === myID;
+                    area.innerHTML += `
+                        <div class="bubble ${isMe ? 'sent' : 'received'}">
+                            ${m.text ? `<div>${m.text}</div>` : ''}
+                            <div class="msg-meta">
+                                <span>${formatTime(m.time)}</span>
+                                ${isMe ? (m.status === 'read' ? '<i class="fas fa-check-double tick-read"></i>' : '<i class="fas fa-check"></i>') : ''}
+                            </div>
+                        </div>`;
+                });
+                area.scrollTop = area.scrollHeight;
             });
+        },
+
+        send: () => {
+            const inp = document.getElementById('msgIn');
+            if(!inp.value.trim() || !activeTarget) return;
+            
+            const room = [myID, activeTarget].sort().join("_");
+            const newMsg = {
+                from: myID,
+                text: inp.value,
+                time: serverTimestamp(),
+                status: 'sent'
+            };
+
+            push(ref(db, `chats/${room}`), newMsg);
+            // Tambahkan ke kontak otomatis agar muncul di list chat
+            update(ref(db, `users/${myID}/contacts/${activeTarget}`), { lastInteraction: serverTimestamp() });
+            update(ref(db, `users/${activeTarget}/contacts/${myID}`), { lastInteraction: serverTimestamp() });
+            
+            inp.value = "";
         }
     };
 
-    // --- WATCHERS ---
-    onValue(ref(db, `users/${myID}/contacts`), (snap) => {
-        const rList = document.getElementById('chatList');
-        const cList = document.getElementById('contactList');
-        const aList = document.getElementById('archivedList');
-        rList.innerHTML = ""; cList.innerHTML = ""; aList.innerHTML = "";
-        let unreadTotal = 0;
+    // --- GLOBAL CHAT WATCHER (Munculkan chat dari siapapun) ---
+    onValue(ref(db, `chats`), (allChats) => {
+        const listArea = document.getElementById('chatList');
+        listArea.innerHTML = ""; // Clear list
 
-        snap.forEach(child => {
-            const cid = child.key; const isArchived = child.val().archived;
-            onValue(ref(db, `users/${cid}/profile`), pSnap => {
-                const p = pSnap.val() || { name: cid };
-                const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}`;
+        allChats.forEach(room => {
+            if(room.key.includes(myID)) {
+                const targetID = room.key.replace(myID, "").replace("_", "");
                 
-                const room = [myID, cid].sort().join("_");
-                onValue(ref(db, `chats/${room}`), msgSnap => {
-                    let lastMsg = null, unread = 0;
-                    msgSnap.forEach(m => {
-                        lastMsg = m.val();
-                        if(lastMsg.from !== myID && lastMsg.status !== 'read') {
-                            unread++;
-                            if(lastMsg.time > appStartTime && !notifiedMessages.has(m.key) && activeTarget !== cid) {
-                                notifiedMessages.add(m.key);
-                                window.showFloatingNotif(p.name, lastMsg.text || "Media", pfp, cid);
-                            }
-                        }
-                    });
-
-                    const html = `<div class="pfp-wrap" id="sw-${cid}"><img src="${pfp}" class="pfp"></div><div class="card-info"><div class="card-header-flex"><div class="card-name">${p.name}</div><div class="card-time">${lastMsg ? formatTime(lastMsg.time) : ''}</div></div><div class="card-msg">${lastMsg?.text || 'Mulai obrolan'}</div></div>${unread > 0 ? `<div class="unread-badge">${unread}</div>` : ''}`;
-                    let card = document.getElementById(`chat-${cid}`) || document.createElement('div');
-                    card.id = `chat-${cid}`; card.className = 'card'; card.innerHTML = html;
-                    card.onclick = () => window.app.openChat(cid, p.name, pfp);
-                    (isArchived ? aList : rList).appendChild(card);
+                // Ambil data profil target
+                get(ref(db, `users/${targetID}/profile`)).then(pSnap => {
+                    const p = pSnap.val() || { name: targetID, pfp: "" };
+                    const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}`;
                     
-                    unreadTotal += unread;
-                    document.getElementById('chatBadge').style.display = unreadTotal > 0 ? 'block' : 'none';
+                    // Ambil pesan terakhir
+                    let lastMsg = { text: "...", time: 0 };
+                    room.forEach(m => { lastMsg = m.val(); });
+
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <img src="${pfp}" class="pfp">
+                        <div class="card-info">
+                            <div class="card-header-flex">
+                                <div class="card-name">${p.name}</div>
+                                <div class="card-time">${formatTime(lastMsg.time)}</div>
+                            </div>
+                            <div class="card-msg">${lastMsg.text}</div>
+                        </div>`;
+                    card.onclick = () => window.app.openChat(targetID, p.name, pfp);
+                    listArea.appendChild(card);
+
+                    // LOGIKA NOTIFIKASI SISTEM (Push)
+                    if(lastMsg.from !== myID && lastMsg.time > appStartTime && !notifiedMessages.has(lastMsg.time)) {
+                        notifiedMessages.add(lastMsg.time);
+                        if(Notification.permission === "granted") {
+                            new Notification(p.name, { body: lastMsg.text, icon: pfp });
+                        }
+                    }
                 });
-                
-                // Tambah ke tab Teman
-                const cCard = document.createElement('div');
-                cCard.className = 'card';
-                cCard.innerHTML = `<img src="${pfp}" class="pfp" style="width:45px;height:45px"><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">${p.bio || ''}</div></div>`;
-                cCard.onclick = () => window.app.openChat(cid, p.name, pfp);
-                cList.appendChild(cCard);
-            });
+            }
         });
     });
 
-    // --- BAN SYSTEM ---
+    // --- BAN CHECK ---
     onValue(ref(db, `users/${myID}/isBanned`), snap => {
         if(snap.val() === true) {
-            document.body.innerHTML = `<div style="height:100dvh; background:#020617; color:white; display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:20px; font-family: sans-serif;"><h2>Akses Dibatasi</h2><p>Akun ${myID} telah ditangguhkan.</p><textarea id="ap" placeholder="Alasan banding..." style="width:100%; max-width:300px; margin:20px 0; padding:10px; border-radius:10px;"></textarea><button id="btnBanding" style="padding:10px 20px; background:red; color:white; border:none; border-radius:10px; cursor:pointer;">Kirim Banding</button></div>`;
-            document.getElementById('btnBanding').onclick = () => {
-                const txt = document.getElementById('ap').value;
-                if(txt) update(ref(db, `users/${myID}`), { appealMessage: txt, appealStatus: 'pending' }).then(() => alert("Banding dikirim"));
-            };
+            document.body.innerHTML = "<div style='color:white; text-align:center; margin-top:50px;'><h2>Akun Anda Ditangguhkan</h2></div>";
         }
     });
 
