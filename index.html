@@ -1052,47 +1052,291 @@ if (myID) {
                         <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 25px;">Akun <b>${myID}</b> ditangguhkan sementara.</p>
                         
                         <div style="text-align: left; margin-bottom: 20px;">
-                            <textarea id="appealText" placeholder="Tulis alasan banding..." style="width: 100%; height: 100px; padding: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.1); background: rgba(15, 23, 42, 0.8); color: white; outline: none; resize: none;"></textarea>
-                        </div>
-                        
-                        <button id="btnAppeal" onclick="kirimBandingAction()" style="width: 100%; padding: 16px; background: #ef4444; color: white; border: none; border-radius: 18px; font-weight: 800; cursor: pointer;">Ajukan Banding</button>
-                    </div>
-                </div>
-            `;
+                import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue, get, update, query, orderByChild, limitToLast, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-            // Definisikan fungsi langsung di objek window agar bisa dipanggil oleh onclick di atas
-            window.kirimBandingAction = () => {
-                const text = document.getElementById('appealText').value.trim();
-                const btn = document.getElementById('btnAppeal');
-                
-                if(!text) return alert("Harap isi pesan banding!");
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+            authDomain: "mybro-9ba5f.firebaseapp.com",
+            databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+            projectId: "mybro-9ba5f"
+        };
+        const app_fire = initializeApp(firebaseConfig);
+        const db = getDatabase(app_fire);
 
-                btn.innerText = "Mengirim...";
-                btn.disabled = true;
+        if ("Notification" in window) { Notification.requestPermission(); }
 
-                // Proses update ke Firebase
-                update(ref(db, `users/${myID}`), {
-                    appealMessage: text,
-                    appealStatus: "pending"
-                }).then(() => {
-                    // Beri feedback visual setelah berhasil
-                    btn.innerText = "Banding Telah Dikirim";
-                    btn.style.background = "#1e293b";
-                    btn.style.color = "#94a3b8";
-                    document.getElementById('appealText').disabled = true;
-                    alert("Banding Anda berhasil dikirim ke Admin MyBro.");
-                }).catch((err) => {
-                    alert("Gagal mengirim banding: " + err.message);
-                    btn.innerText = "Coba Lagi";
-                    btn.disabled = false;
-                });
-            };
+        let myID = localStorage.getItem('mybro_id');
+        if(!myID) {
+            myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
+            localStorage.setItem('mybro_id', myID);
+            set(ref(db, `users/${myID}/profile`), { id: myID, name: "User " + myID.split('-')[1], pfp: "", bio: "Hey ada di MyBro!" });
         }
-    });
-}
+        document.getElementById('displayID').innerText = myID;
 
+        const appStartTime = Date.now();
+        const notifiedMessages = new Set();
+        let activeTarget = null;
+        let pfpBase64 = "";
+        let currentStoryQueue = [], currentStoryIndex = 0, storyTimer, viewingStoryOf = null;
+        let unreadCountGlobal = 0;
+        let selectedMsgId = null; 
+        let isSelectedMsgPinned = false;
 
-    
-    </script>
+        // --- UTILS ---
+        window.showToast = (message, icon = 'check-circle') => {
+            let toast = document.querySelector('.toast-msg');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.className = 'toast-msg';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        };
+
+        const formatTime = (ts) => {
+            if(!ts) return "";
+            const d = new Date(ts);
+            return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
+        };
+
+        const formatLastSeen = (ts) => {
+            if(!ts) return "";
+            const d = new Date(ts);
+            const today = new Date();
+            const isToday = d.getDate() === today.getDate() && d.getMonth() === today.getMonth();
+            return isToday ? "Hari ini " + formatTime(ts) : `${d.getDate()}/${d.getMonth()+1} ` + formatTime(ts);
+        };
+
+        window.showFloatingNotif = (name, text, pfp, targetId) => {
+            let notif = document.getElementById('inAppNotif');
+            if(!notif) {
+                notif = document.createElement('div');
+                notif.id = 'inAppNotif';
+                notif.className = 'floating-notif';
+                document.body.appendChild(notif);
+            }
+            notif.innerHTML = `<img src="${pfp}" style="width:45px;height:45px;border-radius:50%;object-fit:cover;"><div style="flex:1; overflow:hidden;"><div style="font-weight:600; font-size:0.95rem; color:white;">${name}</div><div style="font-size:0.85rem; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${text}</div></div>`;
+            notif.onclick = () => { window.app.openChat(targetId, name, pfp); notif.classList.remove('show'); };
+            notif.classList.add('show');
+            setTimeout(() => notif.classList.remove('show'), 4000);
+        };
+
+        window.showTab = (id, el) => {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
+        };
+        
+        window.toggleOverlay = (id, show) => { 
+            const el = document.getElementById(id); 
+            if(show) { el.classList.add('active'); el.style.display = 'flex'; } 
+            else { el.classList.remove('active'); setTimeout(() => el.style.display = 'none', 300); } 
+        };
+
+        window.closeOverlay = (e) => { if(e.target.classList.contains('overlay')) toggleOverlay(e.target.id, false); };
+        window.copyID = () => { navigator.clipboard.writeText(myID); window.showToast("ID Berhasil Disalin!", "copy"); };
+        window.toggleArchived = () => {
+            const list = document.getElementById('archivedList');
+            list.style.display = list.style.display === 'none' ? 'block' : 'none';
+        };
+
+        // --- PRESENCE SYSTEM ---
+        onValue(ref(db, '.info/connected'), (snap) => {
+            if (snap.val() === true && myID) {
+                set(ref(db, `users/${myID}/profile/status`), 'online');
+                onDisconnect(ref(db, `users/${myID}/profile/status`)).set('offline');
+                onDisconnect(ref(db, `users/${myID}/profile/lastSeen`)).set(serverTimestamp());
+            }
+        });
+
+        // --- CORE APP OBJECT ---
+        window.app = {
+            handlePfp: (input) => {
+                const reader = new FileReader(); reader.readAsDataURL(input.files[0]);
+                reader.onload = () => { pfpBase64 = reader.result; document.getElementById('pfpEdit').src = pfpBase64; }
+            },
+            updateProfile: () => {
+                const updates = { name: document.getElementById('editName').value, bio: document.getElementById('editBio').value };
+                if(pfpBase64) updates.pfp = pfpBase64; update(ref(db, `users/${myID}/profile`), updates); toggleOverlay('popProfile', false);
+            },
+            addFriend: () => {
+                const tid = document.getElementById('targetID').value.trim().toUpperCase();
+                if(!tid || tid === myID) return;
+                set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid, archived: false }); toggleOverlay('popAdd', false);
+            },
+            openChat: (id, name, pfp) => {
+                activeTarget = id;
+                document.getElementById('chatName').innerText = name; document.getElementById('chatPfp').src = pfp;
+                document.getElementById('chatPanel').classList.add('active');
+                
+                // Status Target
+                onValue(ref(db, `users/${id}/profile`), (pSnap) => {
+                    const p = pSnap.val();
+                    if(p) {
+                        const statEl = document.getElementById('chatStatus');
+                        statEl.innerText = p.status === 'online' ? "Online" : (p.lastSeen ? "Terakhir dilihat " + formatLastSeen(p.lastSeen) : "Offline");
+                        statEl.style.color = p.status === 'online' ? "var(--accent)" : "var(--text-dim)";
+                    }
+                });
+
+                const room = [myID, id].sort().join("_");
+                onValue(ref(db, `chats/${room}`), (snap) => {
+                    const area = document.getElementById('msgArea');
+                    area.innerHTML = "";
+                    let pinnedMsg = null;
+
+                    snap.forEach(child => {
+                        const m = child.val();
+                        if(m.from !== myID && m.status !== 'read') update(ref(db, `chats/${room}/${child.key}`), { status: 'read' });
+                        if(m.pinned) pinnedMsg = m;
+
+                        let tickHTML = "";
+                        if(m.from === myID) {
+                            if (m.status === 'read') tickHTML = `<i class="fas fa-check-double tick-read"></i>`;
+                            else if (m.status === 'delivered') tickHTML = `<i class="fas fa-check-double"></i>`;
+                            else tickHTML = `<i class="fas fa-check"></i>`;
+                        }
+
+                        let mediaHTML = "";
+                        if(m.type === 'image') mediaHTML = `<img src="${m.media}">`;
+                        else if(m.type === 'video') mediaHTML = `<video src="${m.media}" controls></video>`;
+                        else if(m.type === 'file') mediaHTML = `<div class="file-box"><i class="fas fa-file-alt fa-2x"></i> <div>${m.fileName}<br><a href="${m.media}" download="${m.fileName}" style="color:var(--accent); font-size:0.7rem;">Download</a></div></div>`;
+
+                        area.innerHTML += `<div class="bubble ${m.from === myID ? 'sent' : 'received'}" oncontextmenu="window.app.msgMenu('${child.key}', ${m.pinned || false}, event)">${mediaHTML}${m.text ? `<div>${m.text}</div>` : ''}<div class="msg-meta"><span>${formatTime(m.time)}</span> ${tickHTML}</div></div>`;
+                    });
+                    area.scrollTop = area.scrollHeight;
+                    document.getElementById('pinnedMsgContainer').style.display = pinnedMsg ? 'block' : 'none';
+                    if(pinnedMsg) document.getElementById('pinnedMsgText').innerText = pinnedMsg.text || "Media";
+                });
+            },
+            closeChat: () => { document.getElementById('chatPanel').classList.remove('active'); activeTarget = null; },
+            send: (customText = null, mediaData = null, type = 'text', fileName = '') => {
+                const inp = document.getElementById('msgIn');
+                const text = customText !== null ? customText : inp.value;
+                if((!text && !mediaData) || !activeTarget) return;
+                const room = [myID, activeTarget].sort().join("_");
+                push(ref(db, `chats/${room}`), { from: myID, text: text, time: Date.now(), status: 'sent', type: type, media: mediaData || "", fileName: fileName, pinned: false });
+                inp.value = "";
+            },
+            sendMedia: (input) => {
+                const file = input.files[0]; if(!file) return;
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = () => { 
+                    let type = file.type.startsWith('image') ? 'image' : (file.type.startsWith('video') ? 'video' : 'file');
+                    window.app.send("", reader.result, type, file.name); 
+                }
+            },
+            msgMenu: (msgId, isPinned, e) => {
+                e.preventDefault(); selectedMsgId = msgId; isSelectedMsgPinned = isPinned;
+                document.getElementById('pinMenuText').innerHTML = isPinned ? `<i class="fas fa-thumbtack"></i> Lepas Sematan` : `<i class="fas fa-thumbtack"></i> Sematkan Pesan`;
+                toggleOverlay('msgOptionsMenu', true);
+            },
+            pinMessage: () => {
+                const room = [myID, activeTarget].sort().join("_");
+                update(ref(db, `chats/${room}/${selectedMsgId}`), { pinned: !isSelectedMsgPinned });
+                toggleOverlay('msgOptionsMenu', false);
+            },
+            deleteMessage: () => {
+                if(confirm("Hapus pesan ini?")) {
+                    const room = [myID, activeTarget].sort().join("_");
+                    set(ref(db, `chats/${room}/${selectedMsgId}`), null);
+                    toggleOverlay('msgOptionsMenu', false);
+                }
+            },
+            openStory: (userId, userName, userPfp, isMyStory) => {
+                get(ref(db, `stories/${userId}`)).then(snap => {
+                    currentStoryQueue = [];
+                    if(snap.exists()) snap.forEach(c => { if(Date.now() - c.val().time < 86400000) currentStoryQueue.push({id:c.key, ...c.val()}); });
+                    if(currentStoryQueue.length > 0) {
+                        currentStoryIndex = 0; viewingStoryOf = userId;
+                        document.getElementById('svName').innerText = userName; document.getElementById('svPfp').src = userPfp;
+                        document.getElementById('svFooter').style.display = isMyStory ? 'none' : 'flex';
+                        document.getElementById('svViews').style.display = isMyStory ? 'flex' : 'none';
+                        document.getElementById('storyViewer').style.display = 'flex';
+                        window.app.renderCurrentStory();
+                    } else if(isMyStory) document.getElementById('storyUpload').click();
+                });
+            },
+            renderCurrentStory: () => {
+                if(currentStoryIndex >= currentStoryQueue.length) return window.app.closeStory();
+                const s = currentStoryQueue[currentStoryIndex];
+                const container = document.getElementById('svMediaContainer');
+                container.innerHTML = s.type === 'video' ? `<video src="${s.media}" autoplay playsinline></video>` : `<img src="${s.media}">`;
+                if(viewingStoryOf === myID) {
+                    document.getElementById('svViews').innerHTML = `<div onclick="window.app.deleteStory('${s.id}')" style="color:#ef4444; margin-bottom:10px;"><i class="fas fa-trash"></i> Hapus</div><div><i class="fas fa-eye"></i> ${s.views || 0}</div>`;
+                } else update(ref(db, `stories/${viewingStoryOf}/${s.id}`), { views: (s.views || 0) + 1 });
+                
+                const bar = document.getElementById('storyProgress');
+                bar.style.transition = 'none'; bar.style.width = '0%';
+                setTimeout(() => { bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 50);
+                clearTimeout(storyTimer); storyTimer = setTimeout(() => window.app.nextStory(), 5000);
+            },
+            nextStory: () => { currentStoryIndex++; window.app.renderCurrentStory(); },
+            closeStory: () => { clearTimeout(storyTimer); document.getElementById('storyViewer').style.display = 'none'; },
+            deleteStory: (sid) => { set(ref(db, `stories/${myID}/${sid}`), null); window.app.closeStory(); },
+            openMyStory: () => {
+                get(ref(db, `users/${myID}/profile`)).then(snap => {
+                    const p = snap.val() || {};
+                    window.app.openStory(myID, "Status Saya", p.pfp || `https://ui-avatars.com/api/?name=Me`, true);
+                });
+            }
+        };
+
+        // --- WATCHERS ---
+        onValue(ref(db, `users/${myID}/contacts`), (snap) => {
+            const rList = document.getElementById('chatList');
+            const cList = document.getElementById('contactList');
+            const aList = document.getElementById('archivedList');
+            rList.innerHTML = ""; cList.innerHTML = ""; aList.innerHTML = "";
+            unreadCountGlobal = 0;
+
+            snap.forEach(child => {
+                const cid = child.key; const isArchived = child.val().archived;
+                onValue(ref(db, `users/${cid}/profile`), pSnap => {
+                    const p = pSnap.val() || { name: cid };
+                    const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}`;
+                    
+                    const room = [myID, cid].sort().join("_");
+                    onValue(ref(db, `chats/${room}`), msgSnap => {
+                        let lastMsg = null, unread = 0;
+                        msgSnap.forEach(m => {
+                            lastMsg = m.val();
+                            if(lastMsg.from !== myID && lastMsg.status !== 'read') {
+                                unread++;
+                                if(lastMsg.time > appStartTime && !notifiedMessages.has(m.key) && activeTarget !== cid) {
+                                    notifiedMessages.add(m.key);
+                                    window.showFloatingNotif(p.name, lastMsg.text || "Media", pfp, cid);
+                                }
+                            }
+                        });
+
+                        const html = `<div class="pfp-wrap" id="sw-${cid}"><img src="${pfp}" class="pfp"></div><div class="card-info"><div class="card-header-flex"><div class="card-name">${p.name}</div><div class="card-time">${lastMsg ? formatTime(lastMsg.time) : ''}</div></div><div class="card-msg">${lastMsg?.text || 'Mulai obrolan'}</div></div>${unread > 0 ? `<div class="unread-badge">${unread}</div>` : ''}`;
+                        let card = document.getElementById(`chat-${cid}`) || document.createElement('div');
+                        card.id = `chat-${cid}`; card.className = 'card'; card.innerHTML = html;
+                        card.onclick = () => window.app.openChat(cid, p.name, pfp);
+                        (isArchived ? aList : rList).appendChild(card);
+                        
+                        unreadCountGlobal += unread;
+                        document.getElementById('chatBadge').style.display = unreadCountGlobal > 0 ? 'block' : 'none';
+                    });
+                });
+            });
+        });
+
+        // --- BAN SYSTEM ---
+        onValue(ref(db, `users/${myID}/isBanned`), snap => {
+            if(snap.val() === true) {
+                document.body.innerHTML = `<div style="height:100dvh; background:#020617; color:white; display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:20px;"><h2>Akses Dibatasi</h2><p>Akun ${myID} telah ditangguhkan.</p><textarea id="ap" placeholder="Alasan banding..." style="width:100%; max-width:300px; margin:20px 0; padding:10px;"></textarea><button onclick="window.kb()" style="padding:10px 20px; background:red; color:white; border:none; border-radius:10px;">Kirim Banding</button></div>`;
+                window.kb = () => {
+                    const txt = document.getElementById('ap').value;
+                    if(txt) update(ref(db, `users/${myID}`), { appealMessage: txt, appealStatus: 'pending' }).then(() => alert("Banding dikirim"));
+                };
+            }
+        });
+
 </body>
     </html>
