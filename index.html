@@ -232,7 +232,7 @@ input[type="text"]:focus, textarea:focus {
 <body>
 
     <header>
-        <div class="logo">My<span>Bro</span></div>
+        <div class="logo">Talk<span>Sky</span></div>
         <div class="my-id-tag" id="displayID" onclick="copyID()">ID: ...</div>
     </header>
 
@@ -345,7 +345,8 @@ input[type="text"]:focus, textarea:focus {
             <img id="chatPfp" src="" class="pfp" style="width:40px; height:40px;">
             <div style="flex:1">
                 <div id="chatName" style="font-weight:600; font-size:1rem;">...</div>
-                <div style="font-size:0.75rem; color:var(--accent);">Online</div>
+                <div id="chatStatus" style="font-size:0.75rem; color:var(--accent);">Menghubungkan...</div>
+
             </div>
             <i class="fas fa-ellipsis-v" id="chatMenuBtn" onclick="toggleOverlay('chatOptionsMenu', true)" style="cursor:pointer; padding:5px 10px; font-size:1.2rem;"></i>
         </div>
@@ -404,7 +405,7 @@ input[type="text"]:focus, textarea:focus {
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, get, update, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, get, update, query, orderByChild, limitToLast, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
@@ -431,6 +432,55 @@ input[type="text"]:focus, textarea:focus {
         let unreadCountGlobal = 0;
         let selectedMsgId = null; 
         let isSelectedMsgPinned = false;
+
+        // --- VARIABEL TAMBAHAN ---
+const appStartTime = Date.now();
+const notifiedMessages = new Set();
+
+// --- FUNGSI FORMAT LAST SEEN ---
+const formatLastSeen = (ts) => {
+    if(!ts) return "";
+    const d = new Date(ts);
+    const today = new Date();
+    const isToday = d.getDate() === today.getDate() && d.getMonth() === today.getMonth();
+    const time = d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
+    return isToday ? "Hari ini " + time : `${d.getDate()}/${d.getMonth()+1} ` + time;
+};
+
+// --- FUNGSI NOTIFIKASI MENGAMBANG ---
+window.showFloatingNotif = (name, text, pfp, targetId) => {
+    let notif = document.getElementById('inAppNotif');
+    if(!notif) {
+        notif = document.createElement('div');
+        notif.id = 'inAppNotif';
+        notif.className = 'floating-notif';
+        document.body.appendChild(notif);
+    }
+    notif.innerHTML = `
+        <img src="${pfp}" style="width:45px;height:45px;border-radius:50%;object-fit:cover;">
+        <div style="flex:1; overflow:hidden;">
+            <div style="font-weight:600; font-size:0.95rem; color:white;">${name}</div>
+            <div style="font-size:0.85rem; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${text}</div>
+        </div>
+    `;
+    notif.onclick = () => { window.app.openChat(targetId, name, pfp); notif.classList.remove('show'); };
+    notif.classList.add('show');
+    setTimeout(() => notif.classList.remove('show'), 4000); // Hilang setelah 4 detik
+};
+
+// --- SISTEM ONLINE / OFFLINE (PRESENCE) ---
+const connectedRef = ref(db, '.info/connected');
+onValue(connectedRef, (snap) => {
+    if (snap.val() === true && myID) {
+        const statusRef = ref(db, `users/${myID}/profile/status`);
+        const lastSeenRef = ref(db, `users/${myID}/profile/lastSeen`);
+        
+        set(statusRef, 'online');
+        onDisconnect(statusRef).set('offline');
+        onDisconnect(lastSeenRef).set(serverTimestamp());
+    }
+});
+
 
         window.showTab = (id, el) => {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -475,6 +525,21 @@ input[type="text"]:focus, textarea:focus {
             // --- CHAT & MEDIA SYSTEM ---
             openChat: (id, name, pfp) => {
                 activeTarget = id;
+                // Listener untuk Status Online/Last Seen Target
+onValue(ref(db, `users/${id}/profile`), (pSnap) => {
+    const p = pSnap.val();
+    if(p) {
+        const statEl = document.getElementById('chatStatus');
+        if(p.status === 'online') {
+            statEl.innerText = "Online";
+            statEl.style.color = "var(--accent)";
+        } else {
+            statEl.innerText = p.lastSeen ? "Terakhir dilihat " + formatLastSeen(p.lastSeen) : "Offline";
+            statEl.style.color = "var(--text-dim)";
+        }
+    }
+});
+
                 document.getElementById('chatName').innerText = name; document.getElementById('chatPfp').src = pfp;
                 document.getElementById('chatPanel').classList.add('active');
                 
@@ -500,7 +565,20 @@ input[type="text"]:focus, textarea:focus {
                     snap.forEach(child => {
                         const m = child.val();
                         
-                        if(m.from !== myID && m.status !== 'read') { updates[`${child.key}/status`] = 'read'; hasUpdates = true; }
+                        let tickHTML = "";
+if(m.from === myID) {
+    if (m.status === 'read') {
+        // C2 Biru (Sudah terbaca)
+        tickHTML = `<i class="fas fa-check-double tick" style="color: var(--blue-tick); text-shadow: 0 0 2px rgba(59,130,246,0.5);"></i>`;
+    } else if (m.status === 'delivered') {
+        // C2 Putih (Terkirim, masuk ke HP target tapi belum dibuka)
+        tickHTML = `<i class="fas fa-check-double tick" style="color: rgba(255,255,255,0.7);"></i>`;
+    } else {
+        // C1 Putih (Dikirim dari kita/Server, tapi target offline/tidak ada kuota)
+        tickHTML = `<i class="fas fa-check tick" style="color: rgba(255,255,255,0.7);"></i>`;
+    }
+}
+
                         if(m.pinned) pinnedMsg = m; // Ambil pesan tersemat terakhir
 
                         let mediaHTML = "";
@@ -761,6 +839,42 @@ input[type="text"]:focus, textarea:focus {
                 onValue(ref(db, `users/${cid}/profile`), (pSnap) => {
                     const p = pSnap.val() || { name: cid, pfp: "" };
                     const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}&background=1e293b&color=fff`;
+// ... KODE SEBELUMNYA ...
+onValue(ref(db, `chats/${room}`), (msgSnap) => {
+    let lastMsgObj = null, unreadCount = 0;
+    
+    msgSnap.forEach(m => {
+        lastMsgObj = m.val();
+        const msgKey = m.key;
+        
+        if(lastMsgObj.from !== myID) {
+            // Update status menjadi delivered (C2 putih) karena HP kita sudah menerimanya
+            if(lastMsgObj.status === 'sent') {
+                update(ref(db, `chats/${room}/${msgKey}`), { status: 'delivered' });
+            }
+            
+            if(lastMsgObj.status !== 'read') {
+                unreadCount++;
+                
+                // Memicu Notifikasi Mengambang jika chat tidak sedang dibuka dan baru masuk
+                if(lastMsgObj.time > appStartTime && !notifiedMessages.has(msgKey) && activeTarget !== cid) {
+                    notifiedMessages.add(msgKey);
+                    
+                    let notifText = lastMsgObj.text;
+                    if(lastMsgObj.type === 'image') notifText = '📷 Mengirim foto';
+                    else if(lastMsgObj.type === 'video') notifText = '🎥 Mengirim video';
+                    
+                    window.showFloatingNotif(p.name, notifText, pfp, cid);
+                    
+                    // Notifikasi Sistem Android/PC (Jika diizinkan)
+                    if(Notification.permission === "granted") {
+                        new Notification(`Pesan dari ${p.name}`, { body: notifText, icon: pfp });
+                    }
+                }
+            }
+        }
+    });
+// ... LANJUTAN KODE ...
 
                     const cCard = document.createElement('div'); cCard.className = 'card';
                     cCard.innerHTML = `<img src="${pfp}" class="pfp" style="width:45px;height:45px"><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">${p.bio}</div></div>`;
