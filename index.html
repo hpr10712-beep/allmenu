@@ -586,7 +586,6 @@ input[type="text"]:focus, textarea:focus {
                 });
             },
             renderCurrentStory: () => {
-                        renderCurrentStory: () => {
                 if(currentStoryIndex >= currentStoryQueue.length) return window.app.closeStory();
                 const s = currentStoryQueue[currentStoryIndex];
                 const isMine = viewingStoryOf === myID;
@@ -596,7 +595,6 @@ input[type="text"]:focus, textarea:focus {
                 if(s.type === 'video') container.innerHTML = `<video src="${s.media}" autoplay playsinline loop></video>`;
                 else container.innerHTML = `<img src="${s.media}">`;
 
-                // TAMPILKAN TOMBOL HAPUS & VIEW JIKA MILIK SENDIRI
                 const viewEl = document.getElementById('svViews');
                 if(isMine) {
                     viewEl.style.display = 'flex';
@@ -607,7 +605,6 @@ input[type="text"]:focus, textarea:focus {
                         <div><i class="fas fa-eye"></i> ${s.views || 0}</div>
                     `;
                 } else {
-                    // Update view count jika orang lain yang melihat
                     update(ref(db, `stories/${viewingStoryOf}/${s.id}`), { views: (s.views || 0) + 1 });
                 }
 
@@ -615,7 +612,8 @@ input[type="text"]:focus, textarea:focus {
                 bar.style.transition = 'none'; bar.style.width = '0%';
                 setTimeout(() => { bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 50);
 
-                clearTimeout(storyTimer); storyTimer = setTimeout(() => window.app.nextStory(), 5000);
+                clearTimeout(storyTimer); 
+                storyTimer = setTimeout(() => window.app.nextStory(), 5000);
             },
 
             nextStory: () => { currentStoryIndex++; window.app.renderCurrentStory(); },
@@ -624,17 +622,17 @@ input[type="text"]:focus, textarea:focus {
                 const inp = document.getElementById('storyReplyInp'); if(!inp.value || !viewingStoryOf) return;
                 activeTarget = viewingStoryOf; window.app.send(`Membahas status: "${inp.value}"`);
                 inp.value = ""; window.app.closeStory(); alert("Balasan dikirim!");
-        }
-        deleteStory: (storyId) => { // <--- Masukkan fungsi hapus di sini
-    if(confirm("Hapus status ini?")) {
-        const db = getDatabase();
-        set(ref(db, `stories/${myID}/${storyId}`), null);
-        window.app.closeStory();
-        alert("Status dihapus!");
-  }
- }
-});
-                // LOGIKA AGAR CHAT BARU LANGSUNG MUNCUL DI DAFTAR
+            },
+            deleteStory: (storyId) => { 
+                if(confirm("Hapus status ini?")) {
+                    set(ref(db, `stories/${myID}/${storyId}`), null);
+                    window.app.closeStory();
+                    alert("Status dihapus!");
+                }
+            }
+        }; // TUTUP OBJECT window.app DI SINI
+
+        // LOGIKA AGAR CHAT BARU LANGSUNG MUNCUL DI DAFTAR (DI LUAR window.app)
         onValue(ref(db, `chats`), (snapshot) => {
             snapshot.forEach((roomSnap) => {
                 const roomId = roomSnap.key;
