@@ -577,12 +577,36 @@ input[type="text"]:focus, textarea:focus {
 
             },
             openStory: (userId, userName, userPfp, isMyStory) => {
-                get(ref(db, `stories/${userId}`)).then(snap => {
-                    if(!snap.exists()) return;
-                    currentStoryQueue = []; const now = Date.now();
-                    snap.forEach(child => {
-                        if(now - child.val().time < 24 * 60 * 60 * 1000) currentStoryQueue.push({ id: child.key, ...child.val() });
-                    });
+                // Ganti bagian ini di dalam loop kontak kamu:
+get(ref(db, `stories/${cid}`)).then(storySnap => {
+    let hasStory = false; 
+    const now = Date.now();
+    if(storySnap.exists()) {
+        storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
+    }
+
+    if(hasStory) {
+        let sCard = document.getElementById(`story-${cid}`);
+        if(!sCard) {
+            sCard = document.createElement('div');
+            sCard.className = 'card';
+            sCard.id = `story-${cid}`;
+            
+            // KLIK AREA LUAS (Nama & Profil)
+            sCard.onclick = () => window.app.openStory(cid, p.name, pfp, false);
+            
+            sCard.innerHTML = `
+                <div class="pfp-wrap has-story"><img src="${pfp}" class="pfp"></div>
+                <div class="card-info">
+                    <div class="card-name">${p.name}</div>
+                    <div class="card-msg">Pembaruan baru</div>
+                </div>
+            `;
+            sList.appendChild(sCard);
+        }
+    }
+});
+
                     if(currentStoryQueue.length === 0) return;
                     
                     viewingStoryOf = userId;
