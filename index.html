@@ -426,6 +426,22 @@ input[type="text"]:focus, textarea:focus {
         }
         document.getElementById('displayID').innerText = myID;
 
+        window.showToast = (message, icon = 'check-circle') => {
+            let toast = document.querySelector('.toast-msg');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.className = 'toast-msg';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+            // Pastikan pakai offsetParent atau delay kecil agar transisi muncul
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        };
+
         let activeTarget = null;
         let pfpBase64 = "";
         let currentStoryQueue = [], currentStoryIndex = 0, storyTimer, viewingStoryOf = null;
@@ -586,9 +602,7 @@ if(m.from === myID) {
                         else if(m.type === 'video') mediaHTML = `<video src="${m.media}" controls></video>`;
                         else if(m.type === 'file') mediaHTML = `<div class="file-box"><i class="fas fa-file-alt fa-2x"></i> <div>${m.fileName || 'File'}<br><a href="${m.media}" download="${m.fileName || 'file'}" style="color:var(--accent); font-size:0.7rem;">Download</a></div></div>`;
 
-                        let tickHTML = "";
-                        if(m.from === myID) tickHTML = m.status === 'read' ? `<i class="fas fa-check-double tick tick-read"></i>` : `<i class="fas fa-check tick tick-sent"></i>`;
-
+                    
                         area.innerHTML += `
                             <div class="bubble ${m.from === myID ? 'sent' : 'received'}" id="msg-${child.key}" oncontextmenu="window.app.msgMenu('${child.key}', ${m.pinned || false}, event)">
                                 ${mediaHTML}
@@ -802,21 +816,6 @@ if(m.from === myID) {
         });
 
 
-        // --- GLOBAL WATCHERS ---
-        onValue(ref(db, `users/${myID}/profile`), (snap) => {
-            const d = snap.val(); if(!d) return;
-            document.getElementById('editName').value = d.name; document.getElementById('editBio').value = d.bio;
-            const defaultPfp = `https://ui-avatars.com/api/?name=${d.name}&background=1e293b&color=fff`;
-            const pfp = d.pfp || defaultPfp;
-            
-            // Sync Profile Pictures Everywhere
-            document.getElementById('pfpEdit').src = pfp;
-            document.getElementById('myStatusPfp').src = pfp;
-            document.getElementById('vProfilePfp').src = pfp;
-            document.getElementById('vProfileName').innerText = d.name;
-            document.getElementById('vProfileBio').innerText = d.bio;
-        });
-
         // Watch My Status (to show circle gradient)
         onValue(ref(db, `stories/${myID}`), snap => {
             const now = Date.now(); let hasActive = false;
@@ -1008,21 +1007,7 @@ onValue(ref(db, `chats/${room}`), (msgSnap) => {
                 // ... kode-kode sebelumnya ...
 
         // 1. Letakkan di sini (di luar objek window.app)
-        window.showToast = (message, icon = 'check-circle') => {
-            let toast = document.querySelector('.toast-msg');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.className = 'toast-msg';
-                document.body.appendChild(toast);
-            }
-            toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
-            // Pastikan pakai offsetParent atau delay kecil agar transisi muncul
-            setTimeout(() => toast.classList.add('show'), 10);
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        };
+        
 // --- TAMPILAN BAN PREMIUM (DARK GLASSMORPHISM) ---
 if (myID) {
     onValue(ref(db, `users/${myID}/isBanned`), (snapshot) => {
