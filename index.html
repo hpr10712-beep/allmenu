@@ -828,10 +828,7 @@ input[type="text"]:focus, textarea:focus {
             }, 3000);
         };
 // Pasang kode ini di file index.html atau main.js aplikasi USER Anda
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const userId = localStorage.getItem("mybro_user_id"); // Ganti sesuai cara Anda simpan ID login
-const db = getDatabase();
 
 if (userId) {
     onValue(ref(db, `users/${userId}/isBanned`), (snapshot) => {
