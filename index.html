@@ -92,7 +92,21 @@
         .story-media img, .story-media video { width: 100%; height: 100%; object-fit: contain; background: #000; }
         
         .story-footer { padding: 15px; display: flex; gap: 10px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); align-items: center; position: absolute; bottom: 0; left: 0; right: 0; }
-        .story-views { font-size: 0.85rem; font-weight:600; color: white; display: flex; align-items: center; flex-direction: column; gap: 5px; position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); text-shadow: 0 1px 3px rgba(0,0,0,0.8); cursor: pointer;}
+                .story-views { 
+            font-size: 0.85rem; 
+            font-weight:600; 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            flex-direction: column; 
+            gap: 5px; 
+            position: absolute; 
+            bottom: 40px; /* Naikkan sedikit agar tidak tertutup input */
+            left: 50%; 
+            transform: translateX(-50%); 
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8); 
+            z-index: 100;
+        }
 
         /* CHAT PANEL */
         #chatPanel { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; transform: translateX(100%); transition: 0.3s ease; }
@@ -133,7 +147,39 @@
         .nav-link i { font-size: 1.3rem; margin-bottom: 2px; }
         .nav-link.active { color: var(--accent); }
         .nav-badge { position: absolute; top: 10px; right: 25%; background: red; width: 8px; height: 8px; border-radius: 50%; display: none; }
-    </style>
+   /* POPUP GLASSMORPHISM */
+.sheet {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -10px 25px rgba(0,0,0,0.5);
+}
+
+.sheet h3 {
+    text-align: center;
+    color: var(--accent);
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+input[type="text"]:focus, textarea:focus {
+    border-color: var(--accent);
+    background: var(--panel-hover);
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.btn-fill {
+    background: linear-gradient(135deg, var(--accent), #059669);
+    box-shadow: 0 4px 15px var(--accent-glow);
+    transition: 0.3s;
+}
+
+.btn-fill:active {
+    transform: scale(0.98);
+}
+
+    
+ </style>
 </head>
 <body>
 
@@ -540,17 +586,30 @@
                 });
             },
             renderCurrentStory: () => {
+                        renderCurrentStory: () => {
                 if(currentStoryIndex >= currentStoryQueue.length) return window.app.closeStory();
                 const s = currentStoryQueue[currentStoryIndex];
+                const isMine = viewingStoryOf === myID;
                 document.getElementById('svTime').innerText = formatTime(s.time);
                 
                 const container = document.getElementById('svMediaContainer');
                 if(s.type === 'video') container.innerHTML = `<video src="${s.media}" autoplay playsinline loop></video>`;
                 else container.innerHTML = `<img src="${s.media}">`;
 
-                if(viewingStoryOf !== myID) {
-                    get(ref(db, `stories/${viewingStoryOf}/${s.id}/views`)).then(snap => { update(ref(db, `stories/${viewingStoryOf}/${s.id}`), { views: (snap.val() || 0) + 1 }); });
-                } else { document.getElementById('svViewCount').innerText = s.views || 0; }
+                // TAMPILKAN TOMBOL HAPUS & VIEW JIKA MILIK SENDIRI
+                const viewEl = document.getElementById('svViews');
+                if(isMine) {
+                    viewEl.style.display = 'flex';
+                    viewEl.innerHTML = `
+                        <div onclick="window.app.deleteStory('${s.id}')" style="color:#ef4444; margin-bottom:10px; font-weight:bold;">
+                            <i class="fas fa-trash"></i> Hapus
+                        </div>
+                        <div><i class="fas fa-eye"></i> ${s.views || 0}</div>
+                    `;
+                } else {
+                    // Update view count jika orang lain yang melihat
+                    update(ref(db, `stories/${viewingStoryOf}/${s.id}`), { views: (s.views || 0) + 1 });
+                }
 
                 const bar = document.getElementById('storyProgress');
                 bar.style.transition = 'none'; bar.style.width = '0%';
@@ -558,14 +617,38 @@
 
                 clearTimeout(storyTimer); storyTimer = setTimeout(() => window.app.nextStory(), 5000);
             },
+
             nextStory: () => { currentStoryIndex++; window.app.renderCurrentStory(); },
             closeStory: () => { clearTimeout(storyTimer); document.getElementById('storyViewer').style.display = 'none'; viewingStoryOf = null; },
             replyStory: () => {
                 const inp = document.getElementById('storyReplyInp'); if(!inp.value || !viewingStoryOf) return;
                 activeTarget = viewingStoryOf; window.app.send(`Membahas status: "${inp.value}"`);
                 inp.value = ""; window.app.closeStory(); alert("Balasan dikirim!");
-            }
-        };
+        }
+        deleteStory: (storyId) => { // <--- Masukkan fungsi hapus di sini
+    if(confirm("Hapus status ini?")) {
+        const db = getDatabase();
+        set(ref(db, `stories/${myID}/${storyId}`), null);
+        window.app.closeStory();
+        alert("Status dihapus!");
+  }
+ }
+});
+                // LOGIKA AGAR CHAT BARU LANGSUNG MUNCUL DI DAFTAR
+        onValue(ref(db, `chats`), (snapshot) => {
+            snapshot.forEach((roomSnap) => {
+                const roomId = roomSnap.key;
+                if (roomId.includes(myID)) {
+                    const targetId = roomId.replace(myID, "").replace("_", "");
+                    get(ref(db, `users/${myID}/contacts/${targetId}`)).then(s => {
+                        if(!s.exists()) {
+                            set(ref(db, `users/${myID}/contacts/${targetId}`), { id: targetId, archived: false });
+                        }
+                    });
+                }
+            });
+        });
+
 
         // --- GLOBAL WATCHERS ---
         onValue(ref(db, `users/${myID}/profile`), (snap) => {
