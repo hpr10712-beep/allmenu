@@ -654,7 +654,7 @@ window.app.closeStory();
 window.showToast("Status berhasil dihapus", "trash");
 
             }
-        }; // TUTUP OBJECT window.app DI SINI
+        }, // TUTUP OBJECT window.app DI SINI
 
         // LOGIKA AGAR CHAT BARU LANGSUNG MUNCUL DI DAFTAR (DI LUAR window.app)
         onValue(ref(db, `chats`), (snapshot) => {
