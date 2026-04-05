@@ -2,264 +2,218 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MyBro - Ultra Premium Messenger</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MyBro - Ultimate Fix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --bg: #0b101a;
-            --panel: rgba(23, 32, 51, 0.8);
-            --accent: #00ffa3;
-            --text: #f1f5f9;
-            --text-dim: #94a3b8;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.08);
+            --bg: #0b101a; --panel: #161e2e; --accent: #00ffa3; --text: #f1f5f9; --text-dim: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
         }
-
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { 
-            margin: 0; background: var(--bg); color: var(--text); 
-            height: 100dvh; display: flex; flex-direction: column; overflow: hidden;
-        }
+        body { margin: 0; background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* --- LAYOUT UTAMA --- */
-        header { 
-            padding: 20px; background: rgba(11, 16, 26, 0.9); 
-            backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center; z-index: 10;
-        }
+        header { padding: 15px 20px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+        .id-badge { background: rgba(0,255,163,0.1); padding: 5px 12px; border-radius: 10px; font-size: 0.8rem; color: var(--accent); font-weight: bold; border: 1px solid var(--accent); }
 
-        .view-container { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
-        .view { display: none; animation: fadeIn 0.3s ease; }
-        .view.active { display: block; }
+        .view-container { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 90px; }
+        .view { display: none; }
+        .view.active { display: block; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- NAVIGATION BAWAH --- */
-        nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 75px;
-            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border); display: flex; 
-            justify-content: space-around; align-items: center; z-index: 100;
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        .nav-item { 
-            display: flex; flex-direction: column; align-items: center; 
-            color: var(--text-dim); cursor: pointer; transition: 0.3s;
-        }
+        /* NAV BAWAH */
+        nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-dim); cursor: pointer; padding: 10px; width: 25%; }
         .nav-item.active { color: var(--accent); }
-        .nav-item i { font-size: 1.4rem; margin-bottom: 4px; }
+        .nav-item i { font-size: 1.3rem; margin-bottom: 4px; }
         .nav-item span { font-size: 0.7rem; font-weight: 600; }
 
-        /* --- CARD STYLE --- */
-        .list-card {
-            background: var(--glass); border: 1px solid var(--border);
-            border-radius: 20px; padding: 15px; margin-bottom: 12px;
-            display: flex; align-items: center; gap: 15px; transition: 0.2s;
-        }
-        .list-card:active { transform: scale(0.98); background: rgba(255,255,255,0.06); }
+        /* LIST & AVATAR */
+        .list-card { display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+        .avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: #262f3f; }
         
-        .avatar { 
-            width: 55px; height: 55px; border-radius: 18px; 
-            object-fit: cover; background: #1e293b; border: 1px solid var(--border);
-        }
-        .online-ring { border: 2px solid var(--accent); padding: 2px; }
+        /* STORY HORIZONTAL */
+        .story-scroll { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 10px; scrollbar-width: none; }
+        .story-scroll::-webkit-scrollbar { display: none; }
+        .story-item { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 65px; cursor: pointer; }
+        .story-avatar { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); padding: 2px; }
+        .story-add { border: 2px dashed var(--text-dim); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-dim); }
 
-        /* --- MODAL / POPUP --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
-            display: none; justify-content: center; align-items: center; z-index: 1000;
-        }
-        .modal-content {
-            background: #161e2e; border: 1px solid var(--border);
-            width: 90%; max-width: 400px; padding: 30px; border-radius: 30px;
-            position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-        }
-        .close-btn {
-            position: absolute; top: 20px; right: 20px; width: 35px; height: 35px;
-            background: var(--glass); border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; color: var(--text-dim); cursor: pointer;
-        }
+        /* MODALS */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { background: var(--panel); width: 90%; max-width: 350px; padding: 25px; border-radius: 20px; position: relative; }
+        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 1.2rem; cursor: pointer; color: var(--text-dim); padding: 5px; }
 
-        /* --- INPUT & BUTTON --- */
-        input, textarea {
-            width: 100%; padding: 14px; margin: 10px 0; border-radius: 15px;
-            border: 1px solid var(--border); background: rgba(0,0,0,0.2);
-            color: white; outline: none; font-size: 0.95rem;
-        }
-        .btn-primary {
-            width: 100%; padding: 16px; border-radius: 15px; border: none;
-            background: linear-gradient(135deg, #00ffa3, #00d1ff);
-            color: #000; font-weight: 700; cursor: pointer; margin-top: 15px;
-            box-shadow: 0 10px 20px rgba(0, 255, 163, 0.2);
-        }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #262f3f; background: #0b101a; color: white; outline: none; }
+        .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: var(--accent); color: #000; font-weight: bold; cursor: pointer; margin-top: 10px; }
 
-        /* --- CHAT VIEW --- */
-        #chatPanel {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg); z-index: 500; transform: translateX(100%);
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column;
-        }
+        /* SW VIEWER (STORY) */
+        #swViewer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
+        .sw-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(rgba(0,0,0,0.8), transparent); position: absolute; top: 0; width: 100%; }
+        .sw-footer { padding: 15px; display: flex; gap: 10px; position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.8)); }
+        #swImgDisplay { width: 100%; height: 100%; object-fit: contain; }
+
+        /* CHAT PANEL */
+        #chatPanel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1500; transform: translateX(100%); transition: 0.3s ease; display: flex; flex-direction: column; }
         #chatPanel.open { transform: translateX(0); }
-        .chat-header { padding: 15px 20px; background: #161e2e; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
-        #messageArea { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .bubble { padding: 12px 18px; border-radius: 20px; max-width: 80%; font-size: 0.9rem; line-height: 1.4; }
-        .me { align-self: flex-end; background: var(--accent); color: #000; border-bottom-right-radius: 4px; }
-        .them { align-self: flex-start; background: #262f3f; color: #fff; border-bottom-left-radius: 4px; }
-
-        /* --- PROFILE UI --- */
-        .profile-header { text-align: center; margin-bottom: 25px; }
-        .profile-avatar-large { 
-            width: 120px; height: 120px; border-radius: 40px; margin: 0 auto 15px;
-            object-fit: cover; border: 3px solid var(--accent); box-shadow: 0 0 30px rgba(0,255,163,0.3);
-        }
-        .id-badge { background: var(--glass); padding: 5px 12px; border-radius: 10px; font-size: 0.7rem; color: var(--accent); border: 1px solid var(--border); }
+        .chat-header { padding: 15px; background: var(--panel); display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--border); }
+        #msgArea { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .bubble { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 0.95rem; }
+        .me { align-self: flex-end; background: var(--accent); color: #000; border-bottom-right-radius: 0; }
+        .them { align-self: flex-start; background: #262f3f; color: #fff; border-bottom-left-radius: 0; }
+        
+        .fab { position: absolute; bottom: 20px; right: 0; background: var(--accent); color: black; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 10px rgba(0,255,163,0.3); }
     </style>
 </head>
 <body>
 
     <header>
-        <div style="font-weight: 800; font-size: 1.4rem; letter-spacing: -1px;">My<span style="color:var(--accent)">Bro</span>.</div>
-        <div id="myIDDisplay" class="id-badge">ID: Loading...</div>
+        <div style="font-size: 1.4rem; font-weight: bold;">My<span style="color:var(--accent)">Bro</span></div>
+        <div id="topID" class="id-badge">ID: --</div>
     </header>
 
     <div class="view-container">
         <div id="tab-chats" class="view active">
-            <h3 style="margin-bottom: 20px;">Pesan Terbaru</h3>
-            <div id="chatList"></div>
-        </div>
-
-        <div id="tab-status" class="view">
-            <h3>Status Teman</h3>
-            <div class="list-card" onclick="triggerSWUpload()">
-                <div class="avatar" style="display:flex;align-items:center;justify-content:center;border:2px dashed var(--text-dim)"><i class="fas fa-plus"></i></div>
-                <div><strong>Tambah Status</strong><br><small style="color:var(--text-dim)">Bagikan foto hari ini</small></div>
-            </div>
-            <div id="statusList"></div>
+            <h4 style="margin-top:0">Status Terbaru</h4>
+            <div class="story-scroll" id="storyRow">
+                <div class="story-item" onclick="document.getElementById('swUpload').click()">
+                    <div class="story-avatar story-add"><i class="fas fa-plus"></i></div>
+                    <small>Tambah</small>
+                </div>
+                </div>
+            
+            <h4 style="margin-top:20px; border-bottom:1px solid var(--border); padding-bottom:10px;">Obrolan</h4>
+            <div id="recentChatsList"></div>
         </div>
 
         <div id="tab-contacts" class="view">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h3>Kontak Saya</h3>
-                <button onclick="openModal('modalAddFriend')" style="background:var(--accent); border:none; padding:8px 15px; border-radius:10px; font-weight:700;"><i class="fas fa-plus"></i></button>
+            <div style="position:relative; padding-bottom: 20px;">
+                <h4 style="margin-top:0">Daftar Teman</h4>
+                <div id="contactList"></div>
+                <button class="fab" onclick="window.openModal('modalAddFriend')"><i class="fas fa-user-plus"></i></button>
             </div>
-            <div id="contactList"></div>
         </div>
     </div>
 
     <nav>
-        <div class="nav-item active" onclick="switchTab('chats', this)"><i class="fas fa-comment-alt"></i><span>Pesan</span></div>
-        <div class="nav-item" onclick="switchTab('status', this)"><i class="fas fa-circle-notch"></i><span>Status</span></div>
-        <div class="nav-item" onclick="switchTab('contacts', this)"><i class="fas fa-address-book"></i><span>Kontak</span></div>
-        <div class="nav-item" onclick="openProfile(true)"><i class="fas fa-user-circle"></i><span>Profil</span></div>
+        <div class="nav-item active" onclick="window.switchTab('chats', this)"><i class="fas fa-comment-dots"></i><span>Pesan</span></div>
+        <div class="nav-item" onclick="window.switchTab('contacts', this)"><i class="fas fa-users"></i><span>Kontak</span></div>
+        <div class="nav-item" onclick="window.openMyProfile()"><i class="fas fa-user-gear"></i><span>Profil</span></div>
     </nav>
 
-    <div id="modalAddFriend" class="modal-overlay" onclick="closeModals(event)">
+    <div id="modalAddFriend" class="modal-overlay">
         <div class="modal-content">
-            <div class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></div>
-            <h3>Cari Teman</h3>
-            <p style="color:var(--text-dim); font-size:0.8rem;">Masukkan ID unik teman Anda untuk memulai percakapan.</p>
-            <input type="text" id="inputTargetID" placeholder="Contoh: BRO-1234">
-            <button class="btn-primary" onclick="addFriendAction()">Tambah Kontak</button>
+            <i class="fas fa-times close-btn" onclick="window.closeModal()"></i>
+            <h3>Tambah Teman</h3>
+            <input type="text" id="targetID" placeholder="ID Teman (Contoh: BRO-1234)">
+            <button class="btn" onclick="window.addContact()">Simpan Kontak</button>
         </div>
     </div>
 
-    <div id="modalProfile" class="modal-overlay" onclick="closeModals(event)">
+    <div id="modalProfile" class="modal-overlay">
         <div class="modal-content">
-            <div class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></div>
-            <div class="profile-header">
-                <img id="viewProfImg" src="https://ui-avatars.com/api/?name=User" class="profile-avatar-large">
-                <h2 id="viewProfName" style="margin:0">Nama Pengguna</h2>
-                <span id="viewProfID" class="id-badge">ID: ----</span>
+            <i class="fas fa-times close-btn" onclick="window.closeModal()"></i>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <img id="myProfImg" src="https://ui-avatars.com/api/?name=Me" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:2px solid var(--accent); margin-bottom:10px;">
+                <br>
+                <button onclick="document.getElementById('profUpload').click()" style="background:transparent; border:1px solid var(--accent); color:var(--accent); padding:5px 15px; border-radius:20px;">Ganti Foto</button>
             </div>
-            
-            <div id="editFields" style="display:none">
-                <input type="text" id="editName" placeholder="Nama Anda">
-                <textarea id="editBio" placeholder="Bio / Status..." rows="2"></textarea>
-                <p style="font-size:0.7rem; color:var(--text-dim);">Ketuk tombol di bawah untuk ganti foto:</p>
-                <input type="file" id="fileAvatar" accept="image/*" style="display:none" onchange="compressAndStore(this, 'avatar')">
-                <button class="btn-primary" style="background:var(--glass); color:white; border:1px solid var(--border);" onclick="document.getElementById('fileAvatar').click()">Pilih Foto Baru</button>
-                <button class="btn-primary" onclick="saveProfileAction()">Simpan Perubahan</button>
-            </div>
+            <input type="text" id="myProfName" placeholder="Nama Anda">
+            <textarea id="myProfBio" placeholder="Bio Singkat..." rows="2"></textarea>
+            <button class="btn" onclick="window.saveProfile()">Simpan Profil</button>
+        </div>
+    </div>
 
-            <div id="readOnlyFields">
-                <div style="background:rgba(0,0,0,0.2); padding:15px; border-radius:15px; border:1px solid var(--border);">
-                    <small style="color:var(--accent); font-weight:700;">BIO</small>
-                    <p id="viewProfBio" style="margin:5px 0 0; font-size:0.9rem;">Halo! Saya menggunakan MyBro.</p>
-                </div>
-                <button id="btnChatHim" class="btn-primary" style="display:none">Kirim Pesan</button>
+    <div id="modalViewProfile" class="modal-overlay">
+        <div class="modal-content" style="text-align: center;">
+            <i class="fas fa-times close-btn" onclick="window.closeModal()"></i>
+            <img id="viewImg" src="" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:3px solid var(--accent); margin-bottom:15px;">
+            <h2 id="viewName" style="margin:5px 0;">Nama</h2>
+            <div class="id-badge" id="viewID" style="display:inline-block; margin-bottom:15px;">ID: --</div>
+            <div style="background:#0b101a; padding:15px; border-radius:10px; border:1px solid var(--border); text-align:left;">
+                <small style="color:var(--accent);">Bio:</small>
+                <p id="viewBio" style="margin:5px 0 0;">-</p>
             </div>
+        </div>
+    </div>
+
+    <div id="swViewer">
+        <div class="sw-header">
+            <i class="fas fa-arrow-left" style="font-size:1.5rem; cursor:pointer;" onclick="window.closeSW()"></i>
+            <div style="text-align:right;">
+                <strong id="swOwnerName">Nama</strong><br>
+                <small><i class="fas fa-eye"></i> <span id="swViewsCount">0</span> Tayangan</small>
+            </div>
+        </div>
+        <img id="swImgDisplay" src="">
+        <div class="sw-footer" id="swReplyArea">
+            <input type="text" id="swReplyInput" placeholder="Balas status..." style="margin:0;">
+            <button onclick="window.sendReplySW()" style="background:var(--accent); border:none; width:50px; border-radius:10px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
     <div id="chatPanel">
         <div class="chat-header">
-            <i class="fas fa-arrow-left" onclick="closeChat()" style="cursor:pointer; padding:10px;"></i>
-            <img id="activeChatAvatar" src="" class="avatar" style="width:40px; height:40px; cursor:pointer;" onclick="viewTargetProfile()">
-            <div style="flex:1">
-                <strong id="activeChatName">Nama</strong><br>
-                <small id="activeChatStatus" style="color:var(--accent); font-size:0.7rem;">Online</small>
-            </div>
+            <i class="fas fa-arrow-left" style="font-size:1.3rem; cursor:pointer;" onclick="window.closeChat()"></i>
+            <img id="chatHeaderImg" src="" class="avatar" style="width:40px;height:40px; cursor:pointer;" onclick="window.seeTargetProfile()">
+            <strong id="chatHeaderName" style="cursor:pointer;" onclick="window.seeTargetProfile()">Nama Target</strong>
         </div>
-        <div id="messageArea"></div>
-        <div style="padding:15px; background:#161e2e; display:flex; gap:10px; align-items:center;">
-            <input type="text" id="msgInput" placeholder="Tulis pesan..." style="margin:0">
-            <button onclick="sendMessage()" style="background:var(--accent); color:black; border:none; width:50px; height:50px; border-radius:15px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
+        <div id="msgArea"></div>
+        <div style="padding:15px; background:var(--panel); display:flex; gap:10px;">
+            <input type="text" id="msgInput" placeholder="Ketik pesan..." style="margin:0;">
+            <button onclick="window.sendChatMsg()" style="background:var(--accent); border:none; width:50px; border-radius:10px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <input type="file" id="fileSW" accept="image/*" style="display:none" onchange="compressAndStore(this, 'sw')">
+    <input type="file" id="profUpload" accept="image/*" style="display:none;" onchange="window.compressImage(this, 'profile')">
+    <input type="file" id="swUpload" accept="image/*" style="display:none;" onchange="window.compressImage(this, 'sw')">
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, get, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, get, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
             authDomain: "mybro-9ba5f.firebaseapp.com",
             databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
-            projectId: "mybro-9ba5f",
-            storageBucket: "mybro-9ba5f.appspot.com",
-            messagingSenderId: "820948893264",
-            appId: "1:820948893264:web:e58e1a175bc90053335b55"
+            projectId: "mybro-9ba5f"
         };
-
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        let myID = localStorage.getItem('user_id') || "BRO-" + Math.floor(1000 + Math.random() * 9000);
-        localStorage.setItem('user_id', myID);
-        document.getElementById('myIDDisplay').innerText = "ID: " + myID;
+        // 1. Inisialisasi ID dan Paksa Buat Profil Default (Agar tidak error saat ditambahkan)
+        let myID = localStorage.getItem('mybro_id');
+        if(!myID) {
+            myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
+            localStorage.setItem('mybro_id', myID);
+            // Default profil
+            set(ref(db, `users/${myID}/profile`), { name: "User " + myID, id: myID, bio: "Halo, saya pakai MyBro!", photo: "" });
+        }
+        document.getElementById('topID').innerText = "ID: " + myID;
 
+        // State Global
         let activeChatID = null;
+        let activeSWData = null; // Menyimpan data story yang sedang dibuka
         let tempBase64 = "";
 
-        // --- NAVIGATION ---
+        // --- FUNGSI UI DASAR (MENGGUNAKAN WINDOW AGAR BISA DIKLIK DI HTML) ---
         window.switchTab = (tab, el) => {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('tab-'+tab).classList.add('active');
+            document.getElementById('tab-' + tab).classList.add('active');
             el.classList.add('active');
         };
 
         window.openModal = (id) => {
+            document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
             document.getElementById(id).style.display = 'flex';
         };
+        window.closeModal = () => { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); tempBase64 = ""; };
 
-        window.closeModals = (e) => {
-            if(e.target.className === 'modal-overlay') closeModal();
-        };
-
-        window.closeModal = () => {
-            document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
-            tempBase64 = "";
-        };
-
-        // --- COMPRESSION LOGIC (Mencegah Database Error) ---
-        window.compressAndStore = (input, type) => {
+        // --- FUNGSI KOMPRESI GAMBAR (PENTING AGAR TIDAK LAG) ---
+        window.compressImage = (input, type) => {
             const file = input.files[0];
             if(!file) return;
             const reader = new FileReader();
@@ -269,177 +223,222 @@
                 img.src = e.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
+                    const maxW = 500; const scale = maxW / img.width;
+                    canvas.width = maxW; canvas.height = img.height * scale;
                     const ctx = canvas.getContext('2d');
-                    const maxW = 400; // Perkecil resolusi agar hemat data
-                    const scale = maxW / img.width;
-                    canvas.width = maxW;
-                    canvas.height = img.height * scale;
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    tempBase64 = canvas.toDataURL('image/jpeg', 0.7); // Kompresi 70%
-                    alert("Foto siap!");
-                    if(type === 'sw') uploadSW();
+                    tempBase64 = canvas.toDataURL('image/jpeg', 0.6); // Kompres 60%
+                    
+                    if(type === 'sw') {
+                        window.postSW();
+                    } else if (type === 'profile') {
+                        document.getElementById('myProfImg').src = tempBase64;
+                    }
                 };
             };
         };
 
-        // --- PROFILE LOGIC ---
-        window.openProfile = async (isSelf, targetID = null) => {
-            const idToView = isSelf ? myID : targetID;
-            const snap = await get(ref(db, `users/${idToView}/profile`));
-            const data = snap.val() || { name: "User "+idToView, photo: "", bio: "Halo! Saya menggunakan MyBro." };
-
-            document.getElementById('viewProfImg').src = data.photo || `https://ui-avatars.com/api/?name=${data.name}&background=random`;
-            document.getElementById('viewProfName').innerText = data.name;
-            document.getElementById('viewProfBio').innerText = data.bio || "No Bio.";
-            document.getElementById('viewProfID').innerText = "ID: " + idToView;
-
-            if(isSelf) {
-                document.getElementById('editFields').style.display = 'block';
-                document.getElementById('editName').value = data.name;
-                document.getElementById('editBio').value = data.bio || "";
-                document.getElementById('btnChatHim').style.display = 'none';
-            } else {
-                document.getElementById('editFields').style.display = 'none';
-                document.getElementById('btnChatHim').style.display = 'block';
-                document.getElementById('btnChatHim').onclick = () => { closeModal(); openChat(idToView, data.name, data.photo); };
-            }
-            openModal('modalProfile');
-        };
-
-        window.saveProfileAction = () => {
-            const name = document.getElementById('editName').value;
-            const bio = document.getElementById('editBio').value;
-            const updateData = { name, bio, id: myID };
-            if(tempBase64) updateData.photo = tempBase64;
-            else {
-                // Pertahankan foto lama jika tidak ganti
-                get(ref(db, `users/${myID}/profile/photo`)).then(s => {
-                    if(s.exists()) updateData.photo = s.val();
-                    set(ref(db, `users/${myID}/profile`), updateData);
-                });
-            }
-            set(ref(db, `users/${myID}/profile`), updateData);
-            alert("Profil diperbarui!");
-            closeModal();
-        };
-
-        // --- CONTACT LOGIC ---
-        window.addFriendAction = async () => {
-            const tid = document.getElementById('inputTargetID').value.trim();
-            if(!tid || tid === myID) return alert("ID Tidak Valid!");
-            
-            const snap = await get(ref(db, `users/${tid}/profile`));
+        // --- PROFIL SAYA ---
+        window.openMyProfile = async () => {
+            const snap = await get(ref(db, `users/${myID}/profile`));
             if(snap.exists()) {
-                set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid });
-                alert("Kontak Berhasil Ditambahkan!");
-                closeModal();
-            } else {
-                alert("ID Tidak Ditemukan!");
+                const d = snap.val();
+                document.getElementById('myProfName').value = d.name;
+                document.getElementById('myProfBio').value = d.bio || "";
+                if(d.photo) document.getElementById('myProfImg').src = d.photo;
             }
+            window.openModal('modalProfile');
         };
 
+        window.saveProfile = () => {
+            const name = document.getElementById('myProfName').value || myID;
+            const bio = document.getElementById('myProfBio').value;
+            const data = { name, bio, id: myID };
+            
+            // Cek jika foto diganti
+            if(tempBase64 !== "") data.photo = tempBase64;
+            else data.photo = document.getElementById('myProfImg').src.includes("ui-avatars") ? "" : document.getElementById('myProfImg').src;
+
+            set(ref(db, `users/${myID}/profile`), data);
+            alert("Profil berhasil disimpan!");
+            window.closeModal();
+        };
+
+        // --- PROFIL ORANG LAIN ---
+        window.seeTargetProfile = async () => {
+            if(!activeChatID) return;
+            const snap = await get(ref(db, `users/${activeChatID}/profile`));
+            const d = snap.val() || { name: activeChatID, bio: "-", photo: "" };
+            
+            document.getElementById('viewImg').src = d.photo || `https://ui-avatars.com/api/?name=${d.name}`;
+            document.getElementById('viewName').innerText = d.name;
+            document.getElementById('viewID').innerText = "ID: " + activeChatID;
+            document.getElementById('viewBio').innerText = d.bio || "Tidak ada bio.";
+            window.openModal('modalViewProfile');
+        };
+
+        // --- KONTAK ---
+        window.addContact = async () => {
+            const tid = document.getElementById('targetID').value.trim();
+            if(!tid || tid === myID) return alert("ID tidak valid!");
+            
+            // Simpan langsung, jika target belum buka app, profilnya mungkin kosong tapi tetap bisa dichat
+            set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid });
+            alert("Kontak ditambahkan!");
+            window.closeModal();
+        };
+
+        window.deleteContact = (id) => {
+            if(confirm("Hapus kontak?")) remove(ref(db, `users/${myID}/contacts/${id}`));
+        };
+
+        // Render Kontak & Obrolan Terbaru
         onValue(ref(db, `users/${myID}/contacts`), (snap) => {
-            const container = document.getElementById('contactList');
-            container.innerHTML = "";
+            const cList = document.getElementById('contactList');
+            const rList = document.getElementById('recentChatsList');
+            cList.innerHTML = ""; rList.innerHTML = "";
+            
             snap.forEach(child => {
                 const cid = child.key;
                 onValue(ref(db, `users/${cid}/profile`), (pSnap) => {
                     const p = pSnap.val() || { name: cid, photo: "" };
                     const img = p.photo || `https://ui-avatars.com/api/?name=${p.name}`;
-                    container.innerHTML += `
+                    
+                    const htmlContact = `
                         <div class="list-card">
-                            <img src="${img}" class="avatar" onclick="openProfile(false, '${cid}')">
-                            <div style="flex:1" onclick="openChat('${cid}', '${p.name}', '${p.photo}')">
+                            <img src="${img}" class="avatar" onclick="window.openChat('${cid}', '${p.name}', '${img}')">
+                            <div style="flex:1" onclick="window.openChat('${cid}', '${p.name}', '${img}')">
                                 <strong>${p.name}</strong><br><small style="color:var(--text-dim)">${cid}</small>
                             </div>
-                            <i class="fas fa-trash" style="color:#ff4d4d" onclick="deleteContact('${cid}')"></i>
+                            <i class="fas fa-trash" style="color:#ef4444;" onclick="window.deleteContact('${cid}')"></i>
                         </div>`;
+                    cList.innerHTML += htmlContact;
+
+                    const htmlRecent = `
+                        <div class="list-card" onclick="window.openChat('${cid}', '${p.name}', '${img}')">
+                            <img src="${img}" class="avatar">
+                            <div><strong>${p.name}</strong><br><small style="color:var(--text-dim)">Ketuk untuk membuka chat</small></div>
+                        </div>`;
+                    rList.innerHTML += htmlRecent;
                 });
             });
         });
 
-        window.deleteContact = (id) => {
-            if(confirm("Hapus kontak ini?")) remove(ref(db, `users/${myID}/contacts/${id}`));
+        // --- STORY (SW) ---
+        window.postSW = () => {
+            if(!tempBase64) return;
+            const newSWRef = push(ref(db, 'stories'));
+            set(newSWRef, { id: newSWRef.key, img: tempBase64, owner: myID, time: Date.now() });
+            tempBase64 = "";
+            alert("Status terkirim!");
         };
 
-        // --- STATUS LOGIC ---
-        window.triggerSWUpload = () => document.getElementById('fileSW').click();
+        // Render Story Horizontal
+        onValue(ref(db, 'stories'), (snap) => {
+            const row = document.getElementById('storyRow');
+            // Hapus isi selain tombol Tambah
+            const addBtn = row.firstElementChild.outerHTML;
+            row.innerHTML = addBtn;
 
-        function uploadSW() {
-            if(!tempBase64) return;
-            push(ref(db, `stories`), { img: tempBase64, owner: myID, time: Date.now() });
-            alert("Status Terkirim!");
-            tempBase64 = "";
-        }
-
-        onValue(ref(db, `stories`), (snap) => {
-            const container = document.getElementById('statusList');
-            container.innerHTML = "";
             snap.forEach(child => {
                 const s = child.val();
-                if(Date.now() - s.time < 86400000) {
-                    container.innerHTML += `
-                        <div class="list-card" onclick="viewSW('${s.img}', '${s.owner}')">
-                            <img src="${s.img}" class="avatar online-ring">
-                            <div><strong>${s.owner}</strong><br><small>Baru saja</small></div>
-                        </div>`;
+                if(Date.now() - s.time < 86400000) { // Hanya 24 jam terakhir
+                    get(ref(db, `users/${s.owner}/profile`)).then(pSnap => {
+                        const p = pSnap.val() || { name: s.owner, photo: "" };
+                        const thumb = p.photo || `https://ui-avatars.com/api/?name=${p.name}`;
+                        
+                        // Cek jika kita sudah melihatnya
+                        const viewsCount = s.views ? Object.keys(s.views).length : 0;
+                        const isMine = s.owner === myID;
+                        const label = isMine ? "Anda" : p.name.split(" ")[0];
+
+                        row.innerHTML += `
+                            <div class="story-item" onclick="window.openSW('${s.id}', '${s.img}', '${s.owner}', '${p.name}')">
+                                <img src="${thumb}" class="story-avatar" style="${isMine ? 'border-color:gray' : ''}">
+                                <small style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60px;">${label}</small>
+                            </div>
+                        `;
+                    });
                 }
             });
         });
 
+        // Buka Story, Tambah Views, dan Siapkan Reply
+        window.openSW = (swID, img, ownerID, ownerName) => {
+            document.getElementById('swImgDisplay').src = img;
+            document.getElementById('swOwnerName').innerText = ownerName;
+            
+            // Catat data story aktif
+            activeSWData = { swID, ownerID };
+
+            // Atur input balas (sembunyikan jika story kita sendiri)
+            const replyArea = document.getElementById('swReplyArea');
+            if(ownerID === myID) {
+                replyArea.style.display = 'none';
+            } else {
+                replyArea.style.display = 'flex';
+                // Tambah ke viewer
+                update(ref(db, `stories/${swID}/views`), { [myID]: true });
+            }
+
+            // Realtime hitung views
+            onValue(ref(db, `stories/${swID}/views`), (vSnap) => {
+                document.getElementById('swViewsCount').innerText = vSnap.exists() ? Object.keys(vSnap.val()).length : 0;
+            });
+
+            document.getElementById('swViewer').style.display = 'flex';
+        };
+
+        window.closeSW = () => { document.getElementById('swViewer').style.display = 'none'; activeSWData = null; };
+
+        // Balas Story
+        window.sendReplySW = () => {
+            const inp = document.getElementById('swReplyInput');
+            if(!inp.value || !activeSWData) return;
+            
+            const chatID = [myID, activeSWData.ownerID].sort().join("_");
+            push(ref(db, `chats/${chatID}`), { 
+                from: myID, 
+                text: "📸 *Membalas Status:* " + inp.value, 
+                time: Date.now() 
+            });
+            
+            inp.value = "";
+            alert("Balasan dikirim!");
+            window.closeSW();
+            // Otomatis buka chat
+            window.openChat(activeSWData.ownerID, document.getElementById('swOwnerName').innerText, "");
+        };
+
         // --- CHAT LOGIC ---
         window.openChat = (id, name, img) => {
             activeChatID = id;
-            document.getElementById('activeChatName').innerText = name;
-            document.getElementById('activeChatAvatar').src = img || `https://ui-avatars.com/api/?name=${name}`;
+            document.getElementById('chatHeaderName').innerText = name;
+            document.getElementById('chatHeaderImg').src = img || `https://ui-avatars.com/api/?name=${name}`;
             document.getElementById('chatPanel').classList.add('open');
             
             const chatID = [myID, id].sort().join("_");
             onValue(ref(db, `chats/${chatID}`), (snap) => {
-                const area = document.getElementById('messageArea');
+                const area = document.getElementById('msgArea');
                 area.innerHTML = "";
                 snap.forEach(m => {
                     const d = m.val();
                     const cls = d.from === myID ? 'me' : 'them';
                     area.innerHTML += `<div class="bubble ${cls}">${d.text}</div>`;
                 });
-                area.scrollTop = area.scrollHeight;
+                area.scrollTop = area.scrollHeight; // Scroll ke bawah
             });
         };
 
-        window.closeChat = () => document.getElementById('chatPanel').classList.remove('open');
+        window.closeChat = () => { document.getElementById('chatPanel').classList.remove('open'); activeChatID = null; };
 
-        window.sendMessage = () => {
+        window.sendChatMsg = () => {
             const inp = document.getElementById('msgInput');
             if(!inp.value || !activeChatID) return;
             const chatID = [myID, activeChatID].sort().join("_");
             push(ref(db, `chats/${chatID}`), { from: myID, text: inp.value, time: Date.now() });
             inp.value = "";
         };
-
-        window.viewTargetProfile = () => {
-            if(activeChatID) openProfile(false, activeChatID);
-        };
-        
-        // Tab Chat List (Recent)
-        onValue(ref(db, `chats`), (snap) => {
-            const list = document.getElementById('chatList');
-            list.innerHTML = "";
-            snap.forEach(child => {
-                if(child.key.includes(myID)) {
-                    const parts = child.key.split("_");
-                    const targetID = parts[0] === myID ? parts[1] : parts[0];
-                    get(ref(db, `users/${targetID}/profile`)).then(pSnap => {
-                        const p = pSnap.val() || { name: targetID, photo: "" };
-                        list.innerHTML += `
-                            <div class="list-card" onclick="openChat('${targetID}', '${p.name}', '${p.photo}')">
-                                <img src="${p.photo || `https://ui-avatars.com/api/?name=${p.name}`}" class="avatar">
-                                <div><strong>${p.name}</strong><br><small style="color:var(--text-dim)">Ketuk untuk lanjut chat</small></div>
-                            </div>`;
-                    });
-                }
-            });
-        });
 
     </script>
 </body>
