@@ -766,57 +766,125 @@ input[type="text"]:focus, textarea:focus {
         send: () => {
             const inp = document.getElementById('msgIn');
             if(!inp.value.trim() || !activeTarget) return;
-            
-            const room = [myID, activeTarget].sort().join("_");
-            const newMsg = {
-                from: myID,
-                text: inp.value,
-                time: serverTimestamp(),
-                status: 'sent'
-            };
+            <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue, get, update, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-            push(ref(db, `chats/${room}`), newMsg);
-            // Tambahkan ke kontak otomatis agar muncul di list chat
-            update(ref(db, `users/${myID}/contacts/${activeTarget}`), { lastInteraction: serverTimestamp() });
-            update(ref(db, `users/${activeTarget}/contacts/${myID}`), { lastInteraction: serverTimestamp() });
+    const firebaseConfig = {
+        apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+        authDomain: "mybro-9ba5f.firebaseapp.com",
+        databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+        projectId: "mybro-9ba5f"
+    };
+
+    const app_fire = initializeApp(firebaseConfig);
+    const db = getDatabase(app_fire);
+
+    // --- INISIALISASI USER & NOTIFIKASI ---
+    let myID = localStorage.getItem('mybro_id');
+    if(!myID) {
+        myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
+        localStorage.setItem('mybro_id', myID);
+        set(ref(db, `users/${myID}/profile`), { 
+            id: myID, name: "User " + myID.split('-')[1], pfp: "", bio: "Hey!", status: "online" 
+        });
+    }
+    document.getElementById('displayID').innerText = myID;
+
+    // Registrasi Service Worker untuk Notifikasi Sistem
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+    }
+
+    const appStartTime = Date.now();
+    const notifiedMessages = new Set();
+    let activeTarget = null;
+    let pfpBase64 = "";
+
+    // --- UTILS ---
+    const formatTime = (ts) => {
+        if(!ts) return "";
+        const d = new Date(ts);
+        return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
+    };
+
+    window.showToast = (msg) => {
+        let t = document.getElementById('toast') || document.createElement('div');
+        t.id = 'toast'; t.className = 'toast-msg show'; t.innerText = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.classList.remove('show'), 3000);
+    };
+
+    // --- CORE APP ---
+    window.app = {
+        handlePfp: (input) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(input.files[0]);
+            reader.onload = () => { pfpBase64 = reader.result; document.getElementById('pfpEdit').src = pfpBase64; };
+        },
+        updateProfile: () => {
+            const up = { name: document.getElementById('editName').value, bio: document.getElementById('editBio').value };
+            if(pfpBase64) up.pfp = pfpBase64;
+            update(ref(db, `users/${myID}/profile`), up).then(() => {
+                window.showToast("Profil Disimpan!");
+                toggleOverlay('popProfile', false);
+            });
+        },
+        openChat: (id, name, pfp) => {
+            activeTarget = id;
+            document.getElementById('chatName').innerText = name;
+            document.getElementById('chatPfp').src = pfp;
+            document.getElementById('chatPanel').classList.add('active');
             
+            const room = [myID, id].sort().join("_");
+            onValue(ref(db, `chats/${room}`), (snap) => {
+                const area = document.getElementById('msgArea');
+                area.innerHTML = "";
+                snap.forEach(child => {
+                    const m = child.val();
+                    if(m.from !== myID && m.status !== 'read') update(ref(db, `chats/${room}/${child.key}`), { status: 'read' });
+                    area.innerHTML += `<div class="bubble ${m.from === myID ? 'sent' : 'received'}">${m.text}<div class="msg-meta">${formatTime(m.time)}</div></div>`;
+                });
+                area.scrollTop = area.scrollHeight;
+            });
+        },
+        send: () => {
+            const inp = document.getElementById('msgIn');
+            if(!inp.value || !activeTarget) return;
+            const room = [myID, activeTarget].sort().join("_");
+            push(ref(db, `chats/${room}`), { from: myID, text: inp.value, time: serverTimestamp(), status: 'sent' });
             inp.value = "";
         }
     };
 
-    // --- GLOBAL CHAT WATCHER (Munculkan chat dari siapapun) ---
+    // --- WATCHER CHAT (ANTI-DUPLIKAT) ---
     onValue(ref(db, `chats`), (allChats) => {
         const listArea = document.getElementById('chatList');
-        listArea.innerHTML = ""; // Clear list
+        const tempItems = {};
 
         allChats.forEach(room => {
             if(room.key.includes(myID)) {
-                const targetID = room.key.replace(myID, "").replace("_", "");
-                
-                // Ambil data profil target
-                get(ref(db, `users/${targetID}/profile`)).then(pSnap => {
-                    const p = pSnap.val() || { name: targetID, pfp: "" };
+                const tid = room.key.replace(myID, "").replace("_", "");
+                get(ref(db, `users/${tid}/profile`)).then(pSnap => {
+                    const p = pSnap.val() || { name: tid };
                     const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}`;
-                    
-                    // Ambil pesan terakhir
-                    let lastMsg = { text: "...", time: 0 };
+                    let lastMsg = { text: "", time: 0, from: "" };
                     room.forEach(m => { lastMsg = m.val(); });
 
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `
-                        <img src="${pfp}" class="pfp">
-                        <div class="card-info">
-                            <div class="card-header-flex">
-                                <div class="card-name">${p.name}</div>
-                                <div class="card-time">${formatTime(lastMsg.time)}</div>
-                            </div>
-                            <div class="card-msg">${lastMsg.text}</div>
-                        </div>`;
-                    card.onclick = () => window.app.openChat(targetID, p.name, pfp);
-                    listArea.appendChild(card);
+                    tempItems[tid] = { name: p.name, pfp: pfp, text: lastMsg.text, time: lastMsg.time };
+                    
+                    // Render List
+                    listArea.innerHTML = "";
+                    Object.keys(tempItems).sort((a,b) => tempItems[b].time - tempItems[a].time).forEach(id => {
+                        const d = tempItems[id];
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.innerHTML = `<img src="${d.pfp}" class="pfp"><div class="card-info"><div class="card-header-flex"><div class="card-name">${d.name}</div><div class="card-time">${formatTime(d.time)}</div></div><div class="card-msg">${d.text}</div></div>`;
+                        card.onclick = () => window.app.openChat(id, d.name, d.pfp);
+                        listArea.appendChild(card);
+                    });
 
-                    // LOGIKA NOTIFIKASI SISTEM (Push)
+                    // Notifikasi Sistem
                     if(lastMsg.from !== myID && lastMsg.time > appStartTime && !notifiedMessages.has(lastMsg.time)) {
                         notifiedMessages.add(lastMsg.time);
                         if(Notification.permission === "granted") {
@@ -828,10 +896,37 @@ input[type="text"]:focus, textarea:focus {
         });
     });
 
-    // --- BAN CHECK ---
+    // --- LOGIKA BANNED (TAMPILAN BARU) ---
     onValue(ref(db, `users/${myID}/isBanned`), snap => {
         if(snap.val() === true) {
-            document.body.innerHTML = "<div style='color:white; text-align:center; margin-top:50px;'><h2>Akun Anda Ditangguhkan</h2></div>";
+            document.body.innerHTML = `
+                <div style="height:100dvh; background:#0f172a; display:flex; align-items:center; justify-content:center; padding:20px; font-family:sans-serif;">
+                    <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px); padding:30px; border-radius:24px; text-align:center; max-width:400px; width:100%; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
+                        <div style="width:80px; height:80px; background:#ef4444; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+                            <i class="fas fa-user-slash" style="color:white; font-size:30px;"></i>
+                        </div>
+                        <h2 style="color:white; margin-bottom:10px; font-size:1.5rem;">Akses Ditangguhkan</h2>
+                        <p style="color:#94a3b8; font-size:0.9rem; line-height:1.5; margin-bottom:25px;">Akun <b>${myID}</b> telah diblokir karena melanggar ketentuan komunitas kami.</p>
+                        <textarea id="apMsg" placeholder="Tulis alasan banding kamu..." style="width:100%; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px; color:white; font-size:0.9rem; height:100px; outline:none; margin-bottom:15px;"></textarea>
+                        <button id="sendAppeal" style="width:100%; padding:14px; background:#ef4444; color:white; border:none; border-radius:12px; font-weight:600; cursor:pointer; transition:0.3s;">Kirim Banding</button>
+                        <p style="color:#64748b; font-size:0.75rem; margin-top:20px;">ID Perangkat: ${myID}</p>
+                    </div>
+                </div>`;
+            
+            document.getElementById('sendAppeal').onclick = () => {
+                const msg = document.getElementById('apMsg').value;
+                if(!msg) return alert("Alasan tidak boleh kosong");
+                update(ref(db, `users/${myID}`), { appealMessage: msg, appealStatus: 'pending' });
+                alert("Banding telah dikirim. Mohon tunggu proses peninjauan.");
+            };
+        }
+    });
+
+    // --- PRESENCE ---
+    onValue(ref(db, '.info/connected'), (s) => {
+        if(s.val() === true) {
+            set(ref(db, `users/${myID}/profile/status`), 'online');
+            onDisconnect(ref(db, `users/${myID}/profile/status`)).set('offline');
         }
     });
 
