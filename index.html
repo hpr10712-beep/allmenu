@@ -910,44 +910,101 @@ onValue(ref(db, `chats/${room}`), (msgSnap) => {
                             let hasStory = false; const now = Date.now();
                             if(storySnap.exists()) storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
 
-                            const htmlChat = `
-                                <div class="pfp-wrap ${hasStory ? 'has-story' : ''}"><img src="${pfp}" class="pfp"></div>
-                                <div class="card-info">
-                                    <div class="card-header-flex"><div class="card-name">${p.name}</div><div class="card-time">${lastTime}</div></div>
-                                    <div class="card-msg">${tickHTML} ${lastMsgText}</div>
-                                </div>
-                                ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
-                            `;
+                                  onValue(ref(db, `users/${myID}/contacts`), (snap) => {
+            const cList = document.getElementById('contactList'); 
+            const rList = document.getElementById('chatList'); 
+            const sList = document.getElementById('storyList'); 
+            const aList = document.getElementById('archivedList');
+            
+            cList.innerHTML = ""; 
+            unreadCountGlobal = 0;
+
+            snap.forEach(child => {
+                const cid = child.key; 
+                const isArchived = child.val().archived;
+                const room = [myID, cid].sort().join("_");
+                
+                onValue(ref(db, `users/${cid}/profile`), (pSnap) => {
+                    const p = pSnap.val() || { name: cid, pfp: "" };
+                    const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}&background=1e293b&color=fff`;
+
+                    // FIX: Pindahkan listener pesan ke sini agar variabel 'p' dan 'pfp' terbaca
+                    onValue(ref(db, `chats/${room}`), (msgSnap) => {
+                        let lastMsgObj = null, unreadCount = 0;
+                        
+                        msgSnap.forEach(m => {
+                            lastMsgObj = m.val();
+                            const msgKey = m.key;
                             
-                            let existingCard = document.getElementById(`chat-${cid}`);
-                            if(existingCard) {
-                                existingCard.innerHTML = htmlChat;
-                                if(isArchived) aList.appendChild(existingCard); else rList.appendChild(existingCard);
-                            } else {
-                                const rCard = document.createElement('div'); rCard.className = 'card'; rCard.id = `chat-${cid}`;
-                                rCard.innerHTML = htmlChat; rCard.onclick = () => window.app.openChat(cid, p.name, pfp);
-                                if(isArchived) aList.appendChild(rCard); else rList.appendChild(rCard);
-                            }
-
-                            // Show/Hide Archive Banner
-                            const archBtn = document.getElementById('archivedBtn');
-                            if(aList.children.length > 0) { archBtn.style.display = 'flex'; document.getElementById('archivedCount').innerText = aList.children.length; } 
-                            else { archBtn.style.display = 'none'; aList.style.display = 'none'; }
-
-                            // Update Stories List
-                            if(hasStory) {
-                                let sCard = document.getElementById(`story-${cid}`);
-                                if(!sCard) {
-                                    sCard = document.createElement('div'); sCard.className = 'card'; sCard.id = `story-${cid}`;
-                                    sCard.innerHTML = `<div class="pfp-wrap has-story"><img src="${pfp}" class="pfp"></div><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">Pembaruan baru</div></div>`;
-                                    sCard.onclick = () => window.app.openStory(cid, p.name, pfp, false); sList.appendChild(sCard);
+                            if(lastMsgObj.from !== myID) {
+                                if(lastMsgObj.status === 'sent') {
+                                    update(ref(db, `chats/${room}/${msgKey}`), { status: 'delivered' });
+                                }
+                                
+                                if(lastMsgObj.status !== 'read') {
+                                    unreadCount++;
+                                    if(lastMsgObj.time > appStartTime && !notifiedMessages.has(msgKey) && activeTarget !== cid) {
+                                        notifiedMessages.add(msgKey);
+                                        let notifText = lastMsgObj.text || "Mengirim media";
+                                        window.showFloatingNotif(p.name, notifText, pfp, cid);
+                                    }
                                 }
                             }
                         });
+
+                        let lastMsgText = "Mulai obrolan", lastTime = "", tickHTML = "";
+                        if(lastMsgObj) {
+                            if(lastMsgObj.type === 'image') lastMsgText = '📷 Foto';
+                            else if(lastMsgObj.type === 'video') lastMsgText = '🎥 Video';
+                            else if(lastMsgObj.type === 'file') lastMsgText = '📄 Dokumen';
+                            else lastMsgText = lastMsgObj.text;
+                            
+                            lastTime = formatTime(lastMsgObj.time);
+                            if(lastMsgObj.from === myID) {
+                                if (lastMsgObj.status === 'read') tickHTML = `<i class="fas fa-check-double tick tick-read"></i>`;
+                                else if (lastMsgObj.status === 'delivered') tickHTML = `<i class="fas fa-check-double tick tick-sent"></i>`;
+                                else tickHTML = `<i class="fas fa-check tick tick-sent"></i>`;
+                            }
+                        }
+
+                        // Update UI List Chat
+                        const htmlChat = `
+                            <div class="pfp-wrap" id="sw-${cid}"><img src="${pfp}" class="pfp"></div>
+                            <div class="card-info">
+                                <div class="card-header-flex"><div class="card-name">${p.name}</div><div class="card-time">${lastTime}</div></div>
+                                <div class="card-msg">${tickHTML} ${lastMsgText}</div>
+                            </div>
+                            ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
+                        `;
+
+                        let existingCard = document.getElementById(`chat-${cid}`);
+                        if(!existingCard) {
+                            existingCard = document.createElement('div');
+                            existingCard.className = 'card';
+                            existingCard.id = `chat-${cid}`;
+                            existingCard.onclick = () => window.app.openChat(cid, p.name, pfp);
+                        }
+                        existingCard.innerHTML = htmlChat;
+                        if(isArchived) aList.appendChild(existingCard); else rList.appendChild(existingCard);
+
+                        // Cek Story untuk lingkaran profil
+                        get(ref(db, `stories/${cid}`)).then(storySnap => {
+                            const now = Date.now(); let hasStory = false;
+                            if(storySnap.exists()) storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
+                            if(hasStory) document.getElementById(`sw-${cid}`)?.classList.add('has-story');
+                        });
                     });
+
+                    // Tambah ke daftar kontak
+                    const cCard = document.createElement('div'); 
+                    cCard.className = 'card';
+                    cCard.innerHTML = `<img src="${pfp}" class="pfp" style="width:45px;height:45px"><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">${p.bio}</div></div>`;
+                    cCard.onclick = () => window.app.openChat(cid, p.name, pfp); 
+                    cList.appendChild(cCard);
                 });
             });
-        }); 
+        });
+
                 // ... kode-kode sebelumnya ...
 
         // 1. Letakkan di sini (di luar objek window.app)
