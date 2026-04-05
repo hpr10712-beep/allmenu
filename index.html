@@ -507,78 +507,7 @@ input[type="text"]:focus, textarea:focus {
                         else if(pinnedMsg.type === 'file') pinText = '📄 Dokumen';
                         document.getElementById('pinnedMsgText').innerText = pinText;
                     } else {
-                        pinContainer.style.display = 'none';
-                    }
-                });
-            },
-            closeChat: () => { document.getElementById('chatPanel').classList.remove('active'); activeTarget = null; },
-            send: (customText = null, mediaData = null, type = 'text', fileName = '') => {
-                const inp = document.getElementById('msgIn');
-                const text = customText !== null ? customText : inp.value;
-                if((!text && !mediaData) || !activeTarget) return;
-                
-                const room = [myID, activeTarget].sort().join("_");
-                push(ref(db, `chats/${room}`), { 
-                    from: myID, text: text, time: Date.now(), status: 'sent', 
-                    type: type, media: mediaData || "", fileName: fileName, pinned: false
-                });
-                inp.value = "";
-            },
-            sendMedia: (input) => {
-                const file = input.files[0]; if(!file) return;
-                if(file.size > 3 * 1024 * 1024) return alert("Batas ukuran file 3MB untuk demo Base64 ini.");
-                
-                let type = 'file';
-                if(file.type.startsWith('image/')) type = 'image';
-                if(file.type.startsWith('video/')) type = 'video';
-
-                const reader = new FileReader(); reader.readAsDataURL(file);
-                reader.onload = () => { window.app.send("", reader.result, type, file.name); }
-            },
-
-            // --- MENU MESSAGE LOGIC ---
-            msgMenu: (msgId, isPinned, e) => {
-                e.preventDefault();
-                selectedMsgId = msgId; isSelectedMsgPinned = isPinned;
-                document.getElementById('pinMenuText').innerHTML = isPinned ? `<i class="fas fa-thumbtack"></i> Lepas Sematan` : `<i class="fas fa-thumbtack"></i> Sematkan Pesan`;
-                toggleOverlay('msgOptionsMenu', true);
-            },
-            pinMessage: () => {
-                if(!selectedMsgId || !activeTarget) return;
-                const room = [myID, activeTarget].sort().join("_");
-                update(ref(db, `chats/${room}/${selectedMsgId}`), { pinned: !isSelectedMsgPinned });
-                toggleOverlay('msgOptionsMenu', false);
-            },
-            deleteMessage: () => {
-                if(!selectedMsgId || !activeTarget) return;
-                if(confirm("Hapus pesan ini?")) {
-                    const room = [myID, activeTarget].sort().join("_");
-                    set(ref(db, `chats/${room}/${selectedMsgId}`), null);
-                    toggleOverlay('msgOptionsMenu', false);
-                }
-            },
-            deleteChat: () => {
-                if(!activeTarget) return;
-                if(confirm("Hapus semua pesan di obrolan ini? (Kontak tidak akan terhapus)")) {
-                    const room = [myID, activeTarget].sort().join("_");
-                    set(ref(db, `chats/${room}`), null);
-                    toggleOverlay('chatOptionsMenu', false);
-                    window.app.closeChat();
-                }
-            },
-
-            // --- STORY SYSTEM ---
-            uploadStory: (input) => {
-                const file = input.files[0]; if(!file) return;
-                if(file.size > 3 * 1024 * 1024) return alert("Maksimal 3MB.");
-                const type = file.type.startsWith('video') ? 'video' : 'image';
-                const reader = new FileReader(); reader.readAsDataURL(file);
-                reader.onload = () => { push(ref(db, `stories/${myID}`), { media: reader.result, type: type, time: Date.now(), views: 0 }); window.showToast("Status Berhasil Diunggah!", "cloud-upload-alt"); }
-
-            },
-                        openStory: (userId, userName, userPfp, isMyStory) => {
-                viewingStoryOf = userId;
-                document.getElementById('svName').innerText = userName;
+  
         window.app = {
             handlePfp: (input) => {
                 const reader = new FileReader(); reader.readAsDataURL(input.files[0]);
