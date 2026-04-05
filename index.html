@@ -201,6 +201,15 @@ input[type="text"]:focus, textarea:focus {
     transform: translateX(-50%) translateY(0);
 }
 
+        /* Efek Glow Centang Biru Premium */
+.verified-badge {
+    color: #3b82f6; 
+    font-size: 0.9rem; 
+    margin-left: 5px;
+    filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.6));
+    vertical-align: middle;
+}
+
     
  </style>
 </head>
@@ -451,12 +460,14 @@ input[type="text"]:focus, textarea:focus {
             openChat: (id, name, pfp) => {
                 activeTarget = id;
                 // Ambil data verified secara real-time dari profil target
+// Di dalam window.app.openChat
 onValue(ref(db, `users/${id}/profile`), (vSnap) => {
     const pData = vSnap.val() || {};
     const isVerified = pData.isVerified || false;
-    document.getElementById('chatName').innerHTML = `
-        ${name} ${isVerified ? '<i class="fas fa-check-circle" style="color:#3b82f6; font-size:0.9rem; margin-left:4px;"></i>' : ''}
-    `;
+    const badge = isVerified ? `<i class="fas fa-check-circle verified-badge"></i>` : '';
+    
+    // Gunakan innerHTML supaya tag <i> dirender jadi ikon
+    document.getElementById('chatName').innerHTML = `${name} ${badge}`;
 });
 
 document.getElementById('chatPfp').src = pfp;
@@ -787,18 +798,18 @@ document.getElementById('vProfileName').innerHTML = `
                             if(storySnap.exists()) storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
 
                             // Pastikan variabel 'p' sudah berisi data profil (termasuk isVerified)
-// Cek apakah user tersebut verified
-const verifiedIcon = p.isVerified ? '<i class="fas fa-check-circle" style="color:#3b82f6; font-size:0.85rem; margin-left:4px;"></i>' : '';
-
-// Cek status verified dari data profil 'p'
+// Ambil status verified dari profil 'p'
 const isVerified = p.isVerified || false;
+const badge = isVerified ? `<i class="fas fa-check-circle verified-badge"></i>` : '';
 
 const htmlChat = `
-    <div class="pfp-wrap ${hasStory ? 'has-story' : ''}"><img src="${pfp}" class="pfp"></div>
+    <div class="pfp-wrap ${hasStory ? 'has-story' : ''}">
+        <img src="${pfp}" class="pfp">
+    </div>
     <div class="card-info">
         <div class="card-header-flex">
             <div class="card-name">
-                ${p.name} ${isVerified ? '<i class="fas fa-check-circle" style="color:#3b82f6; font-size:0.85rem; margin-left:3px;"></i>' : ''}
+                ${p.name} ${badge}
             </div>
             <div class="card-time">${lastTime}</div>
         </div>
@@ -806,6 +817,7 @@ const htmlChat = `
     </div>
     ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
 `;
+
 
 
                             
