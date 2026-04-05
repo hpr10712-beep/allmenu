@@ -201,38 +201,13 @@ input[type="text"]:focus, textarea:focus {
     transform: translateX(-50%) translateY(0);
 }
 
-    /* FLOATING NOTIFICATION */
-.floating-notif {
-    position: fixed;
-    top: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(30, 41, 59, 0.95);
-    backdrop-filter: blur(15px);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--accent);
-    padding: 12px 16px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    z-index: 9999;
-    transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    cursor: pointer;
-    width: 90%;
-    max-width: 400px;
-}
-.floating-notif.show {
-    top: calc(15px + var(--safe-top));
-}
-
+    
  </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">Talk<span>Sky</span></div>
+        <div class="logo">My<span>Bro</span></div>
         <div class="my-id-tag" id="displayID" onclick="copyID()">ID: ...</div>
     </header>
 
@@ -345,8 +320,7 @@ input[type="text"]:focus, textarea:focus {
             <img id="chatPfp" src="" class="pfp" style="width:40px; height:40px;">
             <div style="flex:1">
                 <div id="chatName" style="font-weight:600; font-size:1rem;">...</div>
-                <div id="chatStatus" style="font-size:0.75rem; color:var(--accent);">Menghubungkan...</div>
-
+                <div style="font-size:0.75rem; color:var(--accent);">Online</div>
             </div>
             <i class="fas fa-ellipsis-v" id="chatMenuBtn" onclick="toggleOverlay('chatOptionsMenu', true)" style="cursor:pointer; padding:5px 10px; font-size:1.2rem;"></i>
         </div>
@@ -402,536 +376,582 @@ input[type="text"]:focus, textarea:focus {
             <button class="btn-fill" onclick="window.app.updateProfile()">Simpan</button>
         </div>
     </div>
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, push, onValue, get, update, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
-        authDomain: "mybro-9ba5f.firebaseapp.com",
-        databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
-        projectId: "mybro-9ba5f"
-    };
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue, get, update, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    const app_fire = initializeApp(firebaseConfig);
-    const db = getDatabase(app_fire);
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+            authDomain: "mybro-9ba5f.firebaseapp.com",
+            databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+            projectId: "mybro-9ba5f"
+        };
+        const app_fire = initializeApp(firebaseConfig);
+        const db = getDatabase(app_fire);
 
-    if ("Notification" in window) { Notification.requestPermission(); }
+        if ("Notification" in window) { Notification.requestPermission(); }
 
-    let myID = localStorage.getItem('mybro_id');
-    if(!myID) {
-        myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
-        localStorage.setItem('mybro_id', myID);
-        set(ref(db, `users/${myID}/profile`), { id: myID, name: "User " + myID.split('-')[1], pfp: "", bio: "Hey ada di MyBro!" });
-    }
-    document.getElementById('displayID').innerText = myID;
-
-    const appStartTime = Date.now();
-    const notifiedMessages = new Set();
-    let activeTarget = null;
-    let pfpBase64 = "";
-    let currentStoryQueue = [], currentStoryIndex = 0, storyTimer, viewingStoryOf = null;
-    let selectedMsgId = null; 
-    let isSelectedMsgPinned = false;
-
-    // --- UTILS ---
-    window.showToast = (message, icon = 'check-circle') => {
-        let toast = document.querySelector('.toast-msg');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.className = 'toast-msg';
-            document.body.appendChild(toast);
+        let myID = localStorage.getItem('mybro_id');
+        if(!myID) {
+            myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
+            localStorage.setItem('mybro_id', myID);
+            set(ref(db, `users/${myID}/profile`), { id: myID, name: "User " + myID.split('-')[1], pfp: "", bio: "Hey ada di MyBro!" });
         }
-        toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
-        setTimeout(() => toast.classList.add('show'), 10);
-        setTimeout(() => toast.classList.remove('show'), 3000);
-    };
+        document.getElementById('displayID').innerText = myID;
 
-    const formatTime = (ts) => {
-        if(!ts) return "";
-        const d = new Date(ts);
-        return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
-    };
+        let activeTarget = null;
+        let pfpBase64 = "";
+        let currentStoryQueue = [], currentStoryIndex = 0, storyTimer, viewingStoryOf = null;
+        let unreadCountGlobal = 0;
+        let selectedMsgId = null; 
+        let isSelectedMsgPinned = false;
 
-    const formatLastSeen = (ts) => {
-        if(!ts) return "";
-        const d = new Date(ts);
-        const today = new Date();
-        const isToday = d.getDate() === today.getDate() && d.getMonth() === today.getMonth();
-        return isToday ? "Hari ini " + formatTime(ts) : `${d.getDate()}/${d.getMonth()+1} ` + formatTime(ts);
-    };
-
-    window.showFloatingNotif = (name, text, pfp, targetId) => {
-        let notif = document.getElementById('inAppNotif');
-        if(!notif) {
-            notif = document.createElement('div');
-            notif.id = 'inAppNotif';
-            notif.className = 'floating-notif';
-            document.body.appendChild(notif);
+        window.showTab = (id, el) => {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
         }
-        notif.innerHTML = `<img src="${pfp}" style="width:45px;height:45px;border-radius:50%;object-fit:cover;"><div style="flex:1; overflow:hidden;"><div style="font-weight:600; font-size:0.95rem; color:white;">${name}</div><div style="font-size:0.85rem; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${text}</div></div>`;
-        notif.onclick = () => { window.app.openChat(targetId, name, pfp); notif.classList.remove('show'); };
-        notif.classList.add('show');
-        setTimeout(() => notif.classList.remove('show'), 4000);
-    };
-
-    window.showTab = (id, el) => {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        el.classList.add('active');
-    };
-    
-    window.toggleOverlay = (id, show) => { 
-        const el = document.getElementById(id); 
-        if(show) { el.classList.add('active'); el.style.display = 'flex'; } 
-        else { el.classList.remove('active'); setTimeout(() => el.style.display = 'none', 300); } 
-    };
-
-    window.closeOverlay = (e) => { if(e.target.classList.contains('overlay')) toggleOverlay(e.target.id, false); };
-    window.copyID = () => { navigator.clipboard.writeText(myID); window.showToast("ID Berhasil Disalin!", "copy"); };
-    window.toggleArchived = () => {
-        const list = document.getElementById('archivedList');
-        list.style.display = list.style.display === 'none' ? 'block' : 'none';
-    };
-
-    // --- PRESENCE SYSTEM ---
-    onValue(ref(db, '.info/connected'), (snap) => {
-        if (snap.val() === true && myID) {
-            set(ref(db, `users/${myID}/profile/status`), 'online');
-            onDisconnect(ref(db, `users/${myID}/profile/status`)).set('offline');
-            onDisconnect(ref(db, `users/${myID}/profile/lastSeen`)).set(serverTimestamp());
+        
+        window.toggleOverlay = (id, show) => { 
+            const el = document.getElementById(id); 
+            if(show) { el.classList.add('active'); el.style.display = 'flex'; } 
+            else { el.classList.remove('active'); setTimeout(() => el.style.display = 'none', 300); } 
         }
-    });
+        window.closeOverlay = (e) => { if(e.target.classList.contains('overlay')) toggleOverlay(e.target.id, false); }
+        window.copyID = () => { navigator.clipboard.writeText(myID); window.showToast("ID Berhasil Disalin!", "copy"); }
 
-    // --- CORE APP OBJECT ---
-    window.app = {
-        handlePfp: (input) => {
-            const reader = new FileReader(); reader.readAsDataURL(input.files[0]);
-            reader.onload = () => { pfpBase64 = reader.result; document.getElementById('pfpEdit').src = pfpBase64; }
-        },
-        updateProfile: () => {
-            const updates = { name: document.getElementById('editName').value, bio: document.getElementById('editBio').value };
-            if(pfpBase64) updates.pfp = pfpBase64; update(ref(db, `users/${myID}/profile`), updates); toggleOverlay('popProfile', false);
-        },
-        addFriend: () => {
-            const tid = document.getElementById('targetID').value.trim().toUpperCase();
-            if(!tid || tid === myID) return;
-            set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid, archived: false }); toggleOverlay('popAdd', false);
-        },
-        openChat: (id, name, pfp) => {
-            activeTarget = id;
-            document.getElementById('chatName').innerText = name; document.getElementById('chatPfp').src = pfp;
-            document.getElementById('chatPanel').classList.add('active');
-            
-            onValue(ref(db, `users/${id}/profile`), (pSnap) => {
-                const p = pSnap.val();
-                if(p) {
-                    const statEl = document.getElementById('chatStatus');
-                    statEl.innerText = p.status === 'online' ? "Online" : (p.lastSeen ? "Terakhir dilihat " + formatLastSeen(p.lastSeen) : "Offline");
-                    statEl.style.color = p.status === 'online' ? "var(--accent)" : "var(--text-dim)";
+        window.toggleArchived = () => {
+            const list = document.getElementById('archivedList');
+            list.style.display = list.style.display === 'none' ? 'block' : 'none';
+        }
+
+        const formatTime = (ts) => {
+            const d = new Date(ts);
+            return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
+        }
+
+        window.app = {
+            handlePfp: (input) => {
+                const reader = new FileReader(); reader.readAsDataURL(input.files[0]);
+                reader.onload = () => { pfpBase64 = reader.result; document.getElementById('pfpEdit').src = pfpBase64; }
+            },
+            updateProfile: () => {
+                const updates = { name: document.getElementById('editName').value, bio: document.getElementById('editBio').value };
+                if(pfpBase64) updates.pfp = pfpBase64; update(ref(db, `users/${myID}/profile`), updates); toggleOverlay('popProfile', false);
+            },
+            addFriend: () => {
+                const tid = document.getElementById('targetID').value.trim().toUpperCase();
+                if(!tid || tid === myID) return;
+                set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid }); toggleOverlay('popAdd', false);
+            },
+
+            // --- CHAT & MEDIA SYSTEM ---
+            openChat: (id, name, pfp) => {
+                activeTarget = id;
+                document.getElementById('chatName').innerText = name; document.getElementById('chatPfp').src = pfp;
+                document.getElementById('chatPanel').classList.add('active');
+                
+                // Set Archive Status for Menu
+                get(ref(db, `users/${myID}/contacts/${id}`)).then(snap => {
+                    const isArchived = snap.val()?.archived || false;
+                    const archBtn = document.getElementById('archiveMenuBtn');
+                    archBtn.innerHTML = isArchived ? `<i class="fas fa-box-open"></i> Buka Arsip` : `<i class="fas fa-archive"></i> Arsipkan Obrolan`;
+                    archBtn.onclick = () => {
+                        update(ref(db, `users/${myID}/contacts/${id}`), { archived: !isArchived });
+                        toggleOverlay('chatOptionsMenu', false);
+                        window.app.closeChat();
+                    };
+                });
+
+                const room = [myID, id].sort().join("_");
+                onValue(ref(db, `chats/${room}`), (snap) => {
+                    const area = document.getElementById('msgArea');
+                    area.innerHTML = "";
+                    let updates = {}; let hasUpdates = false;
+                    let pinnedMsg = null;
+
+                    snap.forEach(child => {
+                        const m = child.val();
+                        
+                        if(m.from !== myID && m.status !== 'read') { updates[`${child.key}/status`] = 'read'; hasUpdates = true; }
+                        if(m.pinned) pinnedMsg = m; // Ambil pesan tersemat terakhir
+
+                        let mediaHTML = "";
+                        if(m.type === 'image') mediaHTML = `<img src="${m.media}">`;
+                        else if(m.type === 'video') mediaHTML = `<video src="${m.media}" controls></video>`;
+                        else if(m.type === 'file') mediaHTML = `<div class="file-box"><i class="fas fa-file-alt fa-2x"></i> <div>${m.fileName || 'File'}<br><a href="${m.media}" download="${m.fileName || 'file'}" style="color:var(--accent); font-size:0.7rem;">Download</a></div></div>`;
+
+                        let tickHTML = "";
+                        if(m.from === myID) tickHTML = m.status === 'read' ? `<i class="fas fa-check-double tick tick-read"></i>` : `<i class="fas fa-check tick tick-sent"></i>`;
+
+                        area.innerHTML += `
+                            <div class="bubble ${m.from === myID ? 'sent' : 'received'}" id="msg-${child.key}" oncontextmenu="window.app.msgMenu('${child.key}', ${m.pinned || false}, event)">
+                                ${mediaHTML}
+                                ${m.text ? `<div>${m.text}</div>` : ''}
+                                <div class="msg-meta"><span>${formatTime(m.time)}</span> ${tickHTML}</div>
+                            </div>`;
+                    });
+                    
+                    if(hasUpdates) update(ref(db, `chats/${room}`), updates);
+                    area.scrollTop = area.scrollHeight;
+
+                    // Update Pinned Message UI
+                    const pinContainer = document.getElementById('pinnedMsgContainer');
+                    if(pinnedMsg) {
+                        pinContainer.style.display = 'block';
+                        let pinText = pinnedMsg.text;
+                        if(pinnedMsg.type === 'image') pinText = '📷 Foto';
+                        else if(pinnedMsg.type === 'video') pinText = '🎥 Video';
+                        else if(pinnedMsg.type === 'file') pinText = '📄 Dokumen';
+                        document.getElementById('pinnedMsgText').innerText = pinText;
+                    } else {
+                        pinContainer.style.display = 'none';
+                    }
+                });
+            },
+            closeChat: () => { document.getElementById('chatPanel').classList.remove('active'); activeTarget = null; },
+            send: (customText = null, mediaData = null, type = 'text', fileName = '') => {
+                const inp = document.getElementById('msgIn');
+                const text = customText !== null ? customText : inp.value;
+                if((!text && !mediaData) || !activeTarget) return;
+                
+                const room = [myID, activeTarget].sort().join("_");
+                push(ref(db, `chats/${room}`), { 
+                    from: myID, text: text, time: Date.now(), status: 'sent', 
+                    type: type, media: mediaData || "", fileName: fileName, pinned: false
+                });
+                inp.value = "";
+            },
+            sendMedia: (input) => {
+                const file = input.files[0]; if(!file) return;
+                if(file.size > 3 * 1024 * 1024) return alert("Batas ukuran file 3MB untuk demo Base64 ini.");
+                
+                let type = 'file';
+                if(file.type.startsWith('image/')) type = 'image';
+                if(file.type.startsWith('video/')) type = 'video';
+
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = () => { window.app.send("", reader.result, type, file.name); }
+            },
+
+            // --- MENU MESSAGE LOGIC ---
+            msgMenu: (msgId, isPinned, e) => {
+                e.preventDefault();
+                selectedMsgId = msgId; isSelectedMsgPinned = isPinned;
+                document.getElementById('pinMenuText').innerHTML = isPinned ? `<i class="fas fa-thumbtack"></i> Lepas Sematan` : `<i class="fas fa-thumbtack"></i> Sematkan Pesan`;
+                toggleOverlay('msgOptionsMenu', true);
+            },
+            pinMessage: () => {
+                if(!selectedMsgId || !activeTarget) return;
+                const room = [myID, activeTarget].sort().join("_");
+                update(ref(db, `chats/${room}/${selectedMsgId}`), { pinned: !isSelectedMsgPinned });
+                toggleOverlay('msgOptionsMenu', false);
+            },
+            deleteMessage: () => {
+                if(!selectedMsgId || !activeTarget) return;
+                if(confirm("Hapus pesan ini?")) {
+                    const room = [myID, activeTarget].sort().join("_");
+                    set(ref(db, `chats/${room}/${selectedMsgId}`), null);
+                    toggleOverlay('msgOptionsMenu', false);
+                }
+            },
+            deleteChat: () => {
+                if(!activeTarget) return;
+                if(confirm("Hapus semua pesan di obrolan ini? (Kontak tidak akan terhapus)")) {
+                    const room = [myID, activeTarget].sort().join("_");
+                    set(ref(db, `chats/${room}`), null);
+                    toggleOverlay('chatOptionsMenu', false);
+                    window.app.closeChat();
+                }
+            },
+
+            // --- STORY SYSTEM ---
+            uploadStory: (input) => {
+                const file = input.files[0]; if(!file) return;
+                if(file.size > 3 * 1024 * 1024) return alert("Maksimal 3MB.");
+                const type = file.type.startsWith('video') ? 'video' : 'image';
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = () => { push(ref(db, `stories/${myID}`), { media: reader.result, type: type, time: Date.now(), views: 0 }); window.showToast("Status Berhasil Diunggah!", "cloud-upload-alt"); }
+
+            },
+            openStory: (userId, userName, userPfp, isMyStory) => {
+    get(ref(db, `stories/${userId}`)).then(snap => {
+        currentStoryQueue = [];
+        const now = Date.now();
+        
+        // Ambil semua status yang belum lewat 24 jam
+        if(snap.exists()) {
+            snap.forEach(child => {
+                const s = child.val();
+                if(now - s.time < 86400000) { 
+                    currentStoryQueue.push({ id: child.key, ...s });
                 }
             });
-
-            const room = [myID, id].sort().join("_");
-            onValue(ref(db, `chats/${room}`), (snap) => {
-                const area = document.getElementById('msgArea');
-                area.innerHTML = "";
-                let pinnedMsg = null;
-
-                snap.forEach(child => {
-                    const m = child.val();
-                    if(m.from !== myID && m.status !== 'read') update(ref(db, `chats/${room}/${child.key}`), { status: 'read' });
-                    if(m.pinned) pinnedMsg = m;
-
-                    let tickHTML = "";
-                    if(m.from === myID) {
-                        if (m.status === 'read') tickHTML = `<i class="fas fa-check-double tick-read"></i>`;
-                        else if (m.status === 'delivered') tickHTML = `<i class="fas fa-check-double"></i>`;
-                        else tickHTML = `<i class="fas fa-check"></i>`;
-                    }
-
-                    let mediaHTML = "";
-                    if(m.type === 'image') mediaHTML = `<img src="${m.media}">`;
-                    else if(m.type === 'video') mediaHTML = `<video src="${m.media}" controls></video>`;
-                    else if(m.type === 'file') mediaHTML = `<div class="file-box"><i class="fas fa-file-alt fa-2x"></i> <div>${m.fileName}<br><a href="${m.media}" download="${m.fileName}" style="color:var(--accent); font-size:0.7rem;">Download</a></div></div>`;
-
-                    area.innerHTML += `<div class="bubble ${m.from === myID ? 'sent' : 'received'}" oncontextmenu="window.app.msgMenu('${child.key}', ${m.pinned || false}, event)">${mediaHTML}${m.text ? `<div>${m.text}</div>` : ''}<div class="msg-meta"><span>${formatTime(m.time)}</span> ${tickHTML}</div></div>`;
-                });
-                area.scrollTop = area.scrollHeight;
-                document.getElementById('pinnedMsgContainer').style.display = pinnedMsg ? 'block' : 'none';
-                if(pinnedMsg) document.getElementById('pinnedMsgText').innerText = pinnedMsg.text || "Media";
-            });
-        },
-        closeChat: () => { document.getElementById('chatPanel').classList.remove('active'); activeTarget = null; },
-        send: (customText = null, mediaData = null, type = 'text', fileName = '') => {
-            const inp = document.getElementById('msgIn');
-            const text = customText !== null ? customText : inp.value;
-            if((!text && !mediaData) || !activeTarget) return;
-            const room = [myID, activeTarget].sort().join("_");
-            push(ref(db, `chats/${room}`), { from: myID, text: text, time: Date.now(), status: 'sent', type: type, media: mediaData || "", fileName: fileName, pinned: false });
-            inp.value = "";
-        },
-        sendMedia: (input) => {
-            const file = input.files[0]; if(!file) return;
-            const reader = new FileReader(); reader.readAsDataURL(file);
-            reader.onload = () => { 
-                let type = file.type.startsWith('image') ? 'image' : (file.type.startsWith('video') ? 'video' : 'file');
-                window.app.send("", reader.result, type, file.name); 
-            }
-        },
-        msgMenu: (msgId, isPinned, e) => {
-            e.preventDefault(); selectedMsgId = msgId; isSelectedMsgPinned = isPinned;
-            document.getElementById('pinMenuText').innerHTML = isPinned ? `<i class="fas fa-thumbtack"></i> Lepas Sematan` : `<i class="fas fa-thumbtack"></i> Sematkan Pesan`;
-            toggleOverlay('msgOptionsMenu', true);
-        },
-        pinMessage: () => {
-            const room = [myID, activeTarget].sort().join("_");
-            update(ref(db, `chats/${room}/${selectedMsgId}`), { pinned: !isSelectedMsgPinned });
-            toggleOverlay('msgOptionsMenu', false);
-        },
-        deleteMessage: () => {
-            if(confirm("Hapus pesan ini?")) {
-                const room = [myID, activeTarget].sort().join("_");
-                set(ref(db, `chats/${room}/${selectedMsgId}`), null);
-                toggleOverlay('msgOptionsMenu', false);
-            }
-        },
-        openStory: (userId, userName, userPfp, isMyStory) => {
-            get(ref(db, `stories/${userId}`)).then(snap => {
-                currentStoryQueue = [];
-                if(snap.exists()) snap.forEach(c => { if(Date.now() - c.val().time < 86400000) currentStoryQueue.push({id:c.key, ...c.val()}); });
-                if(currentStoryQueue.length > 0) {
-                    currentStoryIndex = 0; viewingStoryOf = userId;
-                    document.getElementById('svName').innerText = userName; document.getElementById('svPfp').src = userPfp;
-                    document.getElementById('svFooter').style.display = isMyStory ? 'none' : 'flex';
-                    document.getElementById('svViews').style.display = isMyStory ? 'flex' : 'none';
-                    document.getElementById('storyViewer').style.display = 'flex';
-                    window.app.renderCurrentStory();
-                } else if(isMyStory) document.getElementById('storyUpload').click();
-            });
-        },
-        renderCurrentStory: () => {
-            if(currentStoryIndex >= currentStoryQueue.length) return window.app.closeStory();
-            const s = currentStoryQueue[currentStoryIndex];
-            const container = document.getElementById('svMediaContainer');
-            container.innerHTML = s.type === 'video' ? `<video src="${s.media}" autoplay playsinline></video>` : `<img src="${s.media}">`;
-            
-            if(viewingStoryOf === myID) {
-                document.getElementById('svViews').innerHTML = `<div onclick="window.app.deleteStory('${s.id}')" style="color:#ef4444; margin-bottom:10px;"><i class="fas fa-trash"></i> Hapus</div><div><i class="fas fa-eye"></i> ${s.views || 0}</div>`;
-            } else update(ref(db, `stories/${viewingStoryOf}/${s.id}`), { views: (s.views || 0) + 1 });
-            
-            const bar = document.getElementById('storyProgress');
-            bar.style.transition = 'none'; bar.style.width = '0%';
-            setTimeout(() => { bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 50);
-            clearTimeout(storyTimer); storyTimer = setTimeout(() => window.app.nextStory(), 5000);
-        },
-        nextStory: () => { currentStoryIndex++; window.app.renderCurrentStory(); },
-        closeStory: () => { clearTimeout(storyTimer); document.getElementById('storyViewer').style.display = 'none'; },
-        deleteStory: (sid) => { set(ref(db, `stories/${myID}/${sid}`), null); window.app.closeStory(); },
-        openMyStory: () => <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, push, onValue, get, update, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-    // --- KONFIGURASI FIREBASE ---
-    const firebaseConfig = {
-        apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
-        authDomain: "mybro-9ba5f.firebaseapp.com",
-        databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
-        projectId: "mybro-9ba5f"
-    };
-
-    const app_fire = initializeApp(firebaseConfig);
-    const db = getDatabase(app_fire);
-
-    // --- INISIALISASI USER ---
-    let myID = localStorage.getItem('mybro_id');
-    if(!myID) {
-        myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
-        localStorage.setItem('mybro_id', myID);
-        // Set profil awal jika user baru
-        set(ref(db, `users/${myID}/profile`), { 
-            id: myID, 
-            name: "User " + myID.split('-')[1], 
-            pfp: "", 
-            bio: "Hey, saya menggunakan MyBro!",
-            status: "online",
-            lastSeen: serverTimestamp()
-        });
-    }
-    document.getElementById('displayID').innerText = myID;
-
-    // --- STATE APP ---
-    const appStartTime = Date.now();
-    const notifiedMessages = new Set();
-    let activeTarget = null;
-    let pfpBase64 = "";
-
-    // --- NOTIFIKASI SISTEM ---
-    if ("Notification" in window) {
-        Notification.requestPermission().then(permission => {
-            console.log("Izin Notifikasi:", permission);
-        });
-    }
-
-    // --- UTILS ---
-    window.showToast = (message, icon = 'check-circle') => {
-        let toast = document.querySelector('.toast-msg');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.className = 'toast-msg';
-            document.body.appendChild(toast);
         }
-        toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
-    };
 
-    const formatTime = (ts) => {
-        if(!ts) return "";
-        const d = new Date(ts);
-        return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
-    };
+        // Jika ada status yang valid, jalankan Story Viewer
+        if(currentStoryQueue.length > 0) {
+            currentStoryIndex = 0;
+            viewingStoryOf = userId;
 
-    // --- PRESENCE (STATUS ONLINE) ---
-    onValue(ref(db, '.info/connected'), (snap) => {
-        if (snap.val() === true) {
-            const statusRef = ref(db, `users/${myID}/profile/status`);
-            const lastSeenRef = ref(db, `users/${myID}/profile/lastSeen`);
-            set(statusRef, 'online');
-            onDisconnect(statusRef).set('offline');
-            onDisconnect(lastSeenRef).set(serverTimestamp());
+            // Update UI Nama & Foto Profil di atas story
+            document.getElementById('svName').innerText = userName;
+            document.getElementById('svPfp').src = userPfp;
+
+            // Atur tombol balas (hanya muncul di story orang lain) 
+            // dan jumlah view (hanya muncul di story sendiri)
+            document.getElementById('svFooter').style.display = isMyStory ? 'none' : 'flex';
+            document.getElementById('svViews').style.display = isMyStory ? 'flex' : 'none';
+
+            // Munculkan layar hitam fullscreen
+            document.getElementById('storyViewer').style.display = 'flex';
+
+            // Mulai putar status
+            window.app.renderCurrentStory();
+        } else {
+            // Jika tidak ada status aktif dan ini punya sendiri, buka galeri untuk upload
+            if(isMyStory) document.getElementById('storyUpload').click();
         }
     });
+            },
 
-    // --- CORE LOGIC ---
-    window.app = {
-        // Upload & Simpan Profil
-        handlePfp: (input) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(input.files[0]);
-            reader.onload = () => { 
-                pfpBase64 = reader.result; 
-                document.getElementById('pfpEdit').src = pfpBase64; 
-            };
-        },
-        updateProfile: () => {
-            const newName = document.getElementById('editName').value;
-            const newBio = document.getElementById('editBio').value;
-            const updates = { name: newName, bio: newBio };
-            if(pfpBase64) updates.pfp = pfpBase64;
-
-            update(ref(db, `users/${myID}/profile`), updates)
-                .then(() => {
-                    window.showToast("Profil Berhasil Disimpan!");
-                    window.toggleOverlay('popProfile', false);
-                })
-                .catch(err => alert("Gagal update: " + err.message));
-        },
-
-        // Chat & Pesan
-        openChat: (id, name, pfp) => {
-            activeTarget = id;
-            document.getElementById('chatName').innerText = name;
-            document.getElementById('chatPfp').src = pfp;
-            document.getElementById('chatPanel').classList.add('active');
-
-            const room = [myID, id].sort().join("_");
-            const chatRef = ref(db, `chats/${room}`);
-
-            onValue(chatRef, (snap) => {
-                const area = document.getElementById('msgArea');
-                area.innerHTML = "";
-                snap.forEach(child => {
-                    const m = child.val();
-                    // Mark as read jika pesan dari lawan bicara
-                    if(m.from !== myID && m.status !== 'read') {
-                        update(ref(db, `chats/${room}/${child.key}`), { status: 'read' });
-                    }
-
-                    const isMe = m.from === myID;
-                    area.innerHTML += `
-                        <div class="bubble ${isMe ? 'sent' : 'received'}">
-                            ${m.text ? `<div>${m.text}</div>` : ''}
-                            <div class="msg-meta">
-                                <span>${formatTime(m.time)}</span>
-                                ${isMe ? (m.status === 'read' ? '<i class="fas fa-check-double tick-read"></i>' : '<i class="fas fa-check"></i>') : ''}
-                            </div>
-                        </div>`;
-                });
-                area.scrollTop = area.scrollHeight;
-            });
-        },
-
-        send: () => {
-            const inp = document.getElementById('msgIn');
-            if(!inp.value.trim() || !activeTarget) return;
-            <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, push, onValue, get, update, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
-        authDomain: "mybro-9ba5f.firebaseapp.com",
-        databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
-        projectId: "mybro-9ba5f"
-    };
-
-    const app_fire = initializeApp(firebaseConfig);
-    const db = getDatabase(app_fire);
-
-    // --- INISIALISASI USER & NOTIFIKASI ---
-    let myID = localStorage.getItem('mybro_id');
-    if(!myID) {
-        myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
-        localStorage.setItem('mybro_id', myID);
-        set(ref(db, `users/${myID}/profile`), { 
-            id: myID, name: "User " + myID.split('-')[1], pfp: "", bio: "Hey!", status: "online" 
-        });
-    }
-    document.getElementById('displayID').innerText = myID;
-
-    // Registrasi Service Worker untuk Notifikasi Sistem
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-    }
-
-    const appStartTime = Date.now();
-    const notifiedMessages = new Set();
-    let activeTarget = null;
-    let pfpBase64 = "";
-
-    // --- UTILS ---
-    const formatTime = (ts) => {
-        if(!ts) return "";
-        const d = new Date(ts);
-        return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
-    };
-
-    window.showToast = (msg) => {
-        let t = document.getElementById('toast') || document.createElement('div');
-        t.id = 'toast'; t.className = 'toast-msg show'; t.innerText = msg;
-        document.body.appendChild(t);
-        setTimeout(() => t.classList.remove('show'), 3000);
-    };
-
-    // --- CORE APP ---
-    window.app = {
-        handlePfp: (input) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(input.files[0]);
-            reader.onload = () => { pfpBase64 = reader.result; document.getElementById('pfpEdit').src = pfpBase64; };
-        },
-        updateProfile: () => {
-            const up = { name: document.getElementById('editName').value, bio: document.getElementById('editBio').value };
-            if(pfpBase64) up.pfp = pfpBase64;
-            update(ref(db, `users/${myID}/profile`), up).then(() => {
-                window.showToast("Profil Disimpan!");
-                toggleOverlay('popProfile', false);
-            });
-        },
-        openChat: (id, name, pfp) => {
-            activeTarget = id;
-            document.getElementById('chatName').innerText = name;
-            document.getElementById('chatPfp').src = pfp;
-            document.getElementById('chatPanel').classList.add('active');
             
-            const room = [myID, id].sort().join("_");
-            onValue(ref(db, `chats/${room}`), (snap) => {
-                const area = document.getElementById('msgArea');
-                area.innerHTML = "";
-                snap.forEach(child => {
-                    const m = child.val();
-                    if(m.from !== myID && m.status !== 'read') update(ref(db, `chats/${room}/${child.key}`), { status: 'read' });
-                    area.innerHTML += `<div class="bubble ${m.from === myID ? 'sent' : 'received'}">${m.text}<div class="msg-meta">${formatTime(m.time)}</div></div>`;
-                });
-                area.scrollTop = area.scrollHeight;
-            });
-        },
-        send: () => {
-            const inp = document.getElementById('msgIn');
-            if(!inp.value || !activeTarget) return;
-            const room = [myID, activeTarget].sort().join("_");
-            push(ref(db, `chats/${room}`), { from: myID, text: inp.value, time: serverTimestamp(), status: 'sent' });
-            inp.value = "";
-        }
-    };
-
-    // --- WATCHER CHAT (ANTI-DUPLIKAT) ---
-    onValue(ref(db, `chats`), (allChats) => {
-        const listArea = document.getElementById('chatList');
-        const tempItems = {};
-
-        allChats.forEach(room => {
-            if(room.key.includes(myID)) {
-                const tid = room.key.replace(myID, "").replace("_", "");
-                get(ref(db, `users/${tid}/profile`)).then(pSnap => {
-                    const p = pSnap.val() || { name: tid };
-                    const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}`;
-                    let lastMsg = { text: "", time: 0, from: "" };
-                    room.forEach(m => { lastMsg = m.val(); });
-
-                    tempItems[tid] = { name: p.name, pfp: pfp, text: lastMsg.text, time: lastMsg.time };
-                    
-                    // Render List
-                    listArea.innerHTML = "";
-                    Object.keys(tempItems).sort((a,b) => tempItems[b].time - tempItems[a].time).forEach(id => {
-                        const d = tempItems[id];
-                        const card = document.createElement('div');
-                        card.className = 'card';
-                        card.innerHTML = `<img src="${d.pfp}" class="pfp"><div class="card-info"><div class="card-header-flex"><div class="card-name">${d.name}</div><div class="card-time">${formatTime(d.time)}</div></div><div class="card-msg">${d.text}</div></div>`;
-                        card.onclick = () => window.app.openChat(id, d.name, d.pfp);
-                        listArea.appendChild(card);
-                    });
-
-                    // Notifikasi Sistem
-                    if(lastMsg.from !== myID && lastMsg.time > appStartTime && !notifiedMessages.has(lastMsg.time)) {
-                        notifiedMessages.add(lastMsg.time);
-                        if(Notification.permission === "granted") {
-                            new Notification(p.name, { body: lastMsg.text, icon: pfp });
+            openMyStory: () => {
+                get(ref(db, `users/${myID}/profile`)).then(snap => {
+                    const p = snap.val() || {};
+                    const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name || 'Me'}&background=1e293b&color=fff`;
+                    get(ref(db, `stories/${myID}`)).then(storySnap => {
+                        let hasActive = false; const now = Date.now();
+                        if(storySnap.exists()) {
+                            storySnap.forEach(s => { if(now - s.val().time < 86400000) hasActive = true; });
                         }
-                    }
+                        if(hasActive) window.app.openStory(myID, "Status Saya", pfp, true);
+                        else document.getElementById('storyUpload').click();
+                    });
                 });
-            }
-        });
-    });
+            },
+            renderCurrentStory: () => {
+                if(currentStoryIndex >= currentStoryQueue.length) return window.app.closeStory();
+                const s = currentStoryQueue[currentStoryIndex];
+                const isMine = viewingStoryOf === myID;
+                document.getElementById('svTime').innerText = formatTime(s.time);
+                
+                const container = document.getElementById('svMediaContainer');
+                if(s.type === 'video') container.innerHTML = `<video src="${s.media}" autoplay playsinline loop></video>`;
+                else container.innerHTML = `<img src="${s.media}">`;
 
-    // --- LOGIKA BANNED (TAMPILAN BARU) ---
-    onValue(ref(db, `users/${myID}/isBanned`), snap => {
-        if(snap.val() === true) {
-            document.body.innerHTML = `
-                <div style="height:100dvh; background:#0f172a; display:flex; align-items:center; justify-content:center; padding:20px; font-family:sans-serif;">
-                    <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px); padding:30px; border-radius:24px; text-align:center; max-width:400px; width:100%; box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);">
-                        <div style="width:80px; height:80px; background:#ef4444; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
-                            <i class="fas fa-user-slash" style="color:white; font-size:30px;"></i>
+                const viewEl = document.getElementById('svViews');
+                if(isMine) {
+                    viewEl.style.display = 'flex';
+                    viewEl.innerHTML = `
+                        <div onclick="window.app.deleteStory('${s.id}')" style="color:#ef4444; margin-bottom:10px; font-weight:bold;">
+                            <i class="fas fa-trash"></i> Hapus
                         </div>
-                        <h2 style="color:white; margin-bottom:10px; font-size:1.5rem;">Akses Ditangguhkan</h2>
-                        <p style="color:#94a3b8; font-size:0.9rem; line-height:1.5; margin-bottom:25px;">Akun <b>${myID}</b> telah diblokir karena melanggar ketentuan komunitas kami.</p>
-                        <textarea id="apMsg" placeholder="Tulis alasan banding kamu..." style="width:100%; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px; color:white; font-size:0.9rem; height:100px; outline:none; margin-bottom:15px;"></textarea>
-                        <button id="sendAppeal" style="width:100%; padding:14px; background:#ef4444; color:white; border:none; border-radius:12px; font-weight:600; cursor:pointer; transition:0.3s;">Kirim Banding</button>
-                        <p style="color:#64748b; font-size:0.75rem; margin-top:20px;">ID Perangkat: ${myID}</p>
-                    </div>
-                </div>`;
+                        <div><i class="fas fa-eye"></i> ${s.views || 0}</div>
+                    `;
+                } else {
+                    update(ref(db, `stories/${viewingStoryOf}/${s.id}`), { views: (s.views || 0) + 1 });
+                }
+
+                const bar = document.getElementById('storyProgress');
+                bar.style.transition = 'none'; bar.style.width = '0%';
+                setTimeout(() => { bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 50);
+
+                clearTimeout(storyTimer); 
+                storyTimer = setTimeout(() => window.app.nextStory(), 5000);
+            },
+
+            nextStory: () => { currentStoryIndex++; window.app.renderCurrentStory(); },
+            closeStory: () => { clearTimeout(storyTimer); document.getElementById('storyViewer').style.display = 'none'; viewingStoryOf = null; },
+            replyStory: () => {
+                const inp = document.getElementById('storyReplyInp'); if(!inp.value || !viewingStoryOf) return;
+                activeTarget = viewingStoryOf; window.app.send(`Membahas status: "${inp.value}"`);
+                inp.value = ""; window.app.closeStory(); alert("Balasan dikirim!");
+            },
+                        deleteStory: (storyId) => { 
+    // Langsung eksekusi hapus agar tidak muncul pop-up jelek
+    set(ref(db, `stories/${myID}/${storyId}`), null);
+    window.app.closeStory();
+    window.showToast("Status berhasil dihapus", "trash");
+},
+
+            scrollToPinned: () => {
+                const pinned = document.querySelector('.bubble[style*="border"]');
+                if(pinned) pinned.scrollIntoView({ behavior: 'smooth' });
+            }
+        }; // <--- INI PENUTUP PENTING UNTUK window.app
+
+        // LOGIKA AGAR CHAT BARU LANGSUNG MUNCUL DI DAFTAR (DI LUAR window.app)
+        onValue(ref(db, `chats`), (snapshot) => {
+            snapshot.forEach((roomSnap) => {
+                const roomId = roomSnap.key;
+                if (roomId.includes(myID)) {
+                    const targetId = roomId.replace(myID, "").replace("_", "");
+                    get(ref(db, `users/${myID}/contacts/${targetId}`)).then(s => {
+                        if(!s.exists()) {
+                            set(ref(db, `users/${myID}/contacts/${targetId}`), { id: targetId, archived: false });
+                        }
+                    });
+                }
+            });
+        });
+
+
+        // --- GLOBAL WATCHERS ---
+        onValue(ref(db, `users/${myID}/profile`), (snap) => {
+            const d = snap.val(); if(!d) return;
+            document.getElementById('editName').value = d.name; document.getElementById('editBio').value = d.bio;
+            const defaultPfp = `https://ui-avatars.com/api/?name=${d.name}&background=1e293b&color=fff`;
+            const pfp = d.pfp || defaultPfp;
             
-            document.getElementById('sendAppeal').onclick = () => {
-                const msg = document.getElementById('apMsg').value;
-                if(!msg) return alert("Alasan tidak boleh kosong");
-                update(ref(db, `users/${myID}`), { appealMessage: msg, appealStatus: 'pending' });
-                alert("Banding telah dikirim. Mohon tunggu proses peninjauan.");
+            // Sync Profile Pictures Everywhere
+            document.getElementById('pfpEdit').src = pfp;
+            document.getElementById('myStatusPfp').src = pfp;
+            document.getElementById('vProfilePfp').src = pfp;
+            document.getElementById('vProfileName').innerText = d.name;
+            document.getElementById('vProfileBio').innerText = d.bio;
+        });
+
+        // Watch My Status (to show circle gradient)
+        onValue(ref(db, `stories/${myID}`), snap => {
+            const now = Date.now(); let hasActive = false;
+            if(snap.exists()) { snap.forEach(child => { if(now - child.val().time < 86400000) hasActive = true; }); }
+            const wrap = document.getElementById('myStatusPfpWrap'); const txt = document.getElementById('myStatusText');
+            if(hasActive) { wrap.classList.add('has-story'); txt.innerText = "Ketuk untuk melihat status Anda"; } 
+            else { wrap.classList.remove('has-story'); txt.innerText = "Ketuk untuk menambahkan status"; }
+        });
+
+        onValue(ref(db, `users/${myID}/contacts`), (snap) => {
+            const cList = document.getElementById('contactList'); const rList = document.getElementById('chatList'); 
+            const sList = document.getElementById('storyList'); const aList = document.getElementById('archivedList');
+            
+            cList.innerHTML = ""; unreadCountGlobal = 0;
+
+            snap.forEach(child => {
+                const cid = child.key; const isArchived = child.val().archived;
+                const room = [myID, cid].sort().join("_");
+                
+                onValue(ref(db, `users/${cid}/profile`), (pSnap) => {
+                    const p = pSnap.val() || { name: cid, pfp: "" };
+                    const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}&background=1e293b&color=fff`;
+
+                    const cCard = document.createElement('div'); cCard.className = 'card';
+                    cCard.innerHTML = `<img src="${pfp}" class="pfp" style="width:45px;height:45px"><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">${p.bio}</div></div>`;
+                    cCard.onclick = () => window.app.openChat(cid, p.name, pfp); cList.appendChild(cCard);
+
+                    // Fetch Messages for Chat List
+                    onValue(ref(db, `chats/${room}`), (msgSnap) => {
+                        let lastMsgObj = null, unreadCount = 0;
+                        msgSnap.forEach(m => {
+                            lastMsgObj = m.val();
+                            if(lastMsgObj.from !== myID && lastMsgObj.status !== 'read') unreadCount++;
+                        });
+                        
+                        let lastMsgText = "Mulai obrolan", lastTime = "", tickHTML = "";
+                        if(lastMsgObj) {
+                            if(lastMsgObj.type === 'image') lastMsgText = '📷 Foto';
+                            else if(lastMsgObj.type === 'video') lastMsgText = '🎥 Video';
+                            else if(lastMsgObj.type === 'file') lastMsgText = '📄 Dokumen';
+                            else lastMsgText = lastMsgObj.text;
+                            
+                            lastTime = formatTime(lastMsgObj.time);
+                            if(lastMsgObj.from === myID) tickHTML = lastMsgObj.status === 'read' ? `<i class="fas fa-check-double tick tick-read"></i>` : `<i class="fas fa-check tick tick-sent"></i>`;
+
+                            if(unreadCount > 0 && Notification.permission === "granted" && activeTarget !== cid) {
+                                new Notification(`Pesan baru dari ${p.name}`, { body: lastMsgText, icon: pfp });
+                            }
+                        }
+                        
+                        unreadCountGlobal += unreadCount;
+                        document.getElementById('chatBadge').style.display = unreadCountGlobal > 0 ? 'block' : 'none';
+
+                        get(ref(db, `stories/${cid}`)).then(storySnap => {
+                            let hasStory = false; const now = Date.now();
+                            if(storySnap.exists()) storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
+
+                            const htmlChat = `
+                                <div class="pfp-wrap ${hasStory ? 'has-story' : ''}"><img src="${pfp}" class="pfp"></div>
+                                <div class="card-info">
+                                    <div class="card-header-flex"><div class="card-name">${p.name}</div><div class="card-time">${lastTime}</div></div>
+                                    <div class="card-msg">${tickHTML} ${lastMsgText}</div>
+                                </div>
+                                ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
+                            `;
+                            
+                            let existingCard = document.getElementById(`chat-${cid}`);
+                            if(existingCard) {
+                                existingCard.innerHTML = htmlChat;
+                                if(isArchived) aList.appendChild(existingCard); else rList.appendChild(existingCard);
+                            } else {
+                                const rCard = document.createElement('div'); rCard.className = 'card'; rCard.id = `chat-${cid}`;
+                                rCard.innerHTML = htmlChat; rCard.onclick = () => window.app.openChat(cid, p.name, pfp);
+                                if(isArchived) aList.appendChild(rCard); else rList.appendChild(rCard);
+                            }
+
+                            // Show/Hide Archive Banner
+                            const archBtn = document.getElementById('archivedBtn');
+                            if(aList.children.length > 0) { archBtn.style.display = 'flex'; document.getElementById('archivedCount').innerText = aList.children.length; } 
+                            else { archBtn.style.display = 'none'; aList.style.display = 'none'; }
+
+                            // Update Stories List
+                            if(hasStory) {
+                                let sCard = document.getElementById(`story-${cid}`);
+                                if(!sCard) {
+                                    sCard = document.createElement('div'); sCard.className = 'card'; sCard.id = `story-${cid}`;
+                                    sCard.innerHTML = `<div class="pfp-wrap has-story"><img src="${pfp}" class="pfp"></div><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">Pembaruan baru</div></div>`;
+                                    sCard.onclick = () => window.app.openStory(cid, p.name, pfp, false); sList.appendChild(sCard);
+                                }
+                            }
+                        });
+                    });
+                });
+            });
+        }); 
+                // ... kode-kode sebelumnya ...
+
+        // 1. Letakkan di sini (di luar objek window.app)
+        window.showToast = (message, icon = 'check-circle') => {
+            let toast = document.querySelector('.toast-msg');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.className = 'toast-msg';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+            // Pastikan pakai offsetParent atau delay kecil agar transisi muncul
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        };
+// --- TAMPILAN BAN PREMIUM (DARK GLASSMORPHISM) ---
+if (myID) {
+    onValue(ref(db, `users/${myID}/isBanned`), (snapshot) => {
+        if (snapshot.exists() && snapshot.val() === true) {
+            document.body.innerHTML = `
+                <div style="position:fixed; inset:0; background:radial-gradient(circle at center, #1e293b 0%, #020617 100%); display:flex; align-items:center; justify-content:center; z-index:100000; font-family:'Inter', sans-serif; padding:20px;">
+                    
+                    <div style="position:absolute; width:300px; height:300px; background:rgba(239, 68, 68, 0.1); filter:blur(100px); border-radius:50%; top:20%; left:10%;"></div>
+                    <div style="position:absolute; width:200px; height:200px; background:rgba(37, 99, 235, 0.1); filter:blur(80px); border-radius:50%; bottom:10%; right:10%;"></div>
+
+                    <div style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px 30px; border-radius: 32px; text-align: center; max-width: 420px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+                        
+                        <div style="width: 90px; height: 90px; background: rgba(239, 68, 68, 0.15); color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; font-size: 40px; box-shadow: 0 0 30px rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.3);">
+                            <i class="fas fa-shield-slash"></i>
+                        </div>
+
+                        <h2 style="color: #ffffff; margin-bottom: 12px; font-weight: 800; font-size: 1.6rem; letter-spacing: -0.5px;">Akses Dibatasi</h2>
+                        
+                        <p style="color: #94a3b8; line-height: 1.6; margin-bottom: 30px; font-size: 0.95rem;">
+                            Sistem mendeteksi aktivitas yang melanggar ketentuan. Akun <span style="color: #ef4444; font-weight: 600;">${myID}</span> telah dinonaktifkan sementara oleh tim <b>MyBro</b>.
+                        </p>
+                        
+                        <div style="margin-bottom: 25px; text-align: left;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                                <label style="font-size: 0.75rem; font-weight: 700; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px;">Pesan Banding</label>
+                                <span style="font-size: 0.7rem; color: #64748b;">Opsional</span>
+                            </div>
+                            <textarea id="appealText" placeholder="Berikan alasan atau penjelasan Anda..." 
+                                style="width: 100%; height: 110px; padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); background: rgba(15, 23, 42, 0.6); color: white; font-size: 0.9rem; outline: none; transition: 0.3s; resize: none;"></textarea>
+                        </div>
+                        
+                        <button id="btnAppeal" onclick="sendAppeal()" 
+                            style="width: 100%; padding: 16px; background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: white; border: none; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);">
+                            Kirim Pengajuan Banding
+                        </button>
+
+                        <div style="margin-top: 25px; font-size: 0.75rem; color: #64748b;">
+                            ID Sesi: <span style="color: #94a3b8;">${Date.now()}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Tambahkan efek fokus pada textarea
+            const tx = document.getElementById('appealText');
+            tx.onfocus = () => { tx.style.borderColor = '#ef4444'; tx.style.boxShadow = '0 0 15px rgba(239, 68, 68, 0.1)'; };
+            tx.onblur = () => { tx.style.borderColor = 'rgba(255,255,255,0.1)'; tx.style.boxShadow = 'none'; };
+        }
+    });
+}
+
+// --- LOGIKA BAN DENGAN FIX FUNGSI KIRIM ---
+if (myID) {
+    onValue(ref(db, `users/${myID}/isBanned`), (snapshot) => {
+        if (snapshot.exists() && snapshot.val() === true) {
+            document.body.innerHTML = `
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                <style>
+                    @keyframes pulse-red {
+                        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+                        70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+                        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+                    }
+                    .icon-box {
+                        width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); 
+                        color: #ef4444; border-radius: 50%; display: flex; 
+                        align-items: center; justify-content: center; margin: 0 auto 20px; 
+                        font-size: 35px; border: 1px solid rgba(239, 68, 68, 0.3);
+                        animation: pulse-red 2s infinite;
+                    }
+                    .ban-container {
+                        position:fixed; inset:0; background:#020617; display:flex; 
+                        align-items:center; justify-content:center; z-index:100000; 
+                        font-family:'Inter', sans-serif; padding:20px;
+                    }
+                </style>
+
+                <div class="ban-container">
+                    <div style="background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px 25px; border-radius: 35px; text-align: center; max-width: 400px; width: 100%; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+                        <div class="icon-box"><i class="fas fa-ban"></i></div>
+                        <h2 style="color: white; margin-bottom: 10px; font-weight: 800; font-size: 1.6rem;">Akses Terbatas</h2>
+                        <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 25px;">Akun <b>${myID}</b> ditangguhkan sementara.</p>
+                        
+                        <div style="text-align: left; margin-bottom: 20px;">
+                            <textarea id="appealText" placeholder="Tulis alasan banding..." style="width: 100%; height: 100px; padding: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.1); background: rgba(15, 23, 42, 0.8); color: white; outline: none; resize: none;"></textarea>
+                        </div>
+                        
+                        <button id="btnAppeal" onclick="kirimBandingAction()" style="width: 100%; padding: 16px; background: #ef4444; color: white; border: none; border-radius: 18px; font-weight: 800; cursor: pointer;">Ajukan Banding</button>
+                    </div>
+                </div>
+            `;
+
+            // Definisikan fungsi langsung di objek window agar bisa dipanggil oleh onclick di atas
+            window.kirimBandingAction = () => {
+                const text = document.getElementById('appealText').value.trim();
+                const btn = document.getElementById('btnAppeal');
+                
+                if(!text) return alert("Harap isi pesan banding!");
+
+                btn.innerText = "Mengirim...";
+                btn.disabled = true;
+
+                // Proses update ke Firebase
+                update(ref(db, `users/${myID}`), {
+                    appealMessage: text,
+                    appealStatus: "pending"
+                }).then(() => {
+                    // Beri feedback visual setelah berhasil
+                    btn.innerText = "Banding Telah Dikirim";
+                    btn.style.background = "#1e293b";
+                    btn.style.color = "#94a3b8";
+                    document.getElementById('appealText').disabled = true;
+                    alert("Banding Anda berhasil dikirim ke Admin MyBro.");
+                }).catch((err) => {
+                    alert("Gagal mengirim banding: " + err.message);
+                    btn.innerText = "Coba Lagi";
+                    btn.disabled = false;
+                });
             };
         }
     });
-
-    // --- PRESENCE ---
-    onValue(ref(db, '.info/connected'), (s) => {
-        if(s.val() === true) {
-            set(ref(db, `users/${myID}/profile/status`), 'online');
-            onDisconnect(ref(db, `users/${myID}/profile/status`)).set('offline');
-        }
-    });
-
-</script>
+}
 
 
+    
+    </script>
 </body>
 </html>
