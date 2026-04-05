@@ -605,19 +605,7 @@ get(ref(db, `stories/${cid}`)).then(storySnap => {
             sList.appendChild(sCard);
         }
     }
-});
-
-                    if(currentStoryQueue.length === 0) return;
-                    
-                    viewingStoryOf = userId;
-                    document.getElementById('svName').innerText = userName; document.getElementById('svPfp').src = userPfp;
-                    document.getElementById('storyViewer').style.display = 'flex';
-                    
-                    document.getElementById('svFooter').style.display = isMyStory ? 'none' : 'flex';
-                    document.getElementById('svViews').style.display = isMyStory ? 'flex' : 'none';
-
-                    currentStoryIndex = 0; window.app.renderCurrentStory();
-                });
+});                 
             },
             openMyStory: () => {
                 get(ref(db, `users/${myID}/profile`)).then(snap => {
