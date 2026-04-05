@@ -577,13 +577,38 @@ input[type="text"]:focus, textarea:focus {
 
             },
             openStory: (userId, userName, userPfp, isMyStory) => {
-                // Ganti bagian ini di dalam loop kontak kamu:
-get(ref(db, `stories/${cid}`)).then(storySnap => {
-    let hasStory = false; 
-    const now = Date.now();
-    if(storySnap.exists()) {
-        storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
-    }
+    get(ref(db, `stories/${userId}`)).then(snap => {
+        if(!snap.exists()) {
+            window.showToast("Tidak ada status", "info-circle");
+            return;
+        }
+        currentStoryQueue = [];
+        const now = Date.now();
+        snap.forEach(child => {
+            const s = child.val();
+            // Cek apakah status belum 24 jam (86400000 ms)
+            if(now - s.time < 86400000) { 
+                s.id = child.key; 
+                currentStoryQueue.push(s); 
+            }
+        });
+        
+        if(currentStoryQueue.length === 0) {
+            window.showToast("Status sudah kedaluwarsa", "info-circle");
+            return;
+        }
+
+        viewingStoryOf = userId;
+        currentStoryIndex = 0;
+        document.getElementById('svName').innerText = userName;
+        document.getElementById('svPfp').src = userPfp;
+        document.getElementById('storyViewer').style.display = 'flex';
+        
+        // Panggil fungsi render yang sudah kamu buat di bawahnya
+        window.app.renderCurrentStory();
+    });
+},
+
 
     if(hasStory) {
         let sCard = document.getElementById(`story-${cid}`);
