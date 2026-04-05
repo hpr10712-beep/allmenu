@@ -507,74 +507,8 @@ input[type="text"]:focus, textarea:focus {
                         else if(pinnedMsg.type === 'file') pinText = '📄 Dokumen';
                         document.getElementById('pinnedMsgText').innerText = pinText;
                     } else {
-  
-        window.app = {
-            handlePfp: (input) => {
-                const reader = new FileReader(); reader.readAsDataURL(input.files[0]);
-                reader.onload = () => { pfpBase64 = reader.result; document.getElementById('pfpEdit').src = pfpBase64; }
-            },
-            updateProfile: () => {
-                const updates = { name: document.getElementById('editName').value, bio: document.getElementById('editBio').value };
-                if(pfpBase64) updates.pfp = pfpBase64; update(ref(db, `users/${myID}/profile`), updates); toggleOverlay('popProfile', false);
-            },
-            addFriend: () => {
-                const tid = document.getElementById('targetID').value.trim().toUpperCase();
-                if(!tid || tid === myID) return;
-                set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid }); toggleOverlay('popAdd', false);
-            },
-
-            // --- CHAT SYSTEM ---
-            openChat: (id, name, pfp) => {
-                activeTarget = id;
-                document.getElementById('chatName').innerText = name; document.getElementById('chatPfp').src = pfp;
-                document.getElementById('chatPanel').classList.add('active');
-                
-                get(ref(db, `users/${myID}/contacts/${id}`)).then(snap => {
-                    const isArchived = snap.val()?.archived || false;
-                    const archBtn = document.getElementById('archiveMenuBtn');
-                    archBtn.innerHTML = isArchived ? `<i class="fas fa-box-open"></i> Buka Arsip` : `<i class="fas fa-archive"></i> Arsipkan Obrolan`;
-                    archBtn.onclick = () => {
-                        update(ref(db, `users/${myID}/contacts/${id}`), { archived: !isArchived });
-                        toggleOverlay('chatOptionsMenu', false);
-                        window.app.closeChat();
-                    };
-                });
-
-                const room = [myID, id].sort().join("_");
-                onValue(ref(db, `chats/${room}`), (snap) => {
-                    const area = document.getElementById('msgArea');
-                    area.innerHTML = "";
-                    let updates = {}; let hasUpdates = false;
-                    let pinnedMsg = null;
-
-                    snap.forEach(child => {
-                        const m = child.val();
-                        if(m.from !== myID && m.status !== 'read') { updates[`${child.key}/status`] = 'read'; hasUpdates = true; }
-                        if(m.pinned) pinnedMsg = m;
-
-                        let mediaHTML = "";
-                        if(m.type === 'image') mediaHTML = `<img src="${m.media}">`;
-                        else if(m.type === 'video') mediaHTML = `<video src="${m.media}" controls></video>`;
-                        else if(m.type === 'file') mediaHTML = `<div class="file-box"><i class="fas fa-file-alt fa-2x"></i> <div>${m.fileName || 'File'}<br><a href="${m.media}" download="${m.fileName || 'file'}" style="color:var(--accent); font-size:0.7rem;">Download</a></div></div>`;
-
-                        let tickHTML = "";
-                        if(m.from === myID) tickHTML = m.status === 'read' ? `<i class="fas fa-check-double tick tick-read"></i>` : `<i class="fas fa-check tick tick-sent"></i>`;
-
-                        area.innerHTML += `
-                            <div class="bubble ${m.from === myID ? 'sent' : 'received'}" id="msg-${child.key}" oncontextmenu="window.app.msgMenu('${child.key}', ${m.pinned || false}, event)">
-                                ${mediaHTML}
-                                ${m.text ? `<div>${m.text}</div>` : ''}
-                                <div class="msg-meta"><span>${formatTime(m.time)}</span> ${tickHTML}</div>
-                            </div>`;
-                    });
-                    if(hasUpdates) update(ref(db, `chats/${room}`), updates);
-                    area.scrollTop = area.scrollHeight;
-
-                    const pinContainer = document.getElementById('pinnedMsgContainer');
-                    if(pinnedMsg) {
-                        pinContainer.style.display = 'block';
-                        document.getElementById('pinnedMsgText').innerText = pinnedMsg.text || "Media";
-                    } else { pinContainer.style.display = 'none'; }
+                        pinContainer.style.display = 'none';
+                    }
                 });
             },
             closeChat: () => { document.getElementById('chatPanel').classList.remove('active'); activeTarget = null; },
@@ -582,18 +516,27 @@ input[type="text"]:focus, textarea:focus {
                 const inp = document.getElementById('msgIn');
                 const text = customText !== null ? customText : inp.value;
                 if((!text && !mediaData) || !activeTarget) return;
+                
                 const room = [myID, activeTarget].sort().join("_");
-                push(ref(db, `chats/${room}`), { from: myID, text: text, time: Date.now(), status: 'sent', type: type, media: mediaData || "", fileName: fileName, pinned: false });
+                push(ref(db, `chats/${room}`), { 
+                    from: myID, text: text, time: Date.now(), status: 'sent', 
+                    type: type, media: mediaData || "", fileName: fileName, pinned: false
+                });
                 inp.value = "";
             },
             sendMedia: (input) => {
                 const file = input.files[0]; if(!file) return;
+                if(file.size > 3 * 1024 * 1024) return alert("Batas ukuran file 3MB untuk demo Base64 ini.");
+                
+                let type = 'file';
+                if(file.type.startsWith('image/')) type = 'image';
+                if(file.type.startsWith('video/')) type = 'video';
+
                 const reader = new FileReader(); reader.readAsDataURL(file);
-                let type = file.type.startsWith('image/') ? 'image' : (file.type.startsWith('video/') ? 'video' : 'file');
                 reader.onload = () => { window.app.send("", reader.result, type, file.name); }
             },
 
-            // --- MSG MENU ---
+            // --- MENU MESSAGE LOGIC ---
             msgMenu: (msgId, isPinned, e) => {
                 e.preventDefault();
                 selectedMsgId = msgId; isSelectedMsgPinned = isPinned;
@@ -601,19 +544,22 @@ input[type="text"]:focus, textarea:focus {
                 toggleOverlay('msgOptionsMenu', true);
             },
             pinMessage: () => {
+                if(!selectedMsgId || !activeTarget) return;
                 const room = [myID, activeTarget].sort().join("_");
                 update(ref(db, `chats/${room}/${selectedMsgId}`), { pinned: !isSelectedMsgPinned });
                 toggleOverlay('msgOptionsMenu', false);
             },
             deleteMessage: () => {
-                if(confirm("Hapus pesan?")) {
+                if(!selectedMsgId || !activeTarget) return;
+                if(confirm("Hapus pesan ini?")) {
                     const room = [myID, activeTarget].sort().join("_");
                     set(ref(db, `chats/${room}/${selectedMsgId}`), null);
                     toggleOverlay('msgOptionsMenu', false);
                 }
             },
             deleteChat: () => {
-                if(confirm("Hapus semua pesan?")) {
+                if(!activeTarget) return;
+                if(confirm("Hapus semua pesan di obrolan ini? (Kontak tidak akan terhapus)")) {
                     const room = [myID, activeTarget].sort().join("_");
                     set(ref(db, `chats/${room}`), null);
                     toggleOverlay('chatOptionsMenu', false);
@@ -624,39 +570,52 @@ input[type="text"]:focus, textarea:focus {
             // --- STORY SYSTEM ---
             uploadStory: (input) => {
                 const file = input.files[0]; if(!file) return;
+                if(file.size > 3 * 1024 * 1024) return alert("Maksimal 3MB.");
+                const type = file.type.startsWith('video') ? 'video' : 'image';
                 const reader = new FileReader(); reader.readAsDataURL(file);
-                reader.onload = () => { 
-                    push(ref(db, `stories/${myID}`), { media: reader.result, type: file.type.startsWith('video') ? 'video' : 'image', time: Date.now(), views: 0 }); 
-                    window.showToast("Status diunggah!");
-                }
+                reader.onload = () => { push(ref(db, `stories/${myID}`), { media: reader.result, type: type, time: Date.now(), views: 0 }); window.showToast("Status Berhasil Diunggah!", "cloud-upload-alt"); }
+
             },
             openStory: (userId, userName, userPfp, isMyStory) => {
-                viewingStoryOf = userId;
-                document.getElementById('svName').innerText = userName;
-                document.getElementById('svPfp').src = userPfp;
-                document.getElementById('svFooter').style.display = isMyStory ? 'none' : 'flex';
-                
-                get(ref(db, `stories/${userId}`)).then(snap => {
-                    currentStoryQueue = [];
-                    const now = Date.now();
-                    snap.forEach(child => {
-                        const s = child.val();
-                        if(now - s.time < 86400000) { s.id = child.key; currentStoryQueue.push(s); }
-                    });
-                    if(currentStoryQueue.length > 0) {
-                        currentStoryIndex = 0;
-                        document.getElementById('storyViewer').style.display = 'flex';
-                        window.app.renderCurrentStory();
-                    }
-                });
+                // Ganti bagian ini di dalam loop kontak kamu:
+get(ref(db, `stories/${cid}`)).then(storySnap => {
+    let hasStory = false; 
+    const now = Date.now();
+    if(storySnap.exists()) {
+        storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
+    }
+
+    if(hasStory) {
+        let sCard = document.getElementById(`story-${cid}`);
+        if(!sCard) {
+            sCard = document.createElement('div');
+            sCard.className = 'card';
+            sCard.id = `story-${cid}`;
+            
+            // KLIK AREA LUAS (Nama & Profil)
+            sCard.onclick = () => window.app.openStory(cid, p.name, pfp, false);
+            
+            sCard.innerHTML = `
+                <div class="pfp-wrap has-story"><img src="${pfp}" class="pfp"></div>
+                <div class="card-info">
+                    <div class="card-name">${p.name}</div>
+                    <div class="card-msg">Pembaruan baru</div>
+                </div>
+            `;
+            sList.appendChild(sCard);
+        }
+    }
+});                 
             },
             openMyStory: () => {
                 get(ref(db, `users/${myID}/profile`)).then(snap => {
                     const p = snap.val() || {};
                     const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name || 'Me'}&background=1e293b&color=fff`;
                     get(ref(db, `stories/${myID}`)).then(storySnap => {
-                        let hasActive = false;
-                        if(storySnap.exists()) storySnap.forEach(s => { if(Date.now() - s.val().time < 86400000) hasActive = true; });
+                        let hasActive = false; const now = Date.now();
+                        if(storySnap.exists()) {
+                            storySnap.forEach(s => { if(now - s.val().time < 86400000) hasActive = true; });
+                        }
                         if(hasActive) window.app.openStory(myID, "Status Saya", pfp, true);
                         else document.getElementById('storyUpload').click();
                     });
@@ -667,34 +626,51 @@ input[type="text"]:focus, textarea:focus {
                 const s = currentStoryQueue[currentStoryIndex];
                 const isMine = viewingStoryOf === myID;
                 document.getElementById('svTime').innerText = formatTime(s.time);
+                
                 const container = document.getElementById('svMediaContainer');
-                container.innerHTML = s.type === 'video' ? `<video src="${s.media}" autoplay playsinline></video>` : `<img src="${s.media}">`;
+                if(s.type === 'video') container.innerHTML = `<video src="${s.media}" autoplay playsinline loop></video>`;
+                else container.innerHTML = `<img src="${s.media}">`;
 
                 const viewEl = document.getElementById('svViews');
                 if(isMine) {
                     viewEl.style.display = 'flex';
-                    viewEl.innerHTML = `<div onclick="window.app.deleteStory('${s.id}')" style="color:#ef4444;"><i class="fas fa-trash"></i> Hapus</div><div><i class="fas fa-eye"></i> ${s.views || 0}</div>`;
+                    viewEl.innerHTML = `
+                        <div onclick="window.app.deleteStory('${s.id}')" style="color:#ef4444; margin-bottom:10px; font-weight:bold;">
+                            <i class="fas fa-trash"></i> Hapus
+                        </div>
+                        <div><i class="fas fa-eye"></i> ${s.views || 0}</div>
+                    `;
                 } else {
-                    viewEl.style.display = 'none';
                     update(ref(db, `stories/${viewingStoryOf}/${s.id}`), { views: (s.views || 0) + 1 });
                 }
 
                 const bar = document.getElementById('storyProgress');
                 bar.style.transition = 'none'; bar.style.width = '0%';
                 setTimeout(() => { bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 50);
-                clearTimeout(storyTimer); storyTimer = setTimeout(() => window.app.nextStory(), 5000);
+
+                clearTimeout(storyTimer); 
+                storyTimer = setTimeout(() => window.app.nextStory(), 5000);
             },
+
             nextStory: () => { currentStoryIndex++; window.app.renderCurrentStory(); },
-            closeStory: () => { clearTimeout(storyTimer); document.getElementById('storyViewer').style.display = 'none'; },
-            deleteStory: (sid) => { set(ref(db, `stories/${myID}/${sid}`), null); window.app.closeStory(); },
+            closeStory: () => { clearTimeout(storyTimer); document.getElementById('storyViewer').style.display = 'none'; viewingStoryOf = null; },
             replyStory: () => {
-                const inp = document.getElementById('storyReplyInp');
-                if(!inp.value) return;
-                activeTarget = viewingStoryOf; window.app.send(`Balas status: ${inp.value}`);
-                inp.value = ""; window.app.closeStory();
+                const inp = document.getElementById('storyReplyInp'); if(!inp.value || !viewingStoryOf) return;
+                activeTarget = viewingStoryOf; window.app.send(`Membahas status: "${inp.value}"`);
+                inp.value = ""; window.app.closeStory(); alert("Balasan dikirim!");
             },
-            scrollToPinned: () => { /* Logic scroll ke pesan pin */ }
-        }; 
+                        deleteStory: (storyId) => { 
+    // Langsung eksekusi hapus agar tidak muncul pop-up jelek
+    set(ref(db, `stories/${myID}/${storyId}`), null);
+    window.app.closeStory();
+    window.showToast("Status berhasil dihapus", "trash");
+},
+
+            scrollToPinned: () => {
+                const pinned = document.querySelector('.bubble[style*="border"]');
+                if(pinned) pinned.scrollIntoView({ behavior: 'smooth' });
+            }
+        }; // <--- INI PENUTUP PENTING UNTUK window.app
 
         // LOGIKA AGAR CHAT BARU LANGSUNG MUNCUL DI DAFTAR (DI LUAR window.app)
         onValue(ref(db, `chats`), (snapshot) => {
@@ -807,29 +783,20 @@ input[type="text"]:focus, textarea:focus {
                             const archBtn = document.getElementById('archivedBtn');
                             if(aList.children.length > 0) { archBtn.style.display = 'flex'; document.getElementById('archivedCount').innerText = aList.children.length; } 
                             else { archBtn.style.display = 'none'; aList.style.display = 'none'; }
-                            
 
-                                                        // Update Stories List
+                            // Update Stories List
                             if(hasStory) {
                                 let sCard = document.getElementById(`story-${cid}`);
                                 if(!sCard) {
-                                    sCard = document.createElement('div'); 
-                                    sCard.className = 'card'; 
-                                    sCard.id = `story-${cid}`;
-                                    // Ini yang membuat area nama & foto bisa diklik
-                                    sCard.onclick = () => window.app.openStory(cid, p.name, pfp, false); 
-                                    
-                                    sCard.innerHTML = `
-                                        <div class="pfp-wrap has-story"><img src="${pfp}" class="pfp"></div>
-                                        <div class="card-info">
-                                            <div class="card-name">${p.name}</div>
-                                            <div class="card-msg">Pembaruan baru</div>
-                                        </div>
-                                    `;
-                                    sList.appendChild(sCard);
+                                    sCard = document.createElement('div'); sCard.className = 'card'; sCard.id = `story-${cid}`;
+                                    sCard.innerHTML = `<div class="pfp-wrap has-story"><img src="${pfp}" class="pfp"></div><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">Pembaruan baru</div></div>`;
+                                    sCard.onclick = () => window.app.openStory(cid, p.name, pfp, false); sList.appendChild(sCard);
                                 }
                             }
-
+                        });
+                    });
+                });
+            });
         }); 
                 // ... kode-kode sebelumnya ...
 
@@ -854,3 +821,4 @@ input[type="text"]:focus, textarea:focus {
     </script>
 </body>
 </html>
+
