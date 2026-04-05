@@ -402,902 +402,9 @@ input[type="text"]:focus, textarea:focus {
             <button class="btn-fill" onclick="window.app.updateProfile()">Simpan</button>
         </div>
     </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, get, update, query, orderByChild, limitToLast, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
-            authDomain: "mybro-9ba5f.firebaseapp.com",
-            databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
-            projectId: "mybro-9ba5f"
-        };
-        const app_fire = initializeApp(firebaseConfig);
-        const db = getDatabase(app_fire);
-
-        if ("Notification" in window) { Notification.requestPermission(); }
-
-        let myID = localStorage.getItem('mybro_id');
-        if(!myID) {
-            myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
-            localStorage.setItem('mybro_id', myID);
-            set(ref(db, `users/${myID}/profile`), { id: myID, name: "User " + myID.split('-')[1], pfp: "", bio: "Hey ada di MyBro!" });
-        }
-        document.getElementById('displayID').innerText = myID;
-
-        window.showToast = (message, icon = 'check-circle') => {
-            let toast = document.querySelector('.toast-msg');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.className = 'toast-msg';
-                document.body.appendChild(toast);
-            }
-            toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
-            // Pastikan pakai offsetParent atau delay kecil agar transisi muncul
-            setTimeout(() => toast.classList.add('show'), 10);
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        };
-
-        let activeTarget = null;
-        let pfpBase64 = "";
-        let currentStoryQueue = [], currentStoryIndex = 0, storyTimer, viewingStoryOf = null;
-        let unreadCountGlobal = 0;
-        let selectedMsgId = null; 
-        let isSelectedMsgPinned = false;
-
-        // --- VARIABEL TAMBAHAN ---
-const appStartTime = Date.now();
-const notifiedMessages = new Set();
-
-// --- FUNGSI FORMAT LAST SEEN ---
-const formatLastSeen = (ts) => {
-    if(!ts) return "";
-    const d = new Date(ts);
-    const today = new Date();
-    const isToday = d.getDate() === today.getDate() && d.getMonth() === today.getMonth();
-    const time = d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
-    return isToday ? "Hari ini " + time : `${d.getDate()}/${d.getMonth()+1} ` + time;
-};
-
-// --- FUNGSI NOTIFIKASI MENGAMBANG ---
-window.showFloatingNotif = (name, text, pfp, targetId) => {
-    let notif = document.getElementById('inAppNotif');
-    if(!notif) {
-        notif = document.createElement('div');
-        notif.id = 'inAppNotif';
-        notif.className = 'floating-notif';
-        document.body.appendChild(notif);
-    }
-    notif.innerHTML = `
-        <img src="${pfp}" style="width:45px;height:45px;border-radius:50%;object-fit:cover;">
-        <div style="flex:1; overflow:hidden;">
-            <div style="font-weight:600; font-size:0.95rem; color:white;">${name}</div>
-            <div style="font-size:0.85rem; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${text}</div>
-        </div>
-    `;
-    notif.onclick = () => { window.app.openChat(targetId, name, pfp); notif.classList.remove('show'); };
-    notif.classList.add('show');
-    setTimeout(() => notif.classList.remove('show'), 4000); // Hilang setelah 4 detik
-};
-
-// --- SISTEM ONLINE / OFFLINE (PRESENCE) ---
-const connectedRef = ref(db, '.info/connected');
-onValue(connectedRef, (snap) => {
-    if (snap.val() === true && myID) {
-        const statusRef = ref(db, `users/${myID}/profile/status`);
-        const lastSeenRef = ref(db, `users/${myID}/profile/lastSeen`);
-        
-        set(statusRef, 'online');
-        onDisconnect(statusRef).set('offline');
-        onDisconnect(lastSeenRef).set(serverTimestamp());
-    }
-});
-
-
-        window.showTab = (id, el) => {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            el.classList.add('active');
-        }
-        
-        window.toggleOverlay = (id, show) => { 
-            const el = document.getElementById(id); 
-            if(show) { el.classList.add('active'); el.style.display = 'flex'; } 
-            else { el.classList.remove('active'); setTimeout(() => el.style.display = 'none', 300); } 
-        }
-        window.closeOverlay = (e) => { if(e.target.classList.contains('overlay')) toggleOverlay(e.target.id, false); }
-        window.copyID = () => { navigator.clipboard.writeText(myID); window.showToast("ID Berhasil Disalin!", "copy"); }
-
-        window.toggleArchived = () => {
-            const list = document.getElementById('archivedList');
-            list.style.display = list.style.display === 'none' ? 'block' : 'none';
-        }
-
-        const formatTime = (ts) => {
-            const d = new Date(ts);
-            return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
-        }
-
-        window.app = {
-            handlePfp: (input) => {
-                const reader = new FileReader(); reader.readAsDataURL(input.files[0]);
-                reader.onload = () => { pfpBase64 = reader.result; document.getElementById('pfpEdit').src = pfpBase64; }
-            },
-            updateProfile: () => {
-                const updates = { name: document.getElementById('editName').value, bio: document.getElementById('editBio').value };
-                if(pfpBase64) updates.pfp = pfpBase64; update(ref(db, `users/${myID}/profile`), updates); toggleOverlay('popProfile', false);
-            },
-            addFriend: () => {
-                const tid = document.getElementById('targetID').value.trim().toUpperCase();
-                if(!tid || tid === myID) return;
-                set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid }); toggleOverlay('popAdd', false);
-            },
-
-            // --- CHAT & MEDIA SYSTEM ---
-            openChat: (id, name, pfp) => {
-                activeTarget = id;
-
-        };
-                // Listener untuk Status Online/Last Seen Target
-onValue(ref(db, `users/${id}/profile`), (pSnap) => {
-    const p = pSnap.val();
-    if(p) {
-        const statEl = document.getElementById('chatStatus');
-        if(p.status === 'online') {
-            statEl.innerText = "Online";
-            statEl.style.color = "var(--accent)";
-        } else {
-            statEl.innerText = p.lastSeen ? "Terakhir dilihat " + formatLastSeen(p.lastSeen) : "Offline";
-            statEl.style.color = "var(--text-dim)";
-        }
-    }
-});
-
-                document.getElementById('chatName').innerText = name; document.getElementById('chatPfp').src = pfp;
-                document.getElementById('chatPanel').classList.add('active');
-                
-                // Set Archive Status for Menu
-                get(ref(db, `users/${myID}/contacts/${id}`)).then(snap => {
-                    const isArchived = snap.val()?.archived || false;
-                    const archBtn = document.getElementById('archiveMenuBtn');
-                    archBtn.innerHTML = isArchived ? `<i class="fas fa-box-open"></i> Buka Arsip` : `<i class="fas fa-archive"></i> Arsipkan Obrolan`;
-                    archBtn.onclick = () => {
-                        update(ref(db, `users/${myID}/contacts/${id}`), { archived: !isArchived });
-                        toggleOverlay('chatOptionsMenu', false);
-                        window.app.closeChat();
-                    };
-                });
-
-                const room = [myID, id].sort().join("_");
-                onValue(ref(db, `chats/${room}`), (snap) => {
-                    const area = document.getElementById('msgArea');
-                    area.innerHTML = "";
-                    let updates = {}; let hasUpdates = false;
-                    let pinnedMsg = null;
-
-                    snap.forEach(child => {
-                        const m = child.val();
-                        
-                        let tickHTML = "";
-if(m.from === myID) {
-    if (m.status === 'read') {
-        // C2 Biru (Sudah terbaca)
-        tickHTML = `<i class="fas fa-check-double tick" style="color: var(--blue-tick); text-shadow: 0 0 2px rgba(59,130,246,0.5);"></i>`;
-    } else if (m.status === 'delivered') {
-        // C2 Putih (Terkirim, masuk ke HP target tapi belum dibuka)
-        tickHTML = `<i class="fas fa-check-double tick" style="color: rgba(255,255,255,0.7);"></i>`;
-    } else {
-        // C1 Putih (Dikirim dari kita/Server, tapi target offline/tidak ada kuota)
-        tickHTML = `<i class="fas fa-check tick" style="color: rgba(255,255,255,0.7);"></i>`;
-    }
-}
-
-                        if(m.pinned) pinnedMsg = m; // Ambil pesan tersemat terakhir
-
-                        let mediaHTML = "";
-                        if(m.type === 'image') mediaHTML = `<img src="${m.media}">`;
-                        else if(m.type === 'video') mediaHTML = `<video src="${m.media}" controls></video>`;
-                        else if(m.type === 'file') mediaHTML = `<div class="file-box"><i class="fas fa-file-alt fa-2x"></i> <div>${m.fileName || 'File'}<br><a href="${m.media}" download="${m.fileName || 'file'}" style="color:var(--accent); font-size:0.7rem;">Download</a></div></div>`;
-
-                    
-                        area.innerHTML += `
-                            <div class="bubble ${m.from === myID ? 'sent' : 'received'}" id="msg-${child.key}" oncontextmenu="window.app.msgMenu('${child.key}', ${m.pinned || false}, event)">
-                                ${mediaHTML}
-                                ${m.text ? `<div>${m.text}</div>` : ''}
-                                <div class="msg-meta"><span>${formatTime(m.time)}</span> ${tickHTML}</div>
-                            </div>`;
-                    });
-                    
-                    if(hasUpdates) update(ref(db, `chats/${room}`), updates);
-                    area.scrollTop = area.scrollHeight;
-
-                    // Update Pinned Message UI
-                    const pinContainer = document.getElementById('pinnedMsgContainer');
-                    if(pinnedMsg) {
-                        pinContainer.style.display = 'block';
-                        let pinText = pinnedMsg.text;
-                        if(pinnedMsg.type === 'image') pinText = '📷 Foto';
-                        else if(pinnedMsg.type === 'video') pinText = '🎥 Video';
-                        else if(pinnedMsg.type === 'file') pinText = '📄 Dokumen';
-                        document.getElementById('pinnedMsgText').innerText = pinText;
-                    } else {
-                        pinContainer.style.display = 'none';
-                    }
-                });
-            },
-            closeChat: () => { document.getElementById('chatPanel').classList.remove('active'); activeTarget = null; },
-            send: (customText = null, mediaData = null, type = 'text', fileName = '') => {
-                const inp = document.getElementById('msgIn');
-                const text = customText !== null ? customText : inp.value;
-                if((!text && !mediaData) || !activeTarget) return;
-                
-                const room = [myID, activeTarget].sort().join("_");
-                push(ref(db, `chats/${room}`), { 
-                    from: myID, text: text, time: Date.now(), status: 'sent', 
-                    type: type, media: mediaData || "", fileName: fileName, pinned: false
-                });
-                inp.value = "";
-            },
-            sendMedia: (input) => {
-                const file = input.files[0]; if(!file) return;
-                if(file.size > 3 * 1024 * 1024) return alert("Batas ukuran file 3MB untuk demo Base64 ini.");
-                
-                let type = 'file';
-                if(file.type.startsWith('image/')) type = 'image';
-                if(file.type.startsWith('video/')) type = 'video';
-
-                const reader = new FileReader(); reader.readAsDataURL(file);
-                reader.onload = () => { window.app.send("", reader.result, type, file.name); }
-            },
-
-            // --- MENU MESSAGE LOGIC ---
-            msgMenu: (msgId, isPinned, e) => {
-                e.preventDefault();
-                selectedMsgId = msgId; isSelectedMsgPinned = isPinned;
-                document.getElementById('pinMenuText').innerHTML = isPinned ? `<i class="fas fa-thumbtack"></i> Lepas Sematan` : `<i class="fas fa-thumbtack"></i> Sematkan Pesan`;
-                toggleOverlay('msgOptionsMenu', true);
-            },
-            pinMessage: () => {
-                if(!selectedMsgId || !activeTarget) return;
-                const room = [myID, activeTarget].sort().join("_");
-                update(ref(db, `chats/${room}/${selectedMsgId}`), { pinned: !isSelectedMsgPinned });
-                toggleOverlay('msgOptionsMenu', false);
-            },
-            deleteMessage: () => {
-                if(!selectedMsgId || !activeTarget) return;
-                if(confirm("Hapus pesan ini?")) {
-                    const room = [myID, activeTarget].sort().join("_");
-                    set(ref(db, `chats/${room}/${selectedMsgId}`), null);
-                    toggleOverlay('msgOptionsMenu', false);
-                }
-            },
-            deleteChat: () => {
-                if(!activeTarget) return;
-                if(confirm("Hapus semua pesan di obrolan ini? (Kontak tidak akan terhapus)")) {
-                    const room = [myID, activeTarget].sort().join("_");
-                    set(ref(db, `chats/${room}`), null);
-                    toggleOverlay('chatOptionsMenu', false);
-                    window.app.closeChat();
-                }
-            },
-
-            // --- STORY SYSTEM ---
-            uploadStory: (input) => {
-                const file = input.files[0]; if(!file) return;
-                if(file.size > 3 * 1024 * 1024) return alert("Maksimal 3MB.");
-                const type = file.type.startsWith('video') ? 'video' : 'image';
-                const reader = new FileReader(); reader.readAsDataURL(file);
-                reader.onload = () => { push(ref(db, `stories/${myID}`), { media: reader.result, type: type, time: Date.now(), views: 0 }); window.showToast("Status Berhasil Diunggah!", "cloud-upload-alt"); }
-
-            },
-            openStory: (userId, userName, userPfp, isMyStory) => {
-    get(ref(db, `stories/${userId}`)).then(snap => {
-        currentStoryQueue = [];
-        const now = Date.now();
-        
-        // Ambil semua status yang belum lewat 24 jam
-        if(snap.exists()) {
-            snap.forEach(child => {
-                const s = child.val();
-                if(now - s.time < 86400000) { 
-                    currentStoryQueue.push({ id: child.key, ...s });
-                }
-            });
-        }
-
-        // Jika ada status yang valid, jalankan Story Viewer
-        if(currentStoryQueue.length > 0) {
-            currentStoryIndex = 0;
-            viewingStoryOf = userId;
-
-            // Update UI Nama & Foto Profil di atas story
-            document.getElementById('svName').innerText = userName;
-            document.getElementById('svPfp').src = userPfp;
-
-            // Atur tombol balas (hanya muncul di story orang lain) 
-            // dan jumlah view (hanya muncul di story sendiri)
-            document.getElementById('svFooter').style.display = isMyStory ? 'none' : 'flex';
-            document.getElementById('svViews').style.display = isMyStory ? 'flex' : 'none';
-
-            // Munculkan layar hitam fullscreen
-            document.getElementById('storyViewer').style.display = 'flex';
-
-            // Mulai putar status
-            window.app.renderCurrentStory();
-        } else {
-            // Jika tidak ada status aktif dan ini punya sendiri, buka galeri untuk upload
-            if(isMyStory) document.getElementById('storyUpload').click();
-        }
-    });
-            },
-
-            
-            openMyStory: () => {
-                get(ref(db, `users/${myID}/profile`)).then(snap => {
-                    const p = snap.val() || {};
-                    const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name || 'Me'}&background=1e293b&color=fff`;
-                    get(ref(db, `stories/${myID}`)).then(storySnap => {
-                        let hasActive = false; const now = Date.now();
-                        if(storySnap.exists()) {
-                            storySnap.forEach(s => { if(now - s.val().time < 86400000) hasActive = true; });
-                        }
-                        if(hasActive) window.app.openStory(myID, "Status Saya", pfp, true);
-                        else document.getElementById('storyUpload').click();
-                    });
-                });
-            },
-            renderCurrentStory: () => {
-                if(currentStoryIndex >= currentStoryQueue.length) return window.app.closeStory();
-                const s = currentStoryQueue[currentStoryIndex];
-                const isMine = viewingStoryOf === myID;
-                document.getElementById('svTime').innerText = formatTime(s.time);
-                
-                const container = document.getElementById('svMediaContainer');
-                if(s.type === 'video') container.innerHTML = `<video src="${s.media}" autoplay playsinline loop></video>`;
-                else container.innerHTML = `<img src="${s.media}">`;
-
-                const viewEl = document.getElementById('svViews');
-                if(isMine) {
-                    viewEl.style.display = 'flex';
-                    viewEl.innerHTML = `
-                        <div onclick="window.app.deleteStory('${s.id}')" style="color:#ef4444; margin-bottom:10px; font-weight:bold;">
-                            <i class="fas fa-trash"></i> Hapus
-                        </div>
-                        <div><i class="fas fa-eye"></i> ${s.views || 0}</div>
-                    `;
-                } else {
-                    update(ref(db, `stories/${viewingStoryOf}/${s.id}`), { views: (s.views || 0) + 1 });
-                }
-
-                const bar = document.getElementById('storyProgress');
-                bar.style.transition = 'none'; bar.style.width = '0%';
-                setTimeout(() => { bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 50);
-
-                clearTimeout(storyTimer); 
-                storyTimer = setTimeout(() => window.app.nextStory(), 5000);
-            },
-
-            nextStory: () => { currentStoryIndex++; window.app.renderCurrentStory(); },
-            closeStory: () => { clearTimeout(storyTimer); document.getElementById('storyViewer').style.display = 'none'; viewingStoryOf = null; },
-            replyStory: () => {
-                const inp = document.getElementById('storyReplyInp'); if(!inp.value || !viewingStoryOf) return;
-                activeTarget = viewingStoryOf; window.app.send(`Membahas status: "${inp.value}"`);
-                inp.value = ""; window.app.closeStory(); alert("Balasan dikirim!");
-            },
-                        deleteStory: (storyId) => { 
-    // Langsung eksekusi hapus agar tidak muncul pop-up jelek
-    set(ref(db, `stories/${myID}/${storyId}`), null);
-    window.app.closeStory();
-    window.showToast("Status berhasil dihapus", "trash");
-},
-
-            scrollToPinned: () => {
-                const pinned = document.querySelector('.bubble[style*="border"]');
-                if(pinned) pinned.scrollIntoView({ behavior: 'smooth' });
-            }
-        }; // <--- INI PENUTUP PENTING UNTUK window.app
-
-        // LOGIKA AGAR CHAT BARU LANGSUNG MUNCUL DI DAFTAR (DI LUAR window.app)
-        onValue(ref(db, `chats`), (snapshot) => {
-            snapshot.forEach((roomSnap) => {
-                const roomId = roomSnap.key;
-                if (roomId.includes(myID)) {
-                    const targetId = roomId.replace(myID, "").replace("_", "");
-                    get(ref(db, `users/${myID}/contacts/${targetId}`)).then(s => {
-                        if(!s.exists()) {
-                            set(ref(db, `users/${myID}/contacts/${targetId}`), { id: targetId, archived: false });
-                        }
-                    });
-                }
-            });
-        });
-
-
-        // Watch My Status (to show circle gradient)
-        onValue(ref(db, `stories/${myID}`), snap => {
-            const now = Date.now(); let hasActive = false;
-            if(snap.exists()) { snap.forEach(child => { if(now - child.val().time < 86400000) hasActive = true; }); }
-            const wrap = document.getElementById('myStatusPfpWrap'); const txt = document.getElementById('myStatusText');
-            if(hasActive) { wrap.classList.add('has-story'); txt.innerText = "Ketuk untuk melihat status Anda"; } 
-            else { wrap.classList.remove('has-story'); txt.innerText = "Ketuk untuk menambahkan status"; }
-        });
-
-        onValue(ref(db, `users/${myID}/contacts`), (snap) => {
-            const cList = document.getElementById('contactList'); const rList = document.getElementById('chatList'); 
-            const sList = document.getElementById('storyList'); const aList = document.getElementById('archivedList');
-            
-            cList.innerHTML = ""; unreadCountGlobal = 0;
-
-            snap.forEach(child => {
-                const cid = child.key; const isArchived = child.val().archived;
-                const room = [myID, cid].sort().join("_");
-                
-                onValue(ref(db, `users/${cid}/profile`), (pSnap) => {
-                    const p = pSnap.val() || { name: cid, pfp: "" };
-                    const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}&background=1e293b&color=fff`;
-// ... KODE SEBELUMNYA ...
-onValue(ref(db, `chats/${room}`), (msgSnap) => {
-    let lastMsgObj = null, unreadCount = 0;
-    
-    msgSnap.forEach(m => {
-        lastMsgObj = m.val();
-        const msgKey = m.key;
-        
-        if(lastMsgObj.from !== myID) {
-            // Update status menjadi delivered (C2 putih) karena HP kita sudah menerimanya
-            if(lastMsgObj.status === 'sent') {
-                update(ref(db, `chats/${room}/${msgKey}`), { status: 'delivered' });
-            }
-            
-            if(lastMsgObj.status !== 'read') {
-                unreadCount++;
-                
-                // Memicu Notifikasi Mengambang jika chat tidak sedang dibuka dan baru masuk
-                if(lastMsgObj.time > appStartTime && !notifiedMessages.has(msgKey) && activeTarget !== cid) {
-                    notifiedMessages.add(msgKey);
-                    
-                    let notifText = lastMsgObj.text;
-                    if(lastMsgObj.type === 'image') notifText = '📷 Mengirim foto';
-                    else if(lastMsgObj.type === 'video') notifText = '🎥 Mengirim video';
-                    
-                    window.showFloatingNotif(p.name, notifText, pfp, cid);
-                    
-                    // Notifikasi Sistem Android/PC (Jika diizinkan)
-                    if(Notification.permission === "granted") {
-                        new Notification(`Pesan dari ${p.name}`, { body: notifText, icon: pfp });
-                    }
-                }
-            }
-        }
-    });
-// ... LANJUTAN KODE ...
-
-                    const cCard = document.createElement('div'); cCard.className = 'card';
-                    cCard.innerHTML = `<img src="${pfp}" class="pfp" style="width:45px;height:45px"><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">${p.bio}</div></div>`;
-                    cCard.onclick = () => window.app.openChat(cid, p.name, pfp); cList.appendChild(cCard);
-
-                    // Fetch Messages for Chat List
-                    onValue(ref(db, `chats/${room}`), (msgSnap) => {
-                        let lastMsgObj = null, unreadCount = 0;
-                        msgSnap.forEach(m => {
-                            lastMsgObj = m.val();
-                            if(lastMsgObj.from !== myID && lastMsgObj.status !== 'read') unreadCount++;
-                        });
-                        
-                        let lastMsgText = "Mulai obrolan", lastTime = "", tickHTML = "";
-                        if(lastMsgObj) {
-                            if(lastMsgObj.type === 'image') lastMsgText = '📷 Foto';
-                            else if(lastMsgObj.type === 'video') lastMsgText = '🎥 Video';
-                            else if(lastMsgObj.type === 'file') lastMsgText = '📄 Dokumen';
-                            else lastMsgText = lastMsgObj.text;
-                            
-                            lastTime = formatTime(lastMsgObj.time);
-                            if(lastMsgObj.from === myID) tickHTML = lastMsgObj.status === 'read' ? `<i class="fas fa-check-double tick tick-read"></i>` : `<i class="fas fa-check tick tick-sent"></i>`;
-
-                            if(unreadCount > 0 && Notification.permission === "granted" && activeTarget !== cid) {
-                                new Notification(`Pesan baru dari ${p.name}`, { body: lastMsgText, icon: pfp });
-                            }
-                        }
-                        
-                        unreadCountGlobal += unreadCount;
-                        document.getElementById('chatBadge').style.display = unreadCountGlobal > 0 ? 'block' : 'none';
-
-                        get(ref(db, `stories/${cid}`)).then(storySnap => {
-                            let hasStory = false; const now = Date.now();
-                            if(storySnap.exists()) storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
-
-                        }
-
-                        let lastMsgText = "Mulai obrolan", lastTime = "", tickHTML = "";
-                        if(lastMsgObj) {
-                            if(lastMsgObj.type === 'image') lastMsgText = '📷 Foto';
-                            else if(lastMsgObj.type === 'video') lastMsgText = '🎥 Video';
-                            else if(lastMsgObj.type === 'file') lastMsgText = '📄 Dokumen';
-                            else lastMsgText = lastMsgObj.text;
-                            
-                            lastTime = formatTime(lastMsgObj.time);
-                            if(lastMsgObj.from === myID) {
-                                if (lastMsgObj.status === 'read') tickHTML = `<i class="fas fa-check-double tick tick-read"></i>`;
-                                else if (lastMsgObj.status === 'delivered') tickHTML = `<i class="fas fa-check-double tick tick-sent"></i>`;
-                                else tickHTML = `<i class="fas fa-check tick tick-sent"></i>`;
-                            }
-                        }
-
-                        // Update UI List Chat
-                        const htmlChat = `
-                            <div class="pfp-wrap" id="sw-${cid}"><img src="${pfp}" class="pfp"></div>
-                            <div class="card-info">
-                                <div class="card-header-flex"><div class="card-name">${p.name}</div><div class="card-time">${lastTime}</div></div>
-                                <div class="card-msg">${tickHTML} ${lastMsgText}</div>
-                            </div>
-                            ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
-                        `;
-
-                        let existingCard = document.getElementById(`chat-${cid}`);
-                        if(!existingCard) {
-                            existingCard = document.createElement('div');
-                            existingCard.className = 'card';
-                            existingCard.id = `chat-${cid}`;
-                            existingCard.onclick = () => window.app.openChat(cid, p.name, pfp);
-                        }
-                        existingCard.innerHTML = htmlChat;
-                        if(isArchived) aList.appendChild(existingCard); else rList.appendChild(existingCard);
-
-                        // Cek Story untuk lingkaran profil
-                        get(ref(db, `stories/${cid}`)).then(storySnap => {
-                            const now = Date.now(); let hasStory = false;
-                            if(storySnap.exists()) storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
-                            if(hasStory) document.getElementById(`sw-${cid}`)?.classList.add('has-story');
-                        });
-                    });
-
-                    // Tambah ke daftar kontak
-                    const cCard = document.createElement('div'); 
-                    cCard.className = 'card';
-                    cCard.innerHTML = `<img src="${pfp}" class="pfp" style="width:45px;height:45px"><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">${p.bio}</div></div>`;
-                    cCard.onclick = () => window.app.openChat(cid, p.name, pfp); 
-                    cList.appendChild(cCard);
-                });
-            });
-        });
-
-                // ... kode-kode sebelumnya ...
-
-        // 1. Letakkan di sini (di luar objek window.app)
-        
-// --- TAMPILAN BAN PREMIUM (DARK GLASSMORPHISM) ---
-if (myID) {
-    onValue(ref(db, `users/${myID}/isBanned`), (snapshot) => {
-        if (snapshot.exists() && snapshot.val() === true) {
-            document.body.innerHTML = `
-                <div style="position:fixed; inset:0; background:radial-gradient(circle at center, #1e293b 0%, #020617 100%); display:flex; align-items:center; justify-content:center; z-index:100000; font-family:'Inter', sans-serif; padding:20px;">
-                    
-                    <div style="position:absolute; width:300px; height:300px; background:rgba(239, 68, 68, 0.1); filter:blur(100px); border-radius:50%; top:20%; left:10%;"></div>
-                    <div style="position:absolute; width:200px; height:200px; background:rgba(37, 99, 235, 0.1); filter:blur(80px); border-radius:50%; bottom:10%; right:10%;"></div>
-
-                    <div style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px 30px; border-radius: 32px; text-align: center; max-width: 420px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
-                        
-                        <div style="width: 90px; height: 90px; background: rgba(239, 68, 68, 0.15); color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; font-size: 40px; box-shadow: 0 0 30px rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.3);">
-                            <i class="fas fa-shield-slash"></i>
-                        </div>
-
-                        <h2 style="color: #ffffff; margin-bottom: 12px; font-weight: 800; font-size: 1.6rem; letter-spacing: -0.5px;">Akses Dibatasi</h2>
-                        
-                        <p style="color: #94a3b8; line-height: 1.6; margin-bottom: 30px; font-size: 0.95rem;">
-                            Sistem mendeteksi aktivitas yang melanggar ketentuan. Akun <span style="color: #ef4444; font-weight: 600;">${myID}</span> telah dinonaktifkan sementara oleh tim <b>MyBro</b>.
-                        </p>
-                        
-                        <div style="margin-bottom: 25px; text-align: left;">
-                            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                                <label style="font-size: 0.75rem; font-weight: 700; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px;">Pesan Banding</label>
-                                <span style="font-size: 0.7rem; color: #64748b;">Opsional</span>
-                            </div>
-                            <textarea id="appealText" placeholder="Berikan alasan atau penjelasan Anda..." 
-                                style="width: 100%; height: 110px; padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); background: rgba(15, 23, 42, 0.6); color: white; font-size: 0.9rem; outline: none; transition: 0.3s; resize: none;"></textarea>
-                        </div>
-                        
-                        <button id="btnAppeal" onclick="sendAppeal()" 
-                            style="width: 100%; padding: 16px; background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: white; border: none; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);">
-                            Kirim Pengajuan Banding
-                        </button>
-
-                        <div style="margin-top: 25px; font-size: 0.75rem; color: #64748b;">
-                            ID Sesi: <span style="color: #94a3b8;">${Date.now()}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            // Tambahkan efek fokus pada textarea
-            const tx = document.getElementById('appealText');
-            tx.onfocus = () => { tx.style.borderColor = '#ef4444'; tx.style.boxShadow = '0 0 15px rgba(239, 68, 68, 0.1)'; };
-            tx.onblur = () => { tx.style.borderColor = 'rgba(255,255,255,0.1)'; tx.style.boxShadow = 'none'; };
-        }
-    });
-}
-
-// --- LOGIKA BAN DENGAN FIX FUNGSI KIRIM ---
-if (myID) {
-    onValue(ref(db, `users/${myID}/isBanned`), (snapshot) => {
-        if (snapshot.exists() && snapshot.val() === true) {
-            document.body.innerHTML = `
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-                <style>
-                    @keyframes pulse-red {
-                        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-                        70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
-                        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-                    }
-                    .icon-box {
-                        width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); 
-                        color: #ef4444; border-radius: 50%; display: flex; 
-                        align-items: center; justify-content: center; margin: 0 auto 20px; 
-                        font-size: 35px; border: 1px solid rgba(239, 68, 68, 0.3);
-                        animation: pulse-red 2s infinite;
-                    }
-                    .ban-container {
-                        position:fixed; inset:0; background:#020617; display:flex; 
-                        align-items:center; justify-content:center; z-index:100000; 
-                        font-family:'Inter', sans-serif; padding:20px;
-                    }
-                </style>
-
-                <div class="ban-container">
-                    <div style="background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px 25px; border-radius: 35px; text-align: center; max-width: 400px; width: 100%; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
-                        <div class="icon-box"><i class="fas fa-ban"></i></div>
-                        <h2 style="color: white; margin-bottom: 10px; font-weight: 800; font-size: 1.6rem;">Akses Terbatas</h2>
-                        <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 25px;">Akun <b>${myID}</b> ditangguhkan sementara.</p>
-                        
-                        <div style="text-align: left; margin-bottom: 20px;">
-                import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, get, update, query, orderByChild, limitToLast, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
-            authDomain: "mybro-9ba5f.firebaseapp.com",
-            databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
-            projectId: "mybro-9ba5f"
-        };
-        const app_fire = initializeApp(firebaseConfig);
-        const db = getDatabase(app_fire);
-
-        if ("Notification" in window) { Notification.requestPermission(); }
-
-        let myID = localStorage.getItem('mybro_id');
-        if(!myID) {
-            myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
-            localStorage.setItem('mybro_id', myID);
-            set(ref(db, `users/${myID}/profile`), { id: myID, name: "User " + myID.split('-')[1], pfp: "", bio: "Hey ada di MyBro!" });
-        }
-        document.getElementById('displayID').innerText = myID;
-
-        const appStartTime = Date.now();
-        const notifiedMessages = new Set();
-        let activeTarget = null;
-        let pfpBase64 = "";
-        let currentStoryQueue = [], currentStoryIndex = 0, storyTimer, viewingStoryOf = null;
-        let unreadCountGlobal = 0;
-        let selectedMsgId = null; 
-        let isSelectedMsgPinned = false;
-
-        // --- UTILS ---
-        window.showToast = (message, icon = 'check-circle') => {
-            let toast = document.querySelector('.toast-msg');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.className = 'toast-msg';
-                document.body.appendChild(toast);
-            }
-            toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
-            setTimeout(() => toast.classList.add('show'), 10);
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        };
-
-        const formatTime = (ts) => {
-            if(!ts) return "";
-            const d = new Date(ts);
-            return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
-        };
-
-        const formatLastSeen = (ts) => {
-            if(!ts) return "";
-            const d = new Date(ts);
-            const today = new Date();
-            const isToday = d.getDate() === today.getDate() && d.getMonth() === today.getMonth();
-            return isToday ? "Hari ini " + formatTime(ts) : `${d.getDate()}/${d.getMonth()+1} ` + formatTime(ts);
-        };
-
-        window.showFloatingNotif = (name, text, pfp, targetId) => {
-            let notif = document.getElementById('inAppNotif');
-            if(!notif) {
-                notif = document.createElement('div');
-                notif.id = 'inAppNotif';
-                notif.className = 'floating-notif';
-                document.body.appendChild(notif);
-            }
-            notif.innerHTML = `<img src="${pfp}" style="width:45px;height:45px;border-radius:50%;object-fit:cover;"><div style="flex:1; overflow:hidden;"><div style="font-weight:600; font-size:0.95rem; color:white;">${name}</div><div style="font-size:0.85rem; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${text}</div></div>`;
-            notif.onclick = () => { window.app.openChat(targetId, name, pfp); notif.classList.remove('show'); };
-            notif.classList.add('show');
-            setTimeout(() => notif.classList.remove('show'), 4000);
-        };
-
-        window.showTab = (id, el) => {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            el.classList.add('active');
-        };
-        
-        window.toggleOverlay = (id, show) => { 
-            const el = document.getElementById(id); 
-            if(show) { el.classList.add('active'); el.style.display = 'flex'; } 
-            else { el.classList.remove('active'); setTimeout(() => el.style.display = 'none', 300); } 
-        };
-
-        window.closeOverlay = (e) => { if(e.target.classList.contains('overlay')) toggleOverlay(e.target.id, false); };
-        window.copyID = () => { navigator.clipboard.writeText(myID); window.showToast("ID Berhasil Disalin!", "copy"); };
-        window.toggleArchived = () => {
-            const list = document.getElementById('archivedList');
-            list.style.display = list.style.display === 'none' ? 'block' : 'none';
-        };
-
-        // --- PRESENCE SYSTEM ---
-        onValue(ref(db, '.info/connected'), (snap) => {
-            if (snap.val() === true && myID) {
-                set(ref(db, `users/${myID}/profile/status`), 'online');
-                onDisconnect(ref(db, `users/${myID}/profile/status`)).set('offline');
-                onDisconnect(ref(db, `users/${myID}/profile/lastSeen`)).set(serverTimestamp());
-            }
-        });
-
-        // --- CORE APP OBJECT ---
-        window.app = {
-            handlePfp: (input) => {
-                const reader = new FileReader(); reader.readAsDataURL(input.files[0]);
-                reader.onload = () => { pfpBase64 = reader.result; document.getElementById('pfpEdit').src = pfpBase64; }
-            },
-            updateProfile: () => {
-                const updates = { name: document.getElementById('editName').value, bio: document.getElementById('editBio').value };
-                if(pfpBase64) updates.pfp = pfpBase64; update(ref(db, `users/${myID}/profile`), updates); toggleOverlay('popProfile', false);
-            },
-            addFriend: () => {
-                const tid = document.getElementById('targetID').value.trim().toUpperCase();
-                if(!tid || tid === myID) return;
-                set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid, archived: false }); toggleOverlay('popAdd', false);
-            },
-            openChat: (id, name, pfp) => {
-                activeTarget = id;
-                document.getElementById('chatName').innerText = name; document.getElementById('chatPfp').src = pfp;
-                document.getElementById('chatPanel').classList.add('active');
-                
-                // Status Target
-                onValue(ref(db, `users/${id}/profile`), (pSnap) => {
-                    const p = pSnap.val();
-                    if(p) {
-                        const statEl = document.getElementById('chatStatus');
-                        statEl.innerText = p.status === 'online' ? "Online" : (p.lastSeen ? "Terakhir dilihat " + formatLastSeen(p.lastSeen) : "Offline");
-                        statEl.style.color = p.status === 'online' ? "var(--accent)" : "var(--text-dim)";
-                    }
-                });
-
-                const room = [myID, id].sort().join("_");
-                onValue(ref(db, `chats/${room}`), (snap) => {
-                    const area = document.getElementById('msgArea');
-                    area.innerHTML = "";
-                    let pinnedMsg = null;
-
-                    snap.forEach(child => {
-                        const m = child.val();
-                        if(m.from !== myID && m.status !== 'read') update(ref(db, `chats/${room}/${child.key}`), { status: 'read' });
-                        if(m.pinned) pinnedMsg = m;
-
-                        let tickHTML = "";
-                        if(m.from === myID) {
-                            if (m.status === 'read') tickHTML = `<i class="fas fa-check-double tick-read"></i>`;
-                            else if (m.status === 'delivered') tickHTML = `<i class="fas fa-check-double"></i>`;
-                            else tickHTML = `<i class="fas fa-check"></i>`;
-                        }
-
-                        let mediaHTML = "";
-                        if(m.type === 'image') mediaHTML = `<img src="${m.media}">`;
-                        else if(m.type === 'video') mediaHTML = `<video src="${m.media}" controls></video>`;
-                        else if(m.type === 'file') mediaHTML = `<div class="file-box"><i class="fas fa-file-alt fa-2x"></i> <div>${m.fileName}<br><a href="${m.media}" download="${m.fileName}" style="color:var(--accent); font-size:0.7rem;">Download</a></div></div>`;
-
-                        area.innerHTML += `<div class="bubble ${m.from === myID ? 'sent' : 'received'}" oncontextmenu="window.app.msgMenu('${child.key}', ${m.pinned || false}, event)">${mediaHTML}${m.text ? `<div>${m.text}</div>` : ''}<div class="msg-meta"><span>${formatTime(m.time)}</span> ${tickHTML}</div></div>`;
-                    });
-                    area.scrollTop = area.scrollHeight;
-                    document.getElementById('pinnedMsgContainer').style.display = pinnedMsg ? 'block' : 'none';
-                    if(pinnedMsg) document.getElementById('pinnedMsgText').innerText = pinnedMsg.text || "Media";
-                });
-            },
-            closeChat: () => { document.getElementById('chatPanel').classList.remove('active'); activeTarget = null; },
-            send: (customText = null, mediaData = null, type = 'text', fileName = '') => {
-                const inp = document.getElementById('msgIn');
-                const text = customText !== null ? customText : inp.value;
-                if((!text && !mediaData) || !activeTarget) return;
-                const room = [myID, activeTarget].sort().join("_");
-                push(ref(db, `chats/${room}`), { from: myID, text: text, time: Date.now(), status: 'sent', type: type, media: mediaData || "", fileName: fileName, pinned: false });
-                inp.value = "";
-            },
-            sendMedia: (input) => {
-                const file = input.files[0]; if(!file) return;
-                const reader = new FileReader(); reader.readAsDataURL(file);
-                reader.onload = () => { 
-                    let type = file.type.startsWith('image') ? 'image' : (file.type.startsWith('video') ? 'video' : 'file');
-                    window.app.send("", reader.result, type, file.name); 
-                }
-            },
-            msgMenu: (msgId, isPinned, e) => {
-                e.preventDefault(); selectedMsgId = msgId; isSelectedMsgPinned = isPinned;
-                document.getElementById('pinMenuText').innerHTML = isPinned ? `<i class="fas fa-thumbtack"></i> Lepas Sematan` : `<i class="fas fa-thumbtack"></i> Sematkan Pesan`;
-                toggleOverlay('msgOptionsMenu', true);
-            },
-            pinMessage: () => {
-                const room = [myID, activeTarget].sort().join("_");
-                update(ref(db, `chats/${room}/${selectedMsgId}`), { pinned: !isSelectedMsgPinned });
-                toggleOverlay('msgOptionsMenu', false);
-            },
-            deleteMessage: () => {
-                if(confirm("Hapus pesan ini?")) {
-                    const room = [myID, activeTarget].sort().join("_");
-                    set(ref(db, `chats/${room}/${selectedMsgId}`), null);
-                    toggleOverlay('msgOptionsMenu', false);
-                }
-            },
-            openStory: (userId, userName, userPfp, isMyStory) => {
-                get(ref(db, `stories/${userId}`)).then(snap => {
-                    currentStoryQueue = [];
-                    if(snap.exists()) snap.forEach(c => { if(Date.now() - c.val().time < 86400000) currentStoryQueue.push({id:c.key, ...c.val()}); });
-                    if(currentStoryQueue.length > 0) {
-                        currentStoryIndex = 0; viewingStoryOf = userId;
-                        document.getElementById('svName').innerText = userName; document.getElementById('svPfp').src = userPfp;
-                        document.getElementById('svFooter').style.display = isMyStory ? 'none' : 'flex';
-                        document.getElementById('svViews').style.display = isMyStory ? 'flex' : 'none';
-                        document.getElementById('storyViewer').style.display = 'flex';
-                        window.app.renderCurrentStory();
-                    } else if(isMyStory) document.getElementById('storyUpload').click();
-                });
-            },
-            renderCurrentStory: () => {
-                if(currentStoryIndex >= currentStoryQueue.length) return window.app.closeStory();
-                const s = currentStoryQueue[currentStoryIndex];
-                const container = document.getElementById('svMediaContainer');
-                container.innerHTML = s.type === 'video' ? `<video src="${s.media}" autoplay playsinline></video>` : `<img src="${s.media}">`;
-                if(viewingStoryOf === myID) {
-                    document.getElementById('svViews').innerHTML = `<div onclick="window.app.deleteStory('${s.id}')" style="color:#ef4444; margin-bottom:10px;"><i class="fas fa-trash"></i> Hapus</div><div><i class="fas fa-eye"></i> ${s.views || 0}</div>`;
-                } else update(ref(db, `stories/${viewingStoryOf}/${s.id}`), { views: (s.views || 0) + 1 });
-                
-                const bar = document.getElementById('storyProgress');
-                bar.style.transition = 'none'; bar.style.width = '0%';
-                setTimeout(() => { bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 50);
-                clearTimeout(storyTimer); storyTimer = setTimeout(() => window.app.nextStory(), 5000);
-            },
-            nextStory: () => { currentStoryIndex++; window.app.renderCurrentStory(); },
-            closeStory: () => { clearTimeout(storyTimer); document.getElementById('storyViewer').style.display = 'none'; },
-            deleteStory: (sid) => { set(ref(db, `stories/${myID}/${sid}`), null); window.app.closeStory(); },
-            openMyStory: () => {
-                get(ref(db, `users/${myID}/profile`)).then(snap => {
-                    const p = snap.val() || {};
-                    window.app.openStory(myID, "Status Saya", p.pfp || `https://ui-avatars.com/api/?name=Me`, true);
-                });
-            }
-        };
-
-        // --- WATCHERS ---
-        onValue(ref(db, `users/${myID}/contacts`), (snap) => {
-            const rList = document.getElementById('chatList');
-            const cList = document.getElementById('contactList');
-            const aList = document.getElementById('archivedList');
-            rList.innerHTML = ""; cList.innerHTML = ""; aList.innerHTML = "";
-            unreadCountGlobal = 0;
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, push, onValue, get, update, remove, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, set, push, onValue, get, update, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
@@ -1309,35 +416,63 @@ if (myID) {
     const app_fire = initializeApp(firebaseConfig);
     const db = getDatabase(app_fire);
 
-    // --- State & Variables ---
+    if ("Notification" in window) { Notification.requestPermission(); }
+
     let myID = localStorage.getItem('mybro_id');
     if(!myID) {
         myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
         localStorage.setItem('mybro_id', myID);
-        set(ref(db, `users/${myID}/profile`), { id: myID, name: "User " + myID.split('-')[1], pfp: "", bio: "Hey! I am using TalkSky" });
+        set(ref(db, `users/${myID}/profile`), { id: myID, name: "User " + myID.split('-')[1], pfp: "", bio: "Hey ada di MyBro!" });
     }
-    document.getElementById('displayID').innerText = `ID: ${myID}`;
+    document.getElementById('displayID').innerText = myID;
 
+    const appStartTime = Date.now();
+    const notifiedMessages = new Set();
     let activeTarget = null;
     let pfpBase64 = "";
     let currentStoryQueue = [], currentStoryIndex = 0, storyTimer, viewingStoryOf = null;
-    const notifiedMessages = new Set();
-    const appStartTime = Date.now();
+    let selectedMsgId = null; 
+    let isSelectedMsgPinned = false;
 
-    // --- Utils ---
+    // --- UTILS ---
+    window.showToast = (message, icon = 'check-circle') => {
+        let toast = document.querySelector('.toast-msg');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.className = 'toast-msg';
+            document.body.appendChild(toast);
+        }
+        toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    };
+
     const formatTime = (ts) => {
         if(!ts) return "";
         const d = new Date(ts);
         return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
     };
 
-    window.showToast = (msg, icon = 'check-circle') => {
-        let toast = document.querySelector('.toast-msg') || document.createElement('div');
-        toast.className = 'toast-msg';
-        document.body.appendChild(toast);
-        toast.innerHTML = `<i class="fas fa-${icon}"></i> ${msg}`;
-        setTimeout(() => toast.classList.add('show'), 10);
-        setTimeout(() => toast.classList.remove('show'), 3000);
+    const formatLastSeen = (ts) => {
+        if(!ts) return "";
+        const d = new Date(ts);
+        const today = new Date();
+        const isToday = d.getDate() === today.getDate() && d.getMonth() === today.getMonth();
+        return isToday ? "Hari ini " + formatTime(ts) : `${d.getDate()}/${d.getMonth()+1} ` + formatTime(ts);
+    };
+
+    window.showFloatingNotif = (name, text, pfp, targetId) => {
+        let notif = document.getElementById('inAppNotif');
+        if(!notif) {
+            notif = document.createElement('div');
+            notif.id = 'inAppNotif';
+            notif.className = 'floating-notif';
+            document.body.appendChild(notif);
+        }
+        notif.innerHTML = `<img src="${pfp}" style="width:45px;height:45px;border-radius:50%;object-fit:cover;"><div style="flex:1; overflow:hidden;"><div style="font-weight:600; font-size:0.95rem; color:white;">${name}</div><div style="font-size:0.85rem; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${text}</div></div>`;
+        notif.onclick = () => { window.app.openChat(targetId, name, pfp); notif.classList.remove('show'); };
+        notif.classList.add('show');
+        setTimeout(() => notif.classList.remove('show'), 4000);
     };
 
     window.showTab = (id, el) => {
@@ -1346,155 +481,223 @@ if (myID) {
         document.getElementById(id).classList.add('active');
         el.classList.add('active');
     };
-
-    window.toggleOverlay = (id, show) => {
-        const el = document.getElementById(id);
-        if(show) { el.style.display = 'flex'; setTimeout(() => el.classList.add('active'), 10); }
-        else { el.classList.remove('active'); setTimeout(() => el.style.display = 'none', 300); }
+    
+    window.toggleOverlay = (id, show) => { 
+        const el = document.getElementById(id); 
+        if(show) { el.classList.add('active'); el.style.display = 'flex'; } 
+        else { el.classList.remove('active'); setTimeout(() => el.style.display = 'none', 300); } 
     };
 
-    window.closeOverlay = (e) => { if(e.target.classList.contains('overlay')) window.toggleOverlay(e.target.id, false); };
+    window.closeOverlay = (e) => { if(e.target.classList.contains('overlay')) toggleOverlay(e.target.id, false); };
+    window.copyID = () => { navigator.clipboard.writeText(myID); window.showToast("ID Berhasil Disalin!", "copy"); };
+    window.toggleArchived = () => {
+        const list = document.getElementById('archivedList');
+        list.style.display = list.style.display === 'none' ? 'block' : 'none';
+    };
 
-    // --- Core App Logic ---
+    // --- PRESENCE SYSTEM ---
+    onValue(ref(db, '.info/connected'), (snap) => {
+        if (snap.val() === true && myID) {
+            set(ref(db, `users/${myID}/profile/status`), 'online');
+            onDisconnect(ref(db, `users/${myID}/profile/status`)).set('offline');
+            onDisconnect(ref(db, `users/${myID}/profile/lastSeen`)).set(serverTimestamp());
+        }
+    });
+
+    // --- CORE APP OBJECT ---
     window.app = {
         handlePfp: (input) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(input.files[0]);
-            reader.onload = () => { pfpBase64 = reader.result; document.getElementById('pfpEdit').src = pfpBase64; };
+            const reader = new FileReader(); reader.readAsDataURL(input.files[0]);
+            reader.onload = () => { pfpBase64 = reader.result; document.getElementById('pfpEdit').src = pfpBase64; }
         },
         updateProfile: () => {
             const updates = { name: document.getElementById('editName').value, bio: document.getElementById('editBio').value };
-            if(pfpBase64) updates.pfp = pfpBase64;
-            update(ref(db, `users/${myID}/profile`), updates);
-            window.toggleOverlay('popProfile', false);
-            window.showToast("Profil diperbarui!");
+            if(pfpBase64) updates.pfp = pfpBase64; update(ref(db, `users/${myID}/profile`), updates); toggleOverlay('popProfile', false);
         },
         addFriend: () => {
             const tid = document.getElementById('targetID').value.trim().toUpperCase();
             if(!tid || tid === myID) return;
-            set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid, archived: false });
-            window.toggleOverlay('popAdd', false);
-            window.showToast("Teman ditambahkan!");
+            set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid, archived: false }); toggleOverlay('popAdd', false);
         },
         openChat: (id, name, pfp) => {
             activeTarget = id;
-            document.getElementById('chatName').innerText = name;
-            document.getElementById('chatPfp').src = pfp;
+            document.getElementById('chatName').innerText = name; document.getElementById('chatPfp').src = pfp;
             document.getElementById('chatPanel').classList.add('active');
             
+            onValue(ref(db, `users/${id}/profile`), (pSnap) => {
+                const p = pSnap.val();
+                if(p) {
+                    const statEl = document.getElementById('chatStatus');
+                    statEl.innerText = p.status === 'online' ? "Online" : (p.lastSeen ? "Terakhir dilihat " + formatLastSeen(p.lastSeen) : "Offline");
+                    statEl.style.color = p.status === 'online' ? "var(--accent)" : "var(--text-dim)";
+                }
+            });
+
             const room = [myID, id].sort().join("_");
             onValue(ref(db, `chats/${room}`), (snap) => {
                 const area = document.getElementById('msgArea');
                 area.innerHTML = "";
+                let pinnedMsg = null;
+
                 snap.forEach(child => {
                     const m = child.val();
                     if(m.from !== myID && m.status !== 'read') update(ref(db, `chats/${room}/${child.key}`), { status: 'read' });
-                    
-                    let tick = "";
+                    if(m.pinned) pinnedMsg = m;
+
+                    let tickHTML = "";
                     if(m.from === myID) {
-                        if(m.status === 'read') tick = '<i class="fas fa-check-double tick-read"></i>';
-                        else tick = '<i class="fas fa-check"></i>';
+                        if (m.status === 'read') tickHTML = `<i class="fas fa-check-double tick-read"></i>`;
+                        else if (m.status === 'delivered') tickHTML = `<i class="fas fa-check-double"></i>`;
+                        else tickHTML = `<i class="fas fa-check"></i>`;
                     }
 
-                    area.innerHTML += `
-                        <div class="bubble ${m.from === myID ? 'sent' : 'received'}" oncontextmenu="window.app.msgMenu('${child.key}', ${m.pinned}, event)">
-                            ${m.type === 'image' ? `<img src="${m.media}">` : ''}
-                            ${m.text ? `<div>${m.text}</div>` : ''}
-                            <div class="msg-meta"><span>${formatTime(m.time)}</span> ${tick}</div>
-                        </div>`;
+                    let mediaHTML = "";
+                    if(m.type === 'image') mediaHTML = `<img src="${m.media}">`;
+                    else if(m.type === 'video') mediaHTML = `<video src="${m.media}" controls></video>`;
+                    else if(m.type === 'file') mediaHTML = `<div class="file-box"><i class="fas fa-file-alt fa-2x"></i> <div>${m.fileName}<br><a href="${m.media}" download="${m.fileName}" style="color:var(--accent); font-size:0.7rem;">Download</a></div></div>`;
+
+                    area.innerHTML += `<div class="bubble ${m.from === myID ? 'sent' : 'received'}" oncontextmenu="window.app.msgMenu('${child.key}', ${m.pinned || false}, event)">${mediaHTML}${m.text ? `<div>${m.text}</div>` : ''}<div class="msg-meta"><span>${formatTime(m.time)}</span> ${tickHTML}</div></div>`;
                 });
                 area.scrollTop = area.scrollHeight;
+                document.getElementById('pinnedMsgContainer').style.display = pinnedMsg ? 'block' : 'none';
+                if(pinnedMsg) document.getElementById('pinnedMsgText').innerText = pinnedMsg.text || "Media";
             });
         },
         closeChat: () => { document.getElementById('chatPanel').classList.remove('active'); activeTarget = null; },
-        send: (txt = null, media = null, type = 'text') => {
-            const input = document.getElementById('msgIn');
-            const message = txt || input.value;
-            if(!message && !media) return;
+        send: (customText = null, mediaData = null, type = 'text', fileName = '') => {
+            const inp = document.getElementById('msgIn');
+            const text = customText !== null ? customText : inp.value;
+            if((!text && !mediaData) || !activeTarget) return;
             const room = [myID, activeTarget].sort().join("_");
-            push(ref(db, `chats/${room}`), {
-                from: myID, text: message, time: Date.now(), status: 'sent', type: type, media: media || "", pinned: false
-            });
-            input.value = "";
+            push(ref(db, `chats/${room}`), { from: myID, text: text, time: Date.now(), status: 'sent', type: type, media: mediaData || "", fileName: fileName, pinned: false });
+            inp.value = "";
         },
-        openMyStory: () => {
-            get(ref(db, `stories/${myID}`)).then(snap => {
-                if(snap.exists()) window.app.openStory(myID, "Status Saya", "", true);
-                else document.getElementById('storyUpload').click();
-            });
+        sendMedia: (input) => {
+            const file = input.files[0]; if(!file) return;
+            const reader = new FileReader(); reader.readAsDataURL(file);
+            reader.onload = () => { 
+                let type = file.type.startsWith('image') ? 'image' : (file.type.startsWith('video') ? 'video' : 'file');
+                window.app.send("", reader.result, type, file.name); 
+            }
         },
-        openStory: (uid, name, pfp, isMine) => {
-            get(ref(db, `stories/${uid}`)).then(snap => {
+        msgMenu: (msgId, isPinned, e) => {
+            e.preventDefault(); selectedMsgId = msgId; isSelectedMsgPinned = isPinned;
+            document.getElementById('pinMenuText').innerHTML = isPinned ? `<i class="fas fa-thumbtack"></i> Lepas Sematan` : `<i class="fas fa-thumbtack"></i> Sematkan Pesan`;
+            toggleOverlay('msgOptionsMenu', true);
+        },
+        pinMessage: () => {
+            const room = [myID, activeTarget].sort().join("_");
+            update(ref(db, `chats/${room}/${selectedMsgId}`), { pinned: !isSelectedMsgPinned });
+            toggleOverlay('msgOptionsMenu', false);
+        },
+        deleteMessage: () => {
+            if(confirm("Hapus pesan ini?")) {
+                const room = [myID, activeTarget].sort().join("_");
+                set(ref(db, `chats/${room}/${selectedMsgId}`), null);
+                toggleOverlay('msgOptionsMenu', false);
+            }
+        },
+        openStory: (userId, userName, userPfp, isMyStory) => {
+            get(ref(db, `stories/${userId}`)).then(snap => {
                 currentStoryQueue = [];
-                snap.forEach(s => { if(Date.now() - s.val().time < 86400000) currentStoryQueue.push({id: s.key, ...s.val()}); });
+                if(snap.exists()) snap.forEach(c => { if(Date.now() - c.val().time < 86400000) currentStoryQueue.push({id:c.key, ...c.val()}); });
                 if(currentStoryQueue.length > 0) {
-                    currentStoryIndex = 0; viewingStoryOf = uid;
+                    currentStoryIndex = 0; viewingStoryOf = userId;
+                    document.getElementById('svName').innerText = userName; document.getElementById('svPfp').src = userPfp;
+                    document.getElementById('svFooter').style.display = isMyStory ? 'none' : 'flex';
+                    document.getElementById('svViews').style.display = isMyStory ? 'flex' : 'none';
                     document.getElementById('storyViewer').style.display = 'flex';
-                    window.app.renderStory();
-                }
+                    window.app.renderCurrentStory();
+                } else if(isMyStory) document.getElementById('storyUpload').click();
             });
         },
-        renderStory: () => {
+        renderCurrentStory: () => {
+            if(currentStoryIndex >= currentStoryQueue.length) return window.app.closeStory();
             const s = currentStoryQueue[currentStoryIndex];
             const container = document.getElementById('svMediaContainer');
-            container.innerHTML = s.type === 'video' ? `<video src="${s.media}" autoplay></video>` : `<img src="${s.media}">`;
+            container.innerHTML = s.type === 'video' ? `<video src="${s.media}" autoplay playsinline></video>` : `<img src="${s.media}">`;
+            
+            if(viewingStoryOf === myID) {
+                document.getElementById('svViews').innerHTML = `<div onclick="window.app.deleteStory('${s.id}')" style="color:#ef4444; margin-bottom:10px;"><i class="fas fa-trash"></i> Hapus</div><div><i class="fas fa-eye"></i> ${s.views || 0}</div>`;
+            } else update(ref(db, `stories/${viewingStoryOf}/${s.id}`), { views: (s.views || 0) + 1 });
             
             const bar = document.getElementById('storyProgress');
-            bar.style.width = '0%';
-            setTimeout(() => bar.style.width = '100%', 100);
-            
-            clearTimeout(storyTimer);
-            storyTimer = setTimeout(() => {
-                currentStoryIndex++;
-                if(currentStoryIndex < currentStoryQueue.length) window.app.renderStory();
-                else window.app.closeStory();
-            }, 5000);
+            bar.style.transition = 'none'; bar.style.width = '0%';
+            setTimeout(() => { bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 50);
+            clearTimeout(storyTimer); storyTimer = setTimeout(() => window.app.nextStory(), 5000);
         },
-        closeStory: () => { 
-            clearTimeout(storyTimer); 
-            document.getElementById('storyViewer').style.display = 'none'; 
-        },
-        uploadStory: (input) => {
-            const file = input.files[0];
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => {
-                push(ref(db, `stories/${myID}`), { media: reader.result, type: file.type.startsWith('video') ? 'video' : 'image', time: Date.now(), views: 0 });
-                window.showToast("Status diunggah!");
-            };
+        nextStory: () => { currentStoryIndex++; window.app.renderCurrentStory(); },
+        closeStory: () => { clearTimeout(storyTimer); document.getElementById('storyViewer').style.display = 'none'; },
+        deleteStory: (sid) => { set(ref(db, `stories/${myID}/${sid}`), null); window.app.closeStory(); },
+        openMyStory: () => {
+            get(ref(db, `users/${myID}/profile`)).then(snap => {
+                const p = snap.val() || {};
+                window.app.openStory(myID, "Status Saya", p.pfp || `https://ui-avatars.com/api/?name=Me`, true);
+            });
         }
     };
 
-    // --- Listeners ---
+    // --- WATCHERS ---
     onValue(ref(db, `users/${myID}/contacts`), (snap) => {
-        const chatList = document.getElementById('chatList');
-        chatList.innerHTML = "";
+        const rList = document.getElementById('chatList');
+        const cList = document.getElementById('contactList');
+        const aList = document.getElementById('archivedList');
+        rList.innerHTML = ""; cList.innerHTML = ""; aList.innerHTML = "";
+        let unreadTotal = 0;
+
         snap.forEach(child => {
-            const cid = child.key;
-            get(ref(db, `users/${cid}/profile`)).then(pSnap => {
-                const p = pSnap.val();
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `<img src="${p.pfp || 'https://ui-avatars.com/api/?name='+p.name}" class="pfp"><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">${p.bio}</div></div>`;
-                card.onclick = () => window.app.openChat(cid, p.name, p.pfp);
-                chatList.appendChild(card);
+            const cid = child.key; const isArchived = child.val().archived;
+            onValue(ref(db, `users/${cid}/profile`), pSnap => {
+                const p = pSnap.val() || { name: cid };
+                const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}`;
+                
+                const room = [myID, cid].sort().join("_");
+                onValue(ref(db, `chats/${room}`), msgSnap => {
+                    let lastMsg = null, unread = 0;
+                    msgSnap.forEach(m => {
+                        lastMsg = m.val();
+                        if(lastMsg.from !== myID && lastMsg.status !== 'read') {
+                            unread++;
+                            if(lastMsg.time > appStartTime && !notifiedMessages.has(m.key) && activeTarget !== cid) {
+                                notifiedMessages.add(m.key);
+                                window.showFloatingNotif(p.name, lastMsg.text || "Media", pfp, cid);
+                            }
+                        }
+                    });
+
+                    const html = `<div class="pfp-wrap" id="sw-${cid}"><img src="${pfp}" class="pfp"></div><div class="card-info"><div class="card-header-flex"><div class="card-name">${p.name}</div><div class="card-time">${lastMsg ? formatTime(lastMsg.time) : ''}</div></div><div class="card-msg">${lastMsg?.text || 'Mulai obrolan'}</div></div>${unread > 0 ? `<div class="unread-badge">${unread}</div>` : ''}`;
+                    let card = document.getElementById(`chat-${cid}`) || document.createElement('div');
+                    card.id = `chat-${cid}`; card.className = 'card'; card.innerHTML = html;
+                    card.onclick = () => window.app.openChat(cid, p.name, pfp);
+                    (isArchived ? aList : rList).appendChild(card);
+                    
+                    unreadTotal += unread;
+                    document.getElementById('chatBadge').style.display = unreadTotal > 0 ? 'block' : 'none';
+                });
+                
+                // Tambah ke tab Teman
+                const cCard = document.createElement('div');
+                cCard.className = 'card';
+                cCard.innerHTML = `<img src="${pfp}" class="pfp" style="width:45px;height:45px"><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">${p.bio || ''}</div></div>`;
+                cCard.onclick = () => window.app.openChat(cid, p.name, pfp);
+                cList.appendChild(cCard);
             });
         });
     });
 
-    // --- Ban System Check ---
-    onValue(ref(db, `users/${myID}/isBanned`), (snap) => {
+    // --- BAN SYSTEM ---
+    onValue(ref(db, `users/${myID}/isBanned`), snap => {
         if(snap.val() === true) {
-            document.body.innerHTML = `<div style="height:100dvh; background:#0f172a; color:white; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
-                <i class="fas fa-user-slash" style="font-size:4rem; color:#ef4444; margin-bottom:20px;"></i>
-                <h1>Akses Ditangguhkan</h1>
-                <p>Akun <b>${myID}</b> telah diblokir karena melanggar ketentuan.</p>
-                <button onclick="location.reload()" style="margin-top:20px; padding:10px 20px; background:#10b981; border:none; border-radius:8px; color:white;">Coba Lagi</button>
-            </div>`;
+            document.body.innerHTML = `<div style="height:100dvh; background:#020617; color:white; display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:20px; font-family: sans-serif;"><h2>Akses Dibatasi</h2><p>Akun ${myID} telah ditangguhkan.</p><textarea id="ap" placeholder="Alasan banding..." style="width:100%; max-width:300px; margin:20px 0; padding:10px; border-radius:10px;"></textarea><button id="btnBanding" style="padding:10px 20px; background:red; color:white; border:none; border-radius:10px; cursor:pointer;">Kirim Banding</button></div>`;
+            document.getElementById('btnBanding').onclick = () => {
+                const txt = document.getElementById('ap').value;
+                if(txt) update(ref(db, `users/${myID}`), { appealMessage: txt, appealStatus: 'pending' }).then(() => alert("Banding dikirim"));
+            };
         }
     });
 
 </script>
 
+
 </body>
-    </html>
+</html>
