@@ -647,14 +647,18 @@ input[type="text"]:focus, textarea:focus {
                 activeTarget = viewingStoryOf; window.app.send(`Membahas status: "${inp.value}"`);
                 inp.value = ""; window.app.closeStory(); alert("Balasan dikirim!");
             },
-            deleteStory: (storyId) => { 
+                        deleteStory: (storyId) => { 
                 if(confirm("Hapus status ini?")) {
                     set(ref(db, `stories/${myID}/${storyId}`), null);
-window.app.closeStory();
-window.showToast("Status berhasil dihapus", "trash");
-
+                    window.app.closeStory();
+                    window.showToast("Status berhasil dihapus", "trash");
+                }
+            },
+            scrollToPinned: () => {
+                const pinned = document.querySelector('.bubble[style*="border"]');
+                if(pinned) pinned.scrollIntoView({ behavior: 'smooth' });
             }
-        }, // TUTUP OBJECT window.app DI SINI
+        }; // <--- INI PENUTUP PENTING UNTUK window.app
 
         // LOGIKA AGAR CHAT BARU LANGSUNG MUNCUL DI DAFTAR (DI LUAR window.app)
         onValue(ref(db, `chats`), (snapshot) => {
@@ -781,7 +785,7 @@ window.showToast("Status berhasil dihapus", "trash");
                     });
                 });
             });
-        });
+        }); 
                 // ... kode-kode sebelumnya ...
 
         // 1. Letakkan di sini (di luar objek window.app)
