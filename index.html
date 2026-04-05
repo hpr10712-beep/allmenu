@@ -42,7 +42,7 @@
 
         h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-dim); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* CARDS */
+        /* CARDS (CHAT & CONTACT) */
         .card { 
             background: transparent; border-radius: 12px; padding: 12px; margin-bottom: 5px; 
             display: flex; align-items: center; gap: 15px; transition: 0.2s; cursor: pointer; position: relative;
@@ -60,50 +60,149 @@
         .card-time { font-size: 0.75rem; color: var(--text-dim); flex-shrink: 0; }
         .card-msg { font-size: 0.85rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 5px; }
         
+        /* ADD STATUS BTN */
         .add-status-btn { position: absolute; bottom: -2px; right: -2px; background: var(--accent); color: white; border-radius: 50%; width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; font-size: 0.7rem; border: 2.5px solid var(--bg); cursor: pointer; z-index: 5; transition: 0.2s; }
+        .add-status-btn:hover { transform: scale(1.1); }
 
+        /* UNREAD BADGE */
         .unread-badge { background: var(--accent); color: white; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; min-width: 20px; text-align: center; }
 
-        /* OVERLAYS & MODALS */
+        /* MODALS & MENUS */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: none; z-index: 4000; align-items: flex-end; }
         .overlay.active { display: flex; }
-        .sheet { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(20px); width: 100%; border-radius: 20px 20px 0 0; padding: 25px 20px 40px; transform: translateY(100%); transition: 0.3s ease; border-top: 1px solid var(--border); box-shadow: 0 -10px 25px rgba(0,0,0,0.5); }
+        .sheet { background: var(--bg); width: 100%; border-radius: 20px 20px 0 0; padding: 25px 20px 40px; transform: translateY(100%); transition: 0.3s ease; border-top: 1px solid var(--border); }
         .overlay.active .sheet { transform: translateY(0); }
+        .sheet-menu { padding: 10px 0 25px; }
+        
         .menu-item { padding: 16px 20px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; font-size: 1rem; color: var(--text); border-bottom: 1px solid var(--border); }
+        .menu-item:last-child { border-bottom: none; }
         .menu-item:hover { background: var(--panel-hover); }
         .menu-item.text-danger { color: #ef4444; }
 
         input[type="text"], textarea { width: 100%; padding: 14px 16px; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--border); background: var(--panel); color: white; outline: none; transition: 0.2s; }
-        .btn-fill { width: 100%; padding: 15px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent), #059669); color: white; font-weight: 600; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 15px var(--accent-glow); }
+        .btn-fill { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--accent); color: white; font-weight: 600; font-size: 1rem; cursor: pointer; }
+
+        /* STORY VIEWER (FULLSCREEN HD) */
+        #storyViewer { position: fixed; inset: 0; background: #000; z-index: 3000; display: none; flex-direction: column; }
+        .story-progress-container { display: flex; gap: 4px; padding: calc(10px + var(--safe-top)) 10px 10px; position: absolute; top: 0; left: 0; right: 0; z-index: 10; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
+        .story-progress-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
+        .story-progress-fill { height: 100%; background: white; width: 0%; transition: width 0.1s linear; }
+        .story-header { position: absolute; top: 40px; left: 0; right: 0; padding: 10px 15px; display: flex; align-items: center; gap: 10px; z-index: 10; }
+        .story-media { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; width: 100%; height: 100%; overflow: hidden; }
+        .story-media img, .story-media video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+        
+        .story-footer { padding: 15px; display: flex; gap: 10px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); align-items: center; position: absolute; bottom: 0; left: 0; right: 0; }
+                .story-views { 
+            font-size: 0.85rem; 
+            font-weight:600; 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            flex-direction: column; 
+            gap: 5px; 
+            position: absolute; 
+            bottom: 40px; /* Naikkan sedikit agar tidak tertutup input */
+            left: 50%; 
+            transform: translateX(-50%); 
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8); 
+            z-index: 100;
+        }
 
         /* CHAT PANEL */
         #chatPanel { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; transform: translateX(100%); transition: 0.3s ease; }
         #chatPanel.active { transform: translateX(0); }
         .chat-header { padding: calc(10px + var(--safe-top)) 15px 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; background: rgba(11, 17, 32, 0.95); backdrop-filter: blur(10px); }
         
-        #pinnedMsgContainer { display: none; padding: 10px 15px; background: var(--panel); border-bottom: 1px solid var(--border); font-size: 0.85rem; border-left: 4px solid var(--accent); cursor: pointer; }
+        /* PINNED MESSAGE BAR */
+        #pinnedMsgContainer { display: none; padding: 10px 15px; background: var(--panel); border-bottom: 1px solid var(--border); font-size: 0.85rem; border-left: 4px solid var(--accent); cursor: pointer; transition: 0.2s; }
+        #pinnedMsgContainer:hover { background: var(--panel-hover); }
+
+        /* CHAT BUBBLES & MEDIA */
         #msgArea { flex: 1; padding: 20px 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        
-        .bubble { padding: 10px 14px; border-radius: 16px; max-width: 80%; font-size: 0.95rem; word-wrap: break-word; position: relative; display: flex; flex-direction: column; transition: 0.2s; }
-        .bubble.sent { align-self: flex-end; background: var(--accent); color: white; border-bottom-right-radius: 4px; }
-        .bubble.received { align-self: flex-start; background: var(--panel); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+        .bubble { padding: 10px 14px; border-radius: 16px; max-width: 80%; font-size: 0.95rem; line-height: 1.4; word-wrap: break-word; position: relative; display: flex; flex-direction: column; cursor: pointer; transition: 0.2s;}
+        .bubble:active { opacity: 0.8; }
         .bubble img, .bubble video { max-width: 100%; border-radius: 8px; margin-bottom: 5px; }
+        .bubble .file-box { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; display: flex; align-items: center; gap: 10px; margin-bottom: 5px; font-size: 0.85rem; }
+        
+        .msg-meta { display: flex; justify-content: flex-end; align-items: center; gap: 5px; font-size: 0.65rem; margin-top: 4px; opacity: 0.8; }
+        
+        /* READ RECEIPTS COLORS */
+        .sent { align-self: flex-end; background: var(--accent); color: white; border-bottom-right-radius: 4px; }
+        .received { align-self: flex-start; background: var(--panel); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+        
+        .tick { font-size: 0.7rem; }
+        .tick-read { color: var(--blue-tick); text-shadow: 0 0 2px rgba(255,255,255,0.5); }
+        .tick-sent { color: rgba(255,255,255,0.8); }
 
-        /* STORY VIEWER */
-        #storyViewer { position: fixed; inset: 0; background: #000; z-index: 3000; display: none; flex-direction: column; }
-        .story-progress-container { display: flex; gap: 4px; padding: calc(10px + var(--safe-top)) 10px 10px; position: absolute; top: 0; left: 0; right: 0; z-index: 10; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); }
-        .story-progress-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
-        .story-progress-fill { height: 100%; background: white; width: 0%; transition: width 0.1s linear; }
+        /* CHAT INPUT AREA */
+        .chat-input-area { padding: 12px 15px 25px; display: flex; align-items: center; gap: 10px; background: var(--bg); border-top: 1px solid var(--border); }
+        .attach-btn { background: none; border: none; color: var(--text-dim); font-size: 1.3rem; padding: 10px; cursor: pointer; transition: 0.2s; }
+        .attach-btn:hover { color: var(--accent); }
+        .chat-input-area input[type="text"] { margin: 0; background: var(--panel); flex: 1; }
+        .send-btn { background: var(--accent); border: none; width: 48px; height: 48px; border-radius: 12px; color: white; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; flex-shrink: 0; }
 
-        /* TOAST */
-        .toast-msg { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(16, 185, 129, 0.95); color: white; padding: 12px 20px; border-radius: 50px; font-size: 0.9rem; z-index: 9999; opacity: 0; transition: 0.3s; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-        .toast-msg.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
+        /* NAV BOTTOM */
         nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: rgba(11, 17, 32, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border); display: flex; z-index: 500; }
-        .nav-link { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; color: var(--text-dim); font-size: 0.7rem; font-weight: 500; cursor: pointer; position: relative; }
+        .nav-link { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; color: var(--text-dim); font-size: 0.7rem; font-weight: 500; cursor: pointer; transition: 0.2s; position: relative; }
+        .nav-link i { font-size: 1.3rem; margin-bottom: 2px; }
         .nav-link.active { color: var(--accent); }
         .nav-badge { position: absolute; top: 10px; right: 25%; background: red; width: 8px; height: 8px; border-radius: 50%; display: none; }
-    </style>
+   /* POPUP GLASSMORPHISM */
+.sheet {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -10px 25px rgba(0,0,0,0.5);
+}
+
+.sheet h3 {
+    text-align: center;
+    color: var(--accent);
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+input[type="text"]:focus, textarea:focus {
+    border-color: var(--accent);
+    background: var(--panel-hover);
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.btn-fill {
+    background: linear-gradient(135deg, var(--accent), #059669);
+    box-shadow: 0 4px 15px var(--accent-glow);
+    transition: 0.3s;
+}
+
+.btn-fill:active {
+    transform: scale(0.98);
+}
+        
+.toast-msg {
+    position: fixed;
+    bottom: 100px; /* Di atas navbar */
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(16, 185, 129, 0.95);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+.toast-msg.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+    
+ </style>
 </head>
 <body>
 
@@ -114,21 +213,24 @@
 
     <div class="content">
         <div id="v-chats" class="view active">
-            <div id="archivedBtn" style="display:none; padding:12px 15px; margin-bottom:10px; background:var(--panel); border-radius:12px; cursor:pointer; align-items:center; gap:15px;" onclick="toggleArchived()">
-                <i class="fas fa-archive"></i>
-                <div style="flex:1; font-weight:600;">Diarsipkan</div>
-                <div id="archivedCount">0</div>
+            <div id="archivedBtn" style="display:none; padding:12px 15px; margin-bottom:10px; background:var(--panel); border-radius:12px; cursor:pointer; align-items:center; gap:15px; transition:0.2s;" onclick="toggleArchived()">
+                <i class="fas fa-archive" style="color:var(--text-dim); font-size:1.1rem; width:20px; text-align:center;"></i>
+                <div style="font-weight:600; flex:1; font-size:0.95rem;">Diarsipkan</div>
+                <div id="archivedCount" style="color:var(--accent); font-weight:bold; font-size:0.85rem;">0</div>
             </div>
             <div id="archivedList" style="display:none; margin-bottom: 20px; border-left: 2px solid var(--accent); padding-left: 5px;"></div>
+            
             <div id="chatList"></div>
         </div>
 
         <div id="v-status" class="view">
             <h4>Status Saya</h4>
-            <div class="card" onclick="window.app.openMyStory()">
-                <div class="pfp-wrap" id="myStatusPfpWrap">
+            <div class="card" style="margin-bottom: 20px; position:relative;" onclick="window.app.openMyStory()">
+                <div class="pfp-wrap" id="myStatusPfpWrap" style="background: var(--panel);">
                     <img id="myStatusPfp" src="" class="pfp">
-                    <div class="add-status-btn" onclick="event.stopPropagation(); document.getElementById('storyUpload').click()"><i class="fas fa-plus"></i></div>
+                    <div class="add-status-btn" onclick="event.stopPropagation(); document.getElementById('storyUpload').click()">
+                        <i class="fas fa-plus"></i>
+                    </div>
                 </div>
                 <div class="card-info">
                     <div class="card-name">Status Saya</div>
@@ -136,78 +238,148 @@
                 </div>
             </div>
             <input type="file" id="storyUpload" accept="image/*,video/*" style="display:none" onchange="window.app.uploadStory(this)">
-            <h4 style="margin-top:20px;">Pembaruan Teman</h4>
+            
+            <h4>Pembaruan Teman</h4>
             <div id="storyList"></div>
         </div>
 
         <div id="v-contacts" class="view">
-            <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                <h4>Kontak Saya</h4>
-                <button onclick="toggleOverlay('popAdd', true)" class="btn-fill" style="width:auto; padding:6px 12px; font-size:0.8rem;">Tambah</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h4 style="margin:0">Kontak Saya</h4>
+                <button onclick="toggleOverlay('popAdd', true)" style="background:var(--accent); border:none; color:white; padding:6px 12px; border-radius:8px; font-weight:600; font-size:0.8rem;"><i class="fas fa-user-plus"></i> Tambah</button>
             </div>
             <div id="contactList"></div>
         </div>
 
         <div id="v-profile" class="view">
-            <div class="profile-header" onclick="toggleOverlay('popProfile', true)" style="display:flex; align-items:center; gap:15px; padding: 20px; background: var(--panel); border-radius:12px; cursor:pointer;">
+            <div class="profile-header" onclick="toggleOverlay('popProfile', true)" style="display:flex; align-items:center; gap:15px; padding: 20px 15px; background: var(--panel); border-radius:12px; margin-bottom: 20px; cursor:pointer; transition:0.2s;">
                 <img id="vProfilePfp" src="" class="pfp" style="width:65px; height:65px;">
                 <div style="flex:1;">
-                    <h3 id="vProfileName">Nama</h3>
+                    <h3 id="vProfileName" style="margin-bottom:3px; font-size:1.1rem;">Nama</h3>
                     <div id="vProfileBio" style="color:var(--text-dim); font-size:0.85rem;">Bio...</div>
+                </div>
+                <i class="fas fa-qrcode" style="color:var(--accent); font-size:1.5rem; opacity:0.8;"></i>
+            </div>
+
+            <h4 style="margin-top: 10px;">Pengaturan</h4>
+            <div style="background: var(--panel); border-radius:12px; overflow:hidden;">
+                <div class="menu-item" onclick="alert('Fitur Akun belum tersedia')">
+                    <div style="width:30px; text-align:center; color:var(--text-dim);"><i class="fas fa-key"></i></div>
+                    <div style="flex:1"><div style="font-weight:600; font-size:0.95rem;">Akun</div><div style="font-size:0.75rem; color:var(--text-dim); margin-top:2px;">Notifikasi keamanan, ganti nomor</div></div>
+                </div>
+                <div class="menu-item" onclick="alert('Fitur Privasi belum tersedia')">
+                    <div style="width:30px; text-align:center; color:var(--text-dim);"><i class="fas fa-lock"></i></div>
+                    <div style="flex:1"><div style="font-weight:600; font-size:0.95rem;">Privasi</div><div style="font-size:0.75rem; color:var(--text-dim); margin-top:2px;">Pesan sementara, blokir kontak</div></div>
+                </div>
+                <div class="menu-item" onclick="alert('Fitur Chat belum tersedia')">
+                    <div style="width:30px; text-align:center; color:var(--text-dim);"><i class="fas fa-comment-alt"></i></div>
+                    <div style="flex:1"><div style="font-weight:600; font-size:0.95rem;">Chat</div><div style="font-size:0.75rem; color:var(--text-dim); margin-top:2px;">Tema, wallpaper, riwayat chat</div></div>
+                </div>
+                <div class="menu-item" onclick="alert('Fitur Notifikasi belum tersedia')">
+                    <div style="width:30px; text-align:center; color:var(--text-dim);"><i class="fas fa-bell"></i></div>
+                    <div style="flex:1"><div style="font-weight:600; font-size:0.95rem;">Notifikasi</div><div style="font-size:0.75rem; color:var(--text-dim); margin-top:2px;">Pesan, grup & nada dering</div></div>
                 </div>
             </div>
         </div>
     </div>
 
+    <nav>
+        <div class="nav-link active" onclick="showTab('v-chats', this)"><i class="fas fa-comment-dots"></i><span>Obrolan</span><div class="nav-badge" id="chatBadge"></div></div>
+        <div class="nav-link" onclick="showTab('v-status', this)"><i class="fas fa-circle-notch"></i><span>Status</span></div>
+        <div class="nav-link" onclick="showTab('v-contacts', this)"><i class="fas fa-users"></i><span>Teman</span></div>
+        <div class="nav-link" onclick="showTab('v-profile', this)"><i class="fas fa-cog"></i><span>Pengaturan</span></div>
+    </nav>
+
     <div id="storyViewer">
         <div class="story-progress-container"><div class="story-progress-bar"><div class="story-progress-fill" id="storyProgress"></div></div></div>
-        <div class="story-header" style="position:absolute; top:40px; padding:10px; display:flex; align-items:center; gap:10px; color:white; z-index:20;">
-            <i class="fas fa-arrow-left" onclick="window.app.closeStory()"></i>
-            <img id="svPfp" src="" style="width:40px; height:40px; border-radius:50%;">
-            <div><div id="svName" style="font-weight:600;">Nama</div><div id="svTime" style="font-size:0.75rem;">Waktu</div></div>
+        <div class="story-header">
+            <i class="fas fa-arrow-left" onclick="window.app.closeStory()" style="color:white; font-size:1.2rem; cursor:pointer; text-shadow:0 1px 3px rgba(0,0,0,0.8); z-index:20;"></i>
+            <img id="svPfp" src="" style="width:40px; height:40px; border-radius:50%; object-fit:cover; z-index:20; border:1px solid rgba(255,255,255,0.5);">
+            <div style="flex:1; z-index:20;">
+                <div id="svName" style="color:white; font-weight:600; font-size:1rem; text-shadow:0 1px 3px rgba(0,0,0,0.8);">Nama</div>
+                <div id="svTime" style="color:rgba(255,255,255,0.9); font-size:0.75rem; text-shadow:0 1px 3px rgba(0,0,0,0.8);">Waktu</div>
+            </div>
         </div>
-        <div class="story-media" id="svMediaContainer" style="flex:1; display:flex; align-items:center;" onclick="window.app.nextStory()"></div>
-        <div class="story-views" id="svViews" style="position:absolute; bottom:40px; left:50%; transform:translateX(-50%); display:none; text-align:center;">
-             <i class="fas fa-eye"></i> <span id="svViewCount">0</span>
+        
+        <div class="story-media" id="svMediaContainer" onclick="window.app.nextStory()"></div>
+
+        <div class="story-views" id="svViews" style="display:none;" onclick="alert('Fitur List Penonton belum tersedia')">
+            <i class="fas fa-chevron-up" style="font-size:0.8rem; opacity:0.8;"></i>
+            <div><i class="fas fa-eye"></i> <span id="svViewCount">0</span></div>
         </div>
-        <div class="story-footer" id="svFooter" style="padding:15px; display:flex; gap:10px;">
-            <input type="text" id="storyReplyInp" placeholder="Balas status..." style="background:rgba(255,255,255,0.2); border:none;">
-            <button onclick="window.app.replyStory()" class="send-btn" style="width:45px; height:45px; border-radius:50%; background:var(--accent); color:white; border:none;"><i class="fas fa-paper-plane"></i></button>
+
+        <div class="story-footer" id="svFooter">
+            <input type="text" id="storyReplyInp" placeholder="Balas status..." style="margin:0; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(10px); color:white; border-radius:20px; padding:12px 20px;">
+            <button onclick="window.app.replyStory()" class="send-btn" style="border-radius:50%; width:45px; height:45px;"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
     <div id="chatPanel">
         <div class="chat-header">
-            <i class="fas fa-arrow-left" onclick="window.app.closeChat()"></i>
+            <i class="fas fa-arrow-left" onclick="window.app.closeChat()" style="font-size:1.2rem; cursor:pointer;"></i>
             <img id="chatPfp" src="" class="pfp" style="width:40px; height:40px;">
-            <div style="flex:1"><div id="chatName" style="font-weight:600;">...</div><div id="chatOnlineStatus" style="font-size:0.75rem; color:var(--accent);">Memuat...</div></div>
-            <i class="fas fa-ellipsis-v" onclick="toggleOverlay('chatOptionsMenu', true)"></i>
+            <div style="flex:1">
+                <div id="chatName" style="font-weight:600; font-size:1rem;">...</div>
+                <div style="font-size:0.75rem; color:var(--accent);">Online</div>
+            </div>
+            <i class="fas fa-ellipsis-v" id="chatMenuBtn" onclick="toggleOverlay('chatOptionsMenu', true)" style="cursor:pointer; padding:5px 10px; font-size:1.2rem;"></i>
         </div>
-        <div id="pinnedMsgContainer" onclick="window.app.scrollToPinned()"><div id="pinnedMsgText"></div></div>
+        
+        <div id="pinnedMsgContainer" onclick="window.app.scrollToPinned()">
+            <div style="color:var(--accent); font-weight:600; margin-bottom:2px; display:flex; justify-content:space-between; align-items:center;">
+                <span><i class="fas fa-thumbtack" style="font-size:0.75rem; margin-right:4px;"></i> Pesan Disematkan</span>
+            </div>
+            <div id="pinnedMsgText" style="color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
+        </div>
+
         <div id="msgArea"></div>
-        <div class="chat-input-area" style="padding:15px; display:flex; gap:10px; background:var(--bg); border-top:1px solid var(--border);">
-            <button class="attach-btn" onclick="document.getElementById('chatMedia').click()" style="background:none; border:none; color:var(--text-dim); font-size:1.2rem;"><i class="fas fa-paperclip"></i></button>
+        <div class="chat-input-area">
+            <button class="attach-btn" onclick="document.getElementById('chatMedia').click()"><i class="fas fa-paperclip"></i></button>
             <input type="file" id="chatMedia" style="display:none" onchange="window.app.sendMedia(this)">
-            <input type="text" id="msgIn" placeholder="Ketik pesan..." style="margin:0;">
-            <button class="send-btn" onclick="window.app.send()" style="background:var(--accent); border:none; width:48px; height:48px; border-radius:12px; color:white;"><i class="fas fa-paper-plane"></i></button>
+            <input type="text" id="msgIn" placeholder="Ketik pesan..." onkeypress="if(event.key === 'Enter') window.app.send()">
+            <button class="send-btn" onclick="window.app.send()"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <div class="overlay" id="chatOptionsMenu" onclick="closeOverlay(event)"><div class="sheet"><div class="menu-item" id="archiveMenuBtn">Arsip</div><div class="menu-item text-danger" onclick="window.app.deleteChat()">Hapus Obrolan</div></div></div>
-    <div class="overlay" id="msgOptionsMenu" onclick="closeOverlay(event)"><div class="sheet"><div class="menu-item" id="pinMenuText" onclick="window.app.pinMessage()">Sematkan</div><div class="menu-item text-danger" onclick="window.app.deleteMessage()">Hapus Pesan</div></div></div>
-    <div class="overlay" id="popAdd" onclick="closeOverlay(event)"><div class="sheet"><h3>Tambah Teman</h3><input type="text" id="targetID" placeholder="ID (BRO-1234)"><button class="btn-fill" onclick="window.app.addFriend()">Simpan</button></div></div>
-    <div class="overlay" id="popProfile" onclick="closeOverlay(event)"><div class="sheet"><h3>Edit Profil</h3><input type="text" id="editName"><textarea id="editBio"></textarea><button class="btn-fill" onclick="window.app.updateProfile()">Simpan</button></div></div>
+    <div class="overlay" id="chatOptionsMenu" onclick="closeOverlay(event)">
+        <div class="sheet sheet-menu">
+            <div class="menu-item" id="archiveMenuBtn"><i class="fas fa-archive"></i> Arsipkan Obrolan</div>
+            <div class="menu-item text-danger" onclick="window.app.deleteChat()"><i class="fas fa-trash"></i> Hapus Obrolan</div>
+        </div>
+    </div>
 
-    <nav>
-        <div class="nav-link active" onclick="showTab('v-chats', this)"><i class="fas fa-comment-dots"></i><span>Obrolan</span><div class="nav-badge" id="chatBadge"></div></div>
-        <div class="nav-link" onclick="showTab('v-status', this)"><i class="fas fa-circle-notch"></i><span>Status</span></div>
-        <div class="nav-link" onclick="showTab('v-contacts', this)"><i class="fas fa-users"></i><span>Teman</span></div>
-        <div class="nav-link" onclick="showTab('v-profile', this)"><i class="fas fa-cog"></i><span>Setelan</span></div>
-    </nav>
+    <div class="overlay" id="msgOptionsMenu" onclick="closeOverlay(event)">
+        <div class="sheet sheet-menu">
+            <div class="menu-item" id="pinMenuText" onclick="window.app.pinMessage()"><i class="fas fa-thumbtack"></i> Sematkan Pesan</div>
+            <div class="menu-item text-danger" onclick="window.app.deleteMessage()"><i class="fas fa-trash"></i> Hapus Pesan</div>
+        </div>
+    </div>
+
+    <div class="overlay" id="popAdd" onclick="closeOverlay(event)">
+        <div class="sheet">
+            <h3 style="margin-bottom: 15px;">Tambah Teman</h3>
+            <input type="text" id="targetID" placeholder="Masukkan ID (Contoh: BRO-1234)">
+            <button class="btn-fill" onclick="window.app.addFriend()">Simpan</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="popProfile" onclick="closeOverlay(event)">
+        <div class="sheet">
+            <h3 style="margin-bottom: 20px; text-align:center;">Edit Profil</h3>
+            <div style="text-align:center; margin-bottom:20px;">
+                <img id="pfpEdit" src="" class="pfp" style="width:90px; height:90px; margin:0 auto;">
+                <br><button onclick="document.getElementById('filePfp').click()" style="background:none; border:none; color:var(--accent); margin-top:10px; font-weight:600; cursor:pointer;">Ubah Foto</button>
+                <input type="file" id="filePfp" accept="image/*" style="display:none" onchange="window.app.handlePfp(this)">
+            </div>
+            <input type="text" id="editName" placeholder="Nama Lengkap">
+            <textarea id="editBio" placeholder="Bio singkat..."></textarea>
+            <button class="btn-fill" onclick="window.app.updateProfile()">Simpan</button>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, get, update, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, get, update, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
@@ -218,207 +390,568 @@
         const app_fire = initializeApp(firebaseConfig);
         const db = getDatabase(app_fire);
 
+        if ("Notification" in window) { Notification.requestPermission(); }
+
         let myID = localStorage.getItem('mybro_id');
         if(!myID) {
             myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
             localStorage.setItem('mybro_id', myID);
-            set(ref(db, `users/${myID}/profile`), { id: myID, name: "User " + myID.split('-')[1], bio: "Hey ada di MyBro!" });
+            set(ref(db, `users/${myID}/profile`), { id: myID, name: "User " + myID.split('-')[1], pfp: "", bio: "Hey ada di MyBro!" });
         }
         document.getElementById('displayID').innerText = myID;
 
-        // STATUS ONLINE / OFFLINE (GLOBAL)
-        const connectedRef = ref(db, '.info/connected');
-        const myStatusRef = ref(db, `users/${myID}/status`);
-        onValue(connectedRef, (snap) => {
-            if (snap.val() === true) {
-                onDisconnect(myStatusRef).set(Date.now());
-                set(myStatusRef, 'online');
-            }
-        });
-
-        let activeTarget = null, selectedMsgId = null, isSelectedMsgPinned = false;
+        let activeTarget = null;
+        let pfpBase64 = "";
         let currentStoryQueue = [], currentStoryIndex = 0, storyTimer, viewingStoryOf = null;
+        let unreadCountGlobal = 0;
+        let selectedMsgId = null; 
+        let isSelectedMsgPinned = false;
 
         window.showTab = (id, el) => {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             el.classList.add('active');
-        };
-
+        }
+        
         window.toggleOverlay = (id, show) => { 
             const el = document.getElementById(id); 
             if(show) { el.classList.add('active'); el.style.display = 'flex'; } 
             else { el.classList.remove('active'); setTimeout(() => el.style.display = 'none', 300); } 
-        };
-        window.closeOverlay = (e) => { if(e.target.classList.contains('overlay')) toggleOverlay(e.target.id, false); };
-        window.copyID = () => { navigator.clipboard.writeText(myID); window.showToast("ID Berhasil Disalin!", "copy"); };
-        window.toggleArchived = () => { const l = document.getElementById('archivedList'); l.style.display = l.style.display === 'none' ? 'block' : 'none'; };
+        }
+        window.closeOverlay = (e) => { if(e.target.classList.contains('overlay')) toggleOverlay(e.target.id, false); }
+        window.copyID = () => { navigator.clipboard.writeText(myID); window.showToast("ID Berhasil Disalin!", "copy"); }
+
+        window.toggleArchived = () => {
+            const list = document.getElementById('archivedList');
+            list.style.display = list.style.display === 'none' ? 'block' : 'none';
+        }
 
         const formatTime = (ts) => {
             const d = new Date(ts);
             return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
-        };
+        }
 
         window.app = {
+            handlePfp: (input) => {
+                const reader = new FileReader(); reader.readAsDataURL(input.files[0]);
+                reader.onload = () => { pfpBase64 = reader.result; document.getElementById('pfpEdit').src = pfpBase64; }
+            },
+            updateProfile: () => {
+                const updates = { name: document.getElementById('editName').value, bio: document.getElementById('editBio').value };
+                if(pfpBase64) updates.pfp = pfpBase64; update(ref(db, `users/${myID}/profile`), updates); toggleOverlay('popProfile', false);
+            },
+            addFriend: () => {
+                const tid = document.getElementById('targetID').value.trim().toUpperCase();
+                if(!tid || tid === myID) return;
+                set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid }); toggleOverlay('popAdd', false);
+            },
+
+            // --- CHAT & MEDIA SYSTEM ---
             openChat: (id, name, pfp) => {
                 activeTarget = id;
-                document.getElementById('chatName').innerText = name;
-                document.getElementById('chatPfp').src = pfp;
+                document.getElementById('chatName').innerText = name; document.getElementById('chatPfp').src = pfp;
                 document.getElementById('chatPanel').classList.add('active');
                 
-                // PRIVACY: Hanya lihat status online jika sudah jadi kontak
-                get(ref(db, `users/${myID}/contacts/${id}`)).then(snapContact => {
-                    const statusEl = document.getElementById('chatOnlineStatus');
-                    if(snapContact.exists()) {
-                        onValue(ref(db, `users/${id}/status`), (snapStatus) => {
-                            const val = snapStatus.val();
-                            if(val === 'online') { statusEl.innerText = "Online"; statusEl.style.color = "var(--accent)"; }
-                            else { statusEl.innerText = val ? `Terakhir dilihat ${formatTime(val)}` : "Offline"; statusEl.style.color = "var(--text-dim)"; }
-                        });
-                    } else { statusEl.innerText = ""; }
+                // Set Archive Status for Menu
+                get(ref(db, `users/${myID}/contacts/${id}`)).then(snap => {
+                    const isArchived = snap.val()?.archived || false;
+                    const archBtn = document.getElementById('archiveMenuBtn');
+                    archBtn.innerHTML = isArchived ? `<i class="fas fa-box-open"></i> Buka Arsip` : `<i class="fas fa-archive"></i> Arsipkan Obrolan`;
+                    archBtn.onclick = () => {
+                        update(ref(db, `users/${myID}/contacts/${id}`), { archived: !isArchived });
+                        toggleOverlay('chatOptionsMenu', false);
+                        window.app.closeChat();
+                    };
                 });
 
                 const room = [myID, id].sort().join("_");
                 onValue(ref(db, `chats/${room}`), (snap) => {
-                    const area = document.getElementById('msgArea'); area.innerHTML = "";
-                    let updates = {}, pinnedMsg = null;
+                    const area = document.getElementById('msgArea');
+                    area.innerHTML = "";
+                    let updates = {}; let hasUpdates = false;
+                    let pinnedMsg = null;
+
                     snap.forEach(child => {
                         const m = child.val();
-                        if(m.from !== myID && m.status !== 'read') updates[`${child.key}/status`] = 'read';
-                        if(m.pinned) pinnedMsg = m;
+                        
+                        if(m.from !== myID && m.status !== 'read') { updates[`${child.key}/status`] = 'read'; hasUpdates = true; }
+                        if(m.pinned) pinnedMsg = m; // Ambil pesan tersemat terakhir
+
+                        let mediaHTML = "";
+                        if(m.type === 'image') mediaHTML = `<img src="${m.media}">`;
+                        else if(m.type === 'video') mediaHTML = `<video src="${m.media}" controls></video>`;
+                        else if(m.type === 'file') mediaHTML = `<div class="file-box"><i class="fas fa-file-alt fa-2x"></i> <div>${m.fileName || 'File'}<br><a href="${m.media}" download="${m.fileName || 'file'}" style="color:var(--accent); font-size:0.7rem;">Download</a></div></div>`;
+
+                        let tickHTML = "";
+                        if(m.from === myID) tickHTML = m.status === 'read' ? `<i class="fas fa-check-double tick tick-read"></i>` : `<i class="fas fa-check tick tick-sent"></i>`;
 
                         area.innerHTML += `
-                            <div class="bubble ${m.from === myID ? 'sent' : 'received'}" oncontextmenu="window.app.msgMenu('${child.key}', ${m.pinned || false}, event)">
-                                ${m.type === 'image' ? `<img src="${m.media}">` : ''}
+                            <div class="bubble ${m.from === myID ? 'sent' : 'received'}" id="msg-${child.key}" oncontextmenu="window.app.msgMenu('${child.key}', ${m.pinned || false}, event)">
+                                ${mediaHTML}
                                 ${m.text ? `<div>${m.text}</div>` : ''}
-                                <div style="font-size:0.6rem; opacity:0.7; text-align:right;">${formatTime(m.time)}</div>
+                                <div class="msg-meta"><span>${formatTime(m.time)}</span> ${tickHTML}</div>
                             </div>`;
                     });
-                    if(Object.keys(updates).length > 0) update(ref(db, `chats/${room}`), updates);
+                    
+                    if(hasUpdates) update(ref(db, `chats/${room}`), updates);
                     area.scrollTop = area.scrollHeight;
-                    document.getElementById('pinnedMsgContainer').style.display = pinnedMsg ? 'block' : 'none';
-                    if(pinnedMsg) document.getElementById('pinnedMsgText').innerText = pinnedMsg.text || "Media Tersemat";
+
+                    // Update Pinned Message UI
+                    const pinContainer = document.getElementById('pinnedMsgContainer');
+                    if(pinnedMsg) {
+                        pinContainer.style.display = 'block';
+                        let pinText = pinnedMsg.text;
+                        if(pinnedMsg.type === 'image') pinText = '📷 Foto';
+                        else if(pinnedMsg.type === 'video') pinText = '🎥 Video';
+                        else if(pinnedMsg.type === 'file') pinText = '📄 Dokumen';
+                        document.getElementById('pinnedMsgText').innerText = pinText;
+                    } else {
+                        pinContainer.style.display = 'none';
+                    }
                 });
             },
-
             closeChat: () => { document.getElementById('chatPanel').classList.remove('active'); activeTarget = null; },
-
-            send: (txt = null, media = null, type = 'text') => {
+            send: (customText = null, mediaData = null, type = 'text', fileName = '') => {
                 const inp = document.getElementById('msgIn');
-                const text = txt || inp.value;
-                if(!text && !media) return;
+                const text = customText !== null ? customText : inp.value;
+                if((!text && !mediaData) || !activeTarget) return;
+                
                 const room = [myID, activeTarget].sort().join("_");
-                push(ref(db, `chats/${room}`), { from: myID, text, media: media || "", type, time: Date.now(), status: 'sent' });
+                push(ref(db, `chats/${room}`), { 
+                    from: myID, text: text, time: Date.now(), status: 'sent', 
+                    type: type, media: mediaData || "", fileName: fileName, pinned: false
+                });
                 inp.value = "";
             },
-
             sendMedia: (input) => {
-                const file = input.files[0]; if(!file || file.size > 20*1024*1024) return alert("File > 20MB");
+                const file = input.files[0]; if(!file) return;
+                if(file.size > 3 * 1024 * 1024) return alert("Batas ukuran file 3MB untuk demo Base64 ini.");
+                
+                let type = 'file';
+                if(file.type.startsWith('image/')) type = 'image';
+                if(file.type.startsWith('video/')) type = 'video';
+
                 const reader = new FileReader(); reader.readAsDataURL(file);
-                reader.onload = () => { window.app.send("", reader.result, file.type.startsWith('image') ? 'image' : 'video'); };
+                reader.onload = () => { window.app.send("", reader.result, type, file.name); }
             },
 
+            // --- MENU MESSAGE LOGIC ---
+            msgMenu: (msgId, isPinned, e) => {
+                e.preventDefault();
+                selectedMsgId = msgId; isSelectedMsgPinned = isPinned;
+                document.getElementById('pinMenuText').innerHTML = isPinned ? `<i class="fas fa-thumbtack"></i> Lepas Sematan` : `<i class="fas fa-thumbtack"></i> Sematkan Pesan`;
+                toggleOverlay('msgOptionsMenu', true);
+            },
+            pinMessage: () => {
+                if(!selectedMsgId || !activeTarget) return;
+                const room = [myID, activeTarget].sort().join("_");
+                update(ref(db, `chats/${room}/${selectedMsgId}`), { pinned: !isSelectedMsgPinned });
+                toggleOverlay('msgOptionsMenu', false);
+            },
+            deleteMessage: () => {
+                if(!selectedMsgId || !activeTarget) return;
+                if(confirm("Hapus pesan ini?")) {
+                    const room = [myID, activeTarget].sort().join("_");
+                    set(ref(db, `chats/${room}/${selectedMsgId}`), null);
+                    toggleOverlay('msgOptionsMenu', false);
+                }
+            },
+            deleteChat: () => {
+                if(!activeTarget) return;
+                if(confirm("Hapus semua pesan di obrolan ini? (Kontak tidak akan terhapus)")) {
+                    const room = [myID, activeTarget].sort().join("_");
+                    set(ref(db, `chats/${room}`), null);
+                    toggleOverlay('chatOptionsMenu', false);
+                    window.app.closeChat();
+                }
+            },
+
+            // --- STORY SYSTEM ---
             uploadStory: (input) => {
                 const file = input.files[0]; if(!file) return;
+                if(file.size > 3 * 1024 * 1024) return alert("Maksimal 3MB.");
+                const type = file.type.startsWith('video') ? 'video' : 'image';
                 const reader = new FileReader(); reader.readAsDataURL(file);
-                reader.onload = () => {
-                    push(ref(db, `stories/${myID}`), { media: reader.result, type: file.type.startsWith('video') ? 'video' : 'image', time: Date.now(), views: 0 });
-                    window.showToast("Status diunggah!");
-                };
+                reader.onload = () => { push(ref(db, `stories/${myID}`), { media: reader.result, type: type, time: Date.now(), views: 0 }); window.showToast("Status Berhasil Diunggah!", "cloud-upload-alt"); }
+
+            },
+            openStory: (userId, userName, userPfp, isMyStory) => {
+    get(ref(db, `stories/${userId}`)).then(snap => {
+        currentStoryQueue = [];
+        const now = Date.now();
+        
+        // Ambil semua status yang belum lewat 24 jam
+        if(snap.exists()) {
+            snap.forEach(child => {
+                const s = child.val();
+                if(now - s.time < 86400000) { 
+                    currentStoryQueue.push({ id: child.key, ...s });
+                }
+            });
+        }
+
+        // Jika ada status yang valid, jalankan Story Viewer
+        if(currentStoryQueue.length > 0) {
+            currentStoryIndex = 0;
+            viewingStoryOf = userId;
+
+            // Update UI Nama & Foto Profil di atas story
+            document.getElementById('svName').innerText = userName;
+            document.getElementById('svPfp').src = userPfp;
+
+            // Atur tombol balas (hanya muncul di story orang lain) 
+            // dan jumlah view (hanya muncul di story sendiri)
+            document.getElementById('svFooter').style.display = isMyStory ? 'none' : 'flex';
+            document.getElementById('svViews').style.display = isMyStory ? 'flex' : 'none';
+
+            // Munculkan layar hitam fullscreen
+            document.getElementById('storyViewer').style.display = 'flex';
+
+            // Mulai putar status
+            window.app.renderCurrentStory();
+        } else {
+            // Jika tidak ada status aktif dan ini punya sendiri, buka galeri untuk upload
+            if(isMyStory) document.getElementById('storyUpload').click();
+        }
+    });
             },
 
-            // PRIVASI STORY: Hanya render story milik teman
-            renderStories: () => {
-                const sList = document.getElementById('storyList'); sList.innerHTML = "";
-                get(ref(db, `stories`)).then(snap => {
-                    snap.forEach(userStory => {
-                        const uid = userStory.key; if(uid === myID) return;
-                        get(ref(db, `users/${myID}/contacts/${uid}`)).then(contactSnap => {
-                            if(contactSnap.exists()) {
-                                get(ref(db, `users/${uid}/profile`)).then(pSnap => {
-                                    const p = pSnap.val();
-                                    sList.innerHTML += `<div class="card" onclick="window.app.openStory('${uid}', '${p.name}', '${p.pfp || ''}')">
-                                        <div class="pfp-wrap has-story"><img src="${p.pfp || ''}" class="pfp"></div>
-                                        <div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">Klik untuk melihat status</div></div>
-                                    </div>`;
-                                });
-                            }
-                        });
+            
+            openMyStory: () => {
+                get(ref(db, `users/${myID}/profile`)).then(snap => {
+                    const p = snap.val() || {};
+                    const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name || 'Me'}&background=1e293b&color=fff`;
+                    get(ref(db, `stories/${myID}`)).then(storySnap => {
+                        let hasActive = false; const now = Date.now();
+                        if(storySnap.exists()) {
+                            storySnap.forEach(s => { if(now - s.val().time < 86400000) hasActive = true; });
+                        }
+                        if(hasActive) window.app.openStory(myID, "Status Saya", pfp, true);
+                        else document.getElementById('storyUpload').click();
                     });
                 });
             },
-
-            openStory: (uid, name, pfp) => {
-                viewingStoryOf = uid;
-                document.getElementById('svName').innerText = name;
-                document.getElementById('svPfp').src = pfp;
-                get(ref(db, `stories/${uid}`)).then(snap => {
-                    currentStoryQueue = []; snap.forEach(c => currentStoryQueue.push({id: c.key, ...c.val()}));
-                    currentStoryIndex = 0;
-                    document.getElementById('storyViewer').style.display = 'flex';
-                    window.app.renderCurrentStory();
-                });
-            },
-
             renderCurrentStory: () => {
                 if(currentStoryIndex >= currentStoryQueue.length) return window.app.closeStory();
                 const s = currentStoryQueue[currentStoryIndex];
-                const container = document.getElementById('svMediaContainer');
-                container.innerHTML = s.type === 'video' ? `<video src="${s.media}" autoplay></video>` : `<img src="${s.media}">`;
+                const isMine = viewingStoryOf === myID;
+                document.getElementById('svTime').innerText = formatTime(s.time);
                 
+                const container = document.getElementById('svMediaContainer');
+                if(s.type === 'video') container.innerHTML = `<video src="${s.media}" autoplay playsinline loop></video>`;
+                else container.innerHTML = `<img src="${s.media}">`;
+
+                const viewEl = document.getElementById('svViews');
+                if(isMine) {
+                    viewEl.style.display = 'flex';
+                    viewEl.innerHTML = `
+                        <div onclick="window.app.deleteStory('${s.id}')" style="color:#ef4444; margin-bottom:10px; font-weight:bold;">
+                            <i class="fas fa-trash"></i> Hapus
+                        </div>
+                        <div><i class="fas fa-eye"></i> ${s.views || 0}</div>
+                    `;
+                } else {
+                    update(ref(db, `stories/${viewingStoryOf}/${s.id}`), { views: (s.views || 0) + 1 });
+                }
+
                 const bar = document.getElementById('storyProgress');
                 bar.style.transition = 'none'; bar.style.width = '0%';
                 setTimeout(() => { bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 50);
-                
-                clearTimeout(storyTimer);
+
+                clearTimeout(storyTimer); 
                 storyTimer = setTimeout(() => window.app.nextStory(), 5000);
             },
 
             nextStory: () => { currentStoryIndex++; window.app.renderCurrentStory(); },
-            closeStory: () => { clearTimeout(storyTimer); document.getElementById('storyViewer').style.display = 'none'; },
+            closeStory: () => { clearTimeout(storyTimer); document.getElementById('storyViewer').style.display = 'none'; viewingStoryOf = null; },
+            replyStory: () => {
+                const inp = document.getElementById('storyReplyInp'); if(!inp.value || !viewingStoryOf) return;
+                activeTarget = viewingStoryOf; window.app.send(`Membahas status: "${inp.value}"`);
+                inp.value = ""; window.app.closeStory(); alert("Balasan dikirim!");
+            },
+                        deleteStory: (storyId) => { 
+    // Langsung eksekusi hapus agar tidak muncul pop-up jelek
+    set(ref(db, `stories/${myID}/${storyId}`), null);
+    window.app.closeStory();
+    window.showToast("Status berhasil dihapus", "trash");
+},
 
-            msgMenu: (id, pinned, e) => { e.preventDefault(); selectedMsgId = id; isSelectedMsgPinned = pinned; toggleOverlay('msgOptionsMenu', true); },
-            pinMessage: () => {
-                const room = [myID, activeTarget].sort().join("_");
-                update(ref(db, `chats/${room}/${selectedMsgId}`), { pinned: !isSelectedMsgPinned });
-                toggleOverlay('msgOptionsMenu', false);
+            scrollToPinned: () => {
+                const pinned = document.querySelector('.bubble[style*="border"]');
+                if(pinned) pinned.scrollIntoView({ behavior: 'smooth' });
             }
-        };
+        }; // <--- INI PENUTUP PENTING UNTUK window.app
 
-        // --- TOAST NOTIF ---
-        window.showToast = (msg, icon = 'check') => {
-            const t = document.querySelector('.toast-msg') || document.createElement('div');
-            t.className = 'toast-msg show'; t.innerHTML = `<i class="fas fa-${icon}"></i> ${msg}`;
-            document.body.appendChild(t);
-            setTimeout(() => t.classList.remove('show'), 3000);
-        };
-
-        // --- BANNED CHECK (PREMIUM DESIGN) ---
-        onValue(ref(db, `users/${myID}/isBanned`), (snap) => {
-            if (snap.val() === true) {
-                document.body.innerHTML = `
-                    <div style="position:fixed; inset:0; background:#020617; display:flex; align-items:center; justify-content:center; z-index:99999; font-family:'Inter'; text-align:center; padding:30px;">
-                        <div style="background:rgba(30,41,59,0.5); backdrop-filter:blur(20px); padding:40px; border-radius:30px; border:1px solid #ef4444; width:100%; max-width:400px;">
-                            <div style="font-size:50px; color:#ef4444; margin-bottom:20px;"><i class="fas fa-user-slash"></i></div>
-                            <h2 style="color:white; margin-bottom:10px;">Akses Dibatasi</h2>
-                            <p style="color:#94a3b8; font-size:0.9rem; margin-bottom:25px;">Akun Anda <b>${myID}</b> telah diblokir karena melanggar ketentuan.</p>
-                            <textarea id="appealTxt" placeholder="Pesan banding..." style="height:100px;"></textarea>
-                            <button class="btn-fill" onclick="kirimBanding()" style="background:#ef4444;">Kirim Banding</button>
-                        </div>
-                    </div>`;
-                window.kirimBanding = () => {
-                    const msg = document.getElementById('appealTxt').value;
-                    update(ref(db, `users/${myID}`), { appeal: msg, appealStatus: 'pending' });
-                    alert("Banding dikirim!");
-                };
-            }
+        // LOGIKA AGAR CHAT BARU LANGSUNG MUNCUL DI DAFTAR (DI LUAR window.app)
+        onValue(ref(db, `chats`), (snapshot) => {
+            snapshot.forEach((roomSnap) => {
+                const roomId = roomSnap.key;
+                if (roomId.includes(myID)) {
+                    const targetId = roomId.replace(myID, "").replace("_", "");
+                    get(ref(db, `users/${myID}/contacts/${targetId}`)).then(s => {
+                        if(!s.exists()) {
+                            set(ref(db, `users/${myID}/contacts/${targetId}`), { id: targetId, archived: false });
+                        }
+                    });
+                }
+            });
         });
 
-        // Jalankan render story berkala
-        setInterval(window.app.renderStories, 10000);
-        window.app.renderStories();
 
+        // --- GLOBAL WATCHERS ---
+        onValue(ref(db, `users/${myID}/profile`), (snap) => {
+            const d = snap.val(); if(!d) return;
+            document.getElementById('editName').value = d.name; document.getElementById('editBio').value = d.bio;
+            const defaultPfp = `https://ui-avatars.com/api/?name=${d.name}&background=1e293b&color=fff`;
+            const pfp = d.pfp || defaultPfp;
+            
+            // Sync Profile Pictures Everywhere
+            document.getElementById('pfpEdit').src = pfp;
+            document.getElementById('myStatusPfp').src = pfp;
+            document.getElementById('vProfilePfp').src = pfp;
+            document.getElementById('vProfileName').innerText = d.name;
+            document.getElementById('vProfileBio').innerText = d.bio;
+        });
+
+        // Watch My Status (to show circle gradient)
+        onValue(ref(db, `stories/${myID}`), snap => {
+            const now = Date.now(); let hasActive = false;
+            if(snap.exists()) { snap.forEach(child => { if(now - child.val().time < 86400000) hasActive = true; }); }
+            const wrap = document.getElementById('myStatusPfpWrap'); const txt = document.getElementById('myStatusText');
+            if(hasActive) { wrap.classList.add('has-story'); txt.innerText = "Ketuk untuk melihat status Anda"; } 
+            else { wrap.classList.remove('has-story'); txt.innerText = "Ketuk untuk menambahkan status"; }
+        });
+
+        onValue(ref(db, `users/${myID}/contacts`), (snap) => {
+            const cList = document.getElementById('contactList'); const rList = document.getElementById('chatList'); 
+            const sList = document.getElementById('storyList'); const aList = document.getElementById('archivedList');
+            
+            cList.innerHTML = ""; unreadCountGlobal = 0;
+
+            snap.forEach(child => {
+                const cid = child.key; const isArchived = child.val().archived;
+                const room = [myID, cid].sort().join("_");
+                
+                onValue(ref(db, `users/${cid}/profile`), (pSnap) => {
+                    const p = pSnap.val() || { name: cid, pfp: "" };
+                    const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}&background=1e293b&color=fff`;
+
+                    const cCard = document.createElement('div'); cCard.className = 'card';
+                    cCard.innerHTML = `<img src="${pfp}" class="pfp" style="width:45px;height:45px"><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">${p.bio}</div></div>`;
+                    cCard.onclick = () => window.app.openChat(cid, p.name, pfp); cList.appendChild(cCard);
+
+                    // Fetch Messages for Chat List
+                    onValue(ref(db, `chats/${room}`), (msgSnap) => {
+                        let lastMsgObj = null, unreadCount = 0;
+                        msgSnap.forEach(m => {
+                            lastMsgObj = m.val();
+                            if(lastMsgObj.from !== myID && lastMsgObj.status !== 'read') unreadCount++;
+                        });
+                        
+                        let lastMsgText = "Mulai obrolan", lastTime = "", tickHTML = "";
+                        if(lastMsgObj) {
+                            if(lastMsgObj.type === 'image') lastMsgText = '📷 Foto';
+                            else if(lastMsgObj.type === 'video') lastMsgText = '🎥 Video';
+                            else if(lastMsgObj.type === 'file') lastMsgText = '📄 Dokumen';
+                            else lastMsgText = lastMsgObj.text;
+                            
+                            lastTime = formatTime(lastMsgObj.time);
+                            if(lastMsgObj.from === myID) tickHTML = lastMsgObj.status === 'read' ? `<i class="fas fa-check-double tick tick-read"></i>` : `<i class="fas fa-check tick tick-sent"></i>`;
+
+                            if(unreadCount > 0 && Notification.permission === "granted" && activeTarget !== cid) {
+                                new Notification(`Pesan baru dari ${p.name}`, { body: lastMsgText, icon: pfp });
+                            }
+                        }
+                        
+                        unreadCountGlobal += unreadCount;
+                        document.getElementById('chatBadge').style.display = unreadCountGlobal > 0 ? 'block' : 'none';
+
+                        get(ref(db, `stories/${cid}`)).then(storySnap => {
+                            let hasStory = false; const now = Date.now();
+                            if(storySnap.exists()) storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
+
+                            const htmlChat = `
+                                <div class="pfp-wrap ${hasStory ? 'has-story' : ''}"><img src="${pfp}" class="pfp"></div>
+                                <div class="card-info">
+                                    <div class="card-header-flex"><div class="card-name">${p.name}</div><div class="card-time">${lastTime}</div></div>
+                                    <div class="card-msg">${tickHTML} ${lastMsgText}</div>
+                                </div>
+                                ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
+                            `;
+                            
+                            let existingCard = document.getElementById(`chat-${cid}`);
+                            if(existingCard) {
+                                existingCard.innerHTML = htmlChat;
+                                if(isArchived) aList.appendChild(existingCard); else rList.appendChild(existingCard);
+                            } else {
+                                const rCard = document.createElement('div'); rCard.className = 'card'; rCard.id = `chat-${cid}`;
+                                rCard.innerHTML = htmlChat; rCard.onclick = () => window.app.openChat(cid, p.name, pfp);
+                                if(isArchived) aList.appendChild(rCard); else rList.appendChild(rCard);
+                            }
+
+                            // Show/Hide Archive Banner
+                            const archBtn = document.getElementById('archivedBtn');
+                            if(aList.children.length > 0) { archBtn.style.display = 'flex'; document.getElementById('archivedCount').innerText = aList.children.length; } 
+                            else { archBtn.style.display = 'none'; aList.style.display = 'none'; }
+
+                            // Update Stories List
+                            if(hasStory) {
+                                let sCard = document.getElementById(`story-${cid}`);
+                                if(!sCard) {
+                                    sCard = document.createElement('div'); sCard.className = 'card'; sCard.id = `story-${cid}`;
+                                    sCard.innerHTML = `<div class="pfp-wrap has-story"><img src="${pfp}" class="pfp"></div><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">Pembaruan baru</div></div>`;
+                                    sCard.onclick = () => window.app.openStory(cid, p.name, pfp, false); sList.appendChild(sCard);
+                                }
+                            }
+                        });
+                    });
+                });
+            });
+        }); 
+                // ... kode-kode sebelumnya ...
+
+        // 1. Letakkan di sini (di luar objek window.app)
+        window.showToast = (message, icon = 'check-circle') => {
+            let toast = document.querySelector('.toast-msg');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.className = 'toast-msg';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+            // Pastikan pakai offsetParent atau delay kecil agar transisi muncul
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        };
+// --- TAMPILAN BAN PREMIUM (DARK GLASSMORPHISM) ---
+if (myID) {
+    onValue(ref(db, `users/${myID}/isBanned`), (snapshot) => {
+        if (snapshot.exists() && snapshot.val() === true) {
+            document.body.innerHTML = `
+                <div style="position:fixed; inset:0; background:radial-gradient(circle at center, #1e293b 0%, #020617 100%); display:flex; align-items:center; justify-content:center; z-index:100000; font-family:'Inter', sans-serif; padding:20px;">
+                    
+                    <div style="position:absolute; width:300px; height:300px; background:rgba(239, 68, 68, 0.1); filter:blur(100px); border-radius:50%; top:20%; left:10%;"></div>
+                    <div style="position:absolute; width:200px; height:200px; background:rgba(37, 99, 235, 0.1); filter:blur(80px); border-radius:50%; bottom:10%; right:10%;"></div>
+
+                    <div style="background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px 30px; border-radius: 32px; text-align: center; max-width: 420px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+                        
+                        <div style="width: 90px; height: 90px; background: rgba(239, 68, 68, 0.15); color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; font-size: 40px; box-shadow: 0 0 30px rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.3);">
+                            <i class="fas fa-shield-slash"></i>
+                        </div>
+
+                        <h2 style="color: #ffffff; margin-bottom: 12px; font-weight: 800; font-size: 1.6rem; letter-spacing: -0.5px;">Akses Dibatasi</h2>
+                        
+                        <p style="color: #94a3b8; line-height: 1.6; margin-bottom: 30px; font-size: 0.95rem;">
+                            Sistem mendeteksi aktivitas yang melanggar ketentuan. Akun <span style="color: #ef4444; font-weight: 600;">${myID}</span> telah dinonaktifkan sementara oleh tim <b>MyBro</b>.
+                        </p>
+                        
+                        <div style="margin-bottom: 25px; text-align: left;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                                <label style="font-size: 0.75rem; font-weight: 700; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px;">Pesan Banding</label>
+                                <span style="font-size: 0.7rem; color: #64748b;">Opsional</span>
+                            </div>
+                            <textarea id="appealText" placeholder="Berikan alasan atau penjelasan Anda..." 
+                                style="width: 100%; height: 110px; padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); background: rgba(15, 23, 42, 0.6); color: white; font-size: 0.9rem; outline: none; transition: 0.3s; resize: none;"></textarea>
+                        </div>
+                        
+                        <button id="btnAppeal" onclick="sendAppeal()" 
+                            style="width: 100%; padding: 16px; background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: white; border: none; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);">
+                            Kirim Pengajuan Banding
+                        </button>
+
+                        <div style="margin-top: 25px; font-size: 0.75rem; color: #64748b;">
+                            ID Sesi: <span style="color: #94a3b8;">${Date.now()}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Tambahkan efek fokus pada textarea
+            const tx = document.getElementById('appealText');
+            tx.onfocus = () => { tx.style.borderColor = '#ef4444'; tx.style.boxShadow = '0 0 15px rgba(239, 68, 68, 0.1)'; };
+            tx.onblur = () => { tx.style.borderColor = 'rgba(255,255,255,0.1)'; tx.style.boxShadow = 'none'; };
+        }
+    });
+}
+
+// --- LOGIKA BAN DENGAN FIX FUNGSI KIRIM ---
+if (myID) {
+    onValue(ref(db, `users/${myID}/isBanned`), (snapshot) => {
+        if (snapshot.exists() && snapshot.val() === true) {
+            document.body.innerHTML = `
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                <style>
+                    @keyframes pulse-red {
+                        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+                        70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+                        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+                    }
+                    .icon-box {
+                        width: 80px; height: 80px; background: rgba(239, 68, 68, 0.1); 
+                        color: #ef4444; border-radius: 50%; display: flex; 
+                        align-items: center; justify-content: center; margin: 0 auto 20px; 
+                        font-size: 35px; border: 1px solid rgba(239, 68, 68, 0.3);
+                        animation: pulse-red 2s infinite;
+                    }
+                    .ban-container {
+                        position:fixed; inset:0; background:#020617; display:flex; 
+                        align-items:center; justify-content:center; z-index:100000; 
+                        font-family:'Inter', sans-serif; padding:20px;
+                    }
+                </style>
+
+                <div class="ban-container">
+                    <div style="background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px 25px; border-radius: 35px; text-align: center; max-width: 400px; width: 100%; box-shadow: 0 25px 50px rgba(0,0,0,0.5);">
+                        <div class="icon-box"><i class="fas fa-ban"></i></div>
+                        <h2 style="color: white; margin-bottom: 10px; font-weight: 800; font-size: 1.6rem;">Akses Terbatas</h2>
+                        <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 25px;">Akun <b>${myID}</b> ditangguhkan sementara.</p>
+                        
+                        <div style="text-align: left; margin-bottom: 20px;">
+                            <textarea id="appealText" placeholder="Tulis alasan banding..." style="width: 100%; height: 100px; padding: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.1); background: rgba(15, 23, 42, 0.8); color: white; outline: none; resize: none;"></textarea>
+                        </div>
+                        
+                        <button id="btnAppeal" onclick="kirimBandingAction()" style="width: 100%; padding: 16px; background: #ef4444; color: white; border: none; border-radius: 18px; font-weight: 800; cursor: pointer;">Ajukan Banding</button>
+                    </div>
+                </div>
+            `;
+
+            // Definisikan fungsi langsung di objek window agar bisa dipanggil oleh onclick di atas
+            window.kirimBandingAction = () => {
+                const text = document.getElementById('appealText').value.trim();
+                const btn = document.getElementById('btnAppeal');
+                
+                if(!text) return alert("Harap isi pesan banding!");
+
+                btn.innerText = "Mengirim...";
+                btn.disabled = true;
+
+                // Proses update ke Firebase
+                update(ref(db, `users/${myID}`), {
+                    appealMessage: text,
+                    appealStatus: "pending"
+                }).then(() => {
+                    // Beri feedback visual setelah berhasil
+                    btn.innerText = "Banding Telah Dikirim";
+                    btn.style.background = "#1e293b";
+                    btn.style.color = "#94a3b8";
+                    document.getElementById('appealText').disabled = true;
+                    alert("Banding Anda berhasil dikirim ke Admin MyBro.");
+                }).catch((err) => {
+                    alert("Gagal mengirim banding: " + err.message);
+                    btn.innerText = "Coba Lagi";
+                    btn.disabled = false;
+                });
+            };
+        }
+    });
+}
+
+
+    
     </script>
 </body>
-</html>
+                                                                                                                                                                                                             </html>
