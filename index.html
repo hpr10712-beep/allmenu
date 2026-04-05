@@ -573,7 +573,8 @@ input[type="text"]:focus, textarea:focus {
                 if(file.size > 3 * 1024 * 1024) return alert("Maksimal 3MB.");
                 const type = file.type.startsWith('video') ? 'video' : 'image';
                 const reader = new FileReader(); reader.readAsDataURL(file);
-                reader.onload = () => { push(ref(db, `stories/${myID}`), { media: reader.result, type: type, time: Date.now(), views: 0 }); alert("Status Berhasil Diunggah!"); }
+                reader.onload = () => { push(ref(db, `stories/${myID}`), { media: reader.result, type: type, time: Date.now(), views: 0 }); window.showToast("Status Berhasil Diunggah!", "cloud-upload-alt"); }
+
             },
             openStory: (userId, userName, userPfp, isMyStory) => {
                 get(ref(db, `stories/${userId}`)).then(snap => {
@@ -649,9 +650,9 @@ input[type="text"]:focus, textarea:focus {
             deleteStory: (storyId) => { 
                 if(confirm("Hapus status ini?")) {
                     set(ref(db, `stories/${myID}/${storyId}`), null);
-                    window.app.closeStory();
-                    alert("Status dihapus!");
-                }
+window.app.closeStory();
+window.showToast("Status berhasil dihapus", "trash");
+
             }
         }; // TUTUP OBJECT window.app DI SINI
 
