@@ -577,13 +577,45 @@ input[type="text"]:focus, textarea:focus {
 
             },
             openStory: (userId, userName, userPfp, isMyStory) => {
-                // Ganti bagian ini di dalam loop kontak kamu:
-get(ref(db, `stories/${cid}`)).then(storySnap => {
-    let hasStory = false; 
-    const now = Date.now();
-    if(storySnap.exists()) {
-        storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
-    }
+    get(ref(db, `stories/${userId}`)).then(snap => {
+        currentStoryQueue = [];
+        const now = Date.now();
+        
+        // Ambil semua status yang belum lewat 24 jam
+        if(snap.exists()) {
+            snap.forEach(child => {
+                const s = child.val();
+                if(now - s.time < 86400000) { 
+                    currentStoryQueue.push({ id: child.key, ...s });
+                }
+            });
+        }
+
+        // Jika ada status yang valid, jalankan Story Viewer
+        if(currentStoryQueue.length > 0) {
+            currentStoryIndex = 0;
+            viewingStoryOf = userId;
+
+            // Update UI Nama & Foto Profil di atas story
+            document.getElementById('svName').innerText = userName;
+            document.getElementById('svPfp').src = userPfp;
+
+            // Atur tombol balas (hanya muncul di story orang lain) 
+            // dan jumlah view (hanya muncul di story sendiri)
+            document.getElementById('svFooter').style.display = isMyStory ? 'none' : 'flex';
+            document.getElementById('svViews').style.display = isMyStory ? 'flex' : 'none';
+
+            // Munculkan layar hitam fullscreen
+            document.getElementById('storyViewer').style.display = 'flex';
+
+            // Mulai putar status
+            window.app.renderCurrentStory();
+        } else {
+            // Jika tidak ada status aktif dan ini punya sendiri, buka galeri untuk upload
+            if(isMyStory) document.getElementById('storyUpload').click();
+        }
+    });
+},
 
     if(hasStory) {
         let sCard = document.getElementById(`story-${cid}`);
