@@ -450,13 +450,15 @@ input[type="text"]:focus, textarea:focus {
             // --- CHAT & MEDIA SYSTEM ---
             openChat: (id, name, pfp) => {
                 activeTarget = id;
-                // Ambil status verifikasi dari database user yang sedang diajak chat
-onValue(ref(db, `users/${id}/isVerified`), (vSnap) => {
-    const verified = vSnap.val() || false;
+                // Ambil data verified secara real-time dari profil target
+onValue(ref(db, `users/${id}/profile`), (vSnap) => {
+    const pData = vSnap.val() || {};
+    const isVerified = pData.isVerified || false;
     document.getElementById('chatName').innerHTML = `
-        ${name} ${verified ? '<i class="fas fa-check-circle" style="color:#3b82f6; font-size:0.9rem; margin-left:4px;"></i>' : ''}
+        ${name} ${isVerified ? '<i class="fas fa-check-circle" style="color:#3b82f6; font-size:0.9rem; margin-left:4px;"></i>' : ''}
     `;
 });
+
 document.getElementById('chatPfp').src = pfp;
 
                 document.getElementById('chatPanel').classList.add('active');
@@ -718,10 +720,11 @@ document.getElementById('chatPfp').src = pfp;
             document.getElementById('pfpEdit').src = pfp;
             document.getElementById('myStatusPfp').src = pfp;
             document.getElementById('vProfilePfp').src = pfp;
-            const myVerified = d.isVerified || false;
+            const isMyVerified = d.isVerified || false;
 document.getElementById('vProfileName').innerHTML = `
-    ${d.name} ${myVerified ? '<i class="fas fa-check-circle" style="color:#3b82f6; margin-left:5px;"></i>' : ''}
+    ${d.name} ${isMyVerified ? '<i class="fas fa-check-circle" style="color:#3b82f6; margin-left:5px;"></i>' : ''}
 `;
+
 
             document.getElementById('vProfileBio').innerText = d.bio;
         });
@@ -787,17 +790,23 @@ document.getElementById('vProfileName').innerHTML = `
 // Cek apakah user tersebut verified
 const verifiedIcon = p.isVerified ? '<i class="fas fa-check-circle" style="color:#3b82f6; font-size:0.85rem; margin-left:4px;"></i>' : '';
 
+// Cek status verified dari data profil 'p'
+const isVerified = p.isVerified || false;
+
 const htmlChat = `
     <div class="pfp-wrap ${hasStory ? 'has-story' : ''}"><img src="${pfp}" class="pfp"></div>
     <div class="card-info">
         <div class="card-header-flex">
-            <div class="card-name">${p.name} ${verifiedIcon}</div>
+            <div class="card-name">
+                ${p.name} ${isVerified ? '<i class="fas fa-check-circle" style="color:#3b82f6; font-size:0.85rem; margin-left:3px;"></i>' : ''}
+            </div>
             <div class="card-time">${lastTime}</div>
         </div>
         <div class="card-msg">${tickHTML} ${lastMsgText}</div>
     </div>
     ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
 `;
+
 
                             
                             let existingCard = document.getElementById(`chat-${cid}`);
