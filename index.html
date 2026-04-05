@@ -541,6 +541,8 @@ onValue(connectedRef, (snap) => {
             // --- CHAT & MEDIA SYSTEM ---
             openChat: (id, name, pfp) => {
                 activeTarget = id;
+
+        };
                 // Listener untuk Status Online/Last Seen Target
 onValue(ref(db, `users/${id}/profile`), (pSnap) => {
     const p = pSnap.val();
