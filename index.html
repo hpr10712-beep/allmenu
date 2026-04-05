@@ -177,6 +177,29 @@ input[type="text"]:focus, textarea:focus {
 .btn-fill:active {
     transform: scale(0.98);
 }
+        
+.toast-msg {
+    position: fixed;
+    bottom: 100px; /* Di atas navbar */
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(16, 185, 129, 0.95);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+.toast-msg.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
 
     
  </style>
@@ -758,6 +781,28 @@ input[type="text"]:focus, textarea:focus {
                 });
             });
         });
+                // ... kode-kode sebelumnya ...
+
+        // 1. Letakkan di sini (di luar objek window.app)
+        window.showToast = (message, icon = 'check-circle') => {
+            let toast = document.querySelector('.toast-msg');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.className = 'toast-msg';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+            // Pastikan pakai offsetParent atau delay kecil agar transisi muncul
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        };
+
+    </script> </body>
+</html>
+
     </script>
 </body>
 </html>
