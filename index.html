@@ -827,32 +827,52 @@ input[type="text"]:focus, textarea:focus {
                 toast.classList.remove('show');
             }, 3000);
         };
-// Pasang kode ini di file index.html atau main.js aplikasi USER Anda
-
-
-if (userId) {
-    onValue(ref(db, `users/${userId}/isBanned`), (snapshot) => {
+// --- LOGIKA PENGECEKAN BAN SEMENTARA ---
+// Gunakan myID yang sudah didefinisikan di awal script aplikasi Anda
+if (myID) {
+    onValue(ref(db, `users/${myID}/isBanned`), (snapshot) => {
         if (snapshot.exists() && snapshot.val() === true) {
-            // Tampilkan Pop-up Ban
+            // Hapus semua elemen body dan ganti dengan tampilan Banned
             document.body.innerHTML = `
-                <div style="position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; display:flex; align-items:center; justify-content:center; z-index:10000; font-family:'Plus Jakarta Sans',sans-serif;">
-                    <div style="background:white; padding:40px; border-radius:30px; text-align:center; max-width:85%; box-shadow:0 20px-50px rgba(0,0,0,0.5);">
-                        <div style="width:80px; height:80px; background:#fff1f2; color:#ef4444; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:30px;">
+                <div style="position:fixed; inset:0; background:#0f172a; display:flex; align-items:center; justify-content:center; z-index:10000; font-family:'Inter', sans-serif; padding:20px;">
+                    <div style="background:white; padding:40px 30px; border-radius:30px; text-align:center; max-width:400px; width:100%; box-shadow:0 20px 50px rgba(0,0,0,0.3);">
+                        <div style="width:80px; height:80px; background:#fff1f2; color:#ef4444; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:35px;">
                             <i class="fas fa-user-slash"></i>
                         </div>
-                        <h2 style="color:#1e293b; margin-bottom:10px; font-weight:800;">Akun Dinonaktifkan</h2>
-                        <p style="color:#64748b; line-height:1.6; margin-bottom:25px;">
-                            Mohon maaf, akun Anda telah <b>dinonaktifkan sementara</b> oleh pihak <b>MyBro</b> karena melanggar ketentuan layanan.
+                        <h2 style="color:#1e293b; margin-bottom:12px; font-weight:800; font-size:1.5rem;">Akun Dinonaktifkan</h2>
+                        <p style="color:#64748b; line-height:1.6; margin-bottom:25px; font-size:0.95rem;">
+                            Mohon maaf, akun Anda dengan ID <b>${myID}</b> telah <b>dinonaktifkan sementara</b> oleh pihak <b>MyBro</b>.
                         </p>
-                        <div style="font-size:12px; color:#94a3b8; border-top:1px solid #f1f5f9; pt:15px;">
-                            Hubungi admin untuk banding.
+                        
+                        <div style="margin-bottom:20px; text-align:left;">
+                            <label style="font-size:0.8rem; font-weight:700; color:#1e293b; margin-bottom:8px; display:block;">Ajukan Banding:</label>
+                            <textarea id="appealText" placeholder="Tulis alasan mengapa akun Anda harus diaktifkan kembali..." style="width:100%; height:100px; padding:12px; border-radius:12px; border:1px solid #e2e8f0; font-size:0.85rem; outline:none; background:#f8fafc; resize:none;"></textarea>
                         </div>
+                        
+                        <button onclick="sendAppeal()" style="width:100%; padding:15px; background:#2563eb; color:white; border:none; border-radius:12px; font-weight:700; cursor:pointer; transition:0.3s;">
+                            Kirim Banding
+                        </button>
                     </div>
                 </div>
             `;
         }
     });
 }
+
+// Fungsi kirim banding ke Admin
+window.sendAppeal = () => {
+    const text = document.getElementById('appealText').value.trim();
+    if(!text) return alert("Harap isi pesan banding!");
+    
+    update(ref(db, `users/${myID}`), {
+        appealMessage: text
+    }).then(() => {
+        alert("Pesan banding telah dikirim ke Admin. Harap tunggu proses peninjauan.");
+        document.querySelector('button').innerText = "Banding Terkirim";
+        document.querySelector('button').disabled = true;
+        document.querySelector('button').style.background = "#94a3b8";
+    });
+};
 
     
     </script>
