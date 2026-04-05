@@ -576,36 +576,31 @@ input[type="text"]:focus, textarea:focus {
                 reader.onload = () => { push(ref(db, `stories/${myID}`), { media: reader.result, type: type, time: Date.now(), views: 0 }); window.showToast("Status Berhasil Diunggah!", "cloud-upload-alt"); }
 
             },
-            openStory: (userId, userName, userPfp, isMyStory) => {
-                // Ganti bagian ini di dalam loop kontak kamu:
-get(ref(db, `stories/${cid}`)).then(storySnap => {
-    let hasStory = false; 
-    const now = Date.now();
-    if(storySnap.exists()) {
-        storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
-    }
-
-    if(hasStory) {
-        let sCard = document.getElementById(`story-${cid}`);
-        if(!sCard) {
-            sCard = document.createElement('div');
-            sCard.className = 'card';
-            sCard.id = `story-${cid}`;
-            
-            // KLIK AREA LUAS (Nama & Profil)
-            sCard.onclick = () => window.app.openStory(cid, p.name, pfp, false);
-            
-            sCard.innerHTML = `
-                <div class="pfp-wrap has-story"><img src="${pfp}" class="pfp"></div>
-                <div class="card-info">
-                    <div class="card-name">${p.name}</div>
-                    <div class="card-msg">Pembaruan baru</div>
-                </div>
-            `;
-            sList.appendChild(sCard);
-        }
-    }
-});                 
+                        openStory: (userId, userName, userPfp, isMyStory) => {
+                viewingStoryOf = userId;
+                document.getElementById('svName').innerText = userName;
+                document.getElementById('svPfp').src = userPfp;
+                document.getElementById('storyReplyInp').style.display = isMyStory ? 'none' : 'block';
+                document.getElementById('svFooter').style.display = isMyStory ? 'none' : 'flex';
+                
+                get(ref(db, `stories/${userId}`)).then(snap => {
+                    currentStoryQueue = [];
+                    const now = Date.now();
+                    snap.forEach(child => {
+                        const s = child.val();
+                        if(now - s.time < 86400000) {
+                            s.id = child.key;
+                            currentStoryQueue.push(s);
+                        }
+                    });
+                    if(currentStoryQueue.length > 0) {
+                        currentStoryIndex = 0;
+                        document.getElementById('storyViewer').style.display = 'flex';
+                        window.app.renderCurrentStory();
+                    }
+                });
+            },
+        
             },
             openMyStory: () => {
                 get(ref(db, `users/${myID}/profile`)).then(snap => {
@@ -784,19 +779,27 @@ get(ref(db, `stories/${cid}`)).then(storySnap => {
                             if(aList.children.length > 0) { archBtn.style.display = 'flex'; document.getElementById('archivedCount').innerText = aList.children.length; } 
                             else { archBtn.style.display = 'none'; aList.style.display = 'none'; }
 
-                            // Update Stories List
+                                                        // Update Stories List
                             if(hasStory) {
                                 let sCard = document.getElementById(`story-${cid}`);
                                 if(!sCard) {
-                                    sCard = document.createElement('div'); sCard.className = 'card'; sCard.id = `story-${cid}`;
-                                    sCard.innerHTML = `<div class="pfp-wrap has-story"><img src="${pfp}" class="pfp"></div><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">Pembaruan baru</div></div>`;
-                                    sCard.onclick = () => window.app.openStory(cid, p.name, pfp, false); sList.appendChild(sCard);
+                                    sCard = document.createElement('div'); 
+                                    sCard.className = 'card'; 
+                                    sCard.id = `story-${cid}`;
+                                    // Ini yang membuat area nama & foto bisa diklik
+                                    sCard.onclick = () => window.app.openStory(cid, p.name, pfp, false); 
+                                    
+                                    sCard.innerHTML = `
+                                        <div class="pfp-wrap has-story"><img src="${pfp}" class="pfp"></div>
+                                        <div class="card-info">
+                                            <div class="card-name">${p.name}</div>
+                                            <div class="card-msg">Pembaruan baru</div>
+                                        </div>
+                                    `;
+                                    sList.appendChild(sCard);
                                 }
                             }
-                        });
-                    });
-                });
-            });
+
         }); 
                 // ... kode-kode sebelumnya ...
 
