@@ -1,208 +1,338 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INFO PER JB AN</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MyBro - Ultra Chat & Upload</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg: #0f172a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-heavy: rgba(255, 255, 255, 0.12);
+            --border: rgba(255, 255, 255, 0.1);
+            --accent: #38bdf8;
+            --danger: #ef4444;
+            --text: #f8fafc;
+        }
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap');
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background: var(--bg); color: var(--text); height: 100dvh; display: flex; overflow: hidden; }
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Orbitron',sans-serif;
-}
+        /* Nav Rail */
+        .nav-rail {
+            width: 70px; background: rgba(0,0,0,0.4); backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border); display: flex; flex-direction: column;
+            align-items: center; padding: 20px 0; gap: 15px;
+        }
+        .nav-item {
+            width: 48px; height: 48px; border-radius: 14px; display: flex;
+            align-items: center; justify-content: center; cursor: pointer;
+            transition: 0.3s; color: rgba(255,255,255,0.3);
+        }
+        .nav-item.active { background: var(--accent); color: #000; box-shadow: 0 0 15px rgba(56,189,248,0.4); }
 
-body{
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:#000;
-  overflow:hidden;
-}
+        /* Content Area */
+        .content-area { flex: 1; display: flex; flex-direction: column; position: relative; width: 100%; }
+        header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        
+        .view { display: none; flex: 1; padding: 15px; overflow-y: auto; }
+        .view.active { display: flex; flex-direction: column; }
 
-/* GALAXY BACKGROUND */
-canvas{
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  z-index:0;
-  pointer-events:none; /* FIX AGAR BISA DIKLIK */
-}
+        /* List Cards & Buttons */
+        .list-card {
+            background: var(--glass); border: 1px solid var(--border);
+            border-radius: 16px; padding: 12px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 12px; position: relative;
+        }
+        .avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+        
+        .delete-btn {
+            position: absolute; right: 15px; color: var(--danger);
+            padding: 8px; cursor: pointer; opacity: 0.6; transition: 0.3s;
+        }
+        .delete-btn:hover { opacity: 1; }
 
-/* CONTAINER */
-.container{
-  position:relative;
-  z-index:2;
-  padding:35px 25px;
-  border-radius:18px;
-  text-align:center;
-  background:rgba(0,0,0,0.5);
-  backdrop-filter:blur(8px);
-  border:1px solid rgba(255,255,255,0.1);
-  box-shadow:0 0 25px rgba(0,0,0,0.8);
-}
+        .fab {
+            position: absolute; bottom: 85px; right: 20px; width: 55px; height: 55px;
+            background: var(--accent); border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 1.3rem; color: black;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5); cursor: pointer; border: none; z-index: 90;
+        }
 
-/* JUDUL */
-.title{
-  margin-bottom:25px;
-  padding:12px;
-  border-radius:12px;
-  background:url('https://i.ibb.co.com/KxZVC74M/ac92cb77-ceff-431e-b60e-c869f8db130f.jpg') center/cover no-repeat;
-  position:relative;
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content {
+            background: #1e293b; border: 1px solid var(--border);
+            width: 85%; max-width: 350px; padding: 25px; border-radius: 20px;
+            position: relative;
+        }
+        .close-btn { position: absolute; top: 15px; right: 15px; cursor: pointer; opacity: 0.5; }
 
-  /* GARIS TEPI */
-  border:2px solid rgba(0,255,255,0.6);
+        /* Inputs */
+        input[type="text"] {
+            width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px;
+            border: 1px solid var(--border); background: rgba(0,0,0,0.2); color: white; outline: none;
+        }
+        .file-label {
+            display: block; width: 100%; padding: 12px; margin: 10px 0;
+            background: var(--glass-heavy); border-radius: 10px; text-align: center;
+            cursor: pointer; font-size: 0.9rem; border: 1px dashed var(--accent);
+        }
+        input[type="file"] { display: none; }
+        .btn-action {
+            width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px;
+            border: none; background: var(--accent); color: black; font-weight: 600; cursor: pointer;
+        }
 
-  /* EFEK GLOW */
-  box-shadow:
-    0 0 10px rgba(0,255,255,0.6),
-    0 0 20px rgba(138,43,255,0.5),
-    inset 0 0 10px rgba(0,0,0,0.7);
-}
-
-.title::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,0.5);
-  border-radius:10px;
-}
-
-.title h1{
-  position:relative;
-  color:white;
-  font-size:26px;
-  letter-spacing:2px;
-  text-shadow:0 0 10px #00c6ff;
-}
-
-/* MENU */
-.menu{
-  display:flex;
-  flex-direction:column;
-  gap:15px;
-  align-items:center;
-}
-
-/* TOMBOL */
-/* TOMBOL (SEMUA SAMA) */
-.btn{
-  width:200px;
-  padding:14px;
-  border-radius:14px;
-  font-size:15px;
-  font-weight:700;
-  cursor:pointer;
-  color:white;
-
-  /* GRADIENT HALUS (INI YANG BIKIN BAGUS) */
-  background:linear-gradient(135deg, rgba(0,240,255,0.25), rgba(0,0,0,0.6));
-
-  /* GARIS TIPIS */
-  border:1.5px solid rgba(0,255,255,0.6);
-
-  backdrop-filter:blur(8px);
-
-  /* SHADOW LEBIH SOFT */
-  box-shadow:
-    0 0 8px rgba(0,255,255,0.5),
-    0 0 15px rgba(0,255,255,0.3);
-
-  transition:0.25s;
-}
-  
-.btn:hover{
-  transform:scale(1.07);
-
-  border-color:#00f0ff;
-
-  box-shadow:
-    0 0 15px #00f0ff,
-    0 0 30px #00f0ff,
-    0 0 45px rgba(0,255,255,0.8);
-    }
-</style>
+        /* Chat Panel */
+        #chatPanel {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100dvh;
+            background: var(--bg); z-index: 2000; transition: 0.3s ease;
+            display: flex; flex-direction: column;
+        }
+        #chatPanel.open { right: 0; }
+        #messageArea { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .bubble { padding: 10px 14px; border-radius: 16px; max-width: 80%; font-size: 14px; }
+        .me { align-self: flex-end; background: var(--accent); color: black; border-bottom-right-radius: 2px; }
+        .them { align-self: flex-start; background: var(--glass-heavy); color: white; border-bottom-left-radius: 2px; }
+    </style>
 </head>
-
 <body>
 
-<canvas id="bg"></canvas>
+    <nav class="nav-rail">
+        <div class="nav-item active" onclick="switchView('chats', this)"><i class="fas fa-comment-dots"></i></div>
+        <div class="nav-item" onclick="switchView('stories', this)"><i class="fas fa-circle-notch"></i></div>
+        <div class="nav-item" onclick="switchView('contacts', this)"><i class="fas fa-address-book"></i></div>
+        <div class="nav-item" onclick="openModal('profileModal')" style="margin-top:auto"><i class="fas fa-user-gear"></i></div>
+    </nav>
 
-<div class="container">
-  <div class="title">
-    <h1>INFO PER JB AN</h1>
-  </div>
+    <div class="content-area">
+        <header>
+            <h2 id="viewTitle" style="margin:0; font-size: 1.2rem;">Obrolan</h2>
+            <div id="myIDDisplay" style="font-size: 0.7rem; color: var(--accent); font-weight: bold;">ID: --</div>
+        </header>
 
-  <div class="menu">
-    <button class="btn hitung" onclick="goHitung()">KONTAK ADMIN</button>
-    <button class="btn berita" onclick="goBerita()">GRUB JUAL BELI ALL GAME</button>
-    <button class="btn saluran" onclick="goSaluran()">SALURAN WHATSAPP</button>
-  </div>
-</div>
+        <div id="chatsView" class="view active">
+            <div id="recentChats"></div>
+        </div>
 
-<script>
-const canvas = document.getElementById("bg");
-const ctx = canvas.getContext("2d");
+        <div id="storiesView" class="view">
+            <div class="list-card" onclick="openModal('storyModal')">
+                <div class="avatar" style="display:flex; align-items:center; justify-content:center; border: 2px dashed var(--accent);">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <div><strong>Posting Story</strong><br><small>Pilih foto dari galeri</small></div>
+            </div>
+            <div id="storyContainer"></div>
+        </div>
 
-function resize(){
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resize();
+        <div id="contactsView" class="view">
+            <div id="allContacts"></div>
+        </div>
 
-window.addEventListener("resize", resize);
+        <button class="fab" onclick="openModal('addContactModal')"><i class="fas fa-plus"></i></button>
+    </div>
 
-/* BINTANG HALUS */
-let stars = [];
-for(let i=0;i<120;i++){
-  stars.push({
-    x:Math.random()*canvas.width,
-    y:Math.random()*canvas.height,
-    size:Math.random()*2,
-    speed:Math.random()*0.5 + 0.2
-  });
-}
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fas fa-times close-btn" onclick="closeModal()"></i>
+            
+            <div id="addContactModal" style="display:none">
+                <h3>Tambah Teman</h3>
+                <input type="text" id="targetID" placeholder="Masukkan ID (BRO-xxxx)">
+                <button class="btn-action" onclick="saveContact()">Tambah</button>
+            </div>
 
-function draw(){
-  ctx.fillStyle = "rgba(0,0,0,0.4)";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
+            <div id="storyModal" style="display:none">
+                <h3>Posting Status</h3>
+                <label class="file-label" for="storyFile"><i class="fas fa-image"></i> Pilih Foto</label>
+                <input type="file" id="storyFile" accept="image/*">
+                <div id="storyPreview" style="text-align:center; display:none"><img id="sPrevImg" style="width:100px; height:100px; border-radius:10px; margin-top:10px;"></div>
+                <button class="btn-action" onclick="postStory()">Upload Story</button>
+            </div>
 
-  for(let s of stars){
-    s.y += s.speed;
+            <div id="profileModal" style="display:none">
+                <h3>Edit Profil</h3>
+                <input type="text" id="pName" placeholder="Nama Anda">
+                <label class="file-label" for="profileFile"><i class="fas fa-user-circle"></i> Pilih Foto Profil</label>
+                <input type="file" id="profileFile" accept="image/*">
+                <button class="btn-action" onclick="updateProfile()">Simpan</button>
+            </div>
+        </div>
+    </div>
 
-    if(s.y > canvas.height){
-      s.y = 0;
-      s.x = Math.random()*canvas.width;
-    }
+    <div id="chatPanel">
+        <header>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <i class="fas fa-arrow-left" onclick="closeChat()"></i>
+                <img id="chatAvatar" src="" class="avatar" style="width:35px; height:35px; border:none;">
+                <span id="chatName" style="font-size: 1rem;">Target</span>
+            </div>
+        </header>
+        <div id="messageArea"></div>
+        <div style="padding:15px; display:flex; gap:10px; background: rgba(0,0,0,0.3);">
+            <input type="text" id="msgIn" placeholder="Pesan..." style="margin:0">
+            <button onclick="sendMsg()" style="background:var(--accent); border:none; width:50px; border-radius:10px;"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
 
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-    ctx.fillStyle = "white";
-    ctx.fill();
-  }
-}
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue, get, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-setInterval(draw, 30);
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+            authDomain: "mybro-9ba5f.firebaseapp.com",
+            databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+            projectId: "mybro-9ba5f",
+            storageBucket: "mybro-9ba5f.appspot.com",
+            messagingSenderId: "820948893264",
+            appId: "1:820948893264:web:e58e1a175bc90053335b55"
+        };
 
-/* NAVIGASI */
-function goHitung(){
-  window.location.href = "https://wa.me/6289603266259";
-}
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-function goBerita(){
-  window.location.href = "https://chat.whatsapp.com/KVaUU5idphtBVqKDMvbltx?mode=gi_t";
-}
+        let myID = localStorage.getItem('my_chat_id') || "BRO-" + Math.floor(Math.random()*8999+1000);
+        localStorage.setItem('my_chat_id', myID);
+        document.getElementById('myIDDisplay').innerText = "ID: " + myID;
 
-  function goSaluran(){
-  window.location.href = "https://whatsapp.com/channel/0029VbCLbim3gvWTcdiYq71Y";
-}
-</script>
+        let currentTarget = null;
+        let base64Image = "";
 
+        // UI ACTIONS
+        window.switchView = (name, el) => {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(name+'View').classList.add('active');
+            el.classList.add('active');
+            document.getElementById('viewTitle').innerText = name.charAt(0).toUpperCase() + name.slice(1);
+        };
+
+        window.openModal = (id) => {
+            document.getElementById('modalOverlay').style.display = 'flex';
+            document.getElementById('addContactModal').style.display = 'none';
+            document.getElementById('storyModal').style.display = 'none';
+            document.getElementById('profileModal').style.display = 'none';
+            document.getElementById(id).style.display = 'block';
+            base64Image = ""; // Reset image
+        };
+
+        window.closeModal = () => document.getElementById('modalOverlay').style.display = 'none';
+
+        // CONVERT IMAGE TO BASE64
+        const handleFile = (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => { base64Image = reader.result; };
+            if(file) reader.readAsDataURL(file);
+        };
+        document.getElementById('profileFile').addEventListener('change', handleFile);
+        document.getElementById('storyFile').addEventListener('change', handleFile);
+
+        // LOGIC PROFILE & CONTACT
+        window.updateProfile = () => {
+            const name = document.getElementById('pName').value;
+            if(!name) return alert("Nama harus diisi!");
+            const data = { name, id: myID };
+            if(base64Image) data.photo = base64Image;
+            set(ref(db, `users/${myID}/profile`), data);
+            alert("Profil diperbarui!");
+            closeModal();
+        };
+
+        window.saveContact = async () => {
+            const tid = document.getElementById('targetID').value.trim();
+            if(!tid || tid === myID) return;
+            const userSnap = await get(ref(db, `users/${tid}/profile`));
+            if(userSnap.exists()){
+                set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid });
+                closeModal();
+            } else { alert("ID tidak ditemukan!"); }
+        };
+
+        window.deleteContact = (tid) => {
+            if(confirm("Hapus kontak ini?")){
+                remove(ref(db, `users/${myID}/contacts/${tid}`));
+            }
+        };
+
+        // LISTEN CONTACTS
+        onValue(ref(db, `users/${myID}/contacts`), (snapshot) => {
+            const chatList = document.getElementById('recentChats');
+            const contList = document.getElementById('allContacts');
+            chatList.innerHTML = ""; contList.innerHTML = "";
+            snapshot.forEach(child => {
+                const cid = child.key;
+                onValue(ref(db, `users/${cid}/profile`), (pSnap) => {
+                    const p = pSnap.val() || { name: cid, photo: 'https://ui-avatars.com/api/?name='+cid };
+                    const html = `<div class="list-card">
+                        <div style="display:flex; align-items:center; flex:1" onclick="openChat('${cid}', '${p.name}', '${p.photo}')">
+                            <img src="${p.photo}" class="avatar">
+                            <div><strong>${p.name}</strong><br><small style="opacity:0.5">${cid}</small></div>
+                        </div>
+                        <i class="fas fa-trash-alt delete-btn" onclick="deleteContact('${cid}')"></i>
+                    </div>`;
+                    chatList.innerHTML += html; contList.innerHTML += html;
+                });
+            });
+        });
+
+        // STORY LOGIC
+        window.postStory = () => {
+            if(!base64Image) return alert("Pilih foto dulu!");
+            push(ref(db, `stories`), { url: base64Image, senderID: myID, time: Date.now() });
+            alert("Story Berhasil!");
+            closeModal();
+        };
+
+        onValue(ref(db, `stories`), (snap) => {
+            const container = document.getElementById('storyContainer');
+            container.innerHTML = "";
+            snap.forEach(child => {
+                const s = child.val();
+                if(Date.now() - s.time < 86400000) {
+                    container.innerHTML += `<div class="list-card">
+                        <img src="${s.url}" class="avatar" style="border-color:#ec4899">
+                        <div><strong>${s.senderID}</strong><br><small>Baru saja</small></div>
+                    </div>`;
+                }
+            });
+        });
+
+        // CHAT LOGIC (Same as before)
+        window.openChat = (id, name, photo) => {
+            currentTarget = id;
+            document.getElementById('chatName').innerText = name;
+            document.getElementById('chatAvatar').src = photo;
+            document.getElementById('chatPanel').classList.add('open');
+            const chatID = [myID, id].sort().join("_");
+            onValue(ref(db, `chats/${chatID}`), (snap) => {
+                const area = document.getElementById('messageArea');
+                area.innerHTML = "";
+                snap.forEach(c => {
+                    const m = c.val();
+                    area.innerHTML += `<div class="bubble ${m.sender === myID ? 'me' : 'them'}">${m.text}</div>`;
+                });
+                area.scrollTop = area.scrollHeight;
+            });
+        };
+
+        window.closeChat = () => document.getElementById('chatPanel').classList.remove('open');
+        window.sendMsg = () => {
+            const input = document.getElementById('msgIn');
+            if(!input.value || !currentTarget) return;
+            const chatID = [myID, currentTarget].sort().join("_");
+            push(ref(db, `chats/${chatID}`), { sender: myID, text: input.value, time: Date.now() });
+            input.value = "";
+        };
+    </script>
 </body>
 </html>
