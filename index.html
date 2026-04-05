@@ -576,62 +576,42 @@ input[type="text"]:focus, textarea:focus {
                 reader.onload = () => { push(ref(db, `stories/${myID}`), { media: reader.result, type: type, time: Date.now(), views: 0 }); window.showToast("Status Berhasil Diunggah!", "cloud-upload-alt"); }
 
             },
-            openStory: (userId, userName, userPfp, isMyStory) => {
-    get(ref(db, `stories/${userId}`)).then(snap => {
-        if(!snap.exists()) {
-            window.showToast("Tidak ada status", "info-circle");
-            return;
-        }
-        currentStoryQueue = [];
-        const now = Date.now();
-        snap.forEach(child => {
-            const s = child.val();
-            // Cek apakah status belum 24 jam (86400000 ms)
-            if(now - s.time < 86400000) { 
-                s.id = child.key; 
-                currentStoryQueue.push(s); 
-            }
-        });
-        
-        if(currentStoryQueue.length === 0) {
-            window.showToast("Status sudah kedaluwarsa", "info-circle");
-            return;
-        }
+                        openStory: (userId, userName, userPfp, isMyStory) => {
+                get(ref(db, `stories/${userId}`)).then(snap => {
+                    if(!snap.exists()) {
+                        window.showToast("Tidak ada status", "info-circle");
+                        return;
+                    }
+                    
+                    currentStoryQueue = [];
+                    const now = Date.now();
+                    
+                    // Masukkan status yang umurnya kurang dari 24 jam ke dalam antrean
+                    snap.forEach(child => {
+                        const s = child.val();
+                        if(now - s.time < 86400000) { 
+                            s.id = child.key; 
+                            currentStoryQueue.push(s); 
+                        }
+                    });
+                    
+                    if(currentStoryQueue.length === 0) {
+                        window.showToast("Status sudah kedaluwarsa", "info-circle");
+                        return;
+                    }
 
-        viewingStoryOf = userId;
-        currentStoryIndex = 0;
-        document.getElementById('svName').innerText = userName;
-        document.getElementById('svPfp').src = userPfp;
-        document.getElementById('storyViewer').style.display = 'flex';
-        
-        // Panggil fungsi render yang sudah kamu buat di bawahnya
-        window.app.renderCurrentStory();
-    });
-},
-        }
+                    // Tampilkan UI Story Viewer
+                    viewingStoryOf = userId;
+                    currentStoryIndex = 0;
+                    document.getElementById('svName').innerText = userName;
+                    document.getElementById('svPfp').src = userPfp;
+                    document.getElementById('storyViewer').style.display = 'flex';
+                    
+                    // Mainkan statusnya
+                    window.app.renderCurrentStory();
+                });
+            },
 
-
-    if(hasStory) {
-        let sCard = document.getElementById(`story-${cid}`);
-        if(!sCard) {
-            sCard = document.createElement('div');
-            sCard.className = 'card';
-            sCard.id = `story-${cid}`;
-            
-            // KLIK AREA LUAS (Nama & Profil)
-            sCard.onclick = () => window.app.openStory(cid, p.name, pfp, false);
-            
-            sCard.innerHTML = `
-                <div class="pfp-wrap has-story"><img src="${pfp}" class="pfp"></div>
-                <div class="card-info">
-                    <div class="card-name">${p.name}</div>
-                    <div class="card-msg">Pembaruan baru</div>
-                </div>
-            `;
-            sList.appendChild(sCard);
-        }
-    }
-});                 
             },
             openMyStory: () => {
                 get(ref(db, `users/${myID}/profile`)).then(snap => {
@@ -758,190 +738,92 @@ input[type="text"]:focus, textarea:focus {
 
                     // Fetch Messages for Chat List
                     onValue(ref(db, `chats/${room}`), (msgSnap) => {
-                        let lastMsgOb<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, push, onValue, get, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+                        let lastMsgObj = null, unreadCount = 0;
+                        msgSnap.forEach(m => {
+                            lastMsgObj = m.val();
+                            if(lastMsgObj.from !== myID && lastMsgObj.status !== 'read') unreadCount++;
+                        });
+                        
+                        let lastMsgText = "Mulai obrolan", lastTime = "", tickHTML = "";
+                        if(lastMsgObj) {
+                            if(lastMsgObj.type === 'image') lastMsgText = '📷 Foto';
+                            else if(lastMsgObj.type === 'video') lastMsgText = '🎥 Video';
+                            else if(lastMsgObj.type === 'file') lastMsgText = '📄 Dokumen';
+                            else lastMsgText = lastMsgObj.text;
+                            
+                            lastTime = formatTime(lastMsgObj.time);
+                            if(lastMsgObj.from === myID) tickHTML = lastMsgObj.status === 'read' ? `<i class="fas fa-check-double tick tick-read"></i>` : `<i class="fas fa-check tick tick-sent"></i>`;
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
-        authDomain: "mybro-9ba5f.firebaseapp.com",
-        databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
-        projectId: "mybro-9ba5f"
-    };
-    const app_fire = initializeApp(firebaseConfig);
-    const db = getDatabase(app_fire);
+                            if(unreadCount > 0 && Notification.permission === "granted" && activeTarget !== cid) {
+                                new Notification(`Pesan baru dari ${p.name}`, { body: lastMsgText, icon: pfp });
+                            }
+                        }
+                        
+                        unreadCountGlobal += unreadCount;
+                        document.getElementById('chatBadge').style.display = unreadCountGlobal > 0 ? 'block' : 'none';
 
-    let myID = localStorage.getItem('mybro_id') || ("BRO-" + Math.floor(1000 + Math.random() * 9000));
-    localStorage.setItem('mybro_id', myID);
-    document.getElementById('displayID').innerText = "ID: " + myID;
+                        get(ref(db, `stories/${cid}`)).then(storySnap => {
+                            let hasStory = false; const now = Date.now();
+                            if(storySnap.exists()) storySnap.forEach(s => { if(now - s.val().time < 86400000) hasStory = true; });
 
-    let activeTarget = null;
-    let pfpBase64 = "";
-    let currentStoryQueue = [], currentStoryIndex = 0, storyTimer, viewingStoryOf = null;
-    let selectedMsgId = null; 
+                            const htmlChat = `
+                                <div class="pfp-wrap ${hasStory ? 'has-story' : ''}"><img src="${pfp}" class="pfp"></div>
+                                <div class="card-info">
+                                    <div class="card-header-flex"><div class="card-name">${p.name}</div><div class="card-time">${lastTime}</div></div>
+                                    <div class="card-msg">${tickHTML} ${lastMsgText}</div>
+                                </div>
+                                ${unreadCount > 0 ? `<div class="unread-badge">${unreadCount}</div>` : ''}
+                            `;
+                            
+                            let existingCard = document.getElementById(`chat-${cid}`);
+                            if(existingCard) {
+                                existingCard.innerHTML = htmlChat;
+                                if(isArchived) aList.appendChild(existingCard); else rList.appendChild(existingCard);
+                            } else {
+                                const rCard = document.createElement('div'); rCard.className = 'card'; rCard.id = `chat-${cid}`;
+                                rCard.innerHTML = htmlChat; rCard.onclick = () => window.app.openChat(cid, p.name, pfp);
+                                if(isArchived) aList.appendChild(rCard); else rList.appendChild(rCard);
+                            }
 
-    // --- UTILITY FUNCTIONS ---
-    window.showToast = (msg, icon = 'info-circle') => {
-        const toast = document.createElement('div');
-        toast.className = 'toast-msg show';
-        toast.innerHTML = `<i class="fas fa-${icon}"></i> ${msg}`;
-        document.body.appendChild(toast);
-        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 500); }, 3000);
-    };
+                            // Show/Hide Archive Banner
+                            const archBtn = document.getElementById('archivedBtn');
+                            if(aList.children.length > 0) { archBtn.style.display = 'flex'; document.getElementById('archivedCount').innerText = aList.children.length; } 
+                            else { archBtn.style.display = 'none'; aList.style.display = 'none'; }
 
-    window.showTab = (id, el) => {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        el.classList.add('active');
-    };
-    
-    window.toggleOverlay = (id, show) => { 
-        const el = document.getElementById(id); 
-        if(show) { el.style.display = 'flex'; setTimeout(() => el.classList.add('active'), 10); } 
-        else { el.classList.remove('active'); setTimeout(() => el.style.display = 'none', 300); } 
-    };
-
-    window.closeOverlay = (e) => { if(e.target.classList.contains('overlay')) toggleOverlay(e.target.id, false); };
-    window.copyID = () => { navigator.clipboard.writeText(myID); window.showToast("ID Disalin!", "copy"); };
-
-    const formatTime = (ts) => {
-        const d = new Date(ts);
-        return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
-    };
-
-    // --- CORE APP LOGIC ---
-    window.app = {
-        handlePfp: (input) => {
-            const reader = new FileReader(); reader.readAsDataURL(input.files[0]);
-            reader.onload = () => { pfpBase64 = reader.result; document.getElementById('pfpEdit').src = pfpBase64; }
-        },
-        updateProfile: () => {
-            const updates = { name: document.getElementById('editName').value, bio: document.getElementById('editBio').value };
-            if(pfpBase64) updates.pfp = pfpBase64;
-            update(ref(db, `users/${myID}/profile`), updates);
-            toggleOverlay('popProfile', false);
-            window.showToast("Profil Diperbarui", "user-check");
-        },
-        addFriend: () => {
-            const tid = document.getElementById('targetID').value.trim().toUpperCase();
-            if(!tid || tid === myID) return;
-            set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid, archived: false });
-            toggleOverlay('popAdd', false);
-            window.showToast("Teman Ditambahkan", "user-plus");
-        },
-        openChat: (id, name, pfp) => {
-            activeTarget = id;
-            document.getElementById('chatName').innerText = name;
-            document.getElementById('chatPfp').src = pfp;
-            document.getElementById('chatPanel').classList.add('active');
-            
-            const room = [myID, id].sort().join("_");
-            onValue(ref(db, `chats/${room}`), (snap) => {
-                const area = document.getElementById('msgArea');
-                area.innerHTML = "";
-                snap.forEach(child => {
-                    const m = child.val();
-                    const isMe = m.from === myID;
-                    area.innerHTML += `
-                        <div class="bubble ${isMe ? 'sent' : 'received'}" oncontextmenu="window.app.msgMenu('${child.key}', event)">
-                            ${m.type === 'image' ? `<img src="${m.media}">` : ''}
-                            ${m.text ? `<div>${m.text}</div>` : ''}
-                            <div class="msg-meta">${formatTime(m.time)}</div>
-                        </div>`;
+                            // Update Stories List
+                            if(hasStory) {
+                                let sCard = document.getElementById(`story-${cid}`);
+                                if(!sCard) {
+                                    sCard = document.createElement('div'); sCard.className = 'card'; sCard.id = `story-${cid}`;
+                                    sCard.innerHTML = `<div class="pfp-wrap has-story"><img src="${pfp}" class="pfp"></div><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">Pembaruan baru</div></div>`;
+                                    sCard.onclick = () => window.app.openStory(cid, p.name, pfp, false); sList.appendChild(sCard);
+                                }
+                            }
+                        });
+                    });
                 });
-                area.scrollTop = area.scrollHeight;
             });
-        },
-        closeChat: () => { document.getElementById('chatPanel').classList.remove('active'); activeTarget = null; },
-        send: () => {
-            const inp = document.getElementById('msgIn');
-            if(!inp.value || !activeTarget) return;
-            const room = [myID, activeTarget].sort().join("_");
-            push(ref(db, `chats/${room}`), { from: myID, text: inp.value, time: Date.now(), type: 'text', status: 'sent' });
-            inp.value = "";
-        },
-        
-        // --- STORY LOGIC ---
-        uploadStory: (input) => {
-            const file = input.files[0]; if(!file) return;
-            const reader = new FileReader(); reader.readAsDataURL(file);
-            reader.onload = () => {
-                push(ref(db, `stories/${myID}`), { media: reader.result, type: file.type.startsWith('video') ? 'video' : 'image', time: Date.now(), views: 0 });
-                window.showToast("Status Terkirim", "upload");
+        }); 
+                // ... kode-kode sebelumnya ...
+
+        // 1. Letakkan di sini (di luar objek window.app)
+        window.showToast = (message, icon = 'check-circle') => {
+            let toast = document.querySelector('.toast-msg');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.className = 'toast-msg';
+                document.body.appendChild(toast);
             }
-        },
-        openStory: (userId, userName, userPfp) => {
-            get(ref(db, `stories/${userId}`)).then(snap => {
-                if(!snap.exists()) return;
-                currentStoryQueue = [];
-                const now = Date.now();
-                snap.forEach(child => {
-                    const s = child.val();
-                    if(now - s.time < 86400000) { s.id = child.key; currentStoryQueue.push(s); }
-                });
-                if(currentStoryQueue.length === 0) return;
-                
-                viewingStoryOf = userId;
-                currentStoryIndex = 0;
-                document.getElementById('svName').innerText = userName;
-                document.getElementById('svPfp').src = userPfp;
-                document.getElementById('storyViewer').style.display = 'flex';
-                window.app.renderCurrentStory();
-            });
-        },
-        renderCurrentStory: () => {
-            if(currentStoryIndex >= currentStoryQueue.length) return window.app.closeStory();
-            const s = currentStoryQueue[currentStoryIndex];
-            const container = document.getElementById('svMediaContainer');
-            container.innerHTML = s.type === 'video' ? `<video src="${s.media}" autoplay playsinline></video>` : `<img src="${s.media}">`;
+            toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+            // Pastikan pakai offsetParent atau delay kecil agar transisi muncul
+            setTimeout(() => toast.classList.add('show'), 10);
             
-            const bar = document.getElementById('storyProgress');
-            bar.style.width = '0%';
-            setTimeout(() => { bar.style.transition = 'width 5s linear'; bar.style.width = '100%'; }, 50);
-            
-            clearTimeout(storyTimer);
-            storyTimer = setTimeout(() => window.app.nextStory(), 5000);
-        },
-        nextStory: () => { currentStoryIndex++; window.app.renderCurrentStory(); },
-        closeStory: () => { clearTimeout(storyTimer); document.getElementById('storyViewer').style.display = 'none'; },
-        openMyStory: () => { window.app.openStory(myID, "Status Saya", document.getElementById('myStatusPfp').src); }
-    };
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        };
 
-    // --- WATCHERS ---
-    onValue(ref(db, `users/${myID}/profile`), snap => {
-        const d = snap.val(); if(!d) return;
-        document.getElementById('vProfileName').innerText = d.name;
-        document.getElementById('vProfilePfp').src = d.pfp || `https://ui-avatars.com/api/?name=${d.name}`;
-        document.getElementById('myStatusPfp').src = d.pfp || `https://ui-avatars.com/api/?name=${d.name}`;
-    });
-
-    onValue(ref(db, `users/${myID}/contacts`), snap => {
-        const cList = document.getElementById('contactList');
-        const rList = document.getElementById('chatList');
-        cList.innerHTML = ""; rList.innerHTML = "";
-        
-        snap.forEach(child => {
-            const cid = child.key;
-            onValue(ref(db, `users/${cid}/profile`), pSnap => {
-                const p = pSnap.val(); if(!p) return;
-                const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}`;
-                
-                // Contact List
-                const card = document.createElement('div'); card.className = 'card';
-                card.innerHTML = `<img src="${pfp}" class="pfp"><div>${p.name}</div>`;
-                card.onclick = () => window.app.openChat(cid, p.name, pfp);
-                cList.appendChild(card);
-                
-                // Chat List (Simplified)
-                const rCard = card.cloneNode(true);
-                rCard.onclick = () => window.app.openChat(cid, p.name, pfp);
-                rList.appendChild(rCard);
-            });
-        });
-    });
-</script>
-
+    
+    </script>
 </body>
 </html>
-
