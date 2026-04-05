@@ -1295,50 +1295,206 @@ if (myID) {
             const aList = document.getElementById('archivedList');
             rList.innerHTML = ""; cList.innerHTML = ""; aList.innerHTML = "";
             unreadCountGlobal = 0;
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue, get, update, remove, serverTimestamp, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-            snap.forEach(child => {
-                const cid = child.key; const isArchived = child.val().archived;
-                onValue(ref(db, `users/${cid}/profile`), pSnap => {
-                    const p = pSnap.val() || { name: cid };
-                    const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}`;
+    const firebaseConfig = {
+        apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+        authDomain: "mybro-9ba5f.firebaseapp.com",
+        databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+        projectId: "mybro-9ba5f"
+    };
+
+    const app_fire = initializeApp(firebaseConfig);
+    const db = getDatabase(app_fire);
+
+    // --- State & Variables ---
+    let myID = localStorage.getItem('mybro_id');
+    if(!myID) {
+        myID = "BRO-" + Math.floor(1000 + Math.random() * 9000);
+        localStorage.setItem('mybro_id', myID);
+        set(ref(db, `users/${myID}/profile`), { id: myID, name: "User " + myID.split('-')[1], pfp: "", bio: "Hey! I am using TalkSky" });
+    }
+    document.getElementById('displayID').innerText = `ID: ${myID}`;
+
+    let activeTarget = null;
+    let pfpBase64 = "";
+    let currentStoryQueue = [], currentStoryIndex = 0, storyTimer, viewingStoryOf = null;
+    const notifiedMessages = new Set();
+    const appStartTime = Date.now();
+
+    // --- Utils ---
+    const formatTime = (ts) => {
+        if(!ts) return "";
+        const d = new Date(ts);
+        return d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
+    };
+
+    window.showToast = (msg, icon = 'check-circle') => {
+        let toast = document.querySelector('.toast-msg') || document.createElement('div');
+        toast.className = 'toast-msg';
+        document.body.appendChild(toast);
+        toast.innerHTML = `<i class="fas fa-${icon}"></i> ${msg}`;
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    };
+
+    window.showTab = (id, el) => {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        el.classList.add('active');
+    };
+
+    window.toggleOverlay = (id, show) => {
+        const el = document.getElementById(id);
+        if(show) { el.style.display = 'flex'; setTimeout(() => el.classList.add('active'), 10); }
+        else { el.classList.remove('active'); setTimeout(() => el.style.display = 'none', 300); }
+    };
+
+    window.closeOverlay = (e) => { if(e.target.classList.contains('overlay')) window.toggleOverlay(e.target.id, false); };
+
+    // --- Core App Logic ---
+    window.app = {
+        handlePfp: (input) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(input.files[0]);
+            reader.onload = () => { pfpBase64 = reader.result; document.getElementById('pfpEdit').src = pfpBase64; };
+        },
+        updateProfile: () => {
+            const updates = { name: document.getElementById('editName').value, bio: document.getElementById('editBio').value };
+            if(pfpBase64) updates.pfp = pfpBase64;
+            update(ref(db, `users/${myID}/profile`), updates);
+            window.toggleOverlay('popProfile', false);
+            window.showToast("Profil diperbarui!");
+        },
+        addFriend: () => {
+            const tid = document.getElementById('targetID').value.trim().toUpperCase();
+            if(!tid || tid === myID) return;
+            set(ref(db, `users/${myID}/contacts/${tid}`), { id: tid, archived: false });
+            window.toggleOverlay('popAdd', false);
+            window.showToast("Teman ditambahkan!");
+        },
+        openChat: (id, name, pfp) => {
+            activeTarget = id;
+            document.getElementById('chatName').innerText = name;
+            document.getElementById('chatPfp').src = pfp;
+            document.getElementById('chatPanel').classList.add('active');
+            
+            const room = [myID, id].sort().join("_");
+            onValue(ref(db, `chats/${room}`), (snap) => {
+                const area = document.getElementById('msgArea');
+                area.innerHTML = "";
+                snap.forEach(child => {
+                    const m = child.val();
+                    if(m.from !== myID && m.status !== 'read') update(ref(db, `chats/${room}/${child.key}`), { status: 'read' });
                     
-                    const room = [myID, cid].sort().join("_");
-                    onValue(ref(db, `chats/${room}`), msgSnap => {
-                        let lastMsg = null, unread = 0;
-                        msgSnap.forEach(m => {
-                            lastMsg = m.val();
-                            if(lastMsg.from !== myID && lastMsg.status !== 'read') {
-                                unread++;
-                                if(lastMsg.time > appStartTime && !notifiedMessages.has(m.key) && activeTarget !== cid) {
-                                    notifiedMessages.add(m.key);
-                                    window.showFloatingNotif(p.name, lastMsg.text || "Media", pfp, cid);
-                                }
-                            }
-                        });
+                    let tick = "";
+                    if(m.from === myID) {
+                        if(m.status === 'read') tick = '<i class="fas fa-check-double tick-read"></i>';
+                        else tick = '<i class="fas fa-check"></i>';
+                    }
 
-                        const html = `<div class="pfp-wrap" id="sw-${cid}"><img src="${pfp}" class="pfp"></div><div class="card-info"><div class="card-header-flex"><div class="card-name">${p.name}</div><div class="card-time">${lastMsg ? formatTime(lastMsg.time) : ''}</div></div><div class="card-msg">${lastMsg?.text || 'Mulai obrolan'}</div></div>${unread > 0 ? `<div class="unread-badge">${unread}</div>` : ''}`;
-                        let card = document.getElementById(`chat-${cid}`) || document.createElement('div');
-                        card.id = `chat-${cid}`; card.className = 'card'; card.innerHTML = html;
-                        card.onclick = () => window.app.openChat(cid, p.name, pfp);
-                        (isArchived ? aList : rList).appendChild(card);
-                        
-                        unreadCountGlobal += unread;
-                        document.getElementById('chatBadge').style.display = unreadCountGlobal > 0 ? 'block' : 'none';
-                    });
+                    area.innerHTML += `
+                        <div class="bubble ${m.from === myID ? 'sent' : 'received'}" oncontextmenu="window.app.msgMenu('${child.key}', ${m.pinned}, event)">
+                            ${m.type === 'image' ? `<img src="${m.media}">` : ''}
+                            ${m.text ? `<div>${m.text}</div>` : ''}
+                            <div class="msg-meta"><span>${formatTime(m.time)}</span> ${tick}</div>
+                        </div>`;
                 });
+                area.scrollTop = area.scrollHeight;
+            });
+        },
+        closeChat: () => { document.getElementById('chatPanel').classList.remove('active'); activeTarget = null; },
+        send: (txt = null, media = null, type = 'text') => {
+            const input = document.getElementById('msgIn');
+            const message = txt || input.value;
+            if(!message && !media) return;
+            const room = [myID, activeTarget].sort().join("_");
+            push(ref(db, `chats/${room}`), {
+                from: myID, text: message, time: Date.now(), status: 'sent', type: type, media: media || "", pinned: false
+            });
+            input.value = "";
+        },
+        openMyStory: () => {
+            get(ref(db, `stories/${myID}`)).then(snap => {
+                if(snap.exists()) window.app.openStory(myID, "Status Saya", "", true);
+                else document.getElementById('storyUpload').click();
+            });
+        },
+        openStory: (uid, name, pfp, isMine) => {
+            get(ref(db, `stories/${uid}`)).then(snap => {
+                currentStoryQueue = [];
+                snap.forEach(s => { if(Date.now() - s.val().time < 86400000) currentStoryQueue.push({id: s.key, ...s.val()}); });
+                if(currentStoryQueue.length > 0) {
+                    currentStoryIndex = 0; viewingStoryOf = uid;
+                    document.getElementById('storyViewer').style.display = 'flex';
+                    window.app.renderStory();
+                }
+            });
+        },
+        renderStory: () => {
+            const s = currentStoryQueue[currentStoryIndex];
+            const container = document.getElementById('svMediaContainer');
+            container.innerHTML = s.type === 'video' ? `<video src="${s.media}" autoplay></video>` : `<img src="${s.media}">`;
+            
+            const bar = document.getElementById('storyProgress');
+            bar.style.width = '0%';
+            setTimeout(() => bar.style.width = '100%', 100);
+            
+            clearTimeout(storyTimer);
+            storyTimer = setTimeout(() => {
+                currentStoryIndex++;
+                if(currentStoryIndex < currentStoryQueue.length) window.app.renderStory();
+                else window.app.closeStory();
+            }, 5000);
+        },
+        closeStory: () => { 
+            clearTimeout(storyTimer); 
+            document.getElementById('storyViewer').style.display = 'none'; 
+        },
+        uploadStory: (input) => {
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                push(ref(db, `stories/${myID}`), { media: reader.result, type: file.type.startsWith('video') ? 'video' : 'image', time: Date.now(), views: 0 });
+                window.showToast("Status diunggah!");
+            };
+        }
+    };
+
+    // --- Listeners ---
+    onValue(ref(db, `users/${myID}/contacts`), (snap) => {
+        const chatList = document.getElementById('chatList');
+        chatList.innerHTML = "";
+        snap.forEach(child => {
+            const cid = child.key;
+            get(ref(db, `users/${cid}/profile`)).then(pSnap => {
+                const p = pSnap.val();
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<img src="${p.pfp || 'https://ui-avatars.com/api/?name='+p.name}" class="pfp"><div class="card-info"><div class="card-name">${p.name}</div><div class="card-msg">${p.bio}</div></div>`;
+                card.onclick = () => window.app.openChat(cid, p.name, p.pfp);
+                chatList.appendChild(card);
             });
         });
+    });
 
-        // --- BAN SYSTEM ---
-        onValue(ref(db, `users/${myID}/isBanned`), snap => {
-            if(snap.val() === true) {
-                document.body.innerHTML = `<div style="height:100dvh; background:#020617; color:white; display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:20px;"><h2>Akses Dibatasi</h2><p>Akun ${myID} telah ditangguhkan.</p><textarea id="ap" placeholder="Alasan banding..." style="width:100%; max-width:300px; margin:20px 0; padding:10px;"></textarea><button onclick="window.kb()" style="padding:10px 20px; background:red; color:white; border:none; border-radius:10px;">Kirim Banding</button></div>`;
-                window.kb = () => {
-                    const txt = document.getElementById('ap').value;
-                    if(txt) update(ref(db, `users/${myID}`), { appealMessage: txt, appealStatus: 'pending' }).then(() => alert("Banding dikirim"));
-                };
-            }
-        });
+    // --- Ban System Check ---
+    onValue(ref(db, `users/${myID}/isBanned`), (snap) => {
+        if(snap.val() === true) {
+            document.body.innerHTML = `<div style="height:100dvh; background:#0f172a; color:white; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
+                <i class="fas fa-user-slash" style="font-size:4rem; color:#ef4444; margin-bottom:20px;"></i>
+                <h1>Akses Ditangguhkan</h1>
+                <p>Akun <b>${myID}</b> telah diblokir karena melanggar ketentuan.</p>
+                <button onclick="location.reload()" style="margin-top:20px; padding:10px 20px; background:#10b981; border:none; border-radius:8px; color:white;">Coba Lagi</button>
+            </div>`;
+        }
+    });
+
+</script>
 
 </body>
     </html>
