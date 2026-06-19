@@ -3,183 +3,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok Downloader Tanpa Watermark</title>
-    
+    <title>Clipnova - Professional Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #f4f4f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 500px;
-            width: 100%;
-        }
-
-        h1 {
-            color: #ff0050;
-            margin-bottom: 5px;
-        }
-
-        .input-group {
-            display: flex;
-            margin-top: 20px;
-            gap: 10px;
-        }
-
-        input {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            outline: none;
-        }
-
-        button {
-            background-color: #00f2fe;
-            color: black;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            background-color: #00d2de;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        #loading {
-            margin-top: 20px;
-            color: #555;
-            font-style: italic;
-        }
-
-        #result {
-            margin-top: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .download-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-        }
-
-        .btn {
-            text-decoration: none;
-            background-color: #ff0050;
-            color: white;
-            padding: 12px;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #cc0040;
-        }
-
-        .btn-audio {
-            background-color: #333;
-        }
-
-        .btn-audio:hover {
-            background-color: #111;
-        }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-[#0f0f0f] text-gray-200 min-h-screen relative overflow-x-hidden" x-data="clipnovaApp()">
 
-    <div class="container">
-        <h1>TikTok Downloader</h1>
-        <p>Unduh video TikTok & musik tanpa watermark!</p>
-        
-        <div class="input-group">
-            <input type="text" id="tiktokUrl" placeholder="Tempel tautan video TikTok di sini...">
-            <button id="downloadBtn" onclick="fetchVideo()">Cari Video</button>
+    <div x-show="modals.payment" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+        <div class="bg-[#1a1a1a] border border-gray-800 rounded-2xl p-8 max-w-md w-full shadow-2xl relative" @click.away="closeAllModals()">
+            <button @click="closeAllModals()" class="absolute top-4 right-4 text-gray-500 hover:text-white transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-yellow-500/20">
+                    <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-1">Aktivasi Premium</h3>
+                <p class="text-sm text-gray-400">Pindai kode QRIS di bawah ini dengan e-wallet atau m-banking Anda.</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl flex justify-center mb-6 overflow-hidden">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SimulasiPembayaranClipnova" alt="QRIS" class="w-48 h-48 object-contain">
+            </div>
+            <div class="flex justify-between items-center bg-[#111] border border-gray-800 p-4 rounded-lg mb-6">
+                <span class="text-sm text-gray-400">Total Tagihan</span>
+                <span class="text-lg font-bold text-yellow-500">Rp 25.000</span>
+            </div>
+            <button @click="confirmPayment()" class="w-full py-3.5 bg-yellow-500 text-black font-bold rounded-xl hover:bg-yellow-400 transition-colors">
+                Saya Sudah Membayar
+            </button>
         </div>
+    </div>
 
-        <div id="loading" class="hidden">Memproses tautan...</div>
+    <div x-show="modals.success" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+        <div class="bg-[#1a1a1a] border border-gray-800 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl relative" @click.away="closeAllModals()">
+            <div class="w-16 h-16 bg-green-500/10 border border-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2" x-text="successMessage"></h3>
+            <button @click="closeAllModals()" class="mt-4 w-full py-2 bg-gray-800 text-white font-bold rounded-lg hover:bg-gray-700 transition-colors">Tutup</button>
+        </div>
+    </div>
 
-        <div id="result" class="hidden">
-            <h3 id="videoTitle">Judul Video</h3>
-            <img id="videoThumbnail" src="" alt="Thumbnail" width="200" style="border-radius: 8px;">
-            <div class="download-buttons">
-                <a id="btnNoWatermark" href="#" target="_blank" class="btn">Unduh Video (No Watermark)</a>
-                <a id="btnAudio" href="#" target="_blank" class="btn btn-audio">Unduh Audio (MP3)</a>
+    <div x-show="modals.locked" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+        <div class="bg-[#1a1a1a] border border-gray-800 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl relative" @click.away="closeAllModals()">
+            <div class="w-16 h-16 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Fitur Terkunci</h3>
+            <p class="text-sm text-gray-400 mb-6">Kualitas resolusi ini hanya tersedia untuk akun Premium.</p>
+            <div class="flex gap-3">
+                <button @click="closeAllModals()" class="flex-1 py-2 bg-gray-800 text-white font-bold rounded-lg hover:bg-gray-700 transition-colors">Batal</button>
+                <button @click="openPayment()" class="flex-1 py-2 bg-yellow-500 text-black font-bold rounded-lg hover:bg-yellow-400 transition-colors">Upgrade</button>
             </div>
         </div>
     </div>
 
-    <script>
-        async function fetchVideo() {
-            const urlInput = document.getElementById('tiktokUrl').value;
-            const loadingDiv = document.getElementById('loading');
-            const resultDiv = document.getElementById('result');
+    <div x-show="modals.download" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+        <div class="bg-[#1a1a1a] border border-gray-800 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl relative" @click.away="closeAllModals()">
+            <div class="w-16 h-16 bg-blue-500/10 border border-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-blue-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2" x-text="isPremium ? 'Mengunduh File...' : 'Mengarahkan ke Unduhan...'"></h3>
+            <p class="text-sm text-gray-400 mb-6" x-text="isPremium ? 'File Anda sedang disiapkan secara langsung tanpa hambatan.' : 'Sistem akan membuka tab baru untuk sponsor sebelum unduhan dimulai.'"></p>
+            <button @click="closeAllModals()" class="w-full py-2 bg-gray-800 text-white font-bold rounded-lg hover:bg-gray-700 transition-colors">Mengerti</button>
+        </div>
+    </div>
+
+    <nav class="relative z-50 border-b border-gray-800 bg-[#141414]">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-yellow-500 flex items-center justify-center text-black font-black text-xl rounded">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h1 class="text-xl font-extrabold text-white tracking-wide">CLIP<span class="text-yellow-500">NOVA</span></h1>
+            </div>
             
-            if (!urlInput) {
-                alert("Silakan masukkan tautan TikTok terlebih dahulu!");
-                return;
-            }
+            <button x-show="!isPremium" @click="openPayment()" class="px-5 py-2 text-sm font-bold rounded border border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black transition-colors">
+                UPGRADE PRO
+            </button>
+            <div x-show="isPremium" class="px-4 py-2 text-sm font-bold rounded bg-yellow-500 text-black flex items-center gap-2" style="display: none;">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                PREMIUM
+            </div>
+        </div>
+    </nav>
 
-            // Tampilkan tulisan loading, sembunyikan hasil sebelumnya
-            loadingDiv.classList.remove('hidden');
-            resultDiv.classList.add('hidden');
-
-            try {
-                // Menggunakan API pihak ketiga gratis (tikwm)
-                const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(urlInput)}&count=12&cursor=0&web=1&hd=1`;
+    <main class="relative z-10 max-w-6xl mx-auto px-6 py-8 flex flex-col lg:flex-row gap-8">
+        
+        <div class="flex-1">
+            <div class="bg-[#1a1a1a] border border-gray-800 rounded-2xl p-8 mb-8">
+                <h2 class="text-3xl font-black text-center mb-2 text-white uppercase tracking-tight">
+                    Ekstrak <span class="text-yellow-500">Media</span>
+                </h2>
+                <p class="text-center text-gray-400 mb-8 text-sm">Pilih platform tujuan, tempel tautan, dan sistem akan mengunduhnya untuk Anda.</p>
                 
-                const response = await fetch(apiUrl);
-                const data = await response.json();
+                <form @submit.prevent="fetchMedia" class="flex flex-col gap-4">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="relative w-full sm:w-48 shrink-0">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            </div>
+                            <select x-model="platform" class="w-full pl-11 pr-4 py-3.5 bg-[#0a0a0a] border border-gray-700 rounded-xl focus:outline-none focus:border-yellow-500 text-white transition-colors appearance-none cursor-pointer">
+                                <option value="auto">Deteksi Otomatis</option>
+                                <option value="tiktok">TikTok</option>
+                                <option value="instagram">Instagram</option>
+                                <option value="youtube">YouTube</option>
+                                <option value="twitter">X (Twitter)</option>
+                                <option value="facebook">Facebook</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
 
-                if (data.code === 0) {
-                    // Jika sukses mendapatkan data dari API
-                    document.getElementById('videoTitle').textContent = data.data.title;
-                    document.getElementById('videoThumbnail').src = data.data.cover;
+                        <div class="relative flex-1">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                            </div>
+                            <input type="url" x-model="url" required placeholder="Masukkan URL media sosial..." 
+                                   class="w-full pl-11 pr-4 py-3.5 bg-[#0a0a0a] border border-gray-700 rounded-xl focus:outline-none focus:border-yellow-500 text-white transition-colors">
+                        </div>
+                    </div>
+
+                    <button type="submit" :disabled="isLoading" 
+                            class="w-full px-8 py-3.5 bg-yellow-500 text-black font-bold uppercase tracking-wider rounded-xl hover:bg-yellow-400 transition-colors disabled:opacity-50 flex justify-center items-center">
+                        <span x-show="!isLoading">Unduh Sekarang</span>
+                        <span x-show="isLoading" class="flex items-center gap-2">
+                            Memproses Data API...
+                            <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle><path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" class="opacity-75"></path></svg>
+                        </span>
+                    </button>
+                </form>
+            </div>
+
+            <template x-if="result">
+                <div class="bg-[#1a1a1a] border border-gray-800 rounded-2xl p-6 mb-8">
+                    <div class="flex flex-col md:flex-row gap-8">
+                        <div class="w-full md:w-5/12 bg-[#0a0a0a] rounded-xl border border-gray-800 p-3 flex items-center justify-center min-h-[240px]">
+                            <img :src="result.thumbnail" alt="Thumbnail" class="max-w-full h-auto object-contain rounded-lg">
+                        </div>
+                        <div class="w-full md:w-7/12 flex flex-col justify-center">
+                            <h3 class="text-xl font-bold mb-5 text-white" x-text="result.title"></h3>
+                            <div class="grid grid-cols-1 gap-3">
+                                <template x-for="option in result.download_options">
+                                    <button @click="handleDownload(option)"
+                                            class="w-full flex justify-between items-center p-4 rounded-xl border transition-colors bg-[#111]"
+                                            :class="(!isPremium && option.is_premium) ? 'border-gray-800 opacity-60' : 'border-gray-700 hover:border-yellow-500 hover:bg-[#151515]'">
+                                        
+                                        <div class="flex items-center gap-3">
+                                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                            <span x-text="option.quality" class="font-medium text-sm text-gray-200"></span>
+                                        </div>
+
+                                        <span x-show="!isPremium && option.is_premium" class="text-[10px] bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-2 py-1 rounded font-bold uppercase">Locked</span>
+                                        <span x-show="isPremium || !option.is_premium" class="text-xs text-yellow-500 font-bold uppercase">Unduh</span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <div class="w-full lg:w-80 flex flex-col gap-6">
+            <div class="bg-[#1a1a1a] border border-gray-800 rounded-2xl p-6">
+                <h3 class="font-bold text-white mb-3 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Apa itu Clipnova Premium?
+                </h3>
+                <p class="text-sm text-gray-400 mb-4 leading-relaxed">
+                    Akses eksklusif yang mematikan semua iklan pihak ketiga, membuka kunci resolusi asli tertinggi (hingga 4K), menghilangkan watermark, dan memberikan prioritas antrean pada server API publik kami.
+                </p>
+                <button x-show="!isPremium" @click="openPayment()" class="w-full py-2 bg-yellow-500 text-black text-sm font-bold rounded-lg hover:bg-yellow-400 transition-colors">Aktifkan Sekarang</button>
+            </div>
+            
+            <template x-if="!isPremium">
+                <div class="bg-[#1a1a1a] border border-gray-800 rounded-2xl p-5 text-center">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase mb-3 tracking-wider">Slot Iklan (300x250)</p>
+                    <div class="bg-[#111] border border-gray-800 h-48 rounded-xl flex items-center justify-center">
+                        <span class="text-gray-600 text-sm">AdSense Banner</span>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </main>
+
+    <div class="max-w-6xl mx-auto px-6 pb-8 mt-4">
+        <h3 class="text-lg font-bold text-center mb-8 border-b border-gray-800 pb-4 text-gray-400">15 Fitur Standar Clipnova</h3>
+        <div class="grid grid-cols-4 gap-4">
+            <template x-for="item in standardFeatures" :key="item.id">
+                <div class="bg-[#1a1a1a] border border-gray-800 p-5 rounded-xl text-center hover:bg-[#222] transition-colors">
+                    <div class="w-8 h-8 mx-auto mb-3 text-gray-400" x-html="item.icon"></div>
+                    <h4 class="font-bold text-sm text-white mb-1" x-text="item.title"></h4>
+                    <p class="text-xs text-gray-500" x-text="item.desc"></p>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-6 pb-16">
+        <h3 class="text-lg font-bold text-center mb-8 border-b border-gray-800 pb-4 text-yellow-500">10 Keunggulan Eksklusif Premium</h3>
+        <div class="grid grid-cols-4 gap-4">
+            <template x-for="item in premiumFeatures" :key="item.id">
+                <div class="bg-[#111] border border-yellow-500/20 p-5 rounded-xl text-center hover:border-yellow-500/50 transition-colors relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-yellow-500 text-black text-[9px] font-bold px-2 py-1 rounded-bl-lg">PRO</div>
+                    <div class="w-8 h-8 mx-auto mb-3 text-yellow-500" x-html="item.icon"></div>
+                    <h4 class="font-bold text-sm text-white mb-1" x-text="item.title"></h4>
+                    <p class="text-xs text-gray-500" x-text="item.desc"></p>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <script>
+        const svgCheck = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+        const svgStar = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>`;
+
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('clipnovaApp', () => ({
+                url: '',
+                platform: 'auto',
+                isLoading: false,
+                result: null,
+                isPremium: false,
+                successMessage: '',
+                
+                modals: { payment: false, success: false, locked: false, download: false },
+
+                closeAllModals() { for (let key in this.modals) { this.modals[key] = false; } },
+                openPayment() { this.closeAllModals(); this.modals.payment = true; },
+                openSuccess(msg) { this.closeAllModals(); this.successMessage = msg; this.modals.success = true; },
+                openLocked() { this.closeAllModals(); this.modals.locked = true; },
+                openDownload() { this.closeAllModals(); this.modals.download = true; },
+
+                confirmPayment() {
+                    this.isLoading = true;
+                    setTimeout(() => {
+                        this.isPremium = true;
+                        this.isLoading = false;
+                        this.openSuccess('Pembayaran Berhasil! Akun Premium Aktif.');
+                    }, 1500);
+                },
+
+                async fetchMedia() {
+                    if(!this.url) return;
+                    this.isLoading = true;
+                    this.result = null;
                     
-                    // Setel tautan ke tombol unduhan
-                    document.getElementById('btnNoWatermark').href = data.data.play;
-                    document.getElementById('btnAudio').href = data.data.music;
+                    try {
+                        // ==== INTEGRASI API APIFY ====
+                        const APIFY_TOKEN = 'apify_api_KveOIjwxRd2VhHaHmEP7tTm14SUahl1ETSAD';
+                        
+                        // Menentukan ID Actor berdasarkan pilihan platform
+                        let actorId = '';
+                        if(this.platform === 'tiktok') actorId = 'apify/tiktok-scraper';
+                        else if(this.platform === 'instagram') actorId = 'apify/instagram-scraper';
+                        else if(this.platform === 'youtube') actorId = 'apify/youtube-scraper';
+                        // ... dan seterusnya untuk platform lain
+                        
+                        /* KERANGKA FETCH ASLI APIFY (Bisa terkendala CORS jika dieksekusi langsung di browser)
+                        if (actorId && APIFY_TOKEN) {
+                            const apifyUrl = \`https://api.apify.com/v2/acts/\${actorId}/runs?token=\${APIFY_TOKEN}\`;
+                            // const response = await fetch(apifyUrl, { method: 'POST', ... });
+                            // Jika berhasil, Anda akan perlu melakukan polling untuk mengambil hasil dari Actor Run ID
+                        }
+                        */
 
-                    // Sembunyikan loading, tampilkan menu hasil
-                    loadingDiv.classList.add('hidden');
-                    resultDiv.classList.remove('hidden');
-                } else {
-                    alert("Video tidak ditemukan. Pastikan tautan yang dimasukkan benar.");
-                    loadingDiv.classList.add('hidden');
-                }
+                        // Simulasi proses pengambilan agar UI tetap berfungsi saat Anda menguji desain
+                        setTimeout(() => {
+                            const platformName = this.platform === 'auto' ? 'Deteksi Sistem' : this.platform.toUpperCase();
+                            this.result = {
+                                title: `Video ${platformName} Berhasil Ditarik`,
+                                thumbnail: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=640',
+                                download_options: [
+                                    { quality: 'SD (360p)', url: '#', is_premium: false },
+                                    { quality: 'HD (720p)', url: '#', is_premium: false },
+                                    { quality: 'Ultra HD (4K)', url: '#', is_premium: true },
+                                    { quality: 'Audio Only (MP3)', url: '#', is_premium: true }
+                                ]
+                            };
+                            this.isLoading = false;
+                        }, 1200);
 
-            } catch (error) {
-                console.error(error);
-                alert("Terjadi kesalahan jaringan atau API sedang sibuk.");
-                loadingDiv.classList.add('hidden');
-            }
-        }
+                    } catch (error) {
+                        this.isLoading = false;
+                        this.openSuccess('Gagal memproses data melalui API.');
+                    }
+                },
+
+                handleDownload(option) {
+                    if (!this.isPremium && option.is_premium) {
+                        this.openLocked();
+                        return;
+                    }
+                    this.openDownload();
+                },
+
+                
+
+                premiumFeatures: [
+                    { id: 1, icon: svgStar, title: 'No Watermark', desc: 'Video bersih dari logo' },
+                    { id: 2, icon: svgStar, title: 'Resolusi 4K', desc: 'Kualitas tertinggi' },
+                    { id: 3, icon: svgStar, title: 'Audio 320kbps', desc: 'Suara jernih maksimal' },
+                    { id: 4, icon: svgStar, title: 'Bebas Iklan', desc: '0% Iklan mengganggu' },
+                    { id: 5, icon: svgStar, title: 'Server VIP', desc: 'Kecepatan tanpa batas' },
+                    { id: 6, icon: svgStar, title: 'Unduh Massal', desc: 'Proses banyak link' },
+                    { id: 7, icon: svgStar, title: 'Ekstrak Subtitle', desc: 'Ambil file .srt' },
+                    { id: 8, icon: svgStar, title: 'Format GIF', desc: 'Konversi otomatis' },
+                    { id: 9, icon: svgStar, title: 'Cloud Backup', desc: 'Simpan di akun Anda' },
+                    { id: 10, icon: svgStar, title: 'Support Prioritas', desc: 'Bantuan instan' }
+                ]
+            }));
+        });
     </script>
 </body>
 </html>
