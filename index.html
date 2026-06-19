@@ -3,634 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TalkSky - Aplikasi Perpesanan Modern & Aman</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>TikTok Downloader Tanpa Watermark</title>
     
     <style>
-        :root {
-            --bg-main: #050505;
-            --bg-card: rgba(20, 20, 24, 0.6);
-            --primary: #10b981;
-            --primary-glow: rgba(16, 185, 129, 0.4);
-            --secondary: #3b82f6;
-            --text-light: #f9fafb;
-            --text-muted: #9ca3af;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --glass-blur: blur(12px);
-        }
-
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: var(--bg-main);
-            color: var(--text-light);
-            line-height: 1.6;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
-                radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.04) 0%, transparent 50%);
-        }
-
-        .main-wrapper {
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
 
         .container {
-            max-width: 1050px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        /* Navbar Glassmorphism */
-        header {
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border-color);
-            background: rgba(5, 5, 5, 0.7);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-wrapper { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-        }
-        
-        .logo { 
-            font-size: 26px; 
-            font-weight: 800; 
-            letter-spacing: -1px; 
-            color: #ffffff; 
-        }
-        .logo span { 
-            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .btn-download-nav {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #34d399;
-            text-decoration: none;
-            padding: 10px 22px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .btn-download-nav:hover {
-            background: var(--primary);
-            color: #ffffff;
-            border-color: var(--primary);
-            box-shadow: 0 0 20px var(--primary-glow);
-            transform: translateY(-2px);
-        }
-
-        /* Hero Section */
-        .hero { 
-            padding: 90px 0 50px 0; 
-            text-align: center; 
-            position: relative; 
-        }
-        .hero-logo { 
-            font-size: 72px; 
-            font-weight: 800; 
-            color: #ffffff; 
-            margin-bottom: 16px; 
-            letter-spacing: -2.5px; 
-            line-height: 1;
-        }
-        .hero-logo span { 
-            background: linear-gradient(to right, #10b981, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 40px rgba(16, 185, 129, 0.3);
-        }
-        .hero-tagline { 
-            font-size: 18px; 
-            color: var(--text-muted); 
-            max-width: 650px; 
-            margin: 0 auto; 
-            line-height: 1.7; 
-            font-weight: 400;
-        }
-        
-        .section-padding { padding: 60px 0; }
-        
-        .section-title { 
-            text-align: center; 
-            font-size: 30px; 
-            font-weight: 800; 
-            margin-bottom: 50px; 
-            color: #ffffff; 
-            letter-spacing: -1px; 
-        }
-        .section-title span { 
-            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* --- BERITA GRID (POSISI SEKARANG DI ATAS) --- */
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-        
-        .news-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
+            background: white;
             padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #ff0050;
+            margin-bottom: 5px;
+        }
+
+        .input-group {
+            display: flex;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        button {
+            background-color: #00f2fe;
+            color: black;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #00d2de;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #loading {
+            margin-top: 20px;
+            color: #555;
+            font-style: italic;
+        }
+
+        #result {
+            margin-top: 30px;
             display: flex;
             flex-direction: column;
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
-        }
-        .news-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
-            background: linear-gradient(90deg, #10b981, transparent);
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-        .news-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(16, 185, 129, 0.3);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(16, 185, 129, 0.1);
-        }
-        .news-card:hover::before { opacity: 1; }
-
-        .news-tag {
-            align-self: flex-start; font-size: 11px; font-weight: 700; text-transform: uppercase;
-            padding: 6px 14px; border-radius: 20px; margin-bottom: 18px; letter-spacing: 0.5px;
-        }
-        .tag-update { background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
-        .tag-info { background: rgba(59, 130, 246, 0.1); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.2); }
-        .tag-event { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
-
-        .news-date { font-size: 12px; color: #6b7280; margin-bottom: 10px; font-weight: 500; }
-        .news-card h3 { font-size: 19px; font-weight: 700; color: #ffffff; margin-bottom: 12px; line-height: 1.4; letter-spacing: -0.5px; }
-        .news-card p { font-size: 14.5px; color: var(--text-muted); line-height: 1.6; }
-        
-        .news-status {
-            grid-column: span 3; text-align: center; padding: 30px; color: var(--text-muted); font-size: 15px; font-weight: 500;
-        }
-
-        /* --- PROMO BANNER (POSISI SEKARANG DI BAWAH BERITA) --- */
-        .premium-container { padding-bottom: 60px; }
-        .premium-box {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(10, 10, 10, 0.9) 100%);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 24px;
-            padding: 40px;
-            display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        .premium-box:hover {
-            border-color: rgba(16, 185, 129, 0.4);
-            box-shadow: 0 15px 50px rgba(16, 185, 129, 0.15);
-        }
-        .premium-box::after {
-            content: '';
-            position: absolute;
-            top: 0; right: -50px; width: 200px; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
-            transform: skewX(-25deg);
-            animation: shine 6s infinite;
-        }
-        @keyframes shine { 0% { left: -200px; } 20% { left: 100%; } 100% { left: 100%; } }
-        
-        .premium-info { display: flex; align-items: center; gap: 28px; z-index: 2; position: relative; }
-        .premium-icon {
-            width: 75px; height: 75px; background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05));
-            border-radius: 20px; display: flex; align-items: center; justify-content: center;
-            color: #34d399; font-size: 32px; border: 1px solid rgba(16, 185, 129, 0.25);
-            box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.1);
-        }
-        .premium-text h3 { font-size: 24px; color: #ffffff; margin-bottom: 8px; font-weight: 800; letter-spacing: -0.5px; }
-        .premium-text p { font-size: 15.5px; color: var(--text-muted); max-width: 550px; line-height: 1.6; }
-        .premium-text p strong { color: #10b981; font-weight: 700; }
-        
-        .badge-promo {
-            background: linear-gradient(90deg, #f59e0b, #ef4444); 
-            color: #ffffff; font-size: 12px; font-weight: 800;
-            padding: 4px 12px; border-radius: 20px; margin-left: 12px; vertical-align: middle;
-            text-transform: uppercase; letter-spacing: 1px;
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
-        }
-        
-        .btn-premium {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: #ffffff; text-decoration: none;
-            padding: 16px 32px; border-radius: 16px; font-weight: 700; font-size: 16px;
-            display: inline-flex; align-items: center; gap: 10px; 
-            transition: all 0.3s ease; white-space: nowrap; z-index: 2; position: relative;
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
-        }
-        .btn-premium:hover { 
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4);
+            gap: 15px;
         }
 
-        /* --- PUSAT LAYANAN --- */
-        .layanan-wrapper {
-            background: rgba(255,255,255,0.01);
-            border-top: 1px solid var(--border-color);
-        }
-        
-        .action-buttons-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-        
-        .action-btn {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 20px; padding: 40px 24px; border-radius: 20px; 
-            background: var(--bg-card); border: 1px solid var(--border-color);
-            color: var(--text-light); font-size: 16px; font-weight: 700; cursor: pointer; 
-            transition: all 0.3s ease; text-align: center;
-            backdrop-filter: var(--glass-blur);
-        }
-        
-        .icon-circle {
-            width: 60px; height: 60px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px; transition: all 0.3s ease;
+        .download-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
         }
 
-        .btn-saran .icon-circle { background: rgba(59, 130, 246, 0.1); color: #60a5fa; }
-        .btn-banding .icon-circle { background: rgba(239, 68, 68, 0.1); color: #f87171; }
-        .btn-tips .icon-circle { background: rgba(16, 185, 129, 0.1); color: #34d399; }
-
-        .action-btn:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.15); }
-        .action-btn:hover .icon-circle { transform: scale(1.15); }
-        
-        .btn-saran:hover { box-shadow: 0 15px 30px rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
-        .btn-saran:hover .icon-circle { background: #3b82f6; color: #fff; box-shadow: 0 0 20px rgba(59,130,246,0.5); }
-        
-        .btn-banding:hover { box-shadow: 0 15px 30px rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); }
-        .btn-banding:hover .icon-circle { background: #ef4444; color: #fff; box-shadow: 0 0 20px rgba(239,68,68,0.5); }
-        
-        .btn-tips:hover { box-shadow: 0 15px 30px rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); }
-        .btn-tips:hover .icon-circle { background: #10b981; color: #fff; box-shadow: 0 0 20px rgba(16,185,129,0.5); }
-
-        /* --- MODAL BOX V2 --- */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 999;
-            justify-content: center; align-items: center; padding: 20px;
-        }
-        .modal-content {
-            background: #0a0a0c; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px;
-            padding: 36px; width: 100%; max-width: 480px; position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255,255,255,0.02) inset;
-            animation: modalScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes modalScale { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        
-        .close-modal {
-            position: absolute; top: 24px; right: 24px; color: #6b7280;
-            cursor: pointer; font-size: 22px; transition: all 0.2s;
-            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%;
-        }
-        .close-modal:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
-        
-        .modal-title { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px; }
-        
-        .modal-input {
-            width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-            color: #fff; padding: 16px; border-radius: 14px; margin-bottom: 16px;
-            font-size: 15px; outline: none; transition: all 0.3s;
-        }
-        .modal-input:focus { background: rgba(255,255,255,0.05); border-color: #10b981; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
-        textarea.modal-input { resize: vertical; min-height: 120px; line-height: 1.5; }
-        
-        .modal-btn {
-            width: 100%; padding: 16px; border-radius: 14px; border: none;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; font-weight: 700; font-size: 16px;
-            cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2); margin-top: 8px;
-        }
-        .modal-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3); }
-        .modal-btn:active { transform: translateY(0); }
-
-        /* List Tips */
-        .tips-list li {
-            margin-bottom: 16px; font-size: 14.5px; color: #d1d5db;
-            padding-left: 32px; position: relative; list-style: none; line-height: 1.6;
-        }
-        .tips-list li::before {
-            content: "\f058"; font-family: "Font Awesome 6 Free"; font-weight: 900;
-            color: #10b981; position: absolute; left: 0; top: 2px; font-size: 18px;
+        .btn {
+            text-decoration: none;
+            background-color: #ff0050;
+            color: white;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: 0.3s;
         }
 
-        /* Footer */
-        footer { padding: 40px 0; text-align: center; font-size: 14px; color: #6b7280; border-top: 1px solid var(--border-color); background: rgba(0,0,0,0.3); }
-        footer strong { color: #f3f4f6; font-weight: 600; }
-
-        /* Responsive Layout */
-        @media (max-width: 900px) {
-            .news-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
-            .news-status { grid-column: span 2; }
+        .btn:hover {
+            background-color: #cc0040;
         }
 
-        @media (max-width: 768px) {
-            .hero { padding: 60px 0 30px 0; }
-            .hero-logo { font-size: 52px; }
-            .hero-tagline { font-size: 15px; padding: 0 10px; }
-            
-            .premium-box { flex-direction: column; text-align: center; padding: 30px 20px; gap: 20px; }
-            .premium-info { flex-direction: column; gap: 16px; }
-            .btn-premium { width: 100%; justify-content: center; }
-            
-            .news-grid { grid-template-columns: 1fr; }
-            .news-status { grid-column: span 1; }
-            
-            .action-buttons-grid { grid-template-columns: 1fr; gap: 16px; }
-            .action-btn { padding: 20px; flex-direction: row; justify-content: flex-start; text-align: left; }
-            .icon-circle { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+        .btn-audio {
+            background-color: #333;
+        }
+
+        .btn-audio:hover {
+            background-color: #111;
         }
     </style>
 </head>
 <body>
 
-    <div class="main-wrapper">
-
-        <!-- HEADER -->
-        <header>
-            <div class="container nav-wrapper">
-                <div class="logo">Talk<span>Sky</span></div>
-                <a href="xxx.html" class="btn-download-nav">
-                    <i class="fa-solid fa-cloud-arrow-down"></i> Unduh
-                </a>
-            </div>
-        </header>
-
-        <!-- HERO SECTION -->
-        <section class="hero">
-            <div class="container">
-                <div class="hero-logo">Talk<span>Sky</span></div>
-                <p class="hero-tagline">Pembaruan sistem keamanan dan fitur antarmuka terbaru. Nikmati pengalaman mengobrol yang lebih cepat, eksklusif, dan aman.</p>
-            </div>
-        </section>
-
-        <!-- MENU 1: BERITA & UPDATE (Pindah Ke Atas) -->
-        <section class="section-padding">
-            <div class="container">
-                <h2 class="section-title">Berita & <span>Update Resmi</span></h2>
-                <div class="news-grid" id="newsContainer">
-                    <div class="news-status" id="newsStatus">
-                        <i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px;"></i> Memuat berita terbaru...
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- MENU 2: PROMOSI ID UNIK (Pindah Ke Bawah) -->
-        <section class="container premium-container">
-            <div class="premium-box">
-                <div class="premium-info">
-                    <div class="premium-icon">
-                        <i class="fa-solid fa-crown"></i>
-                    </div>
-                    <div class="premium-text">
-                        <h3>Beli ID Unik Kustom <span class="badge-promo"><i class="fa-solid fa-fire" style="margin-right: 4px;"></i> Hot Promo</span></h3>
-                        <p>Dapatkan ID cantik pilihan Anda seharga <strong>Rp 250.000</strong> & dapatkan bonus Verifikasi Resmi (Centang Hijau) Gratis selama 1 Bulan 15 Hari!</p>
-                    </div>
-                </div>
-                <a href="https://wa.me/608993360673?text=Halo%20Admin%20TalkSky,%20saya%20ingin%20membeli%20ID%20Unik%20Premium%20seharga%20250.000" target="_blank" class="btn-premium">
-                    <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Beli Sekarang
-                </a>
-            </div>
-        </section>
-
-        <!-- MENU 3: PUSAT LAYANAN (Diperbagus) -->
-        <section class="section-padding layanan-wrapper">
-            <div class="container">
-                <h2 class="section-title">Pusat <span>Layanan</span></h2>
-                
-                <div class="action-buttons-grid">
-                    <button class="action-btn btn-saran" onclick="bukaModal('modalSaran')">
-                        <div class="icon-circle"><i class="fa-solid fa-comment-dots"></i></div>
-                        <span>Kirim Saran Aplikasi</span>
-                    </button>
-                    
-                    <button class="action-btn btn-banding" onclick="bukaModal('modalBanding')">
-                        <div class="icon-circle"><i class="fa-solid fa-gavel"></i></div>
-                        <span>Banding Akun Terblokir</span>
-                    </button>
-                    
-                    <button class="action-btn btn-tips" onclick="bukaModal('modalTips')">
-                        <div class="icon-circle"><i class="fa-solid fa-lightbulb"></i></div>
-                        <span>Tips Penggunaan Bijak</span>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- FOOTER -->
-        <footer>
-            <div class="container">
-                <p>&copy; 2026 <strong>TalkSky</strong>. Dikembangkan oleh Radz.</p>
-            </div>
-        </footer>
-
-    </div>
-
-    <!-- MODAL BOX SARAN -->
-    <div id="modalSaran" class="modal-overlay">
-        <div class="modal-content">
-            <div class="close-modal" onclick="tutupModal('modalSaran')"><i class="fa-solid fa-xmark"></i></div>
-            <div class="modal-title"><i class="fa-solid fa-comment-dots" style="color: #3b82f6;"></i> Kotak Saran</div>
-            <p style="font-size: 14.5px; color: #9ca3af; margin-bottom: 24px;">Masukan Anda sangat berarti bagi pengembangan aplikasi kami ke depannya.</p>
-            <input type="text" id="namaSaran" class="modal-input" placeholder="Nama Anda (Opsional)">
-            <textarea id="isiSaran" class="modal-input" placeholder="Tulis saran atau keluhan Anda di sini..."></textarea>
-            <button class="modal-btn" id="btnSaran" onclick="kirimDataSaran()">Kirim Saran</button>
-        </div>
-    </div>
-
-    <!-- MODAL BOX BANDING -->
-    <div id="modalBanding" class="modal-overlay">
-        <div class="modal-content">
-            <div class="close-modal" onclick="tutupModal('modalBanding')"><i class="fa-solid fa-xmark"></i></div>
-            <div class="modal-title"><i class="fa-solid fa-shield-halved" style="color: #ef4444;"></i> Banding Pemblokiran</div>
-            <p style="font-size: 14.5px; color: #9ca3af; margin-bottom: 24px;">Jika Anda merasa pemblokiran akun merupakan kesalahan sistem, silakan isi form ini.</p>
-            <input type="text" id="idBanding" class="modal-input" placeholder="ID Akun (Contoh: ID-1234)" required>
-            <textarea id="alasanBanding" class="modal-input" placeholder="Jelaskan alasan mengapa akun Anda tidak seharusnya diblokir..." required></textarea>
-            <button class="modal-btn" id="btnBanding" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);" onclick="kirimDataBanding()">Kirim Permohonan</button>
-        </div>
-    </div>
-
-    <!-- MODAL BOX TIPS -->
-    <div id="modalTips" class="modal-overlay">
-        <div class="modal-content">
-            <div class="close-modal" onclick="tutupModal('modalTips')"><i class="fa-solid fa-xmark"></i></div>
-            <div class="modal-title"><i class="fa-solid fa-lightbulb" style="color: #10b981;"></i> Panduan Komunitas</div>
-            <ul class="tips-list" style="margin-top: 20px;">
-                <li><strong>Gunakan Nama yang Sopan:</strong> Jangan menggunakan kata-kata *toxic*, kasar, atau ujaran kebencian di nama profil maupun bio Anda.</li>
-                <li><strong>Jaga Privasi:</strong> Hindari membagikan informasi sensitif seperti password atau detail bank kepada pengguna yang tidak dikenal.</li>
-                <li><strong>Hargai Pengguna Lain:</strong> Dilarang melakukan spam pesan atau pelecehan. Akun yang dilaporkan atas tindakan ini akan langsung ditangguhkan (banned).</li>
-                <li><strong>Gunakan ID untuk Menambah Teman:</strong> Demi keamanan nomor telepon Anda, gunakan sistem *ID Unik* saat mencari teman baru.</li>
-            </ul>
-            <button class="modal-btn" style="margin-top: 24px; background: rgba(255,255,255,0.1); box-shadow: none;" onclick="tutupModal('modalTips')">Saya Mengerti</button>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT TETAP SAMA (TIDAK ADA YANG DIUBAH) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push, set, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
-            authDomain: "mybro-9ba5f.firebaseapp.com",
-            databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
-            projectId: "mybro-9ba5f"
-        };
+    <div class="container">
+        <h1>TikTok Downloader</h1>
+        <p>Unduh video TikTok & musik tanpa watermark!</p>
         
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+        <div class="input-group">
+            <input type="text" id="tiktokUrl" placeholder="Tempel tautan video TikTok di sini...">
+            <button id="downloadBtn" onclick="fetchVideo()">Cari Video</button>
+        </div>
 
-        window.bukaModal = function(id) {
-            document.getElementById(id).style.display = 'flex';
-        }
-        window.tutupModal = function(id) {
-            document.getElementById(id).style.display = 'none';
-        }
+        <div id="loading" class="hidden">Memproses tautan...</div>
 
-        const newsContainer = document.getElementById('newsContainer');
-        const beritaRef = ref(db, 'berita_talksky');
+        <div id="result" class="hidden">
+            <h3 id="videoTitle">Judul Video</h3>
+            <img id="videoThumbnail" src="" alt="Thumbnail" width="200" style="border-radius: 8px;">
+            <div class="download-buttons">
+                <a id="btnNoWatermark" href="#" target="_blank" class="btn">Unduh Video (No Watermark)</a>
+                <a id="btnAudio" href="#" target="_blank" class="btn btn-audio">Unduh Audio (MP3)</a>
+            </div>
+        </div>
+    </div>
 
-        onValue(beritaRef, (snapshot) => {
-            newsContainer.innerHTML = ''; 
+    <script>
+        async function fetchVideo() {
+            const urlInput = document.getElementById('tiktokUrl').value;
+            const loadingDiv = document.getElementById('loading');
+            const resultDiv = document.getElementById('result');
             
-            if (snapshot.exists()) {
-                const data = snapshot.val();
+            if (!urlInput) {
+                alert("Silakan masukkan tautan TikTok terlebih dahulu!");
+                return;
+            }
+
+            // Tampilkan tulisan loading, sembunyikan hasil sebelumnya
+            loadingDiv.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+
+            try {
+                // Menggunakan API pihak ketiga gratis (tikwm)
+                const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(urlInput)}&count=12&cursor=0&web=1&hd=1`;
                 
-                Object.keys(data).forEach((key) => {
-                    const item = data[key];
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (data.code === 0) {
+                    // Jika sukses mendapatkan data dari API
+                    document.getElementById('videoTitle').textContent = data.data.title;
+                    document.getElementById('videoThumbnail').src = data.data.cover;
                     
-                    let tagClass = 'tag-info';
-                    if(item.tag_tipe === 'update') tagClass = 'tag-update';
-                    if(item.tag_tipe === 'event') tagClass = 'tag-event';
+                    // Setel tautan ke tombol unduhan
+                    document.getElementById('btnNoWatermark').href = data.data.play;
+                    document.getElementById('btnAudio').href = data.data.music;
 
-                    const newsCardHTML = `
-                        <div class="news-card">
-                            <span class="news-tag ${tagClass}">${item.tag_nama || 'Info'}</span>
-                            <div class="news-date">${item.tanggal || 'Baru Saja'}</div>
-                            <h3>${item.judul || 'Judul Berita'}</h3>
-                            <p>${item.deskripsi || 'Tidak ada deskripsi.'}</p>
-                        </div>
-                    `;
-                    newsContainer.insertAdjacentHTML('beforeend', newsCardHTML);
-                });
-            } else {
-                newsContainer.innerHTML = `
-                    <div class="news-card">
-                        <span class="news-tag tag-update">Update v1.0.4</span>
-                        <div class="news-date">4 Juni 2026</div>
-                        <h3>Perbaikan UI & Toko Grid</h3>
-                        <p>Penambahan sistem sistem tampilan kartu berita responsif baru dan perombakan struktur pengiriman pesan.</p>
-                    </div>
-                    <div class="news-card">
-                        <span class="news-tag tag-info">Pengumuman</span>
-                        <div class="news-date">1 Juni 2026</div>
-                        <h3>Kebijakan Baru Profil</h3>
-                        <p>Untuk menjaga kenyamanan, sistem AI kami kini akan memfilter bio dan nama pengguna yang mengandung kata kasar.</p>
-                    </div>
-                    <div class="news-card">
-                        <span class="news-tag tag-event">Event</span>
-                        <div class="news-date">28 Mei 2026</div>
-                        <h3>Tema Eksklusif Gratis</h3>
-                        <p>Klaim tema ruang angkasa spesial minggu ini langsung di menu pengaturan aplikasi TalkSky Anda.</p>
-                    </div>
-                `;
-            }
-        });
+                    // Sembunyikan loading, tampilkan menu hasil
+                    loadingDiv.classList.add('hidden');
+                    resultDiv.classList.remove('hidden');
+                } else {
+                    alert("Video tidak ditemukan. Pastikan tautan yang dimasukkan benar.");
+                    loadingDiv.classList.add('hidden');
+                }
 
-        window.kirimDataSaran = async function() {
-            const nama = document.getElementById('namaSaran').value || 'Anonim';
-            const saran = document.getElementById('isiSaran').value;
-            const btn = document.getElementById('btnSaran');
-
-            if(!saran.trim()) {
-                alert('Teks saran tidak boleh kosong!');
-                return;
-            }
-
-            btn.innerText = "Mengirim...";
-            try {
-                const dbRef = ref(db, 'laporan_saran');
-                const newLaporan = push(dbRef);
-                await set(newLaporan, {
-                    nama: nama,
-                    pesan_saran: saran,
-                    waktu: serverTimestamp()
-                });
-                alert('Terima kasih! Saran Anda telah masuk ke sistem kami.');
-                document.getElementById('namaSaran').value = '';
-                document.getElementById('isiSaran').value = '';
-                tutupModal('modalSaran');
             } catch (error) {
-                alert('Terjadi kesalahan koneksi database: ' + error.message);
+                console.error(error);
+                alert("Terjadi kesalahan jaringan atau API sedang sibuk.");
+                loadingDiv.classList.add('hidden');
             }
-            btn.innerText = "Kirim Saran";
-        }
-
-        window.kirimDataBanding = async function() {
-            const idAkun = document.getElementById('idBanding').value;
-            const alasan = document.getElementById('alasanBanding').value;
-            const btn = document.getElementById('btnBanding');
-
-            if(!idAkun.trim() || !alasan.trim()) {
-                alert('ID Akun dan Alasan wajib diisi secara lengkap!');
-                return;
-            }
-
-            btn.innerText = "Memproses...";
-            try {
-                const dbRef = ref(db, 'laporan_banding');
-                const newBanding = push(dbRef);
-                await set(newBanding, {
-                    id_akun: idAkun,
-                    alasan_banding: alasan,
-                    status: 'Menunggu Tinjauan Admin',
-                    waktu: serverTimestamp()
-                });
-                alert('Permohonan banding berhasil dikirim. Admin kami akan segera meninjaunya.');
-                document.getElementById('idBanding').value = '';
-                document.getElementById('alasanBanding').value = '';
-                tutupModal('modalBanding');
-            } catch (error) {
-                alert('Gagal memproses permohonan: ' + error.message);
-            }
-            btn.innerText = "Kirim Permohonan";
         }
     </script>
 </body>
