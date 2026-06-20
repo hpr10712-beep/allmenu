@@ -3,323 +3,361 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CCTV AI - Smart Security</title>
+    <title>CCTV AI Pro</title>
+    <!-- TensorFlow & COCO-SSD -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            background: #0a0e17;
+            background: #0b0e14;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             color: #e6edf3;
             padding: 16px;
-            background-image: radial-gradient(ellipse at 20% 50%, #0d1b2a 0%, transparent 60%),
-                              radial-gradient(ellipse at 80% 50%, #0d1b2a 0%, transparent 60%);
         }
-        .app {
+        .container {
             width: 100%;
-            max-width: 460px;
-            background: rgba(22, 28, 36, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 32px;
-            padding: 24px 20px 20px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.03);
+            max-width: 500px;
+            background: #151b23;
+            border-radius: 28px;
+            padding: 20px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            border: 1px solid #2d333b;
         }
-        /* Header */
+        /* HEADER */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 18px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 14px;
+            border-bottom: 1px solid #2d333b;
         }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .header h1 {
             font-size: 20px;
             font-weight: 600;
-            letter-spacing: -0.5px;
+            letter-spacing: 0.3px;
         }
-        .logo span { color: #58a6ff; }
-        .logo i { font-style: normal; font-size: 22px; }
+        .header h1 span {
+            color: #00d4ff;
+        }
         .status-pill {
             display: flex;
             align-items: center;
             gap: 8px;
-            background: rgba(255,255,255,0.04);
-            padding: 6px 16px 6px 12px;
-            border-radius: 40px;
+            background: #212830;
+            padding: 5px 14px 5px 10px;
+            border-radius: 30px;
             font-size: 13px;
             font-weight: 500;
-            border: 1px solid rgba(255,255,255,0.03);
         }
-        .dot-indicator {
+        .dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
             background: #3fb950;
-            transition: 0.3s ease;
-            box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.2);
+            transition: 0.2s;
         }
-        .dot-indicator.active {
-            background: #f0883e;
-            box-shadow: 0 0 0 0 rgba(240, 136, 62, 0.4);
-            animation: pulse-dot 1.2s ease-in-out infinite;
-        }
-        .dot-indicator.danger {
-            background: #da3633;
-            box-shadow: 0 0 0 0 rgba(218, 54, 51, 0.4);
-            animation: pulse-dot 0.8s ease-in-out infinite;
-        }
-        @keyframes pulse-dot {
-            0% { box-shadow: 0 0 0 0 currentColor; }
-            50% { box-shadow: 0 0 0 6px transparent; }
-            100% { box-shadow: 0 0 0 0 transparent; }
-        }
-        /* Video */
-        .video-wrap {
+        .dot.warning { background: #d29922; }
+        .dot.danger { background: #f85149; }
+        .dot.inactive { background: #484f58; }
+
+        /* VIDEO WRAPPER */
+        .video-wrapper {
             position: relative;
-            margin-top: 18px;
-            border-radius: 20px;
+            margin-top: 16px;
+            border-radius: 18px;
             overflow: hidden;
-            background: #000;
-            aspect-ratio: 16/9;
-            border: 1px solid rgba(255,255,255,0.04);
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+            background: #010409;
+            aspect-ratio: 16 / 9;
+            border: 1px solid #30363d;
         }
         #displayCanvas {
             width: 100%;
             height: 100%;
             display: block;
             background: #000;
-            image-rendering: auto;
         }
-        /* HUD modern */
-        .hud-overlay {
+        /* HUD */
+        .hud {
             position: absolute;
-            bottom: 14px;
+            bottom: 12px;
             left: 14px;
             right: 14px;
             display: flex;
             justify-content: space-between;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 500;
-            background: rgba(10, 14, 23, 0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            padding: 10px 16px;
-            border-radius: 14px;
-            border: 1px solid rgba(255,255,255,0.05);
             color: #8b949e;
+            background: rgba(21, 27, 35, 0.7);
+            backdrop-filter: blur(6px);
+            padding: 7px 14px;
+            border-radius: 12px;
+            border: 1px solid #30363d55;
             pointer-events: none;
         }
-        .hud-left, .hud-right { display: flex; gap: 18px; align-items: center; }
-        .hud-val { color: #f0f6fc; font-weight: 600; }
-        .hud-rec { display: flex; align-items: center; gap: 6px; }
-        .rec-dot {
-            width: 8px; height: 8px; border-radius: 50%;
-            background: transparent;
-            transition: 0.2s;
-        }
-        .rec-dot.on {
-            background: #da3633;
-            animation: blink-rec 1s step-end infinite;
-        }
-        @keyframes blink-rec {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.2; }
-        }
+        .hud-left, .hud-right { display: flex; gap: 16px; }
+        .hud .val { color: #f0f6fc; }
+        .hud .val.warn { color: #f0883e; }
 
-        /* Info cards - glassmorphism */
-        .stats {
+        /* INFO GRID */
+        .info-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
             margin-top: 16px;
         }
-        .stat-card {
-            background: rgba(255,255,255,0.02);
-            border-radius: 16px;
-            padding: 12px 4px;
+        .info-card {
+            background: #0d1117;
+            border-radius: 14px;
+            padding: 12px 6px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.03);
-            transition: 0.2s;
+            border: 1px solid #212830;
         }
-        .stat-card .label {
-            font-size: 9px;
+        .info-card .label {
+            font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: 0.6px;
-            color: #6e7681;
+            letter-spacing: 0.4px;
+            color: #8b949e;
         }
-        .stat-card .value {
+        .info-card .value {
             font-size: 16px;
-            font-weight: 700;
-            margin-top: 6px;
-            color: #f0f6fc;
+            font-weight: 600;
+            margin-top: 5px;
             font-variant-numeric: tabular-nums;
+            color: #f0f6fc;
         }
-        .stat-card .value.orange { color: #f0883e; }
-        .stat-card .value.red { color: #da3633; }
-        .stat-card .value.green { color: #3fb950; }
-        .stat-card .value.blue { color: #58a6ff; }
+        .info-card .value.alert { color: #f0883e; }
+        .info-card .value.danger { color: #f85149; }
+        .info-card .value.success { color: #3fb950; }
 
-        /* Log */
-        .log-area {
-            margin-top: 16px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 16px;
-            padding: 12px 16px;
+        /* LOG */
+        .log-box {
+            margin-top: 14px;
+            background: #0d1117;
+            border-radius: 14px;
+            padding: 10px 14px;
             max-height: 70px;
             overflow-y: auto;
             font-size: 12px;
-            font-family: 'JetBrains Mono', 'SF Mono', monospace;
+            font-family: 'SF Mono', 'Courier New', monospace;
             color: #8b949e;
-            border: 1px solid rgba(255,255,255,0.03);
-            line-height: 1.6;
-            scroll-behavior: smooth;
+            border: 1px solid #212830;
+            line-height: 1.7;
         }
-        .log-area::-webkit-scrollbar { width: 3px; }
-        .log-area::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
+        .log-box::-webkit-scrollbar { width: 3px; }
+        .log-box::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
         .log-alert { color: #f0883e; }
-        .log-danger { color: #da3633; }
+        .log-danger { color: #f85149; }
 
-        /* Buttons */
-        .actions {
+        /* BUTTONS */
+        .btn-group {
             display: flex;
             gap: 10px;
             margin-top: 16px;
         }
         .btn {
             flex: 1;
-            padding: 14px 0;
+            padding: 12px 0;
             border: none;
-            border-radius: 16px;
+            border-radius: 14px;
             font-weight: 600;
             font-size: 14px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            background: rgba(255,255,255,0.04);
+            transition: all 0.15s ease;
+            background: #212830;
             color: #c9d1d9;
-            border: 1px solid rgba(255,255,255,0.04);
+            border: 1px solid #30363d;
         }
         .btn:active { transform: scale(0.97); }
         .btn-primary {
+            background: #1f6feb;
+            border-color: #1f6feb;
+            color: #fff;
+        }
+        .btn-primary:hover { background: #388bfd; }
+        .btn-primary:disabled { opacity: 0.5; cursor: default; }
+        .btn-success {
             background: #238636;
             border-color: #238636;
             color: #fff;
         }
-        .btn-primary:hover { background: #2ea043; }
-        .btn-primary:disabled { opacity: 0.4; cursor: default; }
-        .btn-outline { background: transparent; border-color: rgba(255,255,255,0.06); }
-        .btn-outline:hover { background: rgba(255,255,255,0.04); }
+        .btn-success:hover { background: #2ea043; }
         .btn-danger {
             background: #da3633;
             border-color: #da3633;
             color: #fff;
         }
         .btn-danger:hover { background: #f85149; }
+        .btn-outline {
+            background: transparent;
+            border-color: #30363d;
+        }
+        .btn-outline:hover { background: #212830; }
     </style>
 </head>
 <body>
-<div class="app">
-    <!-- Header -->
+
+<div class="container">
+    <!-- HEADER -->
     <div class="header">
-        <div class="logo"><i>🔒</i> <span>CCTV</span>AI</div>
+        <h1>📹 <span>CCTV</span> AI</h1>
         <div class="status-pill">
-            <span class="dot-indicator" id="statusDot"></span>
+            <span class="dot" id="statusDot"></span>
             <span id="statusLabel">SIAGA</span>
         </div>
     </div>
 
-    <!-- Video -->
-    <div class="video-wrap">
+    <!-- VIDEO -->
+    <div class="video-wrapper">
         <canvas id="displayCanvas"></canvas>
         <video id="sourceVideo" autoplay playsinline style="display:none;"></video>
-        <div class="hud-overlay">
+        <div class="hud">
             <div class="hud-left">
-                <span>👤 <span class="hud-val" id="hudHuman">0</span></span>
-                <span>⚡ <span class="hud-val" id="hudFps">0</span> FPS</span>
+                <span>👤 <span class="val" id="humanCount">0</span></span>
+                <span>⚡ <span class="val" id="fpsDisplay">0</span> FPS</span>
             </div>
             <div class="hud-right">
-                <span class="hud-rec">
-                    <span class="rec-dot" id="recDot"></span>
-                    <span id="hudRecTime">IDLE</span>
-                </span>
+                <span>⏱ <span class="val" id="recTimeDisplay">IDLE</span></span>
             </div>
         </div>
     </div>
 
-    <!-- Stats -->
-    <div class="stats">
-        <div class="stat-card"><div class="label">Resolusi</div><div class="value blue" id="statRes">--</div></div>
-        <div class="stat-card"><div class="label">AI Latensi</div><div class="value" id="statLatency">0 ms</div></div>
-        <div class="stat-card"><div class="label">Konfidensi</div><div class="value orange" id="statConf">0%</div></div>
-        <div class="stat-card"><div class="label">Kejadian</div><div class="value" id="statEvents">0</div></div>
+    <!-- INFO GRID -->
+    <div class="info-grid">
+        <div class="info-card">
+            <div class="label">Resolusi</div>
+            <div class="value" id="resDisplay">--x--</div>
+        </div>
+        <div class="info-card">
+            <div class="label">Inferensi AI</div>
+            <div class="value" id="inferDisplay">0 ms</div>
+        </div>
+        <div class="info-card">
+            <div class="label">Konfidensi</div>
+            <div class="value" id="confDisplay">0%</div>
+        </div>
     </div>
 
-    <!-- Log -->
-    <div class="log-area" id="logArea"><div>> Sistem siap. Tekan "Mulai".</div></div>
+    <!-- LOG -->
+    <div class="log-box" id="logArea">
+        > Sistem siap. Tekan "Mulai".
+    </div>
 
-    <!-- Actions -->
-    <div class="actions">
+    <!-- BUTTONS -->
+    <div class="btn-group">
         <button class="btn btn-primary" id="btnStart">▶ Mulai</button>
-        <button class="btn btn-outline" id="btnDownload">⬇ Unduh</button>
+        <button class="btn btn-success" id="btnDownload">⬇ Unduh</button>
         <button class="btn btn-outline" id="btnClear">✕ Bersih</button>
     </div>
 </div>
 
 <script>
-    (function(){
-        // DOM
+    (function() {
+        // --- DOM ---
         const video = document.getElementById('sourceVideo');
         const canvas = document.getElementById('displayCanvas');
         const ctx = canvas.getContext('2d');
         const logArea = document.getElementById('logArea');
         const statusDot = document.getElementById('statusDot');
         const statusLabel = document.getElementById('statusLabel');
-        const hudHuman = document.getElementById('hudHuman');
-        const hudFps = document.getElementById('hudFps');
-        const hudRecTime = document.getElementById('hudRecTime');
-        const recDot = document.getElementById('recDot');
-        const statRes = document.getElementById('statRes');
-        const statLatency = document.getElementById('statLatency');
-        const statConf = document.getElementById('statConf');
-        const statEvents = document.getElementById('statEvents');
+        const humanCount = document.getElementById('humanCount');
+        const fpsDisplay = document.getElementById('fpsDisplay');
+        const resDisplay = document.getElementById('resDisplay');
+        const inferDisplay = document.getElementById('inferDisplay');
+        const confDisplay = document.getElementById('confDisplay');
+        const recTimeDisplay = document.getElementById('recTimeDisplay');
         const btnStart = document.getElementById('btnStart');
         const btnDownload = document.getElementById('btnDownload');
         const btnClear = document.getElementById('btnClear');
 
-        // State
+        // --- STATE ---
         let isRunning = false;
         let model = null;
         let stream = null;
         let mediaRecorder = null;
         let recordedChunks = [];
         let isRecording = false;
-        let animId = null;
-        let detecId = null;
-
-        // Detection
-        let humanPresent = false;
-        let humanCounter = 0;
-        const MIN_CONSEC = 2;
-        let lastBoxes = [];
-        let eventCount = 0;
         let recordingStartTime = 0;
+        let animFrameId = null;
+        let detectionTimerId = null;
 
-        // FPS
+        // Statistik
         let frameCount = 0;
         let fps = 0;
         let lastFpsUpdate = performance.now();
+        let humanDetected = false;
+        let humanCounter = 0;
+        const MIN_CONSECUTIVE = 2;
 
-        // Resize
+        // Smoothing bounding box
+        let smoothBoxes = [];
+        const SMOOTH_FACTOR = 0.5;
+
+        // --- ALARM SUARA ---
+        let alarmCtx = null;
+        let alarmOsc = null;
+        let alarmGain = null;
+        let alarmInterval = null;
+
+        function initAudio() {
+            if (!alarmCtx) {
+                alarmCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function startAlarm() {
+            initAudio();
+            if (alarmCtx.state === 'suspended') {
+                alarmCtx.resume();
+            }
+            // Jika sudah berbunyi, tidak perlu buat baru
+            if (alarmInterval) return;
+
+            // Buat oscillator
+            alarmOsc = alarmCtx.createOscillator();
+            alarmGain = alarmCtx.createGain();
+            alarmOsc.type = 'square';
+            alarmOsc.frequency.value = 800;
+            alarmGain.gain.value = 0.15;
+            alarmOsc.connect(alarmGain);
+            alarmGain.connect(alarmCtx.destination);
+
+            alarmOsc.start();
+            // Kedip volume (beep-beep)
+            let toggle = true;
+            alarmInterval = setInterval(() => {
+                if (alarmGain) {
+                    alarmGain.gain.value = toggle ? 0.15 : 0.0;
+                    toggle = !toggle;
+                }
+            }, 300);
+        }
+
+        function stopAlarm() {
+            if (alarmInterval) {
+                clearInterval(alarmInterval);
+                alarmInterval = null;
+            }
+            if (alarmOsc) {
+                try { alarmOsc.stop(); } catch(e) {}
+                alarmOsc.disconnect();
+                alarmOsc = null;
+            }
+            if (alarmGain) {
+                alarmGain.disconnect();
+                alarmGain = null;
+            }
+        }
+
+        // --- RESIZE CANVAS ---
         function resizeCanvas() {
             const rect = canvas.parentElement.getBoundingClientRect();
             canvas.width = Math.floor(rect.width);
@@ -327,174 +365,191 @@
         }
         window.addEventListener('resize', resizeCanvas);
 
-        // Logging
+        // --- LOG ---
         function addLog(msg, type = '') {
             const time = new Date().toLocaleTimeString('id-ID');
-            const cls = type === 'alert' ? 'log-alert' : type === 'danger' ? 'log-danger' : '';
+            let cls = '';
+            if (type === 'alert') cls = 'log-alert';
+            else if (type === 'danger') cls = 'log-danger';
             logArea.innerHTML += `<div class="${cls}">> [${time}] ${msg}</div>`;
             logArea.scrollTop = logArea.scrollHeight;
-            while (logArea.children.length > 50) logArea.removeChild(logArea.firstChild);
+            while (logArea.children.length > 40) logArea.removeChild(logArea.firstChild);
         }
 
-        // DRAW LOOP (60fps)
+        // --- DRAW LOOP (60 FPS) ---
         function drawLoop(timestamp) {
-            if (!isRunning) { animId = requestAnimationFrame(drawLoop); return; }
+            if (!isRunning) {
+                animFrameId = requestAnimationFrame(drawLoop);
+                return;
+            }
 
-            // FPS
+            // FPS counter
             frameCount++;
             if (timestamp - lastFpsUpdate >= 1000) {
                 fps = frameCount;
                 frameCount = 0;
                 lastFpsUpdate = timestamp;
-                hudFps.textContent = fps;
+                fpsDisplay.textContent = fps;
             }
 
-            // Draw frame with effects
+            // Gambar frame dengan efek BW + BLUR
             if (video.readyState >= 2) {
                 const w = canvas.width, h = canvas.height;
-                ctx.filter = 'blur(3px) grayscale(100%) contrast(1.15)';
+                ctx.filter = 'blur(2.5px) grayscale(100%) contrast(1.1)';
                 ctx.drawImage(video, 0, 0, w, h);
                 ctx.filter = 'none';
 
-                // Draw bounding boxes (smooth, tanpa glow berlebihan)
-                if (humanPresent && lastBoxes.length > 0) {
-                    ctx.save();
-                    ctx.shadowColor = 'rgba(240, 136, 62, 0.2)';
-                    ctx.shadowBlur = 8;
-                    lastBoxes.forEach(b => {
-                        const [x, y, bw, bh] = b.bbox;
-                        // Box dengan sudut membulat
-                        const r = 6;
-                        ctx.beginPath();
-                        ctx.moveTo(x + r, y);
-                        ctx.lineTo(x + bw - r, y);
-                        ctx.quadraticCurveTo(x + bw, y, x + bw, y + r);
-                        ctx.lineTo(x + bw, y + bh - r);
-                        ctx.quadraticCurveTo(x + bw, y + bh, x + bw - r, y + bh);
-                        ctx.lineTo(x + r, y + bh);
-                        ctx.quadraticCurveTo(x, y + bh, x, y + bh - r);
-                        ctx.lineTo(x, y + r);
-                        ctx.quadraticCurveTo(x, y, x + r, y);
-                        ctx.closePath();
-                        ctx.strokeStyle = '#f0883e';
-                        ctx.lineWidth = 2.5;
-                        ctx.shadowBlur = 10;
-                        ctx.stroke();
-                        ctx.shadowBlur = 0;
-                        // Fill tipis
-                        ctx.fillStyle = 'rgba(240, 136, 62, 0.08)';
-                        ctx.fill();
-                        // Label
-                        ctx.font = 'bold 12px -apple-system, sans-serif';
+                // Gambar bounding box yang sudah di-smooth
+                if (humanDetected && smoothBoxes.length > 0) {
+                    ctx.strokeStyle = '#f0883e';
+                    ctx.lineWidth = 2.5;
+                    ctx.shadowColor = 'transparent';
+                    smoothBoxes.forEach(box => {
+                        const [x, y, bw, bh] = box;
+                        ctx.strokeRect(x, y, bw, bh);
+                        ctx.fillStyle = 'rgba(240, 136, 62, 0.12)';
+                        ctx.fillRect(x, y, bw, bh);
+                        ctx.font = 'bold 13px -apple-system, sans-serif';
                         ctx.fillStyle = '#f0883e';
-                        ctx.shadowBlur = 6;
-                        ctx.shadowColor = 'rgba(0,0,0,0.6)';
-                        const label = `MANUSIA ${(b.score * 100).toFixed(0)}%`;
-                        const tw = ctx.measureText(label).width;
-                        ctx.fillStyle = 'rgba(10, 14, 23, 0.7)';
-                        ctx.shadowBlur = 0;
-                        ctx.fillRect(x, y - 22, tw + 14, 20);
-                        ctx.fillStyle = '#f0883e';
-                        ctx.shadowBlur = 4;
-                        ctx.shadowColor = 'rgba(0,0,0,0.4)';
-                        ctx.fillText(label, x + 6, y - 8);
+                        ctx.fillText('MANUSIA', x, y - 6);
                     });
-                    ctx.restore();
                 }
 
-                // Set resolusi sekali
-                if (statRes.textContent === '--' && video.videoWidth) {
-                    statRes.textContent = `${video.videoWidth}×${video.videoHeight}`;
+                // Update resolusi sekali
+                if (resDisplay.textContent === '--x--' && video.videoWidth) {
+                    resDisplay.textContent = `${video.videoWidth}x${video.videoHeight}`;
                 }
             }
 
-            animId = requestAnimationFrame(drawLoop);
+            animFrameId = requestAnimationFrame(drawLoop);
         }
 
-        // DETEKSI (dipanggil per frame via requestAnimationFrame)
-        async function detectLoop() {
+        // --- DETEKSI AI (dipanggil per 200ms) ---
+        async function runDetection() {
             if (!isRunning || !model || video.readyState < 2) {
-                detecId = requestAnimationFrame(detectLoop);
+                detectionTimerId = setTimeout(runDetection, 200);
                 return;
             }
 
-            const start = performance.now();
+            const startTime = performance.now();
             try {
-                const preds = await model.detect(video);
-                const latency = (performance.now() - start).toFixed(0);
-                statLatency.textContent = latency + ' ms';
+                const predictions = await model.detect(video);
+                const inferenceTime = (performance.now() - startTime).toFixed(0);
+                inferDisplay.textContent = inferenceTime + ' ms';
 
-                const humans = preds.filter(p => p.class === 'person' && p.score > 0.40);
-                lastBoxes = humans;
+                // Filter manusia
+                const humans = predictions.filter(p => p.class === 'person' && p.score > 0.45);
 
-                // Update UI
-                hudHuman.textContent = humans.length;
-                const maxConf = humans.length ? Math.max(...humans.map(h => h.score)) : 0;
-                statConf.textContent = (maxConf * 100).toFixed(0) + '%';
+                // Update count
+                humanCount.textContent = humans.length;
 
-                // Logic
+                // Konfidensi
+                let maxConf = 0;
+                if (humans.length > 0) {
+                    maxConf = Math.max(...humans.map(h => h.score));
+                    confDisplay.textContent = (maxConf * 100).toFixed(0) + '%';
+                } else {
+                    confDisplay.textContent = '0%';
+                }
+
+                // --- SMOOTHING BOX ---
+                if (humans.length > 0) {
+                    // Ambil box pertama dengan skor tertinggi
+                    const best = humans.reduce((a, b) => a.score > b.score ? a : b);
+                    const [x, y, w, h] = best.bbox;
+                    // Smooth dengan box sebelumnya
+                    if (smoothBoxes.length === 0) {
+                        smoothBoxes = [[x, y, w, h]];
+                    } else {
+                        const prev = smoothBoxes[0];
+                        const sx = prev[0] + (x - prev[0]) * SMOOTH_FACTOR;
+                        const sy = prev[1] + (y - prev[1]) * SMOOTH_FACTOR;
+                        const sw = prev[2] + (w - prev[2]) * SMOOTH_FACTOR;
+                        const sh = prev[3] + (h - prev[3]) * SMOOTH_FACTOR;
+                        smoothBoxes = [[sx, sy, sw, sh]];
+                    }
+                } else {
+                    // Jika tidak ada manusia, perlahan box mengecil
+                    if (smoothBoxes.length > 0) {
+                        const prev = smoothBoxes[0];
+                        const sx = prev[0] + (0 - prev[0]) * 0.1;
+                        const sy = prev[1] + (0 - prev[1]) * 0.1;
+                        const sw = prev[2] * 0.9;
+                        const sh = prev[3] * 0.9;
+                        if (sw < 1 || sh < 1) {
+                            smoothBoxes = [];
+                        } else {
+                            smoothBoxes = [[sx, sy, sw, sh]];
+                        }
+                    }
+                }
+
+                // Logika deteksi konsisten
                 if (humans.length > 0) {
                     humanCounter++;
                 } else {
                     humanCounter = 0;
                 }
 
-                const confirmed = humanCounter >= MIN_CONSEC;
-                if (confirmed && !humanPresent) {
-                    humanPresent = true;
-                    statusDot.className = 'dot-indicator danger';
+                const confirmed = humanCounter >= MIN_CONSECUTIVE;
+
+                if (confirmed && !humanDetected) {
+                    humanDetected = true;
+                    statusDot.className = 'dot danger';
                     statusLabel.textContent = 'TERDETEKSI';
-                    eventCount++;
-                    statEvents.textContent = eventCount;
-                    addLog('🚨 Manusia terdeteksi! Rekaman dimulai.', 'danger');
+                    addLog('🚨 Manusia terdeteksi! Alarm aktif.', 'danger');
+                    startAlarm();
                     startRecording();
-                } else if (!confirmed && humanPresent) {
-                    humanPresent = false;
-                    statusDot.className = 'dot-indicator';
+                } else if (!confirmed && humanDetected) {
+                    humanDetected = false;
+                    statusDot.className = 'dot';
                     statusLabel.textContent = 'SIAGA';
-                    addLog('✅ Manusia pergi. Rekaman berhenti.', 'alert');
+                    addLog('✅ Manusia pergi. Alarm berhenti.', 'alert');
+                    stopAlarm();
                     stopRecording();
+                    smoothBoxes = [];
                 } else if (confirmed) {
-                    statusDot.className = 'dot-indicator danger';
+                    statusDot.className = 'dot danger';
                     statusLabel.textContent = 'TERDETEKSI';
-                } else {
-                    statusDot.className = 'dot-indicator active';
-                    statusLabel.textContent = 'SIAGA';
                 }
 
-            } catch (e) { /* silent */ }
+            } catch (err) {
+                // silent ignore
+            }
 
-            detecId = requestAnimationFrame(detectLoop);
+            detectionTimerId = setTimeout(runDetection, 200);
         }
 
-        // REKAM
+        // --- REKAM ---
         function startRecording() {
             if (isRecording || !isRunning) return;
             try {
-                const streamCanvas = canvas.captureStream(30);
-                mediaRecorder = new MediaRecorder(streamCanvas, {
+                const canvasStream = canvas.captureStream(30);
+                mediaRecorder = new MediaRecorder(canvasStream, {
                     mimeType: 'video/webm;codecs=vp9,opus',
-                    bitsPerSecond: 1500000
+                    bitsPerSecond: 1200000
                 });
                 recordedChunks = [];
-                mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) recordedChunks.push(e.data);
+                };
                 mediaRecorder.onstop = () => {
-                    if (recordedChunks.length) {
+                    if (recordedChunks.length > 0) {
                         const blob = new Blob(recordedChunks, { type: 'video/webm' });
                         const url = URL.createObjectURL(blob);
-                        window._rec = { url, blob, time: new Date().toISOString() };
-                        addLog(`✅ Rekaman tersimpan (${(blob.size/1024/1024).toFixed(1)} MB)`);
+                        window._recordingBlob = { url, blob, time: new Date().toISOString() };
+                        addLog(`✅ Rekaman selesai (${(blob.size/1024/1024).toFixed(1)} MB)`, 'alert');
                     }
                     isRecording = false;
-                    recDot.className = 'rec-dot';
-                    hudRecTime.textContent = 'IDLE';
+                    recTimeDisplay.textContent = 'IDLE';
                 };
+
                 mediaRecorder.start(1000);
                 isRecording = true;
                 recordingStartTime = Date.now();
-                recDot.className = 'rec-dot on';
-                hudRecTime.textContent = '● REKAM';
-            } catch(e) {
+                recTimeDisplay.textContent = '● REKAM';
+                addLog('🔴 Merekam...', 'alert');
+            } catch (e) {
                 addLog('❌ Gagal rekam: ' + e.message, 'danger');
             }
         }
@@ -505,31 +560,37 @@
             }
             if (isRecording) {
                 isRecording = false;
-                recDot.className = 'rec-dot';
-                hudRecTime.textContent = 'IDLE';
+                recTimeDisplay.textContent = 'IDLE';
             }
         }
 
-        // START/STOP
+        // --- START / STOP CCTV ---
         async function toggleCCTV() {
             if (isRunning) {
+                // STOP
                 isRunning = false;
-                if (detecId) cancelAnimationFrame(detecId);
-                if (animId) cancelAnimationFrame(animId);
+                if (detectionTimerId) clearTimeout(detectionTimerId);
+                if (animFrameId) cancelAnimationFrame(animFrameId);
+                stopAlarm();
                 if (isRecording) stopRecording();
-                if (video.srcObject) { video.srcObject.getTracks().forEach(t => t.stop()); video.srcObject = null; }
+                if (video.srcObject) {
+                    video.srcObject.getTracks().forEach(t => t.stop());
+                    video.srcObject = null;
+                }
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                statusDot.className = 'dot-indicator';
+                statusDot.className = 'dot inactive';
                 statusLabel.textContent = 'STOP';
-                hudHuman.textContent = '0';
-                statConf.textContent = '0%';
-                hudFps.textContent = '0';
+                humanCount.textContent = '0';
+                confDisplay.textContent = '0%';
+                fpsDisplay.textContent = '0';
                 btnStart.textContent = '▶ Mulai';
                 addLog('⏹ Sistem dihentikan.');
                 return;
             }
 
+            // START
             try {
+                // Minta izin kamera
                 stream = await navigator.mediaDevices.getUserMedia({
                     video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } },
                     audio: false
@@ -539,7 +600,7 @@
                 resizeCanvas();
                 isRunning = true;
                 btnStart.textContent = '⏹ Berhenti';
-                statusDot.className = 'dot-indicator active';
+                statusDot.className = 'dot warning';
                 statusLabel.textContent = 'MEMUAT AI';
                 addLog('📷 Kamera aktif. Memuat model AI...');
 
@@ -550,64 +611,73 @@
                     addLog('✅ Model AI sudah siap.');
                 }
 
-                statusDot.className = 'dot-indicator';
+                statusDot.className = 'dot';
                 statusLabel.textContent = 'SIAGA';
-                humanPresent = false;
+                humanDetected = false;
                 humanCounter = 0;
-                lastBoxes = [];
+                smoothBoxes = [];
 
-                if (animId) cancelAnimationFrame(animId);
-                if (detecId) cancelAnimationFrame(detecId);
+                // Mulai loop
+                if (animFrameId) cancelAnimationFrame(animFrameId);
+                if (detectionTimerId) clearTimeout(detectionTimerId);
                 drawLoop(performance.now());
-                detectLoop();
+                runDetection();
 
-            } catch(err) {
-                alert('Gagal akses kamera: ' + err.message);
-                addLog('❌ Error: ' + err.message, 'danger');
+            } catch (err) {
+                // Jika gagal, tampilkan pesan jelas
+                let msg = err.message;
+                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                    msg = 'Izin kamera ditolak. Berikan izin di pengaturan browser.';
+                } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                    msg = 'Tidak ada kamera yang terdeteksi.';
+                }
+                alert('Gagal akses kamera: ' + msg);
+                addLog('❌ Error: ' + msg, 'danger');
                 isRunning = false;
                 btnStart.textContent = '▶ Mulai';
                 statusLabel.textContent = 'ERROR';
+                statusDot.className = 'dot inactive';
             }
         }
 
-        // DOWNLOAD
-        function downloadRec() {
-            if (window._rec && window._rec.blob.size > 0) {
+        // --- DOWNLOAD REKAMAN ---
+        function downloadRecording() {
+            if (window._recordingBlob && window._recordingBlob.blob.size > 0) {
                 const a = document.createElement('a');
-                a.href = window._rec.url;
+                a.href = window._recordingBlob.url;
                 a.download = `rekaman_cctv_${new Date().toISOString().replace(/[:.]/g, '-')}.webm`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-                addLog('⬇ Unduh dimulai.');
+                addLog('⬇ Proses unduh dimulai.');
             } else {
-                alert('Belum ada rekaman. Tunggu deteksi manusia.');
+                alert('Belum ada rekaman. Biarkan CCTV mendeteksi manusia terlebih dahulu.');
             }
         }
 
-        // CLEAR LOG
+        // --- EVENT LISTENERS ---
+        btnStart.addEventListener('click', toggleCCTV);
+        btnDownload.addEventListener('click', downloadRecording);
         btnClear.addEventListener('click', () => {
-            logArea.innerHTML = '<div>> Log dibersihkan.</div>';
+            logArea.innerHTML = '> Log dibersihkan.';
         });
 
-        // EVENTS
-        btnStart.addEventListener('click', toggleCCTV);
-        btnDownload.addEventListener('click', downloadRec);
-
-        // INIT
-        resizeCanvas();
-        statusDot.className = 'dot-indicator';
+        // --- INIT ---
+        addLog('🔧 Aplikasi siap. Tekan "Mulai" untuk mengaktifkan CCTV.');
+        statusDot.className = 'dot inactive';
         statusLabel.textContent = 'SIAGA';
-        statEvents.textContent = '0';
-        addLog('🔒 Aplikasi keamanan siap. Tekan "Mulai".');
+        recTimeDisplay.textContent = 'IDLE';
+        resizeCanvas();
 
-        window.addEventListener('beforeunload', () => {
+        // Bersihkan saat halaman ditutup
+        window.addEventListener('beforeunload', function() {
+            stopAlarm();
             if (isRecording) stopRecording();
             if (stream) stream.getTracks().forEach(t => t.stop());
-            if (detecId) cancelAnimationFrame(detecId);
-            if (animId) cancelAnimationFrame(animId);
+            if (detectionTimerId) clearTimeout(detectionTimerId);
+            if (animFrameId) cancelAnimationFrame(animFrameId);
         });
     })();
 </script>
 </body>
-    </html>
+</html>
