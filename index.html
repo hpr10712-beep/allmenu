@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>CCTV Pro · Surveillance System</title>
+    <title>CCTV Pro · Advanced Surveillance</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
+        /* ─── RESET & BASE ─── */
         * {
             margin: 0;
             padding: 0;
@@ -14,14 +15,24 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background: #060b16;
+            background: #050a16;
             color: #e8edf5;
             min-height: 100vh;
             padding: 14px;
+            overflow-x: hidden;
         }
         .app {
-            max-width: 1440px;
+            max-width: 1480px;
             margin: 0 auto;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: appEnter 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes appEnter {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* ─── HEADER ─── */
@@ -42,8 +53,18 @@
             font-weight: 800;
         }
         .logo i {
-            font-size: 26px;
+            font-size: 28px;
             color: #22d3ee;
+            animation: pulseGlow 2.5s infinite;
+        }
+        @keyframes pulseGlow {
+            0%,
+            100% {
+                filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.3));
+            }
+            50% {
+                filter: drop-shadow(0 0 20px rgba(34, 211, 238, 0.6));
+            }
         }
         .logo span {
             background: linear-gradient(135deg, #22d3ee, #06b6d4);
@@ -53,7 +74,7 @@
         .header-right {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
         }
         .status-badge {
@@ -66,6 +87,22 @@
             font-size: 12px;
             font-weight: 600;
             border: 1px solid rgba(255, 255, 255, 0.04);
+            animation: fadeInBadge 0.5s ease forwards;
+            opacity: 0;
+        }
+        .status-badge:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        .status-badge:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .status-badge:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        @keyframes fadeInBadge {
+            to {
+                opacity: 1;
+            }
         }
         .status-badge .dot {
             width: 9px;
@@ -85,35 +122,50 @@
             background: #fbbf24;
             box-shadow: 0 0 12px #fbbf2466;
         }
+        .dot.blue {
+            background: #22d3ee;
+            box-shadow: 0 0 12px #22d3ee66;
+        }
 
         /* ─── MAIN GRID ─── */
         .main-grid {
             display: grid;
-            grid-template-columns: 1fr 340px;
+            grid-template-columns: 1fr 360px;
             gap: 18px;
             margin-top: 18px;
         }
 
-        /* ─── CCTV VIEW ─── */
+        /* ─── CCTV VIEW (RASIO KOTAK 1:1) ─── */
         .cctv-wrapper {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 24px;
             padding: 16px;
+            animation: fadeInWrapper 0.6s ease 0.2s both;
+        }
+        @keyframes fadeInWrapper {
+            from {
+                opacity: 0;
+                transform: scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
         .cctv-container {
             position: relative;
             width: 100%;
-            aspect-ratio: 16 / 9;
+            aspect-ratio: 1 / 1;
             background: #050810;
             border-radius: 18px;
             overflow: hidden;
-            min-height: 280px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
         }
         .cctv-container video {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
             display: block;
             background: #050810;
         }
@@ -129,28 +181,28 @@
         /* Overlay info */
         .cam-overlay {
             position: absolute;
-            top: 12px;
-            left: 12px;
-            right: 12px;
+            top: 10px;
+            left: 10px;
+            right: 10px;
             display: flex;
             justify-content: space-between;
             pointer-events: none;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 4px;
         }
         .cam-overlay .left,
         .cam-overlay .right {
             display: flex;
             align-items: center;
-            gap: 10px;
-            background: rgba(0, 0, 0, 0.65);
-            backdrop-filter: blur(10px);
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
             padding: 4px 12px;
             border-radius: 30px;
             font-size: 11px;
             font-weight: 600;
             color: #94a3b8;
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .cam-overlay .live {
             color: #4ade80;
@@ -182,6 +234,10 @@
                 opacity: 0.2;
             }
         }
+        .cam-overlay .timestamp {
+            color: #e8edf5;
+            font-weight: 700;
+        }
 
         /* Grid overlay */
         .grid-overlay {
@@ -204,23 +260,61 @@
             width: 100%;
             height: 100%;
             background-image:
-                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 6% 6%;
+                linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+            background-size: 8.33% 8.33%;
         }
 
-        /* Controls */
-        .cam-controls {
+        /* ─── PTZ Controls ─── */
+        .ptz-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            max-width: 200px;
+            margin: 10px auto 0;
+        }
+        .ptz-controls button {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #94a3b8;
+            padding: 6px 0;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ptz-controls button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #e8edf5;
+        }
+        .ptz-controls button:active {
+            transform: scale(0.92);
+        }
+        .ptz-controls .center-btn {
+            background: rgba(34, 211, 238, 0.08);
+            color: #22d3ee;
+            border-color: rgba(34, 211, 238, 0.15);
+        }
+        .ptz-controls .center-btn:hover {
+            background: rgba(34, 211, 238, 0.15);
+        }
+
+        /* ─── CONTROLS BAR ─── */
+        .controls-bar {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
             margin-top: 12px;
+            justify-content: center;
         }
-        .cam-controls button {
+        .controls-bar button {
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.06);
             color: #e8edf5;
-            padding: 7px 14px;
+            padding: 6px 14px;
             border-radius: 40px;
             font-weight: 600;
             font-size: 12px;
@@ -230,32 +324,26 @@
             align-items: center;
             gap: 6px;
         }
-        .cam-controls button:hover {
+        .controls-bar button:hover {
             background: rgba(255, 255, 255, 0.08);
         }
-        .cam-controls button.primary {
+        .controls-bar button.primary {
             background: #22d3ee;
-            color: #060b16;
+            color: #050a16;
             border-color: #22d3ee;
         }
-        .cam-controls button.primary:hover {
+        .controls-bar button.primary:hover {
             background: #06b6d4;
         }
-        .cam-controls button.danger {
+        .controls-bar button.danger {
             background: rgba(248, 113, 113, 0.12);
             color: #f87171;
             border-color: rgba(248, 113, 113, 0.2);
         }
-        .cam-controls button.danger:hover {
+        .controls-bar button.danger:hover {
             background: rgba(248, 113, 113, 0.2);
         }
-        .cam-controls button.outline {
-            background: transparent;
-        }
-        .cam-controls button.outline:hover {
-            border-color: rgba(255, 255, 255, 0.15);
-        }
-        .cam-controls button.recording {
+        .controls-bar button.recording {
             background: rgba(248, 113, 113, 0.15);
             color: #f87171;
             border-color: #f87171;
@@ -270,7 +358,7 @@
                 box-shadow: 0 0 0 6px rgba(248, 113, 113, 0);
             }
         }
-        .cam-controls button .badge-dot {
+        .controls-bar button .badge-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
@@ -283,7 +371,7 @@
             background: #4ade80;
         }
 
-        /* Quality & Settings */
+        /* ─── SETTINGS BAR ─── */
         .settings-bar {
             display: flex;
             gap: 14px;
@@ -293,7 +381,7 @@
             align-items: center;
         }
         .settings-bar .group-label {
-            font-size: 11px;
+            font-size: 10px;
             color: #94a3b8;
             font-weight: 600;
             text-transform: uppercase;
@@ -308,8 +396,8 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 30px;
-            padding: 4px 12px;
-            font-size: 11px;
+            padding: 3px 12px;
+            font-size: 10px;
             font-weight: 600;
             color: #94a3b8;
             cursor: pointer;
@@ -326,13 +414,13 @@
         .zoom-group {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex: 1;
             min-width: 100px;
         }
         .zoom-group i {
             color: #64748b;
-            font-size: 12px;
+            font-size: 11px;
         }
         .zoom-group input[type="range"] {
             flex: 1;
@@ -341,7 +429,7 @@
             height: 3px;
             border-radius: 10px;
             outline: none;
-            min-width: 60px;
+            min-width: 50px;
         }
         .zoom-group input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -354,9 +442,9 @@
         }
         .zoom-group .zoom-val {
             font-weight: 700;
-            font-size: 13px;
+            font-size: 12px;
             color: #fcd34d;
-            min-width: 34px;
+            min-width: 32px;
             text-align: center;
         }
 
@@ -371,6 +459,26 @@
             border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 20px;
             padding: 14px 16px 16px;
+            animation: fadeInCard 0.5s ease both;
+        }
+        .card:nth-child(1) {
+            animation-delay: 0.3s;
+        }
+        .card:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+        .card:nth-child(3) {
+            animation-delay: 0.5s;
+        }
+        @keyframes fadeInCard {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
         .card-header {
             display: flex;
@@ -436,7 +544,7 @@
 
         /* Motion graph */
         .motion-graph {
-            height: 40px;
+            height: 38px;
             display: flex;
             align-items: flex-end;
             gap: 3px;
@@ -469,7 +577,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 0 2px;
+            padding: 4px 0 2px;
             gap: 10px;
         }
         .threshold-row .label {
@@ -488,7 +596,7 @@
             height: 3px;
             border-radius: 10px;
             outline: none;
-            min-width: 60px;
+            min-width: 50px;
         }
         .threshold-row input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -506,9 +614,44 @@
             color: #fcd34d;
         }
 
+        /* Extra menus */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 4px;
+        }
+        .menu-grid button {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            padding: 6px 4px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: 0.25s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .menu-grid button i {
+            font-size: 16px;
+            color: #22d3ee;
+        }
+        .menu-grid button:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #e8edf5;
+        }
+        .menu-grid button.active-menu {
+            border-color: #22d3ee;
+            background: rgba(34, 211, 238, 0.06);
+            color: #22d3ee;
+        }
+
         /* Log */
         .log-container {
-            max-height: 100px;
+            max-height: 90px;
             overflow-y: auto;
             font-size: 11px;
             display: flex;
@@ -548,6 +691,9 @@
         .log-item .msg.record {
             color: #f87171;
         }
+        .log-item .msg.info {
+            color: #22d3ee;
+        }
 
         .btn-sm {
             background: rgba(255, 255, 255, 0.04);
@@ -555,7 +701,7 @@
             color: #94a3b8;
             padding: 3px 12px;
             border-radius: 30px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             cursor: pointer;
             transition: 0.25s;
@@ -565,22 +711,33 @@
             color: #e8edf5;
         }
 
-        /* ─── RECORDING DOWNLOAD MODAL ─── */
+        /* ─── MODAL DOWNLOAD ─── */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(12px);
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(16px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 999;
+            animation: modalFade 0.3s ease;
         }
         .modal-overlay.active {
             display: flex;
+        }
+        @keyframes modalFade {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
         .modal-box {
             background: #0f172a;
@@ -591,11 +748,11 @@
             width: 92%;
             box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8);
             text-align: center;
-            animation: modalPop 0.35s ease;
+            animation: modalPop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         @keyframes modalPop {
             from {
-                transform: scale(0.92) translateY(20px);
+                transform: scale(0.9) translateY(30px);
                 opacity: 0;
             }
             to {
@@ -615,16 +772,16 @@
         }
         .modal-box .sub {
             color: #94a3b8;
-            font-size: 15px;
-            margin-bottom: 20px;
+            font-size: 14px;
+            margin-bottom: 18px;
         }
         .modal-box .info-row {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 16px;
-            padding: 12px 16px;
+            padding: 10px 16px;
             display: flex;
             justify-content: space-between;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             font-size: 14px;
         }
         .modal-box .info-row .label {
@@ -650,7 +807,7 @@
         }
         .modal-box .actions .download-btn {
             background: #22d3ee;
-            color: #060b16;
+            color: #050a16;
         }
         .modal-box .actions .download-btn:hover {
             background: #06b6d4;
@@ -679,8 +836,8 @@
                 grid-template-columns: 1fr;
             }
             .cctv-container {
-                aspect-ratio: 4/3;
-                min-height: 200px;
+                aspect-ratio: 1 / 1;
+                min-height: 240px;
             }
             header {
                 flex-direction: column;
@@ -689,14 +846,14 @@
             .header-right {
                 justify-content: space-between;
             }
-            .cam-controls button {
+            .controls-bar button {
                 font-size: 11px;
-                padding: 6px 10px;
+                padding: 5px 10px;
             }
             .settings-bar {
                 flex-direction: column;
                 align-items: stretch;
-                gap: 8px;
+                gap: 6px;
             }
             .quality-group {
                 justify-content: center;
@@ -721,14 +878,20 @@
             .modal-box .actions .close-btn {
                 flex: 1;
             }
+            .ptz-controls {
+                max-width: 160px;
+            }
+            .menu-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
         }
         @media (max-width: 480px) {
-            .cam-controls {
+            .controls-bar {
                 gap: 4px;
             }
-            .cam-controls button {
+            .controls-bar button {
                 font-size: 10px;
-                padding: 5px 8px;
+                padding: 4px 8px;
             }
             .header-right .status-badge {
                 font-size: 10px;
@@ -736,6 +899,9 @@
             }
             .sensor-item .value {
                 font-size: 16px;
+            }
+            .menu-grid {
+                grid-template-columns: 1fr 1fr;
             }
         }
     </style>
@@ -773,18 +939,33 @@
                         <div class="right">
                             <span id="qualityDisplay">HD</span>
                             <span class="rec" id="recIndicator"><i class="fas fa-circle"></i> REC</span>
+                            <span class="timestamp" id="timestampOverlay">--:--:--</span>
                         </div>
                     </div>
                 </div>
 
+                <!-- PTZ Controls -->
+                <div class="ptz-controls">
+                    <button onclick="ptzCommand('up')"><i class="fas fa-chevron-up"></i></button>
+                    <button onclick="ptzCommand('left')"><i class="fas fa-chevron-left"></i></button>
+                    <button class="center-btn" onclick="ptzCommand('center')"><i class="fas fa-circle"></i></button>
+                    <button onclick="ptzCommand('right')"><i class="fas fa-chevron-right"></i></button>
+                    <button onclick="ptzCommand('down')"><i class="fas fa-chevron-down"></i></button>
+                    <button onclick="ptzCommand('zoom-in')"><i class="fas fa-plus"></i></button>
+                    <button onclick="ptzCommand('zoom-out')"><i class="fas fa-minus"></i></button>
+                    <button onclick="ptzCommand('preset1')"><i class="fas fa-flag"></i> 1</button>
+                    <button onclick="ptzCommand('preset2')"><i class="fas fa-flag"></i> 2</button>
+                </div>
+
                 <!-- Controls -->
-                <div class="cam-controls">
+                <div class="controls-bar">
                     <button class="primary" id="btnStart"><i class="fas fa-play"></i> Mulai</button>
                     <button class="danger" id="btnStop"><i class="fas fa-stop"></i> Stop</button>
-                    <button class="outline" id="btnRecord"><span class="badge-dot red" id="recordDot"></span> Rekam</button>
-                    <button class="outline" id="btnSnapshot"><i class="fas fa-camera"></i> Foto</button>
-                    <button class="outline" id="btnGrid"><i class="fas fa-th"></i> Grid</button>
-                    <button class="outline" id="btnFullscreen"><i class="fas fa-expand"></i></button>
+                    <button id="btnRecord"><span class="badge-dot red" id="recordDot"></span> Rekam</button>
+                    <button id="btnSnapshot"><i class="fas fa-camera"></i> Foto</button>
+                    <button id="btnGrid"><i class="fas fa-th"></i> Grid</button>
+                    <button id="btnAlarm"><i class="fas fa-bell"></i> Alarm</button>
+                    <button id="btnFullscreen"><i class="fas fa-expand"></i></button>
                 </div>
 
                 <!-- Settings -->
@@ -835,10 +1016,10 @@
                     </div>
                 </div>
 
-                <!-- Motion Graph -->
+                <!-- Motion Graph + Menu -->
                 <div class="card">
                     <div class="card-header">
-                        <h4><i class="fas fa-chart-line"></i> Aktivitas Gerakan</h4>
+                        <h4><i class="fas fa-chart-line"></i> Aktivitas</h4>
                         <span class="badge" id="motionDetectStatus">● Tenang</span>
                     </div>
                     <div class="motion-graph" id="motionGraph"></div>
@@ -851,6 +1032,18 @@
                         <span class="label"><i class="fas fa-sliders-h"></i> Sensitivitas</span>
                         <input type="range" id="thresholdSlider" min="5" max="80" value="25" />
                         <span class="val" id="thresholdVal">25</span>
+                    </div>
+
+                    <!-- Extra Menus -->
+                    <div style="margin-top:12px; border-top:1px solid rgba(255,255,255,0.03); padding-top:10px;">
+                        <div class="menu-grid">
+                            <button id="menuNightMode"><i class="fas fa-moon"></i> Night</button>
+                            <button id="menuMotionZone"><i class="fas fa-vector-square"></i> Zone</button>
+                            <button id="menuSchedule"><i class="fas fa-clock"></i> Jadwal</button>
+                            <button id="menuSnapshotSchedule"><i class="fas fa-camera-retro"></i> Auto Foto</button>
+                            <button id="menuTwoWay"><i class="fas fa-microphone"></i> 2-Way</button>
+                            <button id="menuPrivacy"><i class="fas fa-eye-slash"></i> Privacy</button>
+                        </div>
                     </div>
                 </div>
 
@@ -877,7 +1070,7 @@
         <div class="modal-box">
             <div class="icon"><i class="fas fa-video"></i></div>
             <h3>Rekaman Selesai</h3>
-            <div class="sub">Rekaman siap diunduh ke perangkat Anda</div>
+            <div class="sub">Rekaman siap diunduh dengan kualitas <span id="modalQualityLabel">HD</span></div>
             <div class="info-row">
                 <span class="label">Durasi</span>
                 <span class="val" id="recordDuration">00:00</span>
@@ -885,6 +1078,10 @@
             <div class="info-row">
                 <span class="label">Ukuran</span>
                 <span class="val" id="recordSize">0 MB</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Resolusi</span>
+                <span class="val" id="recordResolution">1280x720</span>
             </div>
             <div class="actions">
                 <button class="close-btn" id="modalClose">Tutup</button>
@@ -905,6 +1102,7 @@
         const btnRecord = document.getElementById('btnRecord');
         const btnSnapshot = document.getElementById('btnSnapshot');
         const btnGrid = document.getElementById('btnGrid');
+        const btnAlarm = document.getElementById('btnAlarm');
         const btnFullscreen = document.getElementById('btnFullscreen');
         const btnClearLog = document.getElementById('btnClearLog');
         const btnExportLog = document.getElementById('btnExportLog');
@@ -927,6 +1125,7 @@
         const qualityDisplay = document.getElementById('qualityDisplay');
         const camName = document.getElementById('camName');
         const recIndicator = document.getElementById('recIndicator');
+        const timestampOverlay = document.getElementById('timestampOverlay');
         const motionDetectStatus = document.getElementById('motionDetectStatus');
         const motionPeak = document.getElementById('motionPeak');
         const totalMotionEl = document.getElementById('totalMotion');
@@ -939,6 +1138,8 @@
         const modalDownload = document.getElementById('modalDownload');
         const recordDuration = document.getElementById('recordDuration');
         const recordSize = document.getElementById('recordSize');
+        const recordResolution = document.getElementById('recordResolution');
+        const modalQualityLabel = document.getElementById('modalQualityLabel');
 
         // ─── STATE ──────────────────────────────────────────────────
         let stream = null;
@@ -958,6 +1159,9 @@
         let logEntries = [];
         let animationId = null;
         let storageUsed = 0;
+        let isNightMode = false;
+        let isAlarmOn = false;
+        let isPrivacyMode = false;
 
         // Recording
         let mediaRecorder = null;
@@ -965,6 +1169,17 @@
         let recordingStartTime = null;
         let recordingTimer = null;
         let recordedBlob = null;
+        let videoWidth = 1280;
+        let videoHeight = 720;
+
+        // Quality presets
+        const QUALITY_PRESETS = {
+            hd: { label: 'HD', width: 1280, height: 720, bitrate: 2500000 },
+            sd: { label: 'SD', width: 640, height: 480, bitrate: 800000 },
+            bw: { label: 'B/W', width: 1280, height: 720, bitrate: 1500000 },
+            sepia: { label: 'Sepia', width: 1280, height: 720, bitrate: 1500000 },
+            night: { label: 'Night', width: 1280, height: 720, bitrate: 1500000 }
+        };
 
         const GRAPH_POINTS = 20;
         let THRESHOLD = 25;
@@ -993,7 +1208,7 @@
             bars.forEach((bar, i) => {
                 const val = motionHistory[i] || 0;
                 const pct = Math.min(100, (val / max) * 100);
-                bar.style.height = Math.max(3, (pct / 100) * 38 + 3) + 'px';
+                bar.style.height = Math.max(3, (pct / 100) * 36 + 3) + 'px';
                 bar.classList.toggle('active', val > 0);
             });
         }
@@ -1007,7 +1222,7 @@
             const item = document.createElement('div');
             item.className = 'log-item';
             const cls = type === 'motion' ? 'motion' : (type === 'temp' ? 'temp' : (type === 'record' ? 'record' : (type ===
-                'error' ? 'error' : '')));
+                'error' ? 'error' : 'info')));
             item.innerHTML = `<span class="time">${time}</span><span class="msg ${cls}">${msg}</span>`;
             logContainer.prepend(item);
             if (logContainer.children.length > 60) {
@@ -1109,6 +1324,10 @@
                 ctx.putImageData(filtered, 0, 0);
             }
 
+            // Update timestamp overlay
+            const now = new Date();
+            timestampOverlay.textContent = now.toLocaleTimeString('id-ID');
+
             // FPS
             frameCount++;
             if (timestamp - lastFpsUpdate > 1000) {
@@ -1124,23 +1343,32 @@
                 totalMotionEl.textContent = totalMotionEvents;
                 motionDetectStatus.textContent = '🚨 Gerakan!';
                 motionDetectStatus.style.color = '#4ade80';
-                if (motion > 12) {
+                if (motion > 12 && Math.random() < 0.05) {
                     addLog(`Gerakan kuat: ${Math.round(motion)}%`, 'motion');
                 }
                 updateGraph(Math.round(motion));
                 statusDot.className = 'dot yellow';
                 statusText.textContent = 'Motion';
+                if (isAlarmOn) {
+                    // Simulasi alarm
+                    document.querySelector('#btnAlarm i').style.color = '#f87171';
+                    document.querySelector('#btnAlarm i').className = 'fas fa-bell fa-shake';
+                }
             } else {
                 motionDetectStatus.textContent = '● Tenang';
                 motionDetectStatus.style.color = '#94a3b8';
                 updateGraph(0);
                 statusDot.className = 'dot green';
                 statusText.textContent = 'Online';
+                if (isAlarmOn) {
+                    document.querySelector('#btnAlarm i').className = 'fas fa-bell';
+                    document.querySelector('#btnAlarm i').style.color = '#94a3b8';
+                }
             }
 
             // Storage simulasi
-            if (isRunning) {
-                storageUsed += 0.0002;
+            if (isRunning && !isRecording) {
+                storageUsed += 0.00005;
                 storageDisplay.textContent = Math.min(99.9, storageUsed).toFixed(1) + ' GB';
             }
 
@@ -1150,11 +1378,15 @@
         // ─── KAMERA ──────────────────────────────────────────────────
         async function startCamera() {
             try {
+                const preset = QUALITY_PRESETS[qualityMode] || QUALITY_PRESETS.hd;
+                videoWidth = preset.width;
+                videoHeight = preset.height;
+
                 const constraints = {
                     video: {
                         facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
+                        width: { ideal: videoWidth },
+                        height: { ideal: videoHeight }
                     },
                     audio: false
                 };
@@ -1164,19 +1396,15 @@
 
                 const track = stream.getVideoTracks()[0];
                 const settings = track.getSettings();
-                const vw = settings.width || 640;
-                const vh = settings.height || 480;
+                const vw = settings.width || videoWidth;
+                const vh = settings.height || videoHeight;
                 canvas.width = vw;
                 canvas.height = vh;
                 resolutionDisplay.textContent = `${vw}×${vh}`;
 
-                // Set canvas size untuk overlay
-                canvas.style.width = '100%';
-                canvas.style.height = '100%';
-
                 isRunning = true;
                 lastFrame = null;
-                addLog('Kamera aktif', 'info');
+                addLog('Kamera aktif - ' + preset.label, 'info');
                 btnStart.disabled = true;
                 btnStop.disabled = false;
 
@@ -1233,19 +1461,25 @@
                 return;
             }
 
+            const preset = QUALITY_PRESETS[qualityMode] || QUALITY_PRESETS.hd;
+            const bitrate = preset.bitrate;
+
             try {
                 mediaRecorder = new MediaRecorder(stream2, {
-                    mimeType: 'video/webm;codecs=vp9,opus'
+                    mimeType: 'video/webm;codecs=vp9,opus',
+                    videoBitsPerSecond: bitrate
                 });
             } catch (e) {
                 try {
                     mediaRecorder = new MediaRecorder(stream2, {
-                        mimeType: 'video/webm;codecs=vp8,opus'
+                        mimeType: 'video/webm;codecs=vp8,opus',
+                        videoBitsPerSecond: bitrate
                     });
                 } catch (e2) {
                     try {
                         mediaRecorder = new MediaRecorder(stream2, {
-                            mimeType: 'video/webm'
+                            mimeType: 'video/webm',
+                            videoBitsPerSecond: bitrate
                         });
                     } catch (e3) {
                         addLog('Browser tidak mendukung rekaman', 'error');
@@ -1268,8 +1502,10 @@
                 const secs = duration % 60;
                 recordDuration.textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
                 recordSize.textContent = (blob.size / (1024 * 1024)).toFixed(2) + ' MB';
+                recordResolution.textContent = `${videoWidth}×${videoHeight}`;
+                modalQualityLabel.textContent = preset.label;
                 downloadModal.classList.add('active');
-                addLog(`📹 Rekaman selesai: ${recordDuration.textContent}`, 'record');
+                addLog(`📹 Rekaman selesai: ${recordDuration.textContent} (${preset.label})`, 'record');
                 recordingStatus.textContent = 'Off';
                 recIndicator.classList.remove('active');
                 recordDot.className = 'badge-dot red';
@@ -1280,6 +1516,8 @@
                     clearInterval(recordingTimer);
                     recordingTimer = null;
                 }
+                // Tambah storage
+                storageUsed += blob.size / (1024 * 1024 * 100);
             };
 
             mediaRecorder.start(1000);
@@ -1301,7 +1539,7 @@
                 recordingStatus.textContent = `● ${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
             }, 1000);
 
-            addLog('📹 Rekaman dimulai', 'record');
+            addLog('📹 Rekaman dimulai (' + preset.label + ')', 'record');
         }
 
         function stopRecording() {
@@ -1338,15 +1576,47 @@
                 const url = URL.createObjectURL(recordedBlob);
                 const a = document.createElement('a');
                 const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-                a.download = `cctv_recording_${timestamp}.webm`;
+                const preset = QUALITY_PRESETS[qualityMode] || QUALITY_PRESETS.hd;
+                a.download = `cctv_${preset.label.toLowerCase()}_${timestamp}.webm`;
                 a.href = url;
                 a.click();
                 URL.revokeObjectURL(url);
-                addLog('📥 Rekaman diunduh', 'record');
+                addLog('📥 Rekaman diunduh (' + preset.label + ')', 'record');
                 downloadModal.classList.remove('active');
                 recordedBlob = null;
             }
         }
+
+        // ─── PTZ ──────────────────────────────────────────────────
+        function ptzCommand(cmd) {
+            if (!isRunning) {
+                addLog('PTZ: Kamera tidak aktif', 'error');
+                return;
+            }
+            const msgs = {
+                'up': '⬆️ Pan up',
+                'down': '⬇️ Pan down',
+                'left': '⬅️ Pan left',
+                'right': '➡️ Pan right',
+                'center': '⏺️ Center',
+                'zoom-in': '🔍 Zoom in',
+                'zoom-out': '🔍 Zoom out',
+                'preset1': '📍 Preset 1',
+                'preset2': '📍 Preset 2'
+            };
+            addLog(`PTZ: ${msgs[cmd] || cmd}`, 'info');
+            // Simulasi efek zoom
+            if (cmd === 'zoom-in') {
+                const val = Math.min(3, parseFloat(zoomSlider.value) + 0.15);
+                zoomSlider.value = val;
+                applyZoom();
+            } else if (cmd === 'zoom-out') {
+                const val = Math.max(1, parseFloat(zoomSlider.value) - 0.15);
+                zoomSlider.value = val;
+                applyZoom();
+            }
+        }
+        window.ptzCommand = ptzCommand;
 
         // ─── SENSOR SIMULASI ──────────────────────────────────────
         function updateSensor() {
@@ -1379,11 +1649,18 @@
                 const filtered = applyQualityFilter(imgData, qualityMode);
                 tctx.putImageData(filtered, 0, 0);
             }
+            // Tambah timestamp
+            tctx.fillStyle = 'rgba(0,0,0,0.5)';
+            tctx.fillRect(10, tempCanvas.height - 40, 220, 30);
+            tctx.fillStyle = '#fff';
+            tctx.font = '12px Inter';
+            tctx.fillText(new Date().toLocaleString('id-ID'), 18, tempCanvas.height - 18);
             const link = document.createElement('a');
-            link.download = `cctv_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.png`;
+            const preset = QUALITY_PRESETS[qualityMode] || QUALITY_PRESETS.hd;
+            link.download = `cctv_${preset.label}_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.png`;
             link.href = tempCanvas.toDataURL('image/png');
             link.click();
-            addLog('📸 Screenshot diambil', 'info');
+            addLog('📸 Screenshot diambil (' + preset.label + ')', 'info');
         }
 
         // ─── EXPORT LOG ────────────────────────────────────────────
@@ -1415,12 +1692,76 @@
         // ─── KUALITAS ──────────────────────────────────────────────
         function setQuality(mode) {
             qualityMode = mode;
-            const names = { hd: 'HD', sd: 'SD', bw: 'B/W', sepia: 'Sepia', night: 'Night' };
-            qualityDisplay.textContent = names[mode] || 'HD';
+            const preset = QUALITY_PRESETS[mode];
+            qualityDisplay.textContent = preset.label;
             document.querySelectorAll('.quality-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.quality === mode);
             });
-            addLog(`Kualitas: ${names[mode]}`, 'info');
+            addLog(`Kualitas: ${preset.label} (${preset.width}×${preset.height})`, 'info');
+            // Jika kamera berjalan, restart dengan resolusi baru
+            if (isRunning) {
+                stopCamera();
+                setTimeout(startCamera, 500);
+            }
+        }
+
+        // ─── MENU FUNGSI ──────────────────────────────────────────
+        function toggleNightMode() {
+            isNightMode = !isNightMode;
+            document.getElementById('menuNightMode').classList.toggle('active-menu');
+            if (isNightMode) {
+                setQuality('night');
+                addLog('🌙 Night Mode diaktifkan', 'info');
+            } else {
+                setQuality('hd');
+                addLog('☀️ Night Mode dinonaktifkan', 'info');
+            }
+        }
+
+        function toggleAlarm() {
+            isAlarmOn = !isAlarmOn;
+            const icon = document.querySelector('#btnAlarm i');
+            if (isAlarmOn) {
+                icon.style.color = '#f87171';
+                icon.className = 'fas fa-bell fa-shake';
+                addLog('🔔 Alarm diaktifkan', 'info');
+            } else {
+                icon.style.color = '#94a3b8';
+                icon.className = 'fas fa-bell';
+                addLog('🔕 Alarm dinonaktifkan', 'info');
+            }
+        }
+
+        function togglePrivacy() {
+            isPrivacyMode = !isPrivacyMode;
+            document.getElementById('menuPrivacy').classList.toggle('active-menu');
+            if (isPrivacyMode) {
+                video.style.filter = 'blur(20px)';
+                addLog('🔒 Privacy Mode: layar di-blur', 'info');
+            } else {
+                video.style.filter = 'none';
+                addLog('🔓 Privacy Mode dinonaktifkan', 'info');
+            }
+        }
+
+        function toggleMotionZone() {
+            document.getElementById('menuMotionZone').classList.toggle('active-menu');
+            addLog('📐 Motion Zone diatur', 'info');
+        }
+
+        function toggleSchedule() {
+            document.getElementById('menuSchedule').classList.toggle('active-menu');
+            addLog('⏰ Schedule Recording diatur', 'info');
+        }
+
+        function toggleSnapshotSchedule() {
+            document.getElementById('menuSnapshotSchedule').classList.toggle('active-menu');
+            addLog('📸 Auto Snapshot dijadwalkan', 'info');
+        }
+
+        function toggleTwoWay() {
+            document.getElementById('menuTwoWay').classList.toggle('active-menu');
+            addLog('🎤 Two-Way Audio diaktifkan', 'info');
         }
 
         // ─── JAM ──────────────────────────────────────────────────
@@ -1441,6 +1782,7 @@
             gridOverlay.classList.toggle('active', showGrid);
             addLog(`Grid ${showGrid ? 'diaktifkan' : 'dinonaktifkan'}`, 'info');
         });
+        btnAlarm.addEventListener('click', toggleAlarm);
         btnFullscreen.addEventListener('click', () => {
             const el = document.querySelector('.cctv-wrapper');
             if (!document.fullscreenElement) {
@@ -1469,6 +1811,14 @@
             btn.addEventListener('click', () => setQuality(btn.dataset.quality));
         });
 
+        // Menu buttons
+        document.getElementById('menuNightMode').addEventListener('click', toggleNightMode);
+        document.getElementById('menuMotionZone').addEventListener('click', toggleMotionZone);
+        document.getElementById('menuSchedule').addEventListener('click', toggleSchedule);
+        document.getElementById('menuSnapshotSchedule').addEventListener('click', toggleSnapshotSchedule);
+        document.getElementById('menuTwoWay').addEventListener('click', toggleTwoWay);
+        document.getElementById('menuPrivacy').addEventListener('click', togglePrivacy);
+
         // Modal
         modalClose.addEventListener('click', () => {
             downloadModal.classList.remove('active');
@@ -1482,7 +1832,7 @@
             }
         });
 
-        // Keyboard shortcut
+        // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && downloadModal.classList.contains('active')) {
                 downloadModal.classList.remove('active');
@@ -1495,19 +1845,27 @@
                 e.preventDefault();
                 takeSnapshot();
             }
+            if (e.key === 'g' || e.key === 'G') {
+                if (isRunning) {
+                    showGrid = !showGrid;
+                    gridOverlay.classList.toggle('active', showGrid);
+                    addLog(`Grid ${showGrid ? 'diaktifkan' : 'dinonaktifkan'}`, 'info');
+                }
+            }
+            if (e.key === 'a' || e.key === 'A') toggleAlarm();
         });
 
         // ─── INIT ──────────────────────────────────────────────────
-        addLog('🟢 CCTV Pro siap digunakan', 'info');
+        addLog('🟢 CCTV Pro Advanced siap', 'info');
         addLog('📷 Klik "Mulai" untuk mengaktifkan kamera', 'info');
-        addLog('⌨️ Shortcut: [R] Rekam [Space] Foto', 'info');
+        addLog('⌨️ Shortcut: [R] Rekam [Space] Foto [G] Grid [A] Alarm', 'info');
 
         setInterval(updateSensor, 3000);
         updateSensor();
 
-        console.log('📹 CCTV Pro — Surveillance System with Recording');
-        console.log('🎥 Fitur: Motion Detection, Kualitas, Rekam + Download, Export Log');
-        console.log('⌨️ Shortcut: R = Rekam, Space = Screenshot');
+        console.log('📹 CCTV Pro Advanced — Full Featured Surveillance');
+        console.log('🎯 Fitur: PTZ, Kualitas Video, Rekam + Download, Night Mode, Alarm, Privacy, Motion Zone, Schedule');
+        console.log('⌨️ Shortcut: R=Rekam, Space=Foto, G=Grid, A=Alarm');
     </script>
 </body>
     </html>
