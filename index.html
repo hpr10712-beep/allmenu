@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CCTV AI Pro</title>
+    <title>CCTV AI HD</title>
     <!-- TensorFlow & COCO-SSD -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
@@ -14,46 +14,52 @@
             box-sizing: border-box;
         }
         body {
-            background: #0b0e14;
+            background: #000;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             color: #e6edf3;
-            padding: 16px;
+            overflow: hidden;
         }
         .container {
-            width: 100%;
-            max-width: 500px;
-            background: #151b23;
-            border-radius: 28px;
-            padding: 20px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-            border: 1px solid #2d333b;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100%;
+            background: #0b0e14;
+            display: flex;
+            flex-direction: column;
+            padding: 12px 16px 16px 16px;
         }
-        /* HEADER */
+        /* HEADER MINIMALIS */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 14px;
-            border-bottom: 1px solid #2d333b;
+            padding-bottom: 10px;
+            flex-shrink: 0;
         }
         .header h1 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             letter-spacing: 0.3px;
         }
         .header h1 span {
             color: #00d4ff;
         }
+        .header h1 small {
+            font-size: 11px;
+            font-weight: 400;
+            color: #8b949e;
+            margin-left: 6px;
+        }
         .status-pill {
             display: flex;
             align-items: center;
             gap: 8px;
             background: #212830;
-            padding: 5px 14px 5px 10px;
+            padding: 4px 14px 4px 10px;
             border-radius: 30px;
             font-size: 13px;
             font-weight: 500;
@@ -69,14 +75,14 @@
         .dot.danger { background: #f85149; }
         .dot.inactive { background: #484f58; }
 
-        /* VIDEO WRAPPER */
+        /* VIDEO WRAPPER FULL FLEX */
         .video-wrapper {
             position: relative;
-            margin-top: 16px;
-            border-radius: 18px;
+            flex: 1;
+            min-height: 0;
+            border-radius: 16px;
             overflow: hidden;
             background: #010409;
-            aspect-ratio: 16 / 9;
             border: 1px solid #30363d;
         }
         #displayCanvas {
@@ -84,53 +90,55 @@
             height: 100%;
             display: block;
             background: #000;
+            object-fit: contain; /* Menjaga aspek rasio */
         }
-        /* HUD */
+        /* HUD OVERLAY */
         .hud {
             position: absolute;
-            bottom: 12px;
-            left: 14px;
-            right: 14px;
+            bottom: 16px;
+            left: 16px;
+            right: 16px;
             display: flex;
             justify-content: space-between;
             font-size: 12px;
             font-weight: 500;
             color: #8b949e;
-            background: rgba(21, 27, 35, 0.7);
+            background: rgba(11, 14, 20, 0.7);
             backdrop-filter: blur(6px);
-            padding: 7px 14px;
+            padding: 8px 16px;
             border-radius: 12px;
             border: 1px solid #30363d55;
             pointer-events: none;
         }
-        .hud-left, .hud-right { display: flex; gap: 16px; }
+        .hud-left, .hud-right { display: flex; gap: 18px; }
         .hud .val { color: #f0f6fc; }
-        .hud .val.warn { color: #f0883e; }
+        .hud .val.hd { color: #00d4ff; font-weight: 700; }
 
-        /* INFO GRID */
+        /* INFO GRID KOMPAK */
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 16px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+            flex-shrink: 0;
         }
         .info-card {
             background: #0d1117;
-            border-radius: 14px;
-            padding: 12px 6px;
+            border-radius: 12px;
+            padding: 8px 4px;
             text-align: center;
             border: 1px solid #212830;
         }
         .info-card .label {
-            font-size: 10px;
+            font-size: 9px;
             text-transform: uppercase;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.3px;
             color: #8b949e;
         }
         .info-card .value {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
-            margin-top: 5px;
+            margin-top: 2px;
             font-variant-numeric: tabular-nums;
             color: #f0f6fc;
         }
@@ -138,68 +146,56 @@
         .info-card .value.danger { color: #f85149; }
         .info-card .value.success { color: #3fb950; }
 
-        /* LOG */
+        /* LOG & BUTTONS ROW */
+        .bottom-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-shrink: 0;
+        }
         .log-box {
-            margin-top: 14px;
+            flex: 2;
             background: #0d1117;
-            border-radius: 14px;
-            padding: 10px 14px;
-            max-height: 70px;
+            border-radius: 12px;
+            padding: 8px 12px;
+            max-height: 48px;
             overflow-y: auto;
-            font-size: 12px;
+            font-size: 11px;
             font-family: 'SF Mono', 'Courier New', monospace;
             color: #8b949e;
             border: 1px solid #212830;
-            line-height: 1.7;
+            line-height: 1.6;
+            white-space: nowrap;
         }
         .log-box::-webkit-scrollbar { width: 3px; }
         .log-box::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
         .log-alert { color: #f0883e; }
         .log-danger { color: #f85149; }
 
-        /* BUTTONS */
         .btn-group {
             display: flex;
-            gap: 10px;
-            margin-top: 16px;
+            gap: 8px;
+            flex: 1;
         }
         .btn {
             flex: 1;
-            padding: 12px 0;
+            padding: 8px 0;
             border: none;
-            border-radius: 14px;
+            border-radius: 12px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.15s ease;
             background: #212830;
             color: #c9d1d9;
             border: 1px solid #30363d;
         }
-        .btn:active { transform: scale(0.97); }
-        .btn-primary {
-            background: #1f6feb;
-            border-color: #1f6feb;
-            color: #fff;
-        }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: #1f6feb; border-color: #1f6feb; color: #fff; }
         .btn-primary:hover { background: #388bfd; }
-        .btn-primary:disabled { opacity: 0.5; cursor: default; }
-        .btn-success {
-            background: #238636;
-            border-color: #238636;
-            color: #fff;
-        }
+        .btn-success { background: #238636; border-color: #238636; color: #fff; }
         .btn-success:hover { background: #2ea043; }
-        .btn-danger {
-            background: #da3633;
-            border-color: #da3633;
-            color: #fff;
-        }
-        .btn-danger:hover { background: #f85149; }
-        .btn-outline {
-            background: transparent;
-            border-color: #30363d;
-        }
+        .btn-outline { background: transparent; border-color: #30363d; }
         .btn-outline:hover { background: #212830; }
     </style>
 </head>
@@ -208,7 +204,7 @@
 <div class="container">
     <!-- HEADER -->
     <div class="header">
-        <h1>📹 <span>CCTV</span> AI</h1>
+        <h1>📹 <span>CCTV</span> AI <small>FULL HD</small></h1>
         <div class="status-pill">
             <span class="dot" id="statusDot"></span>
             <span id="statusLabel">SIAGA</span>
@@ -223,6 +219,7 @@
             <div class="hud-left">
                 <span>👤 <span class="val" id="humanCount">0</span></span>
                 <span>⚡ <span class="val" id="fpsDisplay">0</span> FPS</span>
+                <span>📹 <span class="val hd" id="resDisplay">--x--</span></span>
             </div>
             <div class="hud-right">
                 <span>⏱ <span class="val" id="recTimeDisplay">IDLE</span></span>
@@ -233,10 +230,6 @@
     <!-- INFO GRID -->
     <div class="info-grid">
         <div class="info-card">
-            <div class="label">Resolusi</div>
-            <div class="value" id="resDisplay">--x--</div>
-        </div>
-        <div class="info-card">
             <div class="label">Inferensi AI</div>
             <div class="value" id="inferDisplay">0 ms</div>
         </div>
@@ -244,18 +237,25 @@
             <div class="label">Konfidensi</div>
             <div class="value" id="confDisplay">0%</div>
         </div>
+        <div class="info-card">
+            <div class="label">Status Rekam</div>
+            <div class="value" id="recStatusDisplay">■ Berhenti</div>
+        </div>
+        <div class="info-card">
+            <div class="label">Deteksi</div>
+            <div class="value success" id="detectStatus">Aman</div>
+        </div>
     </div>
 
-    <!-- LOG -->
-    <div class="log-box" id="logArea">
-        > Sistem siap. Tekan "Mulai".
-    </div>
-
-    <!-- BUTTONS -->
-    <div class="btn-group">
-        <button class="btn btn-primary" id="btnStart">▶ Mulai</button>
-        <button class="btn btn-success" id="btnDownload">⬇ Unduh</button>
-        <button class="btn btn-outline" id="btnClear">✕ Bersih</button>
+    <!-- BOTTOM ROW: LOG + BUTTONS -->
+    <div class="bottom-row">
+        <div class="log-box" id="logArea">
+            > Sistem siap. Tekan "Mulai".
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-primary" id="btnStart">▶ Mulai</button>
+            <button class="btn btn-success" id="btnDownload">⬇</button>
+        </div>
     </div>
 </div>
 
@@ -274,9 +274,10 @@
         const inferDisplay = document.getElementById('inferDisplay');
         const confDisplay = document.getElementById('confDisplay');
         const recTimeDisplay = document.getElementById('recTimeDisplay');
+        const recStatusDisplay = document.getElementById('recStatusDisplay');
+        const detectStatus = document.getElementById('detectStatus');
         const btnStart = document.getElementById('btnStart');
         const btnDownload = document.getElementById('btnDownload');
-        const btnClear = document.getElementById('btnClear');
 
         // --- STATE ---
         let isRunning = false;
@@ -285,7 +286,6 @@
         let mediaRecorder = null;
         let recordedChunks = [];
         let isRecording = false;
-        let recordingStartTime = 0;
         let animFrameId = null;
         let detectionTimerId = null;
 
@@ -299,71 +299,42 @@
 
         // Smoothing bounding box
         let smoothBoxes = [];
-        const SMOOTH_FACTOR = 0.5;
+        const SMOOTH_FACTOR = 0.6;
 
-        // --- ALARM SUARA ---
-        let alarmCtx = null;
-        let alarmOsc = null;
-        let alarmGain = null;
-        let alarmInterval = null;
-
-        function initAudio() {
-            if (!alarmCtx) {
-                alarmCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // --- SUARA "MANUSIA TERDETEKSI" (Speech Synthesis) ---
+        let lastSpeakTime = 0;
+        function speakHumanDetected() {
+            const now = Date.now();
+            if (now - lastSpeakTime < 3000) return; // Jangan spam suara
+            lastSpeakTime = now;
+            if ('speechSynthesis' in window) {
+                // Hentikan suara sebelumnya agar tidak numpuk
+                window.speechSynthesis.cancel();
+                const msg = new SpeechSynthesisUtterance('Manusia terdeteksi');
+                msg.lang = 'id-ID';
+                msg.rate = 0.9;
+                msg.pitch = 1.1;
+                msg.volume = 0.8;
+                // Cari suara bahasa Indonesia jika ada
+                const voices = window.speechSynthesis.getVoices();
+                const idVoice = voices.find(v => v.lang.startsWith('id'));
+                if (idVoice) msg.voice = idVoice;
+                window.speechSynthesis.speak(msg);
             }
         }
 
-        function startAlarm() {
-            initAudio();
-            if (alarmCtx.state === 'suspended') {
-                alarmCtx.resume();
-            }
-            // Jika sudah berbunyi, tidak perlu buat baru
-            if (alarmInterval) return;
-
-            // Buat oscillator
-            alarmOsc = alarmCtx.createOscillator();
-            alarmGain = alarmCtx.createGain();
-            alarmOsc.type = 'square';
-            alarmOsc.frequency.value = 800;
-            alarmGain.gain.value = 0.15;
-            alarmOsc.connect(alarmGain);
-            alarmGain.connect(alarmCtx.destination);
-
-            alarmOsc.start();
-            // Kedip volume (beep-beep)
-            let toggle = true;
-            alarmInterval = setInterval(() => {
-                if (alarmGain) {
-                    alarmGain.gain.value = toggle ? 0.15 : 0.0;
-                    toggle = !toggle;
+        // --- RESIZE CANVAS ke resolusi video asli ---
+        function resizeCanvasToVideo() {
+            if (video.videoWidth > 0 && video.videoHeight > 0) {
+                const vw = video.videoWidth;
+                const vh = video.videoHeight;
+                if (canvas.width !== vw || canvas.height !== vh) {
+                    canvas.width = vw;
+                    canvas.height = vh;
                 }
-            }, 300);
-        }
-
-        function stopAlarm() {
-            if (alarmInterval) {
-                clearInterval(alarmInterval);
-                alarmInterval = null;
-            }
-            if (alarmOsc) {
-                try { alarmOsc.stop(); } catch(e) {}
-                alarmOsc.disconnect();
-                alarmOsc = null;
-            }
-            if (alarmGain) {
-                alarmGain.disconnect();
-                alarmGain = null;
+                resDisplay.textContent = `${vw}x${vh}`;
             }
         }
-
-        // --- RESIZE CANVAS ---
-        function resizeCanvas() {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = Math.floor(rect.width);
-            canvas.height = Math.floor(rect.height);
-        }
-        window.addEventListener('resize', resizeCanvas);
 
         // --- LOG ---
         function addLog(msg, type = '') {
@@ -373,10 +344,10 @@
             else if (type === 'danger') cls = 'log-danger';
             logArea.innerHTML += `<div class="${cls}">> [${time}] ${msg}</div>`;
             logArea.scrollTop = logArea.scrollHeight;
-            while (logArea.children.length > 40) logArea.removeChild(logArea.firstChild);
+            while (logArea.children.length > 20) logArea.removeChild(logArea.firstChild);
         }
 
-        // --- DRAW LOOP (60 FPS) ---
+        // --- DRAW LOOP (60 FPS) - Kualitas HD ---
         function drawLoop(timestamp) {
             if (!isRunning) {
                 animFrameId = requestAnimationFrame(drawLoop);
@@ -392,42 +363,62 @@
                 fpsDisplay.textContent = fps;
             }
 
-            // Gambar frame dengan efek BW + BLUR
+            // Gambar dengan resolusi asli video
             if (video.readyState >= 2) {
+                // Pastikan canvas sesuai resolusi video
+                if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
+                    resizeCanvasToVideo();
+                }
+
                 const w = canvas.width, h = canvas.height;
-                ctx.filter = 'blur(2.5px) grayscale(100%) contrast(1.1)';
+                // Efek CCTV: blur halus 1.5px + hitam putih + kontras
+                ctx.filter = 'blur(1.5px) grayscale(100%) contrast(1.15)';
                 ctx.drawImage(video, 0, 0, w, h);
                 ctx.filter = 'none';
 
-                // Gambar bounding box yang sudah di-smooth
+                // Gambar bounding box HIJAU dengan smoothing
                 if (humanDetected && smoothBoxes.length > 0) {
-                    ctx.strokeStyle = '#f0883e';
-                    ctx.lineWidth = 2.5;
-                    ctx.shadowColor = 'transparent';
-                    smoothBoxes.forEach(box => {
-                        const [x, y, bw, bh] = box;
-                        ctx.strokeRect(x, y, bw, bh);
-                        ctx.fillStyle = 'rgba(240, 136, 62, 0.12)';
-                        ctx.fillRect(x, y, bw, bh);
-                        ctx.font = 'bold 13px -apple-system, sans-serif';
-                        ctx.fillStyle = '#f0883e';
-                        ctx.fillText('MANUSIA', x, y - 6);
-                    });
+                    const box = smoothBoxes[0];
+                    const [x, y, bw, bh] = box;
+                    
+                    // Glow hijau tipis
+                    ctx.shadowColor = '#00ff88';
+                    ctx.shadowBlur = 12;
+                    ctx.strokeStyle = '#00ff88';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(x, y, bw, bh);
+                    ctx.shadowBlur = 0;
+                    
+                    // Fill transparan hijau
+                    ctx.fillStyle = 'rgba(0, 255, 136, 0.18)';
+                    ctx.fillRect(x, y, bw, bh);
+                    
+                    // Label "MANUSIA" hijau
+                    ctx.font = 'bold 16px -apple-system, sans-serif';
+                    ctx.fillStyle = '#00ff88';
+                    ctx.shadowColor = '#000';
+                    ctx.shadowBlur = 8;
+                    ctx.fillText('● MANUSIA', x, y - 10);
+                    ctx.shadowBlur = 0;
                 }
 
-                // Update resolusi sekali
-                if (resDisplay.textContent === '--x--' && video.videoWidth) {
-                    resDisplay.textContent = `${video.videoWidth}x${video.videoHeight}`;
+                // Update status deteksi di info grid
+                if (humanDetected) {
+                    detectStatus.textContent = '⚠️ Manusia';
+                    detectStatus.className = 'value danger';
+                } else {
+                    detectStatus.textContent = '✅ Aman';
+                    detectStatus.className = 'value success';
                 }
             }
 
             animFrameId = requestAnimationFrame(drawLoop);
         }
 
-        // --- DETEKSI AI (dipanggil per 200ms) ---
+        // --- DETEKSI AI (dipanggil per 250ms) ---
         async function runDetection() {
             if (!isRunning || !model || video.readyState < 2) {
-                detectionTimerId = setTimeout(runDetection, 200);
+                detectionTimerId = setTimeout(runDetection, 250);
                 return;
             }
 
@@ -438,12 +429,9 @@
                 inferDisplay.textContent = inferenceTime + ' ms';
 
                 // Filter manusia
-                const humans = predictions.filter(p => p.class === 'person' && p.score > 0.45);
-
-                // Update count
+                const humans = predictions.filter(p => p.class === 'person' && p.score > 0.4);
                 humanCount.textContent = humans.length;
 
-                // Konfidensi
                 let maxConf = 0;
                 if (humans.length > 0) {
                     maxConf = Math.max(...humans.map(h => h.score));
@@ -452,12 +440,10 @@
                     confDisplay.textContent = '0%';
                 }
 
-                // --- SMOOTHING BOX ---
+                // --- SMOOTHING BOUNDING BOX HIJAU ---
                 if (humans.length > 0) {
-                    // Ambil box pertama dengan skor tertinggi
                     const best = humans.reduce((a, b) => a.score > b.score ? a : b);
                     const [x, y, w, h] = best.bbox;
-                    // Smooth dengan box sebelumnya
                     if (smoothBoxes.length === 0) {
                         smoothBoxes = [[x, y, w, h]];
                     } else {
@@ -469,14 +455,13 @@
                         smoothBoxes = [[sx, sy, sw, sh]];
                     }
                 } else {
-                    // Jika tidak ada manusia, perlahan box mengecil
                     if (smoothBoxes.length > 0) {
                         const prev = smoothBoxes[0];
-                        const sx = prev[0] + (0 - prev[0]) * 0.1;
-                        const sy = prev[1] + (0 - prev[1]) * 0.1;
-                        const sw = prev[2] * 0.9;
-                        const sh = prev[3] * 0.9;
-                        if (sw < 1 || sh < 1) {
+                        const sx = prev[0] + (0 - prev[0]) * 0.15;
+                        const sy = prev[1] + (0 - prev[1]) * 0.15;
+                        const sw = prev[2] * 0.85;
+                        const sh = prev[3] * 0.85;
+                        if (sw < 2 || sh < 2) {
                             smoothBoxes = [];
                         } else {
                             smoothBoxes = [[sx, sy, sw, sh]];
@@ -497,15 +482,15 @@
                     humanDetected = true;
                     statusDot.className = 'dot danger';
                     statusLabel.textContent = 'TERDETEKSI';
-                    addLog('🚨 Manusia terdeteksi! Alarm aktif.', 'danger');
-                    startAlarm();
+                    // Panggil suara "Manusia Terdeteksi"
+                    speakHumanDetected();
+                    addLog('🚨 Manusia terdeteksi! Suara diputar.', 'danger');
                     startRecording();
                 } else if (!confirmed && humanDetected) {
                     humanDetected = false;
                     statusDot.className = 'dot';
                     statusLabel.textContent = 'SIAGA';
-                    addLog('✅ Manusia pergi. Alarm berhenti.', 'alert');
-                    stopAlarm();
+                    addLog('✅ Manusia pergi.', 'alert');
                     stopRecording();
                     smoothBoxes = [];
                 } else if (confirmed) {
@@ -514,20 +499,21 @@
                 }
 
             } catch (err) {
-                // silent ignore
+                // ignore
             }
 
-            detectionTimerId = setTimeout(runDetection, 200);
+            detectionTimerId = setTimeout(runDetection, 250);
         }
 
-        // --- REKAM ---
+        // --- REKAM (HD) ---
         function startRecording() {
             if (isRecording || !isRunning) return;
             try {
+                // Capture dari canvas resolusi HD
                 const canvasStream = canvas.captureStream(30);
                 mediaRecorder = new MediaRecorder(canvasStream, {
                     mimeType: 'video/webm;codecs=vp9,opus',
-                    bitsPerSecond: 1200000
+                    bitsPerSecond: 2500000 // 2.5 Mbps untuk HD
                 });
                 recordedChunks = [];
                 mediaRecorder.ondataavailable = (e) => {
@@ -542,12 +528,15 @@
                     }
                     isRecording = false;
                     recTimeDisplay.textContent = 'IDLE';
+                    recStatusDisplay.textContent = '■ Berhenti';
+                    recStatusDisplay.className = 'value';
                 };
 
                 mediaRecorder.start(1000);
                 isRecording = true;
-                recordingStartTime = Date.now();
                 recTimeDisplay.textContent = '● REKAM';
+                recStatusDisplay.textContent = '● Merekam';
+                recStatusDisplay.className = 'value danger';
                 addLog('🔴 Merekam...', 'alert');
             } catch (e) {
                 addLog('❌ Gagal rekam: ' + e.message, 'danger');
@@ -561,6 +550,8 @@
             if (isRecording) {
                 isRecording = false;
                 recTimeDisplay.textContent = 'IDLE';
+                recStatusDisplay.textContent = '■ Berhenti';
+                recStatusDisplay.className = 'value';
             }
         }
 
@@ -571,7 +562,6 @@
                 isRunning = false;
                 if (detectionTimerId) clearTimeout(detectionTimerId);
                 if (animFrameId) cancelAnimationFrame(animFrameId);
-                stopAlarm();
                 if (isRecording) stopRecording();
                 if (video.srcObject) {
                     video.srcObject.getTracks().forEach(t => t.stop());
@@ -583,6 +573,8 @@
                 humanCount.textContent = '0';
                 confDisplay.textContent = '0%';
                 fpsDisplay.textContent = '0';
+                detectStatus.textContent = '⏹ Berhenti';
+                detectStatus.className = 'value';
                 btnStart.textContent = '▶ Mulai';
                 addLog('⏹ Sistem dihentikan.');
                 return;
@@ -590,14 +582,22 @@
 
             // START
             try {
-                // Minta izin kamera
                 stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } },
+                    video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
                     audio: false
                 });
                 video.srcObject = stream;
                 await video.play();
-                resizeCanvas();
+                
+                // Tunggu sampai video dapat dimensi
+                await new Promise(resolve => {
+                    if (video.videoWidth > 0) resolve();
+                    else video.onloadedmetadata = resolve;
+                });
+                
+                // Set canvas ke ukuran video
+                resizeCanvasToVideo();
+                
                 isRunning = true;
                 btnStart.textContent = '⏹ Berhenti';
                 statusDot.className = 'dot warning';
@@ -624,7 +624,6 @@
                 runDetection();
 
             } catch (err) {
-                // Jika gagal, tampilkan pesan jelas
                 let msg = err.message;
                 if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
                     msg = 'Izin kamera ditolak. Berikan izin di pengaturan browser.';
@@ -640,44 +639,49 @@
             }
         }
 
-        // --- DOWNLOAD REKAMAN ---
+        // --- DOWNLOAD ---
         function downloadRecording() {
             if (window._recordingBlob && window._recordingBlob.blob.size > 0) {
                 const a = document.createElement('a');
                 a.href = window._recordingBlob.url;
-                a.download = `rekaman_cctv_${new Date().toISOString().replace(/[:.]/g, '-')}.webm`;
+                a.download = `rekaman_cctv_hd_${new Date().toISOString().replace(/[:.]/g, '-')}.webm`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-                addLog('⬇ Proses unduh dimulai.');
+                addLog('⬇ Unduh rekaman HD dimulai.');
             } else {
                 alert('Belum ada rekaman. Biarkan CCTV mendeteksi manusia terlebih dahulu.');
             }
         }
 
+        // --- VOICES LOAD (untuk speech) ---
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.getVoices(); // preload
+            window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+        }
+
         // --- EVENT LISTENERS ---
         btnStart.addEventListener('click', toggleCCTV);
         btnDownload.addEventListener('click', downloadRecording);
-        btnClear.addEventListener('click', () => {
-            logArea.innerHTML = '> Log dibersihkan.';
-        });
 
         // --- INIT ---
-        addLog('🔧 Aplikasi siap. Tekan "Mulai" untuk mengaktifkan CCTV.');
+        addLog('🔧 CCTV HD siap. Tekan "Mulai".');
         statusDot.className = 'dot inactive';
         statusLabel.textContent = 'SIAGA';
         recTimeDisplay.textContent = 'IDLE';
-        resizeCanvas();
+        recStatusDisplay.textContent = '■ Berhenti';
+        detectStatus.textContent = '✅ Aman';
+        detectStatus.className = 'value success';
 
-        // Bersihkan saat halaman ditutup
+        // Bersihkan resource saat halaman ditutup
         window.addEventListener('beforeunload', function() {
-            stopAlarm();
             if (isRecording) stopRecording();
             if (stream) stream.getTracks().forEach(t => t.stop());
             if (detectionTimerId) clearTimeout(detectionTimerId);
             if (animFrameId) cancelAnimationFrame(animFrameId);
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
         });
     })();
 </script>
 </body>
-</html>
+    </html>
