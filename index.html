@@ -14,10 +14,10 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background: #060a16;
+            background: #060b16;
             color: #e8edf5;
             min-height: 100vh;
-            padding: 16px;
+            padding: 14px;
         }
         .app {
             max-width: 1440px;
@@ -29,20 +29,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0 18px;
+            padding: 10px 0 16px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
         }
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             font-size: 22px;
             font-weight: 800;
         }
         .logo i {
-            font-size: 28px;
+            font-size: 26px;
             color: #22d3ee;
         }
         .logo span {
@@ -53,45 +53,45 @@
         .header-right {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
             flex-wrap: wrap;
         }
         .status-badge {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             background: rgba(255, 255, 255, 0.04);
-            padding: 6px 18px;
+            padding: 5px 14px;
             border-radius: 40px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             border: 1px solid rgba(255, 255, 255, 0.04);
         }
         .status-badge .dot {
-            width: 10px;
-            height: 10px;
+            width: 9px;
+            height: 9px;
             border-radius: 50%;
             display: inline-block;
         }
         .dot.green {
             background: #4ade80;
-            box-shadow: 0 0 14px #4ade8066;
+            box-shadow: 0 0 12px #4ade8066;
         }
         .dot.red {
             background: #f87171;
-            box-shadow: 0 0 14px #f8717166;
+            box-shadow: 0 0 12px #f8717166;
         }
         .dot.yellow {
             background: #fbbf24;
-            box-shadow: 0 0 14px #fbbf2466;
+            box-shadow: 0 0 12px #fbbf2466;
         }
 
         /* ─── MAIN GRID ─── */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 340px;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 18px;
+            margin-top: 18px;
         }
 
         /* ─── CCTV VIEW ─── */
@@ -99,21 +99,23 @@
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 24px;
-            padding: 18px;
+            padding: 16px;
         }
         .cctv-container {
             position: relative;
             width: 100%;
-            aspect-ratio: 16/9;
+            aspect-ratio: 16 / 9;
             background: #050810;
             border-radius: 18px;
             overflow: hidden;
+            min-height: 280px;
         }
         .cctv-container video {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             display: block;
+            background: #050810;
         }
         .cctv-container canvas {
             position: absolute;
@@ -127,25 +129,25 @@
         /* Overlay info */
         .cam-overlay {
             position: absolute;
-            top: 14px;
-            left: 14px;
-            right: 14px;
+            top: 12px;
+            left: 12px;
+            right: 12px;
             display: flex;
             justify-content: space-between;
             pointer-events: none;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
         }
         .cam-overlay .left,
         .cam-overlay .right {
             display: flex;
             align-items: center;
-            gap: 12px;
-            background: rgba(0, 0, 0, 0.6);
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.65);
             backdrop-filter: blur(10px);
-            padding: 5px 14px;
+            padding: 4px 12px;
             border-radius: 30px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             color: #94a3b8;
             border: 1px solid rgba(255, 255, 255, 0.04);
@@ -154,16 +156,19 @@
             color: #4ade80;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
         .cam-overlay .live i {
-            font-size: 10px;
+            font-size: 8px;
         }
         .cam-overlay .rec {
             color: #f87171;
-            display: flex;
+            display: none;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
+        }
+        .cam-overlay .rec.active {
+            display: flex;
         }
         .cam-overlay .rec i {
             animation: blink 1s infinite;
@@ -199,38 +204,38 @@
             width: 100%;
             height: 100%;
             background-image:
-                linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-            background-size: 5% 5%;
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 6% 6%;
         }
 
         /* Controls */
         .cam-controls {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 14px;
+            gap: 6px;
+            margin-top: 12px;
         }
         .cam-controls button {
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.06);
             color: #e8edf5;
-            padding: 8px 16px;
+            padding: 7px 14px;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             transition: 0.25s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         .cam-controls button:hover {
             background: rgba(255, 255, 255, 0.08);
         }
         .cam-controls button.primary {
             background: #22d3ee;
-            color: #060a16;
+            color: #060b16;
             border-color: #22d3ee;
         }
         .cam-controls button.primary:hover {
@@ -250,44 +255,144 @@
         .cam-controls button.outline:hover {
             border-color: rgba(255, 255, 255, 0.15);
         }
-        .cam-controls button.active-mode {
+        .cam-controls button.recording {
+            background: rgba(248, 113, 113, 0.15);
+            color: #f87171;
+            border-color: #f87171;
+            animation: pulse-border 1.2s infinite;
+        }
+        @keyframes pulse-border {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 0 6px rgba(248, 113, 113, 0);
+            }
+        }
+        .cam-controls button .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .badge-dot.red {
+            background: #f87171;
+        }
+        .badge-dot.green {
+            background: #4ade80;
+        }
+
+        /* Quality & Settings */
+        .settings-bar {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            padding: 0 2px;
+            align-items: center;
+        }
+        .settings-bar .group-label {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .quality-group {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .quality-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 30px;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+        .quality-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .quality-btn.active {
             border-color: #22d3ee;
             background: rgba(34, 211, 238, 0.08);
+            color: #22d3ee;
+        }
+        .zoom-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 100px;
+        }
+        .zoom-group i {
+            color: #64748b;
+            font-size: 12px;
+        }
+        .zoom-group input[type="range"] {
+            flex: 1;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.06);
+            height: 3px;
+            border-radius: 10px;
+            outline: none;
+            min-width: 60px;
+        }
+        .zoom-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #22d3ee;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(34, 211, 238, 0.2);
+        }
+        .zoom-group .zoom-val {
+            font-weight: 700;
+            font-size: 13px;
+            color: #fcd34d;
+            min-width: 34px;
+            text-align: center;
         }
 
         /* ─── SIDEBAR ─── */
         .sidebar {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
         }
         .card {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 20px;
-            padding: 16px 18px 18px;
+            padding: 14px 16px 16px;
         }
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         .card-header h4 {
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             color: #cbd5e1;
         }
         .card-header h4 i {
             color: #22d3ee;
         }
         .card-header .badge {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
-            padding: 2px 12px;
+            padding: 2px 10px;
             border-radius: 30px;
             background: rgba(255, 255, 255, 0.04);
             color: #94a3b8;
@@ -297,24 +402,24 @@
         .sensor-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 6px;
         }
         .sensor-item {
             background: rgba(255, 255, 255, 0.02);
-            border-radius: 14px;
-            padding: 10px 12px;
+            border-radius: 12px;
+            padding: 8px 10px;
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.02);
         }
         .sensor-item .label {
-            font-size: 11px;
+            font-size: 10px;
             color: #94a3b8;
             font-weight: 500;
         }
         .sensor-item .value {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
-            margin-top: 2px;
+            margin-top: 1px;
         }
         .value.temp {
             color: #fbbf24;
@@ -331,11 +436,11 @@
 
         /* Motion graph */
         .motion-graph {
-            height: 44px;
+            height: 40px;
             display: flex;
             align-items: flex-end;
             gap: 3px;
-            margin: 6px 0 4px;
+            margin: 4px 0 3px;
         }
         .motion-graph .bar {
             flex: 1;
@@ -352,94 +457,60 @@
         .motion-stats {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
+            font-size: 11px;
             color: #94a3b8;
         }
         .motion-stats strong {
             color: #e8edf5;
         }
 
-        /* Quality selector */
-        .quality-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 6px;
-        }
-        .quality-btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 12px;
-            padding: 8px 6px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.25s;
-            font-size: 12px;
-            font-weight: 600;
-            color: #94a3b8;
-        }
-        .quality-btn:hover {
-            background: rgba(255, 255, 255, 0.06);
-        }
-        .quality-btn.active {
-            border-color: #22d3ee;
-            background: rgba(34, 211, 238, 0.06);
-            color: #22d3ee;
-        }
-        .quality-btn i {
-            display: block;
-            font-size: 18px;
-            margin-bottom: 2px;
-        }
-
-        /* Settings row */
-        .setting-row {
+        /* Threshold */
+        .threshold-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 4px 0;
+            padding: 6px 0 2px;
             gap: 10px;
-            flex-wrap: wrap;
         }
-        .setting-row .label {
-            font-size: 12px;
+        .threshold-row .label {
+            font-size: 11px;
             color: #94a3b8;
             font-weight: 500;
         }
-        .setting-row .label i {
-            margin-right: 6px;
+        .threshold-row .label i {
+            margin-right: 4px;
             color: #22d3ee;
         }
-        .setting-row input[type="range"] {
+        .threshold-row input[type="range"] {
             flex: 1;
-            min-width: 60px;
             -webkit-appearance: none;
             background: rgba(255, 255, 255, 0.06);
             height: 3px;
             border-radius: 10px;
             outline: none;
+            min-width: 60px;
         }
-        .setting-row input[type="range"]::-webkit-slider-thumb {
+        .threshold-row input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 14px;
             height: 14px;
             border-radius: 50%;
-            background: #22d3ee;
+            background: #fbbf24;
             cursor: pointer;
-            box-shadow: 0 0 16px rgba(34, 211, 238, 0.2);
         }
-        .setting-row .val {
+        .threshold-row .val {
             font-weight: 700;
             font-size: 13px;
-            min-width: 32px;
+            min-width: 28px;
             text-align: right;
             color: #fcd34d;
         }
 
         /* Log */
         .log-container {
-            max-height: 110px;
+            max-height: 100px;
             overflow-y: auto;
-            font-size: 12px;
+            font-size: 11px;
             display: flex;
             flex-direction: column;
             gap: 2px;
@@ -459,10 +530,11 @@
         }
         .log-item .time {
             color: #64748b;
-            font-size: 11px;
+            font-size: 10px;
         }
         .log-item .msg {
             color: #e8edf5;
+            font-size: 11px;
         }
         .log-item .msg.motion {
             color: #4ade80;
@@ -473,14 +545,17 @@
         .log-item .msg.error {
             color: #f87171;
         }
+        .log-item .msg.record {
+            color: #f87171;
+        }
 
         .btn-sm {
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.04);
             color: #94a3b8;
-            padding: 4px 14px;
+            padding: 3px 12px;
             border-radius: 30px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             transition: 0.25s;
@@ -490,7 +565,106 @@
             color: #e8edf5;
         }
 
-        /* RESPONSIVE */
+        /* ─── RECORDING DOWNLOAD MODAL ─── */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 28px;
+            padding: 32px 36px;
+            max-width: 440px;
+            width: 92%;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8);
+            text-align: center;
+            animation: modalPop 0.35s ease;
+        }
+        @keyframes modalPop {
+            from {
+                transform: scale(0.92) translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal-box .icon {
+            font-size: 56px;
+            color: #22d3ee;
+            margin-bottom: 12px;
+        }
+        .modal-box h3 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .modal-box .sub {
+            color: #94a3b8;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+        .modal-box .info-row {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        .modal-box .info-row .label {
+            color: #94a3b8;
+        }
+        .modal-box .info-row .val {
+            font-weight: 700;
+            color: #e8edf5;
+        }
+        .modal-box .actions {
+            display: flex;
+            gap: 12px;
+        }
+        .modal-box .actions button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+        .modal-box .actions .download-btn {
+            background: #22d3ee;
+            color: #060b16;
+        }
+        .modal-box .actions .download-btn:hover {
+            background: #06b6d4;
+        }
+        .modal-box .actions .close-btn {
+            background: rgba(255, 255, 255, 0.04);
+            color: #94a3b8;
+            flex: 0.5;
+        }
+        .modal-box .actions .close-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* ─── RESPONSIVE ─── */
         @media (max-width: 1024px) {
             .main-grid {
                 grid-template-columns: 1fr;
@@ -506,6 +680,7 @@
             }
             .cctv-container {
                 aspect-ratio: 4/3;
+                min-height: 200px;
             }
             header {
                 flex-direction: column;
@@ -515,11 +690,19 @@
                 justify-content: space-between;
             }
             .cam-controls button {
-                font-size: 12px;
-                padding: 6px 12px;
+                font-size: 11px;
+                padding: 6px 10px;
             }
-            .quality-grid {
-                grid-template-columns: 1fr 1fr 1fr;
+            .settings-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .quality-group {
+                justify-content: center;
+            }
+            .zoom-group {
+                min-width: unset;
             }
             .sensor-grid {
                 grid-template-columns: 1fr 1fr;
@@ -527,20 +710,32 @@
             .cam-overlay .left,
             .cam-overlay .right {
                 font-size: 10px;
-                padding: 4px 10px;
+                padding: 3px 10px;
+            }
+            .modal-box {
+                padding: 24px 20px;
+            }
+            .modal-box .actions {
+                flex-wrap: wrap;
+            }
+            .modal-box .actions .close-btn {
+                flex: 1;
             }
         }
         @media (max-width: 480px) {
             .cam-controls {
-                gap: 5px;
+                gap: 4px;
             }
             .cam-controls button {
-                font-size: 11px;
-                padding: 5px 10px;
+                font-size: 10px;
+                padding: 5px 8px;
             }
             .header-right .status-badge {
-                font-size: 11px;
-                padding: 4px 12px;
+                font-size: 10px;
+                padding: 4px 10px;
+            }
+            .sensor-item .value {
+                font-size: 16px;
             }
         }
     </style>
@@ -565,7 +760,7 @@
             <!-- CCTV VIEW -->
             <div class="cctv-wrapper">
                 <div class="cctv-container" id="cctvContainer">
-                    <video id="video" autoplay playsinline></video>
+                    <video id="video" autoplay playsinline muted></video>
                     <canvas id="overlayCanvas"></canvas>
                     <div class="grid-overlay" id="gridOverlay"></div>
 
@@ -586,30 +781,27 @@
                 <div class="cam-controls">
                     <button class="primary" id="btnStart"><i class="fas fa-play"></i> Mulai</button>
                     <button class="danger" id="btnStop"><i class="fas fa-stop"></i> Stop</button>
-                    <button class="outline" id="btnRecord"><i class="fas fa-circle" style="color:#f87171;"></i> Rekam</button>
+                    <button class="outline" id="btnRecord"><span class="badge-dot red" id="recordDot"></span> Rekam</button>
                     <button class="outline" id="btnSnapshot"><i class="fas fa-camera"></i> Foto</button>
                     <button class="outline" id="btnGrid"><i class="fas fa-th"></i> Grid</button>
                     <button class="outline" id="btnFullscreen"><i class="fas fa-expand"></i></button>
                 </div>
 
-                <!-- Quality & Settings -->
-                <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:12px; padding:0 4px; align-items:center;">
-                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                        <span style="font-size:12px; color:#94a3b8; font-weight:600;">Kualitas:</span>
-                        <div class="quality-grid" style="display:flex; gap:6px;">
-                            <button class="quality-btn active" data-quality="hd"><i class="fas fa-hdmi"></i> HD</button>
-                            <button class="quality-btn" data-quality="sd"><i class="fas fa-signal"></i> SD</button>
-                            <button class="quality-btn" data-quality="bw"><i class="fas fa-circle-half-stroke"></i> B/W</button>
-                            <button class="quality-btn" data-quality="sepia"><i class="fas fa-mountain"></i> Sepia</button>
-                            <button class="quality-btn" data-quality="night"><i class="fas fa-moon"></i> Night</button>
-                        </div>
+                <!-- Settings -->
+                <div class="settings-bar">
+                    <span class="group-label">Kualitas</span>
+                    <div class="quality-group">
+                        <button class="quality-btn active" data-quality="hd">HD</button>
+                        <button class="quality-btn" data-quality="sd">SD</button>
+                        <button class="quality-btn" data-quality="bw">B/W</button>
+                        <button class="quality-btn" data-quality="sepia">Sepia</button>
+                        <button class="quality-btn" data-quality="night">Night</button>
                     </div>
-                    <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:120px;">
-                        <i class="fas fa-search-minus" style="color:#64748b; font-size:13px;"></i>
-                        <input type="range" id="zoomSlider" min="1" max="3" step="0.05" value="1"
-                        style="flex:1; -webkit-appearance:none; background:rgba(255,255,255,0.06); height:3px; border-radius:10px; outline:none;">
-                        <i class="fas fa-search-plus" style="color:#64748b; font-size:13px;"></i>
-                        <span id="zoomDisplay" style="font-weight:700; font-size:13px; color:#fcd34d; min-width:36px;">1.0x</span>
+                    <div class="zoom-group">
+                        <i class="fas fa-search-minus"></i>
+                        <input type="range" id="zoomSlider" min="1" max="3" step="0.05" value="1" />
+                        <i class="fas fa-search-plus"></i>
+                        <span class="zoom-val" id="zoomDisplay">1.0x</span>
                     </div>
                 </div>
             </div>
@@ -647,7 +839,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h4><i class="fas fa-chart-line"></i> Aktivitas Gerakan</h4>
-                        <span class="badge" id="motionDetectStatus">Tenang</span>
+                        <span class="badge" id="motionDetectStatus">● Tenang</span>
                     </div>
                     <div class="motion-graph" id="motionGraph"></div>
                     <div class="motion-stats">
@@ -655,12 +847,10 @@
                         <span>Ambang: <strong id="thresholdDisplay">25</strong></span>
                         <span>Total: <strong id="totalMotion">0</strong></span>
                     </div>
-                    <div style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.03); padding-top:10px;">
-                        <div class="setting-row">
-                            <span class="label"><i class="fas fa-sliders-h"></i> Sensitivitas</span>
-                            <input type="range" id="thresholdSlider" min="5" max="80" value="25" />
-                            <span class="val" id="thresholdVal">25</span>
-                        </div>
+                    <div class="threshold-row">
+                        <span class="label"><i class="fas fa-sliders-h"></i> Sensitivitas</span>
+                        <input type="range" id="thresholdSlider" min="5" max="80" value="25" />
+                        <span class="val" id="thresholdVal">25</span>
                     </div>
                 </div>
 
@@ -678,6 +868,27 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── MODAL DOWNLOAD ─── -->
+    <div class="modal-overlay" id="downloadModal">
+        <div class="modal-box">
+            <div class="icon"><i class="fas fa-video"></i></div>
+            <h3>Rekaman Selesai</h3>
+            <div class="sub">Rekaman siap diunduh ke perangkat Anda</div>
+            <div class="info-row">
+                <span class="label">Durasi</span>
+                <span class="val" id="recordDuration">00:00</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Ukuran</span>
+                <span class="val" id="recordSize">0 MB</span>
+            </div>
+            <div class="actions">
+                <button class="close-btn" id="modalClose">Tutup</button>
+                <button class="download-btn" id="modalDownload"><i class="fas fa-download"></i> Unduh</button>
             </div>
         </div>
     </div>
@@ -703,6 +914,7 @@
         const thresholdSlider = document.getElementById('thresholdSlider');
         const thresholdVal = document.getElementById('thresholdVal');
         const thresholdDisplay = document.getElementById('thresholdDisplay');
+        const recordDot = document.getElementById('recordDot');
 
         const tempDisplay = document.getElementById('tempDisplay');
         const humidityDisplay = document.getElementById('humidityDisplay');
@@ -722,12 +934,18 @@
         const logContainer = document.getElementById('logContainer');
         const motionGraph = document.getElementById('motionGraph');
 
+        const downloadModal = document.getElementById('downloadModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalDownload = document.getElementById('modalDownload');
+        const recordDuration = document.getElementById('recordDuration');
+        const recordSize = document.getElementById('recordSize');
+
         // ─── STATE ──────────────────────────────────────────────────
         let stream = null;
         let isRunning = false;
         let isRecording = false;
         let showGrid = false;
-        let qualityMode = 'hd'; // hd, sd, bw, sepia, night
+        let qualityMode = 'hd';
         let motionHistory = [];
         let motionPeakValue = 0;
         let motionCounter = 0;
@@ -739,8 +957,14 @@
         let humidityValue = 60;
         let logEntries = [];
         let animationId = null;
-        let recordingStartTime = null;
         let storageUsed = 0;
+
+        // Recording
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let recordingStartTime = null;
+        let recordingTimer = null;
+        let recordedBlob = null;
 
         const GRAPH_POINTS = 20;
         let THRESHOLD = 25;
@@ -769,7 +993,7 @@
             bars.forEach((bar, i) => {
                 const val = motionHistory[i] || 0;
                 const pct = Math.min(100, (val / max) * 100);
-                bar.style.height = Math.max(3, (pct / 100) * 40 + 3) + 'px';
+                bar.style.height = Math.max(3, (pct / 100) * 38 + 3) + 'px';
                 bar.classList.toggle('active', val > 0);
             });
         }
@@ -782,7 +1006,8 @@
 
             const item = document.createElement('div');
             item.className = 'log-item';
-            const cls = type === 'motion' ? 'motion' : (type === 'temp' ? 'temp' : (type === 'error' ? 'error' : ''));
+            const cls = type === 'motion' ? 'motion' : (type === 'temp' ? 'temp' : (type === 'record' ? 'record' : (type ===
+                'error' ? 'error' : '')));
             item.innerHTML = `<span class="time">${time}</span><span class="msg ${cls}">${msg}</span>`;
             logContainer.prepend(item);
             if (logContainer.children.length > 60) {
@@ -815,7 +1040,7 @@
                 if ((r + g + b) / 3 > THRESHOLD) diff++;
             }
 
-            const motionLevel = Math.min(100, (diff / (w * h)) * 300);
+            const motionLevel = Math.min(100, (diff / (w * h)) * 350);
             lastFrame = currentFrame;
 
             // Overlay gerakan
@@ -828,8 +1053,8 @@
                     ctx2.lineWidth = 2;
                     ctx2.strokeRect(4, 4, w - 8, h - 8);
                     ctx2.fillStyle = 'rgba(255, 0, 0, 0.7)';
-                    ctx2.font = 'bold 15px Inter';
-                    ctx2.fillText('⚠️ GERAKAN', 16, 34);
+                    ctx2.font = 'bold 14px Inter';
+                    ctx2.fillText('⚠️ GERAKAN', 14, 32);
                 }
             }
 
@@ -859,9 +1084,9 @@
                 }
             } else if (mode === 'night') {
                 for (let i = 0; i < len; i += 4) {
-                    data[i] = Math.min(255, data[i] * 1.3);
-                    data[i + 1] = Math.min(255, data[i + 1] * 1.1);
-                    data[i + 2] = Math.min(255, data[i + 2] * 0.7);
+                    data[i] = Math.min(255, data[i] * 1.4);
+                    data[i + 1] = Math.min(255, data[i + 1] * 1.2);
+                    data[i + 2] = Math.min(255, data[i + 2] * 0.6);
                 }
             }
             return imageData;
@@ -874,21 +1099,17 @@
             const w = canvas.width,
                 h = canvas.height;
 
-            // Deteksi gerakan
             const motion = detectMotion(video, canvas);
             motionCounter = Math.round(motion);
 
-            // Simpan frame untuk filter kualitas (diambil dari canvas setelah deteksi)
+            // Apply quality filter
             const imageData = ctx.getImageData(0, 0, w, h);
-
-            // Terapkan filter kualitas
-            let processedData = imageData;
             if (qualityMode === 'bw' || qualityMode === 'sepia' || qualityMode === 'night') {
-                processedData = applyQualityFilter(imageData, qualityMode);
-                ctx.putImageData(processedData, 0, 0);
+                const filtered = applyQualityFilter(imageData, qualityMode);
+                ctx.putImageData(filtered, 0, 0);
             }
 
-            // Update FPS
+            // FPS
             frameCount++;
             if (timestamp - lastFpsUpdate > 1000) {
                 lastFpsUpdate = timestamp;
@@ -917,10 +1138,10 @@
                 statusText.textContent = 'Online';
             }
 
-            // Update storage (simulasi)
-            if (isRecording) {
-                storageUsed += 0.001;
-                storageDisplay.textContent = storageUsed.toFixed(1) + ' GB';
+            // Storage simulasi
+            if (isRunning) {
+                storageUsed += 0.0002;
+                storageDisplay.textContent = Math.min(99.9, storageUsed).toFixed(1) + ' GB';
             }
 
             animationId = requestAnimationFrame(processFrame);
@@ -948,6 +1169,10 @@
                 canvas.width = vw;
                 canvas.height = vh;
                 resolutionDisplay.textContent = `${vw}×${vh}`;
+
+                // Set canvas size untuk overlay
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
 
                 isRunning = true;
                 lastFrame = null;
@@ -989,37 +1214,138 @@
             motionCount.textContent = '0';
             motionDetectStatus.textContent = '--';
             updateGraph(0);
-            if (isRecording) toggleRecording();
+            if (isRecording) stopRecording();
+            recordingStatus.textContent = 'Off';
+            recIndicator.classList.remove('active');
+            recordDot.className = 'badge-dot red';
+            btnRecord.classList.remove('recording');
+            btnRecord.innerHTML = '<span class="badge-dot red" id="recordDot"></span> Rekam';
         }
 
-        function toggleRecording() {
-            isRecording = !isRecording;
-            recordingStatus.textContent = isRecording ? '● Recording' : 'Off';
-            recordingStatus.style.color = isRecording ? '#f87171' : '#94a3b8';
-            recIndicator.style.display = isRecording ? 'flex' : 'none';
-            if (isRecording) {
-                recordingStartTime = new Date();
-                addLog('📹 Rekaman dimulai', 'info');
+        // ─── REKAMAN ──────────────────────────────────────────────────
+        function startRecording() {
+            if (!isRunning || isRecording) return;
+
+            recordedChunks = [];
+            const stream2 = video.captureStream ? video.captureStream(30) : stream;
+            if (!stream2) {
+                addLog('Gagal memulai rekaman: stream tidak tersedia', 'error');
+                return;
+            }
+
+            try {
+                mediaRecorder = new MediaRecorder(stream2, {
+                    mimeType: 'video/webm;codecs=vp9,opus'
+                });
+            } catch (e) {
+                try {
+                    mediaRecorder = new MediaRecorder(stream2, {
+                        mimeType: 'video/webm;codecs=vp8,opus'
+                    });
+                } catch (e2) {
+                    try {
+                        mediaRecorder = new MediaRecorder(stream2, {
+                            mimeType: 'video/webm'
+                        });
+                    } catch (e3) {
+                        addLog('Browser tidak mendukung rekaman', 'error');
+                        return;
+                    }
+                }
+            }
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data && event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                recordedBlob = blob;
+                const duration = Math.floor((Date.now() - recordingStartTime) / 1000);
+                const mins = Math.floor(duration / 60);
+                const secs = duration % 60;
+                recordDuration.textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+                recordSize.textContent = (blob.size / (1024 * 1024)).toFixed(2) + ' MB';
+                downloadModal.classList.add('active');
+                addLog(`📹 Rekaman selesai: ${recordDuration.textContent}`, 'record');
+                recordingStatus.textContent = 'Off';
+                recIndicator.classList.remove('active');
+                recordDot.className = 'badge-dot red';
+                btnRecord.classList.remove('recording');
+                btnRecord.innerHTML = '<span class="badge-dot red" id="recordDot"></span> Rekam';
+                isRecording = false;
+                if (recordingTimer) {
+                    clearInterval(recordingTimer);
+                    recordingTimer = null;
+                }
+            };
+
+            mediaRecorder.start(1000);
+            isRecording = true;
+            recordingStartTime = Date.now();
+            recordingStatus.textContent = '● Recording';
+            recordingStatus.style.color = '#f87171';
+            recIndicator.classList.add('active');
+            recordDot.className = 'badge-dot green';
+            btnRecord.classList.add('recording');
+            btnRecord.innerHTML = '<span class="badge-dot green" id="recordDot"></span> ● Rekam';
+
+            // Timer durasi
+            let seconds = 0;
+            recordingTimer = setInterval(() => {
+                seconds++;
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                recordingStatus.textContent = `● ${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+            }, 1000);
+
+            addLog('📹 Rekaman dimulai', 'record');
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                if (recordingTimer) {
+                    clearInterval(recordingTimer);
+                    recordingTimer = null;
+                }
             } else {
-                addLog('⏹ Rekaman dihentikan', 'info');
+                isRecording = false;
+                recordingStatus.textContent = 'Off';
+                recIndicator.classList.remove('active');
+                recordDot.className = 'badge-dot red';
+                btnRecord.classList.remove('recording');
+                btnRecord.innerHTML = '<span class="badge-dot red" id="recordDot"></span> Rekam';
             }
         }
 
-        function applyZoom() {
-            const zoom = parseFloat(zoomSlider.value);
-            zoomDisplay.textContent = zoom.toFixed(1) + 'x';
-            video.style.transform = `scale(${zoom})`;
-            video.style.transformOrigin = 'center center';
+        function toggleRecording() {
+            if (!isRunning) {
+                addLog('Nyalakan kamera terlebih dahulu', 'error');
+                return;
+            }
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
         }
 
-        function setQuality(mode) {
-            qualityMode = mode;
-            const names = { hd: 'HD', sd: 'SD', bw: 'B/W', sepia: 'Sepia', night: 'Night' };
-            qualityDisplay.textContent = names[mode] || 'HD';
-            document.querySelectorAll('.quality-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.quality === mode);
-            });
-            addLog(`Kualitas: ${names[mode]}`, 'info');
+        function downloadRecording() {
+            if (recordedBlob) {
+                const url = URL.createObjectURL(recordedBlob);
+                const a = document.createElement('a');
+                const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                a.download = `cctv_recording_${timestamp}.webm`;
+                a.href = url;
+                a.click();
+                URL.revokeObjectURL(url);
+                addLog('📥 Rekaman diunduh', 'record');
+                downloadModal.classList.remove('active');
+                recordedBlob = null;
+            }
         }
 
         // ─── SENSOR SIMULASI ──────────────────────────────────────
@@ -1032,7 +1358,7 @@
             humidityValue = Math.min(85, Math.max(25, humidityValue));
             humidityDisplay.textContent = Math.round(humidityValue) + ' %';
 
-            if (Math.random() < 0.04) {
+            if (Math.random() < 0.03) {
                 addLog(`Suhu: ${tempValue.toFixed(1)}°C, Kelembaban: ${Math.round(humidityValue)}%`, 'temp');
             }
         }
@@ -1048,7 +1374,6 @@
             tempCanvas.height = canvas.height;
             const tctx = tempCanvas.getContext('2d');
             tctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
-            // Apply quality filter to snapshot
             const imgData = tctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
             if (qualityMode === 'bw' || qualityMode === 'sepia' || qualityMode === 'night') {
                 const filtered = applyQualityFilter(imgData, qualityMode);
@@ -1077,6 +1402,25 @@
             link.href = URL.createObjectURL(blob);
             link.click();
             addLog('📤 Log diekspor', 'info');
+        }
+
+        // ─── ZOOM ──────────────────────────────────────────────────
+        function applyZoom() {
+            const zoom = parseFloat(zoomSlider.value);
+            zoomDisplay.textContent = zoom.toFixed(1) + 'x';
+            video.style.transform = `scale(${zoom})`;
+            video.style.transformOrigin = 'center center';
+        }
+
+        // ─── KUALITAS ──────────────────────────────────────────────
+        function setQuality(mode) {
+            qualityMode = mode;
+            const names = { hd: 'HD', sd: 'SD', bw: 'B/W', sepia: 'Sepia', night: 'Night' };
+            qualityDisplay.textContent = names[mode] || 'HD';
+            document.querySelectorAll('.quality-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.quality === mode);
+            });
+            addLog(`Kualitas: ${names[mode]}`, 'info');
         }
 
         // ─── JAM ──────────────────────────────────────────────────
@@ -1125,22 +1469,45 @@
             btn.addEventListener('click', () => setQuality(btn.dataset.quality));
         });
 
+        // Modal
+        modalClose.addEventListener('click', () => {
+            downloadModal.classList.remove('active');
+            recordedBlob = null;
+        });
+        modalDownload.addEventListener('click', downloadRecording);
+        downloadModal.addEventListener('click', (e) => {
+            if (e.target === downloadModal) {
+                downloadModal.classList.remove('active');
+                recordedBlob = null;
+            }
+        });
+
+        // Keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && downloadModal.classList.contains('active')) {
+                downloadModal.classList.remove('active');
+                recordedBlob = null;
+            }
+            if (e.key === 'r' || e.key === 'R') {
+                if (isRunning) toggleRecording();
+            }
+            if (e.key === ' ' && isRunning) {
+                e.preventDefault();
+                takeSnapshot();
+            }
+        });
+
         // ─── INIT ──────────────────────────────────────────────────
         addLog('🟢 CCTV Pro siap digunakan', 'info');
         addLog('📷 Klik "Mulai" untuk mengaktifkan kamera', 'info');
+        addLog('⌨️ Shortcut: [R] Rekam [Space] Foto', 'info');
 
-        // Update sensor periodically
         setInterval(updateSensor, 3000);
         updateSensor();
 
-        // Storage simulation
-        setInterval(() => {
-            if (!isRunning) return;
-            storageDisplay.textContent = (storageUsed + 0.2).toFixed(1) + ' GB';
-        }, 5000);
-
-        console.log('📹 CCTV Pro — Surveillance System');
-        console.log('🎥 Fitur: Motion Detection, Kualitas Layar, Rekaman, Grid, Export Log');
+        console.log('📹 CCTV Pro — Surveillance System with Recording');
+        console.log('🎥 Fitur: Motion Detection, Kualitas, Rekam + Download, Export Log');
+        console.log('⌨️ Shortcut: R = Rekam, Space = Screenshot');
     </script>
 </body>
-                    </html>
+    </html>
