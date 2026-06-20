@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SensorVision · Deteksi Gerak & Suhu</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>SensorVision Pro · Deteksi Gerak & Suhu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         * {
@@ -14,23 +14,25 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background: #0b0f1a;
+            background: #070c18;
             color: #e8edf5;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 16px;
         }
         .app {
             width: 100%;
-            max-width: 1400px;
+            max-width: 1440px;
         }
+
+        /* HEADER */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 0 24px;
+            padding: 14px 0 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             flex-wrap: wrap;
             gap: 12px;
@@ -39,7 +41,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
             background: linear-gradient(135deg, #22d3ee, #06b6d4);
             -webkit-background-clip: text;
@@ -49,13 +51,13 @@
             -webkit-text-fill-color: #22d3ee;
             background: none;
         }
-        .header-status {
+        .header-controls {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
             flex-wrap: wrap;
         }
-        .header-status .indicator {
+        .header-controls .status {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -63,10 +65,10 @@
             padding: 6px 18px;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             border: 1px solid rgba(255, 255, 255, 0.04);
         }
-        .header-status .indicator .dot {
+        .status .dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
@@ -74,28 +76,31 @@
         }
         .dot.green {
             background: #4ade80;
-            box-shadow: 0 0 12px #4ade8066;
+            box-shadow: 0 0 14px #4ade8066;
         }
         .dot.red {
             background: #f87171;
-            box-shadow: 0 0 12px #f8717166;
+            box-shadow: 0 0 14px #f8717166;
         }
         .dot.yellow {
             background: #fbbf24;
-            box-shadow: 0 0 12px #fbbf2466;
+            box-shadow: 0 0 14px #fbbf2466;
         }
+
+        /* MAIN GRID */
         .main-grid {
             display: grid;
-            grid-template-columns: 1fr 360px;
+            grid-template-columns: 1fr 380px;
             gap: 24px;
-            margin-top: 24px;
+            margin-top: 20px;
         }
+
+        /* KAMERA */
         .camera-wrapper {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 28px;
             padding: 20px;
-            position: relative;
         }
         .camera-container {
             position: relative;
@@ -121,19 +126,19 @@
         }
         .camera-overlay-info {
             position: absolute;
-            top: 16px;
-            left: 16px;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(10px);
-            padding: 8px 16px;
+            top: 14px;
+            left: 14px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+            padding: 6px 16px;
             border-radius: 40px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: #94a3b8;
             border: 1px solid rgba(255, 255, 255, 0.04);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
         .camera-overlay-info .live {
             color: #4ade80;
@@ -144,22 +149,24 @@
         .camera-overlay-info .live i {
             font-size: 10px;
         }
+
+        /* Kontrol kamera */
         .camera-controls {
             display: flex;
-            gap: 12px;
-            margin-top: 16px;
             flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
         }
         .camera-controls button {
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.06);
             color: #e8edf5;
-            padding: 10px 24px;
+            padding: 8px 18px;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.25s;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -184,87 +191,126 @@
         .camera-controls button.danger:hover {
             background: rgba(248, 113, 113, 0.2);
         }
+        .camera-controls button.outline {
+            background: transparent;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        .camera-controls button.outline:hover {
+            border-color: rgba(255, 255, 255, 0.16);
+        }
 
-        /* Sidebar */
+        /* SIDEBAR */
         .sidebar {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 18px;
         }
         .card {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 24px;
-            padding: 20px 22px;
+            padding: 18px 20px 20px;
         }
-        .card h4 {
-            font-weight: 700;
-            font-size: 16px;
+        .card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 14px;
+        }
+        .card .card-header h4 {
+            font-weight: 700;
+            font-size: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
             color: #cbd5e1;
         }
-        .card h4 i {
+        .card .card-header h4 i {
             color: #22d3ee;
         }
-        .sensor-value {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-        }
-        .sensor-value:last-child {
-            border-bottom: none;
-        }
-        .sensor-value .label {
+        .card .card-header .badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.04);
             color: #94a3b8;
-            font-size: 14px;
         }
-        .sensor-value .value {
-            font-weight: 700;
-            font-size: 18px;
+
+        /* Sensor values */
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .sensor-item {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            padding: 12px 14px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+        .sensor-item .label {
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        .sensor-item .value {
+            font-size: 22px;
+            font-weight: 800;
+            margin-top: 2px;
         }
         .value.temp {
             color: #fbbf24;
         }
+        .value.humid {
+            color: #22d3ee;
+        }
         .value.motion {
             color: #4ade80;
         }
-        .value.humidity {
-            color: #22d3ee;
+        .value.battery {
+            color: #a78bfa;
         }
 
+        /* Grafik */
         .motion-graph {
-            margin-top: 8px;
-            height: 60px;
+            height: 52px;
             display: flex;
             align-items: flex-end;
             gap: 4px;
+            margin: 8px 0 6px;
         }
         .motion-graph .bar {
             flex: 1;
             background: linear-gradient(180deg, #22d3ee, #06b6d4);
-            border-radius: 4px 4px 0 0;
-            min-height: 4px;
-            transition: height 0.3s;
-            opacity: 0.7;
+            border-radius: 3px 3px 0 0;
+            min-height: 3px;
+            transition: height 0.25s;
+            opacity: 0.5;
         }
         .motion-graph .bar.active {
             opacity: 1;
             background: linear-gradient(180deg, #4ade80, #22d3ee);
         }
-
-        .log-container {
-            max-height: 140px;
-            overflow-y: auto;
+        .motion-stats {
+            display: flex;
+            justify-content: space-between;
             font-size: 13px;
             color: #94a3b8;
+        }
+        .motion-stats strong {
+            color: #e8edf5;
+        }
+
+        /* Log */
+        .log-container {
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 13px;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
         }
         .log-container::-webkit-scrollbar {
             width: 3px;
@@ -281,6 +327,7 @@
         }
         .log-item .time {
             color: #64748b;
+            font-size: 12px;
         }
         .log-item .msg {
             color: #e8edf5;
@@ -291,7 +338,95 @@
         .log-item .msg.temp {
             color: #fbbf24;
         }
+        .log-item .msg.error {
+            color: #f87171;
+        }
 
+        /* Slider pengaturan */
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .setting-row .label {
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        .setting-row .label i {
+            margin-right: 6px;
+            color: #22d3ee;
+        }
+        .setting-row input[type="range"] {
+            flex: 1;
+            min-width: 80px;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.06);
+            height: 4px;
+            border-radius: 10px;
+            outline: none;
+        }
+        .setting-row input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #22d3ee;
+            cursor: pointer;
+            box-shadow: 0 0 16px rgba(34, 211, 238, 0.3);
+        }
+        .setting-row .val {
+            font-weight: 700;
+            font-size: 14px;
+            min-width: 36px;
+            text-align: right;
+            color: #fcd34d;
+        }
+        .setting-row select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #e8edf5;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            flex: 1;
+            min-width: 100px;
+        }
+        .setting-row select option {
+            background: #0f172a;
+        }
+
+        .btn-export {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #e8edf5;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-export:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .btn-export.danger {
+            color: #f87171;
+        }
+        .btn-export.danger:hover {
+            background: rgba(248, 113, 113, 0.12);
+        }
+
+        /* RESPONSIVE */
         @media (max-width: 1024px) {
             .main-grid {
                 grid-template-columns: 1fr;
@@ -312,14 +447,38 @@
                 flex-direction: column;
                 align-items: stretch;
             }
-            .header-status {
+            .header-controls {
                 justify-content: space-between;
             }
-        }
-        @media (max-width: 480px) {
             .camera-controls button {
                 flex: 1;
                 justify-content: center;
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+            .sensor-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .setting-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 4px;
+            }
+            .setting-row .val {
+                text-align: left;
+            }
+        }
+        @media (max-width: 480px) {
+            .camera-controls {
+                gap: 6px;
+            }
+            .camera-controls button {
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+            .header-controls .status {
+                font-size: 12px;
+                padding: 4px 12px;
             }
         }
     </style>
@@ -329,10 +488,11 @@
     <div class="app">
         <!-- HEADER -->
         <header>
-            <div class="logo"><i class="fas fa-eye"></i> SensorVision</div>
-            <div class="header-status">
-                <span class="indicator"><span class="dot green" id="statusDot"></span> <span id="statusText">Online</span></span>
-                <span class="indicator"><i class="fas fa-clock"></i> <span id="clockDisplay">--:--:--</span></span>
+            <div class="logo"><i class="fas fa-eye"></i> SensorVision Pro</div>
+            <div class="header-controls">
+                <span class="status"><span class="dot green" id="statusDot"></span> <span id="statusText">Online</span></span>
+                <span class="status"><i class="fas fa-clock"></i> <span id="clockDisplay">--:--:--</span></span>
+                <span class="status"><i class="fas fa-wifi"></i> <span id="fpsDisplay">0 FPS</span></span>
             </div>
         </header>
 
@@ -346,58 +506,106 @@
                     <div class="camera-overlay-info">
                         <span class="live"><i class="fas fa-circle"></i> LIVE</span>
                         <span id="resolutionDisplay">--</span>
+                        <span id="cameraFacing">Belakang</span>
                     </div>
                 </div>
+                <!-- Kontrol Kamera -->
                 <div class="camera-controls">
                     <button class="primary" id="btnStart"><i class="fas fa-play"></i> Mulai</button>
                     <button class="danger" id="btnStop"><i class="fas fa-stop"></i> Berhenti</button>
-                    <button id="btnSnapshot"><i class="fas fa-camera"></i> Screenshot</button>
-                    <button id="btnToggleOverlay"><i class="fas fa-layer-group"></i> Overlay</button>
+                    <button class="outline" id="btnSwitchCamera"><i class="fas fa-arrows-rotate"></i> Putar</button>
+                    <button class="outline" id="btnSnapshot"><i class="fas fa-camera"></i> Foto</button>
+                    <button class="outline" id="btnToggleOverlay"><i class="fas fa-layer-group"></i> Overlay</button>
+                    <button class="outline" id="btnFullscreen"><i class="fas fa-expand"></i></button>
+                </div>
+                <!-- Zoom control -->
+                <div style="display:flex; align-items:center; gap:12px; margin-top:12px; padding:0 4px;">
+                    <i class="fas fa-search-minus" style="color:#64748b; font-size:14px;"></i>
+                    <input type="range" id="zoomSlider" min="1" max="3" step="0.05" value="1"
+                    style="flex:1; -webkit-appearance:none; background:rgba(255,255,255,0.06); height:3px; border-radius:10px; outline:none;">
+                    <i class="fas fa-search-plus" style="color:#64748b; font-size:14px;"></i>
+                    <span id="zoomDisplay" style="font-weight:700; font-size:14px; color:#fcd34d; min-width:40px;">1.0x</span>
                 </div>
             </div>
 
             <!-- SIDEBAR -->
             <div class="sidebar">
+
                 <!-- Sensor -->
                 <div class="card">
-                    <h4><i class="fas fa-microchip"></i> Sensor</h4>
-                    <div class="sensor-value">
-                        <span class="label"><i class="fas fa-thermometer-half"></i> Suhu</span>
-                        <span class="value temp" id="tempDisplay">25.0 °C</span>
+                    <div class="card-header">
+                        <h4><i class="fas fa-microchip"></i> Sensor</h4>
+                        <span class="badge"><i class="fas fa-sync-alt fa-fw"></i> Real-time</span>
                     </div>
-                    <div class="sensor-value">
-                        <span class="label"><i class="fas fa-water"></i> Kelembaban</span>
-                        <span class="value humidity" id="humidityDisplay">60 %</span>
-                    </div>
-                    <div class="sensor-value">
-                        <span class="label"><i class="fas fa-people-arrows"></i> Gerakan</span>
-                        <span class="value motion" id="motionCount">0</span>
-                    </div>
-                    <div class="sensor-value" style="border-bottom: none; padding-top: 12px;">
-                        <span class="label"><i class="fas fa-bolt"></i> Daya</span>
-                        <span class="value" style="color:#4ade80;" id="batteryDisplay">100%</span>
+                    <div class="sensor-grid">
+                        <div class="sensor-item">
+                            <div class="label"><i class="fas fa-thermometer-half"></i> Suhu</div>
+                            <div class="value temp" id="tempDisplay">25.0 °C</div>
+                        </div>
+                        <div class="sensor-item">
+                            <div class="label"><i class="fas fa-water"></i> Kelembaban</div>
+                            <div class="value humid" id="humidityDisplay">60 %</div>
+                        </div>
+                        <div class="sensor-item">
+                            <div class="label"><i class="fas fa-people-arrows"></i> Gerakan</div>
+                            <div class="value motion" id="motionCount">0</div>
+                        </div>
+                        <div class="sensor-item">
+                            <div class="label"><i class="fas fa-bolt"></i> Daya</div>
+                            <div class="value battery" id="batteryDisplay">100%</div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Grafik Gerakan -->
+                <!-- Grafik & Pengaturan -->
                 <div class="card">
-                    <h4><i class="fas fa-chart-line"></i> Aktivitas Gerakan</h4>
-                    <div class="motion-graph" id="motionGraph">
-                        <!-- 20 bar akan diisi JS -->
+                    <div class="card-header">
+                        <h4><i class="fas fa-chart-line"></i> Aktivitas</h4>
+                        <span class="badge" id="motionDetectStatus">Tenang</span>
                     </div>
-                    <div style="margin-top:10px; font-size:13px; color:#64748b; display:flex; justify-content:space-between;">
-                        <span>Deteksi: <strong id="motionDetectStatus">Tidak Ada</strong></span>
+                    <div class="motion-graph" id="motionGraph"></div>
+                    <div class="motion-stats">
                         <span>Puncak: <strong id="motionPeak">0</strong></span>
+                        <span>Ambang: <strong id="thresholdDisplay">30</strong></span>
+                    </div>
+
+                    <!-- Pengaturan -->
+                    <div style="margin-top:12px; border-top:1px solid rgba(255,255,255,0.03); padding-top:12px;">
+                        <div class="setting-row">
+                            <span class="label"><i class="fas fa-sliders-h"></i> Sensitivitas</span>
+                            <input type="range" id="thresholdSlider" min="5" max="80" value="30" />
+                            <span class="val" id="thresholdVal">30</span>
+                        </div>
+                        <div class="setting-row">
+                            <span class="label"><i class="fas fa-crosshairs"></i> Mode Deteksi</span>
+                            <select id="detectionMode">
+                                <option value="motion">Gerakan</option>
+                                <option value="thermal">Thermal</option>
+                                <option value="both">Keduanya</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Log -->
+                <!-- Log & Aksi -->
                 <div class="card">
-                    <h4><i class="fas fa-clipboard-list"></i> Log Aktivitas</h4>
+                    <div class="card-header">
+                        <h4><i class="fas fa-clipboard-list"></i> Log Aktivitas</h4>
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn-export" id="btnExportLog"><i class="fas fa-download"></i> Export</button>
+                            <button class="btn-export danger" id="btnClearLog"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
                     <div class="log-container" id="logContainer">
                         <div class="log-item"><span class="time">--:--:--</span><span class="msg">Sistem siap</span></div>
                     </div>
+                    <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="btn-export" id="btnResetData" style="flex:1; justify-content:center;">
+                            <i class="fas fa-rotate-left"></i> Reset Data
+                        </button>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -410,17 +618,31 @@
 
         const btnStart = document.getElementById('btnStart');
         const btnStop = document.getElementById('btnStop');
+        const btnSwitch = document.getElementById('btnSwitchCamera');
         const btnSnapshot = document.getElementById('btnSnapshot');
         const btnToggleOverlay = document.getElementById('btnToggleOverlay');
+        const btnFullscreen = document.getElementById('btnFullscreen');
+        const btnExportLog = document.getElementById('btnExportLog');
+        const btnClearLog = document.getElementById('btnClearLog');
+        const btnResetData = document.getElementById('btnResetData');
+
+        const zoomSlider = document.getElementById('zoomSlider');
+        const zoomDisplay = document.getElementById('zoomDisplay');
+        const thresholdSlider = document.getElementById('thresholdSlider');
+        const thresholdVal = document.getElementById('thresholdVal');
+        const thresholdDisplay = document.getElementById('thresholdDisplay');
+        const detectionMode = document.getElementById('detectionMode');
 
         const tempDisplay = document.getElementById('tempDisplay');
         const humidityDisplay = document.getElementById('humidityDisplay');
         const motionCount = document.getElementById('motionCount');
         const batteryDisplay = document.getElementById('batteryDisplay');
         const clockDisplay = document.getElementById('clockDisplay');
+        const fpsDisplay = document.getElementById('fpsDisplay');
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
         const resolutionDisplay = document.getElementById('resolutionDisplay');
+        const cameraFacing = document.getElementById('cameraFacing');
         const motionDetectStatus = document.getElementById('motionDetectStatus');
         const motionPeak = document.getElementById('motionPeak');
         const logContainer = document.getElementById('logContainer');
@@ -430,37 +652,37 @@
         let stream = null;
         let isRunning = false;
         let showOverlay = true;
-        let motionHistory = []; // untuk grafik (20 nilai)
+        let motionHistory = [];
         let motionPeakValue = 0;
         let motionCounter = 0;
         let lastFrame = null;
         let frameCount = 0;
+        let lastFpsUpdate = 0;
         let tempValue = 25.0;
         let humidityValue = 60;
-        let logCount = 0;
+        let logEntries = [];
         let animationId = null;
+        let facingMode = 'environment'; // 'environment' or 'user'
+        let currentZoom = 1;
 
-        // ─── KONFIGURASI ────────────────────────────────────────────
-        const MOTION_THRESHOLD = 30; // sensitivitas
         const GRAPH_POINTS = 20;
-        const TEMP_UPDATE_INTERVAL = 3000; // ms
+        let THRESHOLD = 30;
+        const TEMP_UPDATE_INTERVAL = 3000;
 
-        // ─── FUNGSI UTAMA ──────────────────────────────────────────
-
-        // Inisialisasi grafik
+        // ─── INIT GRAPH ────────────────────────────────────────────
         function initGraph() {
             motionGraph.innerHTML = '';
             for (let i = 0; i < GRAPH_POINTS; i++) {
                 const bar = document.createElement('div');
                 bar.className = 'bar';
-                bar.style.height = '4px';
+                bar.style.height = '3px';
                 motionGraph.appendChild(bar);
             }
             motionHistory = new Array(GRAPH_POINTS).fill(0);
         }
         initGraph();
 
-        // Update grafik
+        // ─── FUNGSI ──────────────────────────────────────────────────
         function updateGraph(value) {
             motionHistory.push(value);
             if (motionHistory.length > GRAPH_POINTS) motionHistory.shift();
@@ -471,33 +693,35 @@
             bars.forEach((bar, i) => {
                 const val = motionHistory[i] || 0;
                 const pct = Math.min(100, (val / max) * 100);
-                bar.style.height = Math.max(4, (pct / 100) * 50 + 4) + 'px';
+                bar.style.height = Math.max(3, (pct / 100) * 48 + 3) + 'px';
                 bar.classList.toggle('active', val > 0);
             });
         }
 
-        // Log
         function addLog(msg, type = 'info') {
             const time = new Date().toLocaleTimeString('id-ID');
+            const entry = { time, msg, type };
+            logEntries.push(entry);
+            if (logEntries.length > 100) logEntries.shift();
+
             const item = document.createElement('div');
             item.className = 'log-item';
-            const cls = type === 'motion' ? 'motion' : (type === 'temp' ? 'temp' : '');
+            const cls = type === 'motion' ? 'motion' : (type === 'temp' ? 'temp' : (type === 'error' ? 'error' : ''));
             item.innerHTML = `<span class="time">${time}</span><span class="msg ${cls}">${msg}</span>`;
             logContainer.prepend(item);
-            if (logContainer.children.length > 30) {
+            if (logContainer.children.length > 50) {
                 logContainer.removeChild(logContainer.lastChild);
             }
         }
 
         // ─── DETEKSI GERAKAN ──────────────────────────────────────
-        function detectMotion(videoElement, canvasEl) {
+        function detectMotion(videoEl, canvasEl) {
             const c = canvasEl;
             const w = c.width,
                 h = c.height;
             const ctx2 = c.getContext('2d');
 
-            // Ambil frame video ke canvas
-            ctx2.drawImage(videoElement, 0, 0, w, h);
+            ctx2.drawImage(videoEl, 0, 0, w, h);
             const currentFrame = ctx2.getImageData(0, 0, w, h);
             const data = currentFrame.data;
 
@@ -506,99 +730,104 @@
                 return 0;
             }
 
-            // Hitung perbedaan
             let diff = 0;
             const len = data.length;
-            for (let i = 0; i < len; i += 4) {
+            const step = 4;
+            for (let i = 0; i < len; i += step) {
                 const r = Math.abs(data[i] - lastFrame.data[i]);
                 const g = Math.abs(data[i + 1] - lastFrame.data[i + 1]);
                 const b = Math.abs(data[i + 2] - lastFrame.data[i + 2]);
                 const avg = (r + g + b) / 3;
-                if (avg > MOTION_THRESHOLD) diff++;
+                if (avg > THRESHOLD) diff++;
             }
 
-            // Normalisasi
-            const motionLevel = Math.min(100, (diff / (w * h)) * 200);
+            const motionLevel = Math.min(100, (diff / (w * h)) * 300);
             lastFrame = currentFrame;
 
-            // Gambar overlay jika ada gerakan
-            if (showOverlay && motionLevel > 2) {
-                // Buat highlight area bergerak dengan menggambar kotak merah transparan
-                // Untuk demo, kita gambar rect di area rata-rata (jika mau lebih akurat, kita bisa cari bounding box)
-                // Tapi kita sederhanakan: tampilkan indikator di pojok
-                if (motionLevel > 5) {
-                    ctx2.fillStyle = 'rgba(255, 0, 0, 0.15)';
-                    ctx2.fillRect(0, 0, w, h);
-                    ctx2.strokeStyle = 'rgba(255, 0, 0, 0.5)';
-                    ctx2.lineWidth = 2;
-                    ctx2.strokeRect(2, 2, w - 4, h - 4);
-                    // Tampilkan teks
+            // Overlay
+            if (showOverlay && motionLevel > 3) {
+                const alpha = Math.min(0.2, motionLevel / 500);
+                ctx2.fillStyle = `rgba(255, 0, 0, ${alpha})`;
+                ctx2.fillRect(0, 0, w, h);
+                ctx2.strokeStyle = `rgba(255, 0, 0, ${Math.min(0.6, motionLevel/200)})`;
+                ctx2.lineWidth = 2;
+                ctx2.strokeRect(2, 2, w - 4, h - 4);
+                if (motionLevel > 15) {
                     ctx2.fillStyle = 'rgba(255, 0, 0, 0.8)';
-                    ctx2.font = 'bold 18px Inter';
-                    ctx2.fillText('⚠️ GERAKAN TERDETEKSI', 20, 40);
+                    ctx2.font = 'bold 16px Inter';
+                    ctx2.fillText('⚠️ GERAKAN', 16, 38);
                 }
             }
 
             return motionLevel;
         }
 
-        // ─── LOOP KAMERA ──────────────────────────────────────────
-        function processFrame() {
+        // ─── LOOP ──────────────────────────────────────────────────
+        function processFrame(timestamp) {
             if (!isRunning) return;
 
             const w = canvas.width;
             const h = canvas.height;
 
-            // Deteksi gerakan
             const motion = detectMotion(video, canvas);
             motionCounter = Math.round(motion);
 
-            // Update tampilan
-            motionCount.textContent = motionCounter;
-            if (motion > 5) {
-                motionDetectStatus.textContent = 'Ada Gerakan!';
-                motionDetectStatus.style.color = '#4ade80';
-                if (motion > 20) {
-                    addLog(`Gerakan kuat terdeteksi (${Math.round(motion)}%)`, 'motion');
-                } else {
-                    addLog(`Gerakan terdeteksi (${Math.round(motion)}%)`, 'motion');
-                }
-                // Update grafik
-                updateGraph(Math.round(motion));
-            } else {
-                motionDetectStatus.textContent = 'Tidak Ada';
-                motionDetectStatus.style.color = '#94a3b8';
-                updateGraph(0);
+            // Update FPS
+            frameCount++;
+            if (timestamp - lastFpsUpdate > 1000) {
+                fpsDisplay.textContent = frameCount + ' FPS';
+                frameCount = 0;
+                lastFpsUpdate = timestamp;
             }
 
-            // Update status
-            if (motionCounter > 10) {
+            // Update UI
+            motionCount.textContent = motionCounter;
+
+            const mode = detectionMode.value;
+            const isMotionDetected = motion > 5;
+            const isThermalDetected = (mode === 'thermal' || mode === 'both') && tempValue > 28;
+
+            if (isMotionDetected || isThermalDetected) {
+                let status = [];
+                if (isMotionDetected) status.push('Gerakan');
+                if (isThermalDetected) status.push('Suhu Tinggi');
+                motionDetectStatus.textContent = status.join(' + ');
+                motionDetectStatus.style.color = '#4ade80';
+                if (isMotionDetected && motion > 15) {
+                    addLog(`Gerakan: ${Math.round(motion)}%`, 'motion');
+                }
+                if (isThermalDetected) {
+                    addLog(`Suhu tinggi: ${tempValue.toFixed(1)}°C`, 'temp');
+                }
+                updateGraph(Math.round(motion + (isThermalDetected ? 10 : 0)));
                 statusDot.className = 'dot yellow';
-                statusText.textContent = 'Gerakan';
+                statusText.textContent = 'Aktif';
             } else {
+                motionDetectStatus.textContent = 'Tenang';
+                motionDetectStatus.style.color = '#94a3b8';
+                updateGraph(0);
                 statusDot.className = 'dot green';
                 statusText.textContent = 'Online';
             }
 
-            // Lanjutkan loop
             animationId = requestAnimationFrame(processFrame);
         }
 
-        // ─── KONTROL KAMERA ──────────────────────────────────────
+        // ─── KAMERA ──────────────────────────────────────────────────
         async function startCamera() {
             try {
-                stream = await navigator.mediaDevices.getUserMedia({
+                const constraints = {
                     video: {
-                        facingMode: 'environment',
+                        facingMode: facingMode,
                         width: { ideal: 1280 },
                         height: { ideal: 720 }
                     },
                     audio: false
-                });
+                };
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
                 video.srcObject = stream;
                 await video.play();
 
-                // Set canvas size
                 const track = stream.getVideoTracks()[0];
                 const settings = track.getSettings();
                 const vw = settings.width || 640;
@@ -606,18 +835,17 @@
                 canvas.width = vw;
                 canvas.height = vh;
                 resolutionDisplay.textContent = `${vw}×${vh}`;
+                cameraFacing.textContent = facingMode === 'environment' ? 'Belakang' : 'Depan';
 
                 isRunning = true;
                 lastFrame = null;
-                addLog('Kamera diaktifkan', 'info');
+                addLog('Kamera aktif (' + (facingMode === 'environment' ? 'Belakang' : 'Depan') + ')', 'info');
                 btnStart.disabled = true;
                 btnStop.disabled = false;
 
-                // Mulai loop
                 if (animationId) cancelAnimationFrame(animationId);
-                processFrame();
+                processFrame(performance.now());
 
-                // Mulai update sensor suhu simulasi
                 if (!window._tempInterval) {
                     window._tempInterval = setInterval(updateSensor, TEMP_UPDATE_INTERVAL);
                 }
@@ -645,31 +873,50 @@
             statusDot.className = 'dot red';
             statusText.textContent = 'Offline';
             addLog('Kamera dimatikan', 'info');
-            // Clear overlay
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             motionCount.textContent = '0';
             motionDetectStatus.textContent = '--';
             updateGraph(0);
         }
 
+        function switchCamera() {
+            if (isRunning) {
+                stopCamera();
+                setTimeout(() => {
+                    facingMode = facingMode === 'environment' ? 'user' : 'environment';
+                    startCamera();
+                }, 300);
+            } else {
+                facingMode = facingMode === 'environment' ? 'user' : 'environment';
+                cameraFacing.textContent = facingMode === 'environment' ? 'Belakang' : 'Depan';
+                addLog('Mode kamera: ' + (facingMode === 'environment' ? 'Belakang' : 'Depan'), 'info');
+            }
+        }
+
+        function applyZoom() {
+            const zoom = parseFloat(zoomSlider.value);
+            currentZoom = zoom;
+            zoomDisplay.textContent = zoom.toFixed(1) + 'x';
+            if (video) {
+                video.style.transform = `scale(${zoom})`;
+                video.style.transformOrigin = 'center center';
+            }
+        }
+
         // ─── SENSOR SIMULASI ──────────────────────────────────────
         function updateSensor() {
-            // Simulasi suhu (naik turun sedikit)
-            tempValue += (Math.random() - 0.5) * 0.3;
-            tempValue = Math.min(35, Math.max(18, tempValue));
+            tempValue += (Math.random() - 0.5) * 0.4;
+            tempValue = Math.min(38, Math.max(18, tempValue));
             tempDisplay.textContent = tempValue.toFixed(1) + ' °C';
 
-            // Kelembaban
             humidityValue += (Math.random() - 0.5) * 0.8;
-            humidityValue = Math.min(85, Math.max(30, humidityValue));
+            humidityValue = Math.min(85, Math.max(25, humidityValue));
             humidityDisplay.textContent = Math.round(humidityValue) + ' %';
 
-            // Battery (simulasi)
-            const bat = Math.max(10, Math.min(100, 100 - Math.random() * 0.5));
+            const bat = Math.max(8, Math.min(100, 100 - Math.random() * 0.3));
             batteryDisplay.textContent = Math.round(bat) + '%';
 
-            // Log perubahan suhu signifikan
-            if (Math.random() < 0.1) {
+            if (Math.random() < 0.06) {
                 addLog(`Suhu: ${tempValue.toFixed(1)}°C, Kelembaban: ${Math.round(humidityValue)}%`, 'temp');
             }
         }
@@ -684,11 +931,8 @@
             tempCanvas.width = canvas.width;
             tempCanvas.height = canvas.height;
             const tctx = tempCanvas.getContext('2d');
-            // Gambar video
             tctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
-            // Gambar overlay jika aktif
             if (showOverlay) {
-                // Gambar overlay dari canvas utama (yang punya deteksi)
                 tctx.drawImage(canvas, 0, 0);
             }
             const link = document.createElement('a');
@@ -698,11 +942,45 @@
             addLog('Screenshot diambil', 'info');
         }
 
-        // ─── TOGGLE OVERLAY ──────────────────────────────────────
-        function toggleOverlay() {
-            showOverlay = !showOverlay;
-            btnToggleOverlay.textContent = showOverlay ? 'Overlay' : 'Overlay (Mati)';
-            addLog(`Overlay ${showOverlay ? 'diaktifkan' : 'dinonaktifkan'}`, 'info');
+        // ─── EXPORT LOG ────────────────────────────────────────────
+        function exportLog() {
+            if (logEntries.length === 0) {
+                alert('Tidak ada data log untuk diekspor');
+                return;
+            }
+            let csv = 'Waktu,Pesan,Tipe\n';
+            logEntries.forEach(e => {
+                csv += `"${e.time}","${e.msg}","${e.type}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.download = `sensor_log_${new Date().toISOString().slice(0,10)}.csv`;
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            addLog('Log diekspor', 'info');
+        }
+
+        // ─── RESET DATA ────────────────────────────────────────────
+        function resetData() {
+            if (confirm('Reset semua data log dan grafik?')) {
+                logEntries = [];
+                logContainer.innerHTML = `<div class="log-item"><span class="time">--:--:--</span><span class="msg">Data direset</span></div>`;
+                motionHistory = new Array(GRAPH_POINTS).fill(0);
+                updateGraph(0);
+                motionPeak.textContent = '0';
+                motionCount.textContent = '0';
+                addLog('Semua data direset', 'info');
+            }
+        }
+
+        // ─── FULLSCREEN ────────────────────────────────────────────
+        function toggleFullscreen() {
+            const el = document.querySelector('.camera-wrapper');
+            if (!document.fullscreenElement) {
+                el.requestFullscreen().catch(err => {});
+            } else {
+                document.exitFullscreen();
+            }
         }
 
         // ─── JAM ──────────────────────────────────────────────────
@@ -713,20 +991,44 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // ─── INIT ──────────────────────────────────────────────────
+        // ─── EVENT LISTENERS ──────────────────────────────────────
         btnStart.addEventListener('click', startCamera);
         btnStop.addEventListener('click', stopCamera);
+        btnSwitch.addEventListener('click', switchCamera);
         btnSnapshot.addEventListener('click', takeSnapshot);
-        btnToggleOverlay.addEventListener('click', toggleOverlay);
+        btnToggleOverlay.addEventListener('click', () => {
+            showOverlay = !showOverlay;
+            btnToggleOverlay.textContent = showOverlay ? 'Overlay' : 'Overlay (Mati)';
+            addLog(`Overlay ${showOverlay ? 'diaktifkan' : 'dinonaktifkan'}`, 'info');
+        });
+        btnFullscreen.addEventListener('click', toggleFullscreen);
+        btnExportLog.addEventListener('click', exportLog);
+        btnClearLog.addEventListener('click', () => {
+            logEntries = [];
+            logContainer.innerHTML = `<div class="log-item"><span class="time">--:--:--</span><span class="msg">Log dibersihkan</span></div>`;
+            addLog('Log dibersihkan', 'info');
+        });
+        btnResetData.addEventListener('click', resetData);
 
-        // Tambahkan log awal
-        addLog('Sistem siap. Klik Mulai untuk mengaktifkan kamera.', 'info');
+        zoomSlider.addEventListener('input', applyZoom);
+        applyZoom();
 
-        // Mulai update sensor
+        thresholdSlider.addEventListener('input', () => {
+            THRESHOLD = parseInt(thresholdSlider.value);
+            thresholdVal.textContent = THRESHOLD;
+            thresholdDisplay.textContent = THRESHOLD;
+            addLog(`Sensitivitas diubah ke ${THRESHOLD}`, 'info');
+        });
+
+        // ─── INIT ──────────────────────────────────────────────────
+        addLog('Sistem siap. Klik Mulai untuk kamera.', 'info');
+
+        // Mulai sensor update
         setInterval(updateSensor, 3000);
         updateSensor();
 
-        console.log('🚀 SensorVision siap digunakan.');
+        console.log('🚀 SensorVision Pro siap digunakan!');
+        console.log('📷 Fitur: Putar kamera, Zoom, Sensitivitas, Export Log, Reset Data');
     </script>
 </body>
-</html>
+    </html>
