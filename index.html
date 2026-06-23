@@ -1,687 +1,301 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CCTV AI HD</title>
-    <!-- TensorFlow & COCO-SSD -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>✨ Chat Kuy</title>
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            background: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            color: #e6edf3;
-            overflow: hidden;
-        }
-        .container {
-            width: 100vw;
-            height: 100vh;
-            max-width: 100%;
-            background: #0b0e14;
-            display: flex;
-            flex-direction: column;
-            padding: 12px 16px 16px 16px;
-        }
-        /* HEADER MINIMALIS */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 10px;
-            flex-shrink: 0;
-        }
-        .header h1 {
-            font-size: 18px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-        }
-        .header h1 span {
-            color: #00d4ff;
-        }
-        .header h1 small {
-            font-size: 11px;
-            font-weight: 400;
-            color: #8b949e;
-            margin-left: 6px;
-        }
-        .status-pill {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #212830;
-            padding: 4px 14px 4px 10px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 500;
-        }
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #3fb950;
-            transition: 0.2s;
-        }
-        .dot.warning { background: #d29922; }
-        .dot.danger { background: #f85149; }
-        .dot.inactive { background: #484f58; }
-
-        /* VIDEO WRAPPER FULL FLEX */
-        .video-wrapper {
-            position: relative;
-            flex: 1;
-            min-height: 0;
-            border-radius: 16px;
-            overflow: hidden;
-            background: #010409;
-            border: 1px solid #30363d;
-        }
-        #displayCanvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-            background: #000;
-            object-fit: contain; /* Menjaga aspek rasio */
-        }
-        /* HUD OVERLAY */
-        .hud {
-            position: absolute;
-            bottom: 16px;
-            left: 16px;
-            right: 16px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            font-weight: 500;
-            color: #8b949e;
-            background: rgba(11, 14, 20, 0.7);
-            backdrop-filter: blur(6px);
-            padding: 8px 16px;
-            border-radius: 12px;
-            border: 1px solid #30363d55;
-            pointer-events: none;
-        }
-        .hud-left, .hud-right { display: flex; gap: 18px; }
-        .hud .val { color: #f0f6fc; }
-        .hud .val.hd { color: #00d4ff; font-weight: 700; }
-
-        /* INFO GRID KOMPAK */
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-top: 10px;
-            flex-shrink: 0;
-        }
-        .info-card {
-            background: #0d1117;
-            border-radius: 12px;
-            padding: 8px 4px;
-            text-align: center;
-            border: 1px solid #212830;
-        }
-        .info-card .label {
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            color: #8b949e;
-        }
-        .info-card .value {
-            font-size: 14px;
-            font-weight: 600;
-            margin-top: 2px;
-            font-variant-numeric: tabular-nums;
-            color: #f0f6fc;
-        }
-        .info-card .value.alert { color: #f0883e; }
-        .info-card .value.danger { color: #f85149; }
-        .info-card .value.success { color: #3fb950; }
-
-        /* LOG & BUTTONS ROW */
-        .bottom-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-shrink: 0;
-        }
-        .log-box {
-            flex: 2;
-            background: #0d1117;
-            border-radius: 12px;
-            padding: 8px 12px;
-            max-height: 48px;
-            overflow-y: auto;
-            font-size: 11px;
-            font-family: 'SF Mono', 'Courier New', monospace;
-            color: #8b949e;
-            border: 1px solid #212830;
-            line-height: 1.6;
-            white-space: nowrap;
-        }
-        .log-box::-webkit-scrollbar { width: 3px; }
-        .log-box::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
-        .log-alert { color: #f0883e; }
-        .log-danger { color: #f85149; }
-
-        .btn-group {
-            display: flex;
-            gap: 8px;
-            flex: 1;
-        }
-        .btn {
-            flex: 1;
-            padding: 8px 0;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            background: #212830;
-            color: #c9d1d9;
-            border: 1px solid #30363d;
-        }
-        .btn:active { transform: scale(0.96); }
-        .btn-primary { background: #1f6feb; border-color: #1f6feb; color: #fff; }
-        .btn-primary:hover { background: #388bfd; }
-        .btn-success { background: #238636; border-color: #238636; color: #fff; }
-        .btn-success:hover { background: #2ea043; }
-        .btn-outline { background: transparent; border-color: #30363d; }
-        .btn-outline:hover { background: #212830; }
+        /* (Sama seperti sebelumnya, tidak saya ubah) */
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins','Segoe UI',sans-serif; }
+        body { background: linear-gradient(145deg,#0b0f1c,#1a1f33); min-height:100vh; display:flex; justify-content:center; align-items:center; padding:16px; }
+        .app-container { width:100%; max-width:450px; height:90vh; max-height:800px; background:rgba(255,255,255,0.07); backdrop-filter:blur(24px) saturate(180%); border-radius:40px; border:1px solid rgba(255,255,255,0.15); box-shadow:0 30px 60px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.05); display:flex; flex-direction:column; overflow:hidden; }
+        .header { padding:20px 24px 12px; background:rgba(0,0,0,0.2); border-bottom:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+        .header h1 { font-size:20px; font-weight:600; color:#fff; display:flex; align-items:center; gap:10px; }
+        .header h1 i { color:#6c5ce7; font-size:24px; filter:drop-shadow(0 0 10px rgba(108,92,231,0.4)); }
+        .user-badge { background:rgba(108,92,231,0.25); padding:6px 14px; border-radius:30px; font-size:13px; color:#c8bfff; border:1px solid rgba(108,92,231,0.2); display:flex; align-items:center; gap:8px; }
+        .user-badge i { color:#a29bfe; }
+        .login-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:30px 24px; text-align:center; }
+        .login-screen .logo-icon { font-size:72px; color:#6c5ce7; margin-bottom:20px; animation:float 3s ease-in-out infinite; }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+        .login-screen h2 { color:#fff; font-weight:500; font-size:26px; margin-bottom:8px; }
+        .login-screen p { color:rgba(255,255,255,0.5); font-size:14px; margin-bottom:30px; }
+        .login-input-group { width:100%; display:flex; flex-direction:column; gap:16px; }
+        .login-input-group input { padding:16px 20px; border-radius:60px; border:none; background:rgba(255,255,255,0.08); color:#fff; font-size:16px; outline:1px solid rgba(255,255,255,0.1); transition:all .3s; }
+        .login-input-group input::placeholder { color:rgba(255,255,255,0.3); }
+        .login-input-group input:focus { outline:1px solid #6c5ce7; background:rgba(108,92,231,0.12); box-shadow:0 0 20px rgba(108,92,231,0.15); }
+        .login-btn { padding:16px; border-radius:60px; border:none; background:linear-gradient(135deg,#6c5ce7,#a29bfe); color:#fff; font-weight:600; font-size:18px; cursor:pointer; transition:all .3s; box-shadow:0 8px 24px rgba(108,92,231,0.3); display:flex; align-items:center; justify-content:center; gap:10px; }
+        .login-btn:hover { transform:scale(1.02); box-shadow:0 12px 32px rgba(108,92,231,0.5); }
+        .login-btn:active { transform:scale(0.97); }
+        .chat-area { display:none; flex:1; flex-direction:column; overflow:hidden; }
+        .online-bar { padding:10px 20px; background:rgba(0,0,0,0.15); border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:12px; flex-shrink:0; overflow-x:auto; scrollbar-width:none; }
+        .online-bar::-webkit-scrollbar { display:none; }
+        .online-bar .label { color:rgba(255,255,255,0.4); font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:1px; white-space:nowrap; }
+        .user-chip { background:rgba(255,255,255,0.07); padding:6px 16px; border-radius:30px; color:#ddd; font-size:14px; white-space:nowrap; border:1px solid rgba(255,255,255,0.06); transition:all .2s; cursor:pointer; backdrop-filter:blur(4px); display:flex; align-items:center; gap:8px; }
+        .user-chip i { color:#6c5ce7; font-size:12px; }
+        .user-chip.active { background:rgba(108,92,231,0.25); border-color:#6c5ce7; color:#fff; box-shadow:0 0 20px rgba(108,92,231,0.15); }
+        .user-chip .online-dot { display:inline-block; width:8px; height:8px; background:#00d2d3; border-radius:50%; animation:pulse-dot 1.8s infinite; }
+        @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+        .messages-container { flex:1; overflow-y:auto; padding:16px 20px; display:flex; flex-direction:column; gap:12px; scroll-behavior:smooth; }
+        .messages-container::-webkit-scrollbar { width:4px; }
+        .messages-container::-webkit-scrollbar-thumb { background:rgba(108,92,231,0.3); border-radius:10px; }
+        .message { max-width:80%; padding:14px 18px; border-radius:24px; font-size:15px; line-height:1.5; word-wrap:break-word; animation:slideUp .3s ease-out; box-shadow:0 4px 12px rgba(0,0,0,0.1); backdrop-filter:blur(4px); }
+        @keyframes slideUp { 0%{opacity:0;transform:translateY(16px) scale(0.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }
+        .message.sent { align-self:flex-end; background:linear-gradient(135deg,#6c5ce7,#a29bfe); color:#fff; border-bottom-right-radius:4px; }
+        .message.received { align-self:flex-start; background:rgba(255,255,255,0.08); color:#f0f0f0; border-bottom-left-radius:4px; border:1px solid rgba(255,255,255,0.05); }
+        .message .sender { font-size:12px; font-weight:600; opacity:0.7; margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+        .message .time { font-size:10px; opacity:0.5; margin-top:6px; text-align:right; }
+        .input-area { padding:12px 20px 20px; background:rgba(0,0,0,0.15); border-top:1px solid rgba(255,255,255,0.05); display:flex; gap:12px; align-items:center; flex-shrink:0; }
+        .input-area input { flex:1; padding:14px 20px; border-radius:60px; border:none; background:rgba(255,255,255,0.07); color:#fff; font-size:15px; outline:1px solid rgba(255,255,255,0.06); transition:all .3s; backdrop-filter:blur(4px); }
+        .input-area input::placeholder { color:rgba(255,255,255,0.25); }
+        .input-area input:focus { outline:1px solid #6c5ce7; background:rgba(108,92,231,0.08); }
+        .input-area input:disabled { opacity:0.4; cursor:not-allowed; }
+        .send-btn { width:54px; height:54px; border-radius:60px; border:none; background:linear-gradient(135deg,#6c5ce7,#a29bfe); color:#fff; font-size:22px; cursor:pointer; transition:all .3s; box-shadow:0 6px 20px rgba(108,92,231,0.25); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .send-btn:hover { transform:scale(1.06); box-shadow:0 8px 28px rgba(108,92,231,0.4); }
+        .send-btn:active { transform:scale(0.92); }
+        .send-btn:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
+        .empty-state { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:rgba(255,255,255,0.2); text-align:center; padding:20px; }
+        .empty-state i { font-size:56px; margin-bottom:16px; color:rgba(108,92,231,0.3); }
+        .empty-state p { font-size:14px; }
+        .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:rgba(255,0,0,0.8); color:#fff; padding:10px 24px; border-radius:60px; font-size:14px; backdrop-filter:blur(8px); box-shadow:0 8px 30px rgba(0,0,0,0.5); z-index:999; animation:slideUp .3s; display:none; }
+        @media (max-width:480px) { .app-container { height:100vh; max-height:none; border-radius:0; box-shadow:none; } .header h1 { font-size:17px; } .user-badge { font-size:11px; padding:4px 12px; } }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- HEADER -->
+<div class="app-container">
     <div class="header">
-        <h1>📹 <span>CCTV</span> AI <small>FULL HD</small></h1>
-        <div class="status-pill">
-            <span class="dot" id="statusDot"></span>
-            <span id="statusLabel">SIAGA</span>
+        <h1><i class="fas fa-comment-dots"></i> ChatKuy</h1>
+        <div class="user-badge"><i class="fas fa-user-circle"></i> <span id="usernameDisplay">Guest</span></div>
+    </div>
+
+    <div class="login-screen" id="loginScreen">
+        <div class="logo-icon"><i class="fas fa-rocket"></i></div>
+        <h2>Masuk ke Ruang Chat</h2>
+        <p>Pilih nama pengguna untuk memulai</p>
+        <div class="login-input-group">
+            <input type="text" id="usernameInput" placeholder="Nama kamu..." maxlength="16" autofocus />
+            <button class="login-btn" id="loginBtn"><i class="fas fa-arrow-right"></i> Mulai Chat</button>
         </div>
     </div>
 
-    <!-- VIDEO -->
-    <div class="video-wrapper">
-        <canvas id="displayCanvas"></canvas>
-        <video id="sourceVideo" autoplay playsinline style="display:none;"></video>
-        <div class="hud">
-            <div class="hud-left">
-                <span>👤 <span class="val" id="humanCount">0</span></span>
-                <span>⚡ <span class="val" id="fpsDisplay">0</span> FPS</span>
-                <span>📹 <span class="val hd" id="resDisplay">--x--</span></span>
+    <div class="chat-area" id="chatArea">
+        <div class="online-bar" id="onlineBar">
+            <span class="label"><i class="fas fa-circle" style="color:#00d2d3;font-size:8px;"></i> Online</span>
+        </div>
+        <div class="messages-container" id="messagesContainer">
+            <div class="empty-state" id="emptyState">
+                <i class="fas fa-comment-smile"></i>
+                <p>Pilih user di atas untuk mulai chat</p>
             </div>
-            <div class="hud-right">
-                <span>⏱ <span class="val" id="recTimeDisplay">IDLE</span></span>
-            </div>
         </div>
-    </div>
-
-    <!-- INFO GRID -->
-    <div class="info-grid">
-        <div class="info-card">
-            <div class="label">Inferensi AI</div>
-            <div class="value" id="inferDisplay">0 ms</div>
-        </div>
-        <div class="info-card">
-            <div class="label">Konfidensi</div>
-            <div class="value" id="confDisplay">0%</div>
-        </div>
-        <div class="info-card">
-            <div class="label">Status Rekam</div>
-            <div class="value" id="recStatusDisplay">■ Berhenti</div>
-        </div>
-        <div class="info-card">
-            <div class="label">Deteksi</div>
-            <div class="value success" id="detectStatus">Aman</div>
-        </div>
-    </div>
-
-    <!-- BOTTOM ROW: LOG + BUTTONS -->
-    <div class="bottom-row">
-        <div class="log-box" id="logArea">
-            > Sistem siap. Tekan "Mulai".
-        </div>
-        <div class="btn-group">
-            <button class="btn btn-primary" id="btnStart">▶ Mulai</button>
-            <button class="btn btn-success" id="btnDownload">⬇</button>
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="Pilih user terlebih dahulu..." disabled />
+            <button class="send-btn" id="sendBtn" disabled><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 </div>
 
+<!-- Toast notifikasi -->
+<div class="toast" id="toast"></div>
+
 <script>
-    (function() {
-        // --- DOM ---
-        const video = document.getElementById('sourceVideo');
-        const canvas = document.getElementById('displayCanvas');
-        const ctx = canvas.getContext('2d');
-        const logArea = document.getElementById('logArea');
-        const statusDot = document.getElementById('statusDot');
-        const statusLabel = document.getElementById('statusLabel');
-        const humanCount = document.getElementById('humanCount');
-        const fpsDisplay = document.getElementById('fpsDisplay');
-        const resDisplay = document.getElementById('resDisplay');
-        const inferDisplay = document.getElementById('inferDisplay');
-        const confDisplay = document.getElementById('confDisplay');
-        const recTimeDisplay = document.getElementById('recTimeDisplay');
-        const recStatusDisplay = document.getElementById('recStatusDisplay');
-        const detectStatus = document.getElementById('detectStatus');
-        const btnStart = document.getElementById('btnStart');
-        const btnDownload = document.getElementById('btnDownload');
+// ============================================================
+// KONFIGURASI
+// ============================================================
+const SOCKET_SERVER = 'http://192.168.1.10:3000'; // ⚠️ GANTI DENGAN IP SERVER ANDA!
 
-        // --- STATE ---
-        let isRunning = false;
-        let model = null;
-        let stream = null;
-        let mediaRecorder = null;
-        let recordedChunks = [];
-        let isRecording = false;
-        let animFrameId = null;
-        let detectionTimerId = null;
+// ============================================================
+// ELEMEN DOM
+// ============================================================
+const loginScreen = document.getElementById('loginScreen');
+const chatArea = document.getElementById('chatArea');
+const usernameInput = document.getElementById('usernameInput');
+const loginBtn = document.getElementById('loginBtn');
+const usernameDisplay = document.getElementById('usernameDisplay');
+const onlineBar = document.getElementById('onlineBar');
+const messagesContainer = document.getElementById('messagesContainer');
+const emptyState = document.getElementById('emptyState');
+const messageInput = document.getElementById('messageInput');
+const sendBtn = document.getElementById('sendBtn');
+const toast = document.getElementById('toast');
 
-        // Statistik
-        let frameCount = 0;
-        let fps = 0;
-        let lastFpsUpdate = performance.now();
-        let humanDetected = false;
-        let humanCounter = 0;
-        const MIN_CONSECUTIVE = 2;
+let currentUser = '';
+let selectedUser = null;
+let onlineUsers = [];
 
-        // Smoothing bounding box
-        let smoothBoxes = [];
-        const SMOOTH_FACTOR = 0.6;
+// ============================================================
+// SOCKET.IO
+// ============================================================
+const socket = io(SOCKET_SERVER, { transports: ['websocket', 'polling'] });
 
-        // --- SUARA "MANUSIA TERDETEKSI" (Speech Synthesis) ---
-        let lastSpeakTime = 0;
-        function speakHumanDetected() {
-            const now = Date.now();
-            if (now - lastSpeakTime < 3000) return; // Jangan spam suara
-            lastSpeakTime = now;
-            if ('speechSynthesis' in window) {
-                // Hentikan suara sebelumnya agar tidak numpuk
-                window.speechSynthesis.cancel();
-                const msg = new SpeechSynthesisUtterance('Manusia terdeteksi');
-                msg.lang = 'id-ID';
-                msg.rate = 0.9;
-                msg.pitch = 1.1;
-                msg.volume = 0.8;
-                // Cari suara bahasa Indonesia jika ada
-                const voices = window.speechSynthesis.getVoices();
-                const idVoice = voices.find(v => v.lang.startsWith('id'));
-                if (idVoice) msg.voice = idVoice;
-                window.speechSynthesis.speak(msg);
-            }
+socket.on('connect', () => console.log('✅ Terhubung ke server'));
+socket.on('disconnect', () => console.log('❌ Terputus'));
+
+// ============================================================
+// FUNGSI UI
+// ============================================================
+function showToast(msg, isError = true) {
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    toast.style.background = isError ? 'rgba(255,0,0,0.8)' : 'rgba(0,200,100,0.8)';
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => { toast.style.display = 'none'; }, 3000);
+}
+
+function renderOnlineUsers(users) {
+    // simpan daftar online
+    onlineUsers = users.filter(u => u !== currentUser);
+
+    // Hapus semua chip kecuali label
+    const label = onlineBar.querySelector('.label');
+    onlineBar.innerHTML = '';
+    onlineBar.appendChild(label);
+
+    if (onlineUsers.length === 0) {
+        const chip = document.createElement('span');
+        chip.className = 'user-chip';
+        chip.textContent = 'Tidak ada pengguna lain';
+        chip.style.opacity = '0.5';
+        chip.style.cursor = 'default';
+        onlineBar.appendChild(chip);
+        // Jika tidak ada user, disable input
+        if (selectedUser) {
+            selectedUser = null;
+            messageInput.disabled = true;
+            sendBtn.disabled = true;
+            messageInput.placeholder = 'Tidak ada user online';
         }
+        return;
+    }
 
-        // --- RESIZE CANVAS ke resolusi video asli ---
-        function resizeCanvasToVideo() {
-            if (video.videoWidth > 0 && video.videoHeight > 0) {
-                const vw = video.videoWidth;
-                const vh = video.videoHeight;
-                if (canvas.width !== vw || canvas.height !== vh) {
-                    canvas.width = vw;
-                    canvas.height = vh;
-                }
-                resDisplay.textContent = `${vw}x${vh}`;
-            }
-        }
-
-        // --- LOG ---
-        function addLog(msg, type = '') {
-            const time = new Date().toLocaleTimeString('id-ID');
-            let cls = '';
-            if (type === 'alert') cls = 'log-alert';
-            else if (type === 'danger') cls = 'log-danger';
-            logArea.innerHTML += `<div class="${cls}">> [${time}] ${msg}</div>`;
-            logArea.scrollTop = logArea.scrollHeight;
-            while (logArea.children.length > 20) logArea.removeChild(logArea.firstChild);
-        }
-
-        // --- DRAW LOOP (60 FPS) - Kualitas HD ---
-        function drawLoop(timestamp) {
-            if (!isRunning) {
-                animFrameId = requestAnimationFrame(drawLoop);
-                return;
-            }
-
-            // FPS counter
-            frameCount++;
-            if (timestamp - lastFpsUpdate >= 1000) {
-                fps = frameCount;
-                frameCount = 0;
-                lastFpsUpdate = timestamp;
-                fpsDisplay.textContent = fps;
-            }
-
-            // Gambar dengan resolusi asli video
-            if (video.readyState >= 2) {
-                // Pastikan canvas sesuai resolusi video
-                if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
-                    resizeCanvasToVideo();
-                }
-
-                const w = canvas.width, h = canvas.height;
-                // Efek CCTV: blur halus 1.5px + hitam putih + kontras
-                ctx.filter = 'blur(1.5px) grayscale(100%) contrast(1.15)';
-                ctx.drawImage(video, 0, 0, w, h);
-                ctx.filter = 'none';
-
-                // Gambar bounding box HIJAU dengan smoothing
-                if (humanDetected && smoothBoxes.length > 0) {
-                    const box = smoothBoxes[0];
-                    const [x, y, bw, bh] = box;
-                    
-                    // Glow hijau tipis
-                    ctx.shadowColor = '#00ff88';
-                    ctx.shadowBlur = 12;
-                    ctx.strokeStyle = '#00ff88';
-                    ctx.lineWidth = 3;
-                    ctx.strokeRect(x, y, bw, bh);
-                    ctx.shadowBlur = 0;
-                    
-                    // Fill transparan hijau
-                    ctx.fillStyle = 'rgba(0, 255, 136, 0.18)';
-                    ctx.fillRect(x, y, bw, bh);
-                    
-                    // Label "MANUSIA" hijau
-                    ctx.font = 'bold 16px -apple-system, sans-serif';
-                    ctx.fillStyle = '#00ff88';
-                    ctx.shadowColor = '#000';
-                    ctx.shadowBlur = 8;
-                    ctx.fillText('● MANUSIA', x, y - 10);
-                    ctx.shadowBlur = 0;
-                }
-
-                // Update status deteksi di info grid
-                if (humanDetected) {
-                    detectStatus.textContent = '⚠️ Manusia';
-                    detectStatus.className = 'value danger';
-                } else {
-                    detectStatus.textContent = '✅ Aman';
-                    detectStatus.className = 'value success';
-                }
-            }
-
-            animFrameId = requestAnimationFrame(drawLoop);
-        }
-
-        // --- DETEKSI AI (dipanggil per 250ms) ---
-        async function runDetection() {
-            if (!isRunning || !model || video.readyState < 2) {
-                detectionTimerId = setTimeout(runDetection, 250);
-                return;
-            }
-
-            const startTime = performance.now();
-            try {
-                const predictions = await model.detect(video);
-                const inferenceTime = (performance.now() - startTime).toFixed(0);
-                inferDisplay.textContent = inferenceTime + ' ms';
-
-                // Filter manusia
-                const humans = predictions.filter(p => p.class === 'person' && p.score > 0.4);
-                humanCount.textContent = humans.length;
-
-                let maxConf = 0;
-                if (humans.length > 0) {
-                    maxConf = Math.max(...humans.map(h => h.score));
-                    confDisplay.textContent = (maxConf * 100).toFixed(0) + '%';
-                } else {
-                    confDisplay.textContent = '0%';
-                }
-
-                // --- SMOOTHING BOUNDING BOX HIJAU ---
-                if (humans.length > 0) {
-                    const best = humans.reduce((a, b) => a.score > b.score ? a : b);
-                    const [x, y, w, h] = best.bbox;
-                    if (smoothBoxes.length === 0) {
-                        smoothBoxes = [[x, y, w, h]];
-                    } else {
-                        const prev = smoothBoxes[0];
-                        const sx = prev[0] + (x - prev[0]) * SMOOTH_FACTOR;
-                        const sy = prev[1] + (y - prev[1]) * SMOOTH_FACTOR;
-                        const sw = prev[2] + (w - prev[2]) * SMOOTH_FACTOR;
-                        const sh = prev[3] + (h - prev[3]) * SMOOTH_FACTOR;
-                        smoothBoxes = [[sx, sy, sw, sh]];
-                    }
-                } else {
-                    if (smoothBoxes.length > 0) {
-                        const prev = smoothBoxes[0];
-                        const sx = prev[0] + (0 - prev[0]) * 0.15;
-                        const sy = prev[1] + (0 - prev[1]) * 0.15;
-                        const sw = prev[2] * 0.85;
-                        const sh = prev[3] * 0.85;
-                        if (sw < 2 || sh < 2) {
-                            smoothBoxes = [];
-                        } else {
-                            smoothBoxes = [[sx, sy, sw, sh]];
-                        }
-                    }
-                }
-
-                // Logika deteksi konsisten
-                if (humans.length > 0) {
-                    humanCounter++;
-                } else {
-                    humanCounter = 0;
-                }
-
-                const confirmed = humanCounter >= MIN_CONSECUTIVE;
-
-                if (confirmed && !humanDetected) {
-                    humanDetected = true;
-                    statusDot.className = 'dot danger';
-                    statusLabel.textContent = 'TERDETEKSI';
-                    // Panggil suara "Manusia Terdeteksi"
-                    speakHumanDetected();
-                    addLog('🚨 Manusia terdeteksi! Suara diputar.', 'danger');
-                    startRecording();
-                } else if (!confirmed && humanDetected) {
-                    humanDetected = false;
-                    statusDot.className = 'dot';
-                    statusLabel.textContent = 'SIAGA';
-                    addLog('✅ Manusia pergi.', 'alert');
-                    stopRecording();
-                    smoothBoxes = [];
-                } else if (confirmed) {
-                    statusDot.className = 'dot danger';
-                    statusLabel.textContent = 'TERDETEKSI';
-                }
-
-            } catch (err) {
-                // ignore
-            }
-
-            detectionTimerId = setTimeout(runDetection, 250);
-        }
-
-        // --- REKAM (HD) ---
-        function startRecording() {
-            if (isRecording || !isRunning) return;
-            try {
-                // Capture dari canvas resolusi HD
-                const canvasStream = canvas.captureStream(30);
-                mediaRecorder = new MediaRecorder(canvasStream, {
-                    mimeType: 'video/webm;codecs=vp9,opus',
-                    bitsPerSecond: 2500000 // 2.5 Mbps untuk HD
-                });
-                recordedChunks = [];
-                mediaRecorder.ondataavailable = (e) => {
-                    if (e.data.size > 0) recordedChunks.push(e.data);
-                };
-                mediaRecorder.onstop = () => {
-                    if (recordedChunks.length > 0) {
-                        const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                        const url = URL.createObjectURL(blob);
-                        window._recordingBlob = { url, blob, time: new Date().toISOString() };
-                        addLog(`✅ Rekaman selesai (${(blob.size/1024/1024).toFixed(1)} MB)`, 'alert');
-                    }
-                    isRecording = false;
-                    recTimeDisplay.textContent = 'IDLE';
-                    recStatusDisplay.textContent = '■ Berhenti';
-                    recStatusDisplay.className = 'value';
-                };
-
-                mediaRecorder.start(1000);
-                isRecording = true;
-                recTimeDisplay.textContent = '● REKAM';
-                recStatusDisplay.textContent = '● Merekam';
-                recStatusDisplay.className = 'value danger';
-                addLog('🔴 Merekam...', 'alert');
-            } catch (e) {
-                addLog('❌ Gagal rekam: ' + e.message, 'danger');
-            }
-        }
-
-        function stopRecording() {
-            if (mediaRecorder && mediaRecorder.state === 'recording') {
-                try { mediaRecorder.stop(); } catch(e) {}
-            }
-            if (isRecording) {
-                isRecording = false;
-                recTimeDisplay.textContent = 'IDLE';
-                recStatusDisplay.textContent = '■ Berhenti';
-                recStatusDisplay.className = 'value';
-            }
-        }
-
-        // --- START / STOP CCTV ---
-        async function toggleCCTV() {
-            if (isRunning) {
-                // STOP
-                isRunning = false;
-                if (detectionTimerId) clearTimeout(detectionTimerId);
-                if (animFrameId) cancelAnimationFrame(animFrameId);
-                if (isRecording) stopRecording();
-                if (video.srcObject) {
-                    video.srcObject.getTracks().forEach(t => t.stop());
-                    video.srcObject = null;
-                }
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                statusDot.className = 'dot inactive';
-                statusLabel.textContent = 'STOP';
-                humanCount.textContent = '0';
-                confDisplay.textContent = '0%';
-                fpsDisplay.textContent = '0';
-                detectStatus.textContent = '⏹ Berhenti';
-                detectStatus.className = 'value';
-                btnStart.textContent = '▶ Mulai';
-                addLog('⏹ Sistem dihentikan.');
-                return;
-            }
-
-            // START
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
-                    audio: false
-                });
-                video.srcObject = stream;
-                await video.play();
-                
-                // Tunggu sampai video dapat dimensi
-                await new Promise(resolve => {
-                    if (video.videoWidth > 0) resolve();
-                    else video.onloadedmetadata = resolve;
-                });
-                
-                // Set canvas ke ukuran video
-                resizeCanvasToVideo();
-                
-                isRunning = true;
-                btnStart.textContent = '⏹ Berhenti';
-                statusDot.className = 'dot warning';
-                statusLabel.textContent = 'MEMUAT AI';
-                addLog('📷 Kamera aktif. Memuat model AI...');
-
-                if (!model) {
-                    model = await cocoSsd.load({ base: 'mobilenet_v2' });
-                    addLog('✅ Model AI siap (COCO-SSD).');
-                } else {
-                    addLog('✅ Model AI sudah siap.');
-                }
-
-                statusDot.className = 'dot';
-                statusLabel.textContent = 'SIAGA';
-                humanDetected = false;
-                humanCounter = 0;
-                smoothBoxes = [];
-
-                // Mulai loop
-                if (animFrameId) cancelAnimationFrame(animFrameId);
-                if (detectionTimerId) clearTimeout(detectionTimerId);
-                drawLoop(performance.now());
-                runDetection();
-
-            } catch (err) {
-                let msg = err.message;
-                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-                    msg = 'Izin kamera ditolak. Berikan izin di pengaturan browser.';
-                } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-                    msg = 'Tidak ada kamera yang terdeteksi.';
-                }
-                alert('Gagal akses kamera: ' + msg);
-                addLog('❌ Error: ' + msg, 'danger');
-                isRunning = false;
-                btnStart.textContent = '▶ Mulai';
-                statusLabel.textContent = 'ERROR';
-                statusDot.className = 'dot inactive';
-            }
-        }
-
-        // --- DOWNLOAD ---
-        function downloadRecording() {
-            if (window._recordingBlob && window._recordingBlob.blob.size > 0) {
-                const a = document.createElement('a');
-                a.href = window._recordingBlob.url;
-                a.download = `rekaman_cctv_hd_${new Date().toISOString().replace(/[:.]/g, '-')}.webm`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                addLog('⬇ Unduh rekaman HD dimulai.');
-            } else {
-                alert('Belum ada rekaman. Biarkan CCTV mendeteksi manusia terlebih dahulu.');
-            }
-        }
-
-        // --- VOICES LOAD (untuk speech) ---
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.getVoices(); // preload
-            window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
-        }
-
-        // --- EVENT LISTENERS ---
-        btnStart.addEventListener('click', toggleCCTV);
-        btnDownload.addEventListener('click', downloadRecording);
-
-        // --- INIT ---
-        addLog('🔧 CCTV HD siap. Tekan "Mulai".');
-        statusDot.className = 'dot inactive';
-        statusLabel.textContent = 'SIAGA';
-        recTimeDisplay.textContent = 'IDLE';
-        recStatusDisplay.textContent = '■ Berhenti';
-        detectStatus.textContent = '✅ Aman';
-        detectStatus.className = 'value success';
-
-        // Bersihkan resource saat halaman ditutup
-        window.addEventListener('beforeunload', function() {
-            if (isRecording) stopRecording();
-            if (stream) stream.getTracks().forEach(t => t.stop());
-            if (detectionTimerId) clearTimeout(detectionTimerId);
-            if (animFrameId) cancelAnimationFrame(animFrameId);
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    onlineUsers.forEach(user => {
+        const chip = document.createElement('span');
+        chip.className = 'user-chip';
+        chip.innerHTML = `<span class="online-dot"></span> ${user}`;
+        chip.dataset.username = user;
+        if (selectedUser === user) chip.classList.add('active');
+        chip.addEventListener('click', () => {
+            // Pilih user
+            selectedUser = user;
+            document.querySelectorAll('.user-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            messageInput.disabled = false;
+            sendBtn.disabled = false;
+            messageInput.placeholder = `Kirim ke ${user}...`;
+            messageInput.focus();
+            // Hilangkan empty state (jika ada)
+            if (emptyState.style.display !== 'none') emptyState.style.display = 'none';
         });
-    })();
+        onlineBar.appendChild(chip);
+    });
+
+    // Jika selectedUser tidak ada dalam daftar online, reset
+    if (selectedUser && !onlineUsers.includes(selectedUser)) {
+        selectedUser = null;
+        messageInput.disabled = true;
+        sendBtn.disabled = true;
+        messageInput.placeholder = 'User offline, pilih ulang';
+        showToast('User yang dipilih sedang offline', true);
+    }
+}
+
+function addMessage(from, text, timestamp) {
+    if (emptyState.style.display !== 'none') emptyState.style.display = 'none';
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `message ${from === currentUser ? 'sent' : 'received'}`;
+    const senderSpan = document.createElement('div');
+    senderSpan.className = 'sender';
+    senderSpan.innerHTML = `<i class="fas fa-user-circle"></i> ${from}`;
+    msgDiv.appendChild(senderSpan);
+    const textSpan = document.createElement('div');
+    textSpan.textContent = text;
+    msgDiv.appendChild(textSpan);
+    const timeSpan = document.createElement('div');
+    timeSpan.className = 'time';
+    const t = new Date(timestamp);
+    timeSpan.textContent = t.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+    msgDiv.appendChild(timeSpan);
+    messagesContainer.appendChild(msgDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// ============================================================
+// EVENT SOCKET
+// ============================================================
+socket.on('online-users', (users) => {
+    renderOnlineUsers(users);
+});
+
+socket.on('private-message', (data) => {
+    const { from, message, timestamp } = data;
+    if (from === 'You') return; // sudah ditampilkan saat kirim
+    addMessage(from, message, timestamp);
+});
+
+socket.on('error', (err) => {
+    showToast('❌ ' + err, true);
+    // Jika error karena user tidak online, reset selected
+    if (err.includes('not online')) {
+        selectedUser = null;
+        messageInput.disabled = true;
+        sendBtn.disabled = true;
+        messageInput.placeholder = 'Pilih user lain';
+        renderOnlineUsers(onlineUsers); // refresh daftar
+    }
+});
+
+// ============================================================
+// LOGIN
+// ============================================================
+function doLogin() {
+    const name = usernameInput.value.trim();
+    if (!name) { showToast('Masukkan nama!', true); return; }
+    currentUser = name;
+    usernameDisplay.textContent = name;
+    socket.emit('register', name);
+    loginScreen.style.display = 'none';
+    chatArea.style.display = 'flex';
+    messageInput.disabled = true;
+    sendBtn.disabled = true;
+    messageInput.placeholder = 'Pilih user terlebih dahulu...';
+    addMessage('Sistem', `Halo ${name}, selamat datang!`, new Date().toISOString());
+}
+
+loginBtn.addEventListener('click', doLogin);
+usernameInput.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+// ============================================================
+// KIRIM PESAN
+// ============================================================
+function sendMessage() {
+    const text = messageInput.value.trim();
+    if (!text || !selectedUser) {
+        if (!selectedUser) showToast('Pilih user tujuan dulu!', true);
+        return;
+    }
+    // Kirim
+    socket.emit('private-message', { to: selectedUser, message: text });
+    // Tampilkan di UI
+    addMessage(currentUser, text, new Date().toISOString());
+    messageInput.value = '';
+    messageInput.focus();
+}
+
+sendBtn.addEventListener('click', sendMessage);
+messageInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('load', () => usernameInput.focus());
+
+socket.on('connect_error', () => {
+    showToast('Gagal koneksi ke server!', true);
+});
+
+console.log('🚀 Aplikasi siap (revisi)');
 </script>
 </body>
-    </html>
+</html>
