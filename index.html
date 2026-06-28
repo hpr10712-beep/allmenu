@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>✨ Game 3D - Koleksi Bintang</title>
+    <title>🍜 Miecrah - Multiplayer 3D</title>
     <style>
-        /* Reset & styling dasar */
         * {
             margin: 0;
             padding: 0;
@@ -14,149 +13,158 @@
         body {
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #0a0a1a;
-            user-select: none;
+            background: #0f0f1f;
+            color: #fff;
         }
         canvas {
             display: block;
         }
 
-        /* HUD Skor & Info */
+        /* HUD */
         #hud {
             position: fixed;
-            top: 25px;
-            left: 30px;
-            color: #fff;
+            top: 20px;
+            left: 20px;
             z-index: 10;
             pointer-events: none;
             text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
         }
-        #hud .score-label {
-            font-size: 18px;
-            font-weight: 300;
-            letter-spacing: 2px;
-            opacity: 0.7;
-        }
-        #hud .score-value {
-            font-size: 56px;
-            font-weight: 700;
+        #hud .title {
+            font-size: 22px;
+            font-weight: 600;
             background: linear-gradient(135deg, #f9d976, #f39c12);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            line-height: 1;
+            letter-spacing: 2px;
         }
-        #hud .target {
-            font-size: 16px;
-            font-weight: 300;
-            margin-top: 4px;
-            opacity: 0.6;
-            letter-spacing: 1px;
-        }
-
-        /* Pesan Menang */
-        #win-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #fff;
-            z-index: 20;
-            text-align: center;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.8s ease;
-            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.9);
-        }
-        #win-message.show {
-            opacity: 1;
-        }
-        #win-message h1 {
-            font-size: 72px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #f9d976, #f39c12, #e74c3c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 8px;
-        }
-        #win-message p {
-            font-size: 22px;
-            font-weight: 300;
-            letter-spacing: 3px;
-            opacity: 0.8;
-        }
-        #win-message .sub {
-            font-size: 16px;
-            margin-top: 12px;
-            opacity: 0.5;
-        }
-
-        /* Tombol restart (muncul setelah menang) */
-        #restart-btn {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 25;
-            padding: 14px 40px;
+        #hud .score {
             font-size: 18px;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50px;
-            color: #fff;
-            cursor: pointer;
-            letter-spacing: 1.5px;
-            transition: all 0.3s ease;
-            opacity: 0;
-            pointer-events: none;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            font-weight: 300;
+            margin-top: 6px;
+            opacity: 0.9;
         }
-        #restart-btn.show {
-            opacity: 1;
-            pointer-events: auto;
+        #hud .score span {
+            font-weight: 700;
+            color: #f9d976;
+            -webkit-text-fill-color: #f9d976;
         }
-        #restart-btn:hover {
-            background: rgba(255, 255, 255, 0.18);
-            transform: translateX(-50%) scale(1.04);
-            border-color: rgba(255, 215, 0, 0.5);
+        #hud .players-online {
+            font-size: 14px;
+            opacity: 0.6;
+            margin-top: 4px;
         }
 
-        /* Kontrol info */
-        #controls-info {
+        /* Leaderboard */
+        #leaderboard {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            color: rgba(255, 255, 255, 0.25);
-            font-size: 14px;
-            font-weight: 300;
-            letter-spacing: 1px;
-            text-align: right;
-            z-index: 5;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            padding: 16px 22px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            min-width: 180px;
             pointer-events: none;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-            line-height: 1.6;
         }
-        #controls-info kbd {
+        #leaderboard h3 {
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        #leaderboard .player-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        #leaderboard .player-row .name {
+            font-weight: 400;
+        }
+        #leaderboard .player-row .score {
+            font-weight: 600;
+            color: #f9d976;
+        }
+        #leaderboard .player-row.me {
+            color: #4fc3f7;
+        }
+        #leaderboard .player-row.me .score {
+            color: #4fc3f7;
+        }
+
+        /* Controls info */
+        #controls {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-align: center;
+            pointer-events: none;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 20px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        #controls kbd {
             background: rgba(255, 255, 255, 0.08);
             padding: 2px 10px;
             border-radius: 4px;
             border: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 12px;
+        }
+
+        /* Status koneksi */
+        #status {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
             font-size: 13px;
+            opacity: 0.5;
+            pointer-events: none;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 4px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
         }
 
         /* Responsif */
-        @media (max-width: 600px) {
-            #hud .score-value {
-                font-size: 40px;
+        @media (max-width: 640px) {
+            #leaderboard {
+                top: 10px;
+                right: 10px;
+                padding: 10px 14px;
+                min-width: 130px;
             }
-            #win-message h1 {
-                font-size: 44px;
+            #leaderboard h3 {
+                font-size: 11px;
             }
-            #controls-info {
-                display: none;
+            #leaderboard .player-row {
+                font-size: 12px;
+            }
+            #hud .title {
+                font-size: 17px;
+            }
+            #hud .score {
+                font-size: 14px;
+            }
+            #controls {
+                font-size: 11px;
+                padding: 4px 14px;
+                bottom: 15px;
             }
         }
     </style>
@@ -165,71 +173,89 @@
 
     <!-- HUD -->
     <div id="hud">
-        <div class="score-label">⭐ SKOR</div>
-        <div class="score-value" id="scoreDisplay">0</div>
-        <div class="target">Target: <span id="targetDisplay">10</span> bintang</div>
+        <div class="title">🍜 Miecrah</div>
+        <div class="score">⭐ Skor: <span id="myScore">0</span></div>
+        <div class="players-online">👥 <span id="playerCount">0</span> pemain online</div>
     </div>
 
-    <!-- Pesan Menang -->
-    <div id="win-message">
-        <h1>🎉 SELAMAT!</h1>
-        <p>Kamu mengumpulkan semua bintang!</p>
-        <div class="sub">✨ Luar biasa! ✨</div>
+    <!-- Leaderboard -->
+    <div id="leaderboard">
+        <h3>🏆 Papan Skor</h3>
+        <div id="leaderboardList">
+            <div class="player-row" style="opacity:0.3;">Belum ada pemain</div>
+        </div>
     </div>
 
-    <!-- Tombol Restart -->
-    <button id="restart-btn">🔄 Main Lagi</button>
-
-    <!-- Info Kontrol -->
-    <div id="controls-info">
-        <kbd>W A S D</kbd> atau <kbd>↑ ← ↓ →</kbd> untuk bergerak
+    <!-- Kontrol -->
+    <div id="controls">
+        <kbd>W A S D</kbd> atau <kbd>↑ ← ↓ →</kbd> untuk bergerak · Kumpulkan bintang ⭐
     </div>
 
-    <!-- ========== THREE.JS GAME ========== -->
+    <div id="status">⏳ Menghubungkan ke Firebase...</div>
+
+    <!-- ===== THREE.JS + FIREBASE ===== -->
     <script type="importmap">
         {
             "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "firebase-app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+                "firebase-database": "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
             }
         }
     </script>
 
     <script type="module">
-        // ----- Impor -----
+        // ----- Impor Firebase -----
+        import { initializeApp } from "firebase-app";
+        import { getDatabase, ref, set, push, onValue, update, remove, runTransaction, serverTimestamp } from "firebase-database";
+
+        // ----- Konfigurasi Firebase (dari prompt) -----
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+            authDomain: "mybro-9ba5f.firebaseapp.com",
+            databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+            projectId: "mybro-9ba5f"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // ----- Status koneksi -----
+        const statusEl = document.getElementById('status');
+        const connectedRef = ref(db, '.info/connected');
+        onValue(connectedRef, (snap) => {
+            if (snap.val() === true) {
+                statusEl.textContent = '✅ Terhubung ke Firebase';
+                statusEl.style.opacity = '0.6';
+            } else {
+                statusEl.textContent = '❌ Koneksi terputus';
+                statusEl.style.opacity = '1';
+            }
+        });
+
+        // ----- Three.js Impor -----
         import * as THREE from 'three';
 
-        // ----- Konfigurasi -----
-        const TARGET_SCORE = 10;
-        const PLAYER_SPEED = 0.12;
-        const COLLECT_DISTANCE = 1.6;
-        const STAR_COUNT = 12;
+        // ----- Konfigurasi Game -----
         const ARENA_SIZE = 14;
+        const PLAYER_SPEED = 0.12;
+        const COLLECT_DIST = 1.8;
+        const STAR_COUNT = 8;
+        const PLAYER_RADIUS = 0.6;
 
-        // ----- State -----
-        let score = 0;
-        let gameOver = false;
-        let stars = [];
-        let starPositions = [];
+        // ----- State Player -----
+        const playerId = localStorage.getItem('miecrah_playerId') || 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+        localStorage.setItem('miecrah_playerId', playerId);
+        const playerName = 'Pemain_' + playerId.substr(-4);
 
-        // ----- DOM refs -----
-        const scoreDisplay = document.getElementById('scoreDisplay');
-        const targetDisplay = document.getElementById('targetDisplay');
-        const winMessage = document.getElementById('win-message');
-        const restartBtn = document.getElementById('restart-btn');
-
-        targetDisplay.textContent = TARGET_SCORE;
-
-        // ----- Scene -----
+        // ----- Scene Three.js -----
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x0a0a1a);
-        scene.fog = new THREE.Fog(0x0a0a1a, 18, 30);
+        scene.background = new THREE.Color(0x0f0f1f);
+        scene.fog = new THREE.Fog(0x0f0f1f, 18, 30);
 
-        // ----- Camera -----
         const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 50);
         camera.position.set(10, 10, 14);
         camera.lookAt(0, 0, 0);
 
-        // ----- Renderer -----
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -240,12 +266,9 @@
         document.body.prepend(renderer.domElement);
 
         // ----- Lighting -----
-
-        // Ambient
-        const ambient = new THREE.AmbientLight(0x40406b, 0.5);
+        const ambient = new THREE.AmbientLight(0x40406b, 0.6);
         scene.add(ambient);
 
-        // Main directional
         const dirLight = new THREE.DirectionalLight(0xffeedd, 1.8);
         dirLight.position.set(8, 16, 6);
         dirLight.castShadow = true;
@@ -259,15 +282,9 @@
         dirLight.shadow.camera.bottom = -15;
         scene.add(dirLight);
 
-        // Fill light
         const fillLight = new THREE.DirectionalLight(0x8888ff, 0.4);
         fillLight.position.set(-6, 4, -8);
         scene.add(fillLight);
-
-        // Rim light
-        const rimLight = new THREE.DirectionalLight(0xffaa66, 0.3);
-        rimLight.position.set(-4, 2, 10);
-        scene.add(rimLight);
 
         // ----- Ground -----
         const groundGeo = new THREE.PlaneGeometry(ARENA_SIZE + 4, ARENA_SIZE + 4);
@@ -284,51 +301,28 @@
         ground.receiveShadow = true;
         scene.add(ground);
 
-        // ----- Grid (dekoratif) -----
         const gridHelper = new THREE.GridHelper(ARENA_SIZE + 4, 20, 0x4444aa, 0x333366);
         gridHelper.position.y = -0.45;
         gridHelper.material.transparent = true;
         gridHelper.material.opacity = 0.3;
         scene.add(gridHelper);
 
-        // ----- Arena Border (cahaya tepi) -----
-        const borderPoints = [
-            [-ARENA_SIZE / 2, -ARENA_SIZE / 2],
-            [ARENA_SIZE / 2, -ARENA_SIZE / 2],
-            [ARENA_SIZE / 2, ARENA_SIZE / 2],
-            [-ARENA_SIZE / 2, ARENA_SIZE / 2],
-            [-ARENA_SIZE / 2, -ARENA_SIZE / 2],
-        ];
-        const borderCurve = new THREE.CatmullRomCurve3(
-            borderPoints.map(p => new THREE.Vector3(p[0], -0.4, p[1]))
-        );
-        const borderTube = new THREE.TubeGeometry(borderCurve, 60, 0.06, 8, false);
-        const borderMat = new THREE.MeshStandardMaterial({
-            color: 0x6666ff,
-            emissive: 0x4444aa,
-            emissiveIntensity: 0.3,
-            transparent: true,
-            opacity: 0.5,
-        });
-        const borderMesh = new THREE.Mesh(borderTube, borderMat);
-        scene.add(borderMesh);
-
-        // ----- Player -----
+        // ----- Player (karakter sendiri) -----
         const playerGeo = new THREE.BoxGeometry(0.9, 0.9, 0.9);
         const playerMat = new THREE.MeshStandardMaterial({
             color: 0x4fc3f7,
             emissive: 0x1565c0,
-            emissiveIntensity: 0.15,
+            emissiveIntensity: 0.2,
             roughness: 0.2,
             metalness: 0.6,
         });
-        const player = new THREE.Mesh(playerGeo, playerMat);
-        player.castShadow = true;
-        player.receiveShadow = true;
-        player.position.y = 0.0;
-        scene.add(player);
+        const myPlayerMesh = new THREE.Mesh(playerGeo, playerMat);
+        myPlayerMesh.castShadow = true;
+        myPlayerMesh.receiveShadow = true;
+        myPlayerMesh.position.y = 0;
+        scene.add(myPlayerMesh);
 
-        // Player glow (inner)
+        // Glow
         const glowGeo = new THREE.BoxGeometry(1.1, 1.1, 1.1);
         const glowMat = new THREE.MeshBasicMaterial({
             color: 0x4fc3f7,
@@ -337,33 +331,63 @@
             wireframe: true,
         });
         const glow = new THREE.Mesh(glowGeo, glowMat);
-        player.add(glow);
+        myPlayerMesh.add(glow);
 
-        // ----- Stars -----
-        function createStar() {
+        // ----- Pemain lain (disimpan dalam Map) -----
+        const otherPlayers = new Map(); // playerId -> { mesh, score, name }
+
+        // ----- Bintang (disimpan dalam Map) -----
+        const starMeshes = new Map(); // starId -> { mesh, data }
+
+        // ----- Firebase References -----
+        const playersRef = ref(db, 'players');
+        const starsRef = ref(db, 'stars');
+
+        // ----- Generate bintang awal jika kosong -----
+        function generateStarsIfEmpty() {
+            get(starsRef).then((snapshot) => {
+                if (!snapshot.exists()) {
+                    // Buat bintang
+                    const updates = {};
+                    for (let i = 0; i < STAR_COUNT; i++) {
+                        const id = 'star_' + Date.now() + '_' + i;
+                        const x = (Math.random() - 0.5) * (ARENA_SIZE - 2);
+                        const z = (Math.random() - 0.5) * (ARENA_SIZE - 2);
+                        // Hindari spawn di dekat (0,0)
+                        if (Math.abs(x) < 1.5 && Math.abs(z) < 1.5) continue;
+                        updates[id] = { x, z, claimed: false };
+                    }
+                    set(starsRef, updates).then(() => {
+                        console.log('⭐ Bintang digenerate di Firebase');
+                    });
+                }
+            });
+        }
+        generateStarsIfEmpty();
+
+        // ----- Fungsi untuk membuat mesh bintang -----
+        function createStarMesh() {
             const group = new THREE.Group();
-
-            // Badan bintang (octahedron)
-            const geo = new THREE.OctahedronGeometry(0.55, 0);
+            const geo = new THREE.OctahedronGeometry(0.5, 0);
             const mat = new THREE.MeshStandardMaterial({
                 color: 0xf9d976,
                 emissive: 0xf39c12,
-                emissiveIntensity: 0.25,
+                emissiveIntensity: 0.3,
                 roughness: 0.2,
                 metalness: 0.7,
             });
             const mesh = new THREE.Mesh(geo, mat);
+            mesh.scale.set(1, 1.3, 1);
             mesh.castShadow = true;
             mesh.receiveShadow = true;
-            mesh.scale.set(1, 1.3, 1);
             group.add(mesh);
 
-            // Glow ring
-            const ringGeo = new THREE.RingGeometry(0.7, 0.9, 32);
+            // Ring
+            const ringGeo = new THREE.RingGeometry(0.6, 0.8, 32);
             const ringMat = new THREE.MeshBasicMaterial({
                 color: 0xf9d976,
                 transparent: true,
-                opacity: 0.15,
+                opacity: 0.2,
                 side: THREE.DoubleSide,
             });
             const ring = new THREE.Mesh(ringGeo, ringMat);
@@ -371,56 +395,180 @@
             ring.position.y = -0.1;
             group.add(ring);
 
-            // Pivot point (untuk animasi)
             group.userData = {
                 rotSpeed: 0.01 + Math.random() * 0.02,
                 floatPhase: Math.random() * Math.PI * 2,
                 floatSpeed: 0.6 + Math.random() * 0.4,
-                baseY: 0,
+                baseY: 0.2,
             };
-
             return group;
         }
 
-        function spawnStars() {
-            // Hapus bintang lama
-            stars.forEach(s => scene.remove(s));
-            stars = [];
-            starPositions = [];
-
-            for (let i = 0; i < STAR_COUNT; i++) {
-                const star = createStar();
-                let x, z, valid;
-                let attempts = 0;
-                do {
-                    x = (Math.random() - 0.5) * (ARENA_SIZE - 1.5);
-                    z = (Math.random() - 0.5) * (ARENA_SIZE - 1.5);
-                    valid = true;
-                    // Jangan spawn di dekat player start (0,0)
-                    if (Math.abs(x) < 1.8 && Math.abs(z) < 1.8) valid = false;
-                    // Jangan terlalu dekat dengan bintang lain
-                    for (const pos of starPositions) {
-                        if (Math.sqrt((x - pos.x) ** 2 + (z - pos.z) ** 2) < 1.4) {
-                            valid = false;
-                            break;
-                        }
+        // ----- Update bintang dari Firebase -----
+        onValue(starsRef, (snapshot) => {
+            const data = snapshot.val() || {};
+            // Hapus bintang yang tidak ada di data
+            for (const [id, meshObj] of starMeshes) {
+                if (!data[id] || data[id].claimed === true) {
+                    scene.remove(meshObj.mesh);
+                    starMeshes.delete(id);
+                }
+            }
+            // Tambah atau update bintang
+            for (const [id, starData] of Object.entries(data)) {
+                if (starData.claimed === true) {
+                    // Jika sudah diklaim, hapus dari scene jika ada
+                    if (starMeshes.has(id)) {
+                        scene.remove(starMeshes.get(id).mesh);
+                        starMeshes.delete(id);
                     }
-                    attempts++;
-                    if (attempts > 100) break;
-                } while (!valid);
+                    continue;
+                }
+                if (!starMeshes.has(id)) {
+                    // Buat bintang baru
+                    const mesh = createStarMesh();
+                    mesh.position.set(starData.x, 0.2, starData.z);
+                    mesh.userData.baseY = 0.2 + Math.random() * 0.3;
+                    mesh.userData.floatPhase = Math.random() * Math.PI * 2;
+                    scene.add(mesh);
+                    starMeshes.set(id, { mesh, data: starData });
+                } else {
+                    // Update posisi jika berubah (jarang)
+                    const existing = starMeshes.get(id);
+                    if (existing.data.x !== starData.x || existing.data.z !== starData.z) {
+                        existing.mesh.position.set(starData.x, 0.2, starData.z);
+                        existing.data = starData;
+                    }
+                }
+            }
+        });
 
-                star.position.set(x, 0.2, z);
-                star.userData.baseY = 0.2 + Math.random() * 0.3;
-                star.userData.floatPhase = Math.random() * Math.PI * 2;
-                scene.add(star);
-                stars.push(star);
-                starPositions.push({ x, z });
+        // ----- Update pemain dari Firebase -----
+        onValue(playersRef, (snapshot) => {
+            const data = snapshot.val() || {};
+            // Hapus pemain yang sudah tidak ada
+            for (const [id, obj] of otherPlayers) {
+                if (!data[id]) {
+                    scene.remove(obj.mesh);
+                    otherPlayers.delete(id);
+                }
+            }
+            // Update atau tambah pemain
+            for (const [id, playerData] of Object.entries(data)) {
+                if (id === playerId) continue; // skip sendiri
+                if (!otherPlayers.has(id)) {
+                    // Buat mesh untuk pemain lain
+                    const color = new THREE.Color().setHSL(Math.random(), 0.8, 0.6);
+                    const geo = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+                    const mat = new THREE.MeshStandardMaterial({
+                        color: color,
+                        emissive: color,
+                        emissiveIntensity: 0.1,
+                        roughness: 0.3,
+                        metalness: 0.3,
+                    });
+                    const mesh = new THREE.Mesh(geo, mat);
+                    mesh.castShadow = true;
+                    mesh.receiveShadow = true;
+                    mesh.position.set(playerData.x || 0, 0, playerData.z || 0);
+                    scene.add(mesh);
+                    otherPlayers.set(id, {
+                        mesh,
+                        name: playerData.name || 'Anonim',
+                        score: playerData.score || 0,
+                    });
+                } else {
+                    // Update posisi
+                    const obj = otherPlayers.get(id);
+                    obj.mesh.position.set(playerData.x || 0, 0, playerData.z || 0);
+                    obj.score = playerData.score || 0;
+                    obj.name = playerData.name || 'Anonim';
+                }
+            }
+            // Update jumlah pemain
+            document.getElementById('playerCount').textContent = Object.keys(data).length;
+
+            // Update leaderboard
+            updateLeaderboard(data);
+        });
+
+        // ----- Leaderboard -----
+        function updateLeaderboard(data) {
+            const list = document.getElementById('leaderboardList');
+            const entries = Object.entries(data)
+                .map(([id, p]) => ({ id, name: p.name || 'Anonim', score: p.score || 0 }))
+                .sort((a, b) => b.score - a.score);
+
+            if (entries.length === 0) {
+                list.innerHTML = '<div class="player-row" style="opacity:0.3;">Belum ada pemain</div>';
+                return;
+            }
+
+            let html = '';
+            for (const entry of entries) {
+                const isMe = entry.id === playerId;
+                html += `
+                    <div class="player-row ${isMe ? 'me' : ''}">
+                        <span class="name">${entry.name} ${isMe ? '(kamu)' : ''}</span>
+                        <span class="score">${entry.score}</span>
+                    </div>
+                `;
+            }
+            list.innerHTML = html;
+        }
+
+        // ----- Fungsi klaim bintang (transaction) -----
+        function claimStar(starId) {
+            const starRef = ref(db, `stars/${starId}`);
+            runTransaction(starRef, (currentData) => {
+                if (currentData === null || currentData.claimed === true) {
+                    return; // tidak ada atau sudah diklaim
+                }
+                // Klaim bintang
+                currentData.claimed = true;
+                return currentData;
+            }).then((result) => {
+                if (result.committed) {
+                    // Berhasil klaim, tambah skor
+                    const playerRef = ref(db, `players/${playerId}`);
+                    runTransaction(playerRef, (currentData) => {
+                        if (currentData === null) {
+                            return { score: 1, name: playerName, x: 0, z: 0 };
+                        }
+                        currentData.score = (currentData.score || 0) + 1;
+                        return currentData;
+                    }).then(() => {
+                        // Efek visual
+                        myPlayerMesh.material.emissiveIntensity = 0.8;
+                        setTimeout(() => {
+                            myPlayerMesh.material.emissiveIntensity = 0.2;
+                        }, 150);
+                    });
+                } else {
+                    // Gagal klaim (bintang sudah diambil)
+                    console.log('⭐ Bintang sudah diambil pemain lain');
+                }
+            }).catch((err) => {
+                console.warn('Gagal klaim bintang:', err);
+            });
+        }
+
+        // ----- Deteksi koleksi bintang (setiap frame) -----
+        function checkStarCollection() {
+            const myPos = myPlayerMesh.position;
+            for (const [id, obj] of starMeshes) {
+                const starPos = obj.mesh.position;
+                const dist = myPos.distanceTo(starPos);
+                if (dist < COLLECT_DIST) {
+                    // Coba klaim bintang ini
+                    claimStar(id);
+                    // Hanya satu per frame
+                    break;
+                }
             }
         }
 
-        spawnStars();
-
-        // ----- Keyboard controls -----
+        // ----- Keyboard & Touch controls -----
         const keys = { w: false, a: false, s: false, d: false, up: false, down: false, left: false, right: false };
 
         document.addEventListener('keydown', (e) => {
@@ -433,12 +581,10 @@
             if (key === 'arrowdown') keys.down = true;
             if (key === 'arrowleft') keys.left = true;
             if (key === 'arrowright') keys.right = true;
-            // Mencegah scroll dengan arrow
             if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key)) {
                 e.preventDefault();
             }
         });
-
         document.addEventListener('keyup', (e) => {
             const key = e.key.toLowerCase();
             if (key === 'w') keys.w = false;
@@ -451,23 +597,20 @@
             if (key === 'arrowright') keys.right = false;
         });
 
-        // ----- Touch / Mobile controls (sederhana) -----
-        let touchX = null;
-        let touchY = null;
+        // Touch controls
+        let touchX = null,
+            touchY = null;
         const touchArea = renderer.domElement;
-
         touchArea.addEventListener('touchstart', (e) => {
             const t = e.touches[0];
             touchX = t.clientX;
             touchY = t.clientY;
         }, { passive: true });
-
         touchArea.addEventListener('touchmove', (e) => {
             e.preventDefault();
             const t = e.touches[0];
             const dx = t.clientX - touchX;
             const dy = t.clientY - touchY;
-            // Map touch delta ke tombol
             const threshold = 15;
             keys.left = dx < -threshold;
             keys.right = dx > threshold;
@@ -476,7 +619,6 @@
             touchX = t.clientX;
             touchY = t.clientY;
         }, { passive: false });
-
         touchArea.addEventListener('touchend', () => {
             keys.left = false;
             keys.right = false;
@@ -486,248 +628,148 @@
             touchY = null;
         }, { passive: true });
 
-        // ----- Game logic -----
-        function collectStar(star) {
-            scene.remove(star);
-            const idx = stars.indexOf(star);
-            if (idx !== -1) {
-                stars.splice(idx, 1);
-                starPositions.splice(idx, 1);
-            }
-            score++;
-            scoreDisplay.textContent = score;
+        // ----- Update posisi pemain di Firebase (throttle) -----
+        let lastUpdateTime = 0;
 
-            // Efek visual: flash player
-            player.material.emissiveIntensity = 0.8;
-            setTimeout(() => {
-                player.material.emissiveIntensity = 0.15;
-            }, 150);
+        function updatePlayerPosition() {
+            const now = Date.now();
+            if (now - lastUpdateTime < 80) return; // throttle 80ms
+            lastUpdateTime = now;
 
-            // Efek partikel sederhana (ledakan kecil)
-            createCollectParticles(star.position.clone());
-
-            if (score >= TARGET_SCORE) {
-                gameOver = true;
-                winMessage.classList.add('show');
-                restartBtn.classList.add('show');
-            } else {
-                // Respawn bintang baru di posisi acak
-                setTimeout(() => {
-                    if (!gameOver) {
-                        const newStar = createStar();
-                        let x, z, valid;
-                        let attempts = 0;
-                        do {
-                            x = (Math.random() - 0.5) * (ARENA_SIZE - 1.5);
-                            z = (Math.random() - 0.5) * (ARENA_SIZE - 1.5);
-                            valid = true;
-                            if (Math.abs(x) < 1.8 && Math.abs(z) < 1.8) valid = false;
-                            for (const pos of starPositions) {
-                                if (Math.sqrt((x - pos.x) ** 2 + (z - pos.z) ** 2) < 1.4) {
-                                    valid = false;
-                                    break;
-                                }
-                            }
-                            attempts++;
-                            if (attempts > 100) break;
-                        } while (!valid);
-                        newStar.position.set(x, 0.2, z);
-                        newStar.userData.baseY = 0.2 + Math.random() * 0.3;
-                        newStar.userData.floatPhase = Math.random() * Math.PI * 2;
-                        scene.add(newStar);
-                        stars.push(newStar);
-                        starPositions.push({ x, z });
-                    }
-                }, 300);
-            }
+            const pos = myPlayerMesh.position;
+            const playerRef = ref(db, `players/${playerId}`);
+            // Set data dengan merge
+            update(playerRef, {
+                x: pos.x,
+                z: pos.z,
+                score: parseInt(document.getElementById('myScore').textContent) || 0,
+                name: playerName,
+                lastActive: serverTimestamp(),
+            }).catch((err) => console.warn('Gagal update posisi:', err));
         }
 
-        // ----- Particle effect (sederhana) -----
-        function createCollectParticles(position) {
-            const count = 20;
-            const colors = [0xf9d976, 0xf39c12, 0xff6b6b, 0x4fc3f7];
-            for (let i = 0; i < count; i++) {
-                const size = 0.05 + Math.random() * 0.12;
-                const geo = new THREE.SphereGeometry(size, 6, 6);
-                const mat = new THREE.MeshStandardMaterial({
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    emissive: 0xffaa00,
-                    emissiveIntensity: 0.5,
-                });
-                const p = new THREE.Mesh(geo, mat);
-                p.position.copy(position);
-                p.position.y += 0.2;
-                const dir = new THREE.Vector3(
-                    (Math.random() - 0.5) * 4,
-                    Math.random() * 3 + 1,
-                    (Math.random() - 0.5) * 4
-                ).normalize().multiplyScalar(0.8 + Math.random() * 1.2);
-                p.userData.vel = dir;
-                p.userData.life = 1.0;
-                scene.add(p);
-
-                // Animasi partikel akan di-update di loop
-                // Simpan dalam array global
-                if (!window._particles) window._particles = [];
-                window._particles.push(p);
-            }
-        }
-
-        // ----- Update partikel -----
-        function updateParticles() {
-            if (!window._particles) return;
-            const toRemove = [];
-            for (let i = 0; i < window._particles.length; i++) {
-                const p = window._particles[i];
-                p.position.add(p.userData.vel);
-                p.userData.vel.y -= 0.06;
-                p.userData.life -= 0.012;
-                p.scale.setScalar(p.userData.life);
-                p.material.transparent = true;
-                p.material.opacity = p.userData.life;
-                if (p.userData.life <= 0) {
-                    toRemove.push(i);
+        // ----- Inisialisasi pemain di Firebase -----
+        function initPlayer() {
+            const playerRef = ref(db, `players/${playerId}`);
+            // Cek apakah sudah ada
+            get(playerRef).then((snapshot) => {
+                if (!snapshot.exists()) {
+                    set(playerRef, {
+                        x: 0,
+                        z: 0,
+                        score: 0,
+                        name: playerName,
+                        lastActive: serverTimestamp(),
+                    });
+                } else {
+                    // Update posisi
+                    update(playerRef, {
+                        lastActive: serverTimestamp(),
+                    });
                 }
-            }
-            for (let i = toRemove.length - 1; i >= 0; i--) {
-                const idx = toRemove[i];
-                scene.remove(window._particles[idx]);
-                window._particles.splice(idx, 1);
-            }
+            });
         }
+        initPlayer();
 
-        // ----- Reset game -----
-        function resetGame() {
-            // Hapus semua bintang
-            stars.forEach(s => scene.remove(s));
-            stars = [];
-            starPositions = [];
+        // ----- Cleanup saat keluar (tidak wajib) -----
+        window.addEventListener('beforeunload', () => {
+            // Hapus pemain dari Firebase (optional)
+            // Jika dihapus, pemain lain tidak akan melihatnya
+            // Kita biarkan saja agar data tetap ada, tapi kita set lastActive agar bisa di-filter
+            const playerRef = ref(db, `players/${playerId}`);
+            update(playerRef, { lastActive: serverTimestamp() });
+        });
 
-            // Reset skor
-            score = 0;
-            scoreDisplay.textContent = '0';
-            gameOver = false;
-            winMessage.classList.remove('show');
-            restartBtn.classList.remove('show');
-
-            // Reset player pos
-            player.position.set(0, 0, 0);
-
-            // Hapus partikel
-            if (window._particles) {
-                window._particles.forEach(p => scene.remove(p));
-                window._particles = [];
-            }
-
-            // Spawn ulang bintang
-            spawnStars();
-
-            // Reset material player
-            player.material.emissiveIntensity = 0.15;
-        }
-
-        restartBtn.addEventListener('click', resetGame);
-
-        // ----- Window resize -----
+        // ----- Resize -----
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // ----- Animasi loop -----
+        // ----- Animasi Loop -----
         function animate() {
             requestAnimationFrame(animate);
 
             // ----- Gerakan player -----
-            if (!gameOver) {
-                let dx = 0,
-                    dz = 0;
-                if (keys.w || keys.up) dz = -1;
-                if (keys.s || keys.down) dz = 1;
-                if (keys.a || keys.left) dx = -1;
-                if (keys.d || keys.right) dx = 1;
+            let dx = 0,
+                dz = 0;
+            if (keys.w || keys.up) dz = -1;
+            if (keys.s || keys.down) dz = 1;
+            if (keys.a || keys.left) dx = -1;
+            if (keys.d || keys.right) dx = 1;
 
-                // Normalisasi
-                if (dx !== 0 && dz !== 0) {
-                    dx *= 0.707;
-                    dz *= 0.707;
-                }
-
-                const newX = player.position.x + dx * PLAYER_SPEED;
-                const newZ = player.position.z + dz * PLAYER_SPEED;
-
-                // Batas arena
-                const limit = ARENA_SIZE / 2 - 0.5;
-                player.position.x = Math.max(-limit, Math.min(limit, newX));
-                player.position.z = Math.max(-limit, Math.min(limit, newZ));
-
-                // Rotasi player mengikuti arah
-                if (dx !== 0 || dz !== 0) {
-                    const angle = Math.atan2(dx, dz);
-                    player.rotation.y = angle;
-                }
-
-                // ----- Deteksi koleksi -----
-                const pPos = player.position;
-                for (let i = stars.length - 1; i >= 0; i--) {
-                    const star = stars[i];
-                    const dist = pPos.distanceTo(star.position);
-                    if (dist < COLLECT_DISTANCE) {
-                        collectStar(star);
-                        break; // hanya satu per frame
-                    }
-                }
+            if (dx !== 0 && dz !== 0) {
+                dx *= 0.707;
+                dz *= 0.707;
             }
+
+            const newX = myPlayerMesh.position.x + dx * PLAYER_SPEED;
+            const newZ = myPlayerMesh.position.z + dz * PLAYER_SPEED;
+            const limit = ARENA_SIZE / 2 - 0.5;
+            myPlayerMesh.position.x = Math.max(-limit, Math.min(limit, newX));
+            myPlayerMesh.position.z = Math.max(-limit, Math.min(limit, newZ));
+
+            if (dx !== 0 || dz !== 0) {
+                const angle = Math.atan2(dx, dz);
+                myPlayerMesh.rotation.y = angle;
+            }
+
+            // Update posisi ke Firebase
+            updatePlayerPosition();
+
+            // Deteksi koleksi bintang
+            checkStarCollection();
+
+            // Update skor lokal
+            const playerRef = ref(db, `players/${playerId}`);
+            get(playerRef).then((snap) => {
+                if (snap.exists()) {
+                    const score = snap.val().score || 0;
+                    document.getElementById('myScore').textContent = score;
+                }
+            });
 
             // ----- Animasi bintang -----
             const time = performance.now() / 1000;
-            for (const star of stars) {
-                const ud = star.userData;
-                star.rotation.x += ud.rotSpeed * 0.5;
-                star.rotation.y += ud.rotSpeed;
-                star.rotation.z += ud.rotSpeed * 0.3;
-                // Floating
+            for (const [id, obj] of starMeshes) {
+                const mesh = obj.mesh;
+                const ud = mesh.userData;
+                mesh.rotation.x += ud.rotSpeed * 0.5;
+                mesh.rotation.y += ud.rotSpeed;
+                mesh.rotation.z += ud.rotSpeed * 0.3;
                 const floatOffset = Math.sin(time * ud.floatSpeed + ud.floatPhase) * 0.2;
-                star.position.y = ud.baseY + floatOffset;
+                mesh.position.y = ud.baseY + floatOffset;
             }
 
-            // ----- Animasi player (bounce ringan) -----
-            if (!gameOver) {
-                const bob = Math.sin(time * 3) * 0.03;
-                player.position.y = bob;
-                glow.rotation.x = time * 0.5;
-                glow.rotation.y = time * 0.7;
+            // Animasi pemain lain (bounce kecil)
+            for (const [id, obj] of otherPlayers) {
+                const mesh = obj.mesh;
+                mesh.position.y = Math.sin(time * 2 + id.length) * 0.05;
             }
 
-            // ----- Update partikel -----
-            updateParticles();
+            // Animasi player sendiri
+            myPlayerMesh.position.y = Math.sin(time * 3) * 0.03;
+            glow.rotation.x = time * 0.5;
+            glow.rotation.y = time * 0.7;
 
-            // ----- Kamera mengikuti player (sedikit) -----
+            // Kamera mengikuti player
             const targetCamPos = new THREE.Vector3(
-                player.position.x + 10,
+                myPlayerMesh.position.x + 10,
                 10,
-                player.position.z + 14
+                myPlayerMesh.position.z + 14
             );
             camera.position.lerp(targetCamPos, 0.03);
-            camera.lookAt(player.position.x * 0.3, 0, player.position.z * 0.3);
+            camera.lookAt(myPlayerMesh.position.x * 0.3, 0, myPlayerMesh.position.z * 0.3);
 
-            // ----- Render -----
             renderer.render(scene, camera);
         }
 
         animate();
 
-        // ----- Mulai dengan mulus -----
-        console.log('🎮 Game 3D Koleksi Bintang siap!');
-        console.log(`⭐ Kumpulkan ${TARGET_SCORE} bintang untuk menang!`);
-        console.log('🕹️  Gunakan WASD atau panah untuk bergerak.');
-
-        // Jika pengguna memencet tombol restart di awal (tidak sengaja), aman
-        // Inisialisasi window._particles
-        if (!window._particles) window._particles = [];
-
-        console.log('✅ Game loaded successfully!');
+        // ----- Mulai -----
+        console.log(`🍜 Miecrah Multiplayer dimulai! ID: ${playerId}`);
+        console.log(`👥 Buka di perangkat lain dengan URL yang sama untuk bermain bersama.`);
     </script>
 </body>
 </html>
