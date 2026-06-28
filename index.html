@@ -2,300 +2,732 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>✨ Chat Kuy</title>
-    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>✨ Game 3D - Koleksi Bintang</title>
     <style>
-        /* (Sama seperti sebelumnya, tidak saya ubah) */
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins','Segoe UI',sans-serif; }
-        body { background: linear-gradient(145deg,#0b0f1c,#1a1f33); min-height:100vh; display:flex; justify-content:center; align-items:center; padding:16px; }
-        .app-container { width:100%; max-width:450px; height:90vh; max-height:800px; background:rgba(255,255,255,0.07); backdrop-filter:blur(24px) saturate(180%); border-radius:40px; border:1px solid rgba(255,255,255,0.15); box-shadow:0 30px 60px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.05); display:flex; flex-direction:column; overflow:hidden; }
-        .header { padding:20px 24px 12px; background:rgba(0,0,0,0.2); border-bottom:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
-        .header h1 { font-size:20px; font-weight:600; color:#fff; display:flex; align-items:center; gap:10px; }
-        .header h1 i { color:#6c5ce7; font-size:24px; filter:drop-shadow(0 0 10px rgba(108,92,231,0.4)); }
-        .user-badge { background:rgba(108,92,231,0.25); padding:6px 14px; border-radius:30px; font-size:13px; color:#c8bfff; border:1px solid rgba(108,92,231,0.2); display:flex; align-items:center; gap:8px; }
-        .user-badge i { color:#a29bfe; }
-        .login-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:30px 24px; text-align:center; }
-        .login-screen .logo-icon { font-size:72px; color:#6c5ce7; margin-bottom:20px; animation:float 3s ease-in-out infinite; }
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
-        .login-screen h2 { color:#fff; font-weight:500; font-size:26px; margin-bottom:8px; }
-        .login-screen p { color:rgba(255,255,255,0.5); font-size:14px; margin-bottom:30px; }
-        .login-input-group { width:100%; display:flex; flex-direction:column; gap:16px; }
-        .login-input-group input { padding:16px 20px; border-radius:60px; border:none; background:rgba(255,255,255,0.08); color:#fff; font-size:16px; outline:1px solid rgba(255,255,255,0.1); transition:all .3s; }
-        .login-input-group input::placeholder { color:rgba(255,255,255,0.3); }
-        .login-input-group input:focus { outline:1px solid #6c5ce7; background:rgba(108,92,231,0.12); box-shadow:0 0 20px rgba(108,92,231,0.15); }
-        .login-btn { padding:16px; border-radius:60px; border:none; background:linear-gradient(135deg,#6c5ce7,#a29bfe); color:#fff; font-weight:600; font-size:18px; cursor:pointer; transition:all .3s; box-shadow:0 8px 24px rgba(108,92,231,0.3); display:flex; align-items:center; justify-content:center; gap:10px; }
-        .login-btn:hover { transform:scale(1.02); box-shadow:0 12px 32px rgba(108,92,231,0.5); }
-        .login-btn:active { transform:scale(0.97); }
-        .chat-area { display:none; flex:1; flex-direction:column; overflow:hidden; }
-        .online-bar { padding:10px 20px; background:rgba(0,0,0,0.15); border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:12px; flex-shrink:0; overflow-x:auto; scrollbar-width:none; }
-        .online-bar::-webkit-scrollbar { display:none; }
-        .online-bar .label { color:rgba(255,255,255,0.4); font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:1px; white-space:nowrap; }
-        .user-chip { background:rgba(255,255,255,0.07); padding:6px 16px; border-radius:30px; color:#ddd; font-size:14px; white-space:nowrap; border:1px solid rgba(255,255,255,0.06); transition:all .2s; cursor:pointer; backdrop-filter:blur(4px); display:flex; align-items:center; gap:8px; }
-        .user-chip i { color:#6c5ce7; font-size:12px; }
-        .user-chip.active { background:rgba(108,92,231,0.25); border-color:#6c5ce7; color:#fff; box-shadow:0 0 20px rgba(108,92,231,0.15); }
-        .user-chip .online-dot { display:inline-block; width:8px; height:8px; background:#00d2d3; border-radius:50%; animation:pulse-dot 1.8s infinite; }
-        @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
-        .messages-container { flex:1; overflow-y:auto; padding:16px 20px; display:flex; flex-direction:column; gap:12px; scroll-behavior:smooth; }
-        .messages-container::-webkit-scrollbar { width:4px; }
-        .messages-container::-webkit-scrollbar-thumb { background:rgba(108,92,231,0.3); border-radius:10px; }
-        .message { max-width:80%; padding:14px 18px; border-radius:24px; font-size:15px; line-height:1.5; word-wrap:break-word; animation:slideUp .3s ease-out; box-shadow:0 4px 12px rgba(0,0,0,0.1); backdrop-filter:blur(4px); }
-        @keyframes slideUp { 0%{opacity:0;transform:translateY(16px) scale(0.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }
-        .message.sent { align-self:flex-end; background:linear-gradient(135deg,#6c5ce7,#a29bfe); color:#fff; border-bottom-right-radius:4px; }
-        .message.received { align-self:flex-start; background:rgba(255,255,255,0.08); color:#f0f0f0; border-bottom-left-radius:4px; border:1px solid rgba(255,255,255,0.05); }
-        .message .sender { font-size:12px; font-weight:600; opacity:0.7; margin-bottom:4px; display:flex; align-items:center; gap:6px; }
-        .message .time { font-size:10px; opacity:0.5; margin-top:6px; text-align:right; }
-        .input-area { padding:12px 20px 20px; background:rgba(0,0,0,0.15); border-top:1px solid rgba(255,255,255,0.05); display:flex; gap:12px; align-items:center; flex-shrink:0; }
-        .input-area input { flex:1; padding:14px 20px; border-radius:60px; border:none; background:rgba(255,255,255,0.07); color:#fff; font-size:15px; outline:1px solid rgba(255,255,255,0.06); transition:all .3s; backdrop-filter:blur(4px); }
-        .input-area input::placeholder { color:rgba(255,255,255,0.25); }
-        .input-area input:focus { outline:1px solid #6c5ce7; background:rgba(108,92,231,0.08); }
-        .input-area input:disabled { opacity:0.4; cursor:not-allowed; }
-        .send-btn { width:54px; height:54px; border-radius:60px; border:none; background:linear-gradient(135deg,#6c5ce7,#a29bfe); color:#fff; font-size:22px; cursor:pointer; transition:all .3s; box-shadow:0 6px 20px rgba(108,92,231,0.25); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-        .send-btn:hover { transform:scale(1.06); box-shadow:0 8px 28px rgba(108,92,231,0.4); }
-        .send-btn:active { transform:scale(0.92); }
-        .send-btn:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
-        .empty-state { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:rgba(255,255,255,0.2); text-align:center; padding:20px; }
-        .empty-state i { font-size:56px; margin-bottom:16px; color:rgba(108,92,231,0.3); }
-        .empty-state p { font-size:14px; }
-        .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:rgba(255,0,0,0.8); color:#fff; padding:10px 24px; border-radius:60px; font-size:14px; backdrop-filter:blur(8px); box-shadow:0 8px 30px rgba(0,0,0,0.5); z-index:999; animation:slideUp .3s; display:none; }
-        @media (max-width:480px) { .app-container { height:100vh; max-height:none; border-radius:0; box-shadow:none; } .header h1 { font-size:17px; } .user-badge { font-size:11px; padding:4px 12px; } }
+        /* Reset & styling dasar */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #0a0a1a;
+            user-select: none;
+        }
+        canvas {
+            display: block;
+        }
+
+        /* HUD Skor & Info */
+        #hud {
+            position: fixed;
+            top: 25px;
+            left: 30px;
+            color: #fff;
+            z-index: 10;
+            pointer-events: none;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+        }
+        #hud .score-label {
+            font-size: 18px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            opacity: 0.7;
+        }
+        #hud .score-value {
+            font-size: 56px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f9d976, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+        #hud .target {
+            font-size: 16px;
+            font-weight: 300;
+            margin-top: 4px;
+            opacity: 0.6;
+            letter-spacing: 1px;
+        }
+
+        /* Pesan Menang */
+        #win-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            z-index: 20;
+            text-align: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.9);
+        }
+        #win-message.show {
+            opacity: 1;
+        }
+        #win-message h1 {
+            font-size: 72px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f9d976, #f39c12, #e74c3c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        #win-message p {
+            font-size: 22px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            opacity: 0.8;
+        }
+        #win-message .sub {
+            font-size: 16px;
+            margin-top: 12px;
+            opacity: 0.5;
+        }
+
+        /* Tombol restart (muncul setelah menang) */
+        #restart-btn {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 25;
+            padding: 14px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: #fff;
+            cursor: pointer;
+            letter-spacing: 1.5px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        #restart-btn.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #restart-btn:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateX(-50%) scale(1.04);
+            border-color: rgba(255, 215, 0, 0.5);
+        }
+
+        /* Kontrol info */
+        #controls-info {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-align: right;
+            z-index: 5;
+            pointer-events: none;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+            line-height: 1.6;
+        }
+        #controls-info kbd {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 13px;
+        }
+
+        /* Responsif */
+        @media (max-width: 600px) {
+            #hud .score-value {
+                font-size: 40px;
+            }
+            #win-message h1 {
+                font-size: 44px;
+            }
+            #controls-info {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="header">
-        <h1><i class="fas fa-comment-dots"></i> ChatKuy</h1>
-        <div class="user-badge"><i class="fas fa-user-circle"></i> <span id="usernameDisplay">Guest</span></div>
+    <!-- HUD -->
+    <div id="hud">
+        <div class="score-label">⭐ SKOR</div>
+        <div class="score-value" id="scoreDisplay">0</div>
+        <div class="target">Target: <span id="targetDisplay">10</span> bintang</div>
     </div>
 
-    <div class="login-screen" id="loginScreen">
-        <div class="logo-icon"><i class="fas fa-rocket"></i></div>
-        <h2>Masuk ke Ruang Chat</h2>
-        <p>Pilih nama pengguna untuk memulai</p>
-        <div class="login-input-group">
-            <input type="text" id="usernameInput" placeholder="Nama kamu..." maxlength="16" autofocus />
-            <button class="login-btn" id="loginBtn"><i class="fas fa-arrow-right"></i> Mulai Chat</button>
-        </div>
+    <!-- Pesan Menang -->
+    <div id="win-message">
+        <h1>🎉 SELAMAT!</h1>
+        <p>Kamu mengumpulkan semua bintang!</p>
+        <div class="sub">✨ Luar biasa! ✨</div>
     </div>
 
-    <div class="chat-area" id="chatArea">
-        <div class="online-bar" id="onlineBar">
-            <span class="label"><i class="fas fa-circle" style="color:#00d2d3;font-size:8px;"></i> Online</span>
-        </div>
-        <div class="messages-container" id="messagesContainer">
-            <div class="empty-state" id="emptyState">
-                <i class="fas fa-comment-smile"></i>
-                <p>Pilih user di atas untuk mulai chat</p>
-            </div>
-        </div>
-        <div class="input-area">
-            <input type="text" id="messageInput" placeholder="Pilih user terlebih dahulu..." disabled />
-            <button class="send-btn" id="sendBtn" disabled><i class="fas fa-paper-plane"></i></button>
-        </div>
+    <!-- Tombol Restart -->
+    <button id="restart-btn">🔄 Main Lagi</button>
+
+    <!-- Info Kontrol -->
+    <div id="controls-info">
+        <kbd>W A S D</kbd> atau <kbd>↑ ← ↓ →</kbd> untuk bergerak
     </div>
-</div>
 
-<!-- Toast notifikasi -->
-<div class="toast" id="toast"></div>
-
-<script>
-// ============================================================
-// KONFIGURASI
-// ============================================================
-const SOCKET_SERVER = 'http://192.168.1.10:3000'; // ⚠️ GANTI DENGAN IP SERVER ANDA!
-
-// ============================================================
-// ELEMEN DOM
-// ============================================================
-const loginScreen = document.getElementById('loginScreen');
-const chatArea = document.getElementById('chatArea');
-const usernameInput = document.getElementById('usernameInput');
-const loginBtn = document.getElementById('loginBtn');
-const usernameDisplay = document.getElementById('usernameDisplay');
-const onlineBar = document.getElementById('onlineBar');
-const messagesContainer = document.getElementById('messagesContainer');
-const emptyState = document.getElementById('emptyState');
-const messageInput = document.getElementById('messageInput');
-const sendBtn = document.getElementById('sendBtn');
-const toast = document.getElementById('toast');
-
-let currentUser = '';
-let selectedUser = null;
-let onlineUsers = [];
-
-// ============================================================
-// SOCKET.IO
-// ============================================================
-const socket = io(SOCKET_SERVER, { transports: ['websocket', 'polling'] });
-
-socket.on('connect', () => console.log('✅ Terhubung ke server'));
-socket.on('disconnect', () => console.log('❌ Terputus'));
-
-// ============================================================
-// FUNGSI UI
-// ============================================================
-function showToast(msg, isError = true) {
-    toast.textContent = msg;
-    toast.style.display = 'block';
-    toast.style.background = isError ? 'rgba(255,0,0,0.8)' : 'rgba(0,200,100,0.8)';
-    clearTimeout(toast._timer);
-    toast._timer = setTimeout(() => { toast.style.display = 'none'; }, 3000);
-}
-
-function renderOnlineUsers(users) {
-    // simpan daftar online
-    onlineUsers = users.filter(u => u !== currentUser);
-
-    // Hapus semua chip kecuali label
-    const label = onlineBar.querySelector('.label');
-    onlineBar.innerHTML = '';
-    onlineBar.appendChild(label);
-
-    if (onlineUsers.length === 0) {
-        const chip = document.createElement('span');
-        chip.className = 'user-chip';
-        chip.textContent = 'Tidak ada pengguna lain';
-        chip.style.opacity = '0.5';
-        chip.style.cursor = 'default';
-        onlineBar.appendChild(chip);
-        // Jika tidak ada user, disable input
-        if (selectedUser) {
-            selectedUser = null;
-            messageInput.disabled = true;
-            sendBtn.disabled = true;
-            messageInput.placeholder = 'Tidak ada user online';
+    <!-- ========== THREE.JS GAME ========== -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+            }
         }
-        return;
-    }
+    </script>
 
-    onlineUsers.forEach(user => {
-        const chip = document.createElement('span');
-        chip.className = 'user-chip';
-        chip.innerHTML = `<span class="online-dot"></span> ${user}`;
-        chip.dataset.username = user;
-        if (selectedUser === user) chip.classList.add('active');
-        chip.addEventListener('click', () => {
-            // Pilih user
-            selectedUser = user;
-            document.querySelectorAll('.user-chip').forEach(c => c.classList.remove('active'));
-            chip.classList.add('active');
-            messageInput.disabled = false;
-            sendBtn.disabled = false;
-            messageInput.placeholder = `Kirim ke ${user}...`;
-            messageInput.focus();
-            // Hilangkan empty state (jika ada)
-            if (emptyState.style.display !== 'none') emptyState.style.display = 'none';
+    <script type="module">
+        // ----- Impor -----
+        import * as THREE from 'three';
+
+        // ----- Konfigurasi -----
+        const TARGET_SCORE = 10;
+        const PLAYER_SPEED = 0.12;
+        const COLLECT_DISTANCE = 1.6;
+        const STAR_COUNT = 12;
+        const ARENA_SIZE = 14;
+
+        // ----- State -----
+        let score = 0;
+        let gameOver = false;
+        let stars = [];
+        let starPositions = [];
+
+        // ----- DOM refs -----
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const targetDisplay = document.getElementById('targetDisplay');
+        const winMessage = document.getElementById('win-message');
+        const restartBtn = document.getElementById('restart-btn');
+
+        targetDisplay.textContent = TARGET_SCORE;
+
+        // ----- Scene -----
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a1a);
+        scene.fog = new THREE.Fog(0x0a0a1a, 18, 30);
+
+        // ----- Camera -----
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 50);
+        camera.position.set(10, 10, 14);
+        camera.lookAt(0, 0, 0);
+
+        // ----- Renderer -----
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        document.body.prepend(renderer.domElement);
+
+        // ----- Lighting -----
+
+        // Ambient
+        const ambient = new THREE.AmbientLight(0x40406b, 0.5);
+        scene.add(ambient);
+
+        // Main directional
+        const dirLight = new THREE.DirectionalLight(0xffeedd, 1.8);
+        dirLight.position.set(8, 16, 6);
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 1024;
+        dirLight.shadow.mapSize.height = 1024;
+        dirLight.shadow.camera.near = 0.5;
+        dirLight.shadow.camera.far = 30;
+        dirLight.shadow.camera.left = -15;
+        dirLight.shadow.camera.right = 15;
+        dirLight.shadow.camera.top = 15;
+        dirLight.shadow.camera.bottom = -15;
+        scene.add(dirLight);
+
+        // Fill light
+        const fillLight = new THREE.DirectionalLight(0x8888ff, 0.4);
+        fillLight.position.set(-6, 4, -8);
+        scene.add(fillLight);
+
+        // Rim light
+        const rimLight = new THREE.DirectionalLight(0xffaa66, 0.3);
+        rimLight.position.set(-4, 2, 10);
+        scene.add(rimLight);
+
+        // ----- Ground -----
+        const groundGeo = new THREE.PlaneGeometry(ARENA_SIZE + 4, ARENA_SIZE + 4);
+        const groundMat = new THREE.MeshStandardMaterial({
+            color: 0x1a1a2e,
+            roughness: 0.8,
+            metalness: 0.1,
+            transparent: true,
+            opacity: 0.9,
         });
-        onlineBar.appendChild(chip);
-    });
+        const ground = new THREE.Mesh(groundGeo, groundMat);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -0.5;
+        ground.receiveShadow = true;
+        scene.add(ground);
 
-    // Jika selectedUser tidak ada dalam daftar online, reset
-    if (selectedUser && !onlineUsers.includes(selectedUser)) {
-        selectedUser = null;
-        messageInput.disabled = true;
-        sendBtn.disabled = true;
-        messageInput.placeholder = 'User offline, pilih ulang';
-        showToast('User yang dipilih sedang offline', true);
-    }
-}
+        // ----- Grid (dekoratif) -----
+        const gridHelper = new THREE.GridHelper(ARENA_SIZE + 4, 20, 0x4444aa, 0x333366);
+        gridHelper.position.y = -0.45;
+        gridHelper.material.transparent = true;
+        gridHelper.material.opacity = 0.3;
+        scene.add(gridHelper);
 
-function addMessage(from, text, timestamp) {
-    if (emptyState.style.display !== 'none') emptyState.style.display = 'none';
-    const msgDiv = document.createElement('div');
-    msgDiv.className = `message ${from === currentUser ? 'sent' : 'received'}`;
-    const senderSpan = document.createElement('div');
-    senderSpan.className = 'sender';
-    senderSpan.innerHTML = `<i class="fas fa-user-circle"></i> ${from}`;
-    msgDiv.appendChild(senderSpan);
-    const textSpan = document.createElement('div');
-    textSpan.textContent = text;
-    msgDiv.appendChild(textSpan);
-    const timeSpan = document.createElement('div');
-    timeSpan.className = 'time';
-    const t = new Date(timestamp);
-    timeSpan.textContent = t.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
-    msgDiv.appendChild(timeSpan);
-    messagesContainer.appendChild(msgDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-}
+        // ----- Arena Border (cahaya tepi) -----
+        const borderPoints = [
+            [-ARENA_SIZE / 2, -ARENA_SIZE / 2],
+            [ARENA_SIZE / 2, -ARENA_SIZE / 2],
+            [ARENA_SIZE / 2, ARENA_SIZE / 2],
+            [-ARENA_SIZE / 2, ARENA_SIZE / 2],
+            [-ARENA_SIZE / 2, -ARENA_SIZE / 2],
+        ];
+        const borderCurve = new THREE.CatmullRomCurve3(
+            borderPoints.map(p => new THREE.Vector3(p[0], -0.4, p[1]))
+        );
+        const borderTube = new THREE.TubeGeometry(borderCurve, 60, 0.06, 8, false);
+        const borderMat = new THREE.MeshStandardMaterial({
+            color: 0x6666ff,
+            emissive: 0x4444aa,
+            emissiveIntensity: 0.3,
+            transparent: true,
+            opacity: 0.5,
+        });
+        const borderMesh = new THREE.Mesh(borderTube, borderMat);
+        scene.add(borderMesh);
 
-// ============================================================
-// EVENT SOCKET
-// ============================================================
-socket.on('online-users', (users) => {
-    renderOnlineUsers(users);
-});
+        // ----- Player -----
+        const playerGeo = new THREE.BoxGeometry(0.9, 0.9, 0.9);
+        const playerMat = new THREE.MeshStandardMaterial({
+            color: 0x4fc3f7,
+            emissive: 0x1565c0,
+            emissiveIntensity: 0.15,
+            roughness: 0.2,
+            metalness: 0.6,
+        });
+        const player = new THREE.Mesh(playerGeo, playerMat);
+        player.castShadow = true;
+        player.receiveShadow = true;
+        player.position.y = 0.0;
+        scene.add(player);
 
-socket.on('private-message', (data) => {
-    const { from, message, timestamp } = data;
-    if (from === 'You') return; // sudah ditampilkan saat kirim
-    addMessage(from, message, timestamp);
-});
+        // Player glow (inner)
+        const glowGeo = new THREE.BoxGeometry(1.1, 1.1, 1.1);
+        const glowMat = new THREE.MeshBasicMaterial({
+            color: 0x4fc3f7,
+            transparent: true,
+            opacity: 0.08,
+            wireframe: true,
+        });
+        const glow = new THREE.Mesh(glowGeo, glowMat);
+        player.add(glow);
 
-socket.on('error', (err) => {
-    showToast('❌ ' + err, true);
-    // Jika error karena user tidak online, reset selected
-    if (err.includes('not online')) {
-        selectedUser = null;
-        messageInput.disabled = true;
-        sendBtn.disabled = true;
-        messageInput.placeholder = 'Pilih user lain';
-        renderOnlineUsers(onlineUsers); // refresh daftar
-    }
-});
+        // ----- Stars -----
+        function createStar() {
+            const group = new THREE.Group();
 
-// ============================================================
-// LOGIN
-// ============================================================
-function doLogin() {
-    const name = usernameInput.value.trim();
-    if (!name) { showToast('Masukkan nama!', true); return; }
-    currentUser = name;
-    usernameDisplay.textContent = name;
-    socket.emit('register', name);
-    loginScreen.style.display = 'none';
-    chatArea.style.display = 'flex';
-    messageInput.disabled = true;
-    sendBtn.disabled = true;
-    messageInput.placeholder = 'Pilih user terlebih dahulu...';
-    addMessage('Sistem', `Halo ${name}, selamat datang!`, new Date().toISOString());
-}
+            // Badan bintang (octahedron)
+            const geo = new THREE.OctahedronGeometry(0.55, 0);
+            const mat = new THREE.MeshStandardMaterial({
+                color: 0xf9d976,
+                emissive: 0xf39c12,
+                emissiveIntensity: 0.25,
+                roughness: 0.2,
+                metalness: 0.7,
+            });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            mesh.scale.set(1, 1.3, 1);
+            group.add(mesh);
 
-loginBtn.addEventListener('click', doLogin);
-usernameInput.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+            // Glow ring
+            const ringGeo = new THREE.RingGeometry(0.7, 0.9, 32);
+            const ringMat = new THREE.MeshBasicMaterial({
+                color: 0xf9d976,
+                transparent: true,
+                opacity: 0.15,
+                side: THREE.DoubleSide,
+            });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.rotation.x = Math.PI / 2;
+            ring.position.y = -0.1;
+            group.add(ring);
 
-// ============================================================
-// KIRIM PESAN
-// ============================================================
-function sendMessage() {
-    const text = messageInput.value.trim();
-    if (!text || !selectedUser) {
-        if (!selectedUser) showToast('Pilih user tujuan dulu!', true);
-        return;
-    }
-    // Kirim
-    socket.emit('private-message', { to: selectedUser, message: text });
-    // Tampilkan di UI
-    addMessage(currentUser, text, new Date().toISOString());
-    messageInput.value = '';
-    messageInput.focus();
-}
+            // Pivot point (untuk animasi)
+            group.userData = {
+                rotSpeed: 0.01 + Math.random() * 0.02,
+                floatPhase: Math.random() * Math.PI * 2,
+                floatSpeed: 0.6 + Math.random() * 0.4,
+                baseY: 0,
+            };
 
-sendBtn.addEventListener('click', sendMessage);
-messageInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+            return group;
+        }
 
-// ============================================================
-// INIT
-// ============================================================
-window.addEventListener('load', () => usernameInput.focus());
+        function spawnStars() {
+            // Hapus bintang lama
+            stars.forEach(s => scene.remove(s));
+            stars = [];
+            starPositions = [];
 
-socket.on('connect_error', () => {
-    showToast('Gagal koneksi ke server!', true);
-});
+            for (let i = 0; i < STAR_COUNT; i++) {
+                const star = createStar();
+                let x, z, valid;
+                let attempts = 0;
+                do {
+                    x = (Math.random() - 0.5) * (ARENA_SIZE - 1.5);
+                    z = (Math.random() - 0.5) * (ARENA_SIZE - 1.5);
+                    valid = true;
+                    // Jangan spawn di dekat player start (0,0)
+                    if (Math.abs(x) < 1.8 && Math.abs(z) < 1.8) valid = false;
+                    // Jangan terlalu dekat dengan bintang lain
+                    for (const pos of starPositions) {
+                        if (Math.sqrt((x - pos.x) ** 2 + (z - pos.z) ** 2) < 1.4) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    attempts++;
+                    if (attempts > 100) break;
+                } while (!valid);
 
-console.log('🚀 Aplikasi siap (revisi)');
-</script>
+                star.position.set(x, 0.2, z);
+                star.userData.baseY = 0.2 + Math.random() * 0.3;
+                star.userData.floatPhase = Math.random() * Math.PI * 2;
+                scene.add(star);
+                stars.push(star);
+                starPositions.push({ x, z });
+            }
+        }
+
+        spawnStars();
+
+        // ----- Keyboard controls -----
+        const keys = { w: false, a: false, s: false, d: false, up: false, down: false, left: false, right: false };
+
+        document.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+            if (key === 'w') keys.w = true;
+            if (key === 'a') keys.a = true;
+            if (key === 's') keys.s = true;
+            if (key === 'd') keys.d = true;
+            if (key === 'arrowup') keys.up = true;
+            if (key === 'arrowdown') keys.down = true;
+            if (key === 'arrowleft') keys.left = true;
+            if (key === 'arrowright') keys.right = true;
+            // Mencegah scroll dengan arrow
+            if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            const key = e.key.toLowerCase();
+            if (key === 'w') keys.w = false;
+            if (key === 'a') keys.a = false;
+            if (key === 's') keys.s = false;
+            if (key === 'd') keys.d = false;
+            if (key === 'arrowup') keys.up = false;
+            if (key === 'arrowdown') keys.down = false;
+            if (key === 'arrowleft') keys.left = false;
+            if (key === 'arrowright') keys.right = false;
+        });
+
+        // ----- Touch / Mobile controls (sederhana) -----
+        let touchX = null;
+        let touchY = null;
+        const touchArea = renderer.domElement;
+
+        touchArea.addEventListener('touchstart', (e) => {
+            const t = e.touches[0];
+            touchX = t.clientX;
+            touchY = t.clientY;
+        }, { passive: true });
+
+        touchArea.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const t = e.touches[0];
+            const dx = t.clientX - touchX;
+            const dy = t.clientY - touchY;
+            // Map touch delta ke tombol
+            const threshold = 15;
+            keys.left = dx < -threshold;
+            keys.right = dx > threshold;
+            keys.up = dy < -threshold;
+            keys.down = dy > threshold;
+            touchX = t.clientX;
+            touchY = t.clientY;
+        }, { passive: false });
+
+        touchArea.addEventListener('touchend', () => {
+            keys.left = false;
+            keys.right = false;
+            keys.up = false;
+            keys.down = false;
+            touchX = null;
+            touchY = null;
+        }, { passive: true });
+
+        // ----- Game logic -----
+        function collectStar(star) {
+            scene.remove(star);
+            const idx = stars.indexOf(star);
+            if (idx !== -1) {
+                stars.splice(idx, 1);
+                starPositions.splice(idx, 1);
+            }
+            score++;
+            scoreDisplay.textContent = score;
+
+            // Efek visual: flash player
+            player.material.emissiveIntensity = 0.8;
+            setTimeout(() => {
+                player.material.emissiveIntensity = 0.15;
+            }, 150);
+
+            // Efek partikel sederhana (ledakan kecil)
+            createCollectParticles(star.position.clone());
+
+            if (score >= TARGET_SCORE) {
+                gameOver = true;
+                winMessage.classList.add('show');
+                restartBtn.classList.add('show');
+            } else {
+                // Respawn bintang baru di posisi acak
+                setTimeout(() => {
+                    if (!gameOver) {
+                        const newStar = createStar();
+                        let x, z, valid;
+                        let attempts = 0;
+                        do {
+                            x = (Math.random() - 0.5) * (ARENA_SIZE - 1.5);
+                            z = (Math.random() - 0.5) * (ARENA_SIZE - 1.5);
+                            valid = true;
+                            if (Math.abs(x) < 1.8 && Math.abs(z) < 1.8) valid = false;
+                            for (const pos of starPositions) {
+                                if (Math.sqrt((x - pos.x) ** 2 + (z - pos.z) ** 2) < 1.4) {
+                                    valid = false;
+                                    break;
+                                }
+                            }
+                            attempts++;
+                            if (attempts > 100) break;
+                        } while (!valid);
+                        newStar.position.set(x, 0.2, z);
+                        newStar.userData.baseY = 0.2 + Math.random() * 0.3;
+                        newStar.userData.floatPhase = Math.random() * Math.PI * 2;
+                        scene.add(newStar);
+                        stars.push(newStar);
+                        starPositions.push({ x, z });
+                    }
+                }, 300);
+            }
+        }
+
+        // ----- Particle effect (sederhana) -----
+        function createCollectParticles(position) {
+            const count = 20;
+            const colors = [0xf9d976, 0xf39c12, 0xff6b6b, 0x4fc3f7];
+            for (let i = 0; i < count; i++) {
+                const size = 0.05 + Math.random() * 0.12;
+                const geo = new THREE.SphereGeometry(size, 6, 6);
+                const mat = new THREE.MeshStandardMaterial({
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    emissive: 0xffaa00,
+                    emissiveIntensity: 0.5,
+                });
+                const p = new THREE.Mesh(geo, mat);
+                p.position.copy(position);
+                p.position.y += 0.2;
+                const dir = new THREE.Vector3(
+                    (Math.random() - 0.5) * 4,
+                    Math.random() * 3 + 1,
+                    (Math.random() - 0.5) * 4
+                ).normalize().multiplyScalar(0.8 + Math.random() * 1.2);
+                p.userData.vel = dir;
+                p.userData.life = 1.0;
+                scene.add(p);
+
+                // Animasi partikel akan di-update di loop
+                // Simpan dalam array global
+                if (!window._particles) window._particles = [];
+                window._particles.push(p);
+            }
+        }
+
+        // ----- Update partikel -----
+        function updateParticles() {
+            if (!window._particles) return;
+            const toRemove = [];
+            for (let i = 0; i < window._particles.length; i++) {
+                const p = window._particles[i];
+                p.position.add(p.userData.vel);
+                p.userData.vel.y -= 0.06;
+                p.userData.life -= 0.012;
+                p.scale.setScalar(p.userData.life);
+                p.material.transparent = true;
+                p.material.opacity = p.userData.life;
+                if (p.userData.life <= 0) {
+                    toRemove.push(i);
+                }
+            }
+            for (let i = toRemove.length - 1; i >= 0; i--) {
+                const idx = toRemove[i];
+                scene.remove(window._particles[idx]);
+                window._particles.splice(idx, 1);
+            }
+        }
+
+        // ----- Reset game -----
+        function resetGame() {
+            // Hapus semua bintang
+            stars.forEach(s => scene.remove(s));
+            stars = [];
+            starPositions = [];
+
+            // Reset skor
+            score = 0;
+            scoreDisplay.textContent = '0';
+            gameOver = false;
+            winMessage.classList.remove('show');
+            restartBtn.classList.remove('show');
+
+            // Reset player pos
+            player.position.set(0, 0, 0);
+
+            // Hapus partikel
+            if (window._particles) {
+                window._particles.forEach(p => scene.remove(p));
+                window._particles = [];
+            }
+
+            // Spawn ulang bintang
+            spawnStars();
+
+            // Reset material player
+            player.material.emissiveIntensity = 0.15;
+        }
+
+        restartBtn.addEventListener('click', resetGame);
+
+        // ----- Window resize -----
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // ----- Animasi loop -----
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // ----- Gerakan player -----
+            if (!gameOver) {
+                let dx = 0,
+                    dz = 0;
+                if (keys.w || keys.up) dz = -1;
+                if (keys.s || keys.down) dz = 1;
+                if (keys.a || keys.left) dx = -1;
+                if (keys.d || keys.right) dx = 1;
+
+                // Normalisasi
+                if (dx !== 0 && dz !== 0) {
+                    dx *= 0.707;
+                    dz *= 0.707;
+                }
+
+                const newX = player.position.x + dx * PLAYER_SPEED;
+                const newZ = player.position.z + dz * PLAYER_SPEED;
+
+                // Batas arena
+                const limit = ARENA_SIZE / 2 - 0.5;
+                player.position.x = Math.max(-limit, Math.min(limit, newX));
+                player.position.z = Math.max(-limit, Math.min(limit, newZ));
+
+                // Rotasi player mengikuti arah
+                if (dx !== 0 || dz !== 0) {
+                    const angle = Math.atan2(dx, dz);
+                    player.rotation.y = angle;
+                }
+
+                // ----- Deteksi koleksi -----
+                const pPos = player.position;
+                for (let i = stars.length - 1; i >= 0; i--) {
+                    const star = stars[i];
+                    const dist = pPos.distanceTo(star.position);
+                    if (dist < COLLECT_DISTANCE) {
+                        collectStar(star);
+                        break; // hanya satu per frame
+                    }
+                }
+            }
+
+            // ----- Animasi bintang -----
+            const time = performance.now() / 1000;
+            for (const star of stars) {
+                const ud = star.userData;
+                star.rotation.x += ud.rotSpeed * 0.5;
+                star.rotation.y += ud.rotSpeed;
+                star.rotation.z += ud.rotSpeed * 0.3;
+                // Floating
+                const floatOffset = Math.sin(time * ud.floatSpeed + ud.floatPhase) * 0.2;
+                star.position.y = ud.baseY + floatOffset;
+            }
+
+            // ----- Animasi player (bounce ringan) -----
+            if (!gameOver) {
+                const bob = Math.sin(time * 3) * 0.03;
+                player.position.y = bob;
+                glow.rotation.x = time * 0.5;
+                glow.rotation.y = time * 0.7;
+            }
+
+            // ----- Update partikel -----
+            updateParticles();
+
+            // ----- Kamera mengikuti player (sedikit) -----
+            const targetCamPos = new THREE.Vector3(
+                player.position.x + 10,
+                10,
+                player.position.z + 14
+            );
+            camera.position.lerp(targetCamPos, 0.03);
+            camera.lookAt(player.position.x * 0.3, 0, player.position.z * 0.3);
+
+            // ----- Render -----
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // ----- Mulai dengan mulus -----
+        console.log('🎮 Game 3D Koleksi Bintang siap!');
+        console.log(`⭐ Kumpulkan ${TARGET_SCORE} bintang untuk menang!`);
+        console.log('🕹️  Gunakan WASD atau panah untuk bergerak.');
+
+        // Jika pengguna memencet tombol restart di awal (tidak sengaja), aman
+        // Inisialisasi window._particles
+        if (!window._particles) window._particles = [];
+
+        console.log('✅ Game loaded successfully!');
+    </script>
 </body>
 </html>
