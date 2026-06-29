@@ -2,1435 +2,1937 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>3D Minecraft HD - Open World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Admin Panel - NEV Market</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase-app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+                "firebase-database": "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
+            }
+        }
+    </script>
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            overflow: hidden;
-            background: #0a0a1a;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        canvas {
-            display: block;
+        /* ============================================================
+           ROOT — Clean White Theme (tanpa glow)
+           ============================================================ */
+        :root {
+            --bg-body: #f5f7fa;
+            --bg-card: #ffffff;
+            --bg-input: #f0f2f5;
+            --border: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --shadow: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.08);
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-gold: #f59e0b;
+            --accent-red: #ef4444;
+            --radius: 12px;
+            --radius-sm: 6px;
+            --transition: 0.2s ease;
+            --font: 'Inter', -apple-system, sans-serif;
         }
 
-        /* LOADING SCREEN */
-        #loading-screen {
-            position: fixed;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            padding-bottom: 70px;
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px 10px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0a0a1a;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+        .app-header .brand {
+            font-size: 1.2rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+        .app-header .brand i {
+            color: var(--accent-gold);
+        }
+        .app-header .actions {
+            display: flex;
+            gap: 8px;
+        }
+        .app-header .actions a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 12px;
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            background: var(--bg-body);
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        .app-header .actions a:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+        .app-header .actions button {
+            padding: 5px 14px;
+            border-radius: 40px;
+            border: none;
+            background: var(--accent-blue);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .app-header .actions button:hover {
+            opacity: 0.85;
+        }
+
+        /* ============================================================
+           MAIN CONTENT
+           ============================================================ */
+        .main {
+            padding: 16px 16px 24px;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        /* ============================================================
+           STATS
+           ============================================================ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        .stat-card .label {
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--text-muted);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .stat-card .label i {
+            width: 14px;
+            font-size: 0.6rem;
+        }
+        .stat-card .number {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-top: 2px;
+            letter-spacing: -0.2px;
+        }
+        .stat-card .number.blue { color: var(--accent-blue); }
+        .stat-card .number.green { color: var(--accent-green); }
+        .stat-card .number.gold { color: var(--accent-gold); }
+        .stat-card .number.purple { color: var(--accent-purple); }
+        .stat-card .sub-info {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        /* ============================================================
+           CAROUSEL MENU
+           ============================================================ */
+        .menu-carousel-wrapper {
+            position: relative;
+            margin-bottom: 18px;
+            overflow: hidden;
+            touch-action: pan-y;
+        }
+        .menu-carousel {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding: 4px 4px 10px 4px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            scroll-behavior: smooth;
+        }
+        .menu-carousel::-webkit-scrollbar { display: none; }
+
+        .menu-item {
+            flex: 0 0 68px;
+            scroll-snap-align: start;
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            color: var(--text-secondary);
+            padding: 4px;
+        }
+        .menu-item .icon-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
             justify-content: center;
-            z-index: 1000;
-            transition: opacity 1s ease;
-            pointer-events: none;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            box-shadow: var(--shadow);
         }
-        #loading-screen.hidden {
-            opacity: 0;
-        }
-        #loading-screen h1 {
+        .menu-item.active .icon-circle {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
             color: #fff;
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-            text-shadow: 0 0 20px rgba(0, 150, 255, 0.3);
-            letter-spacing: 2px;
         }
-        #loading-bar-container {
-            width: 300px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 150, 255, 0.1);
+        .menu-item .label {
+            font-size: 0.55rem;
+            font-weight: 500;
+            text-align: center;
+            color: var(--text-muted);
         }
-        #loading-bar {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #00d4ff, #7b2ffc);
-            border-radius: 10px;
-            transition: width 0.3s ease;
+        .menu-item.active .label {
+            color: var(--text-primary);
         }
-        #loading-text {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-            margin-top: 16px;
-            letter-spacing: 1px;
+        .menu-item:hover .icon-circle {
+            border-color: var(--accent-blue);
         }
-        #loading-percent {
+        .menu-item .badge-menu {
+            background: var(--accent-red);
             color: #fff;
-            font-weight: bold;
+            border-radius: 40px;
+            padding: 0 6px;
+            font-size: 0.45rem;
+            font-weight: 700;
+            position: relative;
+            top: -6px;
+            right: -18px;
+            min-width: 14px;
+            text-align: center;
         }
 
-        /* HUD */
-        #hud {
-            position: fixed;
-            top: 0;
-            left: 0;
+        /* ============================================================
+           CONTENT CARD
+           ============================================================ */
+        .content-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .card-header h2 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-header h2 i { color: var(--accent-blue); }
+        .card-header .btn-add {
+            padding: 4px 14px;
+            border-radius: 40px;
+            border: none;
+            background: var(--accent-blue);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-family: inherit;
+        }
+        .card-header .btn-add:hover { opacity: 0.85; transform: translateY(-1px); }
+        .card-header .btn-add-success { background: var(--accent-green); }
+
+        /* ============================================================
+           TABLES
+           ============================================================ */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+        table {
             width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 10;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+        th, td {
+            padding: 6px 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-size: 0.5rem;
+            background: var(--bg-body);
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--bg-body); }
+
+        .badge {
+            display: inline-block;
+            padding: 1px 10px;
+            border-radius: 40px;
+            font-size: 0.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-info { background: #dbeafe; color: #1e40af; }
+
+        .btn-icon {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 3px 8px;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-size: 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-weight: 600;
+        }
+        .btn-icon:hover {
+            background: var(--bg-body);
+            color: var(--text-primary);
+        }
+        .btn-icon.edit:hover { color: var(--accent-blue); }
+        .btn-icon.delete:hover { color: var(--accent-red); }
+        .btn-icon.check:hover { color: var(--accent-green); }
+        .btn-icon.confirm {
+            background: var(--accent-green);
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-size: 0.6rem;
+        }
+        .btn-icon.confirm:hover {
+            background: #059669;
+        }
+        .btn-icon.send {
+            background: var(--accent-gold);
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-size: 0.6rem;
+        }
+        .btn-icon.send:hover {
+            background: #d97706;
         }
 
-        /* Crosshair */
-        #crosshair {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            opacity: 0.9;
+        .product-thumb {
+            width: 30px;
+            height: 30px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+            display: block;
         }
-        #crosshair::before,
-        #crosshair::after {
+
+        .empty-state {
+            text-align: center;
+            padding: 20px 0;
+            color: var(--text-muted);
+        }
+        .empty-state i {
+            font-size: 1.4rem;
+            opacity: 0.3;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* ============================================================
+           TOGGLE SWITCH
+           ============================================================ */
+        .toggle-switch {
+            position: relative;
+            width: 38px;
+            height: 20px;
+            display: inline-block;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: #cbd5e1;
+            border-radius: 40px;
+            transition: var(--transition);
+        }
+        .toggle-slider::before {
             content: '';
             position: absolute;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 2px;
-        }
-        #crosshair::before {
-            width: 2px;
-            height: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        #crosshair::after {
-            width: 100%;
-            height: 2px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        #crosshair-dot {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.6);
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background: #fff;
             border-radius: 50%;
+            transition: var(--transition);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--accent-green);
+        }
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(18px);
         }
 
-        /* Hotbar */
-        #hotbar {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 4px;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 6px 10px;
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            pointer-events: auto;
-        }
-        .slot {
-            width: 48px;
-            height: 48px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            display: flex;
+        /* ============================================================
+           MODAL
+           ============================================================ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: none;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            color: #fff;
-            transition: all 0.2s;
-            cursor: pointer;
-            position: relative;
-            user-select: none;
-        }
-        .slot.active {
-            border-color: #ffd700;
-            background: rgba(255, 215, 0, 0.2);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-        }
-        .slot .color-preview {
-            width: 28px;
-            height: 28px;
-            border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .slot .key {
-            position: absolute;
-            top: 2px;
-            left: 6px;
-            font-size: 9px;
-            color: rgba(255, 255, 255, 0.4);
-            font-weight: bold;
-        }
-
-        /* Info */
-        #info {
-            position: absolute;
-            top: 16px;
-            left: 16px;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 13px;
-            font-family: 'Segoe UI', sans-serif;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-            line-height: 1.6;
-            pointer-events: none;
-            user-select: none;
-        }
-        #info strong {
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        /* Minimap */
-        #minimap {
-            position: absolute;
-            bottom: 100px;
-            right: 20px;
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-            overflow: hidden;
-            background: #2d5a3d;
-            pointer-events: none;
+            background: rgba(0,0,0,0.4);
             backdrop-filter: blur(4px);
+            padding: 16px;
         }
-        #minimap canvas {
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            max-width: 500px;
             width: 100%;
-            height: 100%;
-            image-rendering: pixelated;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s ease;
         }
-        #minimap .player-dot {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 8px;
-            height: 8px;
-            background: #ffd700;
-            border-radius: 50%;
-            border: 2px solid #fff;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
-            pointer-events: none;
-            transition: all 0.1s;
+        @keyframes slideUp {
+            from { opacity:0; transform: translateY(20px); }
+            to { opacity:1; transform: translateY(0); }
         }
-        #minimap .compass {
-            position: absolute;
-            top: 6px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 11px;
-            font-weight: bold;
-            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
-            pointer-events: none;
-            letter-spacing: 1px;
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .modal-header h2 { font-size: 1.1rem; font-weight: 800; }
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .modal-close:hover {
+            color: var(--text-primary);
         }
 
-        /* Skin Selector */
-        #skin-selector {
-            position: absolute;
-            bottom: 110px;
-            left: 20px;
-            display: flex;
+        .form-group { margin-bottom: 10px; }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 7px 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            transition: var(--transition);
+            font-family: inherit;
+            outline: none;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+        .form-group textarea { resize: vertical; min-height: 40px; }
+        .form-group .checkbox-group {
+            display: flex; gap: 10px; flex-wrap: wrap; padding-top: 2px;
+        }
+        .form-group .checkbox-group label {
+            display: flex; align-items: center; gap: 4px;
+            font-weight: 400; font-size: 0.75rem; cursor: pointer;
+        }
+        .form-group .checkbox-group input[type="checkbox"] {
+            width: 15px; height: 15px; accent-color: var(--accent-blue);
+        }
+        .form-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+        }
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+        .form-actions {
+            display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+        }
+        .form-actions .btn-submit {
+            padding: 7px 18px; border-radius: 40px; border: none;
+            background: var(--accent-blue); color: #fff;
+            font-weight: 700; font-size: 0.75rem; cursor: pointer;
+            transition: var(--transition); font-family: inherit;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .form-actions .btn-submit:hover { opacity: 0.85; }
+        .form-actions .btn-cancel {
+            padding: 7px 18px; border-radius: 40px;
+            border: 1px solid var(--border); background: transparent;
+            color: var(--text-secondary); font-weight: 600; font-size: 0.75rem;
+            cursor: pointer; transition: var(--transition); font-family: inherit;
+        }
+        .form-actions .btn-cancel:hover {
+            border-color: var(--text-primary); color: var(--text-primary);
+        }
+
+        /* ============================================================
+           TOAST & NOTIF
+           ============================================================ */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 8px 20px;
+            border-radius: 60px;
+            box-shadow: var(--shadow-lg);
+            z-index: 99999;
+            display: none;
+            align-items: center;
             gap: 8px;
-            pointer-events: auto;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 8px 12px;
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: all 0.35s ease;
+            font-weight: 500;
+            font-size: 0.75rem;
+            color: var(--text-primary);
         }
-        .skin-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            cursor: pointer;
-            transition: all 0.2s;
+        .toast.show {
+            display: flex;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast i { font-size: 0.8rem; }
+        .toast.success i { color: var(--accent-green); }
+        .toast.error i { color: var(--accent-red); }
+        .toast.info i { color: var(--accent-blue); }
+
+        .notif-badge {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: var(--accent-red);
+            color: #fff;
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            background: rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+            box-shadow: 0 2px 12px rgba(239,68,68,0.3);
+            cursor: pointer;
+            z-index: 50;
+            transition: var(--transition);
         }
-        .skin-btn:hover {
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: scale(1.05);
+        .notif-badge:hover { transform: scale(1.05); }
+
+        /* ============================================================
+           RECENT ORDERS
+           ============================================================ */
+        .recent-order-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
         }
-        .skin-btn.active {
-            border-color: #ffd700;
-            background: rgba(255, 215, 0, 0.15);
+        .recent-order-item:last-child { border-bottom: none; }
+        .recent-order-item .thumb {
+            width: 34px;
+            height: 34px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+            flex-shrink: 0;
+        }
+        .recent-order-item .info {
+            flex: 1;
+            min-width: 0;
+        }
+        .recent-order-item .info .name {
+            font-weight: 600;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .recent-order-item .info .meta {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .recent-order-item .badge {
+            flex-shrink: 0;
         }
 
-        /* Controls hint */
-        #controls-hint {
-            position: absolute;
-            bottom: 180px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 13px;
-            font-family: 'Segoe UI', sans-serif;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-            pointer-events: none;
-            user-select: none;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 6px 16px;
-            border-radius: 20px;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: opacity 0.8s;
+        /* ============================================================
+           KONFIRMASI SALDO di Dashboard
+           ============================================================ */
+        .confirm-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
         }
-        #controls-hint.hidden {
-            opacity: 0;
+        .confirm-section .btn-confirm {
+            padding: 4px 16px;
+            border-radius: 40px;
+            border: none;
+            background: var(--accent-green);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
-
-        /* Block count */
-        #block-count {
-            position: absolute;
-            bottom: 85px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 12px;
-            font-family: 'Segoe UI', sans-serif;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-            pointer-events: none;
-            user-select: none;
+        .confirm-section .btn-confirm:hover {
+            background: #059669;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            #minimap {
-                width: 100px;
-                height: 100px;
-                bottom: 80px;
-                right: 10px;
-            }
-            .slot {
-                width: 40px;
-                height: 40px;
-            }
-            .slot .color-preview {
-                width: 22px;
-                height: 22px;
-            }
-            #skin-selector {
-                bottom: 90px;
-                left: 10px;
-                padding: 4px 8px;
-            }
-            .skin-btn {
-                width: 30px;
-                height: 30px;
-                font-size: 14px;
-            }
-            #info {
-                font-size: 11px;
-                top: 10px;
-                left: 10px;
-            }
-            #controls-hint {
-                font-size: 10px;
-                bottom: 150px;
-                padding: 4px 12px;
-            }
-            #loading-screen h1 {
-                font-size: 1.8rem;
-            }
-            #loading-bar-container {
-                width: 200px;
-            }
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .menu-item { flex: 0 0 60px; }
+            .menu-item .icon-circle { width: 44px; height: 44px; font-size: 1rem; }
+            .main { padding: 12px 10px; }
+            .content-card { padding: 12px; }
+            .recent-order-item .thumb { width: 28px; height: 28px; }
+        }
+        @media (max-width: 380px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .menu-item { flex: 0 0 54px; }
+            .menu-item .icon-circle { width: 38px; height: 38px; font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- LOADING SCREEN -->
-    <div id="loading-screen">
-        <h1>⛏️ MEMUAT DUNIA</h1>
-        <div id="loading-bar-container">
-            <div id="loading-bar"></div>
+    <!-- ============ HEADER ============ -->
+    <header class="app-header">
+        <div class="brand"><i class="fas fa-crown"></i> NEV Market</div>
+        <div class="actions">
+            <a href="index.html" target="_blank"><i class="fas fa-store"></i> Toko</a>
+            <button id="refreshBtnTop"><i class="fas fa-sync"></i> Refresh</button>
         </div>
-        <div id="loading-text">Membangun medan... <span id="loading-percent">0%</span></div>
+    </header>
+
+    <!-- ============ MAIN ============ -->
+    <div class="main" id="mainContent">
+
+        <!-- STATS -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card"><div class="label"><i class="fas fa-wallet"></i> Pendapatan Hari Ini</div><div class="number blue" id="pendapatanHarian">Rp 0</div></div>
+            <div class="stat-card"><div class="label"><i class="fas fa-box"></i> Total Pesanan</div><div class="number gold" id="totalOrders">0</div></div>
+            <div class="stat-card"><div class="label"><i class="fas fa-check-circle"></i> Produk Terjual</div><div class="number green" id="totalProdukTerjual">0</div></div>
+            <div class="stat-card"><div class="label"><i class="fas fa-check-circle"></i> Jasa Selesai</div><div class="number purple" id="totalJasaSukses">0</div></div>
+            <div class="stat-card"><div class="label"><i class="fas fa-clock"></i> Antrian Aktif</div><div class="number gold" id="totalQueue">0</div></div>
+            <div class="stat-card"><div class="label"><i class="fas fa-hourglass-half"></i> Jasa Antrian</div><div class="number gold" id="totalJasaAntrian">0</div></div>
+        </div>
+
+        <!-- MENU CAROUSEL -->
+        <div class="menu-carousel-wrapper">
+            <div class="menu-carousel" id="menuCarousel">
+                <button class="menu-item active" data-section="dashboard"><span class="icon-circle"><i class="fas fa-chart-pie"></i></span><span class="label">Dashboard</span></button>
+                <button class="menu-item" data-section="home"><span class="icon-circle"><i class="fas fa-home"></i></span><span class="label">Home</span></button>
+                <button class="menu-item" data-section="digital"><span class="icon-circle"><i class="fas fa-palette"></i></span><span class="label">Produk</span></button>
+                <button class="menu-item" data-section="jasa"><span class="icon-circle"><i class="fas fa-concierge-bell"></i></span><span class="label">Jasa</span></button>
+                <button class="menu-item" data-section="news"><span class="icon-circle"><i class="fas fa-newspaper"></i></span><span class="label">Berita</span></button>
+                <button class="menu-item" data-section="orders-jasa"><span class="icon-circle"><i class="fas fa-box"></i></span><span class="label">Pesan Jasa</span></button>
+                <button class="menu-item" data-section="orders-produk"><span class="icon-circle"><i class="fas fa-shopping-cart"></i></span><span class="label">Pesan Produk</span></button>
+                <button class="menu-item" data-section="queue"><span class="icon-circle"><i class="fas fa-clock"></i></span><span class="label">Antrian</span></button>
+            </div>
+        </div>
+
+        <!-- ==========================================================
+        SECTION: DASHBOARD
+        ========================================================== -->
+        <div id="section-dashboard">
+            <!-- Konfirmasi Saldo -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-check-circle"></i> Konfirmasi Saldo</h2>
+                </div>
+                <div class="confirm-section" id="confirmSaldoSection">
+                    <button class="btn-confirm" data-status="pending" onclick="confirmAllSaldo('pending')">
+                        <i class="fas fa-check"></i> Konfirmasi Semua Pending
+                    </button>
+                    <button class="btn-confirm" data-status="confirmed" onclick="confirmAllSaldo('confirmed')">
+                        <i class="fas fa-check"></i> Konfirmasi Semua Confirmed
+                    </button>
+                    <span style="font-size:0.7rem;color:var(--text-muted);margin-left:4px;">Klik untuk mengkonfirmasi semua pesanan dengan status tersebut</span>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-bolt"></i> Pesanan Terbaru</h2>
+                    <span style="font-size:0.65rem;color:var(--text-muted);">3 terakhir</span>
+                </div>
+                <div id="recentOrdersContainer">
+                    <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h2 style="font-size:0.85rem;font-weight:700;margin-bottom:2px;"><i class="fas fa-info-circle" style="color:var(--accent-blue);"></i> Selamat Datang di Admin Panel</h2>
+                <p style="color:var(--text-secondary);font-size:0.75rem;">Kelola produk, jasa, berita, pesanan, dan antrian dengan mudah.</p>
+            </div>
+        </div>
+
+        <!-- ==========================================================
+        SECTION: HOME
+        ========================================================== -->
+        <div id="section-home" style="display:none;">
+            <div class="content-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-home"></i> Pengaturan Halaman Utama</h2>
+                </div>
+                <form id="homeForm">
+                    <div class="form-group">
+                        <label>Nama Toko</label>
+                        <input type="text" id="shopName" placeholder="NEV Market" />
+                    </div>
+                    <div class="form-group">
+                        <label>Judul Hero</label>
+                        <input type="text" id="heroTitle" placeholder="Desain Logo Premium untuk Bisnis Anda" />
+                    </div>
+                    <div class="form-group">
+                        <label>Subjudul Hero</label>
+                        <input type="text" id="heroSubtitle" placeholder="Dapatkan logo berkualitas tinggi..." />
+                    </div>
+                    <div class="form-group">
+                        <label>URL Gambar Hero</label>
+                        <input type="url" id="heroImage" placeholder="https://example.com/hero.jpg" />
+                    </div>
+
+                    <div class="form-group" style="border-top:1px solid var(--border);padding-top:12px;margin-top:6px;">
+                        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;font-size:0.85rem;">
+                            <span>Status Toko:</span>
+                            <span id="shopStatusLabel" style="font-weight:700;font-size:0.8rem;padding:1px 12px;border-radius:40px;">Buka</span>
+                        </label>
+                        <div style="display:flex;align-items:center;gap:10px;margin-top:2px;">
+                            <span style="font-size:0.7rem;color:var(--text-muted);">Tutup</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="shopToggle" />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span style="font-size:0.7rem;color:var(--text-muted);">Buka</span>
+                            <span id="shopStatusDetail" style="font-size:0.7rem;color:var(--text-secondary);margin-left:4px;">(Toko sedang buka)</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit"><i class="fas fa-save"></i> Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ==========================================================
+        SECTION: PRODUK DIGITAL
+        ========================================================== -->
+        <div id="section-digital" style="display:none;">
+            <div class="content-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-palette"></i> Produk Digital</h2>
+                    <button class="btn-add" id="btnTambahDigital"><i class="fas fa-plus"></i> Tambah</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Gambar</th><th>Nama</th><th>Harga</th><th>Link</th><th>Aksi</th></tr></thead>
+                        <tbody id="digitalTableBody"><tr><td colspan="5" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================================
+        SECTION: LAYANAN JASA
+        ========================================================== -->
+        <div id="section-jasa" style="display:none;">
+            <div class="content-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-concierge-bell"></i> Layanan Jasa</h2>
+                    <button class="btn-add" id="btnTambahJasa"><i class="fas fa-plus"></i> Tambah</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Gambar</th><th>Nama</th><th>Harga</th><th>Dukungan</th><th>Aksi</th></tr></thead>
+                        <tbody id="jasaTableBody"><tr><td colspan="5" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================================
+        SECTION: BERITA
+        ========================================================== -->
+        <div id="section-news" style="display:none;">
+            <div class="content-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-newspaper"></i> Berita</h2>
+                    <button class="btn-add" id="btnTambahBerita"><i class="fas fa-plus"></i> Tambah</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Judul</th><th>Tanggal</th><th>Aksi</th></tr></thead>
+                        <tbody id="newsTableBody"><tr><td colspan="3" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================================
+        SECTION: PESANAN JASA
+        ========================================================== -->
+        <div id="section-orders-jasa" style="display:none;">
+            <div class="content-card">
+                <div class="card-header"><h2><i class="fas fa-box"></i> Pesanan Jasa</h2></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Foto</th><th>Produk</th><th>Harga</th><th>Device</th><th>Status</th><th>Data</th><th>Antrian</th><th>Waktu</th><th>Aksi</th></tr></thead>
+                        <tbody id="ordersJasaTableBody"><tr><td colspan="9" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================================
+        SECTION: PESANAN PRODUK
+        ========================================================== -->
+        <div id="section-orders-produk" style="display:none;">
+            <div class="content-card">
+                <div class="card-header"><h2><i class="fas fa-shopping-cart"></i> Pesanan Produk</h2></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Foto</th><th>Produk</th><th>Harga</th><th>Device</th><th>Status</th><th>Waktu</th><th>Aksi</th></tr></thead>
+                        <tbody id="ordersProdukTableBody"><tr><td colspan="7" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================================
+        SECTION: ANTRIAN
+        ========================================================== -->
+        <div id="section-queue" style="display:none;">
+            <div class="content-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-clock"></i> Antrian</h2>
+                    <button class="btn-add btn-add-success" id="btnResetQueue"><i class="fas fa-redo"></i> Reset</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>No.</th><th>Produk</th><th>Device</th><th>Status</th><th>Waktu</th><th>Aksi</th></tr></thead>
+                        <tbody id="queueTableBody"><tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- HUD -->
-    <div id="hud">
-        <div id="crosshair"><div id="crosshair-dot"></div></div>
-        <div id="info">
-            <strong>⛏️ MINECRAFT HD</strong><br />
-            <span id="pos-info">0, 0, 0</span>
+    <!-- ============ MODAL ============ -->
+    <div class="modal-overlay" id="formModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="formModalTitle">Tambah Item</h2>
+                <button class="modal-close" id="formModalClose"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="formModalBody">
+                <div id="formFields"></div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit"><i class="fas fa-save"></i> Simpan</button>
+                    <button type="button" class="btn-cancel" id="formCancelBtn">Batal</button>
+                </div>
+            </form>
         </div>
-        <div id="controls-hint">🖱️ Klik untuk mulai · WASD gerak · SPACE lompat · Klik kiri hancurkan · Klik kanan pasang</div>
-
-        <div id="skin-selector">
-            <button class="skin-btn active" data-skin="steve" title="Steve">🧑</button>
-            <button class="skin-btn" data-skin="alex" title="Alex">👩</button>
-            <button class="skin-btn" data-skin="knight" title="Knight">⚔️</button>
-            <button class="skin-btn" data-skin="ninja" title="Ninja">🥷</button>
-            <button class="skin-btn" data-skin="wizard" title="Wizard">🧙</button>
-        </div>
-
-        <div id="minimap">
-            <div class="compass">N</div>
-            <canvas id="minimap-canvas" width="140" height="140"></canvas>
-            <div class="player-dot"></div>
-        </div>
-
-        <div id="hotbar"></div>
-        <div id="block-count">Blocks: <span id="block-count-num">0</span></div>
     </div>
 
-    <!-- Three.js Imports -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-            }
-        }
-    </script>
+    <!-- ============ TOAST ============ -->
+    <div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg">Berhasil!</span></div>
 
+    <!-- ============ NOTIFICATION BADGE ============ -->
+    <div class="notif-badge" id="notifBadge" title="Notifikasi pesanan baru"><i class="fas fa-bell"></i></div>
+
+    <!-- ============ JAVASCRIPT ============ -->
     <script type="module">
-        // ──────────────────────────────────────────────
-        // IMPORTS
-        // ──────────────────────────────────────────────
-        import * as THREE from 'three';
-        import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
-        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        // ============================================================
+        // 1. FIREBASE
+        // ============================================================
+        import { initializeApp } from "firebase-app";
+        import { getDatabase, ref, set, push, onValue, remove, update, serverTimestamp, get, query, orderByChild, limitToLast } from "firebase-database";
 
-        // ──────────────────────────────────────────────
-        // DOM REFS
-        // ──────────────────────────────────────────────
-        const hotbarEl = document.getElementById('hotbar');
-        const posInfo = document.getElementById('pos-info');
-        const controlsHint = document.getElementById('controls-hint');
-        const minimapCanvas = document.getElementById('minimap-canvas');
-        const ctx = minimapCanvas.getContext('2d');
-        const blockCountNum = document.getElementById('block-count-num');
-        const loadingScreen = document.getElementById('loading-screen');
-        const loadingBar = document.getElementById('loading-bar');
-        const loadingPercent = document.getElementById('loading-percent');
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+            authDomain: "mybro-9ba5f.firebaseapp.com",
+            databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+            projectId: "mybro-9ba5f"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-        // ──────────────────────────────────────────────
-        // LOADING PROGRESS
-        // ──────────────────────────────────────────────
-        let loadProgress = 0;
+        // ============================================================
+        // 2. NOTIFICATION SOUND
+        // ============================================================
+        function playNotificationSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const now = ctx.currentTime;
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.value = 523.25;
+                gain1.gain.setValueAtTime(0.5, now);
+                gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc1.connect(gain1);
+                gain1.connect(ctx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.3);
 
-        function updateLoading(progress, text) {
-            loadProgress = Math.min(100, progress);
-            loadingBar.style.width = loadProgress + '%';
-            loadingPercent.textContent = Math.round(loadProgress) + '%';
-            if (text) document.getElementById('loading-text').innerHTML = text + ' <span id="loading-percent">' + Math
-                .round(loadProgress) + '%</span>';
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.value = 659.25;
+                gain2.gain.setValueAtTime(0.4, now + 0.08);
+                gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+                osc2.start(now + 0.08);
+                osc2.stop(now + 0.35);
+
+                const osc3 = ctx.createOscillator();
+                const gain3 = ctx.createGain();
+                osc3.type = 'sine';
+                osc3.frequency.value = 783.99;
+                gain3.gain.setValueAtTime(0.35, now + 0.16);
+                gain3.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc3.connect(gain3);
+                gain3.connect(ctx.destination);
+                osc3.start(now + 0.16);
+                osc3.stop(now + 0.4);
+            } catch (e) { console.warn('Sound gagal:', e); }
         }
 
-        // ──────────────────────────────────────────────
-        // SCENE SETUP
-        // ──────────────────────────────────────────────
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x87CEEB);
-        scene.fog = new THREE.Fog(0x87CEEB, 50, 90);
+        // ============================================================
+        // 3. TOAST
+        // ============================================================
+        function showToast(msg, type = 'info') {
+            const t = document.getElementById('toast');
+            const m = document.getElementById('toastMsg');
+            const icon = t.querySelector('i');
+            icon.className = 'fas fa-' + (type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' :
+                'info-circle');
+            t.className = 'toast show ' + type;
+            m.textContent = msg;
+            clearTimeout(t._hide);
+            t._hide = setTimeout(() => { t.classList.remove('show'); }, 3500);
+        }
 
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
-        camera.position.set(8, 6, 8);
+        // ============================================================
+        // 4. KONFIRMASI SALDO
+        // ============================================================
+        window.confirmAllSaldo = async function(status) {
+            const statusLabel = status === 'pending' ? 'Pending' : 'Confirmed';
+            if (!confirm(`Konfirmasi semua pesanan dengan status "${statusLabel}"?`)) return;
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.0;
-        renderer.outputColorSpace = THREE.SRGBColorSpace;
-        document.body.prepend(renderer.domElement);
+            const ordersRef = ref(db, 'logo-shop/orders');
+            const snap = await get(ordersRef);
+            const data = snap.val();
+            if (!data) { showToast('Tidak ada pesanan.', 'info'); return; }
 
-        // ──────────────────────────────────────────────
-        // POST PROCESSING (BLOOM for HD)
-        // ──────────────────────────────────────────────
-        const composer = new EffectComposer(renderer);
-        const renderPass = new RenderPass(scene, camera);
-        composer.addPass(renderPass);
+            let count = 0;
+            const updates = {};
+            for (const [key, order] of Object.entries(data)) {
+                if (order.status === status) {
+                    const newStatus = status === 'pending' ? 'confirmed' : 'completed';
+                    updates[`${key}/status`] = newStatus;
+                    count++;
+                }
+            }
 
-        const bloomPass = new UnrealBloomPass(
-            new THREE.Vector2(window.innerWidth, window.innerHeight),
-            0.15, // strength
-            0.4, // radius
-            0.2 // threshold
-        );
-        composer.addPass(bloomPass);
+            if (count === 0) {
+                showToast(`Tidak ada pesanan dengan status "${statusLabel}".`, 'info');
+                return;
+            }
 
-        // ──────────────────────────────────────────────
-        // CONTROLS
-        // ──────────────────────────────────────────────
-        const controls = new PointerLockControls(camera, renderer.domElement);
-
-        // ──────────────────────────────────────────────
-        // LIGHTING (HD)
-        // ──────────────────────────────────────────────
-        const ambientLight = new THREE.AmbientLight(0x404060, 0.4);
-        scene.add(ambientLight);
-
-        const hemiLight = new THREE.HemisphereLight(0x87CEEB, 0x3a7d44, 0.6);
-        scene.add(hemiLight);
-
-        const sunLight = new THREE.DirectionalLight(0xffeedd, 2.0);
-        sunLight.position.set(30, 40, 20);
-        sunLight.castShadow = true;
-        sunLight.shadow.mapSize.width = 1024;
-        sunLight.shadow.mapSize.height = 1024;
-        sunLight.shadow.camera.near = 0.5;
-        sunLight.shadow.camera.far = 80;
-        sunLight.shadow.camera.left = -40;
-        sunLight.shadow.camera.right = 40;
-        sunLight.shadow.camera.top = 40;
-        sunLight.shadow.camera.bottom = -40;
-        sunLight.shadow.bias = -0.001;
-        scene.add(sunLight);
-
-        const fillLight = new THREE.DirectionalLight(0x8888ff, 0.3);
-        fillLight.position.set(-20, 10, -20);
-        scene.add(fillLight);
-
-        // ──────────────────────────────────────────────
-        // BLOCK DEFINITIONS (Sederhana & Cepat)
-        // ──────────────────────────────────────────────
-        const BLOCK_TYPES = {
-            AIR: 0,
-            GRASS: 1,
-            DIRT: 2,
-            STONE: 3,
-            WOOD: 4,
-            LEAVES: 5,
-            SAND: 6,
-            PLANKS: 7,
-            COBBLESTONE: 8,
-            BRICK: 9,
-            SNOW: 10,
-            OAK_LOG: 11,
+            try {
+                await update(ref(db, 'logo-shop/orders'), updates);
+                showToast(`${count} pesanan berhasil dikonfirmasi!`, 'success');
+                // Refresh semua data
+                loadStats();
+                loadAdvancedStats();
+                loadRecentOrders();
+                loadOrdersJasa();
+                loadOrdersProduk();
+                loadQueue();
+            } catch (err) {
+                showToast('Gagal: ' + err.message, 'error');
+            }
         };
 
-        const BLOCK_COLORS = {
-            [BLOCK_TYPES.GRASS]: 0x7cb342,
-            [BLOCK_TYPES.DIRT]: 0x8d6e63,
-            [BLOCK_TYPES.STONE]: 0x9e9e9e,
-            [BLOCK_TYPES.WOOD]: 0x8d6e63,
-            [BLOCK_TYPES.LEAVES]: 0x4caf50,
-            [BLOCK_TYPES.SAND]: 0xf5e6b8,
-            [BLOCK_TYPES.PLANKS]: 0xdeb887,
-            [BLOCK_TYPES.COBBLESTONE]: 0x757575,
-            [BLOCK_TYPES.BRICK]: 0xb85a3a,
-            [BLOCK_TYPES.SNOW]: 0xf0f4f8,
-            [BLOCK_TYPES.OAK_LOG]: 0x8d6e63,
+        // ============================================================
+        // 5. NAVIGASI MENU CAROUSEL
+        // ============================================================
+        const menuItems = document.querySelectorAll('.menu-item');
+        const sections = {
+            dashboard: document.getElementById('section-dashboard'),
+            home: document.getElementById('section-home'),
+            digital: document.getElementById('section-digital'),
+            jasa: document.getElementById('section-jasa'),
+            news: document.getElementById('section-news'),
+            'orders-jasa': document.getElementById('section-orders-jasa'),
+            'orders-produk': document.getElementById('section-orders-produk'),
+            queue: document.getElementById('section-queue'),
         };
 
-        const BLOCK_SOLID = {
-            [BLOCK_TYPES.AIR]: false,
-            [BLOCK_TYPES.GRASS]: true,
-            [BLOCK_TYPES.DIRT]: true,
-            [BLOCK_TYPES.STONE]: true,
-            [BLOCK_TYPES.WOOD]: true,
-            [BLOCK_TYPES.LEAVES]: true,
-            [BLOCK_TYPES.SAND]: true,
-            [BLOCK_TYPES.PLANKS]: true,
-            [BLOCK_TYPES.COBBLESTONE]: true,
-            [BLOCK_TYPES.BRICK]: true,
-            [BLOCK_TYPES.SNOW]: true,
-            [BLOCK_TYPES.OAK_LOG]: true,
-        };
+        function navigateTo(sectionId) {
+            Object.values(sections).forEach(el => { if (el) el.style.display = 'none'; });
+            if (sections[sectionId]) sections[sectionId].style.display = 'block';
+            menuItems.forEach(el => el.classList.remove('active'));
+            document.querySelector(`.menu-item[data-section="${sectionId}"]`)?.classList.add('active');
 
-        const BLOCK_TRANSPARENT = {
-            [BLOCK_TYPES.AIR]: true,
-            [BLOCK_TYPES.GRASS]: false,
-            [BLOCK_TYPES.DIRT]: false,
-            [BLOCK_TYPES.STONE]: false,
-            [BLOCK_TYPES.WOOD]: false,
-            [BLOCK_TYPES.LEAVES]: true,
-            [BLOCK_TYPES.SAND]: false,
-            [BLOCK_TYPES.PLANKS]: false,
-            [BLOCK_TYPES.COBBLESTONE]: false,
-            [BLOCK_TYPES.BRICK]: false,
-            [BLOCK_TYPES.SNOW]: false,
-            [BLOCK_TYPES.OAK_LOG]: false,
-        };
-
-        // ──────────────────────────────────────────────
-        // TEXTURE ATLAS SEDERHANA (untuk performa)
-        // ──────────────────────────────────────────────
-        function generateSimpleTexture(color, size = 32) {
-            const canvas = document.createElement('canvas');
-            canvas.width = size;
-            canvas.height = size;
-            const c = canvas.getContext('2d');
-            c.fillStyle = '#' + color.toString(16).padStart(6, '0');
-            c.fillRect(0, 0, size, size);
-            // Tambah noise ringan
-            for (let i = 0; i < 30; i++) {
-                const x = Math.random() * size,
-                    y = Math.random() * size;
-                const bright = (Math.random() - 0.5) * 20;
-                const r = parseInt(color.toString(16).slice(0, 2), 16) + bright;
-                const g = parseInt(color.toString(16).slice(2, 4), 16) + bright;
-                const b = parseInt(color.toString(16).slice(4, 6), 16) + bright;
-                c.fillStyle = `rgba(${Math.max(0,Math.min(255,r))},${Math.max(0,Math.min(255,g))},${Math.max(0,Math.min(255,b))},0.3)`;
-                c.fillRect(x, y, 2 + Math.random() * 4, 2 + Math.random() * 4);
-            }
-            return canvas;
+            if (sectionId === 'digital') loadDigital();
+            if (sectionId === 'jasa') loadJasa();
+            if (sectionId === 'news') loadNews();
+            if (sectionId === 'orders-jasa') loadOrdersJasa();
+            if (sectionId === 'orders-produk') loadOrdersProduk();
+            if (sectionId === 'queue') loadQueue();
+            if (sectionId === 'dashboard') { loadStats(); loadAdvancedStats(); loadRecentOrders(); }
+            if (sectionId === 'home') { loadHome(); loadShopStatus(); }
         }
 
-        const textureCache = new Map();
-
-        function getBlockTexture(type) {
-            if (textureCache.has(type)) return textureCache.get(type);
-            const color = BLOCK_COLORS[type] || 0x888888;
-            const canvas = generateSimpleTexture(color);
-            const tex = new THREE.CanvasTexture(canvas);
-            tex.magFilter = THREE.NearestFilter;
-            tex.minFilter = THREE.NearestFilter;
-            tex.wrapS = THREE.RepeatWrapping;
-            tex.wrapT = THREE.RepeatWrapping;
-            textureCache.set(type, tex);
-            return tex;
-        }
-
-        // Grass special (top hijau, side coklat)
-        function getGrassTextures() {
-            const size = 32;
-            const topCanvas = document.createElement('canvas');
-            topCanvas.width = size;
-            topCanvas.height = size;
-            const tCtx = topCanvas.getContext('2d');
-            tCtx.fillStyle = '#7cb342';
-            tCtx.fillRect(0, 0, size, size);
-            for (let i = 0; i < 50; i++) {
-                tCtx.fillStyle = `rgba(${60+Math.random()*80},${160+Math.random()*60},${40+Math.random()*60},0.3)`;
-                tCtx.fillRect(Math.random() * size, Math.random() * size, 1 + Math.random() * 2, 2 + Math.random() * 4);
-            }
-            const topTex = new THREE.CanvasTexture(topCanvas);
-            topTex.magFilter = THREE.NearestFilter;
-            topTex.minFilter = THREE.NearestFilter;
-
-            const sideCanvas = document.createElement('canvas');
-            sideCanvas.width = size;
-            sideCanvas.height = size;
-            const sCtx = sideCanvas.getContext('2d');
-            sCtx.fillStyle = '#8d6e63';
-            sCtx.fillRect(0, 0, size, size);
-            sCtx.fillStyle = '#7cb342';
-            sCtx.fillRect(0, 0, size, size * 0.2);
-            for (let i = 0; i < 20; i++) {
-                sCtx.fillStyle = `rgba(${60+Math.random()*80},${160+Math.random()*60},${40+Math.random()*60},0.3)`;
-                sCtx.fillRect(Math.random() * size, Math.random() * size * 0.2, 1 + Math.random() * 2, 2 + Math.random() *
-                4);
-            }
-            const sideTex = new THREE.CanvasTexture(sideCanvas);
-            sideTex.magFilter = THREE.NearestFilter;
-            sideTex.minFilter = THREE.NearestFilter;
-
-            const bottomCanvas = document.createElement('canvas');
-            bottomCanvas.width = size;
-            bottomCanvas.height = size;
-            const bCtx = bottomCanvas.getContext('2d');
-            bCtx.fillStyle = '#8d6e63';
-            bCtx.fillRect(0, 0, size, size);
-            const bottomTex = new THREE.CanvasTexture(bottomCanvas);
-            bottomTex.magFilter = THREE.NearestFilter;
-            bottomTex.minFilter = THREE.NearestFilter;
-
-            return { top: topTex, side: sideTex, bottom: bottomTex };
-        }
-
-        const grassTex = getGrassTextures();
-
-        // ──────────────────────────────────────────────
-        // WORLD DATA (Ringan)
-        // ──────────────────────────────────────────────
-        const WORLD_SIZE = 32;
-        const WORLD_HALF = WORLD_SIZE / 2;
-        const MAX_HEIGHT = 12;
-
-        // Map untuk block data
-        const world = new Map(); // key "x,y,z" -> type
-        // Instanced mesh per tipe
-        const instanceMeshes = new Map(); // type -> { mesh, dummy, count, positions }
-        const instanceCounts = new Map(); // type -> number
-
-        // Untuk tracking posisi instance (agar bisa dihapus)
-        const blockInstanceMap = new Map(); // key "x,y,z" -> { type, index }
-
-        // Geometry dasar
-        const boxGeo = new THREE.BoxGeometry(1, 1, 1);
-
-        // ──────────────────────────────────────────────
-        // FUNGSI INSTANCED MESH
-        // ──────────────────────────────────────────────
-        const dummy = new THREE.Object3D();
-
-        function createInstanceMesh(type) {
-            if (instanceMeshes.has(type)) return instanceMeshes.get(type);
-
-            let material;
-            if (type === BLOCK_TYPES.GRASS) {
-                // Multi-material untuk grass (top, bottom, side)
-                const topMat = new THREE.MeshStandardMaterial({ map: grassTex.top, roughness: 0.8 });
-                const sideMat = new THREE.MeshStandardMaterial({ map: grassTex.side, roughness: 0.9 });
-                const bottomMat = new THREE.MeshStandardMaterial({ map: grassTex.bottom, roughness: 0.9 });
-                material = [sideMat, sideMat, topMat, bottomMat, sideMat, sideMat];
-            } else {
-                const tex = getBlockTexture(type);
-                const mat = new THREE.MeshStandardMaterial({
-                    map: tex,
-                    roughness: 0.8,
-                    metalness: 0.0,
-                    transparent: BLOCK_TRANSPARENT[type] || false,
-                    opacity: 1.0,
-                });
-                material = mat;
-            }
-
-            const mesh = new THREE.InstancedMesh(boxGeo, material, 0);
-            mesh.castShadow = true;
-            mesh.receiveShadow = true;
-            mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-            scene.add(mesh);
-
-            const data = {
-                mesh,
-                dummy,
-                count: 0,
-                positions: [],
-            };
-            instanceMeshes.set(type, data);
-            instanceCounts.set(type, 0);
-
-            return data;
-        }
-
-        function addBlockInstance(x, y, z, type) {
-            const key = `${x},${y},${z}`;
-            if (blockInstanceMap.has(key)) return; // sudah ada
-
-            const data = createInstanceMesh(type);
-            const mesh = data.mesh;
-            const currentCount = data.count;
-
-            // Resize instance matrix jika perlu
-            if (currentCount >= mesh.count) {
-                const newCount = Math.max(16, currentCount * 2);
-                mesh.instanceMatrix = new THREE.InstancedBufferAttribute(
-                    new Float32Array(newCount * 16),
-                    16
-                );
-                mesh.count = newCount;
-                // Kita simpan matrix array untuk update
-                if (!data.matrixArray) {
-                    data.matrixArray = new Float32Array(newCount * 16);
-                } else {
-                    const old = data.matrixArray;
-                    data.matrixArray = new Float32Array(newCount * 16);
-                    data.matrixArray.set(old);
-                }
-            }
-
-            // Set posisi
-            dummy.position.set(x + 0.5, y + 0.5, z + 0.5);
-            dummy.updateMatrix();
-            const matrix = dummy.matrix;
-            const arr = data.matrixArray;
-            for (let i = 0; i < 16; i++) {
-                arr[currentCount * 16 + i] = matrix.elements[i];
-            }
-
-            // Update mesh
-            mesh.instanceMatrix.array = arr;
-            mesh.instanceMatrix.needsUpdate = true;
-
-            // Simpan index
-            blockInstanceMap.set(key, { type, index: currentCount });
-            data.count = currentCount + 1;
-            instanceCounts.set(type, data.count);
-
-            world.set(key, type);
-        }
-
-        function removeBlockInstance(x, y, z) {
-            const key = `${x},${y},${z}`;
-            const entry = blockInstanceMap.get(key);
-            if (!entry) return false;
-
-            const { type, index } = entry;
-            const data = instanceMeshes.get(type);
-            if (!data) return false;
-
-            const lastIndex = data.count - 1;
-            if (index !== lastIndex) {
-                // Swap with last
-                const lastKey = data.positions[lastIndex];
-                const lastEntry = blockInstanceMap.get(lastKey);
-                if (lastEntry) {
-                    lastEntry.index = index;
-                    blockInstanceMap.set(lastKey, lastEntry);
-                }
-                // Copy matrix from last to index
-                const arr = data.matrixArray;
-                for (let i = 0; i < 16; i++) {
-                    arr[index * 16 + i] = arr[lastIndex * 16 + i];
-                }
-                // Update posisi di positions
-                data.positions[index] = data.positions[lastIndex];
-            }
-
-            data.count--;
-            instanceCounts.set(type, data.count);
-            data.positions.pop();
-
-            // Update mesh count
-            data.mesh.count = data.count;
-            data.mesh.instanceMatrix.array = data.matrixArray;
-            data.mesh.instanceMatrix.needsUpdate = true;
-
-            // Hapus dari world dan map
-            world.delete(key);
-            blockInstanceMap.delete(key);
-
-            // Jika count 0, kita bisa hapus mesh (opsional)
-            if (data.count === 0) {
-                scene.remove(data.mesh);
-                instanceMeshes.delete(type);
-                instanceCounts.delete(type);
-            }
-
-            return true;
-        }
-
-        function getBlock(x, y, z) {
-            return world.get(`${x},${y},${z}`) || BLOCK_TYPES.AIR;
-        }
-
-        function isSolid(x, y, z) {
-            const type = getBlock(x, y, z);
-            return BLOCK_SOLID[type] || false;
-        }
-
-        function setBlock(x, y, z, type) {
-            const key = `${x},${y},${z}`;
-            if (type === BLOCK_TYPES.AIR) {
-                return removeBlockInstance(x, y, z);
-            } else {
-                // Cek apakah sudah ada
-                if (blockInstanceMap.has(key)) {
-                    // Jika tipe sama, skip
-                    if (blockInstanceMap.get(key).type === type) return true;
-                    // Hapus dulu
-                    removeBlockInstance(x, y, z);
-                }
-                addBlockInstance(x, y, z, type);
-                updateMinimap();
-                updateBlockCount();
-                return true;
-            }
-        }
-
-        function updateBlockCount() {
-            blockCountNum.textContent = world.size;
-        }
-
-        // ──────────────────────────────────────────────
-        // WORLD GENERATION (Ringan)
-        // ──────────────────────────────────────────────
-        function generateTerrain() {
-            const heightMap = new Map();
-
-            // Simple noise manual untuk menghindari library berat
-            function simpleNoise(x, z) {
-                const n = Math.sin(x * 0.1 + z * 0.13) * 0.5 +
-                    Math.sin(x * 0.05 + z * 0.07 + 1.2) * 0.3 +
-                    Math.cos(x * 0.02 + z * 0.03) * 0.2;
-                return n;
-            }
-
-            // Build heightmap
-            let totalBlocks = 0;
-            for (let x = -WORLD_HALF; x < WORLD_HALF; x++) {
-                for (let z = -WORLD_HALF; z < WORLD_HALF; z++) {
-                    const n = simpleNoise(x, z);
-                    const height = Math.floor((n + 0.6) * 4) + 3;
-                    const clamped = Math.max(1, Math.min(MAX_HEIGHT - 2, height));
-                    heightMap.set(`${x},${z}`, clamped);
-                    totalBlocks += clamped;
-                }
-            }
-
-            let processed = 0;
-            const total = totalBlocks;
-
-            // Place blocks
-            for (let x = -WORLD_HALF; x < WORLD_HALF; x++) {
-                for (let z = -WORLD_HALF; z < WORLD_HALF; z++) {
-                    const height = heightMap.get(`${x},${z}`) || 3;
-                    let surfaceType = BLOCK_TYPES.GRASS;
-                    if (height < 2) surfaceType = BLOCK_TYPES.SAND;
-                    else if (height > 8) surfaceType = BLOCK_TYPES.SNOW;
-
-                    for (let y = 0; y < height; y++) {
-                        let type;
-                        if (y === height - 1) type = surfaceType;
-                        else if (y > height - 4) type = BLOCK_TYPES.DIRT;
-                        else type = BLOCK_TYPES.STONE;
-                        addBlockInstance(x, y, z, type);
-                        processed++;
-                        if (processed % 100 === 0) {
-                            updateLoading((processed / total) * 100, 'Membangun medan...');
-                        }
-                    }
-                }
-            }
-
-            // Place trees (lebih sedikit untuk performa)
-            for (let x = -WORLD_HALF + 2; x < WORLD_HALF - 2; x += 4) {
-                for (let z = -WORLD_HALF + 2; z < WORLD_HALF - 2; z += 4) {
-                    if (Math.random() < 0.12) {
-                        const height = heightMap.get(`${x},${z}`) || 3;
-                        if (height > 2 && height < 8) {
-                            placeTree(x, height, z);
-                            processed += 20;
-                            updateLoading((processed / total) * 100, 'Menanam pohon...');
-                        }
-                    }
-                }
-            }
-
-            updateMinimap();
-            updateBlockCount();
-            updateLoading(100, 'Selesai!');
-        }
-
-        function placeTree(x, y, z) {
-            const logType = BLOCK_TYPES.OAK_LOG;
-            const leafType = BLOCK_TYPES.LEAVES;
-            const trunkHeight = 4 + Math.floor(Math.random() * 2);
-
-            for (let i = 0; i < trunkHeight; i++) {
-                addBlockInstance(x, y + i, z, logType);
-            }
-
-            const leafStart = trunkHeight - 2;
-            for (let dy = 0; dy < 3; dy++) {
-                const radius = dy === 0 ? 2 : (dy === 1 ? 1 : 1);
-                for (let dx = -radius; dx <= radius; dx++) {
-                    for (let dz = -radius; dz <= radius; dz++) {
-                        if (Math.abs(dx) === radius && Math.abs(dz) === radius && Math.random() < 0.4) continue;
-                        if (dx === 0 && dz === 0 && dy < 2) continue;
-                        const lx = x + dx,
-                            lz = z + dz,
-                            ly = y + leafStart + dy;
-                        if (getBlock(lx, ly, lz) === BLOCK_TYPES.AIR) {
-                            addBlockInstance(lx, ly, lz, leafType);
-                        }
-                    }
-                }
-            }
-        }
-
-        // ──────────────────────────────────────────────
-        // MINIMAP
-        // ──────────────────────────────────────────────
-        function updateMinimap() {
-            const size = 140;
-            const scale = size / WORLD_SIZE;
-
-            ctx.clearRect(0, 0, size, size);
-            const bgGrad = ctx.createRadialGradient(70, 70, 10, 70, 70, 70);
-            bgGrad.addColorStop(0, '#3a7d44');
-            bgGrad.addColorStop(1, '#2d5a3d');
-            ctx.fillStyle = bgGrad;
-            ctx.fillRect(0, 0, size, size);
-
-            const half = WORLD_HALF;
-            for (let x = -half; x < half; x++) {
-                for (let z = -half; z < half; z++) {
-                    let topType = BLOCK_TYPES.AIR;
-                    for (let y = MAX_HEIGHT - 1; y >= 0; y--) {
-                        const type = getBlock(x, y, z);
-                        if (type !== BLOCK_TYPES.AIR) {
-                            topType = type;
-                            break;
-                        }
-                    }
-                    if (topType === BLOCK_TYPES.AIR) continue;
-                    const color = BLOCK_COLORS[topType] || 0x888888;
-                    const hex = '#' + color.toString(16).padStart(6, '0');
-                    ctx.fillStyle = hex;
-                    ctx.fillRect((x + half) * scale, (z + half) * scale, scale + 0.5, scale + 0.5);
-                }
-            }
-
-            // Grid halus
-            ctx.strokeStyle = 'rgba(255,255,255,0.05)';
-            ctx.lineWidth = 0.5;
-            for (let i = 0; i <= WORLD_SIZE; i += 8) {
-                const pos = i * scale;
-                ctx.beginPath();
-                ctx.moveTo(pos, 0);
-                ctx.lineTo(pos, size);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(0, pos);
-                ctx.lineTo(size, pos);
-                ctx.stroke();
-            }
-        }
-
-        // ──────────────────────────────────────────────
-        // SKIN SYSTEM (Sederhana)
-        // ──────────────────────────────────────────────
-        let currentSkin = 'steve';
-        let playerModel = null;
-
-        const SKIN_COLORS = {
-            steve: { head: '#ffcc99', body: '#4caf50', arms: '#3d8b40', legs: '#1a237e', boots: '#5d4037' },
-            alex: { head: '#ffcc99', body: '#ff6f00', arms: '#e65100', legs: '#1a237e', boots: '#5d4037' },
-            knight: { head: '#bdbdbd', body: '#757575', arms: '#9e9e9e', legs: '#424242', boots: '#212121' },
-            ninja: { head: '#1a1a2e', body: '#2d2d44', arms: '#1a1a2e', legs: '#0d0d1a', boots: '#0d0d1a' },
-            wizard: { head: '#ffcc99', body: '#4a148c', arms: '#6a1b9a', legs: '#2d1b4e', boots: '#1a0d2e' },
-        };
-
-        function createPlayerModel(skinName) {
-            if (playerModel) {
-                scene.remove(playerModel);
-                playerModel.traverse(c => { if (c.isMesh) { c.geometry?.dispose();
-                        c.material?.dispose(); } });
-                playerModel = null;
-            }
-
-            const group = new THREE.Group();
-            const colors = SKIN_COLORS[skinName] || SKIN_COLORS.steve;
-
-            function part(w, h, d, color, pos) {
-                const geo = new THREE.BoxGeometry(w, h, d);
-                const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.7, metalness: 0.1 });
-                const mesh = new THREE.Mesh(geo, mat);
-                mesh.position.set(pos[0], pos[1], pos[2]);
-                mesh.castShadow = true;
-                mesh.receiveShadow = true;
-                return mesh;
-            }
-
-            group.add(part(0.6, 0.6, 0.6, colors.head, [0, 1.3, 0]));
-            // Mata
-            const eyeMat = new THREE.MeshStandardMaterial({ color: '#1a237e', emissive: '#1a237e', emissiveIntensity: 0.2 });
-            const eyeGeo = new THREE.SphereGeometry(0.05, 6, 6);
-            const eL = new THREE.Mesh(eyeGeo, eyeMat);
-            eL.position.set(-0.15, 1.4, -0.3);
-            group.add(eL);
-            const eR = new THREE.Mesh(eyeGeo, eyeMat);
-            eR.position.set(0.15, 1.4, -0.3);
-            group.add(eR);
-
-            group.add(part(0.7, 0.5, 0.4, colors.body, [0, 0.8, 0]));
-            group.add(part(0.2, 0.5, 0.2, colors.arms, [-0.45, 0.8, 0]));
-            group.add(part(0.2, 0.5, 0.2, colors.arms, [0.45, 0.8, 0]));
-            group.add(part(0.2, 0.5, 0.2, colors.legs, [-0.15, 0.25, 0]));
-            group.add(part(0.2, 0.5, 0.2, colors.legs, [0.15, 0.25, 0]));
-
-            // Boots
-            const bootMat = new THREE.MeshStandardMaterial({ color: colors.boots, roughness: 0.8 });
-            const bootGeo = new THREE.BoxGeometry(0.22, 0.1, 0.25);
-            const bL = new THREE.Mesh(bootGeo, bootMat);
-            bL.position.set(-0.15, 0.05, 0.02);
-            group.add(bL);
-            const bR = new THREE.Mesh(bootGeo, bootMat);
-            bR.position.set(0.15, 0.05, 0.02);
-            group.add(bR);
-
-            group.scale.set(0.5, 0.5, 0.5);
-            playerModel = group;
-            scene.add(group);
-            return group;
-        }
-
-        // ──────────────────────────────────────────────
-        // HOTBAR
-        // ──────────────────────────────────────────────
-        const hotbarSlots = [
-            BLOCK_TYPES.GRASS,
-            BLOCK_TYPES.DIRT,
-            BLOCK_TYPES.STONE,
-            BLOCK_TYPES.PLANKS,
-            BLOCK_TYPES.COBBLESTONE,
-            BLOCK_TYPES.BRICK,
-            BLOCK_TYPES.OAK_LOG,
-            BLOCK_TYPES.SAND,
-            BLOCK_TYPES.SNOW,
-        ];
-        let selectedSlot = 0;
-
-        function buildHotbar() {
-            hotbarEl.innerHTML = '';
-            hotbarSlots.forEach((type, index) => {
-                const slot = document.createElement('div');
-                slot.className = `slot ${index === selectedSlot ? 'active' : ''}`;
-                const key = document.createElement('span');
-                key.className = 'key';
-                key.textContent = index + 1;
-                slot.appendChild(key);
-
-                const preview = document.createElement('div');
-                preview.className = 'color-preview';
-                const color = BLOCK_COLORS[type] || 0x888888;
-                preview.style.background = '#' + color.toString(16).padStart(6, '0');
-                slot.appendChild(preview);
-
-                slot.addEventListener('click', () => {
-                    selectedSlot = index;
-                    updateHotbar();
-                });
-                hotbarEl.appendChild(slot);
-            });
-        }
-
-        function updateHotbar() {
-            const slots = hotbarEl.querySelectorAll('.slot');
-            slots.forEach((slot, i) => {
-                slot.classList.toggle('active', i === selectedSlot);
-            });
-        }
-
-        function getSelectedBlockType() {
-            return hotbarSlots[selectedSlot] || BLOCK_TYPES.GRASS;
-        }
-
-        // ──────────────────────────────────────────────
-        // RAYCASTER
-        // ──────────────────────────────────────────────
-        const raycaster = new THREE.Raycaster();
-        raycaster.far = 10;
-
-        function getIntersection() {
-            raycaster.setFromCamera({ x: 0, y: 0 }, camera);
-            // Kumpulkan semua mesh dari instanceMeshes
-            const meshes = [];
-            for (const [type, data] of instanceMeshes) {
-                if (data.mesh) meshes.push(data.mesh);
-            }
-            const intersects = raycaster.intersectObjects(meshes);
-            return intersects.length > 0 ? intersects[0] : null;
-        }
-
-        function getBlockFromIntersection(intersect) {
-            if (!intersect) return null;
-            const pos = new THREE.Vector3();
-            intersect.object.getWorldPosition(pos);
-            const x = Math.floor(pos.x - 0.5);
-            const y = Math.floor(pos.y - 0.5);
-            const z = Math.floor(pos.z - 0.5);
-            const type = getBlock(x, y, z);
-            if (type === BLOCK_TYPES.AIR) return null;
-            return { x, y, z, type, normal: intersect.face?.normal || new THREE.Vector3(0, 1, 0) };
-        }
-
-        function getAdjacentBlock(intersect) {
-            const block = getBlockFromIntersection(intersect);
-            if (!block) return null;
-            const n = block.normal;
-            return {
-                x: block.x + Math.round(n.x),
-                y: block.y + Math.round(n.y),
-                z: block.z + Math.round(n.z),
-            };
-        }
-
-        // ──────────────────────────────────────────────
-        // INPUT
-        // ──────────────────────────────────────────────
-        const keys = {};
-        let isLocked = false;
-
-        document.addEventListener('keydown', (e) => {
-            keys[e.code] = true;
-            if (e.code >= 'Digit1' && e.code <= 'Digit9') {
-                const idx = parseInt(e.code.charAt(5)) - 1;
-                if (idx < hotbarSlots.length) {
-                    selectedSlot = idx;
-                    updateHotbar();
-                }
-            }
-        });
-        document.addEventListener('keyup', (e) => { keys[e.code] = false; });
-
-        renderer.domElement.addEventListener('click', () => {
-            if (!isLocked) controls.lock();
-        });
-
-        controls.addEventListener('lock', () => {
-            isLocked = true;
-            controlsHint.classList.add('hidden');
-        });
-        controls.addEventListener('unlock', () => {
-            isLocked = false;
-            controlsHint.classList.remove('hidden');
-        });
-
-        renderer.domElement.addEventListener('mousedown', (e) => {
-            if (!isLocked) return;
-            if (e.button === 0) {
-                const hit = getIntersection();
-                if (hit) {
-                    const block = getBlockFromIntersection(hit);
-                    if (block && block.y > 0) {
-                        setBlock(block.x, block.y, block.z, BLOCK_TYPES.AIR);
-                    }
-                }
-            } else if (e.button === 2) {
-                const hit = getIntersection();
-                if (hit) {
-                    const adj = getAdjacentBlock(hit);
-                    if (adj) {
-                        const { x, y, z } = adj;
-                        const px = Math.floor(camera.position.x);
-                        const py = Math.floor(camera.position.y - 1.6);
-                        const pz = Math.floor(camera.position.z);
-                        if (x === px && y === py && z === pz) return;
-                        if (x === px && (y === py + 1 || y === py) && z === pz) return;
-                        if (getBlock(x, y, z) === BLOCK_TYPES.AIR) {
-                            setBlock(x, y, z, getSelectedBlockType());
-                        }
-                    }
-                }
-            }
-        });
-        renderer.domElement.addEventListener('contextmenu', (e) => e.preventDefault());
-
-        // ──────────────────────────────────────────────
-        // RESIZE
-        // ──────────────────────────────────────────────
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            composer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        // ──────────────────────────────────────────────
-        // GAME LOOP
-        // ──────────────────────────────────────────────
-        const clock = new THREE.Clock();
-
-        function updatePlayer() {
-            if (!isLocked) return;
-            const speed = 4.5;
-            const delta = clock.getDelta();
-
-            const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
-            forward.y = 0;
-            forward.normalize();
-            const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
-            right.y = 0;
-            right.normalize();
-
-            const moveX = (keys['KeyA'] ? -1 : 0) + (keys['KeyD'] ? 1 : 0);
-            const moveZ = (keys['KeyW'] ? -1 : 0) + (keys['KeyS'] ? 1 : 0);
-
-            const velocity = new THREE.Vector3();
-            velocity.addScaledVector(right, moveX * speed * delta);
-            velocity.addScaledVector(forward, moveZ * speed * delta);
-
-            let verticalVel = window._vVel || 0;
-            const gravity = -20;
-            if (keys['Space'] && window._grounded) verticalVel = 6;
-
-            verticalVel += gravity * delta;
-            if (verticalVel < -15) verticalVel = -15;
-
-            const newPos = camera.position.clone();
-            newPos.x += velocity.x;
-            newPos.z += velocity.z;
-            newPos.y += verticalVel * delta;
-
-            // Collision sederhana
-            let grounded = false;
-            const testY = newPos.y - 1.3;
-            for (let dx = -1; dx <= 1; dx++) {
-                for (let dz = -1; dz <= 1; dz++) {
-                    for (let dy = -1; dy <= 2; dy++) {
-                        const bx = Math.floor(newPos.x + dx * 0.4);
-                        const by = Math.floor(testY + dy * 0.4);
-                        const bz = Math.floor(newPos.z + dz * 0.4);
-                        if (isSolid(bx, by, bz)) {
-                            const blockX = bx + 0.5,
-                                blockY = by + 0.5,
-                                blockZ = bz + 0.5;
-                            const dx2 = newPos.x - blockX,
-                                dy2 = testY - blockY,
-                                dz2 = newPos.z - blockZ;
-                            const half = 0.5 + 0.3;
-                            if (Math.abs(dx2) < half && Math.abs(dy2) < half && Math.abs(dz2) < half) {
-                                if (Math.abs(dx2) >= Math.abs(dy2) && Math.abs(dx2) >= Math.abs(dz2)) {
-                                    newPos.x = blockX + (dx2 > 0 ? half : -half);
-                                } else if (Math.abs(dy2) >= Math.abs(dz2)) {
-                                    newPos.y = blockY + (dy2 > 0 ? half : -half) + 1.3;
-                                    if (dy2 < 0) { grounded = true;
-                                        verticalVel = 0; }
-                                } else {
-                                    newPos.z = blockZ + (dz2 > 0 ? half : -half);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Floor check
-            const floorY = newPos.y - 1.7;
-            const fx = Math.floor(newPos.x),
-                fz = Math.floor(newPos.z);
-            if (isSolid(fx, Math.floor(floorY), fz) ||
-                isSolid(fx + 1, Math.floor(floorY), fz) ||
-                isSolid(fx, Math.floor(floorY), fz + 1) ||
-                isSolid(fx + 1, Math.floor(floorY), fz + 1)) {
-                if (verticalVel < 0) { verticalVel = 0;
-                    grounded = true;
-                    newPos.y = Math.floor(floorY) + 1.7; }
-            }
-
-            camera.position.copy(newPos);
-            window._vVel = verticalVel;
-            window._grounded = grounded;
-
-            // Player model
-            if (playerModel) {
-                playerModel.position.copy(camera.position);
-                playerModel.position.y -= 1.3;
-                if (Math.abs(velocity.x) > 0.01 || Math.abs(velocity.z) > 0.01) {
-                    playerModel.rotation.y = Math.atan2(velocity.x, velocity.z);
-                }
-            }
-
-            posInfo.textContent =
-                `${Math.round(camera.position.x)}, ${Math.round(camera.position.y - 1.6)}, ${Math.round(camera.position.z)}`;
-
-            // Minimap dot
-            const mmSize = 140;
-            const scale = mmSize / WORLD_SIZE;
-            const px = (camera.position.x + WORLD_HALF) * scale;
-            const pz = (camera.position.z + WORLD_HALF) * scale;
-            const dot = document.querySelector('#minimap .player-dot');
-            if (dot) {
-                dot.style.left = `${px}px`;
-                dot.style.top = `${pz}px`;
-            }
-        }
-
-        // ──────────────────────────────────────────────
-        // CLOUDS (Ringan)
-        // ──────────────────────────────────────────────
-        function createClouds() {
-            const group = new THREE.Group();
-            const mat = new THREE.MeshStandardMaterial({
-                color: 0xffffff,
-                transparent: true,
-                opacity: 0.6,
-                roughness: 0.2,
-                metalness: 0.0,
-            });
-            for (let i = 0; i < 20; i++) {
-                const cg = new THREE.Group();
-                const parts = 3 + Math.floor(Math.random() * 4);
-                for (let j = 0; j < parts; j++) {
-                    const size = 1.5 + Math.random() * 2.5;
-                    const geo = new THREE.SphereGeometry(size, 5, 5);
-                    const mesh = new THREE.Mesh(geo, mat);
-                    const angle = Math.random() * Math.PI * 2;
-                    const dist = Math.random() * 2.5;
-                    mesh.position.set(Math.cos(angle) * dist, Math.sin(angle) * dist * 0.3, Math.sin(angle) * dist * 0.4);
-                    mesh.scale.y = 0.4 + Math.random() * 0.3;
-                    cg.add(mesh);
-                }
-                cg.position.set((Math.random() - 0.5) * 70, 14 + Math.random() * 4, (Math.random() - 0.5) * 70);
-                group.add(cg);
-            }
-            scene.add(group);
-            // animasi sederhana
-            let t = 0;
-            setInterval(() => {
-                t += 0.002;
-                group.children.forEach((c, i) => {
-                    c.position.x += Math.sin(t + i * 0.7) * 0.005;
-                    c.position.z += Math.cos(t * 0.8 + i * 0.5) * 0.005;
-                });
-            }, 50);
-        }
-
-        // ──────────────────────────────────────────────
-        // INIT
-        // ──────────────────────────────────────────────
-        buildHotbar();
-        createPlayerModel('steve');
-        camera.position.set(0, 8, 0);
-
-        // Loading progress dimulai
-        updateLoading(0, 'Mempersiapkan dunia...');
-
-        // Generate world dengan progress
-        setTimeout(() => {
-            generateTerrain();
-            createClouds();
-            // Sembunyikan loading setelah semua selesai
-            setTimeout(() => {
-                loadingScreen.classList.add('hidden');
-                // Update minimap
-                updateMinimap();
-                updateBlockCount();
-            }, 400);
-        }, 100);
-
-        // Skin selector
-        document.querySelectorAll('.skin-btn').forEach(btn => {
+        menuItems.forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.skin-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentSkin = btn.dataset.skin;
-                createPlayerModel(currentSkin);
-                if (playerModel) {
-                    const pos = camera.position.clone();
-                    playerModel.position.copy(pos);
-                    playerModel.position.y -= 1.3;
-                }
+                const section = btn.dataset.section;
+                navigateTo(section);
             });
         });
 
-        // ──────────────────────────────────────────────
-        // ANIMATION LOOP (dengan composer)
-        // ──────────────────────────────────────────────
-        function animate() {
-            requestAnimationFrame(animate);
-            updatePlayer();
-            composer.render();
+        navigateTo('dashboard');
+
+        // ============================================================
+        // 6. STATS
+        // ============================================================
+        function loadStats() {
+            const productsRef = ref(db, 'logo-shop/products');
+            onValue(productsRef, (snap) => {
+                const data = snap.val() || {};
+                const digital = Object.values(data).filter(p => p.downloadLink && p.isJasa !== true);
+                const jasa = Object.values(data).filter(p => p.isJasa === true || !p.downloadLink);
+            }, { onlyOnce: true });
+
+            const ordersRef = ref(db, 'logo-shop/orders');
+            onValue(ordersRef, (snap) => {
+                const data = snap.val() || {};
+                document.getElementById('totalOrders').textContent = Object.keys(data).length;
+            }, { onlyOnce: true });
+
+            const queueRef = ref(db, 'logo-shop/queue');
+            onValue(queueRef, (snap) => {
+                const data = snap.val() || {};
+                document.getElementById('totalQueue').textContent = Object.keys(data).length;
+            }, { onlyOnce: true });
         }
 
-        animate();
+        // ============================================================
+        // 7. STATS LANJUTAN
+        // ============================================================
+        function loadAdvancedStats() {
+            const ordersRef = ref(db, 'logo-shop/orders');
+            onValue(ordersRef, (snap) => {
+                const data = snap.val() || {};
+                let produkTerjual = 0;
+                let jasaSukses = 0;
+                let jasaAntrian = 0;
+                let pendapatanHarian = 0;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
 
-        // Perbarui minimap tiap 3 detik
-        setInterval(updateMinimap, 3000);
+                Object.values(data).forEach(order => {
+                    const status = order.status || 'pending';
+                    const orderDate = order.orderDate ? new Date(order.orderDate) : null;
+                    const isJasa = order.isJasa === true;
 
-        console.log('✅ Minecraft HD siap!');
-        console.log('🎮 Klik untuk mulai, WASD, SPACE, klik kiri/kanan.');
-        console.log('✨ Bloom effect aktif untuk tampilan HD.');
+                    if (status === 'completed' && !isJasa) produkTerjual++;
+                    if (status === 'completed' && isJasa) jasaSukses++;
+                    if (status === 'in_queue' && isJasa) jasaAntrian++;
+
+                    if (status === 'completed' && orderDate && orderDate >= today) {
+                        pendapatanHarian += (order.price || 0);
+                    }
+                });
+
+                document.getElementById('totalProdukTerjual').textContent = produkTerjual;
+                document.getElementById('totalJasaSukses').textContent = jasaSukses;
+                document.getElementById('totalJasaAntrian').textContent = jasaAntrian;
+                document.getElementById('pendapatanHarian').textContent =
+                    'Rp ' + new Intl.NumberFormat('id-ID').format(pendapatanHarian);
+            }, { onlyOnce: true });
+        }
+
+        // ============================================================
+        // 8. RECENT ORDERS
+        // ============================================================
+        function loadRecentOrders() {
+            const container = document.getElementById('recentOrdersContainer');
+            const ordersRef = ref(db, 'logo-shop/orders');
+            const productsRef = ref(db, 'logo-shop/products');
+
+            let productsMap = {};
+            onValue(productsRef, (snap) => {
+                productsMap = snap.val() || {};
+            }, { onlyOnce: true });
+
+            const recentQuery = query(ordersRef, orderByChild('orderDate'), limitToLast(3));
+            onValue(recentQuery, (snap) => {
+                const data = snap.val();
+                if (!data) {
+                    container.innerHTML = `<div class="empty-state"><i class="fas fa-box-open"></i> Belum ada pesanan.</div>`;
+                    return;
+                }
+                const entries = Object.entries(data).reverse();
+                let html = '';
+                entries.forEach(([key, order]) => {
+                    const status = order.status || 'pending';
+                    let badge = 'warning';
+                    if (status === 'completed') badge = 'success';
+                    else if (status === 'confirmed') badge = 'info';
+                    else if (status === 'cancelled') badge = 'danger';
+
+                    const productData = productsMap[order.productId] || {};
+                    const imgSrc = productData.image || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=60&h=60&fit=crop';
+                    const price = order.price ? `Rp ${new Intl.NumberFormat('id-ID').format(order.price)}` : '-';
+                    const type = order.isJasa ? 'Jasa' : 'Produk';
+
+                    html += `
+                        <div class="recent-order-item">
+                            <img src="${imgSrc}" class="thumb" alt="${order.productName || 'Produk'}" />
+                            <div class="info">
+                                <div class="name">${order.productName || '—'} <span style="color:var(--text-muted);font-weight:400;font-size:0.65rem;">(${type})</span></div>
+                                <div class="meta">
+                                    <span>${price}</span>
+                                    <span>${order.deviceId ? order.deviceId.slice(0,12)+'…' : ''}</span>
+                                </div>
+                            </div>
+                            <span class="badge badge-${badge}">${status}</span>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }, { onlyOnce: true });
+        }
+
+        // ============================================================
+        // 9. HOME / HERO
+        // ============================================================
+        function loadHome() {
+            const homeRef = ref(db, 'logo-shop/home');
+            onValue(homeRef, (snap) => {
+                const data = snap.val() || {};
+                document.getElementById('shopName').value = data.shopName || '';
+                document.getElementById('heroTitle').value = data.title || '';
+                document.getElementById('heroSubtitle').value = data.subtitle || '';
+                document.getElementById('heroImage').value = data.heroImage || '';
+            });
+        }
+
+        document.getElementById('homeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const shopName = document.getElementById('shopName').value.trim();
+            const heroTitle = document.getElementById('heroTitle').value.trim();
+            const heroSubtitle = document.getElementById('heroSubtitle').value.trim();
+            const heroImage = document.getElementById('heroImage').value.trim();
+            try {
+                await set(ref(db, 'logo-shop/home'), { shopName, title: heroTitle, subtitle: heroSubtitle, heroImage });
+                showToast('Halaman utama diperbarui!', 'success');
+            } catch (err) {
+                showToast('Gagal: ' + err.message, 'error');
+            }
+        });
+
+        // ============================================================
+        // 10. SHOP STATUS
+        // ============================================================
+        function loadShopStatus() {
+            const statusRef = ref(db, 'logo-shop/settings/shopOpen');
+            onValue(statusRef, (snap) => {
+                const isOpen = snap.val() !== false;
+                const toggle = document.getElementById('shopToggle');
+                const label = document.getElementById('shopStatusLabel');
+                const detail = document.getElementById('shopStatusDetail');
+                toggle.checked = isOpen;
+                label.textContent = isOpen ? 'Buka' : 'Tutup';
+                label.style.color = isOpen ? 'var(--accent-green)' : 'var(--accent-red)';
+                detail.textContent = isOpen ? '(Toko sedang buka)' : '(Toko sedang tutup sementara)';
+            });
+        }
+
+        document.getElementById('shopToggle').addEventListener('change', async function() {
+            const isOpen = this.checked;
+            try {
+                await set(ref(db, 'logo-shop/settings/shopOpen'), isOpen);
+                showToast(isOpen ? 'Toko dibuka!' : 'Toko ditutup sementara!', 'success');
+                loadShopStatus();
+            } catch (err) {
+                showToast('Gagal update status: ' + err.message, 'error');
+                this.checked = !isOpen;
+            }
+        });
+
+        // ============================================================
+        // 11. MODAL FORM
+        // ============================================================
+        const modal = document.getElementById('formModal');
+        const modalClose = document.getElementById('formModalClose');
+        const modalCancel = document.getElementById('formCancelBtn');
+        const modalForm = document.getElementById('formModalBody');
+        const formFields = document.getElementById('formFields');
+        const formModalTitle = document.getElementById('formModalTitle');
+
+        let currentEditKey = null;
+        let currentType = null;
+
+        function openModal(type, editKey = null, data = null) {
+            currentType = type;
+            currentEditKey = editKey;
+            modal.classList.add('active');
+
+            if (type === 'digital') {
+                formModalTitle.textContent = editKey ? 'Edit Produk Digital' : 'Tambah Produk Digital';
+                formFields.innerHTML = `
+                        <div class="form-group"><label>Nama *</label><input type="text" id="prodName" value="${data?.name || ''}" required /></div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Harga (Rp) *</label><input type="number" id="prodPrice" value="${data?.price || ''}" required /></div>
+                            <div class="form-group"><label>URL Gambar</label><input type="url" id="prodImage" value="${data?.image || ''}" placeholder="https://..." /></div>
+                        </div>
+                        <div class="form-group"><label>Deskripsi</label><textarea id="prodDesc" rows="3">${data?.description || ''}</textarea></div>
+                        <div class="form-group"><label>Link Unduhan *</label><input type="url" id="prodDownload" value="${data?.downloadLink || ''}" placeholder="https://..." required /></div>
+                        <input type="hidden" id="prodIsJasa" value="false" />
+                    `;
+            } else if (type === 'jasa') {
+                formModalTitle.textContent = editKey ? 'Edit Layanan Jasa' : 'Tambah Layanan Jasa';
+                const support = data?.support || {};
+                formFields.innerHTML = `
+                        <div class="form-group"><label>Nama *</label><input type="text" id="jasaName" value="${data?.name || ''}" required /></div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Harga (Rp) *</label><input type="number" id="jasaPrice" value="${data?.price || ''}" required /></div>
+                            <div class="form-group"><label>URL Gambar</label><input type="url" id="jasaImage" value="${data?.image || ''}" placeholder="https://..." /></div>
+                        </div>
+                        <div class="form-group"><label>Deskripsi</label><textarea id="jasaDesc" rows="3">${data?.description || ''}</textarea></div>
+                        <div class="form-group">
+                            <label>Dukungan</label>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" id="supNama" ${support.nama ? 'checked' : ''}> Nama</label>
+                                <label><input type="checkbox" id="supWa" ${support.wa ? 'checked' : ''}> No WhatsApp</label>
+                                <label><input type="checkbox" id="supSosmed" ${support.sosmed ? 'checked' : ''}> Sosial Media</label>
+                            </div>
+                        </div>
+                        <input type="hidden" id="jasaIsJasa" value="true" />
+                        <input type="hidden" id="jasaDownload" value="" />
+                    `;
+            } else if (type === 'news') {
+                formModalTitle.textContent = editKey ? 'Edit Berita' : 'Tambah Berita';
+                formFields.innerHTML = `
+                        <div class="form-group"><label>Judul Berita *</label><input type="text" id="newsTitle" value="${data?.title || ''}" required /></div>
+                        <div class="form-group"><label>Tanggal</label><input type="text" id="newsDate" value="${data?.date || ''}" placeholder="Misal: 24 Juni 2026" /></div>
+                        <div class="form-group"><label>URL Gambar</label><input type="url" id="newsImage" value="${data?.image || ''}" placeholder="https://..." /></div>
+                        <div class="form-group"><label>Konten</label><textarea id="newsContent" rows="4">${data?.content || ''}</textarea></div>
+                    `;
+            }
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            currentEditKey = null;
+            currentType = null;
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modalCancel.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+        // ============================================================
+        // 12. SUBMIT FORM
+        // ============================================================
+        modalForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentType) return;
+            try {
+                if (currentType === 'digital') {
+                    const name = document.getElementById('prodName').value.trim();
+                    const price = parseInt(document.getElementById('prodPrice').value) || 0;
+                    const image = document.getElementById('prodImage').value.trim();
+                    const description = document.getElementById('prodDesc').value.trim();
+                    const downloadLink = document.getElementById('prodDownload').value.trim();
+                    if (!name || !downloadLink) { showToast('Nama dan link unduhan wajib diisi.', 'error'); return; }
+                    const data = { name, price, image, description, downloadLink, isJasa: false };
+                    const productRef = currentEditKey ? ref(db, `logo-shop/products/${currentEditKey}`) : push(ref(db,
+                        'logo-shop/products'));
+                    await set(productRef, data);
+                    showToast(currentEditKey ? 'Produk digital diperbarui!' : 'Produk digital ditambahkan!', 'success');
+                    closeModal();
+                    loadDigital();
+                    loadStats();
+                } else if (currentType === 'jasa') {
+                    const name = document.getElementById('jasaName').value.trim();
+                    const price = parseInt(document.getElementById('jasaPrice').value) || 0;
+                    const image = document.getElementById('jasaImage').value.trim();
+                    const description = document.getElementById('jasaDesc').value.trim();
+                    const support = {
+                        nama: document.getElementById('supNama').checked,
+                        wa: document.getElementById('supWa').checked,
+                        sosmed: document.getElementById('supSosmed').checked
+                    };
+                    if (!name) { showToast('Nama layanan wajib diisi.', 'error'); return; }
+                    const data = { name, price, image, description, support, isJasa: true, downloadLink: '' };
+                    const productRef = currentEditKey ? ref(db, `logo-shop/products/${currentEditKey}`) : push(ref(db,
+                        'logo-shop/products'));
+                    await set(productRef, data);
+                    showToast(currentEditKey ? 'Layanan jasa diperbarui!' : 'Layanan jasa ditambahkan!', 'success');
+                    closeModal();
+                    loadJasa();
+                    loadStats();
+                } else if (currentType === 'news') {
+                    const title = document.getElementById('newsTitle').value.trim();
+                    const date = document.getElementById('newsDate').value.trim();
+                    const image = document.getElementById('newsImage').value.trim();
+                    const content = document.getElementById('newsContent').value.trim();
+                    if (!title) { showToast('Judul berita wajib diisi.', 'error'); return; }
+                    const data = { title, date, image, content };
+                    const newsRef = currentEditKey ? ref(db, `logo-shop/news/${currentEditKey}`) : push(ref(db,
+                        'logo-shop/news'));
+                    await set(newsRef, data);
+                    showToast(currentEditKey ? 'Berita diperbarui!' : 'Berita ditambahkan!', 'success');
+                    closeModal();
+                    loadNews();
+                }
+            } catch (err) {
+                showToast('Gagal: ' + err.message, 'error');
+            }
+        });
+
+        // ============================================================
+        // 13. LOAD: PRODUK DIGITAL
+        // ============================================================
+        function loadDigital() {
+            const tbody = document.getElementById('digitalTableBody');
+            tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>`;
+            onValue(ref(db, 'logo-shop/products'), (snap) => {
+                const data = snap.val();
+                if (!data) { tbody.innerHTML =
+                        `<tr><td colspan="5" class="empty-state"><i class="fas fa-box-open"></i> Belum ada produk digital.</td></tr>`; return; }
+                const items = Object.entries(data).filter(([k, v]) => v.isJasa !== true && v.downloadLink).map(([k, v]) => ({ key: k,
+                    ...v }));
+                if (!items.length) { tbody.innerHTML =
+                        `<tr><td colspan="5" class="empty-state"><i class="fas fa-box-open"></i> Belum ada produk digital.</td></tr>`; return; }
+                let html = '';
+                items.forEach(item => {
+                    html += `<tr>
+                            <td><img src="${item.image || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=80&h=80&fit=crop'}" class="product-thumb" alt="${item.name}" /></td>
+                            <td><strong>${item.name || 'Tanpa nama'}</strong></td>
+                            <td>Rp ${new Intl.NumberFormat('id-ID').format(item.price || 0)}</td>
+                            <td><a href="${item.downloadLink || '#'}" target="_blank" style="color:var(--accent-blue);">Link</a></td>
+                            <td>
+                                <button class="btn-icon edit" data-key="${item.key}"><i class="fas fa-edit"></i></button>
+                                <button class="btn-icon delete" data-key="${item.key}"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                });
+                tbody.innerHTML = html;
+                tbody.querySelectorAll('.edit').forEach(b => b.addEventListener('click', () => {
+                    const key = b.dataset.key;
+                    const item = items.find(d => d.key === key);
+                    openModal('digital', key, item);
+                }));
+                tbody.querySelectorAll('.delete').forEach(b => b.addEventListener('click', async () => {
+                    const key = b.dataset.key;
+                    if (confirm(`Hapus produk "${data[key]?.name}"?`)) { await remove(ref(db,
+                            `logo-shop/products/${key}`));
+                        showToast('Produk dihapus.', 'success');
+                        loadDigital();
+                        loadStats(); }
+                }));
+            });
+        }
+
+        // ============================================================
+        // 14. LOAD: LAYANAN JASA
+        // ============================================================
+        function loadJasa() {
+            const tbody = document.getElementById('jasaTableBody');
+            tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>`;
+            onValue(ref(db, 'logo-shop/products'), (snap) => {
+                const data = snap.val();
+                if (!data) { tbody.innerHTML =
+                        `<tr><td colspan="5" class="empty-state"><i class="fas fa-box-open"></i> Belum ada layanan jasa.</td></tr>`; return; }
+                const items = Object.entries(data).filter(([k, v]) => v.isJasa === true || !v.downloadLink).map(([k, v]) => ({ key: k,
+                    ...v }));
+                if (!items.length) { tbody.innerHTML =
+                        `<tr><td colspan="5" class="empty-state"><i class="fas fa-box-open"></i> Belum ada layanan jasa.</td></tr>`; return; }
+                let html = '';
+                items.forEach(item => {
+                    const support = item.support || {};
+                    const supportText = Object.keys(support).filter(k => support[k]).join(', ') || 'Tidak ada';
+                    html += `<tr>
+                            <td><img src="${item.image || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=80&h=80&fit=crop'}" class="product-thumb" alt="${item.name}" /></td>
+                            <td><strong>${item.name || 'Tanpa nama'}</strong></td>
+                            <td>Rp ${new Intl.NumberFormat('id-ID').format(item.price || 0)}</td>
+                            <td>${supportText}</td>
+                            <td>
+                                <button class="btn-icon edit" data-key="${item.key}"><i class="fas fa-edit"></i></button>
+                                <button class="btn-icon delete" data-key="${item.key}"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                });
+                tbody.innerHTML = html;
+                tbody.querySelectorAll('.edit').forEach(b => b.addEventListener('click', () => {
+                    const key = b.dataset.key;
+                    const item = items.find(d => d.key === key);
+                    openModal('jasa', key, item);
+                }));
+                tbody.querySelectorAll('.delete').forEach(b => b.addEventListener('click', async () => {
+                    const key = b.dataset.key;
+                    if (confirm(`Hapus layanan "${data[key]?.name}"?`)) { await remove(ref(db,
+                            `logo-shop/products/${key}`));
+                        showToast('Layanan dihapus.', 'success');
+                        loadJasa();
+                        loadStats(); }
+                }));
+            });
+        }
+
+        // ============================================================
+        // 15. LOAD: BERITA
+        // ============================================================
+        function loadNews() {
+            const tbody = document.getElementById('newsTableBody');
+            tbody.innerHTML = `<tr><td colspan="3" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>`;
+            onValue(ref(db, 'logo-shop/news'), (snap) => {
+                const data = snap.val();
+                if (!data) { tbody.innerHTML =
+                        `<tr><td colspan="3" class="empty-state"><i class="fas fa-newspaper"></i> Belum ada berita.</td></tr>`; return; }
+                let html = '';
+                Object.entries(data).forEach(([key, item]) => {
+                    html += `<tr>
+                            <td><strong>${item.title || 'Tanpa judul'}</strong></td>
+                            <td>${item.date || '—'}</td>
+                            <td>
+                                <button class="btn-icon edit" data-key="${key}"><i class="fas fa-edit"></i></button>
+                                <button class="btn-icon delete" data-key="${key}"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                });
+                tbody.innerHTML = html;
+                tbody.querySelectorAll('.edit').forEach(b => b.addEventListener('click', () => {
+                    const key = b.dataset.key;
+                    openModal('news', key, data[key]);
+                }));
+                tbody.querySelectorAll('.delete').forEach(b => b.addEventListener('click', async () => {
+                    const key = b.dataset.key;
+                    if (confirm(`Hapus berita "${data[key]?.title}"?`)) { await remove(ref(db,
+                            `logo-shop/news/${key}`));
+                        showToast('Berita dihapus.', 'success');
+                        loadNews(); }
+                }));
+            });
+        }
+
+        // ============================================================
+        // 16. LOAD: PESANAN JASA
+        // ============================================================
+        function loadOrdersJasa() {
+            const tbody = document.getElementById('ordersJasaTableBody');
+            tbody.innerHTML = `<tr><td colspan="9" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>`;
+            const productsRef = ref(db, 'logo-shop/products');
+            let productsMap = {};
+            onValue(productsRef, (snap) => {
+                productsMap = snap.val() || {};
+            }, { onlyOnce: true });
+
+            onValue(ref(db, 'logo-shop/orders'), (snap) => {
+                const data = snap.val();
+                if (!data) { tbody.innerHTML =
+                        `<tr><td colspan="9" class="empty-state"><i class="fas fa-box-open"></i> Belum ada pesanan jasa.</td></tr>`; return; }
+                const items = Object.entries(data).filter(([k, v]) => v.isJasa === true);
+                if (!items.length) { tbody.innerHTML =
+                        `<tr><td colspan="9" class="empty-state"><i class="fas fa-box-open"></i> Belum ada pesanan jasa.</td></tr>`; return; }
+                let html = '';
+                items.forEach(([key, item]) => {
+                    const status = item.status || 'pending';
+                    let badge = 'warning';
+                    if (status === 'completed') badge = 'success';
+                    else if (status === 'confirmed') badge = 'info';
+                    else if (status === 'cancelled') badge = 'danger';
+
+                    const time = item.orderDate ? new Date(item.orderDate).toLocaleString('id-ID') : '—';
+
+                    let dataForm = '-';
+                    const parts = [];
+                    if (item.nama) parts.push(`Nama: ${item.nama}`);
+                    if (item.wa) parts.push(`WA: ${item.wa}`);
+                    if (item.sosmed) parts.push(`Sosmed: ${item.sosmed}`);
+                    if (item.receiverNumber) parts.push(`Penerima: ${item.receiverNumber}`);
+                    dataForm = parts.join('<br>') || 'Belum diisi';
+
+                    const antrian = item.queueNumber ? `#${item.queueNumber}` : '-';
+
+                    const showConfirmBtn = (status === 'pending');
+                    const showSendBtn = (status === 'confirmed' && item.receiverNumber);
+
+                    const productData = productsMap[item.productId] || {};
+                    const imgSrc = productData.image || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=60&h=60&fit=crop';
+
+                    const waReceiver = item.receiverNumber || '';
+                    const waLink = waReceiver ? `https://wa.me/${waReceiver.replace(/[^0-9]/g, '')}` : '#';
+
+                    html += `<tr>
+                            <td><img src="${imgSrc}" class="product-thumb" alt="${item.productName || 'Produk'}" /></td>
+                            <td>${item.productName || '—'}</td>
+                            <td>Rp ${new Intl.NumberFormat('id-ID').format(item.price || 0)}</td>
+                            <td><code style="font-size:0.6rem;background:var(--bg-input);padding:1px 6px;border-radius:4px;">${item.deviceId || '—'}</code></td>
+                            <td><span class="badge badge-${badge}">${status}</span></td>
+                            <td style="font-size:0.65rem;max-width:120px;">${dataForm}</td>
+                            <td><strong>${antrian}</strong></td>
+                            <td style="font-size:0.6rem;">${time}</td>
+                            <td>
+                                ${showConfirmBtn ? `<button class="btn-icon confirm" data-orderkey="${key}"><i class="fas fa-check-circle"></i> Konfirmasi</button>` : ''}
+                                ${showSendBtn ? `<a href="${waLink}" target="_blank" class="btn-icon send" style="text-decoration:none;"><i class="fab fa-whatsapp"></i> WA</a>` : ''}
+                                <button class="btn-icon edit" data-orderkey="${key}" data-status="${status}"><i class="fas fa-sync-alt"></i></button>
+                                <button class="btn-icon delete" data-orderkey="${key}"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                });
+                tbody.innerHTML = html;
+
+                tbody.querySelectorAll('.confirm[data-orderkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const key = btn.dataset.orderkey;
+                        if (confirm('Konfirmasi saldo sudah masuk untuk pesanan ini?')) {
+                            await update(ref(db, `logo-shop/orders/${key}`), { status: 'confirmed' });
+                            showToast('Saldo dikonfirmasi! Status diperbarui.', 'success');
+                            loadOrdersJasa();
+                            loadQueue();
+                            loadStats();
+                            loadAdvancedStats();
+                        }
+                    });
+                });
+
+                tbody.querySelectorAll('.edit[data-orderkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const key = btn.dataset.orderkey;
+                        const currentStatus = btn.dataset.status;
+                        let newStatus = 'pending';
+                        if (currentStatus === 'pending') newStatus = 'confirmed';
+                        else if (currentStatus === 'confirmed') newStatus = 'completed';
+                        else if (currentStatus === 'completed') newStatus = 'completed';
+                        else newStatus = 'pending';
+                        if (confirm(`Ubah status dari "${currentStatus}" menjadi "${newStatus}"?`)) {
+                            await update(ref(db, `logo-shop/orders/${key}`), { status: newStatus });
+                            if (newStatus === 'completed') {
+                                const queueSnap = await get(ref(db, 'logo-shop/queue'));
+                                const queueData = queueSnap.val();
+                                if (queueData) {
+                                    for (const [qKey, qVal] of Object.entries(queueData)) {
+                                        if (qVal.orderKey === key) {
+                                            await remove(ref(db, `logo-shop/queue/${qKey}`));
+                                            break;
+                                        }
+                                    }
+                                }
+                                await renumberQueue();
+                            }
+                            showToast('Status diperbarui.', 'success');
+                            loadOrdersJasa();
+                            loadQueue();
+                            loadStats();
+                            loadAdvancedStats();
+                        }
+                    });
+                });
+
+                tbody.querySelectorAll('.delete[data-orderkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const key = btn.dataset.orderkey;
+                        if (confirm('Hapus pesanan ini?')) {
+                            await remove(ref(db, `logo-shop/orders/${key}`));
+                            showToast('Pesanan dihapus.', 'success');
+                            loadOrdersJasa();
+                            loadQueue();
+                            loadStats();
+                            loadAdvancedStats();
+                        }
+                    });
+                });
+            });
+        }
+
+        // ============================================================
+        // 17. LOAD: PESANAN PRODUK
+        // ============================================================
+        function loadOrdersProduk() {
+            const tbody = document.getElementById('ordersProdukTableBody');
+            tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>`;
+            const productsRef = ref(db, 'logo-shop/products');
+            let productsMap = {};
+            onValue(productsRef, (snap) => {
+                productsMap = snap.val() || {};
+            }, { onlyOnce: true });
+
+            onValue(ref(db, 'logo-shop/orders'), (snap) => {
+                const data = snap.val();
+                if (!data) { tbody.innerHTML =
+                        `<tr><td colspan="7" class="empty-state"><i class="fas fa-box-open"></i> Belum ada pesanan produk.</td></tr>`; return; }
+                const items = Object.entries(data).filter(([k, v]) => v.isJasa !== true);
+                if (!items.length) { tbody.innerHTML =
+                        `<tr><td colspan="7" class="empty-state"><i class="fas fa-box-open"></i> Belum ada pesanan produk.</td></tr>`; return; }
+                let html = '';
+                items.forEach(([key, item]) => {
+                    const status = item.status || 'pending';
+                    const badge = status === 'completed' ? 'success' : status === 'confirmed' ? 'info' : status ===
+                        'cancelled' ? 'danger' : 'warning';
+                    const time = item.orderDate ? new Date(item.orderDate).toLocaleString('id-ID') : '—';
+
+                    const showConfirmBtn = (status === 'pending');
+
+                    const productData = productsMap[item.productId] || {};
+                    const imgSrc = productData.image || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=60&h=60&fit=crop';
+
+                    html += `<tr>
+                            <td><img src="${imgSrc}" class="product-thumb" alt="${item.productName || 'Produk'}" /></td>
+                            <td>${item.productName || '—'}</td>
+                            <td>Rp ${new Intl.NumberFormat('id-ID').format(item.price || 0)}</td>
+                            <td><code style="font-size:0.6rem;background:var(--bg-input);padding:1px 6px;border-radius:4px;">${item.deviceId || '—'}</code></td>
+                            <td><span class="badge badge-${badge}">${status}</span></td>
+                            <td style="font-size:0.6rem;">${time}</td>
+                            <td>
+                                ${showConfirmBtn ? `<button class="btn-icon confirm" data-orderkey="${key}"><i class="fas fa-check-circle"></i> Konfirmasi</button>` : ''}
+                                <button class="btn-icon edit" data-orderkey="${key}" data-status="${status}"><i class="fas fa-sync-alt"></i></button>
+                                <button class="btn-icon delete" data-orderkey="${key}"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                });
+                tbody.innerHTML = html;
+
+                tbody.querySelectorAll('.confirm[data-orderkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const key = btn.dataset.orderkey;
+                        if (confirm('Konfirmasi saldo sudah masuk untuk pesanan ini?')) {
+                            await update(ref(db, `logo-shop/orders/${key}`), { status: 'confirmed' });
+                            showToast('Saldo dikonfirmasi! Status diperbarui.', 'success');
+                            loadOrdersProduk();
+                            loadStats();
+                            loadAdvancedStats();
+                        }
+                    });
+                });
+
+                tbody.querySelectorAll('.edit[data-orderkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const key = btn.dataset.orderkey;
+                        const currentStatus = btn.dataset.status;
+                        let newStatus = 'pending';
+                        if (currentStatus === 'pending') newStatus = 'confirmed';
+                        else if (currentStatus === 'confirmed') newStatus = 'completed';
+                        else if (currentStatus === 'completed') newStatus = 'completed';
+                        else newStatus = 'pending';
+                        if (confirm(`Ubah status dari "${currentStatus}" menjadi "${newStatus}"?`)) {
+                            await update(ref(db, `logo-shop/orders/${key}`), { status: newStatus });
+                            showToast('Status diperbarui.', 'success');
+                            loadOrdersProduk();
+                            loadStats();
+                            loadAdvancedStats();
+                        }
+                    });
+                });
+
+                tbody.querySelectorAll('.delete[data-orderkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const key = btn.dataset.orderkey;
+                        if (confirm('Hapus pesanan ini?')) {
+                            await remove(ref(db, `logo-shop/orders/${key}`));
+                            showToast('Pesanan dihapus.', 'success');
+                            loadOrdersProduk();
+                            loadStats();
+                            loadAdvancedStats();
+                        }
+                    });
+                });
+            });
+        }
+
+        // ============================================================
+        // 18. LOAD: ANTRIAN
+        // ============================================================
+        function loadQueue() {
+            const tbody = document.getElementById('queueTableBody');
+            tbody.innerHTML = `<tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>`;
+            onValue(ref(db, 'logo-shop/queue'), (snap) => {
+                const data = snap.val();
+                if (!data) { tbody.innerHTML =
+                        `<tr><td colspan="6" class="empty-state"><i class="fas fa-clock"></i> Tidak ada antrian.</td></tr>`; return; }
+                const sorted = Object.entries(data).sort((a, b) => (a[1].number || 0) - (b[1].number || 0));
+                let html = '';
+                sorted.forEach(([key, item]) => {
+                    const time = item.createdAt ? new Date(item.createdAt).toLocaleString('id-ID') : '—';
+                    const status = item.status || 'waiting';
+                    const badge = status === 'done' ? 'success' : 'warning';
+                    html += `<tr>
+                            <td><strong>#${item.number || '?'}</strong></td>
+                            <td>${item.productName || '—'}</td>
+                            <td><code style="font-size:0.6rem;">${item.deviceId || '—'}</code></td>
+                            <td><span class="badge badge-${badge}">${status}</span></td>
+                            <td style="font-size:0.6rem;">${time}</td>
+                            <td>
+                                <button class="btn-icon check" data-qkey="${key}"><i class="fas fa-check-circle"></i></button>
+                                <button class="btn-icon delete" data-qkey="${key}"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                });
+                tbody.innerHTML = html;
+                tbody.querySelectorAll('.check[data-qkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const qKey = btn.dataset.qkey;
+                        if (confirm('Tandai antrian ini selesai?')) {
+                            await remove(ref(db, `logo-shop/queue/${qKey}`));
+                            showToast('Antrian selesai.', 'success');
+                            loadQueue();
+                            loadOrdersJasa();
+                            loadStats();
+                            loadAdvancedStats();
+                            await renumberQueue();
+                        }
+                    });
+                });
+                tbody.querySelectorAll('.delete[data-qkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const qKey = btn.dataset.qkey;
+                        if (confirm('Hapus antrian ini?')) {
+                            await remove(ref(db, `logo-shop/queue/${qKey}`));
+                            showToast('Antrian dihapus.', 'success');
+                            loadQueue();
+                            await renumberQueue();
+                        }
+                    });
+                });
+            });
+        }
+
+        async function renumberQueue() {
+            const snap = await get(ref(db, 'logo-shop/queue'));
+            const data = snap.val();
+            if (!data) return;
+            const sorted = Object.entries(data).sort((a, b) => (a[1].number || 0) - (b[1].number || 0));
+            let i = 1;
+            for (const [key, val] of sorted) {
+                if (val.number !== i) await update(ref(db, `logo-shop/queue/${key}`), { number: i });
+                i++;
+            }
+            loadQueue();
+        }
+
+        // ============================================================
+        // 19. NOTIFIKASI PESANAN BARU
+        // ============================================================
+        let lastOrderKey = localStorage.getItem('lastOrderKey') || '';
+        let notifCount = 0;
+
+        function checkNewOrders() {
+            const ordersRef = ref(db, 'logo-shop/orders');
+            onValue(ordersRef, (snap) => {
+                const data = snap.val();
+                if (!data) return;
+                const keys = Object.keys(data);
+                if (keys.length === 0) return;
+
+                let latestKey = null;
+                let latestTime = 0;
+                for (const key of keys) {
+                    const order = data[key];
+                    const time = order.orderDate || 0;
+                    if (time > latestTime) {
+                        latestTime = time;
+                        latestKey = key;
+                    }
+                }
+
+                if (latestKey && latestKey !== lastOrderKey) {
+                    playNotificationSound();
+
+                    const newOrder = data[latestKey];
+                    const productName = newOrder.productName || 'Produk';
+                    const isJasa = newOrder.isJasa ? 'Jasa' : 'Produk';
+                    const price = newOrder.price ? `Rp ${new Intl.NumberFormat('id-ID').format(newOrder.price)}` : '';
+                    showToast(`Pesanan ${isJasa} baru: ${productName} - ${price}`, 'info');
+
+                    notifCount++;
+                    const badge = document.getElementById('notifBadge');
+                    badge.innerHTML = `<i class="fas fa-bell"></i> ${notifCount}`;
+
+                    lastOrderKey = latestKey;
+                    localStorage.setItem('lastOrderKey', lastOrderKey);
+
+                    loadAdvancedStats();
+                    loadRecentOrders();
+                }
+            }, { onlyOnce: false });
+        }
+
+        // ============================================================
+        // 20. BUTTONS
+        // ============================================================
+        document.getElementById('btnTambahDigital').addEventListener('click', () => openModal('digital'));
+        document.getElementById('btnTambahJasa').addEventListener('click', () => openModal('jasa'));
+        document.getElementById('btnTambahBerita').addEventListener('click', () => openModal('news'));
+
+        document.getElementById('btnResetQueue').addEventListener('click', async () => {
+            if (confirm('Yakin menghapus semua antrian?')) { await remove(ref(db, 'logo-shop/queue'));
+                showToast('Semua antrian dihapus.', 'success');
+                loadQueue();
+                loadStats(); }
+        });
+
+        document.getElementById('refreshBtnTop').addEventListener('click', () => {
+            loadDigital();
+            loadJasa();
+            loadNews();
+            loadOrdersJasa();
+            loadOrdersProduk();
+            loadQueue();
+            loadStats();
+            loadAdvancedStats();
+            loadRecentOrders();
+            loadHome();
+            loadShopStatus();
+            showToast('Data direfresh.', 'info');
+        });
+
+        // ============================================================
+        // 21. NOTIFICATION BADGE CLICK
+        // ============================================================
+        document.getElementById('notifBadge').addEventListener('click', function() {
+            notifCount = 0;
+            this.innerHTML = `<i class="fas fa-bell"></i>`;
+        });
+
+        // ============================================================
+        // 22. INIT
+        // ============================================================
+        loadStats();
+        loadAdvancedStats();
+        loadRecentOrders();
+        loadHome();
+        loadShopStatus();
+        checkNewOrders();
+        console.log('Admin Panel siap!');
     </script>
+
 </body>
-    </html>
+</html>
