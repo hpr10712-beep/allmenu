@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NEV Market - Tempat Penjualan Produk Terpercaya</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase-app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+                "firebase-database": "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
+            }
+        }
+    </script>
+
+    <style>
+        /* ============================================================
+           RESET & GLOBAL
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a2e0a;
+            --bg-secondary: #051405;
+            --bg-card: rgba(10, 46, 10, 0.85);
+            --border-color: rgba(239, 178, 44, 0.20);
+            --text-primary: #ffffff;
+            --text-secondary: #b8d9b8;
+            --accent-gold: #efb22c;
+            --accent-emerald: #00b894;
+            --accent-white: #f0f8f0;
+            --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
+            --shadow-xl: 0 30px 70px rgba(0, 0, 0, 0.7);
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ============================================================
+           LAPANGAN SEPAK BOLA — BACKGROUND UTAMA
+           ============================================================ */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f3b0f;
+            background-image:
+                repeating-linear-gradient(90deg,
+                    rgba(34, 120, 34, 0.45) 0px,
+                    rgba(34, 120, 34, 0.45) 55px,
+                    rgba(20, 80, 20, 0.45) 55px,
+                    rgba(20, 80, 20, 0.45) 110px),
+                radial-gradient(ellipse at 50% 0%, rgba(0, 0, 0, 0.0) 60%, rgba(0, 0, 0, 0.35) 100%),
+                linear-gradient(180deg, #0f3b0f 0%, #0a2a0a 100%);
+            background-size: 100% 100%, 100% 100%, 100% 100%;
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Elemen dekoratif: garis-garis lapangan */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Garis tepi lapangan (kotak) */
+        body::before {
+            top: 5%;
+            left: 5%;
+            right: 5%;
+            bottom: 5%;
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Garis tengah lapangan */
+        body::after {
+            top: 49.5%;
+            left: 8%;
+            right: 8%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 2px;
+        }
+
+        /* Lingkaran tengah */
+        .pitch-circle {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px;
+            height: 140px;
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .pitch-center-dot {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.10);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .pitch-penalty-left,
+        .pitch-penalty-right {
+            position: fixed;
+            top: 28%;
+            width: 60px;
+            height: 200px;
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .pitch-penalty-left {
+            left: 6%;
+            border-right: none;
+            border-radius: 4px 0 0 4px;
+        }
+        .pitch-penalty-right {
+            right: 6%;
+            border-left: none;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .pitch-goal-left,
+        .pitch-goal-right {
+            position: fixed;
+            top: 36%;
+            width: 30px;
+            height: 110px;
+            border: 2px solid rgba(255, 255, 255, 0.04);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .pitch-goal-left {
+            left: 3%;
+            border-right: none;
+            border-radius: 4px 0 0 4px;
+        }
+        .pitch-goal-right {
+            right: 3%;
+            border-left: none;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================================
+           BUTTONS
+           ============================================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-gold), #f7d875, var(--accent-gold));
+            color: #0a2a0a;
+            border-color: transparent;
+            box-shadow: 0 4px 20px rgba(239, 178, 44, 0.30);
+            background-size: 200% 200%;
+            animation: shimmerGold 4s ease-in-out infinite;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 32px rgba(239, 178, 44, 0.50);
+        }
+        @keyframes shimmerGold {
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .btn-emerald {
+            background: linear-gradient(135deg, #00b894, #00a381, #00b894);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(0, 184, 148, 0.30);
+            background-size: 200% 200%;
+            animation: shimmerEmerald 4s ease-in-out infinite;
+        }
+        .btn-emerald:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 32px rgba(0, 184, 148, 0.50);
+        }
+        @keyframes shimmerEmerald {
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .btn-outline-gold {
+            background: transparent;
+            border: 1.5px solid var(--accent-gold);
+            color: var(--accent-gold);
+            box-shadow: 0 0 20px rgba(239, 178, 44, 0.05);
+        }
+        .btn-outline-gold:hover {
+            background: rgba(239, 178, 44, 0.10);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 28px rgba(239, 178, 44, 0.20);
+        }
+
+        .btn-white {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-primary);
+        }
+        .btn-white:hover {
+            background: rgba(255, 255, 255, 0.16);
+            transform: translateY(-3px);
+            border-color: var(--accent-gold);
+        }
+
+        .btn-sm {
+            padding: 6px 16px;
+            font-size: 0.8rem;
+        }
+
+        /* ============================================================
+           NAVBAR — dengan nama website
+           ============================================================ */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 12px 0;
+            background: rgba(5, 20, 5, 0.88);
+            backdrop-filter: blur(20px) saturate(1.6);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            font-size: 1.4rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .nav-brand i {
+            color: var(--accent-gold);
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            position: relative;
+            text-decoration: none;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-gold);
+            transition: var(--transition);
+        }
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        .nav-hamburger {
+            display: none;
+            font-size: 1.4rem;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 64px;
+                left: 0;
+                right: 0;
+                background: rgba(5, 20, 5, 0.98);
+                padding: 20px 24px;
+                gap: 14px;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .nav-links.open {
+                display: flex;
+            }
+            .nav-hamburger {
+                display: block;
+            }
+        }
+
+        /* ============================================================
+           BANNER ADMIN
+           ============================================================ */
+        .admin-news-banner {
+            margin-top: 72px;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, rgba(239, 178, 44, 0.12), rgba(0, 184, 148, 0.08));
+            border: 1px solid rgba(239, 178, 44, 0.20);
+            border-radius: var(--radius-md);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        .admin-news-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -20%;
+            width: 60%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(239, 178, 44, 0.05), transparent 70%);
+            pointer-events: none;
+        }
+        .admin-news-banner .badge-admin {
+            background: var(--accent-gold);
+            color: #0a2a0a;
+            font-weight: 800;
+            font-size: 0.7rem;
+            padding: 4px 14px;
+            border-radius: 40px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 12px rgba(239, 178, 44, 0.30);
+        }
+        .admin-news-banner .badge-admin i {
+            font-size: 0.65rem;
+        }
+        .admin-news-banner .news-text {
+            flex: 1;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .admin-news-banner .news-text .highlight-text {
+            color: var(--accent-gold);
+            font-weight: 700;
+        }
+        .admin-news-banner .news-text .emerald-text {
+            color: #6dd5b8;
+            font-weight: 600;
+        }
+        .admin-news-banner .news-date {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.04);
+            padding: 2px 12px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+        @media (max-width: 600px) {
+            .admin-news-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 16px;
+            }
+            .admin-news-banner .news-date {
+                align-self: flex-start;
+            }
+        }
+
+        /* ============================================================
+           HERO
+           ============================================================ */
+        .hero {
+            padding: 30px 0 50px;
+            text-align: center;
+            position: relative;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        .hero h1 {
+            font-size: clamp(2.2rem, 5vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            margin-bottom: 12px;
+        }
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--accent-gold), #f7d875);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto 28px;
+        }
+        .hero .btn-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .hero-img-wrapper {
+            margin-top: 36px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            background: rgba(10, 46, 10, 0.50);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        .hero-img-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            transition: var(--transition);
+        }
+        .hero-img-wrapper #loading {
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        .hero-img-wrapper #loading i {
+            font-size: 2rem;
+            color: var(--accent-gold);
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        /* ============================================================
+           SECTION
+           ============================================================ */
+        section {
+            padding: 56px 0;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .section-header h2 i {
+            color: var(--accent-gold);
+            margin-right: 10px;
+        }
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* ============================================================
+           NEWS
+           ============================================================ */
+        #berita {
+            background: rgba(5, 20, 5, 0.30);
+            backdrop-filter: blur(4px);
+            border-radius: var(--radius-lg);
+            margin: 0 0 20px 0;
+            padding: 40px 0;
+        }
+
+        .news-scroll {
+            display: flex;
+            gap: 24px;
+            overflow-x: auto;
+            padding: 8px 4px 16px 4px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+        .news-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+        .news-scroll::-webkit-scrollbar-track {
+            background: rgba(10, 46, 10, 0.40);
+            border-radius: 10px;
+        }
+        .news-scroll::-webkit-scrollbar-thumb {
+            background: var(--accent-gold);
+            border-radius: 10px;
+        }
+
+        .news-card {
+            flex: 0 0 300px;
+            max-width: 300px;
+            scroll-snap-align: start;
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+        }
+        .news-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-gold);
+            box-shadow: var(--shadow-lg);
+        }
+        .news-card .img-wrap {
+            width: 100%;
+            background: #0a2a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+        }
+        .news-card .img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .news-body {
+            padding: 16px 18px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .news-body .meta {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 4px;
+        }
+        .news-body h3 {
+            font-size: 1.05rem;
+            margin: 0 0 6px;
+            line-height: 1.3;
+            color: #fff;
+        }
+        .news-body .preview-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            flex: 1;
+        }
+        .news-body .btn-read {
+            align-self: flex-start;
+            background: transparent;
+            border: none;
+            color: var(--accent-gold);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 0;
+        }
+        .news-body .btn-read:hover {
+            color: #ffffff;
+            gap: 10px;
+        }
+        .news-body .btn-read i {
+            font-size: 0.7rem;
+            transition: var(--transition);
+        }
+        .news-body .btn-read:hover i {
+            transform: translateX(4px);
+        }
+
+        /* ============================================================
+           MODAL BERITA
+           ============================================================ */
+        .modal-news-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(14px);
+            padding: 20px;
+            animation: fadeInOverlay 0.3s ease;
+        }
+        .modal-news-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeInOverlay {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-news {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            max-width: 600px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 36px 32px 28px;
+            box-shadow: var(--shadow-xl);
+            animation: slideUpModal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            border: 1px solid var(--border-color);
+        }
+
+        @keyframes slideUpModal {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.94);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-news-close {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 4px;
+            line-height: 1;
+        }
+        .modal-news-close:hover {
+            color: var(--accent-gold);
+            transform: rotate(90deg);
+        }
+
+        .modal-news .modal-img-wrap {
+            width: 100%;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-bottom: 16px;
+            background: #0a2a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            aspect-ratio: 16 / 9;
+        }
+        .modal-news .modal-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-news .modal-meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 4px;
+        }
+        .modal-news h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            line-height: 1.2;
+            padding-right: 30px;
+            color: #fff;
+        }
+        .modal-news .modal-content {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .modal-news .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+        .modal-news .btn-group .btn {
+            min-width: 100px;
+        }
+
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+        .footer {
+            background: rgba(3, 13, 3, 0.92);
+            backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 48px 0 24px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 20px;
+        }
+        .footer .container {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+        }
+        .footer .col h4 {
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-size: 1.05rem;
+        }
+        .footer .col p,
+        .footer .col a {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            line-height: 1.8;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        .footer .col a:hover {
+            color: var(--accent-gold);
+        }
+        .footer .col .social-icons {
+            display: flex;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        .footer .col .social-icons a {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.6);
+            transition: var(--transition);
+        }
+        .footer .col .social-icons a:hover {
+            color: var(--accent-gold);
+            transform: translateY(-2px);
+        }
+        .footer .bottom {
+            grid-column: 1 / -1;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 20px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .footer .bottom a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+        }
+        .footer .bottom a:hover {
+            color: var(--accent-gold);
+        }
+
+        @media (max-width: 768px) {
+            .footer .container {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                text-align: center;
+            }
+            .footer .col .social-icons {
+                justify-content: center;
+            }
+            .news-card {
+                flex: 0 0 260px;
+                max-width: 260px;
+            }
+            .modal-news {
+                padding: 24px 20px 20px;
+            }
+            .modal-news h2 {
+                font-size: 1.3rem;
+            }
+            .admin-news-banner .news-text {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* ============================================================
+           TOAST & DEVICE BADGE
+           ============================================================ */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 10px 24px;
+            border-radius: 60px;
+            box-shadow: var(--shadow-lg);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(16px);
+            opacity: 0;
+            transition: all 0.35s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+        .toast.show {
+            display: flex;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast i {
+            font-size: 1rem;
+        }
+        .toast.success i {
+            color: #10b981;
+        }
+        .toast.error i {
+            color: #ef4444;
+        }
+        .toast.info i {
+            color: var(--accent-gold);
+        }
+
+        .device-badge {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--shadow-sm);
+            font-family: monospace;
+        }
+        .device-badge i {
+            color: var(--accent-gold);
+            font-size: 0.8rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 32px 0;
+            color: var(--text-secondary);
+            width: 100%;
+        }
+        .empty-state i {
+            font-size: 1.8rem;
+            opacity: 0.3;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* ============================================================
+           ANIMASI PENGUMUMAN ADMIN — MARQUEE LEMBUT
+           ============================================================ */
+        .admin-marquee {
+            display: inline-block;
+            animation: marqueeScroll 20s linear infinite;
+            white-space: nowrap;
+            padding-left: 100%;
+        }
+        @keyframes marqueeScroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+        .admin-news-banner .news-text .marquee-wrapper {
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: middle;
+            max-width: 100%;
+        }
+        @media (max-width: 600px) {
+            .admin-news-banner .news-text .marquee-wrapper {
+                max-width: 100%;
+                width: 100%;
+            }
+            .admin-marquee {
+                white-space: normal;
+                animation: none;
+                padding-left: 0;
+            }
+        }
+
+        /* ============================================================
+           BRAND NAME — GAYA DEKORATIF KHUSUS NEV Market ⚽
+           ============================================================ */
+        .brand-name {
+            background: linear-gradient(135deg, #ffffff, #f7d875, #efb22c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            display: inline-block;
+            font-weight: 900;
+            text-shadow: none;
+            letter-spacing: -0.02em;
+        }
+
+        /* Garis bawah berkilau khas emas */
+        .brand-name::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -6px;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), #f7d875, var(--accent-gold), transparent);
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(239, 178, 44, 0.7);
+            animation: glowLine 2.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glowLine {
+            0% {
+                opacity: 0.4;
+                width: 60%;
+                left: 20%;
+            }
+            50% {
+                opacity: 1;
+                width: 90%;
+                left: 5%;
+            }
+            100% {
+                opacity: 0.7;
+                width: 70%;
+                left: 15%;
+            }
+        }
+
+        /* Efek tambahan: sedikit bayangan agar lebih menonjol */
+        .brand-name {
+            filter: drop-shadow(0 2px 8px rgba(239, 178, 44, 0.2));
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+    ELEMEN DEKORASI LAPANGAN SEPAK BOLA
+    ============================================================ -->
+    <div class="pitch-circle"></div>
+    <div class="pitch-center-dot"></div>
+    <div class="pitch-penalty-left"></div>
+    <div class="pitch-penalty-right"></div>
+    <div class="pitch-goal-left"></div>
+    <div class="pitch-goal-right"></div>
+
+    <!-- ============================================================
+    NAVBAR
+    ============================================================ -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="nav-brand">
+                <i class="fas fa-crown"></i>
+                <span class="brand-name">NEV Market</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#berita">Berita</a></li>
+                <li><a href="produk.html">Produk</a></li>
+                <li><a href="jasa.html">Jasa</a></li>
+                <li><a href="tentang.html">Tentang</a></li>
+            </ul>
+            <button class="nav-hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- ============================================================
+    BANNER ADMIN
+    ============================================================ -->
+    <div class="container" style="margin-top: 0;">
+        <div class="admin-news-banner" id="adminBanner">
+            <span class="badge-admin"><i class="fas fa-bullhorn"></i> Admin</span>
+            <div class="news-text">
+                <span class="marquee-wrapper">
+                    <span class="admin-marquee" id="adminNewsText">
+                        <span class="highlight-text">⚽ Selamat datang di NEV Market!</span>
+                        <span class="emerald-text">•</span>
+                        Dapatkan produk digital berkualitas dengan harga terbaik.
+                        <span class="emerald-text">•</span>
+                        <span class="highlight-text">Promo spesial</span> untuk pembelian pertama.
+                        <span class="emerald-text">•</span>
+                        Layanan jasa desain &amp; pengembangan website.
+                        <span class="emerald-text">•</span>
+                        <span class="highlight-text">#NEVMarket #FootballEdition</span>
+                    </span>
+                </span>
+            </div>
+            <span class="news-date"><i class="far fa-calendar-alt"></i> NOW</span>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMsg">Berhasil!</span>
+    </div>
+
+    <div class="device-badge">
+        <i class="fas fa-mobile-alt"></i>
+        <span id="deviceIdDisplay">ID: ...</span>
+    </div>
+
+    <!-- ============================================================
+    HERO
+    ============================================================ -->
+    <section class="hero" id="tentang">
+        <div class="container">
+            <div class="hero-content">
+                <h1 style="font-family: 'Inter', -apple-system, sans-serif; text-align: center; margin: 0 0 10px 0; line-height: 1.2;">
+                    <span class="brand-name" style="font-size: 3rem; font-weight: 800; letter-spacing: -0.03em; display: block;">
+                        NEV Market
+                    </span>
+                    <span style="font-size: 1rem; font-weight: 600; color: #b8d9b8; letter-spacing: 0.08em; text-transform: uppercase; display: block; margin-top: 8px;">
+                        Produk Digital &amp; Layanan Jasa
+                    </span>
+                </h1>
+                <p id="heroDesc">Pusat produk digital terlengkap untuk kebutuhan Anda. Dengan Harga Terjangkau Dan Berkualitas</p>
+                <div class="btn-group">
+                    <a href="produk.html" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i> Lihat Produk
+                    </a>
+                    <a href="jasa.html" class="btn btn-emerald">
+                        <i class="fas fa-briefcase"></i> Lihat Jasa
+                    </a>
+                    <a href="tentang.html" class="btn btn-white">
+                        <i class="fas fa-info-circle"></i> Tentang Kami
+                    </a>
+                </div>
+            </div>
+            <div class="hero-img-wrapper">
+                <div id="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>Memuat gambar...</span>
+                </div>
+                <img id="heroImage" style="display:none;" alt="Hero Banner" />
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+    BERITA
+    ============================================================ -->
+    <section id="berita">
+        <div class="container">
+            <div class="section-header">
+                <h2><i class="fas fa-newspaper"></i> Info Terkini</h2>
+                <p>Update Terbaru Seputar NEV Market</p>
+            </div>
+            <div class="news-scroll" id="newsGrid">
+                <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat berita...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+    MODAL BERITA
+    ============================================================ -->
+    <div class="modal-news-overlay" id="modalNews">
+        <div class="modal-news">
+            <button class="modal-news-close" id="modalNewsClose"><i class="fas fa-times"></i></button>
+            <div class="modal-img-wrap" id="modalNewsImageWrap">
+                <img id="modalNewsImage" src="" alt="Gambar berita" />
+            </div>
+            <div class="modal-meta" id="modalNewsMeta">—</div>
+            <h2 id="modalNewsTitle">Judul Berita</h2>
+            <div class="modal-content" id="modalNewsContent">Konten berita lengkap akan ditampilkan di sini.</div>
+            <div class="btn-group">
+                <button class="btn btn-primary" id="modalNewsCloseBtn">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    FOOTER
+    ============================================================ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="col">
+                <h4>
+                    <i class="fas fa-crown" style="color:var(--accent-gold);"></i>
+                    <span class="brand-name">NEV Market</span>
+                </h4>
+                <p>Pusat produk digital terlengkap untuk kebutuhan Anda. Dengan Harga Terjangkau Dan Berkualitas.</p>
+                <div style="margin-top:8px;">
+                    <span style="color:rgba(255,255,255,0.5);font-size:0.8rem;">&copy; 2026 26 Juni. Kami Merilis Website Untuk Penjualan File, Template, Document, Aplikasi Dan Layanan Jasa</span>
+                </div>
+            </div>
+            <div class="col">
+                <h4>Kontak</h4>
+                <p><i class="fas fa-phone" style="width:20px;"></i> <a href="https://wa.me/6289603266259" target="_blank">0896-0326-6259</a></p>
+                <p><i class="fas fa-envelope" style="width:20px;"></i> <a href="mailto:admin@logoshop.com">hpr10712@gmail.com</a></p>
+                <p><i class="fas fa-map-marker-alt" style="width:20px;"></i> Indonesia, Jawa Tengah, Purworejo, Bayan</p>
+            </div>
+            <div class="col">
+                <h4>Ikuti Kami</h4>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+                <div style="margin-top:16px;">
+                    <a href="tentang.html" style="color:rgba(255,255,255,0.5);font-size:0.8rem;text-decoration:underline;">Tentang Kami</a>
+                </div>
+            </div>
+            <div class="bottom">
+                Dibuat dengan <i class="fas fa-heart" style="color:var(--accent-gold);"></i> untuk para pengunjung.
+                <a href="kebijakan-privasi.html">Kebijakan Privasi</a> · <a href="syarat-ketentuan.html">Syarat &amp; Ketentuan</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+    SCRIPT — FIREBASE & LOGIKA
+    ============================================================ -->
+    <script type="module">
+        // ============================================================
+        // 1. FIREBASE
+        // ============================================================
+        import { initializeApp } from "firebase-app";
+        import { getDatabase, ref, onValue } from "firebase-database";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+            authDomain: "mybro-9ba5f.firebaseapp.com",
+            databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+            projectId: "mybro-9ba5f"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // ============================================================
+        // 2. DEVICE ID
+        // ============================================================
+        function getDeviceId() {
+            let id = localStorage.getItem('logoShop_deviceId');
+            if (!id) {
+                id = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+                localStorage.setItem('logoShop_deviceId', id);
+            }
+            return id;
+        }
+        const DEVICE_ID = getDeviceId();
+        document.getElementById('deviceIdDisplay').textContent = DEVICE_ID.slice(0, 12) + '…';
+
+        // ============================================================
+        // 3. TOAST
+        // ============================================================
+        function showToast(msg, type = 'info') {
+            const t = document.getElementById('toast');
+            const m = document.getElementById('toastMsg');
+            const icon = t.querySelector('i');
+            icon.className = 'fas fa-' + (type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' :
+                'info-circle');
+            t.className = 'toast show ' + type;
+            m.textContent = msg;
+            clearTimeout(t._hide);
+            t._hide = setTimeout(() => { t.classList.remove('show'); }, 4000);
+        }
+
+        // ============================================================
+        // 4. NAVBAR
+        // ============================================================
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('navLinks').classList.toggle('open');
+        });
+        document.querySelectorAll('.nav-links a').forEach(a => {
+            a.addEventListener('click', () => {
+                document.getElementById('navLinks').classList.remove('open');
+            });
+        });
+
+        // ============================================================
+        // 5. RENDER HOME & NEWS
+        // ============================================================
+        const homeRef = ref(db, 'logo-shop/home');
+        const newsRef = ref(db, 'logo-shop/news');
+        const infoRef = ref(db, 'logo-shop/info');
+
+        // ============================================================
+        // 6. UPDATE INFO TOKO (Nama & Banner Admin)
+        // ============================================================
+        onValue(infoRef, (snap) => {
+            const data = snap.val() || {};
+            // Update nama toko di semua tempat
+            if (data.shopName) {
+                const name = data.shopName;
+                // Navbar
+                const navBrand = document.querySelector('.nav-brand .brand-name');
+                if (navBrand) navBrand.textContent = name;
+                // Footer
+                const footerBrand = document.querySelector('.footer .col h4 .brand-name');
+                if (footerBrand) footerBrand.textContent = name;
+                // Hero
+                const heroBrand = document.querySelector('.hero .brand-name');
+                if (heroBrand) heroBrand.textContent = name;
+                // Title
+                document.title = name + ' - Toko Digital';
+            }
+            // Update teks banner admin
+            if (data.adminBannerText) {
+                const marquee = document.getElementById('adminNewsText');
+                if (marquee) marquee.innerHTML = data.adminBannerText;
+            }
+        });
+
+        // ============================================================
+        // 7. HOME (Hero Image, Subtitle, dll)
+        // ============================================================
+        onValue(homeRef, (snap) => {
+            const data = snap.val() || {};
+            if (data.title) {
+                const h1 = document.querySelector('.hero h1');
+                // Kita tidak overwrite .brand-name di hero, hanya bagian lain jika ada
+                // Tapi biarkan saja karena .brand-name sudah di-update oleh infoRef
+            }
+            const desc = document.getElementById('heroDesc');
+            if (desc) desc.textContent = data.subtitle ||
+                'Dapatkan logo berkualitas tinggi dengan harga terjangkau. Proses aman dan terpercaya.';
+            const heroImg = document.getElementById('heroImage');
+            if (data.heroImage) {
+                heroImg.src = data.heroImage;
+            }
+            // Hero image loading state
+            if (data.heroImage) {
+                const img = document.getElementById('heroImage');
+                const loading = document.getElementById('loading');
+                img.onload = () => {
+                    loading.style.display = 'none';
+                    img.style.display = 'block';
+                };
+                img.onerror = () => {
+                    loading.innerHTML = '<i class="fas fa-image" style="font-size:2rem;color:var(--text-secondary);"></i><br>Gambar tidak tersedia';
+                };
+                if (img.complete && img.naturalHeight !== 0) {
+                    loading.style.display = 'none';
+                    img.style.display = 'block';
+                }
+            }
+        });
+
+        // ============================================================
+        // 8. NEWS
+        // ============================================================
+        function openNewsModal(item) {
+            const modal = document.getElementById('modalNews');
+            const img = document.getElementById('modalNewsImage');
+            const wrap = document.getElementById('modalNewsImageWrap');
+            if (item.image) {
+                img.src = item.image;
+                img.alt = item.title || 'Berita';
+                wrap.style.display = 'flex';
+            } else {
+                wrap.style.display = 'none';
+            }
+            document.getElementById('modalNewsMeta').textContent = item.date || '—';
+            document.getElementById('modalNewsTitle').textContent = item.title || 'Tanpa Judul';
+            document.getElementById('modalNewsContent').textContent = item.content || 'Tidak ada konten.';
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeNewsModal() {
+            document.getElementById('modalNews').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('modalNewsClose').addEventListener('click', closeNewsModal);
+        document.getElementById('modalNewsCloseBtn').addEventListener('click', closeNewsModal);
+        document.getElementById('modalNews').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeNewsModal();
+        });
+
+        onValue(newsRef, (snap) => {
+            const data = snap.val();
+            const grid = document.getElementById('newsGrid');
+            if (!data) {
+                grid.innerHTML =
+                `<div class="empty-state"><i class="fas fa-newspaper"></i> Belum ada berita.</div>`;
+                return;
+            }
+            const entries = Object.entries(data).reverse();
+            let html = '';
+            entries.forEach(([key, item]) => {
+                const previewText = item.content ? item.content.slice(0, 120) + (item.content.length > 120 ?
+                    '...' : '') : 'Klik "Baca Penjelasan" untuk melihat detail.';
+                const imgSrc = item.image ||
+                    'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&q=80';
+                html += `
+                        <div class="news-card" data-key="${key}">
+                            <div class="img-wrap">
+                                <img src="${imgSrc}" alt="${item.title || 'Berita'}" loading="lazy" />
+                            </div>
+                            <div class="news-body">
+                                <div class="meta"><i class="far fa-calendar-alt"></i> ${item.date || '—'}</div>
+                                <h3>${item.title || 'Tanpa Judul'}</h3>
+                                <p class="preview-text">${previewText}</p>
+                                <button class="btn-read" data-key="${key}">
+                                    Baca Penjelasan <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+            });
+            grid.innerHTML = html;
+
+            grid.querySelectorAll('.btn-read').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const key = btn.dataset.key;
+                    const item = data[key];
+                    if (item) openNewsModal(item);
+                });
+            });
+        });
+
+        // ============================================================
+        // 9. ESC
+        // ============================================================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeNewsModal();
+        });
+
+        showToast('⚽ Selamat datang di NEV Market!', 'info');
+        console.log('🚀 NEV Market loaded. Device ID:', DEVICE_ID);
+
+        // Hero image loading — fallback
+        const heroImg = document.getElementById('heroImage');
+        const loadingEl = document.getElementById('loading');
+        if (heroImg.complete && heroImg.naturalHeight !== 0) {
+            loadingEl.style.display = 'none';
+            heroImg.style.display = 'block';
+        } else if (heroImg.src) {
+            heroImg.onload = () => {
+                loadingEl.style.display = 'none';
+                heroImg.style.display = 'block';
+            };
+            heroImg.onerror = () => {
+                loadingEl.innerHTML =
+                    '<i class="fas fa-image" style="font-size:2rem;color:var(--text-secondary);"></i><br>Gambar tidak tersedia';
+            };
+        }
+    </script>
+
+</body>
+  </html>
