@@ -46,13 +46,51 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        /* ============================================================
+           BACKGROUND LAPANGAN SEPAK BOLA (sama seperti utama)
+           ============================================================ */
         body {
             font-family: var(--font);
-            background: var(--bg-body);
+            background: #0f3b0f;
+            background-image:
+                repeating-linear-gradient(90deg,
+                    rgba(34, 120, 34, 0.45) 0px,
+                    rgba(34, 120, 34, 0.45) 55px,
+                    rgba(20, 80, 20, 0.45) 55px,
+                    rgba(20, 80, 20, 0.45) 110px),
+                radial-gradient(ellipse at 50% 0%, rgba(0,0,0,0.0) 60%, rgba(0,0,0,0.35) 100%),
+                linear-gradient(180deg, #0f3b0f 0%, #0a2a0a 100%);
+            background-size: 100% 100%, 100% 100%, 100% 100%;
+            min-height: 100vh;
             color: var(--text-primary);
             line-height: 1.5;
-            min-height: 100vh;
             padding-bottom: 70px;
+        }
+
+        /* Buat card dan elemen lain tetap terbaca dengan background putih semi-transparan */
+        .app-header,
+        .content-card,
+        .stat-card,
+        .modal,
+        .toast,
+        .notif-badge,
+        .menu-item .icon-circle {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .app-header {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+        .menu-item .icon-circle {
+            background: rgba(255, 255, 255, 0.85);
+        }
+        .menu-item.active .icon-circle {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #fff;
         }
 
         /* ============================================================
@@ -63,7 +101,6 @@
             justify-content: space-between;
             align-items: center;
             padding: 14px 20px 10px;
-            background: var(--bg-card);
             border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
@@ -141,7 +178,6 @@
             margin-bottom: 18px;
         }
         .stat-card {
-            background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius-sm);
             padding: 12px 14px;
@@ -223,7 +259,6 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: var(--bg-card);
             border: 1px solid var(--border);
             display: flex;
             align-items: center;
@@ -268,7 +303,6 @@
            CONTENT CARD
            ============================================================ */
         .content-card {
-            background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius);
             padding: 16px 18px;
@@ -475,7 +509,6 @@
         }
         .modal-overlay.active { display: flex; }
         .modal {
-            background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: var(--radius);
             max-width: 500px;
@@ -578,7 +611,6 @@
             bottom: 80px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
-            background: var(--bg-card);
             border: 1px solid var(--border);
             padding: 8px 20px;
             border-radius: 60px;
@@ -740,6 +772,7 @@
             <div class="menu-carousel" id="menuCarousel">
                 <button class="menu-item active" data-section="dashboard"><span class="icon-circle"><i class="fas fa-chart-pie"></i></span><span class="label">Dashboard</span></button>
                 <button class="menu-item" data-section="home"><span class="icon-circle"><i class="fas fa-home"></i></span><span class="label">Home</span></button>
+                <button class="menu-item" data-section="announcement"><span class="icon-circle"><i class="fas fa-bullhorn"></i></span><span class="label">Pengumuman</span></button>
                 <button class="menu-item" data-section="digital"><span class="icon-circle"><i class="fas fa-palette"></i></span><span class="label">Produk</span></button>
                 <button class="menu-item" data-section="jasa"><span class="icon-circle"><i class="fas fa-concierge-bell"></i></span><span class="label">Jasa</span></button>
                 <button class="menu-item" data-section="news"><span class="icon-circle"><i class="fas fa-newspaper"></i></span><span class="label">Berita</span></button>
@@ -829,6 +862,49 @@
 
                     <div class="form-actions">
                         <button type="submit" class="btn-submit"><i class="fas fa-save"></i> Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ==========================================================
+        SECTION: PENGUMUMAN
+        ========================================================== -->
+        <div id="section-announcement" style="display:none;">
+            <div class="content-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-bullhorn"></i> Pengumuman Admin</h2>
+                    <span style="font-size:0.65rem;color:var(--text-muted);">Teks yang muncul di banner admin pada halaman utama</span>
+                </div>
+                <form id="announcementForm">
+                    <div class="form-group">
+                        <label>Teks Pengumuman (mendukung HTML)</label>
+                        <textarea id="adminBannerText" rows="4" placeholder="Masukkan teks pengumuman, misal: &lt;span class=&quot;highlight-text&quot;&gt;⚽ Selamat datang di NEV Market!&lt;/span&gt; ..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Pratinjau</label>
+                        <div id="announcementPreview" style="background:var(--bg-input);padding:10px;border-radius:var(--radius-sm);border:1px solid var(--border);min-height:40px;font-size:0.9rem;color:var(--text-primary);"></div>
+                    </div>
+
+                    <!-- Toggle Tampilkan Pengumuman -->
+                    <div class="form-group" style="border-top:1px solid var(--border);padding-top:12px;margin-top:6px;">
+                        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;font-size:0.85rem;">
+                            <span>Tampilkan Pengumuman:</span>
+                            <span id="announcementStatusLabel" style="font-weight:700;font-size:0.8rem;padding:1px 12px;border-radius:40px;">Ya</span>
+                        </label>
+                        <div style="display:flex;align-items:center;gap:10px;margin-top:2px;">
+                            <span style="font-size:0.7rem;color:var(--text-muted);">Sembunyi</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="announcementToggle" checked />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span style="font-size:0.7rem;color:var(--text-muted);">Tampil</span>
+                            <span id="announcementStatusDetail" style="font-size:0.7rem;color:var(--text-secondary);margin-left:4px;">(Sedang ditampilkan)</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit"><i class="fas fa-save"></i> Simpan Pengumuman</button>
                     </div>
                 </form>
             </div>
@@ -1084,6 +1160,7 @@
         const sections = {
             dashboard: document.getElementById('section-dashboard'),
             home: document.getElementById('section-home'),
+            announcement: document.getElementById('section-announcement'),
             digital: document.getElementById('section-digital'),
             jasa: document.getElementById('section-jasa'),
             news: document.getElementById('section-news'),
@@ -1106,6 +1183,7 @@
             if (sectionId === 'queue') loadQueue();
             if (sectionId === 'dashboard') { loadStats(); loadAdvancedStats(); loadRecentOrders(); }
             if (sectionId === 'home') { loadHome(); loadShopStatus(); }
+            if (sectionId === 'announcement') { loadAnnouncement(); loadAnnouncementStatus(); }
         }
 
         menuItems.forEach(btn => {
@@ -1911,6 +1989,8 @@
             loadRecentOrders();
             loadHome();
             loadShopStatus();
+            loadAnnouncement();
+            loadAnnouncementStatus();
             showToast('Data direfresh.', 'info');
         });
 
@@ -1923,13 +2003,82 @@
         });
 
         // ============================================================
-        // 22. INIT
+        // 22. PENGUMUMAN
+        // ============================================================
+        function loadAnnouncement() {
+            const infoRef = ref(db, 'logo-shop/info');
+            onValue(infoRef, (snap) => {
+                const data = snap.val() || {};
+                const text = data.adminBannerText || '';
+                document.getElementById('adminBannerText').value = text;
+                updateAnnouncementPreview();
+            });
+        }
+
+        function updateAnnouncementPreview() {
+            const show = document.getElementById('announcementToggle').checked;
+            const preview = document.getElementById('announcementPreview');
+            if (!show) {
+                preview.innerHTML = '<span style="color:var(--text-muted);">🔇 Pengumuman sedang disembunyikan.</span>';
+            } else {
+                const text = document.getElementById('adminBannerText').value || '';
+                preview.innerHTML = text || '<span style="color:var(--text-muted);">Belum ada pengumuman.</span>';
+            }
+        }
+
+        document.getElementById('announcementForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = document.getElementById('adminBannerText').value.trim();
+            try {
+                await update(ref(db, 'logo-shop/info'), { adminBannerText: text });
+                showToast('Pengumuman berhasil disimpan!', 'success');
+                loadAnnouncement();
+            } catch (err) {
+                showToast('Gagal: ' + err.message, 'error');
+            }
+        });
+
+        // ============================================================
+        // 23. STATUS TAMPILKAN PENGUMUMAN
+        // ============================================================
+        function loadAnnouncementStatus() {
+            const statusRef = ref(db, 'logo-shop/info/showAnnouncement');
+            onValue(statusRef, (snap) => {
+                const show = snap.val() !== false; // default true
+                const toggle = document.getElementById('announcementToggle');
+                const label = document.getElementById('announcementStatusLabel');
+                const detail = document.getElementById('announcementStatusDetail');
+                toggle.checked = show;
+                label.textContent = show ? 'Ya' : 'Tidak';
+                label.style.color = show ? 'var(--accent-green)' : 'var(--accent-red)';
+                detail.textContent = show ? '(Sedang ditampilkan)' : '(Sedang disembunyikan)';
+                updateAnnouncementPreview();
+            });
+        }
+
+        document.getElementById('announcementToggle').addEventListener('change', async function() {
+            const show = this.checked;
+            try {
+                await set(ref(db, 'logo-shop/info/showAnnouncement'), show);
+                showToast(show ? 'Pengumuman ditampilkan!' : 'Pengumuman disembunyikan!', 'success');
+                loadAnnouncementStatus();
+                loadAnnouncement();
+            } catch (err) {
+                showToast('Gagal update status: ' + err.message, 'error');
+                this.checked = !show;
+            }
+        });
+
+        // ============================================================
+        // 24. INIT
         // ============================================================
         loadStats();
         loadAdvancedStats();
         loadRecentOrders();
         loadHome();
         loadShopStatus();
+        loadAnnouncement();
+        loadAnnouncementStatus();
         checkNewOrders();
         console.log('Admin Panel siap!');
     </script>
