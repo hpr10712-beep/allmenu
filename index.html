@@ -47,9 +47,6 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* ============================================================
-           BACKGROUND LAPANGAN SEPAK BOLA
-           ============================================================ */
         body {
             font-family: var(--font);
             background: #0f3b0f;
@@ -205,6 +202,7 @@
         .stat-card .number.green { color: var(--accent-green); }
         .stat-card .number.gold { color: var(--accent-gold); }
         .stat-card .number.purple { color: #8b5cf6; }
+        .stat-card .number.red { color: var(--accent-red); }
 
         /* ============================================================
            MENU CAROUSEL
@@ -393,6 +391,14 @@
             font-size: 0.6rem;
         }
         .btn-icon.confirm:hover { background: var(--accent-green-dark); }
+        .btn-icon.reject {
+            background: var(--accent-red);
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-size: 0.6rem;
+        }
+        .btn-icon.reject:hover { background: #dc2626; }
         .btn-icon.send {
             background: var(--accent-gold);
             color: #fff;
@@ -653,6 +659,38 @@
         }
 
         /* ============================================================
+           MODAL EDIT PROFIL (untuk admin)
+           ============================================================ */
+        .profile-edit-field {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .profile-edit-field label {
+            font-weight: 600;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            min-width: 70px;
+        }
+        .profile-edit-field input {
+            flex: 1;
+            padding: 6px 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            transition: var(--transition);
+            font-family: inherit;
+            outline: none;
+        }
+        .profile-edit-field input:focus {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(16,185,129,0.1);
+        }
+
+        /* ============================================================
            TOAST & NOTIF
            ============================================================ */
         .toast {
@@ -746,9 +784,6 @@
             flex-shrink: 0;
         }
 
-        /* ============================================================
-           KONFIRMASI SALDO
-           ============================================================ */
         .confirm-section {
             display: flex;
             flex-wrap: wrap;
@@ -817,6 +852,7 @@
             <div class="stat-card"><div class="label"><i class="fas fa-check-circle"></i> Jasa Selesai</div><div class="number purple" id="totalJasaSukses">0</div></div>
             <div class="stat-card"><div class="label"><i class="fas fa-clock"></i> Antrian Aktif</div><div class="number gold" id="totalQueue">0</div></div>
             <div class="stat-card"><div class="label"><i class="fas fa-hourglass-half"></i> Jasa Antrian</div><div class="number gold" id="totalJasaAntrian">0</div></div>
+            <div class="stat-card"><div class="label"><i class="fas fa-hand-holding-usd"></i> Permintaan Tarik</div><div class="number red" id="totalWithdrawPending">0</div></div>
         </div>
 
         <!-- MENU CAROUSEL -->
@@ -831,6 +867,7 @@
                 <button class="menu-item" data-section="orders-jasa"><span class="icon-circle"><i class="fas fa-box"></i></span><span class="label">Pesan Jasa</span></button>
                 <button class="menu-item" data-section="orders-produk"><span class="icon-circle"><i class="fas fa-shopping-cart"></i></span><span class="label">Pesan Produk</span></button>
                 <button class="menu-item" data-section="queue"><span class="icon-circle"><i class="fas fa-clock"></i></span><span class="label">Antrian</span></button>
+                <button class="menu-item" data-section="withdraw"><span class="icon-circle"><i class="fas fa-hand-holding-usd"></i></span><span class="label">Tarik Saldo</span></button>
             </div>
         </div>
 
@@ -865,7 +902,7 @@
 
             <div class="content-card">
                 <h2 style="font-size:0.85rem;font-weight:700;margin-bottom:2px;"><i class="fas fa-info-circle" style="color:var(--accent-green);"></i> Selamat Datang di Admin Panel</h2>
-                <p style="color:var(--text-secondary);font-size:0.75rem;">Kelola produk, jasa, berita, pesanan, dan antrian dengan mudah.</p>
+                <p style="color:var(--text-secondary);font-size:0.75rem;">Kelola produk, jasa, berita, pesanan, antrian, dan permintaan tarik saldo dengan mudah.</p>
             </div>
         </div>
 
@@ -1062,6 +1099,24 @@
             </div>
         </div>
 
+        <!-- ==========================================================
+        SECTION: TARIK SALDO (PERMINTAAN DARI USER)
+        ========================================================== -->
+        <div id="section-withdraw" style="display:none;">
+            <div class="content-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-hand-holding-usd"></i> Permintaan Tarik Saldo</h2>
+                    <span style="font-size:0.65rem;color:var(--text-muted);">Dari seller / pemilik toko</span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Nama Toko</th><th>Jumlah</th><th>Biaya</th><th>Diterima</th><th>Metode</th><th>Nomor Tujuan</th><th>Status</th><th>Waktu</th><th>Aksi</th></tr></thead>
+                        <tbody id="withdrawTableBody"><tr><td colspan="9" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- ============ MODAL FORM ============ -->
@@ -1086,7 +1141,12 @@
         <div class="modal">
             <div class="modal-header">
                 <h2 id="profileModalTitle"><i class="fas fa-user"></i> Profil Pengguna</h2>
-                <button class="modal-close" id="profileModalClose"><i class="fas fa-times"></i></button>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <button class="btn-icon edit" id="profileEditBtn" style="font-size:0.7rem;background:var(--accent-green);color:#fff;padding:4px 12px;border-radius:40px;">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="modal-close" id="profileModalClose"><i class="fas fa-times"></i></button>
+                </div>
             </div>
             <div id="profileModalBody">
                 <div class="profile-detail-item">
@@ -1114,6 +1174,30 @@
                         <i class="fas fa-microchip"></i> ID: <span id="profileDeviceId">-</span>
                     </span>
                 </div>
+
+                <!-- Form Edit Profil (hidden by default) -->
+                <div id="profileEditForm" style="display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:12px;">
+                    <div class="profile-edit-field">
+                        <label>Nama</label>
+                        <input type="text" id="editProfileNama" placeholder="Nama pengguna" />
+                    </div>
+                    <div class="profile-edit-field">
+                        <label>WhatsApp</label>
+                        <input type="text" id="editProfileWa" placeholder="Nomor WhatsApp" />
+                    </div>
+                    <div class="profile-edit-field">
+                        <label>Gmail</label>
+                        <input type="email" id="editProfileEmail" placeholder="Email" />
+                    </div>
+                    <div class="profile-edit-field">
+                        <label>Catatan</label>
+                        <input type="text" id="editProfileCatatan" placeholder="Catatan admin" />
+                    </div>
+                    <div class="form-actions" style="margin-top:8px;">
+                        <button class="btn-submit" id="profileSaveBtn"><i class="fas fa-save"></i> Simpan Profil</button>
+                        <button class="btn-cancel" id="profileEditCancel">Batal</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1130,7 +1214,7 @@
         // 1. FIREBASE
         // ============================================================
         import { initializeApp } from "firebase-app";
-        import { getDatabase, ref, set, push, onValue, remove, update, get, query, orderByChild, limitToLast } from "firebase-database";
+        import { getDatabase, ref, set, push, onValue, remove, update, get, query, orderByChild, limitToLast, child } from "firebase-database";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
@@ -1211,6 +1295,7 @@
             'orders-jasa': document.getElementById('section-orders-jasa'),
             'orders-produk': document.getElementById('section-orders-produk'),
             queue: document.getElementById('section-queue'),
+            withdraw: document.getElementById('section-withdraw'),
         };
 
         function navigateTo(sectionId) {
@@ -1225,6 +1310,7 @@
             if (sectionId === 'orders-jasa') loadOrdersJasa();
             if (sectionId === 'orders-produk') loadOrdersProduk();
             if (sectionId === 'queue') loadQueue();
+            if (sectionId === 'withdraw') loadWithdrawRequests();
             if (sectionId === 'dashboard') { loadStats(); loadAdvancedStats(); loadRecentOrders(); }
             if (sectionId === 'home') { loadHome(); loadShopStatus(); }
             if (sectionId === 'announcement') { loadAnnouncement(); loadAnnouncementStatus(); }
@@ -1242,11 +1328,16 @@
         // ============================================================
         // 5. FUNGSI AMBIL DATA USER & TAMPILAN PEMESAN
         // ============================================================
+        const userCache = new Map();
+
         async function getUserData(deviceId) {
             if (!deviceId) return null;
+            if (userCache.has(deviceId)) return userCache.get(deviceId);
             try {
                 const snap = await get(ref(db, `logo-shop/users/${deviceId}`));
-                return snap.val() || null;
+                const data = snap.val() || null;
+                userCache.set(deviceId, data);
+                return data;
             } catch (e) {
                 return null;
             }
@@ -1263,12 +1354,19 @@
         }
 
         // ============================================================
-        // 6. MODAL PROFIL USER
+        // 6. MODAL PROFIL USER + EDIT PROFIL
         // ============================================================
         const profileModal = document.getElementById('profileModal');
         const profileModalClose = document.getElementById('profileModalClose');
+        const profileEditBtn = document.getElementById('profileEditBtn');
+        const profileEditForm = document.getElementById('profileEditForm');
+        const profileEditCancel = document.getElementById('profileEditCancel');
+        const profileSaveBtn = document.getElementById('profileSaveBtn');
+
+        let currentProfileDeviceId = null;
 
         function openProfileModal(deviceId) {
+            currentProfileDeviceId = deviceId;
             const title = document.getElementById('profileModalTitle');
             const namaEl = document.getElementById('profileNama');
             const waEl = document.getElementById('profileWa');
@@ -1283,6 +1381,9 @@
             catatanEl.textContent = '-';
             deviceIdEl.textContent = deviceId || '-';
 
+            // Sembunyikan form edit
+            profileEditForm.style.display = 'none';
+
             getUserData(deviceId).then(userData => {
                 if (userData && userData.nama) {
                     title.innerHTML = `<i class="fas fa-user-circle" style="color:var(--accent-green);"></i> Profil: ${userData.nama}`;
@@ -1290,20 +1391,22 @@
                     waEl.textContent = userData.wa || '-';
                     emailEl.textContent = userData.email || '-';
                     catatanEl.textContent = userData.catatan || '-';
-                    deviceIdEl.textContent = deviceId || '-';
+                    // Isi form edit
+                    document.getElementById('editProfileNama').value = userData.nama || '';
+                    document.getElementById('editProfileWa').value = userData.wa || '';
+                    document.getElementById('editProfileEmail').value = userData.email || '';
+                    document.getElementById('editProfileCatatan').value = userData.catatan || '';
                 } else {
                     title.innerHTML = `<i class="fas fa-user-circle" style="color:var(--text-muted);"></i> Belum Membuat Profil`;
                     namaEl.textContent = '-';
                     waEl.textContent = '-';
                     emailEl.textContent = '-';
                     catatanEl.textContent = 'User belum membuat profil';
-                    deviceIdEl.textContent = deviceId || '-';
-                    // Buat semua value menjadi gaya empty
-                    document.querySelectorAll('#profileModalBody .value').forEach(el => {
-                        if (el.textContent === '-' || el.textContent === 'User belum membuat profil') {
-                            el.classList.add('empty');
-                        }
-                    });
+                    // Isi form edit kosong
+                    document.getElementById('editProfileNama').value = '';
+                    document.getElementById('editProfileWa').value = '';
+                    document.getElementById('editProfileEmail').value = '';
+                    document.getElementById('editProfileCatatan').value = '';
                 }
             });
 
@@ -1314,34 +1417,85 @@
         function closeProfileModal() {
             profileModal.classList.remove('active');
             document.body.style.overflow = '';
+            profileEditForm.style.display = 'none';
+            currentProfileDeviceId = null;
         }
 
         profileModalClose.addEventListener('click', closeProfileModal);
         profileModal.addEventListener('click', (e) => { if (e.target === profileModal) closeProfileModal(); });
 
+        // Toggle edit form
+        profileEditBtn.addEventListener('click', () => {
+            if (profileEditForm.style.display === 'none') {
+                profileEditForm.style.display = 'block';
+                profileEditBtn.textContent = 'Batal Edit';
+                profileEditBtn.style.background = 'var(--accent-red)';
+            } else {
+                profileEditForm.style.display = 'none';
+                profileEditBtn.textContent = 'Edit';
+                profileEditBtn.style.background = 'var(--accent-green)';
+            }
+        });
+
+        profileEditCancel.addEventListener('click', () => {
+            profileEditForm.style.display = 'none';
+            profileEditBtn.textContent = 'Edit';
+            profileEditBtn.style.background = 'var(--accent-green)';
+        });
+
+        // Save profile edit
+        profileSaveBtn.addEventListener('click', async () => {
+            if (!currentProfileDeviceId) {
+                showToast('Tidak ada pengguna yang dipilih.', 'error');
+                return;
+            }
+            const nama = document.getElementById('editProfileNama').value.trim();
+            const wa = document.getElementById('editProfileWa').value.trim();
+            const email = document.getElementById('editProfileEmail').value.trim();
+            const catatan = document.getElementById('editProfileCatatan').value.trim();
+
+            try {
+                await set(ref(db, `logo-shop/users/${currentProfileDeviceId}`), {
+                    nama: nama || 'Pengguna',
+                    wa: wa || '',
+                    email: email || '',
+                    catatan: catatan || ''
+                });
+                // Update cache
+                userCache.set(currentProfileDeviceId, { nama, wa, email, catatan });
+                showToast('Profil berhasil diperbarui!', 'success');
+                // Refresh tampilan profil
+                openProfileModal(currentProfileDeviceId);
+                // Refresh orders yang menampilkan nama
+                loadOrdersJasa();
+                loadOrdersProduk();
+                loadQueue();
+                loadRecentOrders();
+                loadWithdrawRequests();
+            } catch (err) {
+                showToast('Gagal: ' + err.message, 'error');
+            }
+        });
+
         // ============================================================
-        // 7. STATS
+        // 7. STATS (dengan onlyOnce untuk kecepatan)
         // ============================================================
         function loadStats() {
-            const ordersRef = ref(db, 'logo-shop/orders');
-            onValue(ordersRef, (snap) => {
+            get(ref(db, 'logo-shop/orders')).then(snap => {
                 const data = snap.val() || {};
                 document.getElementById('totalOrders').textContent = Object.keys(data).length;
-            }, { onlyOnce: true });
-
-            const queueRef = ref(db, 'logo-shop/queue');
-            onValue(queueRef, (snap) => {
+            }).catch(() => {});
+            get(ref(db, 'logo-shop/queue')).then(snap => {
                 const data = snap.val() || {};
                 document.getElementById('totalQueue').textContent = Object.keys(data).length;
-            }, { onlyOnce: true });
+            }).catch(() => {});
         }
 
         // ============================================================
         // 8. STATS LANJUTAN
         // ============================================================
         function loadAdvancedStats() {
-            const ordersRef = ref(db, 'logo-shop/orders');
-            onValue(ordersRef, (snap) => {
+            get(ref(db, 'logo-shop/orders')).then(snap => {
                 const data = snap.val() || {};
                 let produkTerjual = 0;
                 let jasaSukses = 0;
@@ -1369,7 +1523,17 @@
                 document.getElementById('totalJasaAntrian').textContent = jasaAntrian;
                 document.getElementById('pendapatanHarian').textContent =
                     'Rp ' + new Intl.NumberFormat('id-ID').format(pendapatanHarian);
-            }, { onlyOnce: true });
+            }).catch(() => {});
+
+            // Count pending withdrawals
+            get(ref(db, 'logo-shop/withdrawals')).then(snap => {
+                const data = snap.val() || {};
+                let pending = 0;
+                Object.values(data).forEach(w => {
+                    if (w.status === 'pending') pending++;
+                });
+                document.getElementById('totalWithdrawPending').textContent = pending;
+            }).catch(() => {});
         }
 
         // ============================================================
@@ -1377,81 +1541,76 @@
         // ============================================================
         function loadRecentOrders() {
             const container = document.getElementById('recentOrdersContainer');
-            const ordersRef = ref(db, 'logo-shop/orders');
-            const productsRef = ref(db, 'logo-shop/products');
+            get(ref(db, 'logo-shop/products')).then(productsSnap => {
+                const productsMap = productsSnap.val() || {};
+                const queryRef = query(ref(db, 'logo-shop/orders'), orderByChild('orderDate'), limitToLast(3));
+                get(queryRef).then(async (snap) => {
+                    const data = snap.val();
+                    if (!data) {
+                        container.innerHTML =
+                            `<div class="empty-state"><i class="fas fa-box-open"></i> Belum ada pesanan.</div>`;
+                        return;
+                    }
+                    const entries = Object.entries(data).reverse();
+                    let html = '';
+                    for (const [key, order] of entries) {
+                        const status = order.status || 'pending';
+                        let badge = 'warning';
+                        if (status === 'completed') badge = 'success';
+                        else if (status === 'confirmed') badge = 'info';
+                        else if (status === 'cancelled') badge = 'danger';
 
-            let productsMap = {};
-            onValue(productsRef, (snap) => {
-                productsMap = snap.val() || {};
-            }, { onlyOnce: true });
+                        const productData = productsMap[order.productId] || {};
+                        const imgSrc = productData.image ||
+                            'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=60&h=60&fit=crop';
+                        const price = order.price ? `Rp ${new Intl.NumberFormat('id-ID').format(order.price)}` : '-';
+                        const type = order.isJasa ? 'Jasa' : 'Produk';
 
-            const recentQuery = query(ordersRef, orderByChild('orderDate'), limitToLast(3));
-            onValue(recentQuery, async (snap) => {
-                const data = snap.val();
-                if (!data) {
-                    container.innerHTML = `<div class="empty-state"><i class="fas fa-box-open"></i> Belum ada pesanan.</div>`;
-                    return;
-                }
-                const entries = Object.entries(data).reverse();
-                let html = '';
-                for (const [key, order] of entries) {
-                    const status = order.status || 'pending';
-                    let badge = 'warning';
-                    if (status === 'completed') badge = 'success';
-                    else if (status === 'confirmed') badge = 'info';
-                    else if (status === 'cancelled') badge = 'danger';
+                        const pemesan = await getPemesanDisplay(order.deviceId);
+                        const displayName = pemesan.display;
+                        const isDev = pemesan.isDev;
+                        const deviceId = order.deviceId || '';
 
-                    const productData = productsMap[order.productId] || {};
-                    const imgSrc = productData.image || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=60&h=60&fit=crop';
-                    const price = order.price ? `Rp ${new Intl.NumberFormat('id-ID').format(order.price)}` : '-';
-                    const type = order.isJasa ? 'Jasa' : 'Produk';
-
-                    const pemesan = await getPemesanDisplay(order.deviceId);
-                    const displayName = pemesan.display;
-                    const isDev = pemesan.isDev;
-                    const deviceId = order.deviceId || '';
-
-                    html += `
-                        <div class="recent-order-item">
-                            <img src="${imgSrc}" class="thumb" alt="${order.productName || 'Produk'}" />
-                            <div class="info">
-                                <div class="name">${order.productName || '—'} <span style="color:var(--text-muted);font-weight:400;font-size:0.65rem;">(${type})</span></div>
-                                <div class="meta">
-                                    <span>${price}</span>
-                                    <span class="pemesan-name ${isDev ? 'dev' : ''}" data-device="${deviceId}" style="cursor:pointer;font-size:0.7rem;">
-                                        <i class="fas fa-user"></i> ${displayName}
-                                    </span>
+                        html += `
+                            <div class="recent-order-item">
+                                <img src="${imgSrc}" class="thumb" alt="${order.productName || 'Produk'}" />
+                                <div class="info">
+                                    <div class="name">${order.productName || '—'} <span style="color:var(--text-muted);font-weight:400;font-size:0.65rem;">(${type})</span></div>
+                                    <div class="meta">
+                                        <span>${price}</span>
+                                        <span class="pemesan-name ${isDev ? 'dev' : ''}" data-device="${deviceId}" style="cursor:pointer;font-size:0.7rem;">
+                                            <i class="fas fa-user"></i> ${displayName}
+                                        </span>
+                                    </div>
                                 </div>
+                                <span class="badge badge-${badge}">${status}</span>
                             </div>
-                            <span class="badge badge-${badge}">${status}</span>
-                        </div>
-                    `;
-                }
-                container.innerHTML = html;
+                        `;
+                    }
+                    container.innerHTML = html;
 
-                // Event klik nama pemesan
-                container.querySelectorAll('.pemesan-name').forEach(el => {
-                    el.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const deviceId = this.dataset.device;
-                        if (deviceId) openProfileModal(deviceId);
+                    container.querySelectorAll('.pemesan-name').forEach(el => {
+                        el.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const deviceId = this.dataset.device;
+                            if (deviceId) openProfileModal(deviceId);
+                        });
                     });
-                });
-            }, { onlyOnce: true });
+                }).catch(() => {});
+            }).catch(() => {});
         }
 
         // ============================================================
         // 10. HOME
         // ============================================================
         function loadHome() {
-            const homeRef = ref(db, 'logo-shop/home');
-            onValue(homeRef, (snap) => {
+            get(ref(db, 'logo-shop/home')).then(snap => {
                 const data = snap.val() || {};
                 document.getElementById('shopName').value = data.shopName || '';
                 document.getElementById('heroTitle').value = data.title || '';
                 document.getElementById('heroSubtitle').value = data.subtitle || '';
                 document.getElementById('heroImage').value = data.heroImage || '';
-            });
+            }).catch(() => {});
         }
 
         document.getElementById('homeForm').addEventListener('submit', async (e) => {
@@ -1472,8 +1631,7 @@
         // 11. SHOP STATUS
         // ============================================================
         function loadShopStatus() {
-            const statusRef = ref(db, 'logo-shop/settings/shopOpen');
-            onValue(statusRef, (snap) => {
+            get(ref(db, 'logo-shop/settings/shopOpen')).then(snap => {
                 const isOpen = snap.val() !== false;
                 const toggle = document.getElementById('shopToggle');
                 const label = document.getElementById('shopStatusLabel');
@@ -1482,7 +1640,7 @@
                 label.textContent = isOpen ? 'Buka' : 'Tutup';
                 label.style.color = isOpen ? 'var(--accent-green)' : 'var(--accent-red)';
                 detail.textContent = isOpen ? '(Toko sedang buka)' : '(Toko sedang tutup sementara)';
-            });
+            }).catch(() => {});
         }
 
         document.getElementById('shopToggle').addEventListener('change', async function() {
@@ -1635,7 +1793,7 @@
         function loadDigital() {
             const tbody = document.getElementById('digitalTableBody');
             tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>`;
-            onValue(ref(db, 'logo-shop/products'), (snap) => {
+            get(ref(db, 'logo-shop/products')).then(snap => {
                 const data = snap.val();
                 if (!data) { tbody.innerHTML =
                         `<tr><td colspan="5" class="empty-state"><i class="fas fa-box-open"></i> Belum ada produk digital.</td></tr>`; return; }
@@ -1670,7 +1828,7 @@
                         loadDigital();
                         loadStats(); }
                 }));
-            });
+            }).catch(() => {});
         }
 
         // ============================================================
@@ -1679,7 +1837,7 @@
         function loadJasa() {
             const tbody = document.getElementById('jasaTableBody');
             tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>`;
-            onValue(ref(db, 'logo-shop/products'), (snap) => {
+            get(ref(db, 'logo-shop/products')).then(snap => {
                 const data = snap.val();
                 if (!data) { tbody.innerHTML =
                         `<tr><td colspan="5" class="empty-state"><i class="fas fa-box-open"></i> Belum ada layanan jasa.</td></tr>`; return; }
@@ -1716,7 +1874,7 @@
                         loadJasa();
                         loadStats(); }
                 }));
-            });
+            }).catch(() => {});
         }
 
         // ============================================================
@@ -1725,7 +1883,7 @@
         function loadNews() {
             const tbody = document.getElementById('newsTableBody');
             tbody.innerHTML = `<tr><td colspan="3" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>`;
-            onValue(ref(db, 'logo-shop/news'), (snap) => {
+            get(ref(db, 'logo-shop/news')).then(snap => {
                 const data = snap.val();
                 if (!data) { tbody.innerHTML =
                         `<tr><td colspan="3" class="empty-state"><i class="fas fa-newspaper"></i> Belum ada berita.</td></tr>`; return; }
@@ -1752,354 +1910,299 @@
                         showToast('Berita dihapus.', 'success');
                         loadNews(); }
                 }));
-            });
+            }).catch(() => {});
         }
 
         // ============================================================
-        // 17. LOAD: PESANAN JASA (DIPERBAIKI)
+        // 17. LOAD: PESANAN JASA (OPTIMASI)
         // ============================================================
+        let ordersJasaCache = null;
+
         function loadOrdersJasa() {
             const tbody = document.getElementById('ordersJasaTableBody');
             if (!tbody) return;
             tbody.innerHTML = `<tr><td colspan="9" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>`;
 
-            const productsRef = ref(db, 'logo-shop/products');
-            let productsMap = {};
-            onValue(productsRef, (snap) => {
-                productsMap = snap.val() || {};
-            }, { onlyOnce: true });
+            Promise.all([
+                get(ref(db, 'logo-shop/products')),
+                get(ref(db, 'logo-shop/orders'))
+            ]).then(async ([productsSnap, ordersSnap]) => {
+                const productsMap = productsSnap.val() || {};
+                const data = ordersSnap.val() || {};
+                const items = Object.entries(data).filter(([k, v]) => v.isJasa === true);
 
-            const ordersRef = ref(db, 'logo-shop/orders');
-            onValue(ordersRef, async (snap) => {
-                try {
-                    const data = snap.val();
-                    if (!data) {
-                        tbody.innerHTML = `<tr><td colspan="9" class="empty-state"><i class="fas fa-box-open"></i> Belum ada pesanan jasa.</td></tr>`;
-                        return;
-                    }
+                if (!items.length) {
+                    tbody.innerHTML =
+                        `<tr><td colspan="9" class="empty-state"><i class="fas fa-box-open"></i> Belum ada pesanan jasa.</td></tr>`;
+                    return;
+                }
 
-                    const items = Object.entries(data).filter(([k, v]) => v.isJasa === true);
-                    if (!items.length) {
-                        tbody.innerHTML = `<tr><td colspan="9" class="empty-state"><i class="fas fa-box-open"></i> Belum ada pesanan jasa.</td></tr>`;
-                        return;
-                    }
+                let html = '';
+                for (const [key, item] of items) {
+                    const status = item.status || 'pending';
+                    let badge = 'warning';
+                    if (status === 'completed') badge = 'success';
+                    else if (status === 'confirmed') badge = 'info';
+                    else if (status === 'cancelled') badge = 'danger';
 
-                    let html = '';
-                    for (const [key, item] of items) {
-                        try {
-                            const status = item.status || 'pending';
-                            let badge = 'warning';
-                            if (status === 'completed') badge = 'success';
-                            else if (status === 'confirmed') badge = 'info';
-                            else if (status === 'cancelled') badge = 'danger';
+                    const time = item.orderDate ? new Date(item.orderDate).toLocaleString('id-ID') : '—';
+                    let dataForm = '-';
+                    const parts = [];
+                    if (item.nama) parts.push(`Nama: ${item.nama}`);
+                    if (item.wa) parts.push(`WA: ${item.wa}`);
+                    if (item.sosmed) parts.push(`Sosmed: ${item.sosmed}`);
+                    dataForm = parts.join('<br>') || 'Belum diisi';
+                    const antrian = item.queueNumber ? `#${item.queueNumber}` : '-';
+                    const showConfirmBtn = (status === 'pending');
+                    const showSendBtn = (status === 'confirmed' && item.wa);
+                    const productData = productsMap[item.productId] || {};
+                    const imgSrc = productData.image ||
+                        'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=60&h=60&fit=crop';
+                    const waLink = item.wa ? `https://wa.me/${item.wa.replace(/[^0-9]/g, '')}` : '#';
 
-                            const time = item.orderDate ? new Date(item.orderDate).toLocaleString('id-ID') : '—';
+                    const pemesan = await getPemesanDisplay(item.deviceId);
+                    const displayName = pemesan.display || 'Unknown';
+                    const isDev = pemesan.isDev !== undefined ? pemesan.isDev : true;
+                    const deviceId = item.deviceId || '';
 
-                            let dataForm = '-';
-                            const parts = [];
-                            if (item.nama) parts.push(`Nama: ${item.nama}`);
-                            if (item.wa) parts.push(`WA: ${item.wa}`);
-                            if (item.sosmed) parts.push(`Sosmed: ${item.sosmed}`);
-                            dataForm = parts.join('<br>') || 'Belum diisi';
+                    html += `<tr>
+                        <td><img src="${imgSrc}" class="product-thumb" alt="${item.productName || 'Produk'}" /></td>
+                        <td>${item.productName || '—'}</td>
+                        <td>Rp ${new Intl.NumberFormat('id-ID').format(item.price || 0)}</td>
+                        <td>
+                            <span class="pemesan-name ${isDev ? 'dev' : ''}" data-device="${deviceId}" style="cursor:pointer;">
+                                <i class="fas fa-user"></i> ${displayName}
+                            </span>
+                        </td>
+                        <td><span class="badge badge-${badge}">${status}</span></td>
+                        <td style="font-size:0.65rem;max-width:140px;">${dataForm}</td>
+                        <td><strong>${antrian}</strong></td>
+                        <td style="font-size:0.6rem;">${time}</td>
+                        <td>
+                            ${showConfirmBtn ? `<button class="btn-icon confirm" data-orderkey="${key}"><i class="fas fa-check-circle"></i> Konfirmasi</button>` : ''}
+                            ${showSendBtn ? `<a href="${waLink}" target="_blank" class="btn-icon send" style="text-decoration:none;"><i class="fab fa-whatsapp"></i> WA</a>` : ''}
+                            <button class="btn-icon edit" data-orderkey="${key}" data-status="${status}"><i class="fas fa-sync-alt"></i></button>
+                            <button class="btn-icon delete" data-orderkey="${key}"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+                }
 
-                            const antrian = item.queueNumber ? `#${item.queueNumber}` : '-';
+                tbody.innerHTML = html;
 
-                            const showConfirmBtn = (status === 'pending');
-                            const showSendBtn = (status === 'confirmed' && item.wa);
+                // Event listeners
+                tbody.querySelectorAll('.pemesan-name').forEach(el => {
+                    el.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const deviceId = this.dataset.device;
+                        if (deviceId) openProfileModal(deviceId);
+                    });
+                });
 
-                            const productData = productsMap[item.productId] || {};
-                            const imgSrc = productData.image || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=60&h=60&fit=crop';
-
-                            const waLink = item.wa ? `https://wa.me/${item.wa.replace(/[^0-9]/g, '')}` : '#';
-
-                            let pemesan;
+                tbody.querySelectorAll('.confirm[data-orderkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const key = btn.dataset.orderkey;
+                        if (confirm('Konfirmasi saldo sudah masuk untuk pesanan ini?')) {
                             try {
-                                pemesan = await getPemesanDisplay(item.deviceId);
-                            } catch (e) {
-                                pemesan = { display: 'Error', isDev: true, data: null };
+                                await update(ref(db, `logo-shop/orders/${key}`), { status: 'confirmed' });
+                                showToast('Saldo dikonfirmasi! Status diperbarui.', 'success');
+                                loadOrdersJasa();
+                                loadQueue();
+                                loadStats();
+                                loadAdvancedStats();
+                            } catch (err) {
+                                showToast('Gagal: ' + err.message, 'error');
                             }
-                            const displayName = pemesan.display || 'Unknown';
-                            const isDev = pemesan.isDev !== undefined ? pemesan.isDev : true;
-                            const deviceId = item.deviceId || '';
-
-                            html += `<tr>
-                                <td><img src="${imgSrc}" class="product-thumb" alt="${item.productName || 'Produk'}" /></td>
-                                <td>${item.productName || '—'}</td>
-                                <td>Rp ${new Intl.NumberFormat('id-ID').format(item.price || 0)}</td>
-                                <td>
-                                    <span class="pemesan-name ${isDev ? 'dev' : ''}" data-device="${deviceId}" style="cursor:pointer;">
-                                        <i class="fas fa-user"></i> ${displayName}
-                                    </span>
-                                </td>
-                                <td><span class="badge badge-${badge}">${status}</span></td>
-                                <td style="font-size:0.65rem;max-width:140px;">${dataForm}</td>
-                                <td><strong>${antrian}</strong></td>
-                                <td style="font-size:0.6rem;">${time}</td>
-                                <td>
-                                    ${showConfirmBtn ? `<button class="btn-icon confirm" data-orderkey="${key}"><i class="fas fa-check-circle"></i> Konfirmasi</button>` : ''}
-                                    ${showSendBtn ? `<a href="${waLink}" target="_blank" class="btn-icon send" style="text-decoration:none;"><i class="fab fa-whatsapp"></i> WA</a>` : ''}
-                                    <button class="btn-icon edit" data-orderkey="${key}" data-status="${status}"><i class="fas fa-sync-alt"></i></button>
-                                    <button class="btn-icon delete" data-orderkey="${key}"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>`;
-                        } catch (itemError) {
-                            console.warn('Error processing order item:', itemError);
                         }
-                    }
-
-                    if (!html) {
-                        tbody.innerHTML = `<tr><td colspan="9" class="empty-state"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data pesanan.</td></tr>`;
-                        return;
-                    }
-
-                    tbody.innerHTML = html;
-
-                    // Event klik nama pemesan
-                    tbody.querySelectorAll('.pemesan-name').forEach(el => {
-                        el.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            const deviceId = this.dataset.device;
-                            if (deviceId) openProfileModal(deviceId);
-                        });
                     });
+                });
 
-                    // Event konfirmasi
-                    tbody.querySelectorAll('.confirm[data-orderkey]').forEach(btn => {
-                        btn.addEventListener('click', async () => {
-                            const key = btn.dataset.orderkey;
-                            if (confirm('Konfirmasi saldo sudah masuk untuk pesanan ini?')) {
-                                try {
-                                    await update(ref(db, `logo-shop/orders/${key}`), { status: 'confirmed' });
-                                    showToast('Saldo dikonfirmasi! Status diperbarui.', 'success');
-                                    loadOrdersJasa();
-                                    loadQueue();
-                                    loadStats();
-                                    loadAdvancedStats();
-                                } catch (err) {
-                                    showToast('Gagal: ' + err.message, 'error');
-                                }
-                            }
-                        });
-                    });
-
-                    // Event edit status
-                    tbody.querySelectorAll('.edit[data-orderkey]').forEach(btn => {
-                        btn.addEventListener('click', async () => {
-                            const key = btn.dataset.orderkey;
-                            const currentStatus = btn.dataset.status;
-                            let newStatus = 'pending';
-                            if (currentStatus === 'pending') newStatus = 'confirmed';
-                            else if (currentStatus === 'confirmed') newStatus = 'completed';
-                            else if (currentStatus === 'completed') newStatus = 'completed';
-                            else newStatus = 'pending';
-                            if (confirm(`Ubah status dari "${currentStatus}" menjadi "${newStatus}"?`)) {
-                                try {
-                                    await update(ref(db, `logo-shop/orders/${key}`), { status: newStatus });
-                                    if (newStatus === 'completed') {
-                                        const queueSnap = await get(ref(db, 'logo-shop/queue'));
-                                        const queueData = queueSnap.val();
-                                        if (queueData) {
-                                            for (const [qKey, qVal] of Object.entries(queueData)) {
-                                                if (qVal.orderKey === key) {
-                                                    await remove(ref(db, `logo-shop/queue/${qKey}`));
-                                                    break;
-                                                }
+                tbody.querySelectorAll('.edit[data-orderkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const key = btn.dataset.orderkey;
+                        const currentStatus = btn.dataset.status;
+                        let newStatus = 'pending';
+                        if (currentStatus === 'pending') newStatus = 'confirmed';
+                        else if (currentStatus === 'confirmed') newStatus = 'completed';
+                        else newStatus = 'pending';
+                        if (confirm(`Ubah status dari "${currentStatus}" menjadi "${newStatus}"?`)) {
+                            try {
+                                await update(ref(db, `logo-shop/orders/${key}`), { status: newStatus });
+                                if (newStatus === 'completed') {
+                                    const queueSnap = await get(ref(db, 'logo-shop/queue'));
+                                    const queueData = queueSnap.val();
+                                    if (queueData) {
+                                        for (const [qKey, qVal] of Object.entries(queueData)) {
+                                            if (qVal.orderKey === key) {
+                                                await remove(ref(db, `logo-shop/queue/${qKey}`));
+                                                break;
                                             }
                                         }
-                                        await renumberQueue();
                                     }
-                                    showToast('Status diperbarui.', 'success');
-                                    loadOrdersJasa();
-                                    loadQueue();
-                                    loadStats();
-                                    loadAdvancedStats();
-                                } catch (err) {
-                                    showToast('Gagal: ' + err.message, 'error');
+                                    await renumberQueue();
                                 }
+                                showToast('Status diperbarui.', 'success');
+                                loadOrdersJasa();
+                                loadQueue();
+                                loadStats();
+                                loadAdvancedStats();
+                            } catch (err) {
+                                showToast('Gagal: ' + err.message, 'error');
                             }
-                        });
+                        }
                     });
+                });
 
-                    // Event hapus
-                    tbody.querySelectorAll('.delete[data-orderkey]').forEach(btn => {
-                        btn.addEventListener('click', async () => {
-                            const key = btn.dataset.orderkey;
-                            if (confirm('Hapus pesanan ini?')) {
-                                try {
-                                    await remove(ref(db, `logo-shop/orders/${key}`));
-                                    showToast('Pesanan dihapus.', 'success');
-                                    loadOrdersJasa();
-                                    loadQueue();
-                                    loadStats();
-                                    loadAdvancedStats();
-                                } catch (err) {
-                                    showToast('Gagal: ' + err.message, 'error');
-                                }
+                tbody.querySelectorAll('.delete[data-orderkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const key = btn.dataset.orderkey;
+                        if (confirm('Hapus pesanan ini?')) {
+                            try {
+                                await remove(ref(db, `logo-shop/orders/${key}`));
+                                showToast('Pesanan dihapus.', 'success');
+                                loadOrdersJasa();
+                                loadQueue();
+                                loadStats();
+                                loadAdvancedStats();
+                            } catch (err) {
+                                showToast('Gagal: ' + err.message, 'error');
                             }
-                        });
+                        }
                     });
-
-                } catch (error) {
-                    console.error('Error loading orders jasa:', error);
-                    tbody.innerHTML = `<tr><td colspan="9" class="empty-state"><i class="fas fa-exclamation-triangle"></i> Terjadi kesalahan: ${error.message}</td></tr>`;
-                }
-            }, { onlyOnce: true });
+                });
+            }).catch((err) => {
+                console.error('Error loading orders jasa:', err);
+                tbody.innerHTML =
+                    `<tr><td colspan="9" class="empty-state"><i class="fas fa-exclamation-triangle"></i> Terjadi kesalahan</td></tr>`;
+            });
         }
 
         // ============================================================
-        // 18. LOAD: PESANAN PRODUK (DIPERBAIKI)
+        // 18. LOAD: PESANAN PRODUK (OPTIMASI)
         // ============================================================
         function loadOrdersProduk() {
             const tbody = document.getElementById('ordersProdukTableBody');
             if (!tbody) return;
             tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>`;
 
-            const productsRef = ref(db, 'logo-shop/products');
-            let productsMap = {};
-            onValue(productsRef, (snap) => {
-                productsMap = snap.val() || {};
-            }, { onlyOnce: true });
+            Promise.all([
+                get(ref(db, 'logo-shop/products')),
+                get(ref(db, 'logo-shop/orders'))
+            ]).then(async ([productsSnap, ordersSnap]) => {
+                const productsMap = productsSnap.val() || {};
+                const data = ordersSnap.val() || {};
+                const items = Object.entries(data).filter(([k, v]) => v.isJasa !== true);
 
-            const ordersRef = ref(db, 'logo-shop/orders');
-            onValue(ordersRef, async (snap) => {
-                try {
-                    const data = snap.val();
-                    if (!data) {
-                        tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><i class="fas fa-box-open"></i> Belum ada pesanan produk.</td></tr>`;
-                        return;
-                    }
-
-                    const items = Object.entries(data).filter(([k, v]) => v.isJasa !== true);
-                    if (!items.length) {
-                        tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><i class="fas fa-box-open"></i> Belum ada pesanan produk.</td></tr>`;
-                        return;
-                    }
-
-                    let html = '';
-                    for (const [key, item] of items) {
-                        try {
-                            const status = item.status || 'pending';
-                            const badge = status === 'completed' ? 'success' : status === 'confirmed' ? 'info' : status === 'cancelled' ? 'danger' : 'warning';
-                            const time = item.orderDate ? new Date(item.orderDate).toLocaleString('id-ID') : '—';
-
-                            const showConfirmBtn = (status === 'pending');
-
-                            const productData = productsMap[item.productId] || {};
-                            const imgSrc = productData.image || 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=60&h=60&fit=crop';
-
-                            let pemesan;
-                            try {
-                                pemesan = await getPemesanDisplay(item.deviceId);
-                            } catch (e) {
-                                pemesan = { display: 'Error', isDev: true, data: null };
-                            }
-                            const displayName = pemesan.display || 'Unknown';
-                            const isDev = pemesan.isDev !== undefined ? pemesan.isDev : true;
-                            const deviceId = item.deviceId || '';
-
-                            html += `<tr>
-                                <td><img src="${imgSrc}" class="product-thumb" alt="${item.productName || 'Produk'}" /></td>
-                                <td>${item.productName || '—'}</td>
-                                <td>Rp ${new Intl.NumberFormat('id-ID').format(item.price || 0)}</td>
-                                <td>
-                                    <span class="pemesan-name ${isDev ? 'dev' : ''}" data-device="${deviceId}" style="cursor:pointer;">
-                                        <i class="fas fa-user"></i> ${displayName}
-                                    </span>
-                                </td>
-                                <td><span class="badge badge-${badge}">${status}</span></td>
-                                <td style="font-size:0.6rem;">${time}</td>
-                                <td>
-                                    ${showConfirmBtn ? `<button class="btn-icon confirm" data-orderkey="${key}"><i class="fas fa-check-circle"></i> Konfirmasi</button>` : ''}
-                                    <button class="btn-icon edit" data-orderkey="${key}" data-status="${status}"><i class="fas fa-sync-alt"></i></button>
-                                    <button class="btn-icon delete" data-orderkey="${key}"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>`;
-                        } catch (itemError) {
-                            console.warn('Error processing product order item:', itemError);
-                        }
-                    }
-
-                    if (!html) {
-                        tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data pesanan.</td></tr>`;
-                        return;
-                    }
-
-                    tbody.innerHTML = html;
-
-                    // Event klik nama pemesan
-                    tbody.querySelectorAll('.pemesan-name').forEach(el => {
-                        el.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            const deviceId = this.dataset.device;
-                            if (deviceId) openProfileModal(deviceId);
-                        });
-                    });
-
-                    // Event konfirmasi
-                    tbody.querySelectorAll('.confirm[data-orderkey]').forEach(btn => {
-                        btn.addEventListener('click', async () => {
-                            const key = btn.dataset.orderkey;
-                            if (confirm('Konfirmasi saldo sudah masuk untuk pesanan ini?')) {
-                                try {
-                                    await update(ref(db, `logo-shop/orders/${key}`), { status: 'confirmed' });
-                                    showToast('Saldo dikonfirmasi! Status diperbarui.', 'success');
-                                    loadOrdersProduk();
-                                    loadStats();
-                                    loadAdvancedStats();
-                                } catch (err) {
-                                    showToast('Gagal: ' + err.message, 'error');
-                                }
-                            }
-                        });
-                    });
-
-                    // Event edit status
-                    tbody.querySelectorAll('.edit[data-orderkey]').forEach(btn => {
-                        btn.addEventListener('click', async () => {
-                            const key = btn.dataset.orderkey;
-                            const currentStatus = btn.dataset.status;
-                            let newStatus = 'pending';
-                            if (currentStatus === 'pending') newStatus = 'confirmed';
-                            else if (currentStatus === 'confirmed') newStatus = 'completed';
-                            else if (currentStatus === 'completed') newStatus = 'completed';
-                            else newStatus = 'pending';
-                            if (confirm(`Ubah status dari "${currentStatus}" menjadi "${newStatus}"?`)) {
-                                try {
-                                    await update(ref(db, `logo-shop/orders/${key}`), { status: newStatus });
-                                    showToast('Status diperbarui.', 'success');
-                                    loadOrdersProduk();
-                                    loadStats();
-                                    loadAdvancedStats();
-                                } catch (err) {
-                                    showToast('Gagal: ' + err.message, 'error');
-                                }
-                            }
-                        });
-                    });
-
-                    // Event hapus
-                    tbody.querySelectorAll('.delete[data-orderkey]').forEach(btn => {
-                        btn.addEventListener('click', async () => {
-                            const key = btn.dataset.orderkey;
-                            if (confirm('Hapus pesanan ini?')) {
-                                try {
-                                    await remove(ref(db, `logo-shop/orders/${key}`));
-                                    showToast('Pesanan dihapus.', 'success');
-                                    loadOrdersProduk();
-                                    loadStats();
-                                    loadAdvancedStats();
-                                } catch (err) {
-                                    showToast('Gagal: ' + err.message, 'error');
-                                }
-                            }
-                        });
-                    });
-
-                } catch (error) {
-                    console.error('Error loading orders produk:', error);
-                    tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><i class="fas fa-exclamation-triangle"></i> Terjadi kesalahan: ${error.message}</td></tr>`;
+                if (!items.length) {
+                    tbody.innerHTML =
+                        `<tr><td colspan="7" class="empty-state"><i class="fas fa-box-open"></i> Belum ada pesanan produk.</td></tr>`;
+                    return;
                 }
-            }, { onlyOnce: true });
+
+                let html = '';
+                for (const [key, item] of items) {
+                    const status = item.status || 'pending';
+                    const badge = status === 'completed' ? 'success' : status === 'confirmed' ? 'info' : status ===
+                        'cancelled' ? 'danger' : 'warning';
+                    const time = item.orderDate ? new Date(item.orderDate).toLocaleString('id-ID') : '—';
+                    const showConfirmBtn = (status === 'pending');
+                    const productData = productsMap[item.productId] || {};
+                    const imgSrc = productData.image ||
+                        'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=60&h=60&fit=crop';
+
+                    const pemesan = await getPemesanDisplay(item.deviceId);
+                    const displayName = pemesan.display || 'Unknown';
+                    const isDev = pemesan.isDev !== undefined ? pemesan.isDev : true;
+                    const deviceId = item.deviceId || '';
+
+                    html += `<tr>
+                        <td><img src="${imgSrc}" class="product-thumb" alt="${item.productName || 'Produk'}" /></td>
+                        <td>${item.productName || '—'}</td>
+                        <td>Rp ${new Intl.NumberFormat('id-ID').format(item.price || 0)}</td>
+                        <td>
+                            <span class="pemesan-name ${isDev ? 'dev' : ''}" data-device="${deviceId}" style="cursor:pointer;">
+                                <i class="fas fa-user"></i> ${displayName}
+                            </span>
+                        </td>
+                        <td><span class="badge badge-${badge}">${status}</span></td>
+                        <td style="font-size:0.6rem;">${time}</td>
+                        <td>
+                            ${showConfirmBtn ? `<button class="btn-icon confirm" data-orderkey="${key}"><i class="fas fa-check-circle"></i> Konfirmasi</button>` : ''}
+                            <button class="btn-icon edit" data-orderkey="${key}" data-status="${status}"><i class="fas fa-sync-alt"></i></button>
+                            <button class="btn-icon delete" data-orderkey="${key}"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+                }
+
+                tbody.innerHTML = html;
+
+                tbody.querySelectorAll('.pemesan-name').forEach(el => {
+                    el.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const deviceId = this.dataset.device;
+                        if (deviceId) openProfileModal(deviceId);
+                    });
+                });
+
+                tbody.querySelectorAll('.confirm[data-orderkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const key = btn.dataset.orderkey;
+                        if (confirm('Konfirmasi saldo sudah masuk untuk pesanan ini?')) {
+                            try {
+                                await update(ref(db, `logo-shop/orders/${key}`), { status: 'confirmed' });
+                                showToast('Saldo dikonfirmasi! Status diperbarui.', 'success');
+                                loadOrdersProduk();
+                                loadStats();
+                                loadAdvancedStats();
+                            } catch (err) {
+                                showToast('Gagal: ' + err.message, 'error');
+                            }
+                        }
+                    });
+                });
+
+                tbody.querySelectorAll('.edit[data-orderkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const key = btn.dataset.orderkey;
+                        const currentStatus = btn.dataset.status;
+                        let newStatus = 'pending';
+                        if (currentStatus === 'pending') newStatus = 'confirmed';
+                        else if (currentStatus === 'confirmed') newStatus = 'completed';
+                        else newStatus = 'pending';
+                        if (confirm(`Ubah status dari "${currentStatus}" menjadi "${newStatus}"?`)) {
+                            try {
+                                await update(ref(db, `logo-shop/orders/${key}`), { status: newStatus });
+                                showToast('Status diperbarui.', 'success');
+                                loadOrdersProduk();
+                                loadStats();
+                                loadAdvancedStats();
+                            } catch (err) {
+                                showToast('Gagal: ' + err.message, 'error');
+                            }
+                        }
+                    });
+                });
+
+                tbody.querySelectorAll('.delete[data-orderkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const key = btn.dataset.orderkey;
+                        if (confirm('Hapus pesanan ini?')) {
+                            try {
+                                await remove(ref(db, `logo-shop/orders/${key}`));
+                                showToast('Pesanan dihapus.', 'success');
+                                loadOrdersProduk();
+                                loadStats();
+                                loadAdvancedStats();
+                            } catch (err) {
+                                showToast('Gagal: ' + err.message, 'error');
+                            }
+                        }
+                    });
+                });
+            }).catch((err) => {
+                console.error('Error loading orders produk:', err);
+                tbody.innerHTML =
+                    `<tr><td colspan="7" class="empty-state"><i class="fas fa-exclamation-triangle"></i> Terjadi kesalahan</td></tr>`;
+            });
         }
 
         // ============================================================
@@ -2108,7 +2211,7 @@
         function loadQueue() {
             const tbody = document.getElementById('queueTableBody');
             tbody.innerHTML = `<tr><td colspan="6" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>`;
-            onValue(ref(db, 'logo-shop/queue'), async (snap) => {
+            get(ref(db, 'logo-shop/queue')).then(async snap => {
                 const data = snap.val();
                 if (!data) { tbody.innerHTML =
                         `<tr><td colspan="6" class="empty-state"><i class="fas fa-clock"></i> Tidak ada antrian.</td></tr>`; return; }
@@ -2119,7 +2222,6 @@
                     const time = item.createdAt ? new Date(item.createdAt).toLocaleString('id-ID') : '—';
                     const status = item.status || 'waiting';
                     const badge = status === 'done' ? 'success' : 'warning';
-
                     const pemesan = await getPemesanDisplay(item.deviceId);
                     const displayName = pemesan.display;
                     const isDev = pemesan.isDev;
@@ -2143,7 +2245,6 @@
                 }
                 tbody.innerHTML = html;
 
-                // Event klik nama pemesan
                 tbody.querySelectorAll('.pemesan-name').forEach(el => {
                     el.addEventListener('click', function(e) {
                         e.stopPropagation();
@@ -2177,7 +2278,7 @@
                         }
                     });
                 });
-            });
+            }).catch(() => {});
         }
 
         async function renumberQueue() {
@@ -2194,89 +2295,123 @@
         }
 
         // ============================================================
-        // 20. NOTIFIKASI PESANAN BARU
+        // 20. LOAD: PERMINTAAN TARIK SALDO
         // ============================================================
-        let lastOrderKey = localStorage.getItem('lastOrderKey') || '';
-        let notifCount = 0;
+        function loadWithdrawRequests() {
+            const tbody = document.getElementById('withdrawTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = `<tr><td colspan="9" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>`;
 
-        function checkNewOrders() {
-            const ordersRef = ref(db, 'logo-shop/orders');
-            onValue(ordersRef, (snap) => {
+            get(ref(db, 'logo-shop/withdrawals')).then(async snap => {
                 const data = snap.val();
-                if (!data) return;
-                const keys = Object.keys(data);
-                if (keys.length === 0) return;
-
-                let latestKey = null;
-                let latestTime = 0;
-                for (const key of keys) {
-                    const order = data[key];
-                    const time = order.orderDate || 0;
-                    if (time > latestTime) {
-                        latestTime = time;
-                        latestKey = key;
-                    }
+                if (!data) {
+                    tbody.innerHTML =
+                        `<tr><td colspan="9" class="empty-state"><i class="fas fa-hand-holding-usd"></i> Belum ada permintaan tarik saldo.</td></tr>`;
+                    return;
                 }
 
-                if (latestKey && latestKey !== lastOrderKey) {
-                    playNotificationSound();
+                const items = Object.entries(data).sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
+                let html = '';
 
-                    const newOrder = data[latestKey];
-                    const productName = newOrder.productName || 'Produk';
-                    const isJasa = newOrder.isJasa ? 'Jasa' : 'Produk';
-                    const price = newOrder.price ? `Rp ${new Intl.NumberFormat('id-ID').format(newOrder.price)}` : '';
-                    showToast(`Pesanan ${isJasa} baru: ${productName} - ${price}`, 'info');
+                const methodMap = {
+                    dana: 'DANA',
+                    gopay: 'GoPay',
+                    seabank: 'SeaBank',
+                    shopeepay: 'ShopeePay'
+                };
 
-                    notifCount++;
-                    const badge = document.getElementById('notifBadge');
-                    badge.innerHTML = `<i class="fas fa-bell"></i> ${notifCount}`;
+                for (const [key, item] of items) {
+                    const status = item.status || 'pending';
+                    let badge = 'warning';
+                    if (status === 'processed') badge = 'success';
+                    else if (status === 'rejected') badge = 'danger';
 
-                    lastOrderKey = latestKey;
-                    localStorage.setItem('lastOrderKey', lastOrderKey);
+                    const time = item.createdAt ? new Date(item.createdAt).toLocaleString('id-ID') : '—';
+                    const methodName = methodMap[item.method] || item.method || '-';
+                    const storeName = item.storeName || 'Toko';
+                    const amount = item.amount || 0;
+                    const fee = item.fee || 0;
+                    const net = item.netAmount || 0;
 
-                    loadAdvancedStats();
-                    loadRecentOrders();
+                    const showConfirmBtn = (status === 'pending');
+
+                    html += `<tr>
+                        <td><strong>${storeName}</strong></td>
+                        <td>Rp ${new Intl.NumberFormat('id-ID').format(amount)}</td>
+                        <td style="color:var(--accent-red);">Rp ${new Intl.NumberFormat('id-ID').format(fee)}</td>
+                        <td style="color:var(--accent-green);">Rp ${new Intl.NumberFormat('id-ID').format(net)}</td>
+                        <td>${methodName}</td>
+                        <td style="font-size:0.65rem;">${item.destination || '-'}</td>
+                        <td><span class="badge badge-${badge}">${status}</span></td>
+                        <td style="font-size:0.6rem;">${time}</td>
+                        <td>
+                            ${showConfirmBtn ? `
+                                <button class="btn-icon confirm" data-wkey="${key}"><i class="fas fa-check-circle"></i> Konfirmasi</button>
+                                <button class="btn-icon reject" data-wkey="${key}"><i class="fas fa-times-circle"></i> Tolak</button>
+                            ` : ''}
+                            <button class="btn-icon delete" data-wkey="${key}"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
                 }
-            }, { onlyOnce: false });
-        }
 
-        function playNotificationSound() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const now = ctx.currentTime;
-                const osc1 = ctx.createOscillator();
-                const gain1 = ctx.createGain();
-                osc1.type = 'sine';
-                osc1.frequency.value = 523.25;
-                gain1.gain.setValueAtTime(0.5, now);
-                gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                osc1.connect(gain1);
-                gain1.connect(ctx.destination);
-                osc1.start(now);
-                osc1.stop(now + 0.3);
+                tbody.innerHTML = html;
 
-                const osc2 = ctx.createOscillator();
-                const gain2 = ctx.createGain();
-                osc2.type = 'sine';
-                osc2.frequency.value = 659.25;
-                gain2.gain.setValueAtTime(0.4, now + 0.08);
-                gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-                osc2.connect(gain2);
-                gain2.connect(ctx.destination);
-                osc2.start(now + 0.08);
-                osc2.stop(now + 0.35);
+                // Event konfirmasi
+                tbody.querySelectorAll('.confirm[data-wkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const key = btn.dataset.wkey;
+                        if (confirm('Konfirmasi penarikan saldo ini?')) {
+                            try {
+                                await update(ref(db, `logo-shop/withdrawals/${key}`), { status: 'processed' });
+                                showToast('Penarikan dikonfirmasi!', 'success');
+                                loadWithdrawRequests();
+                                loadAdvancedStats();
+                            } catch (err) {
+                                showToast('Gagal: ' + err.message, 'error');
+                            }
+                        }
+                    });
+                });
 
-                const osc3 = ctx.createOscillator();
-                const gain3 = ctx.createGain();
-                osc3.type = 'sine';
-                osc3.frequency.value = 783.99;
-                gain3.gain.setValueAtTime(0.35, now + 0.16);
-                gain3.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-                osc3.connect(gain3);
-                gain3.connect(ctx.destination);
-                osc3.start(now + 0.16);
-                osc3.stop(now + 0.4);
-            } catch (e) { console.warn('Sound gagal:', e); }
+                // Event tolak
+                tbody.querySelectorAll('.reject[data-wkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const key = btn.dataset.wkey;
+                        if (confirm('Tolak permintaan penarikan ini?')) {
+                            try {
+                                await update(ref(db, `logo-shop/withdrawals/${key}`), { status: 'rejected' });
+                                showToast('Penarikan ditolak.', 'success');
+                                loadWithdrawRequests();
+                                loadAdvancedStats();
+                            } catch (err) {
+                                showToast('Gagal: ' + err.message, 'error');
+                            }
+                        }
+                    });
+                });
+
+                // Event hapus
+                tbody.querySelectorAll('.delete[data-wkey]').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const key = btn.dataset.wkey;
+                        if (confirm('Hapus riwayat penarikan ini?')) {
+                            try {
+                                await remove(ref(db, `logo-shop/withdrawals/${key}`));
+                                showToast('Riwayat dihapus.', 'success');
+                                loadWithdrawRequests();
+                                loadAdvancedStats();
+                            } catch (err) {
+                                showToast('Gagal: ' + err.message, 'error');
+                            }
+                        }
+                    });
+                });
+
+            }).catch((err) => {
+                console.error('Error loading withdrawals:', err);
+                tbody.innerHTML =
+                    `<tr><td colspan="9" class="empty-state"><i class="fas fa-exclamation-triangle"></i> Terjadi kesalahan</td></tr>`;
+            });
         }
 
         // ============================================================
@@ -2294,12 +2429,15 @@
         });
 
         document.getElementById('refreshBtnTop').addEventListener('click', () => {
+            // Clear cache
+            userCache.clear();
             loadDigital();
             loadJasa();
             loadNews();
             loadOrdersJasa();
             loadOrdersProduk();
             loadQueue();
+            loadWithdrawRequests();
             loadStats();
             loadAdvancedStats();
             loadRecentOrders();
@@ -2313,6 +2451,7 @@
         // ============================================================
         // 22. NOTIFICATION BADGE
         // ============================================================
+        let notifCount = 0;
         document.getElementById('notifBadge').addEventListener('click', function() {
             notifCount = 0;
             this.innerHTML = `<i class="fas fa-bell"></i>`;
@@ -2322,13 +2461,12 @@
         // 23. PENGUMUMAN
         // ============================================================
         function loadAnnouncement() {
-            const infoRef = ref(db, 'logo-shop/info');
-            onValue(infoRef, (snap) => {
+            get(ref(db, 'logo-shop/info')).then(snap => {
                 const data = snap.val() || {};
                 const text = data.adminBannerText || '';
                 document.getElementById('adminBannerText').value = text;
                 updateAnnouncementPreview();
-            });
+            }).catch(() => {});
         }
 
         function updateAnnouncementPreview() {
@@ -2358,8 +2496,7 @@
         // 24. STATUS TAMPILKAN PENGUMUMAN
         // ============================================================
         function loadAnnouncementStatus() {
-            const statusRef = ref(db, 'logo-shop/info/showAnnouncement');
-            onValue(statusRef, (snap) => {
+            get(ref(db, 'logo-shop/info/showAnnouncement')).then(snap => {
                 const show = snap.val() !== false;
                 const toggle = document.getElementById('announcementToggle');
                 const label = document.getElementById('announcementStatusLabel');
@@ -2369,7 +2506,7 @@
                 label.style.color = show ? 'var(--accent-green)' : 'var(--accent-red)';
                 detail.textContent = show ? '(Sedang ditampilkan)' : '(Sedang disembunyikan)';
                 updateAnnouncementPreview();
-            });
+            }).catch(() => {});
         }
 
         document.getElementById('announcementToggle').addEventListener('change', async function() {
@@ -2386,7 +2523,73 @@
         });
 
         // ============================================================
-        // 25. INIT
+        // 25. NOTIFIKASI PESANAN BARU (dengan onlyOnce)
+        // ============================================================
+        let lastOrderKey = localStorage.getItem('lastOrderKey') || '';
+
+        function checkNewOrders() {
+            const ordersRef = ref(db, 'logo-shop/orders');
+            onValue(ordersRef, (snap) => {
+                const data = snap.val();
+                if (!data) return;
+                const keys = Object.keys(data);
+                if (keys.length === 0) return;
+
+                let latestKey = null;
+                let latestTime = 0;
+                for (const key of keys) {
+                    const order = data[key];
+                    const time = order.orderDate || 0;
+                    if (time > latestTime) {
+                        latestTime = time;
+                        latestKey = key;
+                    }
+                }
+
+                if (latestKey && latestKey !== lastOrderKey) {
+                    try {
+                        const ctx = new(window.AudioContext || window.webkitAudioContext)();
+                        const now = ctx.currentTime;
+                        const osc1 = ctx.createOscillator();
+                        const gain1 = ctx.createGain();
+                        osc1.type = 'sine';
+                        osc1.frequency.value = 523.25;
+                        gain1.gain.setValueAtTime(0.5, now);
+                        gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                        osc1.connect(gain1);
+                        gain1.connect(ctx.destination);
+                        osc1.start(now);
+                        osc1.stop(now + 0.3);
+                        const osc2 = ctx.createOscillator();
+                        const gain2 = ctx.createGain();
+                        osc2.type = 'sine';
+                        osc2.frequency.value = 659.25;
+                        gain2.gain.setValueAtTime(0.4, now + 0.08);
+                        gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                        osc2.connect(gain2);
+                        gain2.connect(ctx.destination);
+                        osc2.start(now + 0.08);
+                        osc2.stop(now + 0.35);
+                    } catch (e) { console.warn('Sound gagal:', e); }
+
+                    const newOrder = data[latestKey];
+                    const productName = newOrder.productName || 'Produk';
+                    const isJasa = newOrder.isJasa ? 'Jasa' : 'Produk';
+                    showToast(`Pesanan ${isJasa} baru: ${productName}`, 'info');
+
+                    notifCount++;
+                    document.getElementById('notifBadge').innerHTML = `<i class="fas fa-bell"></i> ${notifCount}`;
+                    lastOrderKey = latestKey;
+                    localStorage.setItem('lastOrderKey', lastOrderKey);
+
+                    loadAdvancedStats();
+                    loadRecentOrders();
+                }
+            });
+        }
+
+        // ============================================================
+        // 26. INIT
         // ============================================================
         loadStats();
         loadAdvancedStats();
@@ -2396,8 +2599,8 @@
         loadAnnouncement();
         loadAnnouncementStatus();
         checkNewOrders();
-        console.log('Admin Panel siap!');
+        console.log('Admin Panel siap (optimasi loading)!');
     </script>
 
 </body>
-</html>
+    </html>
