@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Akun Bisnis - NEV Market</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase-app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+                "firebase-database": "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
+            }
+        }
+    </script>
+
+    <style>
+        /* ============================================================
+           RESET & GLOBAL
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a2e0a;
+            --bg-secondary: #051405;
+            --bg-card: rgba(10, 46, 10, 0.88);
+            --border-color: rgba(239, 178, 44, 0.18);
+            --text-primary: #ffffff;
+            --text-secondary: #b8d9b8;
+            --text-muted: rgba(255, 255, 255, 0.4);
+            --accent-gold: #efb22c;
+            --accent-emerald: #00b894;
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f3b0f;
+            background-image:
+                repeating-linear-gradient(90deg,
+                    rgba(34, 120, 34, 0.45) 0px,
+                    rgba(34, 120, 34, 0.45) 55px,
+                    rgba(20, 80, 20, 0.45) 55px,
+                    rgba(20, 80, 20, 0.45) 110px),
+                radial-gradient(ellipse at 50% 0%, rgba(0, 0, 0, 0.0) 60%, rgba(0, 0, 0, 0.35) 100%),
+                linear-gradient(180deg, #0f3b0f 0%, #0a2a0a 100%);
+            background-size: 100% 100%, 100% 100%, 100% 100%;
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            right: 5%;
+            bottom: 5%;
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================================
+           NAVBAR
+           ============================================================ */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 12px 0;
+            background: rgba(5, 20, 5, 0.88);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .navbar .container-nav {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            font-size: 1.4rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .nav-brand i {
+            color: var(--accent-gold);
+        }
+        .brand-name {
+            background: linear-gradient(135deg, #ffffff, #f7d875, #efb22c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            position: relative;
+            text-decoration: none;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-gold);
+            transition: var(--transition);
+        }
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        .nav-hamburger {
+            display: none;
+            font-size: 1.4rem;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 64px;
+                left: 0;
+                right: 0;
+                background: rgba(5, 20, 5, 0.98);
+                padding: 20px 24px;
+                gap: 14px;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .nav-links.open {
+                display: flex;
+            }
+            .nav-hamburger {
+                display: block;
+            }
+        }
+
+        /* ============================================================
+           HERO DAFTAR BISNIS
+           ============================================================ */
+        .hero-business {
+            margin-top: 80px;
+            padding: 30px 0 10px;
+            text-align: center;
+            animation: fadeDown 0.8s ease;
+        }
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-business .icon-big {
+            font-size: 4rem;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hero-business h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #efb22c, #f7d875);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+        .hero-business p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            margin-top: 4px;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ============================================================
+           KARTU FORM BISNIS
+           ============================================================ */
+        .form-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 32px 34px 28px;
+            box-shadow: var(--shadow-lg);
+            margin: 8px 0 28px;
+            animation: fadeUp 0.8s ease 0.2s backwards;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-card .card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 14px;
+            margin-bottom: 24px;
+        }
+        .form-card .card-head .title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-card .card-head .title i {
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+        .form-group label .required {
+            color: #ff6b6b;
+            font-weight: 700;
+        }
+        .form-group label .optional {
+            color: var(--text-muted);
+            font-weight: 400;
+            font-size: 0.7rem;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 11px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            color: #fff;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: var(--transition);
+            outline: none;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent-gold);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(239, 178, 44, 0.06);
+        }
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-group .hint {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #efb22c, #f7d875);
+            color: #0a2a0a;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 8px 24px rgba(239, 178, 44, 0.2);
+        }
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(239, 178, 44, 0.35);
+        }
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-submit i {
+            font-size: 1.1rem;
+        }
+
+        /* ============================================================
+           TOMBOL KEMBALI
+           ============================================================ */
+        .back-row {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 28px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 50px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .btn-back:hover {
+            border-color: var(--accent-gold);
+            color: #fff;
+            background: rgba(239, 178, 44, 0.08);
+            transform: translateX(-4px);
+        }
+        .btn-back i {
+            color: var(--accent-gold);
+            font-size: 0.9rem;
+        }
+
+        /* ============================================================
+           TOAST
+           ============================================================ */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 10px 26px;
+            border-radius: 60px;
+            box-shadow: var(--shadow-lg);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(16px);
+            opacity: 0;
+            transition: all 0.35s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+        .toast.show {
+            display: flex;
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast i {
+            font-size: 1rem;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 600px) {
+            .form-card {
+                padding: 22px 18px 20px;
+            }
+            .hero-business h1 {
+                font-size: 1.8rem;
+            }
+            .hero-business .icon-big {
+                font-size: 3rem;
+            }
+            .btn-submit {
+                font-size: 0.95rem;
+                padding: 12px;
+            }
+        }
+        @media (max-width: 400px) {
+            .container {
+                padding: 0 14px;
+            }
+            .form-card {
+                padding: 18px 14px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+    NAVBAR
+    ============================================================ -->
+    <nav class="navbar">
+        <div class="container-nav">
+            <a href="index.html" class="nav-brand">
+                <i class="fas fa-crown"></i>
+                <span class="brand-name">NEV Market</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html#berita">Berita</a></li>
+                <li><a href="produk.html">Produk</a></li>
+                <li><a href="profil.html">Profil</a></li>
+                <li><a href="jasa.html">Jasa</a></li>
+                <li><a href="tentang.html">Tentang</a></li>
+            </ul>
+            <button class="nav-hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- ============================================================
+    HERO
+    ============================================================ -->
+    <div class="hero-business">
+        <div class="container">
+            <div class="icon-big">
+                <i class="fas fa-store-alt"></i>
+            </div>
+            <h1>Buka Toko Sekarang!</h1>
+            <p>Jadilah bagian dari NEV Market dan mulai jual produk digital & jasa</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    FORM DAFTAR TOKO
+    ============================================================ -->
+    <div class="container">
+        <div class="form-card">
+            <div class="card-head">
+                <div class="title">
+                    <i class="fas fa-store"></i> Daftar Akun Bisnis
+                </div>
+                <span style="font-size:0.65rem; color:var(--text-muted);">Gratis &amp; cepat</span>
+            </div>
+
+            <form id="storeForm" autocomplete="off">
+                <!-- Nama Toko -->
+                <div class="form-group">
+                    <label>Nama Toko <span class="required">*</span></label>
+                    <input type="text" id="storeName" placeholder="Contoh: Digital Store Ku" required />
+                    <div class="hint"><i class="fas fa-info-circle"></i> Nama toko akan muncul di setiap produk Anda</div>
+                </div>
+
+                <!-- Deskripsi -->
+                <div class="form-group">
+                    <label>Deskripsi Toko <span class="optional">(opsional)</span></label>
+                    <textarea id="storeDesc" placeholder="Ceritakan tentang toko Anda..."></textarea>
+                </div>
+
+                <!-- Kategori -->
+                <div class="form-group">
+                    <label>Kategori Utama <span class="required">*</span></label>
+                    <select id="storeCategory" style="width:100%; padding:11px 16px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-md); color:#fff; font-size:0.95rem; font-family:inherit; outline:none;">
+                        <option value="digital">Produk Digital</option>
+                        <option value="jasa">Layanan Jasa</option>
+                        <option value="mixed">Keduanya</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit" id="btnDaftarToko">
+                    <i class="fas fa-store-alt"></i> Daftar Sekarang
+                    <i class="fas fa-arrow-right" style="font-size:0.8rem;"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- ============================================================
+        TOMBOL KEMBALI
+        ============================================================ -->
+        <div class="back-row">
+            <a href="profil-user.html" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Kembali ke Profil
+            </a>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div class="toast" id="toast">
+        <i class="fas fa-info-circle"></i>
+        <span id="toastMsg">Pesan</span>
+    </div>
+
+    <!-- ============================================================
+    SCRIPT
+    ============================================================ -->
+    <script type="module">
+        import { initializeApp } from "firebase-app";
+        import { getDatabase, ref, set, get } from "firebase-database";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+            authDomain: "mybro-9ba5f.firebaseapp.com",
+            databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+            projectId: "mybro-9ba5f"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // ===== DEVICE ID =====
+        function getDeviceId() {
+            let id = localStorage.getItem('logoShop_deviceId');
+            if (!id) {
+                id = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+                localStorage.setItem('logoShop_deviceId', id);
+            }
+            return id;
+        }
+        const DEVICE_ID = getDeviceId();
+
+        // ===== TOAST =====
+        function showToast(msg, type = 'info') {
+            const t = document.getElementById('toast');
+            const m = document.getElementById('toastMsg');
+            const icon = t.querySelector('i');
+            icon.className = 'fas fa-' + (type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle');
+            t.className = 'toast show ' + type;
+            m.textContent = msg;
+            clearTimeout(t._hide);
+            t._hide = setTimeout(() => { t.classList.remove('show'); }, 4000);
+        }
+
+        // ===== HAMBURGER =====
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('navLinks').classList.toggle('open');
+        });
+
+        // ===== CEK APAKAH SUDAH PUNYA TOKO =====
+        async function cekToko() {
+            try {
+                const snap = await get(ref(db, `logo-shop/sellers/${DEVICE_ID}`));
+                const data = snap.val();
+                if (data && data.storeName) {
+                    showToast('Anda sudah memiliki toko! Diarahkan ke profil.', 'info');
+                    setTimeout(() => {
+                        window.location.href = 'profil.html';
+                    }, 1500);
+                    return true;
+                }
+                return false;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // ===== FORM DAFTAR TOKO =====
+        const form = document.getElementById('storeForm');
+        const btnDaftarToko = document.getElementById('btnDaftarToko');
+        const storeNameInput = document.getElementById('storeName');
+        const storeDescInput = document.getElementById('storeDesc');
+        const storeCategoryInput = document.getElementById('storeCategory');
+
+        // Cek toko saat halaman dimuat
+        let sudahPunyaToko = false;
+        cekToko().then(result => {
+            sudahPunyaToko = result;
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (sudahPunyaToko) {
+                showToast('Anda sudah memiliki toko!', 'error');
+                return;
+            }
+
+            const namaToko = storeNameInput.value.trim();
+            const deskripsi = storeDescInput.value.trim();
+            const kategori = storeCategoryInput.value;
+
+            if (!namaToko) {
+                showToast('Nama toko wajib diisi!', 'error');
+                return;
+            }
+
+            btnDaftarToko.disabled = true;
+            btnDaftarToko.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mendaftarkan...';
+
+            try {
+                // Simpan data toko
+                await set(ref(db, `logo-shop/sellers/${DEVICE_ID}`), {
+                    storeName: namaToko,
+                    description: deskripsi,
+                    category: kategori,
+                    createdAt: new Date().toISOString(),
+                    followers: 0,
+                    rating: 0,
+                    totalRatings: 0
+                });
+
+                showToast('🎉 Toko berhasil didaftarkan!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'profil-user.html';
+                }, 1500);
+
+            } catch (err) {
+                showToast('Gagal: ' + err.message, 'error');
+                btnDaftarToko.disabled = false;
+                btnDaftarToko.innerHTML = '<i class="fas fa-store-alt"></i> Daftar Sekarang <i class="fas fa-arrow-right" style="font-size:0.8rem;"></i>';
+            }
+        });
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        console.log('Halaman daftar bisnis siap!');
+    </script>
+</body>
+</html>
