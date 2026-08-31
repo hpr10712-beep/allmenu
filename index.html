@@ -822,8 +822,7 @@
     <header class="app-header">
         <div class="brand"><i class="fas fa-crown"></i> NEV Market</div>
         <div class="actions">
-            <a href="akun_bisnis.html" target="_blank"><i class="fas fa-store"></i> Toko</a>
-            <a href="profil.html" target="_blank"><i class="fas fa-store"></i> Toko</a>
+            <a href="index.html" target="_blank"><i class="fas fa-store"></i> Toko</a>
             <button id="refreshBtnTop"><i class="fas fa-sync"></i> Refresh</button>
         </div>
     </header>
@@ -840,6 +839,11 @@
             <div class="stat-card"><div class="label"><i class="fas fa-clock"></i> Antrian Aktif</div><div class="number gold" id="totalQueue">0</div></div>
             <div class="stat-card"><div class="label"><i class="fas fa-hourglass-half"></i> Jasa Antrian</div><div class="number gold" id="totalJasaAntrian">0</div></div>
             <div class="stat-card"><div class="label"><i class="fas fa-hand-holding-usd"></i> Permintaan Tarik</div><div class="number red" id="totalWithdrawPending">0</div></div>
+            <!-- DEVICE ID -->
+            <div class="stat-card">
+                <div class="label"><i class="fas fa-microchip"></i> Device ID</div>
+                <div class="number" style="font-size:0.7rem; word-break:break-all;" id="adminDeviceId">-</div>
+            </div>
         </div>
 
         <!-- MENU CAROUSEL -->
@@ -855,6 +859,7 @@
                 <button class="menu-item" data-section="orders-produk"><span class="icon-circle"><i class="fas fa-shopping-cart"></i></span><span class="label">Pesan Produk</span></button>
                 <button class="menu-item" data-section="queue"><span class="icon-circle"><i class="fas fa-clock"></i></span><span class="label">Antrian</span></button>
                 <button class="menu-item" data-section="withdraw"><span class="icon-circle"><i class="fas fa-hand-holding-usd"></i></span><span class="label">Tarik Saldo</span></button>
+                <button class="menu-item" data-section="admin-store"><span class="icon-circle"><i class="fas fa-store-alt"></i></span><span class="label">Daftar Toko</span></button>
             </div>
         </div>
 
@@ -894,7 +899,7 @@
         </div>
 
         <!-- ==========================================================
-        SECTION: HOME — DIUBAH: TAMBAH PLAYLIST VIDEO & MODE PUTAR
+        SECTION: HOME
         ========================================================== -->
         <div id="section-home" style="display:none;">
             <div class="content-card">
@@ -920,12 +925,9 @@
                         <small style="color:var(--text-muted);font-size:0.6rem;">Gunakan ini jika hanya ingin 1 gambar. Jika diisi playlist, playlist akan diprioritaskan.</small>
                     </div>
 
-                    <!-- ===== PLAYLIST VIDEO (BARU) ===== -->
                     <div class="form-group" style="border-top:1px solid var(--border);padding-top:12px;margin-top:6px;">
                         <label style="font-weight:600;">Playlist Video Hero (lebih dari 1)</label>
-                        <div id="videoPlaylistContainer" style="margin-bottom:6px;">
-                            <!-- Daftar video akan dirender di sini -->
-                        </div>
+                        <div id="videoPlaylistContainer" style="margin-bottom:6px;"></div>
                         <div style="display:flex;gap:8px;">
                             <input type="url" id="newVideoUrl" placeholder="URL video (mp4, youtube, gambar)" style="flex:1;padding:6px 10px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:0.75rem;" />
                             <button type="button" class="btn-add" id="addVideoBtn" style="padding:4px 14px;font-size:0.7rem;white-space:nowrap;"><i class="fas fa-plus"></i> Tambah</button>
@@ -933,7 +935,6 @@
                         <small style="color:var(--text-muted);font-size:0.6rem;">Tambahkan beberapa URL. Urutan akan menjadi playlist. Kosongkan untuk hanya menggunakan gambar tunggal.</small>
                     </div>
 
-                    <!-- ===== MODE PUTAR VIDEO (BARU) ===== -->
                     <div class="form-group" style="border-top:1px solid var(--border);padding-top:12px;margin-top:6px;">
                         <label style="font-weight:600;">Mode Putar Video</label>
                         <div style="display:flex;gap:16px;align-items:center;margin-top:4px;flex-wrap:wrap;">
@@ -1132,6 +1133,49 @@
             </div>
         </div>
 
+        <!-- ==========================================================
+        SECTION: DAFTAR TOKO ADMIN
+        ========================================================== -->
+        <div id="section-admin-store" style="display:none;">
+            <div class="content-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-store-alt"></i> Daftar / Edit Toko Admin</h2>
+                    <span style="font-size:0.65rem;color:var(--text-muted);">Khusus untuk admin NEV Market</span>
+                </div>
+                <form id="adminStoreForm">
+                    <div class="form-group">
+                        <label>Nama Toko <span style="color:var(--accent-red);">*</span></label>
+                        <input type="text" id="adminStoreName" placeholder="Contoh: Toko Admin NEV" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Deskripsi Toko <span style="color:var(--text-muted);font-weight:400;">(opsional)</span></label>
+                        <textarea id="adminStoreDesc" rows="3" placeholder="Deskripsi toko admin..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Kategori Utama</label>
+                        <select id="adminStoreCategory">
+                            <option value="digital">Produk Digital</option>
+                            <option value="jasa">Layanan Jasa</option>
+                            <option value="mixed">Keduanya</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Label Toko <span style="color:var(--text-muted);font-weight:400;">(opsional)</span></label>
+                        <input type="text" id="adminStoreLabel" placeholder="Misal: Official Store" />
+                    </div>
+                    <div class="form-actions" style="margin-top:14px;">
+                        <button type="submit" class="btn-submit" id="adminStoreBtn"><i class="fas fa-save"></i> Simpan Toko Admin</button>
+                        <button type="button" class="btn-cancel" id="adminStoreDeleteBtn" style="color:var(--accent-red);border-color:var(--accent-red);">
+                            <i class="fas fa-trash"></i> Hapus Toko
+                        </button>
+                    </div>
+                </form>
+                <div id="adminStoreStatus" style="margin-top:12px;padding:8px 12px;background:var(--bg-input);border-radius:var(--radius-sm);border:1px solid var(--border);font-size:0.8rem;color:var(--text-secondary);">
+                    <i class="fas fa-info-circle"></i> Status: <span id="adminStoreStatusText">Belum terdaftar</span>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- ============ MODAL FORM ============ -->
@@ -1225,6 +1269,20 @@
     <!-- ============ JAVASCRIPT ============ -->
     <script type="module">
         // ============================================================
+        // 0. DEVICE ID
+        // ============================================================
+        function getDeviceId() {
+            let id = localStorage.getItem('logoShop_deviceId');
+            if (!id) {
+                id = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+                localStorage.setItem('logoShop_deviceId', id);
+            }
+            return id;
+        }
+        const DEVICE_ID = getDeviceId();
+        document.getElementById('adminDeviceId').textContent = DEVICE_ID;
+
+        // ============================================================
         // 1. FIREBASE
         // ============================================================
         import { initializeApp } from "firebase-app";
@@ -1310,6 +1368,7 @@
             'orders-produk': document.getElementById('section-orders-produk'),
             queue: document.getElementById('section-queue'),
             withdraw: document.getElementById('section-withdraw'),
+            'admin-store': document.getElementById('section-admin-store'),
         };
 
         function navigateTo(sectionId) {
@@ -1328,6 +1387,7 @@
             if (sectionId === 'dashboard') { loadStats(); loadAdvancedStats(); loadRecentOrders(); }
             if (sectionId === 'home') { loadHome(); loadShopStatus(); }
             if (sectionId === 'announcement') { loadAnnouncement(); loadAnnouncementStatus(); }
+            if (sectionId === 'admin-store') { loadAdminStore(); }
         }
 
         menuItems.forEach(btn => {
@@ -1605,7 +1665,7 @@
         }
 
         // ============================================================
-        // 10. HOME — DIUBAH: TAMBAH PLAYLIST VIDEO & MODE PUTAR
+        // 10. HOME
         // ============================================================
         let videoList = [];
         let playMode = 'sequential';
@@ -1617,10 +1677,8 @@
                 document.getElementById('heroTitle').value = data.title || '';
                 document.getElementById('heroSubtitle').value = data.subtitle || '';
                 document.getElementById('heroImage').value = data.heroImage || '';
-                // Load playlist
                 videoList = data.heroVideos || [];
                 renderVideoList();
-                // Load play mode
                 playMode = data.playMode || 'sequential';
                 const radioSequential = document.querySelector('input[name="playMode"][value="sequential"]');
                 const radioShuffle = document.querySelector('input[name="playMode"][value="shuffle"]');
@@ -1670,7 +1728,6 @@
             renderVideoList();
         });
 
-        // Submit home form
         document.getElementById('homeForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const shopName = document.getElementById('shopName').value.trim();
@@ -1678,7 +1735,6 @@
             const heroSubtitle = document.getElementById('heroSubtitle').value.trim();
             const heroImage = document.getElementById('heroImage').value.trim();
 
-            // Ambil mode putar
             const selectedMode = document.querySelector('input[name="playMode"]:checked');
             const playModeValue = selectedMode ? selectedMode.value : 'sequential';
 
@@ -1800,7 +1856,7 @@
         modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
         // ============================================================
-        // 13. SUBMIT FORM
+        // 13. SUBMIT FORM — DENGAN sellerId: 'admin'
         // ============================================================
         modalForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1813,7 +1869,8 @@
                     const description = document.getElementById('prodDesc').value.trim();
                     const downloadLink = document.getElementById('prodDownload').value.trim();
                     if (!name || !downloadLink) { showToast('Nama dan link unduhan wajib diisi.', 'error'); return; }
-                    const data = { name, price, image, description, downloadLink, isJasa: false };
+                    // 🔥 TAMBAHKAN sellerId: 'admin'
+                    const data = { name, price, image, description, downloadLink, isJasa: false, sellerId: 'admin' };
                     const productRef = currentEditKey ? ref(db, `logo-shop/products/${currentEditKey}`) : push(ref(db,
                         'logo-shop/products'));
                     await set(productRef, data);
@@ -1832,7 +1889,8 @@
                         sosmed: document.getElementById('supSosmed').checked
                     };
                     if (!name) { showToast('Nama layanan wajib diisi.', 'error'); return; }
-                    const data = { name, price, image, description, support, isJasa: true, downloadLink: '' };
+                    // 🔥 TAMBAHKAN sellerId: 'admin'
+                    const data = { name, price, image, description, support, isJasa: true, downloadLink: '', sellerId: 'admin' };
                     const productRef = currentEditKey ? ref(db, `logo-shop/products/${currentEditKey}`) : push(ref(db,
                         'logo-shop/products'));
                     await set(productRef, data);
@@ -2510,6 +2568,7 @@
             loadShopStatus();
             loadAnnouncement();
             loadAnnouncementStatus();
+            loadAdminStore();
             showToast('Data direfresh.', 'info');
         });
 
@@ -2654,7 +2713,95 @@
         }
 
         // ============================================================
-        // 26. INIT
+        // 26. DAFTAR TOKO ADMIN
+        // ============================================================
+        const adminStoreForm = document.getElementById('adminStoreForm');
+        const adminStoreName = document.getElementById('adminStoreName');
+        const adminStoreDesc = document.getElementById('adminStoreDesc');
+        const adminStoreCategory = document.getElementById('adminStoreCategory');
+        const adminStoreLabel = document.getElementById('adminStoreLabel');
+        const adminStoreBtn = document.getElementById('adminStoreBtn');
+        const adminStoreDeleteBtn = document.getElementById('adminStoreDeleteBtn');
+        const adminStoreStatusText = document.getElementById('adminStoreStatusText');
+
+        function loadAdminStore() {
+            get(ref(db, 'logo-shop/sellers/admin')).then(snap => {
+                const data = snap.val();
+                if (data && data.storeName) {
+                    adminStoreName.value = data.storeName || '';
+                    adminStoreDesc.value = data.description || '';
+                    adminStoreCategory.value = data.category || 'mixed';
+                    adminStoreLabel.value = data.label || '';
+                    adminStoreStatusText.textContent = `Toko aktif: "${data.storeName}"`;
+                    adminStoreStatusText.style.color = 'var(--accent-green)';
+                    adminStoreBtn.innerHTML = '<i class="fas fa-save"></i> Update Toko Admin';
+                    adminStoreDeleteBtn.style.display = 'inline-flex';
+                } else {
+                    adminStoreName.value = '';
+                    adminStoreDesc.value = '';
+                    adminStoreCategory.value = 'mixed';
+                    adminStoreLabel.value = '';
+                    adminStoreStatusText.textContent = 'Belum terdaftar';
+                    adminStoreStatusText.style.color = 'var(--text-muted)';
+                    adminStoreBtn.innerHTML = '<i class="fas fa-save"></i> Daftar Toko Admin';
+                    adminStoreDeleteBtn.style.display = 'none';
+                }
+            }).catch(() => {
+                adminStoreStatusText.textContent = 'Gagal memuat data';
+                adminStoreStatusText.style.color = 'var(--accent-red)';
+            });
+        }
+
+        adminStoreForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = adminStoreName.value.trim();
+            if (!name) {
+                showToast('Nama toko wajib diisi!', 'error');
+                return;
+            }
+            const desc = adminStoreDesc.value.trim();
+            const category = adminStoreCategory.value;
+            const label = adminStoreLabel.value.trim();
+
+            adminStoreBtn.disabled = true;
+            adminStoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+            try {
+                await set(ref(db, 'logo-shop/sellers/admin'), {
+                    storeName: name,
+                    description: desc,
+                    category: category,
+                    label: label || 'Official Store',
+                    followers: 0,
+                    rating: 0,
+                    totalRatings: 0,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    isAdmin: true
+                });
+                showToast('Toko admin berhasil disimpan!', 'success');
+                loadAdminStore();
+            } catch (err) {
+                showToast('Gagal: ' + err.message, 'error');
+            } finally {
+                adminStoreBtn.disabled = false;
+                adminStoreBtn.innerHTML = '<i class="fas fa-save"></i> Simpan Toko Admin';
+            }
+        });
+
+        adminStoreDeleteBtn.addEventListener('click', async () => {
+            if (!confirm('Yakin ingin menghapus toko admin? Data akan hilang permanen.')) return;
+            try {
+                await remove(ref(db, 'logo-shop/sellers/admin'));
+                showToast('Toko admin dihapus.', 'success');
+                loadAdminStore();
+            } catch (err) {
+                showToast('Gagal hapus: ' + err.message, 'error');
+            }
+        });
+
+        // ============================================================
+        // 27. INIT
         // ============================================================
         loadStats();
         loadAdvancedStats();
@@ -2663,8 +2810,9 @@
         loadShopStatus();
         loadAnnouncement();
         loadAnnouncementStatus();
+        loadAdminStore();
         checkNewOrders();
-        console.log('Admin Panel siap (dengan Playlist Video & Mode Putar)!');
+        console.log('Admin Panel siap (dengan sellerId: admin otomatis)!');
     </script>
 
 </body>
