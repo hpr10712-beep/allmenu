@@ -12,9 +12,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.css">
 <style>
-/* ============================================================
-   DESIGN TOKENS
-   ============================================================ */
 :root{
   --bg:#0a0a0f; --bg-2:#0e0e15;
   --fg:#e7e7ef; --fg-2:#b9b9c9;
@@ -61,18 +58,12 @@ h1,h2,h3,h4{margin:0;font-weight:600;letter-spacing:-.02em;line-height:1.25}
 p{margin:0}
 ul{margin:0;padding:0;list-style:none}
 ::selection{background:var(--primary);color:#fff}
-
-/* Scrollbars */
 *::-webkit-scrollbar{width:8px;height:8px}
 *::-webkit-scrollbar-track{background:transparent}
 *::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:8px}
 *::-webkit-scrollbar-thumb:hover{background:var(--muted)}
 .no-scrollbar::-webkit-scrollbar{display:none}
 .no-scrollbar{scrollbar-width:none;-ms-overflow-style:none}
-
-/* ============================================================
-   PRIMITIVES
-   ============================================================ */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
   min-height:40px;padding:0 16px;border-radius:10px;
@@ -94,7 +85,6 @@ ul{margin:0;padding:0;list-style:none}
 .btn-lg{min-height:48px;padding:0 22px;font-size:15px;border-radius:12px}
 .btn-block{width:100%}
 .btn:disabled{opacity:.5;pointer-events:none}
-
 .icon-btn{
   display:inline-flex;align-items:center;justify-content:center;
   width:40px;height:40px;min-width:40px;border-radius:10px;
@@ -103,7 +93,6 @@ ul{margin:0;padding:0;list-style:none}
 .icon-btn:hover{background:var(--card-2);color:var(--fg)}
 .icon-btn:active{transform:scale(.92)}
 .icon-btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
-
 .input,.select,.textarea{
   width:100%;min-height:44px;padding:10px 14px;
   background:var(--bg-2);border:1px solid var(--border);
@@ -122,7 +111,6 @@ label.field{display:block;margin-bottom:14px}
 label.field > .lbl{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--fg-2);margin-bottom:6px}
 label.field > .lbl svg{width:14px;height:14px}
 .hint{font-size:12px;color:var(--muted);margin-top:5px}
-
 .card{
   background:var(--card);border:1px solid var(--border);
   border-radius:var(--radius-lg);padding:16px;
@@ -139,7 +127,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .badge-warning{background:color-mix(in srgb,var(--warning) 15%,transparent);border-color:color-mix(in srgb,var(--warning) 35%,transparent);color:var(--warning)}
 .badge-danger{background:color-mix(in srgb,var(--danger) 15%,transparent);border-color:color-mix(in srgb,var(--danger) 35%,transparent);color:var(--danger)}
 .badge-muted{background:var(--card-2);color:var(--muted)}
-
 .divider{height:1px;background:var(--border);margin:14px 0;border:0}
 .muted{color:var(--muted)}
 .small{font-size:13px}
@@ -151,10 +138,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .stack{display:flex;flex-direction:column;gap:12px}
 .grid{display:grid;gap:12px}
-
-/* ============================================================
-   AUTH / LANDING
-   ============================================================ */
 .landing{min-height:100dvh;display:flex;flex-direction:column;overflow-x:hidden}
 .nav-public{
   position:sticky;top:0;z-index:40;
@@ -176,7 +159,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .nav-public .links a{padding:8px 12px;border-radius:8px;font-size:14px;color:var(--fg-2);font-weight:500}
 .nav-public .links a:hover{background:var(--card-2);color:var(--fg)}
 .nav-actions{margin-left:auto;display:flex;align-items:center;gap:6px}
-
 .hero{
   position:relative;padding:48px 16px 56px;
   display:flex;flex-direction:column;gap:34px;
@@ -215,7 +197,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .hero-stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px}
 .hero-stat b{display:block;font-size:20px;font-weight:700;letter-spacing:-.03em}
 .hero-stat span{font-size:11.5px;color:var(--muted)}
-
 .terminal-card{
   background:var(--card);border:1px solid var(--border);
   border-radius:14px;overflow:hidden;box-shadow:var(--shadow);
@@ -237,7 +218,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .tk-w{color:var(--warning)}
 .cursor-blink::after{content:'▍';color:var(--accent);animation:blink 1.05s steps(2) infinite}
 @keyframes blink{50%{opacity:0}}
-
 .section{padding:56px 16px;max-width:1180px;margin:0 auto;width:100%}
 .section-head{text-align:center;margin-bottom:28px}
 .section-head h2{font-size:clamp(23px,5.4vw,34px);letter-spacing:-.03em;margin-bottom:8px}
@@ -257,7 +237,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .feature .fi svg{width:19px;height:19px}
 .feature h3{font-size:15.5px;margin-bottom:6px}
 .feature p{font-size:13.5px;color:var(--muted);line-height:1.6}
-
 .cta-band{
   margin:0 16px 56px;max-width:1180px;
   border-radius:20px;padding:34px 20px;text-align:center;
@@ -272,8 +251,6 @@ label.field > .lbl svg{width:14px;height:14px}
   font-size:13px;color:var(--muted);
 }
 .footer .fl{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
-
-/* Auth */
 .auth-wrap{
   min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:24px 16px;gap:20px;
@@ -289,13 +266,7 @@ label.field > .lbl svg{width:14px;height:14px}
 .auth-card .lead{color:var(--muted);font-size:13.5px;margin-bottom:20px}
 .auth-switch{text-align:center;font-size:13.5px;color:var(--muted);margin-top:16px}
 .auth-switch a{color:var(--primary-2);font-weight:600}
-
-/* ============================================================
-   APP SHELL
-   ============================================================ */
 .app{display:flex;min-height:100dvh;width:100%}
-
-/* Sidebar (desktop) */
 .sidebar{
   display:none;
   flex-direction:column;width:var(--sidebar-w);flex-shrink:0;
@@ -338,20 +309,14 @@ label.field > .lbl svg{width:14px;height:14px}
 }
 .avatar.lg{width:64px;height:64px;font-size:24px}
 .avatar.sm{width:24px;height:24px;font-size:10px}
-
-/* Collapsed sidebar */
 .sidebar.collapsed{width:var(--sidebar-w-collapsed)}
 .sidebar.collapsed .logo-txt,
 .sidebar.collapsed .side-link .txt,
 .sidebar.collapsed .side-user .uinfo{opacity:0;width:0;overflow:hidden}
 .sidebar.collapsed .side-link{justify-content:center;padding:9px}
 .sidebar.collapsed .side-user{justify-content:center}
-
-/* Main */
 .main{flex:1;min-width:0;display:flex;flex-direction:column;padding-bottom:calc(var(--bottomnav-h) + env(safe-area-inset-bottom) + 8px)}
 .main-inner{flex:1;width:100%;max-width:1400px;margin:0 auto;padding:14px}
-
-/* Mobile top bar */
 .topbar{
   position:sticky;top:0;z-index:45;
   display:flex;align-items:center;gap:4px;
@@ -363,8 +328,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .topbar .tb-title{font-size:14.5px;font-weight:600;letter-spacing:-.02em}
 .topbar .spacer{flex:1}
 .tb-actions{display:flex;align-items:center;gap:0}
-
-/* Bottom nav */
 .bottom-nav{
   position:fixed;left:0;right:0;bottom:0;z-index:60;
   display:flex;align-items:stretch;
@@ -386,15 +349,10 @@ label.field > .lbl svg{width:14px;height:14px}
   width:26px;height:2.5px;border-radius:0 0 3px 3px;background:var(--primary);
 }
 .bn-item:active{transform:scale(.94)}
-
-/* ============================================================
-   PAGE PARTS
-   ============================================================ */
 .page-head{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
 .page-head h1{font-size:22px;letter-spacing:-.03em;display:flex;align-items:center;gap:9px}
 .page-head h1 svg{width:21px;height:21px;color:var(--primary-2)}
 .page-head .sub{color:var(--muted);font-size:13.5px}
-
 .stat-grid{display:grid;grid-template-columns:1fr;gap:10px}
 .stat-card{
   background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
@@ -412,7 +370,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .si.g{background:color-mix(in srgb,var(--success) 13%,transparent);color:var(--success)}
 .si.w{background:color-mix(in srgb,var(--warning) 13%,transparent);color:var(--warning)}
 .si.a{background:color-mix(in srgb,var(--accent) 13%,transparent);color:var(--accent)}
-
 .list-item{
   display:flex;align-items:center;gap:12px;
   padding:13px 14px;background:var(--card);border:1px solid var(--border);
@@ -428,8 +385,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .list-item .li-main{flex:1;min-width:0}
 .list-item .li-title{font-size:14px;font-weight:600;letter-spacing:-.01em}
 .list-item .li-sub{font-size:12px;color:var(--muted);margin-top:1px}
-
-/* Tabs */
 .tabs{
   display:flex;gap:2px;overflow-x:auto;
   border-bottom:1px solid var(--border);
@@ -450,8 +405,6 @@ label.field > .lbl svg{width:14px;height:14px}
   font-size:11px;padding:1px 6px;border-radius:999px;
   background:var(--card-2);color:var(--muted);font-weight:600;
 }
-
-/* File explorer */
 .file-row{
   display:flex;align-items:center;gap:11px;
   padding:11px 12px;border-radius:9px;min-height:46px;
@@ -467,8 +420,6 @@ label.field > .lbl svg{width:14px;height:14px}
   color:var(--muted);flex-shrink:0;opacity:1;
 }
 .file-row .more:hover{background:var(--card-3);color:var(--fg)}
-
-/* Editor */
 .editor-shell{
   position:fixed;inset:0;z-index:80;background:var(--bg);
   display:flex;flex-direction:column;
@@ -496,7 +447,6 @@ label.field > .lbl svg{width:14px;height:14px}
   padding:6px 8px;border-bottom:1px solid var(--border);
   background:var(--bg-2);flex-shrink:0;
   scrollbar-width:none;-ms-overflow-style:none;
-  padding-bottom:calc(6px + env(safe-area-inset-bottom)*0);
 }
 .editor-toolbar::-webkit-scrollbar{display:none}
 .tool-btn{
@@ -528,8 +478,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .editor-status::-webkit-scrollbar{display:none}
 .editor-status .st{display:inline-flex;align-items:center;gap:5px}
 .editor-status svg{width:13px;height:13px}
-
-/* Preview */
 .preview-shell{
   position:fixed;inset:0;z-index:85;background:var(--bg);
   display:flex;flex-direction:column;
@@ -547,8 +495,6 @@ label.field > .lbl svg{width:14px;height:14px}
 }
 .preview-frame.tablet{width:768px;max-width:100%}
 .preview-frame.mobile{width:390px;max-width:100%}
-
-/* Terminal */
 .term-shell{
   position:fixed;left:0;right:0;bottom:0;z-index:90;
   height:min(72dvh,560px);
@@ -581,8 +527,6 @@ label.field > .lbl svg{width:14px;height:14px}
   flex:1;background:transparent;border:0;outline:none;
   font-family:'JetBrains Mono',monospace;font-size:13px;min-width:0;
 }
-
-/* Bottom sheet & Modal */
 .overlay{
   position:fixed;inset:0;z-index:100;
   background:rgba(0,0,0,.6);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
@@ -608,7 +552,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .sheet-body{overflow-y:auto;padding:14px;flex:1;min-height:0}
 .sheet-foot{padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
 .sheet-foot .btn{flex:1}
-
 .menu-item{
   display:flex;align-items:center;gap:12px;
   padding:13px 12px;border-radius:10px;min-height:48px;
@@ -618,8 +561,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .menu-item svg{width:18px;height:18px;color:var(--muted);flex-shrink:0}
 .menu-item.danger{color:var(--danger)}
 .menu-item.danger svg{color:var(--danger)}
-
-/* Drawer */
 .drawer-overlay{
   position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.55);
   animation:fadeIn .16s ease;
@@ -638,8 +579,6 @@ label.field > .lbl svg{width:14px;height:14px}
   border-bottom:1px solid var(--border);flex-shrink:0;
 }
 .drawer-nav{flex:1;overflow-y:auto;padding:10px}
-
-/* Toasts */
 .toast-wrap{
   position:fixed;left:0;right:0;bottom:calc(var(--bottomnav-h) + env(safe-area-inset-bottom) + 12px);
   z-index:200;display:flex;flex-direction:column;gap:8px;align-items:center;padding:0 14px;
@@ -661,8 +600,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .toast.info svg{color:var(--info)}
 .toast.warning svg{color:var(--warning)}
 .toast .tmsg{flex:1;min-width:0}
-
-/* Command palette */
 .cmdk{
   position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.62);
   backdrop-filter:blur(4px);display:flex;align-items:flex-start;justify-content:center;
@@ -685,16 +622,12 @@ label.field > .lbl svg{width:14px;height:14px}
 .cmdk-item:hover,.cmdk-item.sel{background:var(--card-2)}
 .cmdk-item svg{width:17px;height:17px;color:var(--muted);flex-shrink:0}
 .cmdk-item .kbd{margin-left:auto;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace}
-
-/* Diff */
 .diff{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
 .diff-line{display:flex;padding:0 10px;white-space:pre;overflow-x:auto}
 .diff-line.add{background:color-mix(in srgb,var(--success) 12%,transparent);color:var(--success)}
 .diff-line.del{background:color-mix(in srgb,var(--danger) 12%,transparent);color:var(--danger)}
 .diff-line.ctx{color:var(--muted)}
 .diff-line .dn{width:34px;flex-shrink:0;color:var(--muted);user-select:none}
-
-/* Kanban */
 .kanban{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory}
 .kanban::-webkit-scrollbar{height:6px}
 .kcol{
@@ -711,8 +644,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .kcard:active{cursor:grabbing}
 .kcard.dragging{opacity:.45}
 .kcol.dragover{border-color:var(--primary);background:color-mix(in srgb,var(--primary) 7%,transparent)}
-
-/* Search overlay */
 .search-overlay{
   position:fixed;inset:0;z-index:120;background:var(--bg);
   display:flex;flex-direction:column;animation:fadeIn .15s;
@@ -723,8 +654,6 @@ label.field > .lbl svg{width:14px;height:14px}
   padding-top:calc(10px + env(safe-area-inset-top));
 }
 .search-body{flex:1;overflow-y:auto;padding:12px}
-
-/* Notification panel */
 .notif-panel{
   position:fixed;inset:0;z-index:120;background:var(--bg);
   display:flex;flex-direction:column;animation:fadeIn .15s;
@@ -742,8 +671,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .notif-item.unread{border-color:color-mix(in srgb,var(--primary) 45%,transparent);background:color-mix(in srgb,var(--primary) 6%,var(--card))}
 .notif-item .ni{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:var(--card-2);flex-shrink:0;color:var(--primary-2)}
 .notif-item .ni svg{width:16px;height:16px}
-
-/* Empty & skeleton */
 .empty{
   display:flex;flex-direction:column;align-items:center;gap:12px;
   padding:44px 20px;text-align:center;
@@ -762,8 +689,6 @@ label.field > .lbl svg{width:14px;height:14px}
   border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;
 }
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* Contribution graph */
 .contrib{display:flex;gap:3px;overflow-x:auto;padding-bottom:6px}
 .contrib .cweek{display:flex;flex-direction:column;gap:3px}
 .contrib .cday{width:11px;height:11px;border-radius:2.5px;background:var(--card-3)}
@@ -771,8 +696,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .contrib .cday.l2{background:color-mix(in srgb,var(--success) 55%,var(--card-3))}
 .contrib .cday.l3{background:color-mix(in srgb,var(--success) 78%,var(--card-3))}
 .contrib .cday.l4{background:var(--success)}
-
-/* Tooltip */
 [data-tip]{position:relative}
 @media (hover:hover){
   [data-tip]:hover::after{
@@ -783,8 +706,6 @@ label.field > .lbl svg{width:14px;height:14px}
     z-index:300;pointer-events:none;font-weight:500;
   }
 }
-
-/* Utilities */
 .hide{display:none!important}
 .mt-1{margin-top:6px}.mt-2{margin-top:12px}.mt-3{margin-top:18px}
 .mb-1{margin-bottom:6px}.mb-2{margin-bottom:12px}.mb-3{margin-bottom:18px}
@@ -792,8 +713,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .rel{position:relative}
 .gap-sm{gap:6px}
 .badge-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-
-/* Markdown render */
 .md{font-size:14px;line-height:1.75;color:var(--fg-2);word-wrap:break-word}
 .md h1,.md h2,.md h3{color:var(--fg);margin:18px 0 8px;letter-spacing:-.02em}
 .md h1{font-size:22px;border-bottom:1px solid var(--border);padding-bottom:7px}
@@ -812,10 +731,6 @@ label.field > .lbl svg{width:14px;height:14px}
 .md th{background:var(--card-2);font-weight:600;color:var(--fg)}
 .md img{max-width:100%;border-radius:8px;margin:8px 0}
 .md hr{border:0;border-top:1px solid var(--border);margin:18px 0}
-
-/* ============================================================
-   RESPONSIVE — TABLET
-   ============================================================ */
 @media (min-width:600px){
   .main-inner{padding:18px}
   .stat-grid{grid-template-columns:repeat(2,1fr)}
@@ -861,7 +776,6 @@ label.field > .lbl svg{width:14px;height:14px}
 @media (min-width:1280px){
   .main-inner{padding:26px 36px}
 }
-
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
 }
@@ -869,19 +783,10 @@ label.field > .lbl svg{width:14px;height:14px}
 </head>
 <body>
 
-<!-- ROOT -->
 <div id="root"></div>
-
-<!-- TOASTS -->
 <div class="toast-wrap" id="toasts"></div>
-
-<!-- SHEET / MODAL -->
 <div id="sheet-root"></div>
-
-<!-- DRAWER -->
 <div id="drawer-root"></div>
-
-<!-- SEARCH / NOTIF / TERMINAL / EDITOR / PREVIEW / CMDK -->
 <div id="overlay-root"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
@@ -910,16 +815,9 @@ label.field > .lbl svg{width:14px;height:14px}
 <script src="https://unpkg.com/lucide@0.451.0/dist/umd/lucide.min.js"></script>
 
 <script>
-/* ============================================================================
-   NEV CODE — Application
-   Single-file implementation. localStorage sebagai database demo.
-   ============================================================================ */
 (() => {
 'use strict';
 
-/* ---------------------------------------------------------------------------
-   0. UTIL
-   --------------------------------------------------------------------------- */
 const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const esc = (s='') => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -939,16 +837,12 @@ function timeAgo(ts){
 function fmtDate(ts){
   return new Date(ts).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
 }
-// Hash sederhana — DEMO ONLY. Bukan pengganti bcrypt/PBKDF2 di produksi.
 function demoHash(str){
   let h = 5381;
   for (let i=0;i<str.length;i++) h = ((h<<5)+h) ^ str.charCodeAt(i);
   return 'demo$' + (h>>>0).toString(16) + '$' + str.length;
 }
 
-/* ---------------------------------------------------------------------------
-   1. DATABASE (localStorage)
-   --------------------------------------------------------------------------- */
 const DB = {
   k: k => 'nev_' + k,
   get(k, d){ try { const v = localStorage.getItem(this.k(k)); return v==null ? d : JSON.parse(v); } catch { return d; } },
@@ -985,16 +879,13 @@ const Store = {
   setSeeded:    v  => DB.set('seeded', v)
 };
 
-/* ---------------------------------------------------------------------------
-   2. STATE
-   --------------------------------------------------------------------------- */
 const S = {
   user: null,
   settings: Store.settings(),
   route: { name:'landing', params:{} },
   currentRepo: null,
   currentBranch: 'main',
-  openFiles: [],       // {path, content, dirty}
+  openFiles: [],
   activeFile: null,
   cm: null,
   editorDirty: false,
@@ -1002,9 +893,6 @@ const S = {
   searchRecent: DB.get('searchRecent', [])
 };
 
-/* ---------------------------------------------------------------------------
-   3. ICONS
-   --------------------------------------------------------------------------- */
 function icon(name, size){
   const s = size ? ` style="width:${size}px;height:${size}px"` : '';
   return `<i data-lucide="${name}"${s}></i>`;
@@ -1015,9 +903,6 @@ function refreshIcons(){
   }
 }
 
-/* ---------------------------------------------------------------------------
-   4. TOAST
-   --------------------------------------------------------------------------- */
 const TOAST_ICON = { success:'circle-check', error:'circle-x', warning:'triangle-alert', info:'info' };
 function toast(type, title, msg){
   const wrap = $('#toasts');
@@ -1039,9 +924,6 @@ function toast(type, title, msg){
   }, 3400);
 }
 
-/* ---------------------------------------------------------------------------
-   5. SHEET / MODAL
-   --------------------------------------------------------------------------- */
 let sheetEscHandler = null;
 function openSheet({ title, iconName, body, footer, onMount }){
   closeSheet();
@@ -1090,9 +972,6 @@ function confirmSheet({ title='Konfirmasi', message, confirmText='Lanjutkan', da
   });
 }
 
-/* ---------------------------------------------------------------------------
-   6. AUTH
-   --------------------------------------------------------------------------- */
 const Auth = {
   register(username, email, password){
     username = username.trim(); email = email.trim().toLowerCase();
@@ -1151,9 +1030,6 @@ function avatarHTML(user, size=''){
   return `<div class="avatar ${size}" style="background:linear-gradient(135deg,${user.avatarColor||'#6366f1'},var(--accent))">${esc(initial)}</div>`;
 }
 
-/* ---------------------------------------------------------------------------
-   7. DATA HELPERS
-   --------------------------------------------------------------------------- */
 function getUser(id){ return Store.users().find(u => u.id === id); }
 function getRepo(id){ return Store.repos().find(r => r.id === id); }
 function repoFiles(repoId, branch){ return Store.files().filter(f => f.repoId === repoId && f.branch === branch); }
@@ -1191,9 +1067,6 @@ function updateNotifBadge(){
   });
 }
 
-/* ---------------------------------------------------------------------------
-   8. LANGUAGE DETECTION
-   --------------------------------------------------------------------------- */
 const EXT_LANG = {
   html:'htmlmixed', htm:'htmlmixed', vue:'htmlmixed',
   css:'css', scss:'css', less:'css',
@@ -1223,18 +1096,13 @@ function fileIcon(path, isFolder){
   return 'file';
 }
 
-/* ---------------------------------------------------------------------------
-   9. MARKDOWN (subset renderer, aman dari XSS karena escape dulu)
-   --------------------------------------------------------------------------- */
 function renderMarkdown(src){
   let s = esc(src || '');
-  // fenced code
   const blocks = [];
   s = s.replace(/```(\w*)\n([\s\S]*?)```/g, (m, lang, code) => {
     blocks.push(`<pre><code class="lang-${esc(lang)}">${code}</code></pre>`);
     return `\u0000CB${blocks.length-1}\u0000`;
   });
-  // tables
   s = s.replace(/^\|(.+)\|\n\|[\s:|-]+\|\n((?:\|.*\|\n?)*)/gm, (m, head, rows) => {
     const th = head.split('|').map(x=>x.trim()).filter(Boolean).map(x=>`<th>${x}</th>`).join('');
     const tr = rows.trim().split('\n').map(r =>
@@ -1256,7 +1124,6 @@ function renderMarkdown(src){
   s = s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
   s = s.replace(/(^|[^*])\*([^*\n]+)\*/g,'$1<em>$2</em>');
   s = s.replace(/~~([^~]+)~~/g,'<del>$1</del>');
-  // lists
   s = s.replace(/(?:^|\n)((?:[-*+] .*(?:\n|$))+)/g, (m, block) => {
     const items = block.trim().split('\n').map(l => `<li>${l.replace(/^[-*+] /,'')}</li>`).join('');
     return `\n<ul>${items}</ul>`;
@@ -1265,7 +1132,6 @@ function renderMarkdown(src){
     const items = block.trim().split('\n').map(l => `<li>${l.replace(/^\d+\. /,'')}</li>`).join('');
     return `\n<ol>${items}</ol>`;
   });
-  // paragraphs
   s = s.split(/\n{2,}/).map(p => {
     if (/^\s*<(h\d|ul|ol|pre|blockquote|table|hr|img|p)/.test(p.trim())) return p;
     if (p.includes('\u0000CB')) return p;
@@ -1275,9 +1141,6 @@ function renderMarkdown(src){
   return s;
 }
 
-/* ---------------------------------------------------------------------------
-   10. SEED DEMO DATA
-   --------------------------------------------------------------------------- */
 function seedIfNeeded(){
   if (Store.seeded()) return;
   const userId = 'u_demo';
@@ -1438,9 +1301,6 @@ Buka \`index.html\` di browser, atau gunakan preview di NEV CODE.
   Store.setSeeded(true);
 }
 
-/* ---------------------------------------------------------------------------
-   11. ROUTER
-   --------------------------------------------------------------------------- */
 function parseHash(){
   const h = location.hash.replace(/^#\/?/, '');
   const parts = h.split('/').filter(Boolean).map(decodeURIComponent);
@@ -1453,7 +1313,6 @@ function router(){
   const isAuth = !!S.user;
   const head = parts[0] || '';
 
-  // Public routes
   if (!isAuth){
     if (head === 'login')    { S.route = { name:'login' };    return renderPublic(); }
     if (head === 'register') { S.route = { name:'register' }; return renderPublic(); }
@@ -1461,7 +1320,6 @@ function router(){
     return renderPublic();
   }
 
-  // Authenticated routes
   if (!head || head === 'dashboard'){ S.route = { name:'dashboard' }; return renderApp(); }
   if (head === 'repos' || head === 'repositories'){ S.route = { name:'repos' }; return renderApp(); }
   if (head === 'repo'){
@@ -1504,9 +1362,6 @@ window.addEventListener('hashchange', () => {
   window.scrollTo(0,0);
 });
 
-/* ---------------------------------------------------------------------------
-   12. PUBLIC RENDER (Landing / Auth)
-   --------------------------------------------------------------------------- */
 function renderPublic(){
   const root = $('#root');
   if (S.route.name === 'landing') root.innerHTML = viewLanding();
@@ -1716,9 +1571,6 @@ function bindPublic(){
   });
 }
 
-/* ---------------------------------------------------------------------------
-   13. APP SHELL
-   --------------------------------------------------------------------------- */
 const NAV_ITEMS = [
   { id:'dashboard', label:'Dashboard',   icon:'layout-dashboard', href:'#/dashboard' },
   { id:'repos',     label:'Repositories',icon:'git-branch',       href:'#/repos' },
@@ -1771,8 +1623,8 @@ function sidebarHTML(){
       <a class="side-user" href="#/profile">
         ${avatarHTML(S.user)}
         <div class="uinfo grow" style="min-width:0">
-          <div class="small truncate" style="font-weight:600">${esc(S.user.username)}</div>
-          <div class="tiny muted truncate">${esc(S.user.email)}</div>
+          <div class="small truncate" style="font-weight:600">${esc(S.user ? S.user.username : 'Tamu')}</div>
+          <div class="tiny muted truncate">${esc(S.user ? S.user.email : 'belum login')}</div>
         </div>
       </a>
     </div>
@@ -1847,6 +1699,7 @@ function renderRouteView(){
     case 'pulls':       return viewAllPRs();
     case 'settings':    return viewSettings();
     case 'profile':     return viewProfile();
+    case 'view':        return viewSharedRepoView();
     case 'help':        return viewHelp();
     case 'explorer':    return viewExplorerPicker();
     case 'editor':      return viewEditorPicker();
@@ -1877,9 +1730,6 @@ function bindShell(){
   if (on) on.addEventListener('click', openNotifications);
 }
 
-/* ---------------------------------------------------------------------------
-   14. DRAWER
-   --------------------------------------------------------------------------- */
 function openDrawer(){
   const root = $('#drawer-root');
   root.innerHTML = `
@@ -1895,8 +1745,8 @@ function openDrawer(){
         <div class="row" style="padding:8px 10px 12px;gap:11px">
           ${avatarHTML(S.user)}
           <div class="grow" style="min-width:0">
-            <div class="small truncate" style="font-weight:600">${esc(S.user.username)}</div>
-            <div class="tiny muted truncate">${esc(S.user.email)}</div>
+            <div class="small truncate" style="font-weight:600">${esc(S.user ? S.user.username : 'Tamu')}</div>
+            <div class="tiny muted truncate">${esc(S.user ? S.user.email : 'belum login')}</div>
           </div>
         </div>
         <div class="divider" style="margin:0 10px 8px"></div>
@@ -1935,9 +1785,6 @@ function closeAllOverlays(){
   if (S.cm){ try { S.cm.toTextArea && S.cm.toTextArea(); } catch(e){} S.cm = null; }
 }
 
-/* ---------------------------------------------------------------------------
-   15. EMPTY STATE
-   --------------------------------------------------------------------------- */
 function viewEmptyState(iconName, title, msg, btnText, btnHref){
   return `
   <div class="empty">
@@ -1948,9 +1795,6 @@ function viewEmptyState(iconName, title, msg, btnText, btnHref){
   </div>`;
 }
 
-/* ---------------------------------------------------------------------------
-   16. VIEW: DASHBOARD
-   --------------------------------------------------------------------------- */
 function viewDashboard(){
   const repos = myRepos();
   const projects = Store.projects().filter(p => p.userId === S.user.id);
@@ -2073,9 +1917,6 @@ function viewDashboard(){
   </div>`;
 }
 
-/* ---------------------------------------------------------------------------
-   17. VIEW: REPOSITORIES
-   --------------------------------------------------------------------------- */
 function viewRepos(){
   const repos = myRepos();
   return `
@@ -2115,9 +1956,6 @@ function viewRepos(){
   `;
 }
 
-/* ---------------------------------------------------------------------------
-   18. VIEW: REPOSITORY DETAIL
-   --------------------------------------------------------------------------- */
 function viewRepo(tab){
   const r = S.currentRepo;
   if (!r) return viewEmptyState('search-x','Repository tidak ditemukan','Repository tidak tersedia.','Ke Repositories','#/repos');
@@ -2178,7 +2016,6 @@ function viewRepo(tab){
   <div id="repo-body">${body}</div>`;
 }
 
-/* --- Tab: Code --- */
 function repoCodeTab(r){
   const branches = repoBranches(r.id);
   const files = repoFiles(r.id, S.currentBranch);
@@ -2269,7 +2106,6 @@ function renderTree(node, repoId, depth=0, prefix=''){
   return html;
 }
 
-/* --- Tab: Issues --- */
 function repoIssuesTab(r, issues){
   return `
   <div class="row-between mb-2">
@@ -2295,7 +2131,6 @@ function repoIssuesTab(r, issues){
   }).join('')}</div>` : viewEmptyState('circle-dot','Tidak ada issue','Belum ada issue untuk repository ini.')}`;
 }
 
-/* --- Tab: Pull Requests --- */
 function repoPRsTab(r, prs){
   return `
   <div class="row-between mb-2">
@@ -2330,7 +2165,6 @@ function repoPRsTab(r, prs){
   }).join('')}</div>` : viewEmptyState('git-pull-request','Tidak ada pull request','Belum ada PR untuk repository ini.')}`;
 }
 
-/* --- Tab: Actions --- */
 function repoActionsTab(r){
   const deps = repoDeployments(r.id);
   const commits = repoCommits(r.id);
@@ -2373,7 +2207,6 @@ function repoActionsTab(r){
     </div>`).join('')}</div>` : `<p class="small muted">Belum ada deployment.</p>`}`;
 }
 
-/* --- Tab: Projects (repo) --- */
 function repoProjectsTab(r){
   const projects = Store.projects().filter(p => p.userId === r.ownerId);
   return `
@@ -2384,7 +2217,6 @@ function repoProjectsTab(r){
   ${projects.length ? renderKanban(projects[0]) : viewEmptyState('kanban','Belum ada project','Buat project board untuk mengelola tugas.','Ke Projects','#/projects')}`;
 }
 
-/* --- Tab: Settings --- */
 function repoSettingsTab(r){
   if (!canEdit(r)) return viewEmptyState('lock','Akses ditolak','Anda bukan pemilik repository ini.');
   return `
@@ -2417,9 +2249,6 @@ function repoSettingsTab(r){
   </section>`;
 }
 
-/* ---------------------------------------------------------------------------
-   19. VIEW: PROJECTS
-   --------------------------------------------------------------------------- */
 function viewProjects(){
   const projects = Store.projects().filter(p => p.userId === S.user.id);
   return `
@@ -2466,9 +2295,6 @@ function renderKanban(p){
   </div>`;
 }
 
-/* ---------------------------------------------------------------------------
-   20. VIEW: DEPLOYMENTS
-   --------------------------------------------------------------------------- */
 function viewDeployments(){
   const repos = myRepos();
   const deps = Store.deployments().filter(d => repos.some(r => r.id === d.repoId)).sort((a,b)=>b.createdAt-a.createdAt);
@@ -2517,9 +2343,6 @@ function viewDeployments(){
   }).join('')}</div>` : viewEmptyState('rocket','Belum ada deployment','Deployment akan muncul setelah Anda menjalankan build.')}`;
 }
 
-/* ---------------------------------------------------------------------------
-   21. VIEW: ACTIVITY
-   --------------------------------------------------------------------------- */
 function viewActivity(){
   const repos = myRepos();
   const items = [];
@@ -2569,9 +2392,6 @@ function viewActivity(){
     : viewEmptyState('activity','Belum ada aktivitas','Aktivitas akan muncul setelah Anda mulai berkontribusi.')}`;
 }
 
-/* ---------------------------------------------------------------------------
-   22. VIEW: ALL ISSUES / ALL PRS
-   --------------------------------------------------------------------------- */
 function viewAllIssues(){
   const repos = myRepos();
   const issues = Store.issues().filter(i => repos.some(r=>r.id===i.repoId)).sort((a,b)=>b.createdAt-a.createdAt);
@@ -2612,9 +2432,6 @@ function viewAllPRs(){
   }).join('')}</div>` : viewEmptyState('git-pull-request','Belum ada pull request','Pull request akan muncul di sini.')}`;
 }
 
-/* ---------------------------------------------------------------------------
-   23. VIEW: SETTINGS
-   --------------------------------------------------------------------------- */
 function viewSettings(){
   const s = S.settings;
   return `
@@ -2677,7 +2494,7 @@ function viewSettings(){
       </label>
       <label class="field" style="display:flex;align-items:center;gap:10px;cursor:pointer">
         <input type="checkbox" id="set-minimap" ${s.minimap?'checked':''}>
-        <span class="lbl" style="margin:0">${icon('map')} Minimap (CodeMirror tidak mendukung; disimpan sebagai preferensi)</span>
+        <span class="lbl" style="margin:0">${icon('map')} Minimap (disimpan sebagai preferensi)</span>
       </label>
     </section>
 
@@ -2698,7 +2515,6 @@ function viewSettings(){
           <div class="li-sub">${fmtDate(now())}</div>
         </div>
       </div>
-      <p class="hint mt-2">Catatan: NEV CODE ini adalah demo front-end. Otentikasi, rate limiting, CSRF, dan hashing password yang aman harus diimplementasikan di backend produksi.</p>
     </section>
 
     <section class="card">
@@ -2712,16 +2528,12 @@ function viewSettings(){
   </div>`;
 }
 
-/* ---------------------------------------------------------------------------
-   24. VIEW: PROFILE
-   --------------------------------------------------------------------------- */
 function viewProfile(){
   const repos = myRepos();
   const projects = Store.projects().filter(p => p.userId === S.user.id);
   const commits = Store.commits().filter(c => c.authorId === S.user.id);
   const joined = new Date(S.user.createdAt).toLocaleDateString('id-ID',{month:'long',year:'numeric'});
 
-  // Contribution graph: 26 minggu x 7 hari
   const weeks = 26;
   const dayMs = 86400000;
   const today = new Date(); today.setHours(0,0,0,0);
@@ -2786,9 +2598,6 @@ function viewProfile(){
   </section>`;
 }
 
-/* ---------------------------------------------------------------------------
-   25. VIEW: HELP
-   --------------------------------------------------------------------------- */
 function viewHelp(){
   const shortcuts = [
     ['Ctrl + S','Simpan file aktif'],
@@ -2822,15 +2631,12 @@ function viewHelp(){
       NEV CODE yang Anda gunakan adalah implementasi front-end demo.
       Data (akun, repository, file, commit, issue, PR, deployment) disimpan di
       <b>localStorage</b> browser Anda, sehingga tidak dikirim ke server mana pun.
-      Fitur seperti deployment nyata, reset password via email, dan kolaborasi
-      multi-pengguna memerlukan backend dan ditandai sebagai <b>Demo/Prototype</b>.
+      Gunakan tombol <b>Share</b> di repository untuk membuat link publik yang dapat
+      dibagikan — link tersebut mengemas seluruh isi repository dalam URL.
     </p>
   </section>`;
 }
 
-/* ---------------------------------------------------------------------------
-   26. VIEW: EXPLORER PICKER / EDITOR PICKER
-   --------------------------------------------------------------------------- */
 function viewExplorerPicker(){
   const repos = myRepos();
   return `
@@ -2867,9 +2673,6 @@ function viewEditorPicker(){
     : viewEmptyState('code-2','Belum ada repository','Buat repository untuk mulai menulis kode.','Ke Repositories','#/repos')}`;
 }
 
-/* ---------------------------------------------------------------------------
-   27. AFTER RENDER — EVENT BINDING
-   --------------------------------------------------------------------------- */
 function afterRouteRender(){
   const name = S.route.name;
   if (name === 'dashboard') bindDashboard();
@@ -2879,15 +2682,14 @@ function afterRouteRender(){
   if (name === 'deployments') bindDeployments();
   if (name === 'settings') bindSettings();
   if (name === 'profile') bindProfile();
+  if (name === 'view') bindSharedView();
 }
 
-/* --- Dashboard --- */
 function bindDashboard(){
   const b = $('#dash-new-repo');
   if (b) b.addEventListener('click', () => openCreateRepoSheet());
 }
 
-/* --- Repos --- */
 function bindRepos(){
   const b = $('#new-repo-btn');
   if (b) b.addEventListener('click', () => openCreateRepoSheet());
@@ -2899,13 +2701,11 @@ function bindRepos(){
   });
 }
 
-/* --- Repo detail --- */
 function bindRepo(){
   const r = S.currentRepo;
   if (!r) return;
   const tab = S.route.params.tab;
 
-  // Star / Fork / Share
   const star = $('#repo-star');
   if (star) star.addEventListener('click', () => {
     const repos = Store.repos();
@@ -2928,26 +2728,48 @@ function bindRepo(){
     router();
   });
   const share = $('#repo-share');
-  if (share) share.addEventListener('click', () => {
-    const url = location.origin + location.pathname + '#/repo/' + r.id;
-    openSheet({
-      title:'Bagikan repository', iconName:'share-2',
-      body:`<p class="small muted mb-2">Salin tautan berikut untuk membagikan repository.</p>
-        <div class="row gap-sm">
-          <input class="input mono" id="share-url" value="${esc(url)}" readonly style="font-size:12.5px">
-        </div>`,
-      footer:`<button class="btn btn-primary btn-block" id="copy-share">${icon('copy')} Salin tautan</button>`,
-      onMount(root){
-        $('#copy-share', root).addEventListener('click', async () => {
-          try { await navigator.clipboard.writeText(url); toast('success','Tersalin','Tautan disalin ke clipboard.'); }
-          catch { toast('warning','Gagal menyalin','Salin manual dari kolom input.'); }
-          closeSheet();
-        });
-      }
-    });
+  if (share) share.addEventListener('click', async () => {
+    toast('info','Membuat link', 'Mengemas repository...');
+    try {
+      const encoded = await encodeRepo(r.id);
+      const url = location.origin + location.pathname + '#/v/' + encoded;
+      const size = url.length;
+      openSheet({
+        title:'Bagikan repository', iconName:'share-2',
+        body:`
+          <p class="small muted mb-2">Salin tautan ini dan bagikan ke siapa saja. Penerima dapat melihat seluruh isi repository tanpa perlu akun.</p>
+          <label class="field">
+            <span class="lbl">${icon('link')} Link publik</span>
+            <textarea class="textarea mono" id="share-url" readonly style="font-size:11.5px;min-height:100px">${esc(url)}</textarea>
+          </label>
+          <div class="badge-row">
+            <span class="badge">${icon('ruler')} ${size.toLocaleString('id-ID')} karakter</span>
+            ${size > 8000 ? `<span class="badge badge-warning">${icon('triangle-alert')} Link panjang</span>` : ''}
+          </div>
+          ${size > 8000 ? `<p class="hint mt-2">Link sangat panjang. Beberapa aplikasi (WhatsApp, SMS) mungkin memotongnya. Kirim via email atau clipboard.</p>` : ''}
+        `,
+        footer:`<button class="btn" data-close-sheet>Batal</button>
+          <button class="btn btn-primary" id="copy-share">${icon('copy')} Salin</button>`,
+        onMount(root){
+          $('#copy-share', root).addEventListener('click', async () => {
+            try {
+              await navigator.clipboard.writeText(url);
+              toast('success','Tersalin', 'Link siap dibagikan.');
+            } catch {
+              const ta = $('#share-url', root);
+              ta.select();
+              document.execCommand('copy');
+              toast('info','Tersalin', 'Tekan Ctrl+V untuk paste.');
+            }
+            closeSheet();
+          });
+        }
+      });
+    } catch(e){
+      toast('error','Gagal', 'Tidak dapat membuat link: ' + e.message);
+    }
   });
 
-  // Code tab
   if (tab === 'code' || !tab){
     const tree = $('#file-tree');
     if (tree) tree.innerHTML = renderTree(buildFileTree(repoFiles(r.id, S.currentBranch)), r.id);
@@ -2960,7 +2782,6 @@ function bindRepo(){
         const kids = $(`[data-children="${CSS.escape(path)}"]`);
         if (kids){
           kids.classList.toggle('hide');
-          const chev = el.querySelector('.ficon svg, .ficon i');
           el.querySelector('.ficon').innerHTML = icon(kids.classList.contains('hide') ? 'chevron-right' : 'chevron-down');
           refreshIcons();
         }
@@ -3053,7 +2874,6 @@ function bindRepo(){
   }
 }
 
-/* --- Projects --- */
 function bindProjects(){
   const b = $('#new-project-btn');
   if (b) b.addEventListener('click', openNewProjectSheet);
@@ -3101,13 +2921,11 @@ function moveTask(projectId, taskId, toCol){
   router();
 }
 
-/* --- Deployments --- */
 function bindDeployments(){
   const b = $('#new-deploy-btn');
   if (b) b.addEventListener('click', openDeploySheet);
 }
 
-/* --- Settings --- */
 function bindSettings(){
   const acc = $('#save-account');
   if (acc) acc.addEventListener('click', () => {
@@ -3185,12 +3003,190 @@ function bindSettings(){
   });
 }
 
-/* --- Profile --- */
-function bindProfile(){ /* nothing extra */ }
+function bindProfile(){ }
 
 /* ---------------------------------------------------------------------------
-   28. SHEETS: CREATE REPO / NEW FILE / UPLOAD / COMMIT / ISSUE / PR / DEPLOY
+   SHARE LINK — Encode/Decode Repository
    --------------------------------------------------------------------------- */
+async function encodeRepo(repoId){
+  const repo = getRepo(repoId);
+  if (!repo) throw new Error('Repository tidak ditemukan');
+  const files = Store.files().filter(f => f.repoId === repoId);
+  const commits = Store.commits().filter(c => c.repoId === repoId);
+  const branches = Store.branches().filter(b => b.repoId === repoId);
+  const payload = {
+    v: 1,
+    repo: { name: repo.name, description: repo.description || '',
+      defaultBranch: repo.defaultBranch || 'main', language: repo.language || '' },
+    author: S.user ? S.user.username : 'anonymous',
+    files: files.map(f => ({ path: f.path, branch: f.branch, content: f.content })),
+    commits: commits.map(c => ({ id: c.id, branch: c.branch, message: c.message,
+      date: c.date, additions: c.additions, deletions: c.deletions, files: c.files,
+      author: (getUser(c.authorId) || {}).username || '?' })),
+    branches: branches.map(b => ({ name: b.name }))
+  };
+  const json = JSON.stringify(payload);
+  const bytes = new TextEncoder().encode(json);
+  let compressed;
+  if (typeof CompressionStream !== 'undefined'){
+    try {
+      const cs = new CompressionStream('gzip');
+      const writer = cs.writable.getWriter();
+      writer.write(bytes); writer.close();
+      const blob = await new Response(cs.readable).blob();
+      compressed = new Uint8Array(await blob.arrayBuffer());
+    } catch(e){ compressed = bytes; }
+  } else { compressed = bytes; }
+  let binary = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < compressed.length; i += chunk)
+    binary += String.fromCharCode.apply(null, compressed.subarray(i, i + chunk));
+  return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+async function decodeRepo(encoded){
+  const b64 = encoded.replace(/-/g,'+').replace(/_/g,'/');
+  const padded = b64 + '==='.slice((b64.length + 3) % 4);
+  const binary = atob(padded);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  let text;
+  if (typeof DecompressionStream !== 'undefined'){
+    try {
+      const ds = new DecompressionStream('gzip');
+      const writer = ds.writable.getWriter();
+      writer.write(bytes); writer.close();
+      const blob = await new Response(ds.readable).blob();
+      text = await blob.text();
+    } catch(e){ text = new TextDecoder().decode(bytes); }
+  } else { text = new TextDecoder().decode(bytes); }
+  return JSON.parse(text);
+}
+function viewSharedRepoView(){
+  const data = window.__sharedData;
+  if (!data) return viewEmptyState('triangle-alert','Data tidak ditemukan','Link tidak valid atau rusak.');
+  const repo = data.repo;
+  const files = data.files || [];
+  const commits = (data.commits || []).sort((a,b) => b.date - a.date);
+  const defaultBranch = repo.defaultBranch || 'main';
+  const branchFiles = files.filter(f => f.branch === defaultBranch);
+  window.__sharedFiles = branchFiles;
+  const readme = branchFiles.find(f => f.path.toLowerCase() === 'readme.md');
+  return `
+  <div class="page-head">
+    <div style="min-width:0">
+      <div class="row small muted mb-1" style="gap:6px">${icon('link')}<span>Shared Repository</span></div>
+      <h1 style="font-size:19px">
+        ${icon('folder-git-2')}
+        <span class="truncate">${esc(repo.name)}</span>
+        <span class="badge badge-primary">${icon('globe')} Public Link</span>
+      </h1>
+      ${repo.description ? `<p class="sub" style="margin-top:6px">${esc(repo.description)}</p>` : ''}
+    </div>
+    <div class="row wrap gap-sm">
+      <button class="btn btn-sm" id="sv-download">${icon('download')} Unduh JSON</button>
+      <button class="btn btn-sm btn-primary" id="sv-import">${icon('download-cloud')} Salin ke akun saya</button>
+    </div>
+  </div>
+  <div class="card mb-2" style="padding:12px">
+    <div class="row wrap gap-sm">
+      <span class="badge">${icon('user')} ${esc(data.author || 'anonymous')}</span>
+      <span class="badge">${icon('git-branch')} ${esc(defaultBranch)}</span>
+      <span class="badge">${icon('file')} ${branchFiles.length} file</span>
+      <span class="badge">${icon('git-commit-horizontal')} ${commits.length} commit</span>
+    </div>
+  </div>
+  <section class="card" style="padding:0;overflow:hidden;margin-bottom:14px">
+    <div class="row-between" style="padding:12px 14px;border-bottom:1px solid var(--border)">
+      <div class="row small" style="gap:8px;font-weight:600">${icon('folder-tree')} File</div>
+      <span class="tiny muted">${branchFiles.length} file</span>
+    </div>
+    <div id="sv-tree" style="padding:6px">
+      ${branchFiles.map((f, i) => `
+        <div class="file-row" data-sv-file="${i}" style="cursor:pointer">
+          <span class="ficon">${icon(fileIcon(f.path))}</span>
+          <span class="fname">${esc(f.path)}</span>
+        </div>
+      `).join('') || '<p class="small muted" style="padding:12px">Tidak ada file.</p>'}
+    </div>
+  </section>
+  ${readme ? `<section class="card mb-3">
+    <div class="row small mb-2" style="gap:8px;font-weight:600;color:var(--muted)">${icon('book-open')} README.md</div>
+    <div class="md">${renderMarkdown(readme.content)}</div>
+  </section>` : ''}
+  ${commits.length ? `<section class="card">
+    <h3 style="font-size:15px;display:flex;align-items:center;gap:8px;margin-bottom:12px">${icon('history')} Commit History</h3>
+    <div class="stack" style="gap:8px">
+      ${commits.slice(0, 20).map(c => `
+        <div class="list-item" style="cursor:default">
+          <div class="li-icon">${icon('git-commit-horizontal')}</div>
+          <div class="li-main">
+            <div class="li-title truncate">${esc(c.message)}</div>
+            <div class="li-sub">${esc(c.author)} • ${timeAgo(c.date)}</div>
+          </div>
+          <span class="badge mono">${esc((c.id || '').slice(0,7))}</span>
+        </div>
+      `).join('')}
+    </div>
+  </section>` : ''}`;
+}
+function bindSharedView(){
+  const data = window.__sharedData;
+  if (!data) return;
+  const files = window.__sharedFiles || [];
+  $$('[data-sv-file]').forEach(el => el.addEventListener('click', () => {
+    const f = files[+el.dataset.svFile];
+    if (!f) return;
+    openSheet({
+      title: f.path.split('/').pop(), iconName: fileIcon(f.path),
+      body: `<pre class="mono" style="font-size:12px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:12px;overflow-x:auto;white-space:pre-wrap;max-height:60vh">${esc(f.content)}</pre>`
+    });
+  }));
+  const dl = $('#sv-download');
+  if (dl) dl.addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (data.repo.name || 'repo') + '.json';
+    a.click(); URL.revokeObjectURL(a.href);
+  });
+  const im = $('#sv-import');
+  if (im) im.addEventListener('click', () => {
+    if (!S.user) return toast('warning','Login dulu','Masuk atau daftar untuk menyalin repository.');
+    confirmSheet({
+      title:'Salin ke akun saya', confirmText:'Salin',
+      message:`Repository "${data.repo.name}" beserta semua file akan disalin ke akun Anda.`,
+      onConfirm(){
+        const repoId = uid('r');
+        const repos = Store.repos();
+        repos.push({ id: repoId, ownerId: S.user.id,
+          name: data.repo.name + '-copy', description: data.repo.description || '',
+          visibility: 'public', defaultBranch: data.repo.defaultBranch || 'main',
+          createdAt: now(), updatedAt: now(), stars: 0, forks: 0,
+          language: data.repo.language || '' });
+        Store.setRepos(repos);
+        const files2 = Store.files();
+        (data.files || []).forEach(f => files2.push({
+          id: uid('f'), repoId, branch: f.branch, path: f.path,
+          content: f.content, updatedAt: now() }));
+        Store.setFiles(files2);
+        const branches = Store.branches();
+        (data.branches || []).forEach(b => branches.push({
+          id: uid('b'), repoId, name: b.name, createdAt: now() }));
+        Store.setBranches(branches);
+        const commits = Store.commits();
+        (data.commits || []).forEach(c => commits.push({
+          id: c.id, repoId, branch: c.branch, message: c.message,
+          authorId: S.user.id, date: c.date,
+          additions: c.additions || 0, deletions: c.deletions || 0,
+          files: c.files || [] }));
+        Store.setCommits(commits);
+        toast('success','Tersalin!','Repository masuk ke akun Anda.');
+        navigate('/repo/' + repoId);
+      }
+    });
+  });
+}
+
 function openCreateRepoSheet(){
   const templates = [
     ['empty','Kosong','Repository tanpa file awal.'],
@@ -3336,11 +3332,14 @@ function openRepoMenu(repoId){
       <button class="menu-item" id="rm-copy">${icon('copy')} Salin nama</button>
       ${canEdit(r) ? `<button class="menu-item danger" id="rm-delete">${icon('trash-2')} Hapus repository</button>` : ''}`,
     onMount(root){
-      $('#rm-share', root).addEventListener('click', () => {
-        const url = location.origin + location.pathname + '#/repo/' + r.id;
-        navigator.clipboard?.writeText(url);
-        toast('success','Tersalin','Tautan repository disalin.');
+      $('#rm-share', root).addEventListener('click', async () => {
         closeSheet();
+        try {
+          const encoded = await encodeRepo(r.id);
+          const url = location.origin + location.pathname + '#/v/' + encoded;
+          try { await navigator.clipboard.writeText(url); toast('success','Tersalin','Link publik disalin ke clipboard.'); }
+          catch { toast('info','Link dibuat','Salin dari console atau buka Share di repository.'); }
+        } catch(e){ toast('error','Gagal', e.message); }
       });
       $('#rm-copy', root).addEventListener('click', () => {
         navigator.clipboard?.writeText(r.name);
@@ -3670,7 +3669,6 @@ function openBranchSheet(){
               if (!name) return toast('error','Nama kosong','');
               if (repoBranches(r.id).some(b => b.name === name)) return toast('error','Branch sudah ada','');
               Store.setBranches([...Store.branches(), { id: uid('b'), repoId: r.id, name, createdAt: now() }]);
-              // copy files dari branch saat ini
               const files = Store.files();
               repoFiles(r.id, S.currentBranch).forEach(f => {
                 files.push({ id: uid('f'), repoId: r.id, branch: name, path: f.path, content: f.content, updatedAt: now() });
@@ -3939,7 +3937,6 @@ function mergePR(prId){
   confirmSheet({
     title:'Merge pull request', confirmText:'Merge', message:`Merge "${p.fromBranch}" ke "${p.toBranch}"?`,
     onConfirm(){
-      // Copy files dari fromBranch ke toBranch
       const files = Store.files();
       repoFiles(p.repoId, p.fromBranch).forEach(src => {
         const idx = files.findIndex(f => f.repoId === p.repoId && f.branch === p.toBranch && f.path === src.path);
@@ -4004,7 +4001,6 @@ function openDeploySheet(){
         toast('info','Build dimulai', 'Menjalankan build...');
         router();
 
-        // Simulasi: selesai setelah 1.6s (DEMO)
         setTimeout(() => {
           const list = Store.deployments();
           const d = list.find(x => x.id === id);
@@ -4154,9 +4150,6 @@ function openTaskMenu(projectId, taskId){
   });
 }
 
-/* ---------------------------------------------------------------------------
-   29. COMMIT HELPER
-   --------------------------------------------------------------------------- */
 function addCommit(repoId, branch, message, files, additions, deletions){
   const id = uid('c').slice(0,7);
   const commits = Store.commits();
@@ -4176,16 +4169,11 @@ function addCommit(repoId, branch, message, files, additions, deletions){
   return id;
 }
 
-/* ---------------------------------------------------------------------------
-   30. DOWNLOAD REPO (ZIP sederhana — fallback ke JSON karena tanpa library zip)
-   --------------------------------------------------------------------------- */
 function downloadRepoZip(){
   const r = S.currentRepo;
   if (!r) return;
   const files = repoFiles(r.id, S.currentBranch);
   if (!files.length) return toast('warning','Repository kosong','Tidak ada file untuk diunduh.');
-
-  // Demo: unduh sebagai file .json berisi struktur. Untuk ZIP nyata butuh library zip.
   const payload = {
     repository: r.name,
     branch: S.currentBranch,
@@ -4197,12 +4185,9 @@ function downloadRepoZip(){
   a.download = `${r.name}-${S.currentBranch}.json`;
   a.click();
   URL.revokeObjectURL(a.href);
-  toast('info','Unduhan dimulai', 'Demo: file diekspor sebagai JSON (ZIP butuh library tambahan).');
+  toast('info','Unduhan dimulai', 'Demo: file diekspor sebagai JSON.');
 }
 
-/* ---------------------------------------------------------------------------
-   31. EDITOR (CodeMirror)
-   --------------------------------------------------------------------------- */
 function openEditor(repoId, branch, filePath){
   const repo = getRepo(repoId);
   if (!repo) return;
@@ -4372,7 +4357,6 @@ function openEditor(repoId, branch, filePath){
     router();
   }
 
-  // Bind toolbar
   $('#ed-close').addEventListener('click', () => {
     if (dirty){
       confirmSheet({
@@ -4458,7 +4442,6 @@ function openEditor(repoId, branch, filePath){
     let html = '';
     if (path.endsWith('.html')){
       html = cm.getValue();
-      // Inline css/js
       const cssFiles = allFiles.filter(f => f.path.endsWith('.css'));
       const jsFiles  = allFiles.filter(f => f.path.endsWith('.js'));
       cssFiles.forEach(f => {
@@ -4478,14 +4461,6 @@ function openEditor(repoId, branch, filePath){
   renderTabs();
   updateStatus();
   window.__edSave = saveFile;
-
-  // Close editor when route changes
-  function onHashChange(){
-    if (!location.hash.startsWith('#/editor') && !location.hash.includes('/code')){
-      // leave
-    }
-  }
-  window.addEventListener('hashchange', onHashChange, { once:true });
 }
 
 function showPreviewFrame(html){
@@ -4535,7 +4510,6 @@ function openPreview(repoId){
   let html = files.find(f => f.path === 'index.html');
   if (!html) html = files.find(f => f.path.endsWith('.html'));
   if (!html){
-    // fallback: tampilkan daftar file
     showPreviewFrame(`<!DOCTYPE html><html><body style="font-family:system-ui;padding:24px;background:#0a0a0f;color:#e7e7ef">
       <h2 style="margin:0 0 10px">Tidak ada index.html</h2>
       <p style="color:#8b8b9c">Repository ini tidak memiliki file HTML untuk dipratinjau.</p>
@@ -4557,9 +4531,6 @@ function openPreview(repoId){
   showPreviewFrame(content);
 }
 
-/* ---------------------------------------------------------------------------
-   32. TERMINAL
-   --------------------------------------------------------------------------- */
 const termState = { cwd:'/', history:[], hIndex:-1 };
 function openTerminal(){
   const root = $('#overlay-root');
@@ -4652,7 +4623,7 @@ function openTerminal(){
         termPrint('  repo              info repository aktif');
         break;
       case 'ls':
-        if (!r) return termPrint('(tidak ada repository aktif — buka repository terlebih dahulu)', 'tk-w');
+        if (!r) return termPrint('(tidak ada repository aktif)', 'tk-w');
         if (!files.length) return termPrint('(kosong)');
         files.forEach(f => termPrint('  ' + f.path));
         break;
@@ -4716,9 +4687,6 @@ function openTerminal(){
   }
 }
 
-/* ---------------------------------------------------------------------------
-   33. SEARCH
-   --------------------------------------------------------------------------- */
 function openSearch(){
   const root = $('#overlay-root');
   root.innerHTML = `
@@ -4726,16 +4694,11 @@ function openSearch(){
       <div class="search-head">
         <button class="icon-btn" id="sr-close" aria-label="Tutup">${icon('arrow-left')}</button>
         <div class="grow rel">
-          ${icon('search')}
-          <input class="input" id="sr-input" placeholder="Cari repository, file, user, issue, commit..." autocomplete="off" style="padding-left:38px">
-          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;display:grid;place-items:center">${icon('search')}</span>
+          <input class="input" id="sr-input" placeholder="Cari repository, file, user, issue, commit..." autocomplete="off">
         </div>
       </div>
       <div class="search-body" id="sr-body"></div>
     </div>`;
-  // Perbaiki ikon ganda
-  $('#sr-input').parentElement.querySelector('span').innerHTML = '';
-  $('#sr-input').parentElement.querySelector('span').remove();
   refreshIcons();
 
   const input = $('#sr-input');
@@ -4844,9 +4807,6 @@ function openSearch(){
   setTimeout(() => input.focus(), 80);
 }
 
-/* ---------------------------------------------------------------------------
-   34. NOTIFICATIONS
-   --------------------------------------------------------------------------- */
 function openNotifications(){
   const root = $('#overlay-root');
   root.innerHTML = `
@@ -4923,9 +4883,6 @@ function openNotifications(){
   render();
 }
 
-/* ---------------------------------------------------------------------------
-   35. COMMAND PALETTE
-   --------------------------------------------------------------------------- */
 function openCommandPalette(){
   const root = $('#overlay-root');
   const cmds = [
@@ -5002,9 +4959,6 @@ function openCommandPalette(){
   setTimeout(() => input.focus(), 60);
 }
 
-/* ---------------------------------------------------------------------------
-   36. THEME
-   --------------------------------------------------------------------------- */
 function applyTheme(){
   const t = S.settings.theme || 'dark';
   document.documentElement.setAttribute('data-theme', t);
@@ -5026,9 +4980,6 @@ function toggleTheme(){
   toast('info','Tema diganti', s.theme === 'light' ? 'Mode terang' : 'Mode gelap');
 }
 
-/* ---------------------------------------------------------------------------
-   37. GLOBAL KEYBOARD SHORTCUTS
-   --------------------------------------------------------------------------- */
 document.addEventListener('keydown', e => {
   const mod = e.ctrlKey || e.metaKey;
   const tag = (e.target.tagName || '').toLowerCase();
@@ -5059,38 +5010,43 @@ document.addEventListener('keydown', e => {
       if (root.innerHTML){ closeAllOverlays(); }
     }
   }
-  // Ctrl+/ toggle comment in editor
   if (mod && e.key === '/' && cmFocused){
     e.preventDefault();
     S.cm.execCommand('toggleComment');
   }
 });
 
-/* ---------------------------------------------------------------------------
-   38. INIT
-   --------------------------------------------------------------------------- */
 function init(){
   seedIfNeeded();
   applyTheme();
   applyAccent();
   Auth.restore();
-
-  // Pastikan S.settings sinkron
   S.settings = Store.settings();
 
   if (!location.hash) location.hash = S.user ? '#/dashboard' : '#/';
   router();
-
-  // Handle editor route — buka editor setelah render
-  window.addEventListener('hashchange', () => {
-    // Jika route adalah editor spesifik
-  });
 }
 
-// Ekstensi router: tangani #/editor/{repoId}/{branch}/{path}
 const _origRouter = router;
 router = function(){
   const parts = parseHash();
+
+  // Shared view route — accessible tanpa login
+  if (parts[0] === 'v' && parts[1]){
+    (async () => {
+      try {
+        const data = await decodeRepo(parts[1]);
+        window.__sharedData = data;
+        S.route = { name:'view' };
+        renderApp();
+      } catch(e){
+        S.route = { name:'notfound' };
+        renderApp('Link tidak valid', 'Link rusak atau tidak dapat dibuka.');
+      }
+    })();
+    return;
+  }
+
   if (parts[0] === 'editor' && parts[1] && parts[2] && parts[3]){
     const repo = getRepo(parts[1]);
     if (!repo || !canAccess(repo)){ navigate('/repos'); return; }
@@ -5124,15 +5080,12 @@ router = function(){
   return _origRouter();
 };
 
-// Override: bindRepo 'code' tab juga harus membuka editor saat file diklik (href sudah menangani)
-
 init();
 
-// Refresh icons secara periodik untuk konten dinamis
 const iconObserver = new MutationObserver(debounce(() => refreshIcons(), 80));
 iconObserver.observe(document.body, { childList:true, subtree:true });
 
 })();
 </script>
 </body>
-  </html>
+   </html>
