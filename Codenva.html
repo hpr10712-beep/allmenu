@@ -69,14 +69,14 @@ ul{margin:0;padding:0;list-style:none}
   min-height:40px;padding:0 16px;border-radius:10px;
   background:var(--card-2);border:1px solid var(--border);
   font-size:14px;font-weight:500;color:var(--fg);
-  transition:background .15s ease,border-color .15s ease,transform .1s ease,opacity .15s;
+  transition:background .15s ease,border-color .15s ease,transform .1s ease,opacity .15s,box-shadow .2s;
   white-space:nowrap;user-select:none;
 }
 .btn:hover{background:var(--card-3);border-color:var(--border-2)}
 .btn:active{transform:scale(.97)}
 .btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
-.btn-primary{background:var(--primary);border-color:var(--primary);color:var(--primary-fg)}
-.btn-primary:hover{background:var(--primary-2);border-color:var(--primary-2)}
+.btn-primary{background:var(--primary);border-color:var(--primary);color:var(--primary-fg);box-shadow:0 4px 14px -6px color-mix(in srgb, var(--primary) 70%, transparent)}
+.btn-primary:hover{background:var(--primary-2);border-color:var(--primary-2);box-shadow:0 8px 24px -8px color-mix(in srgb, var(--primary) 85%, transparent);transform:translateY(-1px)}
 .btn-danger{background:var(--danger);border-color:var(--danger);color:#fff}
 .btn-danger:hover{filter:brightness(1.1)}
 .btn-ghost{background:transparent;border-color:transparent}
@@ -85,6 +85,13 @@ ul{margin:0;padding:0;list-style:none}
 .btn-lg{min-height:48px;padding:0 22px;font-size:15px;border-radius:12px}
 .btn-block{width:100%}
 .btn:disabled{opacity:.5;pointer-events:none}
+.btn-google{
+  background:#fff;color:#1f1f1f;border:1px solid #dadce0;font-weight:600;
+}
+.btn-google:hover{background:#f8f9fa;border-color:#c6c6c6;box-shadow:0 2px 6px rgba(60,64,67,.15);transform:translateY(-1px)}
+[data-theme="dark"] .btn-google{background:#1a1a1a;color:#e8eaed;border-color:#3c4043}
+[data-theme="dark"] .btn-google:hover{background:#242424;border-color:#5f6368}
+.btn-google svg{width:18px;height:18px}
 .icon-btn{
   display:inline-flex;align-items:center;justify-content:center;
   width:40px;height:40px;min-width:40px;border-radius:10px;
@@ -156,7 +163,7 @@ label.field > .lbl svg{width:14px;height:14px}
 }
 .logo-mark svg{width:17px;height:17px}
 .nav-public .links{display:none;gap:4px;margin-left:18px}
-.nav-public .links a{padding:8px 12px;border-radius:8px;font-size:14px;color:var(--fg-2);font-weight:500}
+.nav-public .links a{padding:8px 12px;border-radius:8px;font-size:14px;color:var(--fg-2);font-weight:500;transition:background .15s,color .15s}
 .nav-public .links a:hover{background:var(--card-2);color:var(--fg)}
 .nav-actions{margin-left:auto;display:flex;align-items:center;gap:6px}
 .hero{
@@ -170,6 +177,18 @@ label.field > .lbl svg{width:14px;height:14px}
     radial-gradient(650px 340px at 15% -5%, color-mix(in srgb,var(--primary) 22%,transparent), transparent 70%),
     radial-gradient(560px 320px at 92% 12%, color-mix(in srgb,var(--accent) 16%,transparent), transparent 70%);
 }
+.hero-bg::before{
+  content:'';position:absolute;inset:-20%;
+  background:
+    radial-gradient(circle at 25% 30%, color-mix(in srgb,var(--primary) 22%,transparent), transparent 42%),
+    radial-gradient(circle at 75% 70%, color-mix(in srgb,var(--accent) 18%,transparent), transparent 45%);
+  filter:blur(10px);
+  animation:heroFloat 22s ease-in-out infinite;
+}
+@keyframes heroFloat{
+  0%,100%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(2%, -2%) scale(1.06)}
+}
 .hero-grid-lines{
   position:absolute;inset:0;
   background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
@@ -182,25 +201,55 @@ label.field > .lbl svg{width:14px;height:14px}
   display:inline-flex;align-items:center;gap:8px;align-self:flex-start;
   padding:5px 12px;border-radius:999px;font-size:12px;font-weight:600;
   background:var(--card-2);border:1px solid var(--border-2);color:var(--fg-2);
+  box-shadow:0 4px 14px -8px color-mix(in srgb,var(--primary) 60%,transparent);
 }
 .eyebrow svg{width:13px;height:13px;color:var(--primary-2)}
+.eyebrow::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--success);box-shadow:0 0 0 3px color-mix(in srgb,var(--success) 25%,transparent);
+  animation:pulseDot 2s ease infinite;
+}
+@keyframes pulseDot{
+  0%,100%{box-shadow:0 0 0 3px color-mix(in srgb,var(--success) 25%,transparent)}
+  50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--success) 8%,transparent)}
+}
 .hero h1{
   font-size:clamp(34px,9vw,60px);font-weight:700;letter-spacing:-.04em;line-height:1.05;
 }
 .grad-text{
-  background:linear-gradient(120deg,var(--primary-2),var(--accent));
+  background:linear-gradient(120deg,var(--primary-2) 0%,var(--accent) 50%,var(--primary-2) 100%);
+  background-size:200% auto;
   -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:gradientShift 6s ease infinite;
+}
+@keyframes gradientShift{
+  0%,100%{background-position:0% center}
+  50%{background-position:100% center}
 }
 .hero .sub{font-size:clamp(15px,3.6vw,18px);color:var(--fg-2);max-width:560px;line-height:1.6}
 .hero-cta{display:flex;flex-direction:column;gap:10px}
 .hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
-.hero-stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px}
+.hero-stat{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;
+  transition:border-color .2s, transform .2s, box-shadow .2s;
+}
+.hero-stat:hover{border-color:var(--border-2);transform:translateY(-2px);box-shadow:0 10px 24px -14px rgba(0,0,0,.5)}
 .hero-stat b{display:block;font-size:20px;font-weight:700;letter-spacing:-.03em}
 .hero-stat span{font-size:11.5px;color:var(--muted)}
+.trust-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.trust-row .badge{background:color-mix(in srgb,var(--card-2) 80%,transparent);backdrop-filter:blur(6px)}
 .terminal-card{
   background:var(--card);border:1px solid var(--border);
   border-radius:14px;overflow:hidden;box-shadow:var(--shadow);
   font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  position:relative;
+}
+.terminal-card::before{
+  content:'';position:absolute;inset:-1px;border-radius:14px;padding:1px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--primary) 40%,transparent),transparent 40%,color-mix(in srgb,var(--accent) 40%,transparent));
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  pointer-events:none;
 }
 .terminal-bar{
   display:flex;align-items:center;gap:8px;padding:9px 12px;
@@ -264,6 +313,10 @@ label.field > .lbl svg{width:14px;height:14px}
 }
 .auth-card h2{font-size:22px;margin-bottom:6px}
 .auth-card .lead{color:var(--muted);font-size:13.5px;margin-bottom:20px}
+.auth-divider{
+  display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--muted);font-size:12px;
+}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
 .auth-switch{text-align:center;font-size:13.5px;color:var(--muted);margin-top:16px}
 .auth-switch a{color:var(--primary-2);font-weight:600}
 .app{display:flex;min-height:100dvh;width:100%}
@@ -299,7 +352,7 @@ label.field > .lbl svg{width:14px;height:14px}
 .side-foot{padding:10px;border-top:1px solid var(--border);flex-shrink:0}
 .side-user{
   display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;
-  transition:background .14s;min-height:48px;
+  transition:background .14s;min-height:48px;width:100%;text-align:left;
 }
 .side-user:hover{background:var(--card-2)}
 .avatar{
@@ -713,6 +766,9 @@ label.field > .lbl svg{width:14px;height:14px}
 .rel{position:relative}
 .gap-sm{gap:6px}
 .badge-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.account-row{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:10px;border:1px solid var(--border);background:var(--card-2);transition:background .15s,border-color .15s;width:100%;text-align:left}
+.account-row:hover{background:var(--card-3);border-color:var(--border-2)}
+.account-row.current{border-color:var(--primary);background:color-mix(in srgb,var(--primary) 8%,var(--card-2))}
 .md{font-size:14px;line-height:1.75;color:var(--fg-2);word-wrap:break-word}
 .md h1,.md h2,.md h3{color:var(--fg);margin:18px 0 8px;letter-spacing:-.02em}
 .md h1{font-size:22px;border-bottom:1px solid var(--border);padding-bottom:7px}
@@ -908,6 +964,8 @@ const Store = {
   setNotifs:    v  => DB.set('notifs', v),
   session:      () => DB.get('session', null),
   setSession:   v  => DB.set('session', v),
+  sessions:     () => DB.get('sessions', []),
+  setSessions:  v  => DB.set('sessions', v),
   settings:     () => DB.get('settings', { theme:'dark', accent:'#6366f1', editorFont:13, tabSize:2, wordWrap:false, minimap:false }),
   setSettings:  v  => DB.set('settings', v),
   seeded:       () => DB.get('seeded', false),
@@ -1007,6 +1065,21 @@ function confirmSheet({ title='Konfirmasi', message, confirmText='Lanjutkan', da
   });
 }
 
+/* ==== SESSION HELPERS (multi akun) ==== */
+function addSession(userId){
+  const list = Store.sessions().filter(id => id !== userId);
+  list.unshift(userId);
+  Store.setSessions(list);
+  Store.setSession(userId);
+}
+function removeSession(userId){
+  Store.setSessions(Store.sessions().filter(id => id !== userId));
+}
+function activeSessions(){
+  const users = Store.users();
+  return Store.sessions().map(id => users.find(u => u.id === id)).filter(Boolean);
+}
+
 const Auth = {
   register(username, email, password){
     username = username.trim(); email = email.trim().toLowerCase();
@@ -1020,11 +1093,14 @@ const Auth = {
     const user = {
       id: uid('u'), username, email,
       passwordHash: demoHash(password),
-      bio: '', createdAt: now(), avatarColor: pickColor(username)
+      provider: 'local',
+      bio: '', createdAt: now(), avatarColor: pickColor(username),
+      subdomain: username.toLowerCase(),
+      customDomain: ''
     };
     users.push(user);
     Store.setUsers(users);
-    Store.setSession(user.id);
+    addSession(user.id);
     S.user = user;
     pushNotif(user.id, 'user-plus', 'Selamat datang di NEV CODE', 'Mulai dengan membuat repository pertama Anda.', '#/repos');
     return { ok:true, user };
@@ -1034,17 +1110,84 @@ const Auth = {
     const users = Store.users();
     const u = users.find(x => x.email === identifier || x.username.toLowerCase() === identifier);
     if (!u) return { ok:false, msg:'Akun tidak ditemukan.' };
-    if (u.passwordHash !== demoHash(password)) return { ok:false, msg:'Password salah.' };
-    Store.setSession(u.id);
+    if (u.provider === 'google'){
+      // akun Google — password bisa diisi apa saja (atau gunakan Google login)
+      if (password && u.passwordHash && u.passwordHash !== demoHash(password))
+        return { ok:false, msg:'Gunakan tombol Google login untuk akun ini.' };
+    } else if (u.passwordHash !== demoHash(password)) {
+      return { ok:false, msg:'Password salah.' };
+    }
+    addSession(u.id);
     S.user = u;
     return { ok:true, user:u };
   },
+  googleLogin(email, name){
+    email = (email||'').trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { ok:false, msg:'Format email Google tidak valid.' };
+    const users = Store.users();
+    let u = users.find(x => x.email === email);
+    if (!u){
+      let base = (name || email.split('@')[0]).toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,20) || 'user';
+      let username = base, i = 1;
+      while (users.some(x => x.username.toLowerCase() === username.toLowerCase())){
+        username = base + i++;
+      }
+      u = {
+        id: uid('u'),
+        username,
+        email,
+        passwordHash: null,
+        provider: 'google',
+        displayName: name || username,
+        bio: '', createdAt: now(),
+        avatarColor: pickColor(username),
+        subdomain: username.toLowerCase(),
+        customDomain: ''
+      };
+      users.push(u);
+      Store.setUsers(users);
+      pushNotif(u.id, 'sparkles', 'Akun Google terhubung', 'Selamat datang di NEV CODE.', '#/repos');
+    }
+    addSession(u.id);
+    S.user = u;
+    return { ok:true, user:u };
+  },
+  switchTo(userId){
+    const u = Store.users().find(x => x.id === userId);
+    if (!u) return false;
+    addSession(userId);
+    S.user = u;
+    S.currentRepo = null;
+    return true;
+  },
   logout(){
+    const cur = Store.session();
+    if (cur) removeSession(cur);
+    const remaining = Store.sessions();
+    if (remaining.length){
+      const nextUser = Store.users().find(u => u.id === remaining[0]);
+      if (nextUser){
+        Store.setSession(nextUser.id);
+        S.user = nextUser;
+        toast('info','Beralih akun', 'Aktif sebagai ' + nextUser.username + '.');
+        location.hash = '#/dashboard';
+        router();
+        return;
+      }
+    }
     Store.setSession(null);
     S.user = null;
     S.currentRepo = null;
     location.hash = '#/';
     toast('info','Logout berhasil','Sesi Anda telah diakhiri.');
+  },
+  logoutAll(){
+    Store.setSessions([]);
+    Store.setSession(null);
+    S.user = null;
+    S.currentRepo = null;
+    location.hash = '#/';
+    toast('info','Semua akun keluar','Anda telah keluar dari seluruh sesi.');
   },
   restore(){
     const id = Store.session();
@@ -1181,8 +1324,10 @@ function seedIfNeeded(){
   const userId = 'u_demo';
   const user = {
     id: userId, username: 'developer', email: 'dev@nevcode.id',
-    passwordHash: demoHash('password'), bio: 'Full-stack developer. Membangun sesuatu dengan NEV CODE.',
-    createdAt: now() - 86400000*90, avatarColor: '#6366f1'
+    passwordHash: demoHash('password'), provider:'local',
+    bio: 'Full-stack developer. Membangun sesuatu dengan NEV CODE.',
+    createdAt: now() - 86400000*90, avatarColor: '#6366f1',
+    subdomain: 'developer', customDomain: ''
   };
   Store.setUsers([user]);
 
@@ -1440,6 +1585,12 @@ function viewLanding(){
           <div class="hero-stat"><b>3.8k</b><span>Developers</span></div>
           <div class="hero-stat"><b>890</b><span>Deployments</span></div>
         </div>
+        <div class="trust-row">
+          <span class="badge">${icon('shield-check')} SSL Aman</span>
+          <span class="badge">${icon('zap')} Deploy cepat</span>
+          <span class="badge">${icon('git-branch')} Git terintegrasi</span>
+          <span class="badge">${icon('smartphone')} Mobile-first</span>
+        </div>
       </div>
 
       <div class="hero-visual">
@@ -1516,6 +1667,19 @@ function viewAuth(mode){
     <div class="auth-card">
       <h2>${isLogin ? 'Masuk ke akun Anda' : 'Buat akun baru'}</h2>
       <p class="lead">${isLogin ? 'Lanjutkan pekerjaan Anda di NEV CODE.' : 'Gratis, tanpa kartu kredit.'}</p>
+
+      <button class="btn btn-block btn-lg btn-google" id="google-login" type="button">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        <span>${isLogin ? 'Masuk dengan Google' : 'Daftar dengan Google'}</span>
+      </button>
+
+      <div class="auth-divider">atau</div>
+
       <form id="auth-form" novalidate>
         ${isLogin ? `
           <label class="field">
@@ -1587,6 +1751,9 @@ function bindPublic(){
       router();
     });
   }
+
+  const gl = $('#google-login');
+  if (gl) gl.addEventListener('click', openGoogleLoginSheet);
 
   const forgot = $('#forgot');
   if (forgot) forgot.addEventListener('click', () => {
@@ -1670,6 +1837,176 @@ function bindPublic(){
   });
 }
 
+/* ============================================================
+   GOOGLE LOGIN SHEET (simulasi akun picker Google)
+   ============================================================ */
+function openGoogleLoginSheet(){
+  const existingGoogle = Store.users().filter(u => u.provider === 'google').slice(0, 3);
+  openSheet({
+    title:'Sign in with Google', iconName:'chrome',
+    body:`
+      <div class="row" style="gap:10px;align-items:flex-start;margin-bottom:14px">
+        <svg viewBox="0 0 48 48" width="26" height="26" aria-hidden="true" style="flex-shrink:0;margin-top:2px">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        <div class="grow">
+          <div class="small" style="font-weight:600">Lanjutkan ke NEV CODE</div>
+          <div class="tiny muted">Pilih akun Google untuk melanjutkan. Ini demo — tidak ada data yang benar-benar dikirim ke Google.</div>
+        </div>
+      </div>
+
+      ${existingGoogle.length ? `
+        <div class="small mb-2" style="font-weight:600;color:var(--muted)">Pilih akun</div>
+        <div class="stack" style="gap:8px;margin-bottom:14px">
+          ${existingGoogle.map(u => `
+            <button class="account-row" data-google-pick="${esc(u.email)}" data-google-name="${esc(u.displayName||u.username)}">
+              ${avatarHTML(u)}
+              <div class="grow" style="min-width:0">
+                <div class="small truncate" style="font-weight:600">${esc(u.displayName || u.username)}</div>
+                <div class="tiny muted truncate">${esc(u.email)}</div>
+              </div>
+              ${icon('chevron-right')}
+            </button>`).join('')}
+        </div>
+        <div class="auth-divider">atau</div>
+      ` : ''}
+
+      <div class="small mb-2" style="font-weight:600;color:var(--muted)">Gunakan akun lain</div>
+      <label class="field">
+        <span class="lbl">${icon('user')} Nama</span>
+        <input class="input" id="gl-name" placeholder="Nama lengkap" autocomplete="off">
+      </label>
+      <label class="field">
+        <span class="lbl">${icon('mail')} Email Google</span>
+        <input class="input" id="gl-email" type="email" placeholder="nama@gmail.com" autocomplete="off">
+      </label>
+      <div id="gl-error" class="hide mb-2" style="font-size:13px;color:var(--danger);display:flex;gap:7px;align-items:flex-start">
+        ${icon('triangle-alert')}<span></span>
+      </div>
+    `,
+    footer:`<button class="btn" data-close-sheet>Batal</button>
+      <button class="btn btn-primary" id="gl-submit">${icon('log-in')} Lanjutkan</button>`,
+    onMount(root){
+      const doLogin = (email, name) => {
+        const err = $('#gl-error', root);
+        err.classList.add('hide');
+        const res = Auth.googleLogin(email, name);
+        if (!res.ok){ err.classList.remove('hide'); $('span', err).textContent = res.msg; refreshIcons(); return; }
+        closeSheet();
+        toast('success','Masuk dengan Google', 'Selamat datang, ' + res.user.username + '.');
+        navigate('/dashboard');
+        router();
+      };
+      $$('[data-google-pick]', root).forEach(b => b.addEventListener('click', () => {
+        doLogin(b.dataset.googlePick, b.dataset.googleName);
+      }));
+      const submit = () => {
+        const email = $('#gl-email', root).value.trim();
+        const name = $('#gl-name', root).value.trim();
+        doLogin(email, name);
+      };
+      $('#gl-submit', root).addEventListener('click', submit);
+      $('#gl-email', root).addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+      setTimeout(() => { const el = $('#gl-email', root); if (el) el.focus(); }, 100);
+    }
+  });
+}
+
+/* ============================================================
+   ACCOUNT SWITCHER (daftar akun, tambah akun, logout)
+   ============================================================ */
+function openAccountSwitcher(){
+  const accounts = activeSessions();
+  const currentId = S.user ? S.user.id : null;
+
+  openSheet({
+    title:'Akun', iconName:'users',
+    body:`
+      <div class="small mb-2" style="font-weight:600;color:var(--muted)">
+        ${accounts.length} akun terhubung
+      </div>
+      <div class="stack" style="gap:8px">
+        ${accounts.length ? accounts.map(u => {
+          const isCur = u.id === currentId;
+          return `
+            <div class="account-row ${isCur?'current':''}" data-acc-row="${u.id}">
+              <button class="row grow" data-acc-switch="${u.id}" style="gap:11px;text-align:left;min-width:0;flex:1;background:none;border:0;padding:0;color:inherit;cursor:pointer">
+                ${avatarHTML(u)}
+                <div class="grow" style="min-width:0">
+                  <div class="small truncate" style="font-weight:600;display:flex;align-items:center;gap:6px">
+                    ${esc(u.username)}
+                    ${u.provider === 'google' ? `<span class="badge" style="font-size:10px;padding:0 6px">G</span>` : ''}
+                    ${isCur ? `<span class="badge badge-success" style="font-size:10px;padding:0 6px">${icon('check')} Aktif</span>` : ''}
+                  </div>
+                  <div class="tiny muted truncate">${esc(u.email)}</div>
+                </div>
+              </button>
+              ${!isCur ? `<button class="icon-btn" data-acc-remove="${u.id}" aria-label="Hapus dari daftar" data-tip="Keluarkan">${icon('x')}</button>` : ''}
+            </div>
+          `;
+        }).join('') : `<p class="small muted">Belum ada akun.</p>`}
+      </div>
+
+      <div class="divider"></div>
+
+      <button class="menu-item" id="acc-add">${icon('user-plus')} Tambah akun lain</button>
+      <a class="menu-item" href="#/settings">${icon('settings')} Pengaturan akun</a>
+      <button class="menu-item" id="acc-logout">${icon('log-out')} Logout dari akun ini</button>
+      <button class="menu-item danger" id="acc-logout-all">${icon('log-out')} Logout dari semua akun</button>
+    `,
+    onMount(root){
+      $$('[data-acc-switch]', root).forEach(b => b.addEventListener('click', () => {
+        const id = b.dataset.accSwitch;
+        if (id === currentId){ closeSheet(); return; }
+        if (Auth.switchTo(id)){
+          closeSheet();
+          toast('success','Beralih akun','Aktif sebagai ' + S.user.username + '.');
+          navigate('/dashboard');
+          router();
+        }
+      }));
+      $$('[data-acc-remove]', root).forEach(b => b.addEventListener('click', e => {
+        e.stopPropagation();
+        const id = b.dataset.accRemove;
+        removeSession(id);
+        // bersihkan session utama jika sama
+        if (Store.session() === id) Store.setSession(currentId);
+        closeSheet();
+        toast('info','Akun dikeluarkan','Akun dihapus dari daftar sesi.');
+        setTimeout(() => openAccountSwitcher(), 120);
+      }));
+
+      $('#acc-add', root).addEventListener('click', () => {
+        closeSheet();
+        // logout sementara tanpa menghapus akun saat ini, lalu arahkan ke login
+        Store.setSession(null);
+        S.user = null;
+        location.hash = '#/login';
+        router();
+        toast('info','Tambah akun','Silakan masuk dengan akun lain.');
+      });
+      $('#acc-logout', root).addEventListener('click', () => {
+        closeSheet();
+        confirmSheet({
+          title:'Logout', message:'Anda akan keluar dari akun ini.', confirmText:'Logout', danger:true,
+          onConfirm(){ Auth.logout(); }
+        });
+      });
+      $('#acc-logout-all', root).addEventListener('click', () => {
+        closeSheet();
+        confirmSheet({
+          title:'Logout semua akun', danger:true, confirmText:'Logout semua',
+          message:'Anda akan keluar dari seluruh akun yang tersimpan di browser ini.',
+          onConfirm(){ Auth.logoutAll(); }
+        });
+      });
+    }
+  });
+}
+
 const NAV_ITEMS = [
   { id:'dashboard', label:'Dashboard',   icon:'layout-dashboard', href:'#/dashboard' },
   { id:'repos',     label:'Repositories',icon:'git-branch',       href:'#/repos' },
@@ -1719,13 +2056,14 @@ function sidebarHTML(){
       </button>
     </nav>
     <div class="side-foot">
-      <a class="side-user" href="#/profile">
+      <button class="side-user" id="open-accounts" data-tip="Kelola akun">
         ${avatarHTML(S.user)}
         <div class="uinfo grow" style="min-width:0">
           <div class="small truncate" style="font-weight:600">${esc(S.user ? S.user.username : 'Tamu')}</div>
           <div class="tiny muted truncate">${esc(S.user ? S.user.email : 'belum login')}</div>
         </div>
-      </a>
+        ${icon('chevrons-up-down')}
+      </button>
     </div>
   </aside>`;
 }
@@ -1745,7 +2083,7 @@ function topbarHTML(){
         ${icon('bell')}
         <span data-notif-badge class="hide" style="position:absolute;top:4px;right:4px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--danger);color:#fff;font-size:9.5px;font-weight:700;display:grid;place-items:center;line-height:1"></span>
       </button>
-      <a class="icon-btn" href="#/profile" aria-label="Profil">${avatarHTML(S.user,'sm')}</a>
+      <button class="icon-btn" id="open-accounts-top" aria-label="Akun">${avatarHTML(S.user,'sm')}</button>
     </div>
   </header>`;
 }
@@ -1828,6 +2166,10 @@ function bindShell(){
   if (os) os.addEventListener('click', openSearch);
   const on = $('#open-notif');
   if (on) on.addEventListener('click', openNotifications);
+  const oa = $('#open-accounts');
+  if (oa) oa.addEventListener('click', openAccountSwitcher);
+  const oat = $('#open-accounts-top');
+  if (oat) oat.addEventListener('click', openAccountSwitcher);
 }
 
 function openDrawer(){
@@ -1842,13 +2184,14 @@ function openDrawer(){
         <button class="icon-btn" id="drawer-close" aria-label="Tutup menu">${icon('x')}</button>
       </div>
       <nav class="drawer-nav">
-        <div class="row" style="padding:8px 10px 12px;gap:11px">
+        <button class="row" id="drawer-accounts" style="padding:8px 10px 12px;gap:11px;width:100%;text-align:left;border-radius:10px;background:none;border:0;color:inherit;cursor:pointer">
           ${avatarHTML(S.user)}
           <div class="grow" style="min-width:0">
             <div class="small truncate" style="font-weight:600">${esc(S.user ? S.user.username : 'Tamu')}</div>
             <div class="tiny muted truncate">${esc(S.user ? S.user.email : 'belum login')}</div>
           </div>
-        </div>
+          ${icon('chevrons-up-down')}
+        </button>
         <div class="divider" style="margin:0 10px 8px"></div>
         ${NAV_ITEMS.map(i => `
           <a class="side-link ${S.route.name===i.id?'active':''}" href="${i.href}">
@@ -1868,6 +2211,7 @@ function openDrawer(){
   const close = () => closeDrawer();
   $('#drawer-ov').addEventListener('click', close);
   $('#drawer-close').addEventListener('click', close);
+  $('#drawer-accounts').addEventListener('click', () => { close(); openAccountSwitcher(); });
   $('#drawer-theme').addEventListener('click', () => { toggleTheme(); close(); });
   $('#drawer-logout').addEventListener('click', () => {
     close();
@@ -2535,6 +2879,8 @@ function viewAllPRs(){
 
 function viewSettings(){
   const s = S.settings;
+  const sub = (S.user.subdomain || S.user.username.toLowerCase());
+  const dom = S.user.customDomain || '';
   return `
   <div class="page-head">
     <div><h1>${icon('settings')} Settings</h1><p class="sub">Kelola akun, tampilan, dan editor</p></div>
@@ -2555,7 +2901,32 @@ function viewSettings(){
         <span class="lbl">${icon('file-text')} Bio</span>
         <textarea class="textarea" id="acc-bio" placeholder="Ceritakan tentang Anda">${esc(S.user.bio||'')}</textarea>
       </label>
-      <button class="btn btn-primary" id="save-account">${icon('check')} Simpan</button>
+      <div class="row wrap gap-sm">
+        <button class="btn btn-primary" id="save-account">${icon('check')} Simpan</button>
+        <button class="btn" id="open-accounts-settings">${icon('users')} Kelola akun</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3 style="font-size:15px;display:flex;align-items:center;gap:8px;margin-bottom:14px">${icon('globe')} Domain</h3>
+      <label class="field">
+        <span class="lbl">${icon('at-sign')} Subdomain NEV</span>
+        <div class="row" style="gap:0">
+          <input class="input mono" id="set-subdomain" value="${esc(sub)}" placeholder="username" style="border-radius:10px 0 0 10px">
+          <span class="badge" style="border-radius:0 10px 10px 0;height:44px;padding:0 12px;border-left:0;background:var(--card-2)">.nevcode.app</span>
+        </div>
+        <div class="hint">Subdomain default untuk semua repository publik Anda.</div>
+      </label>
+      <label class="field">
+        <span class="lbl">${icon('globe-2')} Custom domain</span>
+        <input class="input mono" id="set-domain" value="${esc(dom)}" placeholder="example.com">
+        <div class="hint">Arahkan DNS CNAME ke <b>pages.nevcode.app</b> lalu masukkan domain Anda di sini.</div>
+      </label>
+      <div class="badge-row mb-2">
+        ${dom ? `<span class="badge badge-success">${icon('check-circle-2')} Custom domain terhubung</span>` : `<span class="badge badge-muted">${icon('circle-dashed')} Belum ada custom domain</span>`}
+        <span class="badge badge-primary">${icon('link')} ${esc(sub)}.nevcode.app</span>
+      </div>
+      <button class="btn btn-primary" id="save-domain">${icon('check')} Simpan domain</button>
     </section>
 
     <section class="card">
@@ -2610,6 +2981,14 @@ function viewSettings(){
         <span class="badge badge-success">${icon('check')} Aktif</span>
       </div>
       <div class="list-item mt-2" style="cursor:default;border:0;background:var(--card-2)">
+        <div class="li-icon">${icon('users')}</div>
+        <div class="li-main">
+          <div class="li-title">Akun tersimpan</div>
+          <div class="li-sub">${activeSessions().length} akun aktif di browser ini</div>
+        </div>
+        <button class="btn btn-sm" id="open-accounts-security">${icon('arrow-right')} Kelola</button>
+      </div>
+      <div class="list-item mt-2" style="cursor:default;border:0;background:var(--card-2)">
         <div class="li-icon">${icon('clock')}</div>
         <div class="li-main">
           <div class="li-title">Login terakhir</div>
@@ -2660,19 +3039,23 @@ function viewProfile(){
   return `
   <div class="page-head">
     <div><h1>${icon('user')} Profil</h1><p class="sub">Bergabung ${joined}</p></div>
-    <a class="btn" href="#/settings">${icon('settings')} Edit profil</a>
+    <div class="row wrap gap-sm">
+      <button class="btn" id="profile-accounts">${icon('users')} Akun</button>
+      <a class="btn" href="#/settings">${icon('settings')} Edit profil</a>
+    </div>
   </div>
 
   <section class="card mb-3">
     <div class="row" style="gap:16px;align-items:flex-start;flex-wrap:wrap">
       ${avatarHTML(S.user,'lg')}
       <div class="grow" style="min-width:180px">
-        <h2 style="font-size:20px">${esc(S.user.username)}</h2>
+        <h2 style="font-size:20px">${esc(S.user.username)} ${S.user.provider === 'google' ? `<span class="badge" style="vertical-align:middle;font-size:10px">${icon('chrome')} Google</span>` : ''}</h2>
         <p class="small muted" style="margin-top:4px">${esc(S.user.bio || 'Belum ada bio.')}</p>
         <div class="row wrap gap-sm mt-2">
           <span class="badge">${icon('mail')} ${esc(S.user.email)}</span>
           <span class="badge">${icon('git-branch')} ${repos.length} repos</span>
           <span class="badge">${icon('kanban')} ${projects.length} projects</span>
+          ${S.user.customDomain ? `<span class="badge badge-primary">${icon('globe')} ${esc(S.user.customDomain)}</span>` : `<span class="badge">${icon('globe')} ${esc(S.user.subdomain || S.user.username.toLowerCase())}.nevcode.app</span>`}
         </div>
       </div>
     </div>
@@ -2838,6 +3221,8 @@ function bindRepo(){
     try {
       const shareId = await encodeRepo(r.id);
       const url = location.origin + location.pathname + '#/v/' + shareId;
+      const customDomain = S.user && S.user.customDomain ? S.user.customDomain : null;
+      const subdomain = S.user ? (S.user.subdomain || S.user.username.toLowerCase()) + '.nevcode.app' : null;
       openSheet({
         title:'Bagikan repository', iconName:'share-2',
         body:`
@@ -2846,6 +3231,13 @@ function bindRepo(){
             <span class="lbl">${icon('link')} Link publik</span>
             <input class="input mono" id="share-url" readonly value="${esc(url)}" style="font-size:12.5px">
           </label>
+          ${(customDomain || subdomain) ? `
+            <div class="small mb-2" style="font-weight:600;color:var(--muted)">Preview domain</div>
+            <div class="badge-row mb-2">
+              ${subdomain ? `<span class="badge badge-primary">${icon('globe')} ${esc(subdomain)}</span>` : ''}
+              ${customDomain ? `<span class="badge badge-success">${icon('globe-2')} ${esc(customDomain)}</span>` : ''}
+            </div>
+            <p class="hint mb-2">Domain ini digunakan saat Anda mempublikasikan project. Atur di <a href="#/settings" style="color:var(--primary-2);font-weight:600">Settings → Domain</a>.</p>` : ''}
           <div class="badge-row">
             <span class="badge badge-success">${icon('check-circle-2')} Tersimpan di server</span>
             <span class="badge mono">${icon('hash')} ${esc(shareId)}</span>
@@ -2928,6 +3320,8 @@ function bindRepo(){
       try {
         const previewId = await publishPreview(r.id);
         const url = location.origin + location.pathname + '#/p/' + previewId;
+        const customDomain = S.user && S.user.customDomain ? S.user.customDomain : null;
+        const subdomain = S.user ? (S.user.subdomain || S.user.username.toLowerCase()) + '.nevcode.app' : null;
         openSheet({
           title:'Link preview publik', iconName:'globe',
           body:`
@@ -2936,6 +3330,13 @@ function bindRepo(){
               <span class="lbl">${icon('link')} Link publik</span>
               <input class="input mono" id="pub-url" readonly value="${esc(url)}" style="font-size:12.5px">
             </label>
+            ${(customDomain || subdomain) ? `
+              <div class="small mb-2" style="font-weight:600;color:var(--muted)">Domain publik Anda</div>
+              <div class="badge-row mb-2">
+                ${subdomain ? `<span class="badge badge-primary">${icon('globe')} ${esc(subdomain)}</span>` : ''}
+                ${customDomain ? `<span class="badge badge-success">${icon('globe-2')} ${esc(customDomain)}</span>` : ''}
+              </div>
+              <p class="hint mb-2">Ubah domain ini di <a href="#/settings" style="color:var(--primary-2);font-weight:600">Settings → Domain</a>.</p>` : ''}
             <div class="badge-row">
               <span class="badge badge-success">${icon('check-circle-2')} Live</span>
               <span class="badge mono">${icon('hash')} ${esc(previewId)}</span>
@@ -3100,6 +3501,29 @@ function bindSettings(){
     router();
   });
 
+  const oas = $('#open-accounts-settings');
+  if (oas) oas.addEventListener('click', openAccountSwitcher);
+  const oasec = $('#open-accounts-security');
+  if (oasec) oasec.addEventListener('click', openAccountSwitcher);
+
+  // === Domain ===
+  const sd = $('#save-domain');
+  if (sd) sd.addEventListener('click', () => {
+    const sub = $('#set-subdomain').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'');
+    const dom = $('#set-domain').value.trim().toLowerCase().replace(/\s+/g,'');
+    if (!sub) return toast('error','Subdomain kosong','Minimal 1 karakter.');
+    if (sub.length < 3) return toast('error','Subdomain terlalu pendek','Minimal 3 karakter.');
+    if (dom && !/^([a-z0-9-]+\.)+[a-z]{2,}$/.test(dom)) return toast('error','Domain tidak valid','Format: contoh.com');
+    const users = Store.users();
+    const u = users.find(x => x.id === S.user.id);
+    u.subdomain = sub;
+    u.customDomain = dom;
+    Store.setUsers(users);
+    S.user = u;
+    toast('success','Domain disimpan', dom ? 'Custom domain aktif.' : 'Subdomain diperbarui.');
+    router();
+  });
+
   const th = $('#set-theme');
   if (th) th.addEventListener('change', () => {
     const s = Store.settings(); s.theme = th.value; Store.setSettings(s); S.settings = s;
@@ -3157,7 +3581,10 @@ function bindSettings(){
   });
 }
 
-function bindProfile(){ }
+function bindProfile(){
+  const b = $('#profile-accounts');
+  if (b) b.addEventListener('click', openAccountSwitcher);
+}
 
 /* ---------------------------------------------------------------------------
    SHARE LINK — Firebase Realtime Database
@@ -3245,8 +3672,6 @@ async function publishPreview(repoId){
     const re = new RegExp('<script[^>]*src=["\'][^"\']*' + name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '["\'][^>]*><\\/script>','i');
     html = html.replace(re, `<script>${f.content}<\/script>`);
   });
-
-  // Inline gambar (base64 <img src="..."> tidak bisa diakses tanpa storage; abaikan untuk demo)
 
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let previewId = '';
@@ -5160,6 +5585,7 @@ function openCommandPalette(){
     { id:'open-terminal', label:'Open Terminal', icon:'terminal', run: () => { closeAllOverlays(); openTerminal(); } },
     { id:'open-settings', label:'Open Settings', icon:'settings', run: () => { closeAllOverlays(); navigate('/settings'); } },
     { id:'open-notif', label:'Open Notifications', icon:'bell', run: () => { closeAllOverlays(); openNotifications(); } },
+    { id:'open-accounts', label:'Manage Accounts', icon:'users', run: () => { closeAllOverlays(); openAccountSwitcher(); } },
     { id:'logout', label:'Logout', icon:'log-out', run: () => { closeAllOverlays(); Auth.logout(); } }
   ];
 
@@ -5358,4 +5784,4 @@ iconObserver.observe(document.body, { childList:true, subtree:true });
 })();
 </script>
 </body>
-  </html>
+</html>
