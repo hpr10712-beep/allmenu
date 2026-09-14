@@ -814,6 +814,41 @@ label.field > .lbl svg{width:14px;height:14px}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/display/autorefresh.min.js"></script>
 <script src="https://unpkg.com/lucide@0.451.0/dist/umd/lucide.min.js"></script>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+  authDomain: "mybro-9ba5f.firebaseapp.com",
+  databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+  projectId: "mybro-9ba5f"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+window.NEVFirebase = {
+  async saveShare(id, payload){
+    await set(ref(db, 'nev_shares/' + id), payload);
+    return id;
+  },
+  async loadShare(id){
+    const snap = await get(ref(db, 'nev_shares/' + id));
+    return snap.exists() ? snap.val() : null;
+  },
+  async savePreview(id, payload){
+    await set(ref(db, 'nev_previews/' + id), payload);
+    return id;
+  },
+  async loadPreview(id){
+    const snap = await get(ref(db, 'nev_previews/' + id));
+    return snap.exists() ? snap.val() : null;
+  }
+};
+window.dispatchEvent(new Event('nev-firebase-ready'));
+console.log('[NEV CODE] Firebase siap');
+</script>
+
 <script>
 (() => {
 'use strict';
@@ -1552,20 +1587,84 @@ function bindPublic(){
       router();
     });
   }
+
   const forgot = $('#forgot');
   if (forgot) forgot.addEventListener('click', () => {
     openSheet({
       title:'Reset password', iconName:'key-round',
-      body:`<p class="small muted mb-2">Masukkan email terdaftar. Di lingkungan demo ini, tautan reset tidak benar-benar dikirim.</p>
-            <label class="field"><span class="lbl">${icon('mail')} Email</span><input class="input" id="fp-email" type="email" placeholder="nama@email.com"></label>`,
-      footer:`<button class="btn" data-close-sheet>Batal</button><button class="btn btn-primary" id="fp-send">Kirim tautan</button>`,
+      body:`
+        <p class="small muted mb-2">Masukkan email terdaftar. Jika cocok, Anda dapat mengatur password baru.</p>
+        <label class="field">
+          <span class="lbl">${icon('mail')} Email</span>
+          <input class="input" id="fp-email" type="email" placeholder="nama@email.com" autocomplete="off">
+        </label>
+        <div id="fp-error" class="hide mb-2" style="font-size:13px;color:var(--danger);display:flex;gap:7px;align-items:flex-start">
+          ${icon('triangle-alert')}<span></span>
+        </div>
+      `,
+      footer:`<button class="btn" data-close-sheet>Batal</button><button class="btn btn-primary" id="fp-next">${icon('arrow-right')} Lanjut</button>`,
       onMount(root){
-        $('#fp-send', root).addEventListener('click', () => {
-          const v = $('#fp-email', root).value.trim();
+        setTimeout(() => { const el = $('#fp-email', root); if (el) el.focus(); }, 80);
+        const submit = () => {
+          const email = $('#fp-email', root).value.trim().toLowerCase();
+          const err = $('#fp-error', root);
+          err.classList.add('hide');
+          if (!email){ err.classList.remove('hide'); $('span', err).textContent = 'Masukkan email.'; refreshIcons(); return; }
+          const user = Store.users().find(u => u.email === email);
+          if (!user){ err.classList.remove('hide'); $('span', err).textContent = 'Email tidak terdaftar.'; refreshIcons(); return; }
+
           closeSheet();
-          if (!v) return toast('error','Email kosong','Masukkan email terlebih dahulu.');
-          toast('info','Demo','Fitur reset password belum terhubung ke email sungguhan.');
-        });
+          openSheet({
+            title:'Password Baru', iconName:'lock',
+            body:`
+              <div class="badge-row mb-2">
+                <span class="badge badge-primary">${icon('user')} ${esc(user.username)}</span>
+                <span class="badge">${icon('mail')} ${esc(user.email)}</span>
+              </div>
+              <p class="small muted mb-2">Untuk verifikasi, ketik ulang username Anda, lalu masukkan password baru.</p>
+              <label class="field">
+                <span class="lbl">${icon('user')} Konfirmasi username</span>
+                <input class="input" id="fp-username" placeholder="username" autocomplete="off">
+              </label>
+              <label class="field">
+                <span class="lbl">${icon('lock')} Password baru</span>
+                <input class="input" id="fp-pass" type="password" placeholder="Minimal 6 karakter" autocomplete="new-password">
+              </label>
+              <label class="field">
+                <span class="lbl">${icon('lock')} Ulangi password baru</span>
+                <input class="input" id="fp-pass2" type="password" placeholder="Ulangi password" autocomplete="new-password">
+              </label>
+              <div id="fp-error2" class="hide mb-2" style="font-size:13px;color:var(--danger);display:flex;gap:7px;align-items:flex-start">
+                ${icon('triangle-alert')}<span></span>
+              </div>
+            `,
+            footer:`<button class="btn" data-close-sheet>Batal</button><button class="btn btn-primary" id="fp-save">${icon('check')} Simpan</button>`,
+            onMount(root2){
+              setTimeout(() => { const el = $('#fp-username', root2); if (el) el.focus(); }, 80);
+              $('#fp-save', root2).addEventListener('click', () => {
+                const uname = $('#fp-username', root2).value.trim();
+                const p1 = $('#fp-pass', root2).value;
+                const p2 = $('#fp-pass2', root2).value;
+                const err2 = $('#fp-error2', root2);
+                const showErr = (m) => { err2.classList.remove('hide'); $('span', err2).textContent = m; refreshIcons(); };
+                err2.classList.add('hide');
+                if (uname.toLowerCase() !== user.username.toLowerCase()) return showErr('Username tidak cocok.');
+                if (p1.length < 6) return showErr('Password minimal 6 karakter.');
+                if (p1 !== p2) return showErr('Password tidak sama.');
+
+                const users = Store.users();
+                const idx = users.findIndex(u => u.id === user.id);
+                if (idx < 0) return showErr('Akun tidak ditemukan.');
+                users[idx].passwordHash = demoHash(p1);
+                Store.setUsers(users);
+                closeSheet();
+                toast('success','Password direset', 'Silakan masuk dengan password baru Anda.');
+              });
+            }
+          });
+        };
+        $('#fp-next', root).addEventListener('click', submit);
+        $('#fp-email', root).addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
       }
     });
   });
@@ -1700,6 +1799,7 @@ function renderRouteView(){
     case 'settings':    return viewSettings();
     case 'profile':     return viewProfile();
     case 'view':        return viewSharedRepoView();
+    case 'publicpreview': return viewPublicPreview();
     case 'help':        return viewHelp();
     case 'explorer':    return viewExplorerPicker();
     case 'editor':      return viewEditorPicker();
@@ -2022,7 +2122,7 @@ function repoCodeTab(r){
   const commits = repoCommits(r.id, S.currentBranch);
   const readme = files.find(f => f.path.toLowerCase() === 'readme.md');
 
-  const hasIndex = files.some(f => f.path === 'index.html');
+  const hasIndex = files.some(f => f.path === 'index.html') || files.some(f => f.path.endsWith('.html'));
 
   return `
   <div class="row wrap gap-sm mb-2">
@@ -2033,7 +2133,8 @@ function repoCodeTab(r){
     </div>
     <div class="row gap-sm">
       <button class="btn btn-sm" id="download-repo">${icon('download')} <span class="mobile-only">Unduh</span><span class="desktop-only">Unduh ZIP</span></button>
-      ${hasIndex ? `<button class="btn btn-sm btn-primary" id="preview-btn">${icon('play')} Preview</button>` : ''}
+      ${hasIndex ? `<button class="btn btn-sm" id="preview-btn">${icon('play')} Preview</button>` : ''}
+      ${hasIndex ? `<button class="btn btn-sm btn-primary" id="publish-btn">${icon('globe')} <span class="mobile-only">Publish</span><span class="desktop-only">Publish link</span></button>` : ''}
     </div>
   </div>
 
@@ -2628,11 +2729,10 @@ function viewHelp(){
   <section class="card">
     <h3 style="font-size:15px;display:flex;align-items:center;gap:8px;margin-bottom:12px">${icon('info')} Tentang Demo Ini</h3>
     <p class="small muted" style="line-height:1.75">
-      NEV CODE yang Anda gunakan adalah implementasi front-end demo.
-      Data (akun, repository, file, commit, issue, PR, deployment) disimpan di
-      <b>localStorage</b> browser Anda, sehingga tidak dikirim ke server mana pun.
-      Gunakan tombol <b>Share</b> di repository untuk membuat link publik yang dapat
-      dibagikan — link tersebut mengemas seluruh isi repository dalam URL.
+      NEV CODE menyimpan data akun &amp; repository secara lokal di browser Anda, dan menggunakan
+      Firebase Realtime Database untuk fitur berbagi.
+      Gunakan tombol <b>Share</b> untuk membagikan source code, atau tombol <b>Publish</b> untuk
+      membuat link preview publik yang dapat dibuka siapa saja tanpa akun.
     </p>
   </section>`;
 }
@@ -2683,6 +2783,7 @@ function afterRouteRender(){
   if (name === 'settings') bindSettings();
   if (name === 'profile') bindProfile();
   if (name === 'view') bindSharedView();
+  if (name === 'publicpreview') bindPublicPreview();
 }
 
 function bindDashboard(){
@@ -2729,35 +2830,38 @@ function bindRepo(){
   });
   const share = $('#repo-share');
   if (share) share.addEventListener('click', async () => {
-    toast('info','Membuat link', 'Mengemas repository...');
+    openSheet({
+      title:'Membuat link', iconName:'loader',
+      body:`<div class="empty" style="padding:26px"><div class="spinner"></div><p class="small muted mt-2">Mengunggah repository ke server...</p></div>`
+    });
+    refreshIcons();
     try {
-      const encoded = await encodeRepo(r.id);
-      const url = location.origin + location.pathname + '#/v/' + encoded;
-      const size = url.length;
+      const shareId = await encodeRepo(r.id);
+      const url = location.origin + location.pathname + '#/v/' + shareId;
       openSheet({
         title:'Bagikan repository', iconName:'share-2',
         body:`
           <p class="small muted mb-2">Salin tautan ini dan bagikan ke siapa saja. Penerima dapat melihat seluruh isi repository tanpa perlu akun.</p>
           <label class="field">
             <span class="lbl">${icon('link')} Link publik</span>
-            <textarea class="textarea mono" id="share-url" readonly style="font-size:11.5px;min-height:100px">${esc(url)}</textarea>
+            <input class="input mono" id="share-url" readonly value="${esc(url)}" style="font-size:12.5px">
           </label>
           <div class="badge-row">
-            <span class="badge">${icon('ruler')} ${size.toLocaleString('id-ID')} karakter</span>
-            ${size > 8000 ? `<span class="badge badge-warning">${icon('triangle-alert')} Link panjang</span>` : ''}
+            <span class="badge badge-success">${icon('check-circle-2')} Tersimpan di server</span>
+            <span class="badge mono">${icon('hash')} ${esc(shareId)}</span>
           </div>
-          ${size > 8000 ? `<p class="hint mt-2">Link sangat panjang. Beberapa aplikasi (WhatsApp, SMS) mungkin memotongnya. Kirim via email atau clipboard.</p>` : ''}
+          <p class="hint mt-2">Link ini bersifat permanen dan dapat diakses selama data masih tersimpan di Firebase.</p>
         `,
-        footer:`<button class="btn" data-close-sheet>Batal</button>
-          <button class="btn btn-primary" id="copy-share">${icon('copy')} Salin</button>`,
+        footer:`<button class="btn" data-close-sheet>Tutup</button>
+          <button class="btn btn-primary" id="copy-share">${icon('copy')} Salin link</button>`,
         onMount(root){
           $('#copy-share', root).addEventListener('click', async () => {
             try {
               await navigator.clipboard.writeText(url);
               toast('success','Tersalin', 'Link siap dibagikan.');
             } catch {
-              const ta = $('#share-url', root);
-              ta.select();
+              const inp = $('#share-url', root);
+              inp.select();
               document.execCommand('copy');
               toast('info','Tersalin', 'Tekan Ctrl+V untuk paste.');
             }
@@ -2766,7 +2870,8 @@ function bindRepo(){
         }
       });
     } catch(e){
-      toast('error','Gagal', 'Tidak dapat membuat link: ' + e.message);
+      closeSheet();
+      toast('error','Gagal membuat link', e.message || 'Periksa koneksi internet Anda.');
     }
   });
 
@@ -2811,6 +2916,55 @@ function bindRepo(){
 
     const pv = $('#preview-btn');
     if (pv) pv.addEventListener('click', () => openPreview(r.id));
+
+    // ===== Publish Preview (link publik) =====
+    const pb = $('#publish-btn');
+    if (pb) pb.addEventListener('click', async () => {
+      openSheet({
+        title:'Mempublikasikan', iconName:'rocket',
+        body:`<div class="empty" style="padding:26px"><div class="spinner"></div><p class="small muted mt-2">Mengunggah preview ke server...</p></div>`
+      });
+      refreshIcons();
+      try {
+        const previewId = await publishPreview(r.id);
+        const url = location.origin + location.pathname + '#/p/' + previewId;
+        openSheet({
+          title:'Link preview publik', iconName:'globe',
+          body:`
+            <p class="small muted mb-2">Siapa saja yang memiliki tautan ini dapat melihat hasil website Anda tanpa perlu akun.</p>
+            <label class="field">
+              <span class="lbl">${icon('link')} Link publik</span>
+              <input class="input mono" id="pub-url" readonly value="${esc(url)}" style="font-size:12.5px">
+            </label>
+            <div class="badge-row">
+              <span class="badge badge-success">${icon('check-circle-2')} Live</span>
+              <span class="badge mono">${icon('hash')} ${esc(previewId)}</span>
+              <span class="badge">${icon('git-branch')} ${esc(S.currentBranch)}</span>
+            </div>
+            <p class="hint mt-2">Untuk memperbarui preview setelah mengubah kode, klik Publish lagi untuk membuat link baru.</p>
+          `,
+          footer:`<button class="btn" data-close-sheet>Tutup</button>
+            <button class="btn btn-primary" id="copy-pub">${icon('copy')} Salin link</button>`,
+          onMount(root){
+            $('#copy-pub', root).addEventListener('click', async () => {
+              try {
+                await navigator.clipboard.writeText(url);
+                toast('success','Tersalin', 'Link preview siap dibagikan.');
+              } catch {
+                const inp = $('#pub-url', root);
+                inp.select();
+                document.execCommand('copy');
+                toast('info','Tersalin', 'Tekan Ctrl+V untuk paste.');
+              }
+              closeSheet();
+            });
+          }
+        });
+      } catch(e){
+        closeSheet();
+        toast('error','Gagal publish', e.message || 'Periksa koneksi internet Anda.');
+      }
+    });
   }
 
   if (tab === 'issues'){
@@ -3006,61 +3160,163 @@ function bindSettings(){
 function bindProfile(){ }
 
 /* ---------------------------------------------------------------------------
-   SHARE LINK — Encode/Decode Repository
+   SHARE LINK — Firebase Realtime Database
    --------------------------------------------------------------------------- */
+async function waitFirebaseReady(){
+  if (window.NEVFirebase) return;
+  for (let i = 0; i < 100; i++){
+    await new Promise(r => setTimeout(r, 100));
+    if (window.NEVFirebase) return;
+  }
+  throw new Error('Firebase belum siap. Periksa koneksi internet Anda.');
+}
+
 async function encodeRepo(repoId){
   const repo = getRepo(repoId);
   if (!repo) throw new Error('Repository tidak ditemukan');
+  await waitFirebaseReady();
+
   const files = Store.files().filter(f => f.repoId === repoId);
   const commits = Store.commits().filter(c => c.repoId === repoId);
   const branches = Store.branches().filter(b => b.repoId === repoId);
+
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let shareId = '';
+  for (let i = 0; i < 10; i++) shareId += chars[Math.floor(Math.random() * chars.length)];
+
   const payload = {
     v: 1,
-    repo: { name: repo.name, description: repo.description || '',
-      defaultBranch: repo.defaultBranch || 'main', language: repo.language || '' },
+    repo: {
+      name: repo.name,
+      description: repo.description || '',
+      defaultBranch: repo.defaultBranch || 'main',
+      language: repo.language || ''
+    },
     author: S.user ? S.user.username : 'anonymous',
+    createdAt: Date.now(),
     files: files.map(f => ({ path: f.path, branch: f.branch, content: f.content })),
-    commits: commits.map(c => ({ id: c.id, branch: c.branch, message: c.message,
-      date: c.date, additions: c.additions, deletions: c.deletions, files: c.files,
-      author: (getUser(c.authorId) || {}).username || '?' })),
+    commits: commits.map(c => ({
+      id: c.id, branch: c.branch, message: c.message,
+      date: c.date, additions: c.additions, deletions: c.deletions,
+      files: c.files,
+      author: (getUser(c.authorId) || {}).username || '?'
+    })),
     branches: branches.map(b => ({ name: b.name }))
   };
-  const json = JSON.stringify(payload);
-  const bytes = new TextEncoder().encode(json);
-  let compressed;
-  if (typeof CompressionStream !== 'undefined'){
-    try {
-      const cs = new CompressionStream('gzip');
-      const writer = cs.writable.getWriter();
-      writer.write(bytes); writer.close();
-      const blob = await new Response(cs.readable).blob();
-      compressed = new Uint8Array(await blob.arrayBuffer());
-    } catch(e){ compressed = bytes; }
-  } else { compressed = bytes; }
-  let binary = '';
-  const chunk = 0x8000;
-  for (let i = 0; i < compressed.length; i += chunk)
-    binary += String.fromCharCode.apply(null, compressed.subarray(i, i + chunk));
-  return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+
+  await window.NEVFirebase.saveShare(shareId, payload);
+  return shareId;
 }
-async function decodeRepo(encoded){
-  const b64 = encoded.replace(/-/g,'+').replace(/_/g,'/');
-  const padded = b64 + '==='.slice((b64.length + 3) % 4);
-  const binary = atob(padded);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  let text;
-  if (typeof DecompressionStream !== 'undefined'){
-    try {
-      const ds = new DecompressionStream('gzip');
-      const writer = ds.writable.getWriter();
-      writer.write(bytes); writer.close();
-      const blob = await new Response(ds.readable).blob();
-      text = await blob.text();
-    } catch(e){ text = new TextDecoder().decode(bytes); }
-  } else { text = new TextDecoder().decode(bytes); }
-  return JSON.parse(text);
+
+async function decodeRepo(shareId){
+  await waitFirebaseReady();
+  const data = await window.NEVFirebase.loadShare(shareId);
+  if (!data) throw new Error('Share tidak ditemukan atau sudah dihapus');
+  return data;
 }
+
+/* ---------------------------------------------------------------------------
+   PUBLIC PREVIEW — Link publik hasil coding (tanpa akun)
+   --------------------------------------------------------------------------- */
+async function publishPreview(repoId){
+  const repo = getRepo(repoId);
+  if (!repo) throw new Error('Repository tidak ditemukan');
+  await waitFirebaseReady();
+
+  const files = repoFiles(repoId, S.currentBranch);
+  if (!files.length) throw new Error('Repository kosong');
+
+  let indexFile = files.find(f => f.path === 'index.html');
+  if (!indexFile) indexFile = files.find(f => f.path.endsWith('.html'));
+  if (!indexFile) throw new Error('Tidak ada file HTML untuk dipublikasikan');
+
+  let html = indexFile.content;
+
+  // Inline CSS
+  files.filter(f => f.path.endsWith('.css')).forEach(f => {
+    const name = f.path.split('/').pop();
+    const re = new RegExp('<link[^>]*href=["\'][^"\']*' + name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '["\'][^>]*>','i');
+    html = html.replace(re, `<style>${f.content}</style>`);
+  });
+
+  // Inline JS
+  files.filter(f => f.path.endsWith('.js')).forEach(f => {
+    const name = f.path.split('/').pop();
+    const re = new RegExp('<script[^>]*src=["\'][^"\']*' + name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '["\'][^>]*><\\/script>','i');
+    html = html.replace(re, `<script>${f.content}<\/script>`);
+  });
+
+  // Inline gambar (base64 <img src="..."> tidak bisa diakses tanpa storage; abaikan untuk demo)
+
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let previewId = '';
+  for (let i = 0; i < 10; i++) previewId += chars[Math.floor(Math.random() * chars.length)];
+
+  const payload = {
+    html,
+    name: repo.name,
+    description: repo.description || '',
+    author: S.user ? S.user.username : 'anonymous',
+    branch: S.currentBranch,
+    createdAt: Date.now()
+  };
+
+  await window.NEVFirebase.savePreview(previewId, payload);
+  return previewId;
+}
+
+async function loadPreview(id){
+  await waitFirebaseReady();
+  return window.NEVFirebase.loadPreview(id);
+}
+
+function viewPublicPreview(){
+  const data = window.__previewData;
+  if (!data) return viewEmptyState('triangle-alert','Preview tidak ditemukan','Link tidak valid atau sudah dihapus.');
+  return `
+  <div style="position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;z-index:1">
+    <div style="display:flex;align-items:center;gap:6px;padding:6px 8px;background:#0a0a0f;color:#e7e7ef;border-bottom:1px solid #24242f;padding-top:calc(6px + env(safe-area-inset-top));flex-shrink:0">
+      <button id="pp-close" aria-label="Tutup" style="width:36px;height:36px;border-radius:8px;display:grid;place-items:center;color:#b9b9c9;background:none;border:0;cursor:pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <div style="flex:1;min-width:0;padding:0 4px">
+        <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:Inter,system-ui,sans-serif">${esc(data.name || 'Preview')}</div>
+        <div style="font-size:11px;color:#8b8b9c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:Inter,system-ui,sans-serif">oleh ${esc(data.author || 'anonymous')} • ${timeAgo(data.createdAt)}</div>
+      </div>
+      <button id="pp-refresh" aria-label="Refresh" style="width:36px;height:36px;border-radius:8px;display:grid;place-items:center;color:#b9b9c9;background:none;border:0;cursor:pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+      </button>
+      <button id="pp-open" aria-label="Buka di tab baru" style="width:36px;height:36px;border-radius:8px;display:grid;place-items:center;color:#b9b9c9;background:none;border:0;cursor:pointer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+      </button>
+    </div>
+    <iframe id="pp-frame" sandbox="allow-scripts allow-forms allow-modals allow-popups allow-same-origin" style="flex:1;width:100%;border:0;background:#fff"></iframe>
+  </div>`;
+}
+
+function bindPublicPreview(){
+  const data = window.__previewData;
+  if (!data) return;
+  const frame = $('#pp-frame');
+  if (frame) frame.srcdoc = data.html;
+  const close = $('#pp-close');
+  if (close) close.addEventListener('click', () => {
+    window.__previewData = null;
+    if (S.user) navigate('/dashboard');
+    else navigate('/');
+    router();
+  });
+  const refresh = $('#pp-refresh');
+  if (refresh) refresh.addEventListener('click', () => {
+    if (frame) frame.srcdoc = data.html;
+  });
+  const open = $('#pp-open');
+  if (open) open.addEventListener('click', () => {
+    const w = window.open('', '_blank');
+    if (w){ w.document.write(data.html); w.document.close(); }
+  });
+}
+
 function viewSharedRepoView(){
   const data = window.__sharedData;
   if (!data) return viewEmptyState('triangle-alert','Data tidak ditemukan','Link tidak valid atau rusak.');
@@ -3328,18 +3584,15 @@ function openRepoMenu(repoId){
     body:`
       <a class="menu-item" href="#/repo/${r.id}/code">${icon('folder-tree')} Buka</a>
       <a class="menu-item" href="#/repo/${r.id}/settings">${icon('settings')} Pengaturan</a>
-      <button class="menu-item" id="rm-share">${icon('share-2')} Bagikan</button>
+      <button class="menu-item" id="rm-share">${icon('share-2')} Bagikan source</button>
       <button class="menu-item" id="rm-copy">${icon('copy')} Salin nama</button>
       ${canEdit(r) ? `<button class="menu-item danger" id="rm-delete">${icon('trash-2')} Hapus repository</button>` : ''}`,
     onMount(root){
-      $('#rm-share', root).addEventListener('click', async () => {
+      $('#rm-share', root).addEventListener('click', () => {
         closeSheet();
-        try {
-          const encoded = await encodeRepo(r.id);
-          const url = location.origin + location.pathname + '#/v/' + encoded;
-          try { await navigator.clipboard.writeText(url); toast('success','Tersalin','Link publik disalin ke clipboard.'); }
-          catch { toast('info','Link dibuat','Salin dari console atau buka Share di repository.'); }
-        } catch(e){ toast('error','Gagal', e.message); }
+        const shareBtn = $('#repo-share');
+        if (shareBtn) shareBtn.click();
+        else toast('info','Buka repository','Buka halaman repository untuk tombol Share.');
       });
       $('#rm-copy', root).addEventListener('click', () => {
         navigator.clipboard?.writeText(r.name);
@@ -5031,7 +5284,7 @@ const _origRouter = router;
 router = function(){
   const parts = parseHash();
 
-  // Shared view route — accessible tanpa login
+  // Route shared view — dapat diakses tanpa login
   if (parts[0] === 'v' && parts[1]){
     (async () => {
       try {
@@ -5041,7 +5294,24 @@ router = function(){
         renderApp();
       } catch(e){
         S.route = { name:'notfound' };
-        renderApp('Link tidak valid', 'Link rusak atau tidak dapat dibuka.');
+        renderApp('Link tidak valid', e.message || 'Link rusak atau tidak dapat dibuka.');
+      }
+    })();
+    return;
+  }
+
+  // Route public preview — dapat diakses tanpa login, tanpa NEV UI
+  if (parts[0] === 'p' && parts[1]){
+    (async () => {
+      try {
+        const data = await loadPreview(parts[1]);
+        if (!data) throw new Error('Preview tidak ditemukan');
+        window.__previewData = data;
+        S.route = { name:'publicpreview' };
+        renderApp();
+      } catch(e){
+        S.route = { name:'notfound' };
+        renderApp('Preview tidak ditemukan', e.message || 'Link tidak valid atau sudah dihapus.');
       }
     })();
     return;
@@ -5088,4 +5358,4 @@ iconObserver.observe(document.body, { childList:true, subtree:true });
 })();
 </script>
 </body>
-   </html>
+  </html>
