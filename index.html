@@ -133,91 +133,101 @@ svg.ic-xl{width:40px;height:40px}
 .hidden{display:none !important}
 
 /* ============================================================
-   SPLASH / BOOT SCREEN
+   SPLASH / BOOT SCREEN — refined, no heavy glow
    ============================================================ */
 .splash{
   position:fixed;inset:0;z-index:2000;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
-  background:
-    radial-gradient(900px 700px at 50% 30%, rgba(109,123,255,.24), transparent 60%),
-    radial-gradient(700px 500px at 50% 90%, rgba(164,108,255,.18), transparent 60%),
-    radial-gradient(600px 400px at 15% 70%, rgba(34,211,238,.14), transparent 60%),
-    var(--bg);
+  background:var(--bg);
   transition:opacity .55s ease, visibility .55s ease;
   padding:24px;
   overflow:hidden;
 }
-.splash::before,
+.splash::before{
+  content:'';
+  position:absolute;
+  inset:-50%;
+  pointer-events:none;
+  background-image:
+    radial-gradient(2px 2px at 10% 20%, rgba(109,123,255,.35), transparent 100%),
+    radial-gradient(1.5px 1.5px at 70% 30%, rgba(164,108,255,.32), transparent 100%),
+    radial-gradient(2px 2px at 25% 70%, rgba(34,211,238,.28), transparent 100%),
+    radial-gradient(1.5px 1.5px at 85% 80%, rgba(109,123,255,.3), transparent 100%),
+    radial-gradient(1.5px 1.5px at 45% 15%, rgba(255,255,255,.22), transparent 100%),
+    radial-gradient(2px 2px at 60% 55%, rgba(164,108,255,.25), transparent 100%),
+    radial-gradient(1.5px 1.5px at 15% 90%, rgba(34,211,238,.22), transparent 100%);
+  background-size:200% 200%;
+  animation:splashDots 24s linear infinite;
+}
+@keyframes splashDots{
+  0%{background-position:0% 0%}
+  100%{background-position:200% 200%}
+}
 .splash::after{
   content:'';
   position:absolute;
-  border-radius:50%;
-  filter:blur(70px);
-  opacity:.42;
+  inset:0;
   pointer-events:none;
+  background:linear-gradient(105deg,
+    transparent 40%,
+    rgba(109,123,255,.06) 49%,
+    rgba(109,123,255,.12) 50%,
+    rgba(109,123,255,.06) 51%,
+    transparent 60%);
+  animation:splashSweep 4.5s ease-in-out infinite;
 }
-.splash::before{
-  width:340px;height:340px;
-  background:radial-gradient(circle,#6d7bff,transparent 70%);
-  top:-90px;left:-90px;
-  animation:splashOrb1 9s ease-in-out infinite;
-}
-.splash::after{
-  width:380px;height:380px;
-  background:radial-gradient(circle,#a46cff,transparent 70%);
-  bottom:-120px;right:-90px;
-  animation:splashOrb2 11s ease-in-out infinite;
-}
-@keyframes splashOrb1{
-  0%,100%{transform:translate(0,0) scale(1)}
-  50%{transform:translate(50px,40px) scale(1.12)}
-}
-@keyframes splashOrb2{
-  0%,100%{transform:translate(0,0) scale(1)}
-  50%{transform:translate(-60px,-30px) scale(1.1)}
+@keyframes splashSweep{
+  0%,100%{transform:translateX(-60%)}
+  50%{transform:translateX(60%)}
 }
 .splash.gone{opacity:0;visibility:hidden;pointer-events:none}
 .splash-mark{
   position:relative;
-  width:120px;height:120px;
-  border-radius:36px;
+  width:112px;height:112px;
+  border-radius:32px;
   display:grid;place-items:center;
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
   box-shadow:
-    0 24px 80px rgba(109,123,255,.55),
+    0 10px 32px rgba(109,123,255,.28),
     0 0 0 1px rgba(255,255,255,.1),
-    inset 0 2px 0 rgba(255,255,255,.28);
-  animation:splashPulse 2.6s cubic-bezier(.4,0,.2,1) infinite;
+    inset 0 2px 0 rgba(255,255,255,.25);
+  animation:splashMarkIn .9s cubic-bezier(.2,1.2,.4,1) both;
+  transform-style:preserve-3d;
+}
+@keyframes splashMarkIn{
+  from{opacity:0;transform:scale(.55) rotateY(-60deg)}
+  to{opacity:1;transform:scale(1) rotateY(0)}
 }
 .splash-mark::before{
-  content:'';position:absolute;inset:-14px;border-radius:44px;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  opacity:.5;filter:blur(28px);z-index:-1;
-  animation:splashGlow 3s ease-in-out infinite;
+  content:'';position:absolute;inset:-6px;border-radius:38px;
+  border:1.5px dashed rgba(109,123,255,.5);
+  pointer-events:none;
+  animation:markSpin 12s linear infinite;
+}
+@keyframes markSpin{
+  to{transform:rotate(360deg)}
 }
 .splash-mark::after{
   content:'';position:absolute;inset:0;border-radius:inherit;
   background:linear-gradient(180deg,rgba(255,255,255,.22),transparent 55%);
   pointer-events:none;
 }
-@keyframes splashGlow{
-  0%,100%{opacity:.4;transform:scale(1)}
-  50%{opacity:.7;transform:scale(1.08)}
-}
-.splash-mark svg{width:68px;height:68px;color:#fff;filter:drop-shadow(0 3px 10px rgba(0,0,0,.35));position:relative;z-index:1}
-@keyframes splashPulse{
-  0%,100%{transform:scale(1) rotate(0deg)}
-  50%{transform:scale(1.05) rotate(-1.2deg)}
+.splash-mark svg{width:62px;height:62px;color:#fff;position:relative;z-index:1;
+  animation:splashPiece 3s ease-in-out infinite;}
+@keyframes splashPiece{
+  0%,100%{transform:translateY(0) rotate(0)}
+  50%{transform:translateY(-4px) rotate(-2deg)}
 }
 .splash-title{
   font-size:32px;font-weight:900;letter-spacing:-.045em;
   background:linear-gradient(135deg,#fff 0%,#b7c1e0 60%,#8b96b3 100%);
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
   margin-top:4px;
-  animation:splashTitleIn .8s cubic-bezier(.2,1,.4,1);
+  position:relative;z-index:1;
+  animation:splashTitleIn 1s cubic-bezier(.2,1,.4,1) both;
 }
 @keyframes splashTitleIn{
-  from{opacity:0;letter-spacing:.05em;transform:translateY(8px)}
+  from{opacity:0;letter-spacing:.15em;transform:translateY(12px)}
   to{opacity:1;letter-spacing:-.045em;transform:none}
 }
 [data-theme="light"] .splash-title{
@@ -227,6 +237,7 @@ svg.ic-xl{width:40px;height:40px}
 .splash-sub{
   font-size:11.5px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;
   color:var(--text-dim2);margin-top:6px;
+  animation:splashTitleIn 1s .15s cubic-bezier(.2,1,.4,1) both;
 }
 .splash-bar{
   width:min(280px,80vw);height:5px;border-radius:99px;
@@ -239,7 +250,7 @@ svg.ic-xl{width:40px;height:40px}
   border-radius:99px;
   background:linear-gradient(90deg,var(--accent),var(--accent-2),var(--accent-3));
   background-size:200% 100%;
-  box-shadow:0 0 14px rgba(109,123,255,.7);
+  box-shadow:0 0 10px rgba(109,123,255,.4);
   animation:splashBar 1.8s cubic-bezier(.4,0,.2,1) infinite, splashShine 2.4s ease infinite;
 }
 @keyframes splashBar{
@@ -311,7 +322,6 @@ svg.ic-xl{width:40px;height:40px}
 .avatar.xl{width:96px;height:96px;border-radius:30px;font-size:36px}
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
 
-/* Presence indicator */
 .avatar-wrap{position:relative;display:inline-block;flex:none}
 .presence-dot{
   position:absolute;bottom:-2px;right:-2px;
@@ -523,264 +533,109 @@ svg.ic-xl{width:40px;height:40px}
    RANK BADGES
    ============================================================ */
 .rank-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-  padding:5px 12px;
-  border-radius:11px;
-  font-size:9.5px;
-  font-weight:900;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  position:relative;
-  overflow:hidden;
-  isolation:isolate;
-  line-height:1.4;
-  border:1px solid;
-  will-change:filter;
-  transition:filter .2s ease;
+  display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:11px;
+  font-size:9.5px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;
+  position:relative;overflow:hidden;isolation:isolate;line-height:1.4;border:1px solid;
+  will-change:filter;transition:filter .2s ease;
 }
 .rank-badge:hover{filter:brightness(1.15)}
 .rank-badge::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  background:linear-gradient(180deg,
-    rgba(255,255,255,.28) 0%,
-    rgba(255,255,255,.05) 40%,
-    transparent 60%);
-  pointer-events:none;
-  z-index:1;
-  animation:lightBreathe 3.8s ease-in-out infinite;
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(180deg,rgba(255,255,255,.28) 0%,rgba(255,255,255,.05) 40%,transparent 60%);
+  pointer-events:none;z-index:1;animation:lightBreathe 3.8s ease-in-out infinite;
 }
 [data-theme="light"] .rank-badge::before{
-  background:linear-gradient(180deg,
-    rgba(255,255,255,.55) 0%,
-    rgba(255,255,255,.15) 40%,
-    transparent 60%);
+  background:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.15) 40%,transparent 60%);
 }
-@keyframes lightBreathe{
-  0%,100%{opacity:.85}
-  50%{opacity:1}
-}
+@keyframes lightBreathe{0%,100%{opacity:.85}50%{opacity:1}}
 .rank-badge::after{
-  content:'';
-  position:absolute;
-  top:-100%;
-  left:-100%;
-  width:55%;
-  height:300%;
-  background:linear-gradient(105deg,
-    transparent 0%,
-    rgba(255,255,255,.08) 40%,
-    rgba(255,255,255,.42) 50%,
-    rgba(255,255,255,.08) 60%,
-    transparent 100%);
-  transform:rotate(20deg);
-  pointer-events:none;
-  z-index:2;
+  content:'';position:absolute;top:-100%;left:-100%;width:55%;height:300%;
+  background:linear-gradient(105deg,transparent 0%,rgba(255,255,255,.08) 40%,rgba(255,255,255,.42) 50%,rgba(255,255,255,.08) 60%,transparent 100%);
+  transform:rotate(20deg);pointer-events:none;z-index:2;
   animation:badgeSweep 6s cubic-bezier(.5,0,.2,1) infinite;
 }
 [data-theme="light"] .rank-badge::after{
-  background:linear-gradient(105deg,
-    transparent 0%,
-    rgba(255,255,255,.25) 40%,
-    rgba(255,255,255,.75) 50%,
-    rgba(255,255,255,.25) 60%,
-    transparent 100%);
+  background:linear-gradient(105deg,transparent 0%,rgba(255,255,255,.25) 40%,rgba(255,255,255,.75) 50%,rgba(255,255,255,.25) 60%,transparent 100%);
 }
-@keyframes badgeSweep{
-  0%,70%{left:-100%}
-  100%{left:200%}
-}
-.rank-badge .star-gold{
-  filter:drop-shadow(0 0 2px rgba(255,200,60,.5));
-}
+@keyframes badgeSweep{0%,70%{left:-100%}100%{left:200%}}
+.rank-badge .star-gold{filter:drop-shadow(0 0 2px rgba(255,200,60,.5))}
 .rb-elit{
   color:#cffcf3;
   background-image:
-    linear-gradient(110deg,
-      transparent 0%,
-      rgba(94,214,200,.25) 45%,
-      rgba(94,214,200,.4) 50%,
-      rgba(94,214,200,.25) 55%,
-      transparent 100%),
+    linear-gradient(110deg,transparent 0%,rgba(94,214,200,.25) 45%,rgba(94,214,200,.4) 50%,rgba(94,214,200,.25) 55%,transparent 100%),
     linear-gradient(180deg,#0e4a52,#08333d);
-  background-size:200% 100%,100% 100%;
-  background-position:0% 0,0 0;
-  border-color:rgba(94,214,200,.5);
-  text-shadow:0 1px 1px rgba(0,0,0,.4);
-  box-shadow:
-    0 1px 3px rgba(0,0,0,.35),
-    inset 0 1px 0 rgba(94,214,200,.25),
-    inset 0 -3px 8px rgba(0,0,0,.3);
+  background-size:200% 100%,100% 100%;background-position:0% 0,0 0;
+  border-color:rgba(94,214,200,.5);text-shadow:0 1px 1px rgba(0,0,0,.4);
+  box-shadow:0 1px 3px rgba(0,0,0,.35),inset 0 1px 0 rgba(94,214,200,.25),inset 0 -3px 8px rgba(0,0,0,.3);
   animation:elitFlow 7s ease-in-out infinite;
 }
-@keyframes elitFlow{
-  0%,100%{background-position:0% 0,0 0;}
-  50%{background-position:100% 0,0 0;}
-}
+@keyframes elitFlow{0%,100%{background-position:0% 0,0 0}50%{background-position:100% 0,0 0}}
 .rb-elit::after{animation-duration:7s}
 [data-theme="light"] .rb-elit{
   color:#064e4a;
   background-image:
-    linear-gradient(110deg,
-      transparent 0%,
-      rgba(255,255,255,.6) 45%,
-      rgba(255,255,255,.85) 50%,
-      rgba(255,255,255,.6) 55%,
-      transparent 100%),
+    linear-gradient(110deg,transparent 0%,rgba(255,255,255,.6) 45%,rgba(255,255,255,.85) 50%,rgba(255,255,255,.6) 55%,transparent 100%),
     linear-gradient(180deg,#ccfbf1,#99f6e4);
-  background-size:200% 100%,100% 100%;
-  border-color:#14b8a6;
-  text-shadow:0 1px 0 rgba(255,255,255,.6);
-  box-shadow:
-    0 1px 2px rgba(13,148,136,.15),
-    inset 0 1px 0 rgba(255,255,255,.9),
-    inset 0 -2px 4px rgba(13,148,136,.1);
+  background-size:200% 100%,100% 100%;border-color:#14b8a6;text-shadow:0 1px 0 rgba(255,255,255,.6);
+  box-shadow:0 1px 2px rgba(13,148,136,.15),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -2px 4px rgba(13,148,136,.1);
 }
 .rb-master{
   color:#eee5ff;
   background-image:
-    linear-gradient(120deg,
-      rgba(120,80,220,.35) 0%,
-      rgba(160,110,255,.15) 30%,
-      rgba(200,160,255,.5) 50%,
-      rgba(160,110,255,.15) 70%,
-      rgba(120,80,220,.35) 100%),
+    linear-gradient(120deg,rgba(120,80,220,.35) 0%,rgba(160,110,255,.15) 30%,rgba(200,160,255,.5) 50%,rgba(160,110,255,.15) 70%,rgba(120,80,220,.35) 100%),
     linear-gradient(180deg,#4a2d8f,#2a1552);
-  background-size:300% 100%,100% 100%;
-  background-position:0% 0,0 0;
-  border-color:rgba(185,155,255,.55);
-  text-shadow:0 1px 1px rgba(0,0,0,.4);
-  animation:
-    masterAurora 8s ease-in-out infinite,
-    masterBorder 4s ease-in-out infinite;
+  background-size:300% 100%,100% 100%;background-position:0% 0,0 0;
+  border-color:rgba(185,155,255,.55);text-shadow:0 1px 1px rgba(0,0,0,.4);
+  animation:masterAurora 8s ease-in-out infinite,masterBorder 4s ease-in-out infinite;
 }
-@keyframes masterAurora{
-  0%,100%{background-position:0% 0,0 0;}
-  50%{background-position:100% 0,0 0;}
-}
-@keyframes masterBorder{
-  0%,100%{border-color:rgba(185,155,255,.55)}
-  50%{border-color:rgba(220,200,255,.85)}
-}
-.rb-master{
-  box-shadow:
-    0 1px 3px rgba(0,0,0,.35),
-    0 0 0 1px rgba(167,139,250,.12),
-    inset 0 1px 0 rgba(200,170,255,.3),
-    inset 0 -3px 8px rgba(0,0,0,.3);
-}
+@keyframes masterAurora{0%,100%{background-position:0% 0,0 0}50%{background-position:100% 0,0 0}}
+@keyframes masterBorder{0%,100%{border-color:rgba(185,155,255,.55)}50%{border-color:rgba(220,200,255,.85)}}
+.rb-master{box-shadow:0 1px 3px rgba(0,0,0,.35),0 0 0 1px rgba(167,139,250,.12),inset 0 1px 0 rgba(200,170,255,.3),inset 0 -3px 8px rgba(0,0,0,.3)}
 .rb-master::after{animation-duration:5.4s}
 [data-theme="light"] .rb-master{
   color:#3b0a6b;
   background-image:
-    linear-gradient(120deg,
-      rgba(139,92,246,.28) 0%,
-      rgba(167,139,250,.1) 30%,
-      rgba(196,181,253,.75) 50%,
-      rgba(167,139,250,.1) 70%,
-      rgba(139,92,246,.28) 100%),
+    linear-gradient(120deg,rgba(139,92,246,.28) 0%,rgba(167,139,250,.1) 30%,rgba(196,181,253,.75) 50%,rgba(167,139,250,.1) 70%,rgba(139,92,246,.28) 100%),
     linear-gradient(180deg,#ede0ff,#d8c3ff);
-  background-size:300% 100%,100% 100%;
-  border-color:#8b5cf6;
-  text-shadow:0 1px 0 rgba(255,255,255,.7);
-  box-shadow:
-    0 1px 2px rgba(124,58,237,.15),
-    inset 0 1px 0 rgba(255,255,255,.9),
-    inset 0 -2px 4px rgba(124,58,237,.1);
+  background-size:300% 100%,100% 100%;border-color:#8b5cf6;text-shadow:0 1px 0 rgba(255,255,255,.7);
+  box-shadow:0 1px 2px rgba(124,58,237,.15),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -2px 4px rgba(124,58,237,.1);
   animation:masterAurora 8s ease-in-out infinite;
 }
 .rb-grandmaster{
   color:#fff2cf;
   background-image:
-    radial-gradient(1.6px 1.6px at center, rgba(255,255,255,.95), transparent 100%),
-    radial-gradient(1.2px 1.2px at center, rgba(255,240,200,.9), transparent 100%),
-    radial-gradient(1.4px 1.4px at center, rgba(255,220,160,.8), transparent 100%),
-    linear-gradient(115deg,
-      transparent 0%,
-      rgba(255,220,130,.35) 45%,
-      rgba(255,240,180,.6) 50%,
-      rgba(255,220,130,.35) 55%,
-      transparent 100%),
+    radial-gradient(1.6px 1.6px at center,rgba(255,255,255,.95),transparent 100%),
+    radial-gradient(1.2px 1.2px at center,rgba(255,240,200,.9),transparent 100%),
+    radial-gradient(1.4px 1.4px at center,rgba(255,220,160,.8),transparent 100%),
+    linear-gradient(115deg,transparent 0%,rgba(255,220,130,.35) 45%,rgba(255,240,180,.6) 50%,rgba(255,220,130,.35) 55%,transparent 100%),
     linear-gradient(180deg,#8f5a12,#5a2e05);
-  background-size:
-    24px 24px,
-    32px 32px,
-    40px 40px,
-    250% 100%,
-    100% 100%;
-  background-position:
-    4px 4px,
-    16px 12px,
-    22px 20px,
-    0% 0,
-    0 0;
-  border-color:rgba(255,200,60,.7);
-  text-shadow:0 1px 2px rgba(50,20,0,.6);
-  box-shadow:
-    0 1px 3px rgba(0,0,0,.4),
-    0 0 0 1px rgba(255,200,60,.15),
-    inset 0 1px 0 rgba(255,220,140,.4),
-    inset 0 -3px 8px rgba(0,0,0,.35);
-  animation:
-    gmSparkleDrift 10s linear infinite,
-    gmGoldWave 6s ease-in-out infinite,
-    gmBorderShimmer 3.4s ease-in-out infinite;
+  background-size:24px 24px,32px 32px,40px 40px,250% 100%,100% 100%;
+  background-position:4px 4px,16px 12px,22px 20px,0% 0,0 0;
+  border-color:rgba(255,200,60,.7);text-shadow:0 1px 2px rgba(50,20,0,.6);
+  box-shadow:0 1px 3px rgba(0,0,0,.4),0 0 0 1px rgba(255,200,60,.15),inset 0 1px 0 rgba(255,220,140,.4),inset 0 -3px 8px rgba(0,0,0,.35);
+  animation:gmSparkleDrift 10s linear infinite,gmGoldWave 6s ease-in-out infinite,gmBorderShimmer 3.4s ease-in-out infinite;
 }
-@keyframes gmSparkleDrift{
-  0%{background-position:4px 4px,16px 12px,22px 20px,0% 0,0 0;}
-  100%{background-position:28px 28px,48px 44px,62px 60px,0% 0,0 0;}
-}
-@keyframes gmGoldWave{
-  0%,100%{background-position:4px 4px,16px 12px,22px 20px,0% 0,0 0;}
-  50%{background-position:4px 4px,16px 12px,22px 20px,100% 0,0 0;}
-}
-@keyframes gmBorderShimmer{
-  0%,100%{border-color:rgba(255,200,60,.7)}
-  50%{border-color:rgba(255,235,150,1)}
-}
-.rb-grandmaster .star-gold{
-  animation:gmStarBlink 2s ease-in-out infinite;
-}
-@keyframes gmStarBlink{
-  0%,100%{opacity:1}
-  50%{opacity:.7}
-}
+@keyframes gmSparkleDrift{0%{background-position:4px 4px,16px 12px,22px 20px,0% 0,0 0}100%{background-position:28px 28px,48px 44px,62px 60px,0% 0,0 0}}
+@keyframes gmGoldWave{0%,100%{background-position:4px 4px,16px 12px,22px 20px,0% 0,0 0}50%{background-position:4px 4px,16px 12px,22px 20px,100% 0,0 0}}
+@keyframes gmBorderShimmer{0%,100%{border-color:rgba(255,200,60,.7)}50%{border-color:rgba(255,235,150,1)}}
+.rb-grandmaster .star-gold{animation:gmStarBlink 2s ease-in-out infinite}
+@keyframes gmStarBlink{0%,100%{opacity:1}50%{opacity:.7}}
 .rb-grandmaster::after{animation-duration:4s}
 [data-theme="light"] .rb-grandmaster{
   color:#5a2a00;
   background-image:
-    radial-gradient(1.6px 1.6px at center, rgba(120,53,15,.75), transparent 100%),
-    radial-gradient(1.2px 1.2px at center, rgba(180,83,9,.6), transparent 100%),
-    radial-gradient(1.4px 1.4px at center, rgba(217,119,6,.5), transparent 100%),
-    linear-gradient(115deg,
-      transparent 0%,
-      rgba(255,255,255,.55) 45%,
-      rgba(255,255,255,.85) 50%,
-      rgba(255,255,255,.55) 55%,
-      transparent 100%),
+    radial-gradient(1.6px 1.6px at center,rgba(120,53,15,.75),transparent 100%),
+    radial-gradient(1.2px 1.2px at center,rgba(180,83,9,.6),transparent 100%),
+    radial-gradient(1.4px 1.4px at center,rgba(217,119,6,.5),transparent 100%),
+    linear-gradient(115deg,transparent 0%,rgba(255,255,255,.55) 45%,rgba(255,255,255,.85) 50%,rgba(255,255,255,.55) 55%,transparent 100%),
     linear-gradient(180deg,#fef3c7,#fde68a);
-  background-size:24px 24px,32px 32px,40px 40px,250% 100%,100% 100%;
-  border-color:#b45309;
-  text-shadow:0 1px 0 rgba(255,255,255,.6);
-  box-shadow:
-    0 1px 2px rgba(180,83,9,.18),
-    inset 0 1px 0 rgba(255,255,255,.9),
-    inset 0 -2px 4px rgba(180,83,9,.12);
+  background-size:24px 24px,32px 32px,40px 40px,250% 100%,100% 100%;border-color:#b45309;text-shadow:0 1px 0 rgba(255,255,255,.6);
+  box-shadow:0 1px 2px rgba(180,83,9,.18),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -2px 4px rgba(180,83,9,.12);
 }
 @media (prefers-reduced-motion:reduce){
-  .rank-badge,
-  .rank-badge::before,
-  .rank-badge::after,
-  .rank-badge .star-gold{
-    animation:none !important;
-  }
+  .rank-badge,.rank-badge::before,.rank-badge::after,.rank-badge .star-gold{animation:none !important}
 }
 
-/* Bintang emas di mana pun */
 .star-gold{display:inline-block;vertical-align:-2px;flex:none}
 
 .progress{height:7px;border-radius:99px;background:var(--surface-3);overflow:hidden;margin-top:12px;position:relative;box-shadow:inset 0 1px 2px rgba(0,0,0,.3)}
@@ -798,10 +653,7 @@ svg.ic-xl{width:40px;height:40px}
    AUTH SCREEN
    ============================================================ */
 .auth-screen{
-  position:fixed;inset:0;z-index:900;
-  display:flex;flex-direction:column;
-  overflow-y:auto;
-  padding:0;
+  position:fixed;inset:0;z-index:900;display:flex;flex-direction:column;overflow-y:auto;padding:0;
   background:
     radial-gradient(900px 700px at 15% 10%, rgba(109,123,255,.22), transparent 55%),
     radial-gradient(800px 600px at 100% 90%, rgba(164,108,255,.2), transparent 55%),
@@ -813,13 +665,9 @@ svg.ic-xl{width:40px;height:40px}
   background:
     radial-gradient(circle at 20% 30%, rgba(109,123,255,.16), transparent 30%),
     radial-gradient(circle at 80% 70%, rgba(164,108,255,.14), transparent 30%);
-  animation:authOrbit 30s linear infinite;
-  pointer-events:none;
+  animation:authOrbit 30s linear infinite;pointer-events:none;
 }
-@keyframes authOrbit{
-  0%{transform:rotate(0deg)}
-  100%{transform:rotate(360deg)}
-}
+@keyframes authOrbit{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 .auth-inner{
   width:100%;max-width:460px;margin:auto;
   padding:calc(env(safe-area-inset-top) + 40px) 24px calc(env(safe-area-inset-bottom) + 40px);
@@ -827,7 +675,6 @@ svg.ic-xl{width:40px;height:40px}
   animation:authFade .7s cubic-bezier(.2,1,.4,1);
 }
 @keyframes authFade{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-
 .auth-header{text-align:center;display:flex;flex-direction:column;align-items:center;gap:0}
 .auth-logo{
   width:84px;height:84px;border-radius:26px;display:grid;place-items:center;
@@ -842,40 +689,29 @@ svg.ic-xl{width:40px;height:40px}
   opacity:.32;filter:blur(28px);z-index:-1;
 }
 .auth-logo svg{width:48px;height:48px}
-@keyframes logoFloat{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-6px)}
-}
+@keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .auth-title{
   font-size:30px;font-weight:900;letter-spacing:-.038em;
   background:linear-gradient(135deg,#fff 0%,#b7c1e0 100%);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-  margin-bottom:6px;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;
 }
 [data-theme="light"] .auth-title{
   background:linear-gradient(135deg,#0a0f1e 0%,#4c5cf0 100%);
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
 }
-.auth-tagline{
-  font-size:13px;font-weight:600;color:var(--text-dim);
-  letter-spacing:.03em;
-}
-
+.auth-tagline{font-size:13px;font-weight:600;color:var(--text-dim);letter-spacing:.03em}
 .auth-tabs{
   display:flex;gap:4px;background:var(--surface);padding:5px;border-radius:16px;
-  border:1px solid var(--border-2);
-  box-shadow:inset 0 1px 2px rgba(0,0,0,.25);
+  border:1px solid var(--border-2);box-shadow:inset 0 1px 2px rgba(0,0,0,.25);
 }
 .auth-tabs button{
   flex:1;padding:11px 14px;border-radius:12px;font-size:13px;font-weight:800;
-  color:var(--text-dim);transition:.24s cubic-bezier(.2,1,.4,1);
-  letter-spacing:.01em;
+  color:var(--text-dim);transition:.24s cubic-bezier(.2,1,.4,1);letter-spacing:.01em;
 }
 .auth-tabs button.active{
   background:linear-gradient(180deg,var(--surface-3),var(--surface-2));
   color:var(--text);box-shadow:var(--shadow-sm),inset 0 1px 0 rgba(255,255,255,.06);
 }
-
 .auth-card{
   position:relative;
   background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 92%,transparent),color-mix(in srgb,var(--surface-2) 92%,transparent));
@@ -887,12 +723,10 @@ svg.ic-xl{width:40px;height:40px}
   content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;
   background:linear-gradient(155deg,rgba(255,255,255,.14),rgba(255,255,255,0) 40%,rgba(255,255,255,.06));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  pointer-events:none;
+  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
 }
 .auth-form{animation:formSlide .4s cubic-bezier(.2,1,.4,1)}
 @keyframes formSlide{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
-
 .auth-divider{
   display:flex;align-items:center;gap:14px;margin:18px 0;
   color:var(--text-dim2);font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
@@ -901,10 +735,8 @@ svg.ic-xl{width:40px;height:40px}
   content:'';flex:1;height:1px;
   background:linear-gradient(90deg,transparent,var(--border-2),transparent);
 }
-
 .auth-foot{
-  display:flex;align-items:flex-start;gap:10px;
-  padding:13px 15px;border-radius:14px;
+  display:flex;align-items:flex-start;gap:10px;padding:13px 15px;border-radius:14px;
   background:var(--accent-soft);border:1px solid rgba(109,123,255,.2);
   color:var(--text-dim);font-size:12px;line-height:1.55;
 }
@@ -914,8 +746,7 @@ svg.ic-xl{width:40px;height:40px}
    HOME
    ============================================================ */
 .hero{
-  position:relative;overflow:hidden;
-  border-radius:26px;padding:22px;
+  position:relative;overflow:hidden;border-radius:26px;padding:22px;
   background:
     radial-gradient(140% 160% at 100% 0%, rgba(164,108,255,.42), transparent 55%),
     radial-gradient(140% 160% at 0% 100%, rgba(109,123,255,.32), transparent 55%),
@@ -927,51 +758,30 @@ svg.ic-xl{width:40px;height:40px}
   content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;
   background:linear-gradient(155deg,rgba(255,255,255,.18),rgba(255,255,255,0) 45%,rgba(255,255,255,.08));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  pointer-events:none;
+  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
 }
 .hero::after{
   content:'';position:absolute;right:-70px;top:-70px;width:280px;height:280px;border-radius:50%;
   background:radial-gradient(circle,rgba(109,123,255,.34),transparent 65%);
   pointer-events:none;animation:heroFloat 8s ease-in-out infinite;
 }
-@keyframes heroFloat{
-  0%,100%{transform:translate(0,0)}
-  50%{transform:translate(-14px,14px)}
-}
+@keyframes heroFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(-14px,14px)}}
 .hero-inner{position:relative;z-index:1;display:flex;gap:16px;align-items:center}
 .hero-info{flex:1;min-width:0}
-.hero-name{
-  font-size:19px;font-weight:900;letter-spacing:-.028em;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.hero-meta{
-  display:flex;align-items:center;gap:9px;margin-top:6px;flex-wrap:wrap;
-}
-.hero-lvl{
-  font-size:11.5px;color:var(--text-dim);font-weight:700;
-  display:inline-flex;align-items:center;gap:5px;
-}
+.hero-name{font-size:19px;font-weight:900;letter-spacing:-.028em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hero-meta{display:flex;align-items:center;gap:9px;margin-top:6px;flex-wrap:wrap}
+.hero-lvl{font-size:11.5px;color:var(--text-dim);font-weight:700;display:inline-flex;align-items:center;gap:5px}
 .hero-lvl b{color:var(--text);font-weight:900}
-.hero-stats{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px;
-}
-.hero-stats > div{
-  font-size:10px;font-weight:800;color:var(--text-dim2);
-  letter-spacing:.12em;text-transform:uppercase;
-}
-.hero-stats b{
-  display:block;font-size:22px;font-weight:900;color:var(--text);
-  letter-spacing:-.035em;margin-top:3px;
-}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.hero-stats > div{font-size:10px;font-weight:800;color:var(--text-dim2);letter-spacing:.12em;text-transform:uppercase}
+.hero-stats b{display:block;font-size:22px;font-weight:900;color:var(--text);letter-spacing:-.035em;margin-top:3px}
 .hero-stats b small{font-size:12px;font-weight:700;opacity:.55}
 
 .quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:18px}
 .quick{
   position:relative;overflow:hidden;
   background:linear-gradient(180deg,var(--surface),var(--surface-2));
-  border-radius:18px;
-  padding:16px 10px;
+  border-radius:18px;padding:16px 10px;
   display:flex;flex-direction:column;align-items:center;gap:10px;
   transition:.26s cubic-bezier(.2,1,.4,1);
   min-height:104px;justify-content:center;
@@ -982,42 +792,29 @@ svg.ic-xl{width:40px;height:40px}
   content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;
   background:linear-gradient(155deg,rgba(255,255,255,.1),rgba(255,255,255,0) 40%,rgba(255,255,255,.05));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  pointer-events:none;
+  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
 }
-.quick:hover{
-  transform:translateY(-4px);
-  box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.08);
-  border-color:var(--border-2);
-}
+.quick:hover{transform:translateY(-4px);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.08);border-color:var(--border-2)}
 .quick:active{transform:translateY(-1px) scale(.98)}
 .quick .qi{
   width:44px;height:44px;border-radius:14px;display:grid;place-items:center;
-  color:var(--accent);
-  background:linear-gradient(135deg,var(--accent-soft),transparent);
-  border:1px solid rgba(109,123,255,.2);
-  transition:.26s;
+  color:var(--accent);background:linear-gradient(135deg,var(--accent-soft),transparent);
+  border:1px solid rgba(109,123,255,.2);transition:.26s;
 }
 .quick:hover .qi{
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  color:#fff;border-color:transparent;
-  box-shadow:var(--glow-accent);transform:scale(1.05);
+  color:#fff;border-color:transparent;box-shadow:var(--glow-accent);transform:scale(1.05);
 }
 .quick span{font-size:11.5px;font-weight:800;text-align:center;line-height:1.25;letter-spacing:-.005em}
 
-.list-item{
-  display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:14px;
-  transition:.16s;
-}
+.list-item{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:14px;transition:.16s}
 .list-item + .list-item{border-top:1px solid var(--border)}
 .list-item:hover{background:var(--surface-2)}
 .li-main{flex:1;min-width:0}
 .li-main .t{font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .li-main .s{font-size:11.5px;color:var(--text-dim);margin-top:3px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 
-.res-badge{
-  font-size:10px;font-weight:900;padding:5px 10px;border-radius:8px;letter-spacing:.11em;
-}
+.res-badge{font-size:10px;font-weight:900;padding:5px 10px;border-radius:8px;letter-spacing:.11em}
 .res-w{background:var(--success-soft);color:var(--success);border:1px solid rgba(16,217,141,.3)}
 .res-l{background:var(--danger-soft);color:var(--danger);border:1px solid rgba(255,93,108,.3)}
 .res-d{background:var(--surface-3);color:var(--text-dim);border:1px solid var(--border-2)}
@@ -1029,8 +826,7 @@ svg.ic-xl{width:40px;height:40px}
 .play-card{
   position:relative;overflow:hidden;
   background:linear-gradient(180deg,var(--surface),var(--surface-2));
-  border-radius:20px;padding:18px;
-  display:flex;align-items:center;gap:15px;
+  border-radius:20px;padding:18px;display:flex;align-items:center;gap:15px;
   transition:.26s cubic-bezier(.2,1,.4,1);cursor:pointer;
   box-shadow:var(--shadow-xs),inset 0 1px 0 rgba(255,255,255,.04);
   border:1px solid var(--border);
@@ -1039,20 +835,17 @@ svg.ic-xl{width:40px;height:40px}
   content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;
   background:linear-gradient(155deg,rgba(255,255,255,.09),rgba(255,255,255,0) 40%,rgba(255,255,255,.05));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  pointer-events:none;
+  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
 }
 .play-card:hover{transform:translateY(-3px);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.08);border-color:var(--border-2)}
 .play-card:active{transform:translateY(-1px) scale(.995)}
 .play-card .pc-icon{
   width:56px;height:56px;border-radius:17px;display:grid;place-items:center;flex:none;
-  color:#fff;position:relative;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 6px 18px rgba(0,0,0,.2);
+  color:#fff;position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 6px 18px rgba(0,0,0,.2);
 }
 .play-card .pc-icon::after{
   content:'';position:absolute;inset:0;border-radius:inherit;
-  background:linear-gradient(180deg,rgba(255,255,255,.16),transparent 60%);
-  pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.16),transparent 60%);pointer-events:none;
 }
 .play-card .pc-icon.ranked{background:linear-gradient(135deg,#ff6b6b,#ffb020)}
 .play-card .pc-icon.casual{background:linear-gradient(135deg,#22d3ee,#6d7bff)}
@@ -1063,31 +856,24 @@ svg.ic-xl{width:40px;height:40px}
 .play-card .pc-body{flex:1;min-width:0}
 .play-card .pc-title{font-size:15px;font-weight:800;letter-spacing:-.02em}
 .play-card .pc-sub{font-size:12px;color:var(--text-dim);margin-top:4px;line-height:1.45}
-.play-card .pc-arrow{
-  color:var(--text-dim2);flex:none;transition:.24s;
-}
+.play-card .pc-arrow{color:var(--text-dim2);flex:none;transition:.24s}
 .play-card:hover .pc-arrow{color:var(--accent);transform:translateX(4px)}
 
 /* ============================================================
    FRIENDS
    ============================================================ */
-.search-bar{
-  display:flex;gap:9px;
-}
+.search-bar{display:flex;gap:9px}
 .search-bar .input{flex:1;min-width:0}
 
 /* ============================================================
    LEADERBOARD
    ============================================================ */
-.lb-podium{
-  display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:10px;margin-bottom:14px;
-  align-items:end;
-}
+.lb-podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:10px;margin-bottom:14px;align-items:end}
 .podium{
   position:relative;overflow:hidden;
   background:linear-gradient(180deg,var(--surface),var(--surface-2));
-  border-radius:20px;padding:16px 10px;
-  text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;
+  border-radius:20px;padding:16px 10px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
   box-shadow:var(--shadow-sm),inset 0 1px 0 rgba(255,255,255,.05);
   border:1px solid var(--border);
 }
@@ -1095,8 +881,7 @@ svg.ic-xl{width:40px;height:40px}
   content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;
   background:linear-gradient(155deg,rgba(255,255,255,.1),rgba(255,255,255,0) 40%,rgba(255,255,255,.05));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  pointer-events:none;
+  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
 }
 .podium.rank-1{padding-top:22px;padding-bottom:22px;transform:translateY(-8px)}
 .podium.rank-1::after{
@@ -1114,25 +899,14 @@ svg.ic-xl{width:40px;height:40px}
 .podium .medal.r2{background:linear-gradient(135deg,#c5cdda,#8a95a8)}
 .podium .medal.r3{background:linear-gradient(135deg,#e39b5c,#a0683a)}
 .podium .avatar{width:56px;height:56px;border-radius:18px;font-size:22px}
-.podium .name{
-  font-size:12.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  max-width:100%;
-}
-.podium .score{
-  font-size:17px;font-weight:900;letter-spacing:-.03em;
-}
+.podium .name{font-size:12.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.podium .score{font-size:17px;font-weight:900;letter-spacing:-.03em}
 .podium.rank-1 .name{font-size:13.5px}
 .podium.rank-1 .score{font-size:20px}
 
-.lb-row{
-  display:grid;grid-template-columns:38px 1fr auto;gap:11px;align-items:center;
-  padding:12px 13px;border-radius:14px;transition:.14s;
-}
+.lb-row{display:grid;grid-template-columns:38px 1fr auto;gap:11px;align-items:center;padding:12px 13px;border-radius:14px;transition:.14s}
 .lb-row:hover{background:var(--surface-2)}
-.lb-row.me{
-  background:linear-gradient(135deg,var(--accent-soft),var(--accent-soft-2));
-  border:1px solid rgba(109,123,255,.28);
-}
+.lb-row.me{background:linear-gradient(135deg,var(--accent-soft),var(--accent-soft-2));border:1px solid rgba(109,123,255,.28)}
 .lb-pos{
   font-weight:900;font-size:14px;color:var(--text-dim);text-align:center;
   display:flex;align-items:center;justify-content:center;
@@ -1147,52 +921,32 @@ svg.ic-xl{width:40px;height:40px}
    PROFILE
    ============================================================ */
 .profile-cover{
-  position:relative;overflow:hidden;
-  border-radius:24px;
-  padding:22px;
+  position:relative;overflow:hidden;border-radius:24px;padding:22px;
   background:
     radial-gradient(120% 140% at 100% 0%, rgba(164,108,255,.4), transparent 55%),
     radial-gradient(120% 140% at 0% 100%, rgba(109,123,255,.34), transparent 55%),
     linear-gradient(135deg,var(--surface),var(--surface-2));
-  box-shadow:var(--shadow);
-  isolation:isolate;
+  box-shadow:var(--shadow);isolation:isolate;
 }
 .profile-cover::before{
   content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;
   background:linear-gradient(155deg,rgba(255,255,255,.16),rgba(255,255,255,0) 45%,rgba(255,255,255,.06));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  pointer-events:none;
+  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
 }
 .profile-head{display:flex;gap:16px;align-items:center;position:relative;z-index:1}
 .profile-body{flex:1;min-width:0}
-.profile-name{
-  font-size:22px;font-weight:900;letter-spacing:-.03em;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.profile-id{
-  font-size:11px;color:var(--text-dim2);margin-top:6px;
-  font-family:'JetBrains Mono',ui-monospace,monospace;
-  letter-spacing:.02em;
-}
-.profile-rating{
-  text-align:right;position:relative;z-index:1;
-}
+.profile-name{font-size:22px;font-weight:900;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-id{font-size:11px;color:var(--text-dim2);margin-top:6px;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:.02em}
+.profile-rating{text-align:right;position:relative;z-index:1}
 .profile-rating .rnum{font-size:32px;font-weight:900;letter-spacing:-.04em;line-height:1}
-.profile-rating .rlabel{
-  font-size:10px;font-weight:800;color:var(--text-dim);letter-spacing:.16em;
-  text-transform:uppercase;margin-top:4px;
-}
+.profile-rating .rlabel{font-size:10px;font-weight:800;color:var(--text-dim);letter-spacing:.16em;text-transform:uppercase;margin-top:4px}
 .profile-meta{margin-top:16px;position:relative;z-index:1}
-.profile-meta .mrow{
-  display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);
-  font-weight:700;letter-spacing:.02em;margin-bottom:6px;
-}
+.profile-meta .mrow{display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);font-weight:700;letter-spacing:.02em;margin-bottom:6px}
 
 .avatar-edit-wrap{position:relative;display:inline-block}
 .avatar-edit-btn{
-  position:absolute;bottom:-4px;right:-4px;
-  width:30px;height:30px;border-radius:50%;
+  position:absolute;bottom:-4px;right:-4px;width:30px;height:30px;border-radius:50%;
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
   display:grid;place-items:center;color:#fff;
   box-shadow:0 4px 14px rgba(109,123,255,.5),0 0 0 2px var(--surface);
@@ -1214,8 +968,7 @@ svg.ic-xl{width:40px;height:40px}
 }
 .tabs button.active{
   background:linear-gradient(180deg,var(--surface-3),var(--surface-2));
-  color:var(--text);
-  box-shadow:var(--shadow-sm),inset 0 1px 0 rgba(255,255,255,.06);
+  color:var(--text);box-shadow:var(--shadow-sm),inset 0 1px 0 rgba(255,255,255,.06);
 }
 
 .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
@@ -1230,20 +983,13 @@ svg.ic-xl{width:40px;height:40px}
   content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;
   background:linear-gradient(155deg,rgba(255,255,255,.09),rgba(255,255,255,0) 40%,rgba(255,255,255,.04));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  pointer-events:none;
+  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
 }
-.stat .l{
-  font-size:10.5px;color:var(--text-dim);font-weight:800;text-transform:uppercase;
-  letter-spacing:.11em;
-}
-.stat .v{
-  font-size:26px;font-weight:900;margin-top:6px;letter-spacing:-.04em;line-height:1;
-}
+.stat .l{font-size:10.5px;color:var(--text-dim);font-weight:800;text-transform:uppercase;letter-spacing:.11em}
+.stat .v{font-size:26px;font-weight:900;margin-top:6px;letter-spacing:-.04em;line-height:1}
 
 .ach{
-  display:flex;gap:14px;align-items:center;padding:14px;
-  border-radius:18px;
+  display:flex;gap:14px;align-items:center;padding:14px;border-radius:18px;
   background:linear-gradient(180deg,var(--surface),var(--surface-2));
   border:1px solid var(--border);
   box-shadow:var(--shadow-xs),inset 0 1px 0 rgba(255,255,255,.04);
@@ -1254,8 +1000,7 @@ svg.ic-xl{width:40px;height:40px}
 .ach .ai{
   width:48px;height:48px;border-radius:15px;display:grid;place-items:center;flex:none;
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  color:#fff;box-shadow:var(--glow-accent);
-  position:relative;
+  color:#fff;box-shadow:var(--glow-accent);position:relative;
 }
 .ach .ai::after{
   content:'';position:absolute;inset:0;border-radius:inherit;
@@ -1277,8 +1022,7 @@ svg.ic-xl{width:40px;height:40px}
 }
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .settings-sheet{
-  position:fixed;top:0;bottom:0;right:0;z-index:560;
-  width:min(440px,100vw);
+  position:fixed;top:0;bottom:0;right:0;z-index:560;width:min(440px,100vw);
   display:flex;flex-direction:column;
   background:linear-gradient(180deg,var(--bg-2),var(--bg));
   border-left:1px solid var(--border-2);
@@ -1289,8 +1033,7 @@ svg.ic-xl{width:40px;height:40px}
 @keyframes sheetIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
 .sheet-head{
   display:flex;align-items:center;gap:12px;padding:16px 18px;
-  border-bottom:1px solid var(--border);
-  flex:none;
+  border-bottom:1px solid var(--border);flex:none;
 }
 .sheet-head h3{font-size:17px;font-weight:800;letter-spacing:-.025em;flex:1}
 .sheet-body{flex:1;overflow-y:auto;padding:16px 18px 32px}
@@ -1306,9 +1049,7 @@ svg.ic-xl{width:40px;height:40px}
 }
 .setting-row{
   display:flex;align-items:center;gap:14px;padding:14px 16px;
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  transition:.16s;
+  background:var(--surface);border-bottom:1px solid var(--border);transition:.16s;
 }
 .setting-row:first-of-type{border-top-left-radius:16px;border-top-right-radius:16px;border-top:1px solid var(--border)}
 .setting-row:last-of-type{border-bottom-left-radius:16px;border-bottom-right-radius:16px;border-bottom:none}
@@ -1318,12 +1059,9 @@ svg.ic-xl{width:40px;height:40px}
 .setting-row .st .s{font-size:11.5px;color:var(--text-dim);margin-top:2px}
 .setting-row select{
   background:var(--bg-2);border:1px solid var(--border-2);border-radius:10px;
-  padding:8px 12px;font-size:12.5px;outline:none;font-weight:600;min-width:90px;
-  color:var(--text);
+  padding:8px 12px;font-size:12.5px;outline:none;font-weight:600;min-width:90px;color:var(--text);
 }
-.setting-row input[type=range]{
-  width:130px;accent-color:var(--accent);
-}
+.setting-row input[type=range]{width:130px;accent-color:var(--accent)}
 .switch{
   position:relative;width:48px;height:28px;border-radius:99px;
   background:var(--surface-3);border:1px solid var(--border-2);
@@ -1336,8 +1074,7 @@ svg.ic-xl{width:40px;height:40px}
 }
 .switch.on{
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  border-color:transparent;
-  box-shadow:var(--glow-accent);
+  border-color:transparent;box-shadow:var(--glow-accent);
 }
 .switch.on::after{left:22px}
 .swatch-grid{display:flex;gap:10px;flex-wrap:wrap;padding:14px 16px;background:var(--surface);border-radius:16px;border:1px solid var(--border)}
@@ -1371,10 +1108,9 @@ svg.ic-xl{width:40px;height:40px}
 }
 .game-top .title{
   font-size:13.5px;font-weight:800;flex:1;text-align:center;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  letter-spacing:-.01em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em;
 }
-.game-body{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.game-body{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;position:relative}
 .game-arena{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:10px;gap:10px;min-height:0;overflow:hidden;
@@ -1385,15 +1121,13 @@ svg.ic-xl{width:40px;height:40px}
   background:linear-gradient(180deg,var(--surface),var(--surface-2));
   flex:none;transition:.26s cubic-bezier(.2,1,.4,1);
   box-shadow:var(--shadow-sm),inset 0 1px 0 rgba(255,255,255,.05);
-  border:1px solid var(--border);
-  position:relative;overflow:hidden;
+  border:1px solid var(--border);position:relative;overflow:hidden;
 }
 .player-bar::before{
   content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;
   background:linear-gradient(155deg,rgba(255,255,255,.1),rgba(255,255,255,0) 40%,rgba(255,255,255,.05));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  pointer-events:none;
+  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
 }
 .player-bar.turn{
   border-color:var(--accent);
@@ -1421,8 +1155,7 @@ svg.ic-xl{width:40px;height:40px}
 }
 .clock.active{
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  color:#fff;border-color:transparent;
-  box-shadow:var(--glow-accent);
+  color:#fff;border-color:transparent;box-shadow:var(--glow-accent);
 }
 
 .board-wrap{
@@ -1450,10 +1183,7 @@ svg.ic-xl{width:40px;height:40px}
   0%,100%{box-shadow:inset 0 0 0 100px rgba(255,60,60,.5)}
   50%{box-shadow:inset 0 0 0 100px rgba(255,60,60,.7)}
 }
-.sq .coord{
-  position:absolute;font-size:10px;font-weight:900;opacity:.75;pointer-events:none;
-  letter-spacing:.02em;
-}
+.sq .coord{position:absolute;font-size:10px;font-weight:900;opacity:.75;pointer-events:none;letter-spacing:.02em}
 .sq .coord.f{right:5px;bottom:3px}
 .sq .coord.r{left:5px;top:3px}
 .sq.light .coord{color:color-mix(in srgb,var(--board-d) 60%,#000)}
@@ -1477,8 +1207,7 @@ svg.ic-xl{width:40px;height:40px}
 .piece.pw{--pf:#fafbfd;--ps:#141a26}
 .piece.pb{--pf:#1e2330;--ps:#b8c1d2}
 .piece path,.piece circle,.piece rect,.piece polygon,.piece ellipse{
-  fill:var(--pf);stroke:var(--ps);stroke-width:1.5;
-  stroke-linejoin:round;stroke-linecap:round;
+  fill:var(--pf);stroke:var(--ps);stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round;
 }
 .piece .accent{fill:var(--ps);stroke:none}
 .piece.dragging{opacity:.22}
@@ -1486,9 +1215,7 @@ svg.ic-xl{width:40px;height:40px}
   position:fixed;pointer-events:none;z-index:999;transform:translate(-50%,-50%);
   filter:drop-shadow(0 12px 24px rgba(0,0,0,.55)) drop-shadow(0 4px 8px rgba(0,0,0,.4));
 }
-.game-tools{
-  display:flex;gap:8px;padding:12px 14px 14px;justify-content:center;flex:none;flex-wrap:wrap;
-}
+.game-tools{display:flex;gap:8px;padding:12px 14px 14px;justify-content:center;flex:none;flex-wrap:wrap}
 .tool-btn{
   display:flex;flex-direction:column;align-items:center;gap:5px;
   padding:10px 14px;border-radius:14px;
@@ -1496,19 +1223,21 @@ svg.ic-xl{width:40px;height:40px}
   color:var(--text-dim);font-size:10.5px;font-weight:800;
   transition:.22s cubic-bezier(.2,1,.4,1);min-width:66px;
   border:1px solid var(--border);
-  box-shadow:var(--shadow-xs),inset 0 1px 0 rgba(255,255,255,.04);
-  letter-spacing:.02em;
+  box-shadow:var(--shadow-xs),inset 0 1px 0 rgba(255,255,255,.04);letter-spacing:.02em;
 }
-.tool-btn:hover{
-  color:var(--text);border-color:var(--border-2);transform:translateY(-3px);
-  box-shadow:var(--shadow-sm);
-}
+.tool-btn:hover{color:var(--text);border-color:var(--border-2);transform:translateY(-3px);box-shadow:var(--shadow-sm)}
 .tool-btn:active{transform:translateY(-1px) scale(.97)}
 .tool-btn.danger{color:var(--danger)}
 .tool-btn.danger:hover{background:linear-gradient(180deg,rgba(255,93,108,.14),rgba(255,93,108,.08));border-color:rgba(255,93,108,.3)}
 .status-strip{
   text-align:center;font-size:12.5px;font-weight:800;color:var(--text-dim);
   min-height:20px;padding:0 14px;letter-spacing:.02em;
+}
+@keyframes reactFloat{
+  0%{opacity:0;transform:translateY(20px) scale(.5)}
+  15%{opacity:1;transform:translateY(0) scale(1.15)}
+  30%{transform:translateY(-4px) scale(1)}
+  100%{opacity:0;transform:translateY(-140px) scale(1.05)}
 }
 
 .moves-panel{
@@ -1518,25 +1247,16 @@ svg.ic-xl{width:40px;height:40px}
 }
 .moves-panel.active{display:flex}
 .moves-list{flex:1;overflow-y:auto;padding:12px 14px 32px}
-.mv-row{
-  display:grid;grid-template-columns:42px 1fr 1fr;gap:8px;align-items:center;
-  padding:8px 7px;border-radius:11px;font-size:13.5px;
-}
+.mv-row{display:grid;grid-template-columns:42px 1fr 1fr;gap:8px;align-items:center;padding:8px 7px;border-radius:11px;font-size:13.5px}
 .mv-row:nth-child(odd){background:var(--surface)}
 .mv-row .num{color:var(--text-dim2);font-size:12px;font-weight:800;font-family:'JetBrains Mono',ui-monospace,monospace}
-.mv-row .m{
-  padding:6px 10px;border-radius:8px;font-weight:700;
-  font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-.02em;
-}
+.mv-row .m{padding:6px 10px;border-radius:8px;font-weight:700;font-family:'JetBrains Mono',ui-monospace,monospace;letter-spacing:-.02em}
 .mv-row .m.cur{background:var(--accent-soft);color:var(--accent)}
 
 /* ============================================================
    MODAL
    ============================================================ */
-.modal-root{
-  position:fixed;inset:0;z-index:600;
-  display:none;align-items:center;justify-content:center;padding:16px;
-}
+.modal-root{position:fixed;inset:0;z-index:600;display:none;align-items:center;justify-content:center;padding:16px}
 .modal-root.active{display:flex}
 .modal-backdrop{
   position:absolute;inset:0;background:rgba(0,0,0,.72);
@@ -1555,8 +1275,7 @@ svg.ic-xl{width:40px;height:40px}
   content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;
   background:linear-gradient(155deg,rgba(255,255,255,.14),rgba(255,255,255,0) 40%,rgba(255,255,255,.06));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  pointer-events:none;
+  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
 }
 @keyframes modalPop{from{opacity:0;transform:scale(.92) translateY(14px)}to{opacity:1;transform:none}}
 .modal h3{font-size:19px;margin-bottom:8px;letter-spacing:-.025em}
@@ -1570,10 +1289,7 @@ svg.ic-xl{width:40px;height:40px}
   display:grid;place-items:center;padding:10px;
   transition:.22s cubic-bezier(.2,1.4,.4,1);
 }
-.promo-grid button:hover{
-  border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px) scale(1.04);
-  box-shadow:var(--glow-accent);
-}
+.promo-grid button:hover{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px) scale(1.04);box-shadow:var(--glow-accent)}
 .promo-grid svg{width:84%;height:84%}
 
 /* ============================================================
@@ -1587,8 +1303,7 @@ svg.ic-xl{width:40px;height:40px}
 }
 .toast{
   background:linear-gradient(180deg,var(--surface-2),var(--surface-3));
-  color:var(--text);
-  padding:13px 17px;border-radius:15px;font-size:13px;font-weight:700;
+  color:var(--text);padding:13px 17px;border-radius:15px;font-size:13px;font-weight:700;
   box-shadow:var(--shadow-lg),inset 0 1px 0 rgba(255,255,255,.08);
   display:flex;align-items:center;gap:11px;
   animation:toastIn .36s cubic-bezier(.2,1.2,.4,1);max-width:100%;
@@ -1610,120 +1325,96 @@ svg.ic-xl{width:40px;height:40px}
   font-size:34px;font-weight:900;letter-spacing:.28em;
   text-align:center;padding:24px;
   background:linear-gradient(135deg,var(--bg-2),var(--surface));
-  border:2px dashed rgba(109,123,255,.4);
-  border-radius:20px;margin:16px 0;
-  color:var(--accent);
-  box-shadow:inset 0 2px 8px rgba(0,0,0,.35),0 0 40px rgba(109,123,255,.15);
+  border:2px dashed rgba(109,123,255,.4);border-radius:20px;margin:16px 0;
+  color:var(--accent);box-shadow:inset 0 2px 8px rgba(0,0,0,.35),0 0 40px rgba(109,123,255,.15);
 }
 .pulse-dot{
   width:9px;height:9px;border-radius:50%;background:var(--success);
-  animation:pulseDot 1.6s ease-in-out infinite;
-  box-shadow:0 0 12px var(--success);
+  animation:pulseDot 1.6s ease-in-out infinite;box-shadow:0 0 12px var(--success);
 }
-@keyframes pulseDot{
-  0%,100%{opacity:1;transform:scale(1)}
-  50%{opacity:.45;transform:scale(.85)}
-}
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.85)}}
 
+/* ============================================================
+   SEARCH OVERLAY — refined animations, no heavy glow
+   ============================================================ */
 .search-overlay{
-  position:fixed;inset:0;z-index:400;
-  background:
-    radial-gradient(1000px 800px at 50% 40%, rgba(109,123,255,.26), transparent 60%),
-    radial-gradient(700px 600px at 50% 80%, rgba(164,108,255,.18), transparent 60%),
-    var(--bg);
+  position:fixed;inset:0;z-index:400;background:var(--bg);
   display:none;flex-direction:column;align-items:center;justify-content:center;
   gap:30px;padding:24px;text-align:center;
-  animation:fadeIn .3s;
-  overflow:hidden;
-}
-.search-overlay::before,
-.search-overlay::after{
-  content:'';
-  position:absolute;
-  border-radius:50%;
-  filter:blur(80px);
-  pointer-events:none;
+  animation:fadeIn .3s;overflow:hidden;
 }
 .search-overlay::before{
-  width:400px;height:400px;
-  background:radial-gradient(circle,#6d7bff,transparent 70%);
-  opacity:.32;
-  animation:searchOrbA 8s ease-in-out infinite;
+  content:'';position:absolute;inset:-100%;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(109,123,255,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(109,123,255,.08) 1px, transparent 1px);
+  background-size:40px 40px;
+  animation:gridDrift 14s linear infinite;
+  -webkit-mask:radial-gradient(circle at center, #000 30%, transparent 70%);
+  mask:radial-gradient(circle at center, #000 30%, transparent 70%);
 }
+@keyframes gridDrift{0%{transform:translate(0,0)}100%{transform:translate(40px,40px)}}
 .search-overlay::after{
-  width:320px;height:320px;
-  background:radial-gradient(circle,#22d3ee,transparent 70%);
-  opacity:.24;
-  animation:searchOrbB 10s ease-in-out infinite;
+  content:'';position:absolute;top:0;bottom:0;width:120px;pointer-events:none;
+  background:linear-gradient(90deg, transparent, rgba(109,123,255,.08), transparent);
+  animation:searchLine 6s ease-in-out infinite;
 }
-@keyframes searchOrbA{
-  0%,100%{transform:translate(-40%,-30%)}
-  50%{transform:translate(-20%,-10%) scale(1.15)}
-}
-@keyframes searchOrbB{
-  0%,100%{transform:translate(60%,30%)}
-  50%{transform:translate(40%,10%) scale(1.1)}
-}
+@keyframes searchLine{0%,100%{left:-20%}50%{left:110%}}
 .search-overlay.active{display:flex}
 .radar{
-  width:170px;height:170px;border-radius:50%;
-  border:2px solid rgba(109,123,255,.55);
-  position:relative;display:grid;place-items:center;
-  color:var(--accent);
-  background:
-    radial-gradient(circle,rgba(109,123,255,.18) 0%,transparent 65%),
-    color-mix(in srgb,var(--surface) 40%,transparent);
-  box-shadow:
-    0 0 80px rgba(109,123,255,.4),
-    0 0 30px rgba(109,123,255,.2),
-    inset 0 0 60px rgba(109,123,255,.25),
-    inset 0 1px 0 rgba(255,255,255,.1);
+  width:160px;height:160px;border-radius:50%;
+  border:1.5px solid rgba(109,123,255,.5);
+  position:relative;display:grid;place-items:center;color:var(--accent);
+  background:color-mix(in srgb,var(--surface) 30%,transparent);
+  box-shadow:inset 0 0 30px rgba(109,123,255,.1);
   z-index:1;
 }
-.radar::before,.radar::after{
+.radar::before{
   content:'';position:absolute;inset:0;border-radius:50%;
-  border:1.5px solid rgba(109,123,255,.75);
-  animation:radar 2.4s cubic-bezier(.2,1,.4,1) infinite;
+  background:
+    linear-gradient(rgba(109,123,255,.18) 1px, transparent 1px) center/100% 50% no-repeat,
+    linear-gradient(90deg, rgba(109,123,255,.18) 1px, transparent 1px) center/50% 100% no-repeat;
+  pointer-events:none;
+  animation:crossPulse 3s ease-in-out infinite;
 }
-.radar::after{animation-delay:1.2s}
-.radar svg{filter:drop-shadow(0 0 12px rgba(109,123,255,.8))}
-@keyframes radar{
-  from{transform:scale(.65);opacity:.95}
-  to{transform:scale(2.1);opacity:0}
-}
-.radar-ring{
-  position:absolute;
-  inset:-22px;
-  border-radius:50%;
+@keyframes crossPulse{0%,100%{opacity:.5}50%{opacity:1}}
+.radar::after{
+  content:'';position:absolute;inset:-2px;border-radius:50%;
+  border:1.5px solid rgba(109,123,255,.6);
+  animation:radar 2.6s cubic-bezier(.2,1,.4,1) infinite;
   pointer-events:none;
 }
+@keyframes radar{from{transform:scale(1);opacity:.9}to{transform:scale(2);opacity:0}}
+.radar svg{width:36px;height:36px;color:var(--accent);position:relative;z-index:2}
+.radar-cone{
+  position:absolute;inset:0;border-radius:50%;overflow:hidden;pointer-events:none;z-index:1;
+}
+.radar-cone::before{
+  content:'';position:absolute;top:50%;left:50%;
+  width:50%;height:50%;
+  background:conic-gradient(from 0deg, transparent 0deg, rgba(109,123,255,.28) 30deg, transparent 60deg);
+  transform-origin:0 0;
+  animation:coneSpin 3s linear infinite;
+}
+@keyframes coneSpin{to{transform:rotate(360deg)}}
+.radar-ring{position:absolute;inset:-16px;border-radius:50%;pointer-events:none}
 .radar-ring span{
-  position:absolute;
-  width:8px;height:8px;
-  border-radius:50%;
-  background:var(--accent);
-  box-shadow:0 0 10px rgba(109,123,255,.9);
-  top:50%;left:50%;
-  margin:-4px 0 0 -4px;
-  animation:radarDot 2s ease-in-out infinite;
+  position:absolute;width:6px;height:6px;border-radius:50%;
+  background:var(--accent);top:50%;left:50%;
+  margin:-3px 0 0 -3px;
+  animation:radarDot 2.4s ease-in-out infinite;
 }
 .radar-ring span:nth-child(1){animation-delay:0s;--r:0deg}
-.radar-ring span:nth-child(2){animation-delay:.2s;--r:45deg}
-.radar-ring span:nth-child(3){animation-delay:.4s;--r:90deg}
-.radar-ring span:nth-child(4){animation-delay:.6s;--r:135deg}
-.radar-ring span:nth-child(5){animation-delay:.8s;--r:180deg}
-.radar-ring span:nth-child(6){animation-delay:1s;--r:225deg}
-.radar-ring span:nth-child(7){animation-delay:1.2s;--r:270deg}
-.radar-ring span:nth-child(8){animation-delay:1.4s;--r:315deg}
+.radar-ring span:nth-child(2){animation-delay:.3s;--r:45deg}
+.radar-ring span:nth-child(3){animation-delay:.6s;--r:90deg}
+.radar-ring span:nth-child(4){animation-delay:.9s;--r:135deg}
+.radar-ring span:nth-child(5){animation-delay:1.2s;--r:180deg}
+.radar-ring span:nth-child(6){animation-delay:1.5s;--r:225deg}
+.radar-ring span:nth-child(7){animation-delay:1.8s;--r:270deg}
+.radar-ring span:nth-child(8){animation-delay:2.1s;--r:315deg}
 @keyframes radarDot{
-  0%,100%{
-    transform:rotate(var(--r)) translateY(-95px) rotate(calc(var(--r) * -1));
-    opacity:.35;
-  }
-  50%{
-    transform:rotate(var(--r)) translateY(-115px) rotate(calc(var(--r) * -1));
-    opacity:1;
-  }
+  0%,100%{transform:rotate(var(--r)) translateY(-88px) rotate(calc(var(--r) * -1));opacity:.3}
+  50%{transform:rotate(var(--r)) translateY(-104px) rotate(calc(var(--r) * -1));opacity:1}
 }
 
 /* ============================================================
@@ -1761,9 +1452,6 @@ svg.ic-xl{width:40px;height:40px}
 </head>
 <body>
 
-<!-- ============================================================
-     SPLASH
-     ============================================================ -->
 <div class="splash" id="splash">
   <div class="splash-mark" id="splashMark"></div>
   <div style="text-align:center">
@@ -1774,9 +1462,6 @@ svg.ic-xl{width:40px;height:40px}
   <div class="splash-status" id="splashStatus">Menyiapkan arena...</div>
 </div>
 
-<!-- ============================================================
-     AUTH SCREEN
-     ============================================================ -->
 <div class="auth-screen hidden" id="authScreen">
   <div class="auth-inner">
     <div class="auth-header">
@@ -1800,9 +1485,6 @@ svg.ic-xl{width:40px;height:40px}
   </div>
 </div>
 
-<!-- ============================================================
-     APP SHELL
-     ============================================================ -->
 <div id="app" class="hidden">
   <header class="topbar">
     <div class="brand">
@@ -1886,13 +1568,11 @@ svg.ic-xl{width:40px;height:40px}
   </nav>
 </div>
 
-<!-- ============================================================
-     GAME SCREEN
-     ============================================================ -->
 <div class="game-screen" id="gameScreen">
   <div class="game-top">
     <button class="icon-btn" id="btnGameBack" aria-label="Kembali"></button>
     <div class="title" id="gameTitle">Permainan</div>
+    <span id="gameModePill" class="pill" style="margin-right:6px;flex:none"></span>
     <button class="icon-btn" id="btnGameMoves" aria-label="Daftar langkah"></button>
   </div>
   <div class="game-body">
@@ -1910,13 +1590,11 @@ svg.ic-xl{width:40px;height:40px}
       </div>
       <div class="status-strip" id="gameStatus"></div>
     </div>
+    <div id="reactionLayer" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:50"></div>
     <div class="game-tools" id="gameTools"></div>
   </div>
 </div>
 
-<!-- ============================================================
-     MOVES PANEL
-     ============================================================ -->
 <div class="moves-panel" id="movesPanel">
   <div class="game-top">
     <button class="icon-btn" id="btnMovesBack" aria-label="Tutup"></button>
@@ -1926,11 +1604,9 @@ svg.ic-xl{width:40px;height:40px}
   <div class="moves-list" id="movesList"></div>
 </div>
 
-<!-- ============================================================
-     SEARCH OVERLAY
-     ============================================================ -->
 <div class="search-overlay" id="searchOverlay">
   <div class="radar">
+    <div class="radar-cone"></div>
     <div class="radar-ring">
       <span></span><span></span><span></span><span></span>
       <span></span><span></span><span></span><span></span>
@@ -2001,8 +1677,6 @@ function mapFbError(e){
   if(c.includes('unauthorized-domain'))return'UNAUTHORIZED_DOMAIN';
   return'AUTH_ERROR';
 }
-
-/* Format "terakhir dilihat" */
 function formatLastSeen(ts){
   if(!ts) return 'Baru saja';
   const diff=Date.now()-Number(ts);
@@ -2558,7 +2232,8 @@ const ICONS={
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
   mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
   camera:'<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
-  star:'<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/>'
+  star:'<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/>',
+  message:'<path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/>'
 };
 function icon(name,cls){
   return '<svg class="ic '+(cls||'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
@@ -2829,13 +2504,9 @@ function starInfo(stars){
   const s=Math.max(0,Number(stars)||0);
   const t=tierOf(s);
   let displayStars=0,progress=0;
-  if(t.key==='grandmaster'){
-    displayStars=s-34; progress=1;
-  }else if(t.key==='master'){
-    displayStars=s-9; progress=(s-10)/25;
-  }else{
-    displayStars=s; progress=s/10;
-  }
+  if(t.key==='grandmaster'){displayStars=s-34;progress=1;}
+  else if(t.key==='master'){displayStars=s-9;progress=(s-10)/25;}
+  else{displayStars=s;progress=s/10;}
   return {tier:t,displayStars:displayStars,progress:clamp(progress,0,1),stars:s};
 }
 function tierProgress(stars){ return starInfo(stars).progress; }
@@ -3039,20 +2710,11 @@ async function doGoogleSignIn(){
     logErr('google-signin',e);
     const code=(e&&e.code)||'';
     if(code.includes('popup-blocked')||code.includes('popup-closed')){
-      try{
-        await FB.authApi.signInWithRedirect(FB.auth,provider);
-        return;
-      }catch(e2){
-        logErr('google-redirect',e2);
-        toast(errMsg(mapFbError(e2)),'error');
-        return;
-      }
+      try{await FB.authApi.signInWithRedirect(FB.auth,provider);return;}
+      catch(e2){logErr('google-redirect',e2);toast(errMsg(mapFbError(e2)),'error');return;}
     }
     if(code.includes('cancelled')) return;
-    if(code.includes('unauthorized-domain')){
-      toast('Domain belum terdaftar di Firebase Authorized Domains.','error');
-      return;
-    }
+    if(code.includes('unauthorized-domain')){toast('Domain belum terdaftar di Firebase Authorized Domains.','error');return;}
     toast(errMsg(mapFbError(e)),'error');
   }
 }
@@ -3061,10 +2723,7 @@ async function resolveGoogleRedirect(){
   try{
     const result=await FB.authApi.getRedirectResult(FB.auth);
     return result&&result.user?result.user:null;
-  }catch(e){
-    logErr('google-redirect-result',e);
-    return null;
-  }
+  }catch(e){logErr('google-redirect-result',e);return null;}
 }
 
 async function createUserProfile(uid,username,email){
@@ -3074,21 +2733,15 @@ async function createUserProfile(uid,username,email){
     username,usernameLower:lower,email:email||'',avatar:'',
     rating:1200,xp:0,wins:0,losses:0,draws:0,gamesPlayed:0,
     bestRating:1200,currentStreak:0,bestStreak:0,puzzleRating:1200,
-    stars:0,
-    createdAt:now,lastSeen:now
+    stars:0,createdAt:now,lastSeen:now
   };
   try{
     await FB.api.set(FB.api.ref(FB.db,'users/'+uid),profile);
     await FB.api.set(FB.api.ref(FB.db,'usernames/'+lower),uid);
     await FB.api.set(FB.api.ref(FB.db,'userPrivate/'+uid),{
-      settings:{theme:settings.theme,boardTheme:settings.boardTheme},
-      preferences:{}
+      settings:{theme:settings.theme,boardTheme:settings.boardTheme},preferences:{}
     });
-    try{
-      await FB.api.set(FB.api.ref(FB.db,'leaderboard/'+uid),{
-        username,avatar:'',stars:0,rating:1200,games:0
-      });
-    }catch(_){}
+    try{await FB.api.set(FB.api.ref(FB.db,'leaderboard/'+uid),{username,avatar:'',stars:0,rating:1200,games:0});}catch(_){}
   }catch(e){logErr('create-profile',e);throw e;}
 }
 
@@ -3137,10 +2790,8 @@ function setupPresence(){
   const uid=App.user.uid;
   const presRef=FB.api.ref(FB.db,'presence/'+uid);
   App.presenceRef=presRef;
-  FB.api.set(presRef,{online:settings.onlineStatus,lastSeen:FB.api.serverTimestamp(),status:settings.onlineStatus?'online':'offline'})
-    .catch(e=>logErr('presence',e));
-  FB.api.onDisconnect(presRef).set({online:false,lastSeen:FB.api.serverTimestamp(),status:'offline'})
-    .catch(e=>logErr('presence-dc',e));
+  FB.api.set(presRef,{online:settings.onlineStatus,lastSeen:FB.api.serverTimestamp(),status:settings.onlineStatus?'online':'offline'}).catch(e=>logErr('presence',e));
+  FB.api.onDisconnect(presRef).set({online:false,lastSeen:FB.api.serverTimestamp(),status:'offline'}).catch(e=>logErr('presence-dc',e));
 }
 async function updatePresenceStatus(status){
   if(!FB.ready||!App.user||!App.presenceRef)return;
@@ -3153,11 +2804,9 @@ async function updatePresenceStatus(status){
    ========================================================================== */
 function defaultProfile(uid,name){
   return{
-    uid,username:name||'Pemain',
-    usernameLower:String(name||'pemain').toLowerCase(),
+    uid,username:name||'Pemain',usernameLower:String(name||'pemain').toLowerCase(),
     avatar:'',rating:1200,xp:0,wins:0,losses:0,draws:0,gamesPlayed:0,
-    bestRating:1200,currentStreak:0,bestStreak:0,puzzleRating:1200,
-    stars:0,
+    bestRating:1200,currentStreak:0,bestStreak:0,puzzleRating:1200,stars:0,
     createdAt:Date.now(),lastSeen:Date.now()
   };
 }
@@ -3184,21 +2833,14 @@ async function loadProfile(uid){
     };
   }catch(e){logErr('load-profile',e);return null;}
 }
-
 async function loadPresence(uid){
   if(!FB.ready||!uid) return {online:false,lastSeen:0};
   try{
     const snap=await FB.api.get(FB.api.ref(FB.db,'presence/'+uid));
     if(!snap.exists()) return {online:false,lastSeen:0};
     const v=snap.val()||{};
-    return {
-      online: v.online===true,
-      status: typeof v.status==='string'?v.status:'offline',
-      lastSeen: Number(v.lastSeen)||0
-    };
-  }catch(e){
-    return {online:false,lastSeen:0};
-  }
+    return {online:v.online===true,status:typeof v.status==='string'?v.status:'offline',lastSeen:Number(v.lastSeen)||0};
+  }catch(e){return {online:false,lastSeen:0};}
 }
 
 /* ==========================================================================
@@ -3248,17 +2890,12 @@ async function uploadAvatar(){
     try{
       await FB.api.update(FB.api.ref(FB.db,'users/'+App.user.uid),{avatar:dataUrl});
       if(App.profile){App.profile.avatar=dataUrl;saveProfileCache(App.user.uid,App.profile);}
-      try{
-        await FB.api.update(FB.api.ref(FB.db,'leaderboard/'+App.user.uid),{avatar:dataUrl});
-      }catch(_){}
+      try{await FB.api.update(FB.api.ref(FB.db,'leaderboard/'+App.user.uid),{avatar:dataUrl});}catch(_){}
       toast('Foto profil diperbarui.','success');
       if(App.view==='profile') renderProfile();
       if(App.view==='home') renderHome();
       renderHomeLeaderboard();
-    }catch(e){
-      logErr('avatar-upload',e);
-      toast(errMsg('DATABASE_ERROR'),'error');
-    }
+    }catch(e){logErr('avatar-upload',e);toast(errMsg('DATABASE_ERROR'),'error');}
   };
   input.click();
 }
@@ -3267,16 +2904,9 @@ async function uploadAvatar(){
    SECTION: PROFILE CACHE
    ========================================================================== */
 const PROFILE_CACHE_KEY='gmg_profile_cache';
-function saveProfileCache(uid,profile){
-  try{localStorage.setItem(PROFILE_CACHE_KEY,JSON.stringify({uid,profile,at:Date.now()}));}catch(_){}
-}
+function saveProfileCache(uid,profile){try{localStorage.setItem(PROFILE_CACHE_KEY,JSON.stringify({uid,profile,at:Date.now()}));}catch(_){}}
 function loadProfileCache(uid){
-  try{
-    const raw=localStorage.getItem(PROFILE_CACHE_KEY);
-    if(!raw) return null;
-    const c=JSON.parse(raw);
-    if(c&&c.uid===uid&&c.profile) return c.profile;
-  }catch(_){}
+  try{const raw=localStorage.getItem(PROFILE_CACHE_KEY);if(!raw) return null;const c=JSON.parse(raw);if(c&&c.uid===uid&&c.profile) return c.profile;}catch(_){}
   return null;
 }
 function clearProfileCache(){try{localStorage.removeItem(PROFILE_CACHE_KEY);}catch(_){}}
@@ -3363,8 +2993,7 @@ function findMove(from,to,promotion){
 }
 function applyMove(move,opts){
   opts=opts||{};
-  const c=Game.chess;
-  if(!c)return false;
+  const c=Game.chess;if(!c)return false;
   const san=c.toSAN(move);
   c.makeMove(move);
   Game.sans.push(san);
@@ -3439,8 +3068,7 @@ function resultTitle(info){
 function showResultModal(info,reasonText){
   const box=el('div');
   const title=el('h3',null,resultTitle(info));
-  title.style.fontSize='26px';title.style.textAlign='center';title.style.marginBottom='6px';
-  title.style.letterSpacing='-.03em';
+  title.style.fontSize='26px';title.style.textAlign='center';title.style.marginBottom='6px';title.style.letterSpacing='-.03em';
   const sub=el('p',null,reasonText);
   sub.style.textAlign='center';sub.style.marginBottom='18px';
   box.appendChild(title);box.appendChild(sub);
@@ -3481,10 +3109,7 @@ function showResultModal(info,reasonText){
 }
 
 /* -------- CLOCK -------- */
-function startClock(){
-  stopClock();Game.running=true;Game.turnStartedAt=Date.now();
-  Game.timerId=setInterval(tickClock,100);
-}
+function startClock(){stopClock();Game.running=true;Game.turnStartedAt=Date.now();Game.timerId=setInterval(tickClock,100);}
 function stopClock(){if(Game.timerId){clearInterval(Game.timerId);Game.timerId=null;}}
 function tickClock(){
   if(!Game.running||Game.finished)return;
@@ -3546,21 +3171,12 @@ function updateGameUI(){
   const topRating=$('#topRating'),botRating=$('#botRating');
   if(topRating)topRating.textContent=ratingFor(topColor);
   if(botRating)botRating.textContent=ratingFor(botColor);
-  const setAv=(node,name,profile)=>{
-    if(!node) return;
-    if(profile) node.innerHTML=avatarHtml(profile);
-    else node.textContent=initialFromName(name);
-  };
+  const setAv=(node,name,profile)=>{if(!node) return;if(profile) node.innerHTML=avatarHtml(profile);else node.textContent=initialFromName(name);};
   if(Game.mode==='online'){
     const myProf=App.profile;
     const oppProf=Game.opponentProfile||{username:Game.opponentName,avatar:''};
-    if(topColor===Game.playerColor){
-      setAv($('#topAvatar'),nameFor(topColor),myProf);
-      setAv($('#botAvatar'),nameFor(botColor),oppProf);
-    }else{
-      setAv($('#topAvatar'),nameFor(topColor),oppProf);
-      setAv($('#botAvatar'),nameFor(botColor),myProf);
-    }
+    if(topColor===Game.playerColor){setAv($('#topAvatar'),nameFor(topColor),myProf);setAv($('#botAvatar'),nameFor(botColor),oppProf);}
+    else{setAv($('#topAvatar'),nameFor(topColor),oppProf);setAv($('#botAvatar'),nameFor(botColor),myProf);}
   }else if(Game.mode==='ai'){
     const myProf=App.profile;
     if(topColor===Game.playerColor) setAv($('#topAvatar'),nameFor(topColor),myProf);
@@ -3595,9 +3211,7 @@ function askPromotion(color){
     });
     box.appendChild(grid);
     Modal.open({
-      title:'Pilih Promosi',
-      message:'Bidak mencapai baris terakhir.',
-      body:box,dismissible:false,
+      title:'Pilih Promosi',message:'Bidak mencapai baris terakhir.',body:box,dismissible:false,
       buttons:[{label:'Batal',value:null,variant:'ghost'}]
     }).then(resolve);
   });
@@ -3632,10 +3246,7 @@ function handleSquareTap(sq){
     if(candidates.length){attemptMove(Game.selected,sq);return;}
   }
   if(piece&&canInteractWith(Chess.colorOf(piece))&&Chess.colorOf(piece)===c.turn){
-    Game.selected=sq;
-    Game.legalForSelected=c.movesFrom(sq);
-    renderBoard();
-    return;
+    Game.selected=sq;Game.legalForSelected=c.movesFrom(sq);renderBoard();return;
   }
   Game.selected=-1;Game.legalForSelected=[];renderBoard();
 }
@@ -3700,8 +3311,7 @@ function scheduleAiMove(){
       updateGameUI();return;
     }
     const move=findMove(res.move.from,res.move.to,res.move.promotion);
-    if(move)applyMove(move,{});
-    else updateGameUI();
+    if(move)applyMove(move,{});else updateGameUI();
   },30);
 }
 
@@ -3727,6 +3337,7 @@ function buildGameTools(){
   add('target','Seri',onOfferDraw);
   add('flip','Putar',()=>{Game.flipped=!Game.flipped;renderBoard();updateClocks();updateGameUI();});
   add('zap','Petunjuk',onHint);
+  add('message','Reaksi',onSendReaction);
   if(Game.mode==='ai'||Game.mode==='local'){
     add('clock','Waktu',()=>openTimeAdjustDialog());
   }
@@ -3744,6 +3355,7 @@ function startLocalGame(tc){
   Game.opponentProfile=null;Game.isRanked=false;
   const title=$('#gameTitle');
   if(title)title.textContent='Permainan Lokal';
+  const pill=$('#gameModePill');if(pill){pill.textContent='Lokal';pill.className='pill';}
   openGameScreen();buildGameTools();renderBoard();updateGameUI();updateClocks();startClock();
   updatePresenceStatus('in-game');
 }
@@ -3764,6 +3376,7 @@ function startAiGame(level,colorChoice,tc){
   Game.opponentProfile=null;Game.isRanked=false;
   const title=$('#gameTitle');
   if(title)title.textContent='vs AI · '+cfg.label;
+  const pill=$('#gameModePill');if(pill){pill.textContent='AI';pill.className='pill';}
   openGameScreen();buildGameTools();renderBoard();updateGameUI();updateClocks();startClock();
   updatePresenceStatus('in-game');
   if(Game.chess.turn===Game.aiColor)scheduleAiMove();
@@ -3822,23 +3435,79 @@ function openTimeAdjustDialog(){
     '<input class="input" id="tBlack" type="number" min="0" max="180" step="1" value="'+bRem+'" /></div>'+
     '</div>';
   Modal.open({
-    title:'Atur Waktu',
-    body:box,
-    buttons:[
-      {label:'Batal',value:null,variant:'ghost'},
-      {label:'Terapkan',value:'set',variant:'primary'}
-    ]
+    title:'Atur Waktu',body:box,
+    buttons:[{label:'Batal',value:null,variant:'ghost'},{label:'Terapkan',value:'set',variant:'primary'}]
   }).then(v=>{
     if(v!=='set'||!Game.chess||Game.finished)return;
     const w=Math.max(0,Math.min(180,parseInt($('#tWhite')?$('#tWhite').value:'0',10)||0));
     const b=Math.max(0,Math.min(180,parseInt($('#tBlack')?$('#tBlack').value:'0',10)||0));
-    Game.clocks.w=w*60;
-    Game.clocks.b=b*60;
-    Game.turnStartedAt=Date.now();
-    updateClocks();
-    updateGameUI();
-    toast('Waktu diperbarui.','success');
+    Game.clocks.w=w*60;Game.clocks.b=b*60;Game.turnStartedAt=Date.now();
+    updateClocks();updateGameUI();toast('Waktu diperbarui.','success');
   });
+}
+
+/* -------- REACTIONS -------- */
+const REACTION_EMOJIS=['👋','👍','👎','👊','👏'];
+function onSendReaction(){
+  if(Game.finished){toast('Permainan sudah selesai.');return;}
+  const box=el('div');
+  const grid=el('div');
+  grid.style.cssText='display:grid;grid-template-columns:repeat(5,1fr);gap:10px';
+  REACTION_EMOJIS.forEach(emo=>{
+    const b=el('button');
+    b.type='button';
+    b.textContent=emo;
+    b.style.cssText='font-size:32px;padding:12px 4px;border-radius:14px;background:var(--bg-2);border:1px solid var(--border-2);cursor:pointer;transition:.15s;line-height:1';
+    b.addEventListener('mouseenter',()=>{b.style.transform='translateY(-2px)';b.style.borderColor='var(--accent)';});
+    b.addEventListener('mouseleave',()=>{b.style.transform='none';b.style.borderColor='var(--border-2)';});
+    b.addEventListener('click',()=>{Sound.button();sendReaction(emo);Modal.close(null);});
+    grid.appendChild(b);
+  });
+  box.appendChild(grid);
+  Modal.open({
+    title:'Kirim Reaksi',message:'Pilih reaksi untuk dikirim ke lawan.',body:box,
+    buttons:[{label:'Batal',value:null,variant:'ghost'}]
+  });
+}
+function sendReaction(emo){
+  showFloatingReaction(emo,'me');
+  if(Game.mode!=='online'||!FB.ready||!Game.roomId) return;
+  try{
+    FB.api.push(FB.api.ref(FB.db,'games/'+Game.roomId+'/reactions'),{
+      emo:emo,from:App.user?App.user.uid:'',at:Date.now()
+    }).catch(e=>logErr('send-reaction',e));
+  }catch(e){logErr('send-reaction-outer',e);}
+}
+function showFloatingReaction(emo,side){
+  const layer=$('#reactionLayer');
+  if(!layer) return;
+  const node=el('div');
+  node.textContent=emo;
+  const rightPos = side==='me' ? '18px' : 'auto';
+  const leftPos = side==='me' ? 'auto' : '18px';
+  node.style.cssText=
+    'position:absolute;font-size:44px;line-height:1;pointer-events:none;'+
+    'animation:reactFloat 2.2s cubic-bezier(.2,1,.4,1) forwards;'+
+    'right:'+rightPos+';left:'+leftPos+';bottom:12px;'+
+    'filter:drop-shadow(0 4px 8px rgba(0,0,0,.4))';
+  layer.appendChild(node);
+  setTimeout(()=>{ if(node.parentNode) node.remove(); },2300);
+}
+function listenToReactions(){
+  if(!FB.ready||!Game.roomId) return;
+  unregisterListener('reactions:'+Game.roomId);
+  const seen={};
+  const unsub=FB.api.onValue(FB.api.ref(FB.db,'games/'+Game.roomId+'/reactions'),snap=>{
+    const val=snap.val(); if(!val) return;
+    Object.keys(val).forEach(k=>{
+      const r=val[k];
+      if(!r||seen[k]) return;
+      seen[k]=true;
+      if(r.from && App.user && r.from===App.user.uid) return;
+      showFloatingReaction(r.emo||'👍','opp');
+    });
+  },err=>logErr('reactions-listener',err));
+  registerListener('reactions:'+Game.roomId,unsub);
 }
 
 /* ==========================================================================
@@ -3879,8 +3548,7 @@ async function joinOnlineRoom(code){
     if(room.guestUid&&room.guestUid!==App.user.uid)return{ok:false,code:'ROOM_FULL'};
     const colors=assignColors(room.hostUid,App.user.uid);
     await FB.api.update(FB.api.ref(FB.db,'rooms/'+clean),{
-      guestUid:App.user.uid,status:'ready',
-      whiteUid:colors.white,blackUid:colors.black
+      guestUid:App.user.uid,status:'ready',whiteUid:colors.white,blackUid:colors.black
     });
     return{ok:true,code:clean,room:Object.assign({},room,{guestUid:App.user.uid,whiteUid:colors.white,blackUid:colors.black})};
   }catch(e){logErr('join-room',e);return{ok:false,code:'DATABASE_ERROR'};}
@@ -3912,10 +3580,7 @@ function showRoomLobby(code){
   shareBtn.addEventListener('click',async()=>{
     const text='Ayo main catur di Grandmaster Grid! Kode room: '+code;
     if(navigator.share){try{await navigator.share({title:'Grandmaster Grid',text});}catch(_){}}
-    else{
-      try{await navigator.clipboard.writeText(text);toast('Undangan disalin.','success');}
-      catch(_){toast('Kode: '+code);}
-    }
+    else{try{await navigator.clipboard.writeText(text);toast('Undangan disalin.','success');}catch(_){toast('Kode: '+code);}}
   });
   actions.appendChild(copyBtn);actions.appendChild(shareBtn);
   box.appendChild(actions);
@@ -3943,7 +3608,9 @@ function startOnlineGame(opts){
   Game.lastMove=null;Game.selected=-1;Game.legalForSelected=[];
   Game.roomId=gameId;Game.resultWritten=false;Game.aiThinking=false;Game.isPuzzle=false;
   const title=$('#gameTitle');
-  if(title)title.textContent=isRanked?'Ranked Match':'Permainan Online';
+  if(title)title.textContent=isRanked?'Ranked Match':'Classic Match';
+  const pill=$('#gameModePill');
+  if(pill){pill.textContent=isRanked?'Ranked':'Classic';pill.className='pill '+(isRanked?'accent':'success');}
   openGameScreen();buildGameTools();renderBoard();updateGameUI();updateClocks();startClock();
   updatePresenceStatus('in-game');
   listenToGame(gameId);
@@ -3972,11 +3639,7 @@ function writeOnlineResult(info){
 }
 async function applyOnlineRating(info){
   if(!FB.ready||!App.user)return;
-  if(!Game.isRanked){
-    info.ratingChange=0;
-    info.starChange=0;
-    return;
-  }
+  if(!Game.isRanked){info.ratingChange=0;info.starChange=0;return;}
   const myUid=App.user.uid;
   const oppUid=Game.opponentUid;
   if(!oppUid)return;
@@ -3996,7 +3659,6 @@ async function applyOnlineRating(info){
 
   const delta=eloDelta(myBefore,oppBefore,myScore);
   const myNew=Math.max(100,myBefore+delta);
-
   const myStarDelta=myScore===1?1:myScore===0?-1:0;
   const oppStarDelta=-myStarDelta;
 
@@ -4040,11 +3702,8 @@ async function applyOnlineRating(info){
         mode:'ranked',timeControl:Game.lastTc,date:Date.now(),moves:Game.sans.length
       });
       await FB.api.set(FB.api.ref(FB.db,'leaderboard/'+uid),{
-        username:u.username||'Pemain',
-        avatar:typeof u.avatar==='string'?u.avatar:'',
-        stars:newStars,
-        rating:newRating,
-        games:(Number(u.gamesPlayed)||0)+1
+        username:u.username||'Pemain',avatar:typeof u.avatar==='string'?u.avatar:'',
+        stars:newStars,rating:newRating,games:(Number(u.gamesPlayed)||0)+1
       });
     }catch(e){logErr('rating-update',e);}
   };
@@ -4053,12 +3712,12 @@ async function applyOnlineRating(info){
   await applyTo(myUid,myNew,myBefore,delta,myOutcome,Game.opponentName,oppUid,myStarDelta);
   await applyTo(oppUid,Math.max(100,oppBefore-delta),oppBefore,-delta,oppOutcome,Game.myName,myUid,oppStarDelta);
   const sign=delta>=0?'+':'';
-  toast('Rating '+sign+delta+' · Bintang '+(myStarDelta>0?'+1':myStarDelta<0?'-1':'0'),
-    delta>=0?'success':'error');
+  toast('Rating '+sign+delta+' · Bintang '+(myStarDelta>0?'+1':myStarDelta<0?'-1':'0'),delta>=0?'success':'error');
 }
 function listenToGame(gameId){
   unregisterListener('game:'+gameId);
   if(!FB.ready)return;
+  listenToReactions();
   const unsub=FB.api.onValue(FB.api.ref(FB.db,'games/'+gameId),snap=>{
     const data=snap.val();if(!data)return;
     syncOnlineState(data);
@@ -4083,8 +3742,7 @@ function syncOnlineState(data){
   }
   try{
     Game.chess=new Chess(remoteFen);
-    Game.lastMove=data.lastMove&&typeof data.lastMove.from==='number'
-      ?{from:data.lastMove.from,to:data.lastMove.to}:Game.lastMove;
+    Game.lastMove=data.lastMove&&typeof data.lastMove.from==='number'?{from:data.lastMove.from,to:data.lastMove.to}:Game.lastMove;
     if(data.clocks){
       const wc=Number(data.clocks.w),bc=Number(data.clocks.b);
       if(Number.isFinite(wc))Game.clocks.w=wc;
@@ -4122,25 +3780,28 @@ function sendDrawOffer(){
 
 /* -------- MATCHMAKING -------- */
 let matchmakingActive=false;
-async function findMatch(tc){
+async function findMatch(tc, mode){
+  mode = mode || 'ranked';
+  const isCasual = mode === 'casual';
   if(!FB.ready||!App.user){toast(errMsg('OFFLINE'),'error');return;}
   if(matchmakingActive){toast('Pencarian sudah aktif.');return;}
   matchmakingActive=true;
   const overlay=$('#searchOverlay');
   const info=$('#searchInfo');
   if(overlay)overlay.classList.add('active');
-  if(info)info.textContent='Format 1 menit + 5 detik · Ranked';
+  if(info)info.textContent='Format 1 menit + 5 detik · '+(isCasual?'Classic':'Ranked');
 
   const uid=App.user.uid;
   const myRating=App.profile?App.profile.rating:1200;
   const tcKey=tc.replace('+','_');
+  const queueRoot = isCasual ? 'matchmaking_casual' : 'matchmaking';
   const joinedAt=Date.now();
 
   try{ await FB.api.remove(FB.api.ref(FB.db,'matchAssignments/'+uid)); }catch(_){}
 
   try{
-    await FB.api.set(FB.api.ref(FB.db,'matchmaking/'+tcKey+'/'+uid),{
-      rating:myRating, joinedAt, status:'searching'
+    await FB.api.set(FB.api.ref(FB.db,queueRoot+'/'+tcKey+'/'+uid),{
+      rating:myRating, joinedAt, status:'searching', mode
     });
   }catch(e){
     logErr('mm-join',e);
@@ -4169,12 +3830,12 @@ async function findMatch(tc){
     matched='timeout';
     cleanup();
     const ov=$('#searchOverlay'); if(ov) ov.classList.remove('active');
-    FB.api.remove(FB.api.ref(FB.db,'matchmaking/'+tcKey+'/'+uid)).catch(()=>{});
+    FB.api.remove(FB.api.ref(FB.db,queueRoot+'/'+tcKey+'/'+uid)).catch(()=>{});
     toast('Tidak ada lawan ditemukan. Coba lagi nanti.','error');
   },90000);
 
   try{
-    queueUnsub=FB.api.onValue(FB.api.ref(FB.db,'matchmaking/'+tcKey),async snap=>{
+    queueUnsub=FB.api.onValue(FB.api.ref(FB.db,queueRoot+'/'+tcKey),async snap=>{
       if(matched) return;
       const all=snap.val()||{};
       const entries=Object.keys(all)
@@ -4202,12 +3863,12 @@ async function findMatch(tc){
           clocks:{w:timeControlToSeconds(tc).base,b:timeControlToSeconds(tc).base},
           lastMove:null,result:null,resultReason:null,
           timeControl:tc,increment:timeControlToSeconds(tc).inc,
-          createdAt:now,updatedAt:now,mode:'ranked'
+          createdAt:now,updatedAt:now,mode:mode
         });
-        await FB.api.set(FB.api.ref(FB.db,'matchAssignments/'+uid),{roomId,timeControl:tc,opponent:opp.uid,at:now});
-        await FB.api.set(FB.api.ref(FB.db,'matchAssignments/'+opp.uid),{roomId,timeControl:tc,opponent:uid,at:now});
-        await FB.api.remove(FB.api.ref(FB.db,'matchmaking/'+tcKey+'/'+uid));
-        await FB.api.remove(FB.api.ref(FB.db,'matchmaking/'+tcKey+'/'+opp.uid));
+        await FB.api.set(FB.api.ref(FB.db,'matchAssignments/'+uid),{roomId,timeControl:tc,opponent:opp.uid,at:now,mode});
+        await FB.api.set(FB.api.ref(FB.db,'matchAssignments/'+opp.uid),{roomId,timeControl:tc,opponent:uid,at:now,mode});
+        await FB.api.remove(FB.api.ref(FB.db,queueRoot+'/'+tcKey+'/'+uid));
+        await FB.api.remove(FB.api.ref(FB.db,queueRoot+'/'+tcKey+'/'+opp.uid));
       }catch(e){ logErr('mm-create',e); matched=false; }
     },err=>logErr('mm-listener',err));
     registerListener('mm:'+tcKey,queueUnsub);
@@ -4236,13 +3897,14 @@ async function findMatch(tc){
       Game.myName=App.profile?App.profile.username:'Anda';
       Game.myRating=App.profile?App.profile.rating:1200;
       Game.lastTc=val.timeControl;
+      const thisMode = val.mode || mode;
       const ov=$('#searchOverlay'); if(ov) ov.classList.remove('active');
       await showMatchFound(Game.opponentName,Game.opponentRating,oppProfile);
       startOnlineGame({
         gameId:val.roomId,
         whiteUid:players.white, blackUid:players.black,
         timeControl:val.timeControl, myUid:uid,
-        isRanked:true
+        isRanked: thisMode==='ranked'
       });
     },err=>logErr('assign-listener',err));
     registerListener('assign:'+uid,assignUnsub);
@@ -4250,13 +3912,31 @@ async function findMatch(tc){
 }
 async function showMatchFound(name,rating,profile){
   const box=el('div');
-  const avHtml=profile?avatarHtml(profile):initialFromName(name);
+  if(!profile){
+    profile={username:name,avatar:'',stars:0,rating:rating,level:1,gamesPlayed:0,wins:0,losses:0,draws:0};
+  }
+  const info=starInfo(profile.stars||0);
+  const t=info.tier;
+  const level=levelFromXp(profile.xp||0);
+  const total=profile.gamesPlayed||0;
+  const wr=total>0?Math.round(((profile.wins||0)/total)*100):0;
   box.innerHTML=
-    '<div style="display:flex;align-items:center;gap:14px;justify-content:center;margin:8px 0 16px">'+
-    '<div class="avatar lg">'+avHtml+'</div>'+
-    '<div><div style="font-weight:800;font-size:17px">'+escapeHtml(name)+'</div>'+
-    '<div style="color:var(--text-dim);font-size:12.5px;margin-top:3px;font-weight:600">Rating '+rating+'</div></div></div>'+
-    '<div style="text-align:center;font-size:52px;font-weight:900;color:var(--accent);letter-spacing:-.04em" id="countNum">10</div>';
+    '<div style="text-align:center;margin-bottom:16px">'+
+    '<div class="avatar xl" style="margin:0 auto 12px;position:relative">'+avatarHtml(profile)+'</div>'+
+    '<div style="font-size:20px;font-weight:900;letter-spacing:-.03em">'+escapeHtml(profile.username||name)+'</div>'+
+    '<div style="margin-top:8px">'+tierBadgeHtml(profile.stars||0)+'</div>'+
+    '<div style="font-size:11.5px;color:var(--text-dim);margin-top:6px">Level '+level+' · Rating '+(profile.rating||rating)+'</div>'+
+    '</div>'+
+    '<div class="stat-grid" style="margin-bottom:14px">'+
+    '<div class="stat"><div class="l">Win Rate</div><div class="v" style="color:var(--success)">'+wr+'%</div></div>'+
+    '<div class="stat"><div class="l">Total Game</div><div class="v">'+total+'</div></div>'+
+    '<div class="stat"><div class="l">Menang</div><div class="v" style="color:var(--success)">'+(profile.wins||0)+'</div></div>'+
+    '<div class="stat"><div class="l">Seri</div><div class="v">'+(profile.draws||0)+'</div></div>'+
+    '</div>'+
+    '<div style="text-align:center;padding:16px 0;border-top:1px solid var(--border)">'+
+    '<div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px">Pertandingan Dimulai</div>'+
+    '<div style="font-size:56px;font-weight:900;color:var(--accent);letter-spacing:-.05em;line-height:1" id="countNum">10</div>'+
+    '</div>';
   Modal.open({title:'Lawan Ditemukan',body:box,dismissible:false,buttons:[]});
   for(let i=10;i>=1;i--){
     const n=document.getElementById('countNum');
@@ -4274,7 +3954,10 @@ function cancelMatchmaking(silent){
   unregisterListener('mm:*');
   unregisterListener('assign:'+uid);
   const tcKeys=['1_5','1_0','1_1','2_1','3_0','3_2','5_0','5_3','10_0','10_5','15_10','30_0'];
-  tcKeys.forEach(k=>FB.api.remove(FB.api.ref(FB.db,'matchmaking/'+k+'/'+uid)).catch(()=>{}));
+  tcKeys.forEach(k=>{
+    FB.api.remove(FB.api.ref(FB.db,'matchmaking/'+k+'/'+uid)).catch(()=>{});
+    FB.api.remove(FB.api.ref(FB.db,'matchmaking_casual/'+k+'/'+uid)).catch(()=>{});
+  });
   matchmakingActive=false;
   if(!silent)toast('Pencarian dibatalkan.');
 }
@@ -4292,10 +3975,8 @@ function showPgnModal(){
   const box=el('div');
   const ta=el('textarea','input');
   ta.value=pgn;ta.readOnly=true;
-  ta.style.height='200px';
-  ta.style.fontFamily="'JetBrains Mono',monospace";
-  ta.style.fontSize='12px';
-  ta.style.resize='vertical';
+  ta.style.height='200px';ta.style.fontFamily="'JetBrains Mono',monospace";
+  ta.style.fontSize='12px';ta.style.resize='vertical';
   box.appendChild(ta);
   Modal.open({
     title:'PGN Permainan',body:box,
@@ -4370,11 +4051,7 @@ function buildReplayTools(){
   add('x','Tutup',()=>{stopReplay();closeGame();});
 }
 function toggleReplayPlay(){
-  if(Replay.playing){
-    Replay.playing=false;
-    if(Replay.timer){clearInterval(Replay.timer);Replay.timer=null;}
-    buildReplayTools();return;
-  }
+  if(Replay.playing){Replay.playing=false;if(Replay.timer){clearInterval(Replay.timer);Replay.timer=null;}buildReplayTools();return;}
   Replay.playing=true;buildReplayTools();
   Replay.timer=setInterval(()=>{
     if(Replay.index>=Replay.fens.length-1){
@@ -4385,10 +4062,7 @@ function toggleReplayPlay(){
     Replay.index++;renderReplayBoard();
   },850);
 }
-function stopReplay(){
-  Replay.active=false;Replay.playing=false;
-  if(Replay.timer){clearInterval(Replay.timer);Replay.timer=null;}
-}
+function stopReplay(){Replay.active=false;Replay.playing=false;if(Replay.timer){clearInterval(Replay.timer);Replay.timer=null;}}
 
 /* ==========================================================================
    SECTION: PUZZLES
@@ -4404,10 +4078,7 @@ const BUILTIN_PUZZLES=[
 let cachedPuzzles=null;
 async function loadPuzzles(){
   if(cachedPuzzles)return cachedPuzzles;
-  try{
-    const raw=localStorage.getItem('gmg_puzzles_cache');
-    if(raw){const p=JSON.parse(raw);if(Array.isArray(p)&&p.length){cachedPuzzles=p;return p;}}
-  }catch(e){logErr('puzzle-cache',e);}
+  try{const raw=localStorage.getItem('gmg_puzzles_cache');if(raw){const p=JSON.parse(raw);if(Array.isArray(p)&&p.length){cachedPuzzles=p;return p;}}}catch(e){logErr('puzzle-cache',e);}
   let list=BUILTIN_PUZZLES;
   if(FB.ready){
     try{
@@ -4417,10 +4088,7 @@ async function loadPuzzles(){
         const remote=Object.keys(val).map(k=>{
           const p=val[k]||{};
           if(typeof p.fen!=='string'||!Array.isArray(p.solution)||!p.solution.length)return null;
-          return{id:k,fen:p.fen,solution:p.solution.filter(x=>typeof x==='string'),
-            rating:Number(p.rating)||1000,
-            theme:typeof p.theme==='string'?p.theme:'Taktik',
-            hint:typeof p.hint==='string'?p.hint:''};
+          return{id:k,fen:p.fen,solution:p.solution.filter(x=>typeof x==='string'),rating:Number(p.rating)||1000,theme:typeof p.theme==='string'?p.theme:'Taktik',hint:typeof p.hint==='string'?p.hint:''};
         }).filter(Boolean);
         if(remote.length)list=remote.concat(BUILTIN_PUZZLES);
       }
@@ -4459,13 +4127,11 @@ async function startPuzzle(index){
     Game.opponentProfile=null;Game.isRanked=false;
     const title=$('#gameTitle');
     if(title)title.textContent='Puzzle · '+p.theme;
+    const pill=$('#gameModePill');if(pill){pill.textContent='Puzzle';pill.className='pill';}
     openGameScreen();buildPuzzleTools();renderBoard();updateGameUI();
     const status=$('#gameStatus');
     if(status)status.textContent='Giliran '+(chess.turn==='w'?'Putih':'Hitam')+' — temukan langkah terbaik';
-  }catch(e){
-    logErr('start-puzzle',e);
-    toast('Gagal memuat puzzle.','error');
-  }
+  }catch(e){logErr('start-puzzle',e);toast('Gagal memuat puzzle.','error');}
 }
 function startDailyPuzzle(){
   loadPuzzles().then(puzzles=>{
@@ -4483,15 +4149,8 @@ function buildPuzzleTools(){
     b.addEventListener('click',()=>{Sound.button();fn();});
     tools.appendChild(b);
   };
-  add('info','Petunjuk',()=>{
-    const p=Game.currentPuzzle;
-    if(p&&p.hint)toast(p.hint);
-    else toast('Perhatikan posisi raja dan baris terbuka.');
-  });
-  add('target','Solusi',()=>{
-    const p=Game.currentPuzzle;if(!p)return;
-    Modal.open({title:'Solusi',message:p.solution.join(', '),buttons:[{label:'Tutup',value:null,variant:'primary'}]});
-  });
+  add('info','Petunjuk',()=>{const p=Game.currentPuzzle;if(p&&p.hint)toast(p.hint);else toast('Perhatikan posisi raja dan baris terbuka.');});
+  add('target','Solusi',()=>{const p=Game.currentPuzzle;if(!p)return;Modal.open({title:'Solusi',message:p.solution.join(', '),buttons:[{label:'Tutup',value:null,variant:'primary'}]});});
   add('refresh','Puzzle Lain',()=>startPuzzle(App.puzzleState.index+1));
   add('x','Keluar',()=>closeGame(),true);
 }
@@ -4514,8 +4173,7 @@ function checkPuzzleSolution(move){
     savePuzzleProgress(p.id);
     if(App.profile&&FB.ready&&App.user){
       FB.api.update(FB.api.ref(FB.db,'users/'+App.user.uid),{
-        puzzleRating:App.puzzleState.rating,
-        xp:(App.profile.xp||0)+15
+        puzzleRating:App.puzzleState.rating,xp:(App.profile.xp||0)+15
       }).catch(()=>{});
     }
     setTimeout(()=>{
@@ -4578,14 +4236,7 @@ async function loadLeaderboard(tab){
         const s=await FB.api.get(FB.api.ref(FB.db,'users/'+id));
         if(!s.exists())return null;
         const u=s.val()||{};
-        return{
-          uid:id,
-          username:u.username||'Pemain',
-          avatar:typeof u.avatar==='string'?u.avatar:'',
-          stars:Math.max(0,Number(u.stars)||0),
-          rating:Number(u.rating)||1200,
-          games:Number(u.gamesPlayed)||0
-        };
+        return{uid:id,username:u.username||'Pemain',avatar:typeof u.avatar==='string'?u.avatar:'',stars:Math.max(0,Number(u.stars)||0),rating:Number(u.rating)||1200,games:Number(u.gamesPlayed)||0};
       }));
       entries=results.filter(Boolean);
     }else{
@@ -4702,11 +4353,7 @@ async function searchUsers(query){
           });
           toast('Permintaan terkirim.','success');
           btn.textContent='Terkirim';
-        }catch(e){
-          logErr('friend-request',e);
-          toast(errMsg('DATABASE_ERROR'),'error');
-          btn.disabled=false;
-        }
+        }catch(e){logErr('friend-request',e);toast(errMsg('DATABASE_ERROR'),'error');btn.disabled=false;}
       });
     }
     const viewBtn=$('#btnViewProfile');
@@ -4736,18 +4383,14 @@ function renderFriendRequests(data){
     row.querySelector('[data-act="accept"]').addEventListener('click',async()=>{
       try{
         await FB.api.set(FB.api.ref(FB.db,'friends/'+App.user.uid+'/'+req.senderUid),true);
-        await FB.api.set(FB.api.ref(FB.db,'friends/'+req.senderUid+'/'+App.user.uid),true);
-        await FB.api.remove(FB.api.ref(FB.db,'friendRequests/'+App.user.uid+'/'+req.senderUid));
         try{
-          await FB.api.set(FB.api.ref(FB.db,'notifications/'+req.senderUid+'/'+Date.now()),{
-            type:'friend_accepted',
-            from:App.user.uid,
-            fromName:(App.profile&&App.profile.username)||'Pemain',
-            message:'menerima permintaan pertemanan',
-            createdAt:Date.now(),
-            read:false
+          await FB.api.set(FB.api.ref(FB.db,'friendAcceptSignals/'+req.senderUid+'/'+App.user.uid),{
+            acceptedBy:App.user.uid,
+            acceptedByName:(App.profile&&App.profile.username)||'Pemain',
+            at:Date.now()
           });
         }catch(_){}
+        await FB.api.remove(FB.api.ref(FB.db,'friendRequests/'+App.user.uid+'/'+req.senderUid));
         toast('Pertemanan diterima.','success');
       }catch(e){logErr('friend-accept',e);toast(errMsg('DATABASE_ERROR'),'error');}
     });
@@ -4774,11 +4417,25 @@ async function renderFriendList(data){
   }));
   box.innerHTML='';
   const valid=results.filter(Boolean);
+  /* Rekonsiliasi: pastikan kedua sisi punya satu sama lain */
+  const myUid=App.user.uid;
+  valid.forEach(async f=>{
+    try{
+      const s=await FB.api.get(FB.api.ref(FB.db,'friends/'+f.uid+'/'+myUid));
+      if(!s.exists()){
+        await FB.api.set(FB.api.ref(FB.db,'friendAcceptSignals/'+f.uid+'/'+myUid),{
+          acceptedBy:myUid,
+          acceptedByName:(App.profile&&App.profile.username)||'Pemain',
+          at:Date.now(),
+          reconciling:true
+        });
+      }
+    }catch(_){}
+  });
   if(!valid.length){
     box.innerHTML='<div class="empty">'+icon('users','ic-lg')+'<p>Tidak dapat memuat data teman.</p></div>';
     return;
   }
-  /* Urutkan: yang online dulu */
   valid.sort((a,b)=>{
     const aO=a.presence&&a.presence.online?1:0;
     const bO=b.presence&&b.presence.online?1:0;
@@ -4789,7 +4446,7 @@ async function renderFriendList(data){
     const row=el('div','list-item');
     const isOnline=f.presence&&f.presence.online;
     const statusHtml=isOnline
-      ?'<span style="color:var(--success);font-weight:700;display:inline-flex;align-items:center;gap:5px"><span style="width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 8px var(--success);display:inline-block"></span>Online</span>'
+      ?'<span style="color:var(--success);font-weight:700;display:inline-flex;align-items:center;gap:5px"><span style="width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);display:inline-block"></span>Online</span>'
       :'<span style="color:var(--text-dim2)">Terakhir dilihat '+formatLastSeen(f.presence?f.presence.lastSeen:f.lastSeen)+'</span>';
     row.innerHTML=
       '<div data-act="view" style="cursor:pointer;flex:none">'+avatarWithPresence(f,f.presence,'')+'</div>'+
@@ -4835,13 +4492,10 @@ async function challengeFriend(friend){
       status:'pending'
     });
     toast('Tantangan terkirim ke '+friend.username+'.','success');
-  }catch(e){
-    logErr('challenge',e);
-    toast(errMsg('DATABASE_ERROR'),'error');
-  }
+  }catch(e){logErr('challenge',e);toast(errMsg('DATABASE_ERROR'),'error');}
 }
 
-/* -------- PROFIL PEMAIN (dari menu teman) -------- */
+/* -------- PROFIL PEMAIN -------- */
 async function showPlayerProfile(uid){
   if(!uid){toast('Profil tidak ditemukan.','error');return;}
   if(App.user&&uid===App.user.uid){
@@ -4851,11 +4505,7 @@ async function showPlayerProfile(uid){
   }
   const box=el('div');
   box.innerHTML='<div class="empty"><span class="spinner" style="display:inline-block"></span><p>Memuat profil...</p></div>';
-  Modal.open({
-    title:'Profil Pemain',
-    body:box,
-    buttons:[{label:'Tutup',value:null,variant:'primary'}]
-  });
+  Modal.open({title:'',body:box,buttons:[{label:'Tutup',value:null,variant:'ghost'}]});
   const p=await loadProfile(uid);
   const presence=await loadPresence(uid);
   if(!p){
@@ -4865,35 +4515,59 @@ async function showPlayerProfile(uid){
   const info=starInfo(p.stars||0);
   const t=info.tier;
   const level=levelFromXp(p.xp);
-  const winRate=p.gamesPlayed>0?Math.round((p.wins/p.gamesPlayed)*100):0;
+  const total=p.gamesPlayed||0;
+  const wr=total>0?Math.round((p.wins/total)*100):0;
   const isOnline=presence.online;
-  const statusText=isOnline
-    ?'<span style="color:var(--success);font-weight:700;display:inline-flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 8px var(--success);display:inline-block"></span>Online sekarang</span>'
+  const statusHtml=isOnline
+    ?'<span style="color:var(--success);font-weight:700;display:inline-flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);display:inline-block"></span>Online</span>'
     :'<span style="color:var(--text-dim2)">Terakhir dilihat '+formatLastSeen(presence.lastSeen||p.lastSeen)+'</span>';
   box.innerHTML=
-    '<div style="display:flex;gap:14px;align-items:center;margin-bottom:16px">'+
-    avatarWithPresence(p,presence,'xl')+
-    '<div style="flex:1;min-width:0">'+
-    '<div style="font-size:19px;font-weight:900;letter-spacing:-.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escapeHtml(p.username)+'</div>'+
-    '<div style="font-size:11.5px;margin-top:4px">'+statusText+'</div>'+
-    '<div style="margin-top:8px">'+tierBadgeHtml(p.stars||0)+'</div>'+
-    '<div style="font-size:11px;color:var(--text-dim2);margin-top:6px">Level '+level+' · Rating '+p.rating+'</div>'+
+    '<div style="position:relative;border-radius:18px;padding:18px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,var(--surface)),var(--surface-2));border:1px solid var(--border-2);margin-bottom:14px">'+
+      '<div style="display:flex;gap:14px;align-items:center">'+
+        avatarWithPresence(p,presence,'xl')+
+        '<div style="flex:1;min-width:0">'+
+          '<div style="font-size:19px;font-weight:900;letter-spacing:-.028em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escapeHtml(p.username)+'</div>'+
+          '<div style="font-size:11.5px;margin-top:6px">'+statusHtml+'</div>'+
+          '<div style="margin-top:8px">'+tierBadgeHtml(p.stars||0)+'</div>'+
+        '</div>'+
+        '<div style="text-align:right;flex:none">'+
+          '<div style="display:flex;align-items:center;gap:5px;justify-content:flex-end;font-size:24px;font-weight:900;letter-spacing:-.03em;line-height:1">'+(p.stars||0)+starSVG(20)+'</div>'+
+          '<div style="font-size:10px;font-weight:800;color:var(--text-dim);letter-spacing:.14em;text-transform:uppercase;margin-top:4px">Bintang</div>'+
+        '</div>'+
+      '</div>'+
+      '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);font-weight:700;margin-top:16px;margin-bottom:6px"><span>Progres '+t.name+'</span><span>'+Math.round(info.progress*100)+'%</span></div>'+
+      '<div class="progress" style="margin-top:0"><i style="width:'+(info.progress*100)+'%"></i></div>'+
     '</div>'+
+    '<div class="stat-grid" style="margin-bottom:14px">'+
+      '<div class="stat"><div class="l">Rating</div><div class="v">'+p.rating+'</div></div>'+
+      '<div class="stat"><div class="l">Level</div><div class="v">'+level+'</div></div>'+
+      '<div class="stat"><div class="l">Total Game</div><div class="v">'+total+'</div></div>'+
+      '<div class="stat"><div class="l">Win Rate</div><div class="v" style="color:var(--success)">'+wr+'%</div></div>'+
     '</div>'+
-    '<div class="stat-grid" style="margin-bottom:12px">'+
-    '<div class="stat"><div class="l">Menang</div><div class="v" style="color:var(--success)">'+p.wins+'</div></div>'+
-    '<div class="stat"><div class="l">Kalah</div><div class="v" style="color:var(--danger)">'+p.losses+'</div></div>'+
-    '<div class="stat"><div class="l">Seri</div><div class="v">'+p.draws+'</div></div>'+
-    '<div class="stat"><div class="l">Win Rate</div><div class="v">'+winRate+'%</div></div>'+
+    '<div class="sec-title" style="margin:0 2px 10px"><h3>Statistik</h3></div>'+
+    '<div class="card" style="padding:14px 16px">'+
+      statBar('Menang',p.wins,total,'var(--success)')+
+      statBar('Kalah',p.losses,total,'var(--danger)')+
+      statBar('Seri',p.draws,total,'var(--text-dim)')+
     '</div>'+
-    '<div style="border-radius:14px;background:var(--bg-2);border:1px solid var(--border-2);overflow:hidden">'+
-    rowKV('Total Pertandingan',String(p.gamesPlayed))+
-    rowKV('Total Bintang',String(p.stars||0))+
-    rowKV('Rating Terbaik',String(p.bestRating))+
-    rowKV('Streak Saat Ini',String(p.currentStreak))+
-    rowKV('Streak Terbaik',String(p.bestStreak))+
-    rowKV('Bergabung',new Date(p.createdAt).toLocaleDateString('id-ID'))+
+    '<div class="sec-title" style="margin:16px 2px 10px"><h3>Rekor</h3></div>'+
+    '<div class="card" style="padding:6px 16px">'+
+      rowKV('Total Bintang',String(p.stars||0))+
+      rowKV('Rating Terbaik',String(p.bestRating))+
+      rowKV('Streak Saat Ini',String(p.currentStreak))+
+      rowKV('Streak Terbaik',String(p.bestStreak))+
+      rowKV('Bergabung',new Date(p.createdAt).toLocaleDateString('id-ID'))+
     '</div>';
+}
+function statBar(label,val,total,color){
+  const pct=total>0?Math.round((val/total)*100):0;
+  return '<div style="margin:12px 0">'+
+    '<div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;margin-bottom:6px">'+
+      '<span>'+label+'</span>'+
+      '<span style="color:var(--text-dim)">'+val+' ('+pct+'%)</span>'+
+    '</div>'+
+    '<div class="progress" style="margin-top:0"><i style="width:'+pct+'%;background:'+color+'"></i></div>'+
+  '</div>';
 }
 
 /* ==========================================================================
@@ -5054,10 +4728,7 @@ async function loadProfileGames(){
         '<span class="res-badge '+badge+'">'+label+'</span>';
       box.appendChild(row);
     });
-  }catch(e){
-    logErr('profile-games',e);
-    box.innerHTML='<div class="empty">'+icon('info','ic-lg')+'<p>'+errMsg('DATABASE_ERROR')+'</p></div>';
-  }
+  }catch(e){logErr('profile-games',e);box.innerHTML='<div class="empty">'+icon('info','ic-lg')+'<p>'+errMsg('DATABASE_ERROR')+'</p></div>';}
 }
 async function loadRatingHistory(){
   const box=$('#ratingHistory');
@@ -5087,10 +4758,7 @@ async function loadRatingHistory(){
         (delta>=0?'+':'')+delta+(sDelta>0?' ★+1':sDelta<0?' ★-1':'')+'</div>';
       box.appendChild(row);
     });
-  }catch(e){
-    logErr('rating-history',e);
-    box.innerHTML='<div class="empty">'+icon('info','ic-lg')+'<p>'+errMsg('DATABASE_ERROR')+'</p></div>';
-  }
+  }catch(e){logErr('rating-history',e);box.innerHTML='<div class="empty">'+icon('info','ic-lg')+'<p>'+errMsg('DATABASE_ERROR')+'</p></div>';}
 }
 function drawRatingChart(canvas,games){
   const ctx=canvas.getContext('2d');if(!ctx)return;
@@ -5389,10 +5057,7 @@ async function renderRecentGames(){
         '<span class="res-badge '+badge+'">'+label+'</span>';
       box.appendChild(row);
     });
-  }catch(e){
-    logErr('recent-games',e);
-    box.innerHTML='<div class="empty">'+icon('info','ic-lg')+'<p>'+errMsg('DATABASE_ERROR')+'</p></div>';
-  }
+  }catch(e){logErr('recent-games',e);box.innerHTML='<div class="empty">'+icon('info','ic-lg')+'<p>'+errMsg('DATABASE_ERROR')+'</p></div>';}
 }
 async function renderHomeLeaderboard(){
   const box=$('#homeLeaderboard');if(!box)return;
@@ -5409,10 +5074,7 @@ async function renderHomeLeaderboard(){
       avatar:typeof val[k].avatar==='string'?val[k].avatar:'',
       stars:Math.max(0,Number(val[k].stars)||0),
       rating:Number(val[k].rating)||1200
-    })).sort((a,b)=>{
-      if(b.stars!==a.stars)return b.stars-a.stars;
-      return b.rating-a.rating;
-    }).slice(0,5);
+    })).sort((a,b)=>{if(b.stars!==a.stars)return b.stars-a.stars;return b.rating-a.rating;}).slice(0,5);
     if(!entries.length){
       box.innerHTML='<div class="empty">'+icon('trophy','ic-lg')+'<p>Belum ada data peringkat.</p></div>';
       return;
@@ -5433,10 +5095,7 @@ async function renderHomeLeaderboard(){
         '<div class="lb-rating" style="display:flex;align-items:center;gap:4px">'+e.stars+starSVG(14)+'</div>';
       box.appendChild(row);
     });
-  }catch(e){
-    logErr('home-lb',e);
-    box.innerHTML='<div class="empty">'+icon('info','ic-lg')+'<p>'+errMsg('DATABASE_ERROR')+'</p></div>';
-  }
+  }catch(e){logErr('home-lb',e);box.innerHTML='<div class="empty">'+icon('info','ic-lg')+'<p>'+errMsg('DATABASE_ERROR')+'</p></div>';}
 }
 
 /* ==========================================================================
@@ -5487,27 +5146,37 @@ function openRankedDialog(){
     'Menang = +1★ · Kalah = -1★ · Seri = 0★</p>';
   Modal.open({
     title:'Ranked Match',body:box,
-    buttons:[
-      {label:'Batal',value:null,variant:'ghost'},
-      {label:'Cari Lawan',value:'go',variant:'primary'}
-    ]
+    buttons:[{label:'Batal',value:null,variant:'ghost'},{label:'Cari Lawan',value:'go',variant:'primary'}]
   }).then(v=>{
     if(v!=='go')return;
     Game.lastTc='1+5';
     Game.isRanked=true;
-    findMatch('1+5');
+    findMatch('1+5','ranked');
   });
 }
 function openClassicDialog(){
   if(!FB.ready||!App.user){
     Modal.open({
       title:'Perlu Masuk',
-      message:'Mode Classic online memerlukan akun. Gunakan mode AI atau Lokal untuk bermain offline.',
+      message:'Mode Classic memerlukan akun online. Anda masih dapat bermain AI atau mode lokal secara offline.',
       buttons:[{label:'Mengerti',value:null,variant:'primary'}]
     });
     return;
   }
-  openFriendRoomDialog(true);
+  const box=el('div');
+  box.innerHTML=
+    '<p style="font-size:13px;color:var(--text-dim);margin:0 0 12px;text-align:center;line-height:1.55">'+
+    'Format: <b style="color:var(--text)">1 menit</b> + <b style="color:var(--text)">5 detik</b> per langkah.<br>'+
+    'Permainan santai tanpa peringkat. Rating & bintang tidak berubah.</p>';
+  Modal.open({
+    title:'Classic Match',body:box,
+    buttons:[{label:'Batal',value:null,variant:'ghost'},{label:'Cari Lawan',value:'go',variant:'primary'}]
+  }).then(v=>{
+    if(v!=='go')return;
+    Game.lastTc='1+5';
+    Game.isRanked=false;
+    findMatch('1+5','casual');
+  });
 }
 function openFriendRoomDialog(casual){
   if(!FB.ready||!App.user){
@@ -5520,8 +5189,7 @@ function openFriendRoomDialog(casual){
   }
   const box=el('div');
   box.innerHTML=
-    (casual?'<p style="font-size:12.5px;color:var(--text-dim);margin:0 0 14px;text-align:center">Format Classic: <b style="color:var(--text)">1 menit</b> + <b style="color:var(--text)">5 detik</b> per langkah.</p>'
-          :'<div class="field"><label for="roomTc">Time Control</label>'+tcSelectHtml('roomTc','10+0')+'</div>')+
+    '<div class="field"><label for="roomTc">Time Control</label>'+tcSelectHtml('roomTc','10+0')+'</div>'+
     '<button class="btn primary block" id="btnCreateRoom">'+icon('plus','ic-sm')+' Buat Room</button>'+
     '<div class="auth-divider" style="margin:18px 0">atau gabung dengan kode</div>'+
     '<div style="display:flex;gap:8px">'+
@@ -5530,7 +5198,7 @@ function openFriendRoomDialog(casual){
     '</div>'+
     '<div class="err" id="roomErr"></div>';
   Modal.open({
-    title:casual?'Permainan Classic':'Main dengan Teman',body:box,
+    title:'Main dengan Teman',body:box,
     buttons:[{label:'Tutup',value:null,variant:'ghost'}]
   });
   const createBtn=$('#btnCreateRoom');
@@ -5539,7 +5207,7 @@ function openFriendRoomDialog(casual){
       if(createBtn.disabled)return;
       createBtn.disabled=true;
       createBtn.innerHTML='<span class="spinner"></span> Membuat';
-      const tc=casual?'1+5':($('#roomTc')?$('#roomTc').value:'10+0');
+      const tc=$('#roomTc')?$('#roomTc').value:'10+0';
       const code=await createOnlineRoom(tc);
       if(!code){createBtn.disabled=false;createBtn.innerHTML=icon('plus','ic-sm')+' Buat Room';return;}
       Game.lastTc=tc;
@@ -5631,10 +5299,7 @@ function openAiDialog(){
     '<div class="field"><label for="aiTc">Time Control</label>'+tcSelectHtml('aiTc','10+0')+'</div>';
   Modal.open({
     title:'Lawan AI',body:box,
-    buttons:[
-      {label:'Batal',value:null,variant:'ghost'},
-      {label:'Mulai',value:'go',variant:'primary'}
-    ]
+    buttons:[{label:'Batal',value:null,variant:'ghost'},{label:'Mulai',value:'go',variant:'primary'}]
   }).then(v=>{
     if(v!=='go')return;
     const lvl=$('#aiLevel')?$('#aiLevel').value:'medium';
@@ -5649,10 +5314,7 @@ function openLocalDialog(){
   box.innerHTML='<div class="field"><label for="localTc">Time Control</label>'+tcSelectHtml('localTc','10+0')+'</div>';
   Modal.open({
     title:'Dua Pemain Lokal',body:box,
-    buttons:[
-      {label:'Batal',value:null,variant:'ghost'},
-      {label:'Mulai',value:'go',variant:'primary'}
-    ]
+    buttons:[{label:'Batal',value:null,variant:'ghost'},{label:'Mulai',value:'go',variant:'primary'}]
   }).then(v=>{
     if(v!=='go')return;
     const tc=$('#localTc')?$('#localTc').value:'10+0';
@@ -5675,16 +5337,24 @@ function renderFriendsView(){
   const uid=App.user.uid;
   dbOnValue('friendRequests/'+uid,renderFriendRequests,'freq:'+uid);
   dbOnValue('friends/'+uid,renderFriendList,'friends:'+uid);
+  dbOnValue('friendAcceptSignals/'+uid,async data=>{
+    if(!data||typeof data!=='object')return;
+    const entries=Object.entries(data);
+    for(const [otherUid,sig] of entries){
+      if(!sig)continue;
+      try{
+        await FB.api.set(FB.api.ref(FB.db,'friends/'+uid+'/'+otherUid),true);
+        await FB.api.remove(FB.api.ref(FB.db,'friendAcceptSignals/'+uid+'/'+otherUid));
+        await FB.api.remove(FB.api.ref(FB.db,'friendRequests/'+uid+'/'+otherUid)).catch(()=>{});
+      }catch(e){logErr('friend-signal',e);}
+    }
+  },'faccept:'+uid);
   dbOnValue('challenges/'+uid,data=>{
     if(!data||typeof data!=='object')return;
     const entries=Object.values(data).filter(c=>c&&c.status==='pending');
     if(!entries.length)return;
     const c=entries[0];
-    Modal.confirm(
-      'Tantangan Masuk',
-      c.senderName+' menantang Anda · Classic 1+5.',
-      'Terima'
-    ).then(async ok=>{
+    Modal.confirm('Tantangan Masuk',c.senderName+' menantang Anda · Classic 1+5.','Terima').then(async ok=>{
       const ref=FB.api.ref(FB.db,'challenges/'+uid+'/'+c.senderUid);
       if(!ok){await FB.api.remove(ref).catch(()=>{});return;}
       await FB.api.remove(ref).catch(()=>{});
@@ -5705,9 +5375,7 @@ function renderFriendsView(){
           timeControl:tc,increment:timeControlToSeconds(tc).inc,
           createdAt:now,updatedAt:now,mode:'classic'
         });
-        await FB.api.set(FB.api.ref(FB.db,'matchAssignments/'+c.senderUid),{
-          roomId:code,timeControl:tc,opponent:uid,at:now
-        });
+        await FB.api.set(FB.api.ref(FB.db,'matchAssignments/'+c.senderUid),{roomId:code,timeControl:tc,opponent:uid,at:now,mode:'classic'});
         const oppProfile=await loadProfile(c.senderUid);
         Game.opponentUid=c.senderUid;
         Game.opponentName=oppProfile?oppProfile.username:(c.senderName||'Lawan');
@@ -5718,8 +5386,7 @@ function renderFriendsView(){
         Game.isRanked=false;
         await showMatchFound(Game.opponentName,Game.opponentRating,oppProfile);
         startOnlineGame({
-          gameId:code,
-          whiteUid:colors.white,blackUid:colors.black,
+          gameId:code,whiteUid:colors.white,blackUid:colors.black,
           timeControl:tc,myUid:uid,isRanked:false
         });
       }catch(e){logErr('challenge-accept',e);toast(errMsg('DATABASE_ERROR'),'error');}
@@ -5824,7 +5491,6 @@ function wireShellEvents(){
   }
   const setBtn=$('#btnSettings');
   if(setBtn)setBtn.onclick=()=>{Sound.button();openSettings();};
-
   const searchBtn=$('#btnFriendSearch');
   const searchInput=$('#friendSearch');
   if(searchBtn&&searchInput){
@@ -5833,7 +5499,6 @@ function wireShellEvents(){
   }
   const allGames=$('#btnAllGames');
   if(allGames)allGames.onclick=()=>{Sound.button();App.profileTab='games';showView('profile');};
-
   if(wireShellEvents._wired)return;
   wireShellEvents._wired=true;
   document.addEventListener('click',ev=>{
@@ -5896,7 +5561,10 @@ function closeGame(){
   stopClock();stopAi();stopReplay();
   unregisterListener('game:'+(Game.roomId||''));
   if(Game.opponentUid)unregisterListener('opp-presence:'+Game.opponentUid);
-  if(Game.roomId)unregisterListener('draw-offer:'+Game.roomId);
+  if(Game.roomId){
+    unregisterListener('draw-offer:'+Game.roomId);
+    unregisterListener('reactions:'+Game.roomId);
+  }
   closeGameScreen();
   Game.running=false;Game.finished=false;Game.chess=null;Game.mode=null;
   Game.roomId=null;Game.opponentUid=null;Game.isPuzzle=false;Game.currentPuzzle=null;
@@ -5941,10 +5609,7 @@ async function boot(){
       App.user=null;
       App.profile=defaultProfile('guest','Tamu');
       splashStatus('Memuat mode offline...');
-      setTimeout(()=>{
-        hideSplash();
-        enterApp();
-      },380);
+      setTimeout(()=>{hideSplash();enterApp();},380);
     });
   }
 
@@ -5970,15 +5635,10 @@ async function boot(){
       if(user){
         App.user=user;
         App.offlineMode=false;
-
         const cached=loadProfileCache(user.uid);
         if(cached){
           App.profile=cached;
-          if(firstCallback){
-            firstCallback=false;
-            await minSplash;
-            hideSplash();
-          }
+          if(firstCallback){firstCallback=false;await minSplash;hideSplash();}
           enterApp();
           loadProfile(user.uid).then(profile=>{
             if(profile){
@@ -5990,7 +5650,6 @@ async function boot(){
           });
           return;
         }
-
         let profile=await loadProfile(user.uid);
         if(!profile){
           splashStatus('Menyiapkan profil...');
@@ -6004,9 +5663,8 @@ async function boot(){
             showAuthScreen();
             return;
           }
-          try{
-            await createUserProfile(user.uid,username,user.email||'');
-          }catch(e){
+          try{await createUserProfile(user.uid,username,user.email||'');}
+          catch(e){
             logErr('create-profile-google',e);
             toast(errMsg('DATABASE_ERROR'),'error');
             try{await FB.authApi.signOut(FB.auth);}catch(_){}
@@ -6018,22 +5676,14 @@ async function boot(){
         }
         App.profile=profile||defaultProfile(user.uid,user.displayName||'Pemain');
         saveProfileCache(user.uid,App.profile);
-        if(firstCallback){
-          firstCallback=false;
-          await minSplash;
-          hideSplash();
-        }
+        if(firstCallback){firstCallback=false;await minSplash;hideSplash();}
         enterApp();
       }else{
         App.user=null;
         App.profile=null;
         clearProfileCache();
         clearAllListeners();
-        if(firstCallback){
-          firstCallback=false;
-          await minSplash;
-          hideSplash();
-        }
+        if(firstCallback){firstCallback=false;await minSplash;hideSplash();}
         showAuthScreen();
       }
     });
@@ -6083,4 +5733,4 @@ boot().catch(e=>{
 });
 </script>
 </body>
-</html>
+   </html>
