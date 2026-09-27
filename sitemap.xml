@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Homepage -->
   <url>
     <loc>https://catur.biz.id/</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://i.ibb.co.com/7J74C9fh/WA-1790518020718.jpg</image:loc>
+      <image:title>Grandmaster Grid - Catur Online</image:title>
+      <image:caption>Logo Grandmaster Grid, platform permainan catur online.</image:caption>
+    </image:image>
   </url>
+
+  <!-- Halaman Permainan -->
+  <url>
+    <loc>https://catur.biz.id/play.html</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
 </urlset>
