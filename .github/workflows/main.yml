@@ -1,1 +1,81 @@
-. 
+name: Build APK
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK
+        run: |
+          sdkmanager "platform-tools"
+          sdkmanager "platforms;android-35"
+          sdkmanager "build-tools;35.0.0"
+
+      - name: Install Cordova
+        run: npm install -g cordova
+
+      - name: Create Android project
+        run: |
+          cordova create apk-project com.allmenu.app "Semua Menu"
+
+      - name: Copy website
+        run: |
+          rm -rf apk-project/www
+          mkdir -p apk-project/www
+
+          cp -r ./* apk-project/www/ || true
+
+      - name: Set play.html as APK start page
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          config = Path("apk-project/config.xml")
+          text = config.read_text()
+
+          text = text.replace(
+              '<content src="index.html" />',
+              '<content src="play.html" />'
+          )
+
+          config.write_text(text)
+          PY
+
+      - name: Add Android platform
+        working-directory: apk-project
+        run: cordova platform add android
+
+      - name: Build APK
+        working-directory: apk-project
+        run: cordova build android --debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SemuaMenu-APK
+          path: apk-project/platforms/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
