@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#05070D">
+<meta name="theme-color" content="#FFFFFF">
 
 <title>Grandmaster Grid - Catur Online</title>
 <meta name="description" content="Grandmaster Grid adalah platform catur online untuk bermain, belajar, dan mengembangkan strategi catur langsung melalui browser.">
@@ -53,35 +53,43 @@
   "url": "https://catur.biz.id/",
   "logo": {
     "@type": "ImageObject",
-    "url": "https://i.ibb.co.com/7J74C9fh/WA-1790518020718.jpg"
+    "url": "https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg"
   }
 }
 </script>
 
 <style>
   :root{
-    --bg:#05070D;
-    --bg-2:#0B1020;
-    --card:rgba(255,255,255,0.05);
-    --border:rgba(255,255,255,0.10);
-    --primary:#7C5CFF;
-    --accent:#00D4FF;
-    --highlight:#A78BFA;
-    --text:#FFFFFF;
-    --muted:#94A3B8;
-    --radius:16px;
+    --bg:#FFFFFF;
+    --bg-soft:#F7F8FC;
+    --bg-tint:#EEF1FA;
+    --card:#FFFFFF;
+    --border:rgba(15,23,42,.08);
+    --border-strong:rgba(15,23,42,.14);
+    --primary:#6D4DFF;
+    --primary-dark:#4C2FCC;
+    --accent:#0091D5;
+    --highlight:#8B5CF6;
+    --text:#0F172A;
+    --text-soft:#334155;
+    --muted:#64748B;
+    --radius:18px;
+    --radius-sm:12px;
     --maxw:1200px;
-    --shadow-glow:0 20px 60px -20px rgba(124,92,255,.55);
+    --shadow-sm:0 1px 2px rgba(15,23,42,.05), 0 1px 3px rgba(15,23,42,.06);
+    --shadow-md:0 4px 16px -4px rgba(15,23,42,.08), 0 2px 6px -2px rgba(15,23,42,.05);
+    --shadow-lg:0 20px 50px -20px rgba(109,77,255,.25), 0 8px 24px -12px rgba(15,23,42,.08);
+    --shadow-xl:0 30px 70px -30px rgba(109,77,255,.35), 0 12px 32px -16px rgba(15,23,42,.10);
   }
 
   *,*::before,*::after{box-sizing:border-box}
-  html,body{margin:0;padding:0}
-  html{scroll-behavior:smooth; -webkit-text-size-adjust:100%}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
   body{
+    margin:0;
     font-family:'Inter','Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
     background:var(--bg);
     color:var(--text);
-    line-height:1.6;
+    line-height:1.65;
     overflow-x:hidden;
     min-height:100vh;
     -webkit-font-smoothing:antialiased;
@@ -90,117 +98,105 @@
   img{max-width:100%;display:block;height:auto}
   a{color:inherit;text-decoration:none}
   button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+  :focus-visible{outline:2px solid var(--primary);outline-offset:3px;border-radius:6px}
 
-  /* ==== Background layers ==== */
+  /* ===== Container ===== */
+  .container{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 22px}
+
+  /* ===== Background ===== */
   .bg-layers{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
   .bg-gradient{
     position:absolute;inset:-20%;
     background:
-      radial-gradient(60% 50% at 15% 10%, rgba(124,92,255,.35) 0%, transparent 60%),
-      radial-gradient(50% 40% at 85% 15%, rgba(0,212,255,.22) 0%, transparent 60%),
-      radial-gradient(45% 55% at 50% 100%, rgba(167,139,250,.20) 0%, transparent 65%),
-      linear-gradient(180deg, #05070D 0%, #070A16 50%, #05070D 100%);
-    animation:glowShift 22s ease-in-out infinite alternate;
+      radial-gradient(50% 45% at 12% 8%, rgba(109,77,255,.14) 0%, transparent 60%),
+      radial-gradient(45% 40% at 88% 12%, rgba(0,145,213,.12) 0%, transparent 60%),
+      radial-gradient(40% 50% at 50% 100%, rgba(139,92,246,.10) 0%, transparent 65%),
+      linear-gradient(180deg,#FFFFFF 0%,#F9FAFF 55%,#FFFFFF 100%);
+    animation:glowShift 24s ease-in-out infinite alternate;
   }
   @keyframes glowShift{
-    0%{transform:translate3d(0,0,0) scale(1);filter:hue-rotate(0deg)}
-    100%{transform:translate3d(2%, -2%, 0) scale(1.06);filter:hue-rotate(12deg)}
+    0%{transform:translate3d(0,0,0) scale(1)}
+    100%{transform:translate3d(2%,-2%,0) scale(1.05)}
   }
   .bg-grid{
     position:absolute;inset:0;
     background-image:
-      linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
-    background-size:48px 48px;
-    mask-image:radial-gradient(ellipse at 50% 40%, #000 30%, transparent 80%);
-    -webkit-mask-image:radial-gradient(ellipse at 50% 40%, #000 30%, transparent 80%);
-    animation:gridMove 60s linear infinite;
+      linear-gradient(rgba(15,23,42,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15,23,42,.045) 1px, transparent 1px);
+    background-size:56px 56px;
+    -webkit-mask-image:radial-gradient(ellipse at 50% 40%, #000 25%, transparent 75%);
+    mask-image:radial-gradient(ellipse at 50% 40%, #000 25%, transparent 75%);
+    animation:gridMove 80s linear infinite;
   }
   @keyframes gridMove{
-    0%{background-position:0 0, 0 0}
-    100%{background-position:48px 48px, 48px 48px}
-  }
-  .particles{position:absolute;inset:0}
-  .particles span{
-    position:absolute;width:4px;height:4px;border-radius:50%;
-    background:radial-gradient(circle, #fff 0%, rgba(124,92,255,.0) 70%);
-    opacity:.35;
-    animation:float 14s linear infinite;
-  }
-  .particles span:nth-child(1){left:8%;top:20%;animation-delay:0s;background:radial-gradient(circle,#7C5CFF,rgba(124,92,255,0) 70%)}
-  .particles span:nth-child(2){left:22%;top:75%;animation-delay:-3s;background:radial-gradient(circle,#00D4FF,rgba(0,212,255,0) 70%)}
-  .particles span:nth-child(3){left:45%;top:35%;animation-delay:-6s}
-  .particles span:nth-child(4){left:68%;top:60%;animation-delay:-2s;background:radial-gradient(circle,#A78BFA,rgba(167,139,250,0) 70%)}
-  .particles span:nth-child(5){left:82%;top:25%;animation-delay:-8s;background:radial-gradient(circle,#00D4FF,rgba(0,212,255,0) 70%)}
-  .particles span:nth-child(6){left:35%;top:85%;animation-delay:-4s}
-  .particles span:nth-child(7){left:58%;top:12%;animation-delay:-10s;background:radial-gradient(circle,#7C5CFF,rgba(124,92,255,0) 70%)}
-  .particles span:nth-child(8){left:92%;top:70%;animation-delay:-5s}
-  @keyframes float{
-    0%{transform:translate3d(0,0,0);opacity:.15}
-    50%{opacity:.6}
-    100%{transform:translate3d(0,-120px,0);opacity:0}
+    0%{background-position:0 0,0 0}
+    100%{background-position:56px 56px,56px 56px}
   }
 
-  /* ==== Container ==== */
-  .container{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 20px}
-
-  /* ==== Navbar ==== */
+  /* ===== Navbar ===== */
   .nav{
     position:fixed;top:0;left:0;right:0;z-index:100;
-    transition:background .35s ease, backdrop-filter .35s ease, box-shadow .35s ease, border-color .35s ease;
     border-bottom:1px solid transparent;
+    transition:background .35s ease, backdrop-filter .35s ease, box-shadow .35s ease, border-color .35s ease;
+  }
+  .nav.scrolled{
+    background:rgba(255,255,255,.82);
+    backdrop-filter:saturate(180%) blur(16px);
+    -webkit-backdrop-filter:saturate(180%) blur(16px);
+    border-bottom-color:var(--border);
+    box-shadow:0 8px 30px -18px rgba(15,23,42,.20);
   }
   .nav-inner{
     display:flex;align-items:center;justify-content:space-between;
     gap:16px;padding:14px 0;
   }
-  .nav.scrolled{
-    background:rgba(5,7,13,.75);
-    backdrop-filter:saturate(180%) blur(14px);
-    -webkit-backdrop-filter:saturate(180%) blur(14px);
-    border-bottom-color:var(--border);
-    box-shadow:0 8px 30px -12px rgba(124,92,255,.35);
-  }
-  .brand{display:flex;align-items:center;gap:10px;min-width:0}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
   .brand img{
-    width:38px;height:38px;border-radius:10px;
-    object-fit:cover;
-    box-shadow:0 0 0 1px var(--border), 0 0 24px rgba(124,92,255,.45);
+    width:40px;height:40px;border-radius:12px;object-fit:cover;
+    box-shadow:0 0 0 1px var(--border), 0 6px 16px -6px rgba(109,77,255,.45);
     transition:transform .4s ease, box-shadow .4s ease;
   }
-  .brand:hover img{transform:translateY(-2px) rotate(-3deg);box-shadow:0 0 0 1px var(--border),0 0 36px rgba(124,92,255,.7)}
+  .brand:hover img{
+    transform:translateY(-2px) rotate(-3deg);
+    box-shadow:0 0 0 1px var(--border), 0 10px 24px -8px rgba(109,77,255,.6);
+  }
   .brand-name{
-    font-weight:800;letter-spacing:.2px;font-size:1.05rem;
-    background:linear-gradient(90deg,#fff 0%, #A78BFA 60%, #00D4FF 100%);
+    font-weight:800;letter-spacing:-.3px;font-size:1.08rem;
+    background:linear-gradient(90deg,#0F172A 0%,#4C2FCC 55%,#0091D5 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent;
     white-space:nowrap;
   }
-  .nav-links{display:flex;align-items:center;gap:6px}
+  .nav-links{display:flex;align-items:center;gap:4px}
   .nav-links a{
-    padding:8px 14px;border-radius:10px;font-size:.9rem;color:var(--muted);
+    padding:9px 15px;border-radius:10px;font-size:.9rem;font-weight:500;color:var(--text-soft);
     transition:color .25s ease, background .25s ease;
   }
-  .nav-links a:hover,.nav-links a:focus-visible{color:#fff;background:rgba(255,255,255,.06);outline:none}
+  .nav-links a:hover,
+  .nav-links a:focus-visible{color:var(--primary-dark);background:rgba(109,77,255,.08);outline:none}
 
+  .nav-actions{display:flex;gap:10px;align-items:center}
+
+  /* ===== Buttons ===== */
   .btn{
     display:inline-flex;align-items:center;justify-content:center;gap:8px;
-    padding:11px 18px;border-radius:12px;font-weight:600;font-size:.92rem;
-    transition:transform .3s ease, box-shadow .3s ease, background .3s ease, border-color .3s ease;
+    padding:11px 20px;border-radius:12px;font-weight:600;font-size:.92rem;
+    transition:transform .3s ease, box-shadow .3s ease, background .3s ease, border-color .3s ease, color .3s ease;
     position:relative;overflow:hidden;white-space:nowrap;
   }
   .btn-primary{
-    background:linear-gradient(135deg, #7C5CFF 0%, #A78BFA 50%, #00D4FF 130%);
-    color:#05070D;font-weight:800;
-    box-shadow:0 10px 30px -10px rgba(124,92,255,.75), inset 0 0 0 1px rgba(255,255,255,.15);
+    background:linear-gradient(135deg,#6D4DFF 0%,#8B5CF6 50%,#0091D5 130%);
+    color:#FFFFFF;font-weight:700;
+    box-shadow:0 10px 24px -10px rgba(109,77,255,.75), inset 0 0 0 1px rgba(255,255,255,.15);
   }
-  .btn-primary:hover,.btn-primary:focus-visible{
+  .btn-primary:hover,
+  .btn-primary:focus-visible{
     transform:translateY(-2px);
-    box-shadow:0 16px 40px -10px rgba(124,92,255,.95), 0 0 0 1px rgba(255,255,255,.25);
+    box-shadow:0 16px 34px -10px rgba(109,77,255,.85), inset 0 0 0 1px rgba(255,255,255,.25);
     outline:none;
   }
   .btn-primary::before{
     content:"";position:absolute;inset:0;
-    background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%);
+    background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.5) 50%,transparent 70%);
     transform:translateX(-120%);
     transition:transform .8s ease;
   }
@@ -209,25 +205,30 @@
   .btn-primary:hover svg{transform:translateX(3px)}
 
   .btn-ghost{
-    background:rgba(255,255,255,.04);
-    color:#fff;border:1px solid var(--border);
+    background:#FFFFFF;
+    color:var(--text);
+    border:1px solid var(--border-strong);
+    box-shadow:var(--shadow-sm);
   }
-  .btn-ghost:hover,.btn-ghost:focus-visible{
-    background:rgba(255,255,255,.08);
-    border-color:rgba(124,92,255,.55);
+  .btn-ghost:hover,
+  .btn-ghost:focus-visible{
+    background:#FFFFFF;
+    border-color:rgba(109,77,255,.45);
+    color:var(--primary-dark);
     transform:translateY(-2px);
-    box-shadow:0 12px 30px -14px rgba(124,92,255,.7);
+    box-shadow:0 12px 26px -14px rgba(109,77,255,.5);
     outline:none;
   }
 
-  /* Hamburger */
+  /* ===== Hamburger ===== */
   .hamburger{
     display:none;width:44px;height:44px;border-radius:12px;
-    background:rgba(255,255,255,.05);border:1px solid var(--border);
+    background:#FFFFFF;border:1px solid var(--border-strong);
     position:relative;align-items:center;justify-content:center;
+    box-shadow:var(--shadow-sm);
   }
   .hamburger span{
-    display:block;width:20px;height:2px;background:#fff;border-radius:2px;
+    display:block;width:20px;height:2px;background:var(--text);border-radius:2px;
     position:absolute;left:50%;transform:translateX(-50%);
     transition:transform .3s ease, opacity .3s ease, top .3s ease;
   }
@@ -240,57 +241,58 @@
 
   .mobile-menu{
     display:none;
-    position:fixed;top:68px;left:12px;right:12px;z-index:99;
-    background:rgba(11,16,32,.96);
-    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    position:fixed;top:72px;left:12px;right:12px;z-index:99;
+    background:rgba(255,255,255,.98);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
     border:1px solid var(--border);border-radius:18px;
-    padding:14px;box-shadow:0 30px 60px -20px rgba(0,0,0,.8);
+    padding:14px;box-shadow:0 30px 60px -20px rgba(15,23,42,.18);
     transform-origin:top center;
     transform:scale(.96) translateY(-8px);opacity:0;pointer-events:none;
     transition:transform .3s ease, opacity .3s ease;
   }
   .mobile-menu.open{transform:scale(1) translateY(0);opacity:1;pointer-events:auto}
   .mobile-menu a{
-    display:block;padding:12px 14px;border-radius:12px;color:#E2E8F0;
+    display:block;padding:12px 14px;border-radius:12px;color:var(--text-soft);
     font-weight:500;transition:background .25s ease,color .25s ease;
   }
-  .mobile-menu a:hover{background:rgba(124,92,255,.15);color:#fff}
+  .mobile-menu a:hover{background:rgba(109,77,255,.08);color:var(--primary-dark)}
   .mobile-menu .btn{width:100%;margin-top:8px}
 
-  /* ==== HERO ==== */
-  .hero{padding:130px 0 80px;position:relative}
+  /* ===== Hero ===== */
+  .hero{padding:140px 0 90px;position:relative}
   .hero-grid{
-    display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center;
+    display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center;
   }
   .badge{
     display:inline-flex;align-items:center;gap:8px;
     padding:7px 14px;border-radius:999px;
-    background:rgba(124,92,255,.12);
-    border:1px solid rgba(124,92,255,.35);
-    font-size:.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
-    color:#C7BDFF;
+    background:#FFFFFF;
+    border:1px solid rgba(109,77,255,.20);
+    font-size:.75rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+    color:var(--primary-dark);
+    box-shadow:0 4px 12px -6px rgba(109,77,255,.3);
     animation:fadeUp .8s ease both;
   }
   .badge .dot{
-    width:7px;height:7px;border-radius:50%;background:#00D4FF;
-    box-shadow:0 0 12px #00D4FF;animation:pulse 1.8s ease-in-out infinite;
+    width:7px;height:7px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 3px rgba(0,145,213,.20);
+    animation:pulse 1.8s ease-in-out infinite;
   }
   @keyframes pulse{
     0%,100%{opacity:1;transform:scale(1)}
     50%{opacity:.6;transform:scale(.85)}
   }
-
   .hero h1{
-    font-size:clamp(2.2rem, 5.5vw, 4rem);
-    font-weight:900;line-height:1.05;letter-spacing:-1.5px;
-    margin:22px 0 14px;
-    background:linear-gradient(180deg,#fff 0%,#C7BDFF 60%,#7C5CFF 100%);
+    font-size:clamp(2.3rem,5.8vw,4.2rem);
+    font-weight:900;line-height:1.02;letter-spacing:-2px;
+    margin:24px 0 16px;
+    background:linear-gradient(135deg,#0F172A 0%,#4C2FCC 55%,#0091D5 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent;
     animation:fadeUp .9s .1s ease both;
   }
   .hero .sub{
-    font-size:clamp(1.05rem, 2vw, 1.35rem);font-weight:600;
-    color:#E2E8F0;margin:0 0 12px;
+    font-size:clamp(1.05rem,2vw,1.35rem);font-weight:600;
+    color:var(--text);margin:0 0 14px;
     animation:fadeUp .9s .2s ease both;
   }
   .hero .desc{
@@ -308,219 +310,345 @@
     to{opacity:1;transform:translateY(0)}
   }
 
-  /* Hero visual – chessboard */
+  /* Hero board */
   .hero-visual{
     position:relative;display:flex;align-items:center;justify-content:center;
     animation:fadeUp 1.1s .3s ease both;
   }
   .board-wrap{
-    position:relative;width:100%;max-width:460px;aspect-ratio:1/1;
-    perspective:1200px;
-  }
-  .board{
-    position:absolute;inset:0;
-    display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);
-    border-radius:18px;overflow:hidden;
-    box-shadow:
-      0 0 0 1px rgba(255,255,255,.10),
-      0 40px 80px -30px rgba(124,92,255,.6),
-      0 0 90px rgba(0,212,255,.15);
-    transform:rotateX(14deg) rotateZ(-8deg) translateY(-6px);
-    transform-style:preserve-3d;
-    animation:boardFloat 8s ease-in-out infinite;
-    background:#0B1020;
-  }
-  @keyframes boardFloat{
-    0%,100%{transform:rotateX(14deg) rotateZ(-8deg) translateY(-6px)}
-    50%{transform:rotateX(10deg) rotateZ(-6deg) translateY(-16px)}
-  }
-  .board .sq{position:relative}
-  .board .sq.light{background:linear-gradient(135deg,#2A3356,#1A2140)}
-  .board .sq.dark{background:linear-gradient(135deg,#0E1428,#0A0F1F)}
-  .board .sq.glow{animation:sqGlow 3s ease-in-out infinite}
-  .board .sq.glow:nth-child(4n+1){animation-delay:.3s}
-  .board .sq.glow:nth-child(4n+3){animation-delay:1.2s}
-  @keyframes sqGlow{
-    0%,100%{box-shadow:inset 0 0 0 0 rgba(124,92,255,0)}
-    50%{box-shadow:inset 0 0 24px 0 rgba(124,92,255,.45)}
-  }
-  .piece{
-    position:absolute;inset:12%;
-    background-repeat:no-repeat;background-position:center;background-size:contain;
-    filter:drop-shadow(0 6px 10px rgba(0,0,0,.6));
+    position:relative;width:100%;max-width:470px;aspect-ratio:1/1;
+    perspective:1300px;
   }
   .board-halo{
-    position:absolute;inset:-15%;border-radius:50%;
-    background:radial-gradient(circle, rgba(124,92,255,.35) 0%, transparent 65%);
-    filter:blur(30px);z-index:-1;
+    position:absolute;inset:-18%;border-radius:50%;
+    background:radial-gradient(circle,rgba(109,77,255,.28) 0%,transparent 65%);
+    filter:blur(40px);z-index:-1;
     animation:halo 6s ease-in-out infinite alternate;
   }
   @keyframes halo{
     0%{transform:scale(.95);opacity:.7}
     100%{transform:scale(1.1);opacity:1}
   }
+  .board{
+    position:absolute;inset:0;
+    display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);
+    border-radius:20px;overflow:hidden;
+    background:#F8FAFC;
+    box-shadow:
+      0 0 0 1px rgba(15,23,42,.06),
+      0 30px 60px -20px rgba(109,77,255,.35),
+      0 12px 24px -12px rgba(15,23,42,.15);
+    transform:rotateX(14deg) rotateZ(-8deg) translateY(-6px);
+    transform-style:preserve-3d;
+    animation:boardFloat 8s ease-in-out infinite;
+  }
+  @keyframes boardFloat{
+    0%,100%{transform:rotateX(14deg) rotateZ(-8deg) translateY(-6px)}
+    50%{transform:rotateX(10deg) rotateZ(-6deg) translateY(-16px)}
+  }
+  .board .sq{position:relative}
+  .board .sq.light{background:linear-gradient(135deg,#FFFFFF,#F1F5F9)}
+  .board .sq.dark{background:linear-gradient(135deg,#DCE3F5,#C7D0EA)}
+  .board .sq.glow{animation:sqGlow 3s ease-in-out infinite}
+  .board .sq.glow:nth-child(4n+1){animation-delay:.3s}
+  .board .sq.glow:nth-child(4n+3){animation-delay:1.2s}
+  @keyframes sqGlow{
+    0%,100%{box-shadow:inset 0 0 0 0 rgba(109,77,255,0)}
+    50%{box-shadow:inset 0 0 24px 0 rgba(109,77,255,.35)}
+  }
+  .board .piece{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:clamp(18px,4.6vw,36px);line-height:1;font-weight:700;
+  }
+  .board .piece.w{
+    color:#FFFFFF;
+    text-shadow:0 1px 0 #94A3B8, 0 2px 3px rgba(15,23,42,.35);
+  }
+  .board .piece.b{
+    color:#0F172A;
+    text-shadow:0 1px 0 rgba(255,255,255,.65), 0 2px 3px rgba(15,23,42,.25);
+  }
 
-  /* ==== Section base ==== */
-  section{padding:90px 0;position:relative}
+  /* ===== Section base ===== */
+  section{padding:96px 0;position:relative}
   .section-head{text-align:center;max-width:720px;margin:0 auto 56px}
   .eyebrow{
     display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:2.4px;
-    text-transform:uppercase;color:#A78BFA;margin-bottom:14px;
+    text-transform:uppercase;color:var(--primary-dark);margin-bottom:14px;
   }
   .section-head h2{
-    font-size:clamp(1.75rem, 3.5vw, 2.6rem);
-    font-weight:800;letter-spacing:-.5px;line-height:1.15;margin:0 0 14px;
+    font-size:clamp(1.8rem,3.6vw,2.7rem);
+    font-weight:800;letter-spacing:-.8px;line-height:1.15;margin:0 0 14px;
+    color:var(--text);
   }
   .section-head p{color:var(--muted);font-size:1rem;margin:0}
 
-  /* ==== Features ==== */
-  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  /* ===== Features ===== */
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
   .feature{
-    background:var(--card);
+    background:#FFFFFF;
     border:1px solid var(--border);
     border-radius:var(--radius);
-    padding:28px 24px;
+    padding:30px 26px;
     position:relative;overflow:hidden;
-    transition:transform .4s ease, border-color .4s ease, box-shadow .4s ease, background .4s ease;
+    box-shadow:var(--shadow-sm);
+    transition:transform .4s ease, border-color .4s ease, box-shadow .4s ease;
     opacity:0;transform:translateY(28px);
   }
   .feature.in{opacity:1;transform:translateY(0);transition:opacity .7s ease, transform .7s ease}
-  .feature::after{
+  .feature::before{
     content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-    background:radial-gradient(400px circle at var(--x,50%) var(--y,0%), rgba(124,92,255,.16), transparent 45%);
+    background:radial-gradient(400px circle at var(--x,50%) var(--y,0%), rgba(109,77,255,.09), transparent 45%);
     opacity:0;transition:opacity .35s ease;
   }
-  .feature:hover::after{opacity:1}
+  .feature:hover::before{opacity:1}
   .feature:hover{
     transform:translateY(-6px);
-    border-color:rgba(124,92,255,.55);
-    background:rgba(124,92,255,.06);
-    box-shadow:0 30px 60px -30px rgba(124,92,255,.55);
+    border-color:rgba(109,77,255,.30);
+    box-shadow:var(--shadow-lg);
   }
   .feature .icon{
-    width:52px;height:52px;border-radius:14px;
+    width:54px;height:54px;border-radius:16px;
     display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(135deg, rgba(124,92,255,.22), rgba(0,212,255,.14));
-    border:1px solid rgba(124,92,255,.35);
-    color:#C7BDFF;margin-bottom:18px;
-    transition:transform .4s ease, box-shadow .4s ease;
+    background:linear-gradient(135deg, rgba(109,77,255,.14), rgba(0,145,213,.10));
+    border:1px solid rgba(109,77,255,.18);
+    color:var(--primary-dark);margin-bottom:18px;
+    transition:transform .4s ease, box-shadow .4s ease, background .4s ease;
   }
   .feature:hover .icon{
     transform:translateY(-3px) rotate(-4deg);
-    box-shadow:0 12px 24px -12px rgba(124,92,255,.9);
-    color:#fff;
+    background:linear-gradient(135deg, rgba(109,77,255,.22), rgba(0,145,213,.16));
+    box-shadow:0 12px 22px -12px rgba(109,77,255,.6);
   }
-  .feature h3{font-size:1.1rem;font-weight:700;margin:0 0 8px;letter-spacing:-.2px}
+  .feature h3{font-size:1.1rem;font-weight:700;margin:0 0 8px;letter-spacing:-.2px;color:var(--text)}
   .feature p{color:var(--muted);font-size:.92rem;margin:0}
 
-  /* ==== Steps ==== */
+  /* ===== Game Modes ===== */
+  .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .mode{
+    display:flex;align-items:center;gap:16px;
+    background:#FFFFFF;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:18px 20px;
+    box-shadow:var(--shadow-sm);
+    transition:transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+    opacity:0;transform:translateY(24px);
+    cursor:pointer;
+    position:relative;
+  }
+  .mode.in{opacity:1;transform:translateY(0);transition:opacity .7s ease, transform .7s ease}
+  .mode:hover{
+    transform:translateY(-5px);
+    border-color:rgba(109,77,255,.30);
+    box-shadow:var(--shadow-lg);
+  }
+  .mode-icon{
+    width:52px;height:52px;border-radius:14px;flex:0 0 52px;
+    display:flex;align-items:center;justify-content:center;
+    color:#FFFFFF;
+    box-shadow:0 8px 18px -8px rgba(15,23,42,.25);
+    transition:transform .35s ease;
+  }
+  .mode:hover .mode-icon{transform:scale(1.06) rotate(-3deg)}
+  .mode-icon.ranked{background:linear-gradient(135deg,#F97316,#EA580C)}
+  .mode-icon.classic{background:linear-gradient(135deg,#3B82F6,#1D4ED8)}
+  .mode-icon.friend{background:linear-gradient(135deg,#14B8A6,#0D9488)}
+  .mode-icon.local{background:linear-gradient(135deg,#F59E0B,#D97706)}
+  .mode-icon.ai{background:linear-gradient(135deg,#8B5CF6,#6D28D9)}
+  .mode-icon.puzzle{background:linear-gradient(135deg,#A855F7,#7C3AED)}
+  .mode-icon.tictactoe{background:linear-gradient(135deg,#06B6D4,#0891B2)}
+  .mode-icon.trex{background:linear-gradient(135deg,#FB923C,#EA580C)}
+  .mode-info{flex:1;min-width:0}
+  .mode-info h3{
+    font-size:.98rem;font-weight:700;margin:0 0 3px;color:var(--text);
+    letter-spacing:-.2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  }
+  .mode-info p{font-size:.82rem;color:var(--muted);margin:0;line-height:1.45}
+  .mode-arrow{
+    flex:0 0 auto;color:var(--muted);
+    transition:transform .35s ease, color .35s ease;
+  }
+  .mode:hover .mode-arrow{transform:translateX(4px);color:var(--primary-dark)}
+
+  .offline-tag{
+    display:inline-flex;align-items:center;gap:4px;
+    padding:2px 8px;border-radius:999px;
+    font-size:.62rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+    background:linear-gradient(135deg, rgba(16,185,129,.14), rgba(5,150,105,.10));
+    border:1px solid rgba(16,185,129,.30);
+    color:#047857;
+  }
+  .offline-tag svg{width:10px;height:10px}
+
+  /* ===== Offline Section ===== */
+  .offline-wrap{
+    display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center;
+  }
+  .offline-copy .eyebrow{margin-bottom:12px}
+  .offline-copy h2{
+    font-size:clamp(1.8rem,3.6vw,2.5rem);font-weight:800;
+    letter-spacing:-.8px;line-height:1.15;margin:0 0 18px;color:var(--text);
+  }
+  .offline-copy p{color:var(--text-soft);font-size:1rem;margin:0 0 18px;max-width:56ch}
+  .offline-copy p strong{color:var(--text);font-weight:700}
+  .offline-list{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:12px}
+  .offline-list li{
+    display:flex;align-items:flex-start;gap:12px;
+    font-size:.94rem;color:var(--text-soft);
+  }
+  .offline-list .check{
+    flex:0 0 24px;width:24px;height:24px;border-radius:50%;
+    background:linear-gradient(135deg,#10B981,#059669);
+    color:#FFFFFF;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 10px -4px rgba(16,185,129,.6);
+    margin-top:2px;
+  }
+  .offline-list b{color:var(--text);font-weight:700}
+
+  .offline-visual{
+    position:relative;
+    display:grid;grid-template-columns:1fr 1fr;gap:16px;
+    padding:8px;
+  }
+  .offline-card{
+    background:#FFFFFF;
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:22px 18px;
+    box-shadow:var(--shadow-md);
+    text-align:center;
+    transition:transform .4s ease, box-shadow .4s ease, border-color .4s ease;
+  }
+  .offline-card:hover{
+    transform:translateY(-5px);
+    border-color:rgba(109,77,255,.25);
+    box-shadow:var(--shadow-lg);
+  }
+  .offline-card:nth-child(2){transform:translateY(14px)}
+  .offline-card:nth-child(2):hover{transform:translateY(9px)}
+  .offline-card:nth-child(3){transform:translateY(-6px)}
+  .offline-card:nth-child(3):hover{transform:translateY(-11px)}
+  .offline-card .mini-icon{
+    width:52px;height:52px;border-radius:14px;
+    margin:0 auto 12px;
+    display:flex;align-items:center;justify-content:center;
+    color:#FFFFFF;
+    box-shadow:0 10px 20px -8px rgba(15,23,42,.28);
+  }
+  .offline-card .mini-icon.ai{background:linear-gradient(135deg,#8B5CF6,#6D28D9)}
+  .offline-card .mini-icon.local{background:linear-gradient(135deg,#F59E0B,#D97706)}
+  .offline-card .mini-icon.tictactoe{background:linear-gradient(135deg,#06B6D4,#0891B2)}
+  .offline-card .mini-icon.trex{background:linear-gradient(135deg,#FB923C,#EA580C)}
+  .offline-card h4{
+    font-size:.92rem;font-weight:700;margin:0 0 4px;color:var(--text);
+    letter-spacing:-.2px;
+  }
+  .offline-card p{
+    font-size:.78rem;color:var(--muted);margin:0;line-height:1.45;
+  }
+
+  /* ===== Steps ===== */
   .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:18px}
   .step{
-    position:relative;
-    background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    background:#FFFFFF;
     border:1px solid var(--border);border-radius:var(--radius);
-    padding:26px 20px;
+    padding:28px 22px;
+    box-shadow:var(--shadow-sm);
     transition:transform .4s ease, border-color .4s ease, box-shadow .4s ease;
     opacity:0;transform:translateY(24px);
   }
   .step.in{opacity:1;transform:translateY(0);transition:opacity .7s ease, transform .7s ease}
-  .step:hover{transform:translateY(-6px);border-color:rgba(0,212,255,.5);box-shadow:0 24px 50px -30px rgba(0,212,255,.7)}
+  .step:hover{
+    transform:translateY(-6px);
+    border-color:rgba(0,145,213,.35);
+    box-shadow:0 20px 40px -22px rgba(0,145,213,.55), 0 4px 16px -8px rgba(15,23,42,.08);
+  }
   .step .num{
-    font-family:'Inter',monospace;
     font-size:2.1rem;font-weight:900;letter-spacing:-1px;
-    background:linear-gradient(135deg,#7C5CFF,#00D4FF);
+    background:linear-gradient(135deg,#6D4DFF,#0091D5);
     -webkit-background-clip:text;background-clip:text;color:transparent;
     line-height:1;margin-bottom:14px;
   }
-  .step h4{margin:0 0 8px;font-size:1rem;font-weight:700}
+  .step h4{margin:0 0 8px;font-size:1rem;font-weight:700;color:var(--text)}
   .step p{margin:0;color:var(--muted);font-size:.88rem}
 
-  /* ==== About chess (content) ==== */
-  .about-grid{
-    display:grid;grid-template-columns:1.15fr .85fr;gap:50px;align-items:start;
-  }
-  .about-copy p{color:#CBD5E1;margin:0 0 16px;font-size:.98rem}
-  .about-copy p strong{color:#fff}
+  .center-cta{text-align:center;margin-top:48px}
+
+  /* ===== About ===== */
+  .about-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:50px;align-items:start}
+  .about-copy p{color:var(--text-soft);margin:0 0 16px;font-size:.98rem}
+  .about-copy p strong{color:var(--text);font-weight:700}
   .about-side{
-    background:var(--card);border:1px solid var(--border);
-    border-radius:var(--radius);padding:26px;
-    box-shadow:0 30px 60px -30px rgba(124,92,255,.35);
+    background:#FFFFFF;border:1px solid var(--border);
+    border-radius:var(--radius);padding:28px;
+    box-shadow:var(--shadow-lg);
   }
-  .about-side h3{margin:0 0 16px;font-size:1.05rem;display:flex;align-items:center;gap:10px}
-  .about-side h3 svg{color:#00D4FF}
+  .about-side h3{margin:0 0 18px;font-size:1.05rem;display:flex;align-items:center;gap:10px;color:var(--text)}
+  .about-side h3 svg{color:var(--accent)}
   .piece-list{list-style:none;padding:0;margin:0;display:grid;gap:10px}
   .piece-list li{
     display:flex;align-items:center;gap:12px;
-    padding:10px 12px;border-radius:10px;
-    background:rgba(255,255,255,.03);
-    border:1px solid rgba(255,255,255,.06);
+    padding:11px 13px;border-radius:12px;
+    background:var(--bg-soft);
+    border:1px solid rgba(15,23,42,.05);
     transition:background .25s ease, border-color .25s ease, transform .25s ease;
-    font-size:.9rem;color:#E2E8F0;
+    font-size:.9rem;color:var(--text-soft);
   }
-  .piece-list li:hover{background:rgba(124,92,255,.1);border-color:rgba(124,92,255,.35);transform:translateX(4px)}
+  .piece-list li:hover{
+    background:rgba(109,77,255,.06);
+    border-color:rgba(109,77,255,.25);
+    transform:translateX(4px);
+  }
   .piece-list .pico{
-    width:32px;height:32px;border-radius:8px;flex:0 0 32px;
-    background:linear-gradient(135deg,#1E2647,#0B1020);
-    border:1px solid rgba(255,255,255,.08);
-    display:flex;align-items:center;justify-content:center;color:#A78BFA;
+    width:34px;height:34px;border-radius:10px;flex:0 0 34px;
+    background:linear-gradient(135deg,#FFFFFF,#EEF1FA);
+    border:1px solid rgba(15,23,42,.06);
+    display:flex;align-items:center;justify-content:center;color:var(--primary);
+    box-shadow:0 2px 6px -2px rgba(15,23,42,.06);
   }
-  .piece-list b{color:#fff;margin-right:6px}
+  .piece-list b{color:var(--text);margin-right:6px;font-weight:700}
   .piece-list span{color:var(--muted);font-size:.83rem}
 
-  /* ==== Learn / glossary strip ==== */
-  .topics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-  .topic{
-    padding:16px 18px;border-radius:14px;
-    background:rgba(255,255,255,.035);
-    border:1px solid var(--border);
-    font-size:.9rem;color:#E2E8F0;
-    transition:transform .3s ease, border-color .3s ease, background .3s ease, color .3s ease;
-    display:flex;align-items:center;gap:10px;
-  }
-  .topic:hover{
-    transform:translateY(-3px);
-    border-color:rgba(124,92,255,.5);
-    background:rgba(124,92,255,.09);
-    color:#fff;
-  }
-  .topic svg{flex:0 0 auto;color:#7C5CFF}
-
-  /* ==== FAQ ==== */
+  /* ===== FAQ ===== */
   .faq{max-width:820px;margin:0 auto;display:grid;gap:12px}
   details{
-    background:var(--card);border:1px solid var(--border);
-    border-radius:14px;padding:0;overflow:hidden;
-    transition:border-color .3s ease, background .3s ease;
+    background:#FFFFFF;border:1px solid var(--border);
+    border-radius:14px;overflow:hidden;
+    box-shadow:var(--shadow-sm);
+    transition:border-color .3s ease, box-shadow .3s ease;
   }
-  details[open]{border-color:rgba(124,92,255,.45);background:rgba(124,92,255,.05)}
+  details[open]{border-color:rgba(109,77,255,.30);box-shadow:var(--shadow-md)}
   details summary{
     cursor:pointer;list-style:none;padding:18px 22px;
-    font-weight:600;font-size:1rem;
+    font-weight:600;font-size:1rem;color:var(--text);
     display:flex;align-items:center;justify-content:space-between;gap:16px;
   }
   details summary::-webkit-details-marker{display:none}
   details summary::after{
-    content:"";width:10px;height:10px;flex:0 0 10px;
-    border-right:2px solid #A78BFA;border-bottom:2px solid #A78BFA;
+    content:"";width:9px;height:9px;flex:0 0 9px;
+    border-right:2px solid var(--primary);border-bottom:2px solid var(--primary);
     transform:rotate(45deg);transition:transform .3s ease;
   }
   details[open] summary::after{transform:rotate(-135deg)}
   details p{padding:0 22px 20px;margin:0;color:var(--muted);font-size:.94rem}
 
-  /* ==== Final CTA ==== */
+  /* ===== Final CTA ===== */
   .final-cta{
     text-align:center;
-    padding:80px 24px;
-    border-radius:24px;
+    padding:84px 28px;
+    border-radius:26px;
     background:
-      radial-gradient(120% 100% at 50% 0%, rgba(124,92,255,.25), transparent 60%),
-      linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.01));
+      radial-gradient(120% 100% at 50% 0%, rgba(109,77,255,.16), transparent 60%),
+      linear-gradient(180deg,#FFFFFF,#F7F8FC);
     border:1px solid var(--border);
+    box-shadow:var(--shadow-xl);
     position:relative;overflow:hidden;
   }
   .final-cta::before{
     content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
-    background:linear-gradient(120deg, transparent 30%, rgba(0,212,255,.35) 50%, transparent 70%);
+    background:linear-gradient(120deg,transparent 30%,rgba(0,145,213,.22) 50%,transparent 70%);
     transform:translateX(-100%);
     animation:shine 6s ease-in-out infinite;
   }
@@ -529,28 +657,35 @@
     100%{transform:translateX(100%)}
   }
   .final-cta h2{
-    font-size:clamp(1.7rem, 3.6vw, 2.6rem);font-weight:800;
-    letter-spacing:-.6px;margin:0 0 14px;
+    font-size:clamp(1.7rem,3.6vw,2.6rem);font-weight:800;
+    letter-spacing:-.8px;margin:0 0 14px;color:var(--text);
   }
   .final-cta p{color:var(--muted);max-width:52ch;margin:0 auto 30px}
+  .final-cta .btn{padding:16px 30px;font-size:1.05rem}
 
-  /* ==== Footer ==== */
+  /* ===== Footer ===== */
   footer{
     border-top:1px solid var(--border);
-    padding:56px 0 28px;
-    background:linear-gradient(180deg, transparent, rgba(11,16,32,.6));
+    padding:60px 0 30px;
+    background:linear-gradient(180deg,#FFFFFF,#F7F8FC);
   }
   .foot-grid{
     display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;
-    margin-bottom:36px;
+    margin-bottom:38px;
   }
   .foot-brand{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-  .foot-brand img{width:36px;height:36px;border-radius:9px;box-shadow:0 0 0 1px var(--border),0 0 20px rgba(124,92,255,.5)}
-  .foot-brand span{font-weight:800;font-size:1.05rem}
-  footer h4{font-size:.85rem;letter-spacing:1.6px;text-transform:uppercase;color:#A78BFA;margin:0 0 14px;font-weight:700}
+  .foot-brand img{
+    width:38px;height:38px;border-radius:11px;
+    box-shadow:0 0 0 1px var(--border), 0 6px 14px -6px rgba(109,77,255,.35);
+  }
+  .foot-brand span{font-weight:800;font-size:1.05rem;color:var(--text)}
+  footer h4{
+    font-size:.82rem;letter-spacing:1.6px;text-transform:uppercase;
+    color:var(--primary-dark);margin:0 0 14px;font-weight:700;
+  }
   footer ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
   footer li a{color:var(--muted);font-size:.9rem;transition:color .25s ease, padding-left .25s ease}
-  footer li a:hover{color:#fff;padding-left:4px}
+  footer li a:hover{color:var(--primary-dark);padding-left:4px}
   footer p{color:var(--muted);font-size:.88rem;margin:0;max-width:34ch}
   .foot-bottom{
     border-top:1px solid var(--border);padding-top:22px;
@@ -558,47 +693,53 @@
     color:var(--muted);font-size:.83rem;
   }
 
-  /* ==== Reduced motion ==== */
+  /* ===== Reduced motion ===== */
   @media (prefers-reduced-motion: reduce){
-    *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
-    .bg-gradient,.bg-grid,.particles span,.board,.board-halo,.final-cta::before{animation:none !important}
-    .feature,.step{opacity:1 !important;transform:none !important}
+    *,*::before,*::after{
+      animation-duration:.001ms !important;animation-iteration-count:1 !important;
+      transition-duration:.001ms !important;scroll-behavior:auto !important;
+    }
+    .bg-gradient,.bg-grid,.board,.board-halo,.final-cta::before{animation:none !important}
+    .feature,.step,.mode{opacity:1 !important;transform:none !important}
   }
 
-  /* ==== Responsive ==== */
-  @media (max-width: 1024px){
-    .hero{padding:120px 0 60px}
+  /* ===== Responsive ===== */
+  @media (max-width:1024px){
+    .hero{padding:125px 0 65px}
     .hero-grid{grid-template-columns:1fr;gap:50px}
     .hero-visual{order:-1}
-    .board-wrap{max-width:380px}
+    .board-wrap{max-width:390px}
     .features{grid-template-columns:repeat(2,1fr)}
+    .modes{grid-template-columns:repeat(2,1fr)}
+    .offline-wrap{grid-template-columns:1fr;gap:40px}
     .steps{grid-template-columns:repeat(2,1fr)}
     .about-grid{grid-template-columns:1fr;gap:34px}
-    .topics{grid-template-columns:repeat(3,1fr)}
     .foot-grid{grid-template-columns:1fr 1fr}
   }
-  @media (max-width: 720px){
+  @media (max-width:720px){
     .nav-links{display:none}
     .hamburger{display:flex}
-    section{padding:70px 0}
-    .hero{padding:110px 0 50px}
-    .hero h1{letter-spacing:-.8px}
+    section{padding:72px 0}
+    .hero{padding:112px 0 50px}
+    .hero h1{letter-spacing:-1px}
     .cta-row .btn{width:100%;justify-content:center}
     .features{grid-template-columns:1fr}
+    .modes{grid-template-columns:1fr}
     .steps{grid-template-columns:1fr}
-    .topics{grid-template-columns:repeat(2,1fr)}
     .foot-grid{grid-template-columns:1fr;gap:26px}
     .container{padding:0 16px}
-    .board-wrap{max-width:320px}
+    .board-wrap{max-width:330px}
+    .final-cta{padding:60px 20px}
+    .offline-card:nth-child(2),
+    .offline-card:nth-child(3){transform:none}
+    .offline-card:nth-child(2):hover,
+    .offline-card:nth-child(3):hover{transform:translateY(-5px)}
   }
-  @media (max-width: 380px){
-    .topics{grid-template-columns:1fr}
+  @media (max-width:380px){
     .nav-inner{padding:10px 0}
     .brand-name{font-size:.95rem}
+    .offline-visual{grid-template-columns:1fr}
   }
-
-  /* Focus visible */
-  :focus-visible{outline:2px solid #7C5CFF;outline-offset:3px;border-radius:6px}
 </style>
 </head>
 
@@ -608,10 +749,6 @@
 <div class="bg-layers" aria-hidden="true">
   <div class="bg-gradient"></div>
   <div class="bg-grid"></div>
-  <div class="particles">
-    <span></span><span></span><span></span><span></span>
-    <span></span><span></span><span></span><span></span>
-  </div>
 </div>
 
 <!-- NAVBAR -->
@@ -619,18 +756,20 @@
   <div class="container">
     <nav class="nav-inner" aria-label="Navigasi utama">
       <a href="index.html" class="brand" aria-label="Grandmaster Grid - Beranda">
-        <img src="https://i.ibb.co.com/7J74C9fh/WA-1790518020718.jpg" alt="Logo Grandmaster Grid" width="38" height="38" loading="eager" fetchpriority="high">
+        <img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="Logo Grandmaster Grid" width="40" height="40" loading="eager" fetchpriority="high">
         <span class="brand-name">Grandmaster Grid</span>
       </a>
 
       <div class="nav-links">
         <a href="#beranda">Beranda</a>
         <a href="#fitur">Fitur</a>
+        <a href="#mode">Mode</a>
+        <a href="#offline">Offline</a>
         <a href="#cara-bermain">Cara Bermain</a>
         <a href="#tentang">Tentang</a>
       </div>
 
-      <div style="display:flex;gap:10px;align-items:center">
+      <div class="nav-actions">
         <a href="play.html" class="btn btn-primary" aria-label="Mulai bermain catur online">
           <span>Mulai Bermain</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -649,6 +788,8 @@
 <div class="mobile-menu" id="mobile-menu" role="dialog" aria-label="Menu seluler">
   <a href="#beranda">Beranda</a>
   <a href="#fitur">Fitur</a>
+  <a href="#mode">Mode</a>
+  <a href="#offline">Offline</a>
   <a href="#cara-bermain">Cara Bermain</a>
   <a href="#tentang">Tentang</a>
   <a href="#faq">FAQ</a>
@@ -669,7 +810,7 @@
         <div class="hero-copy">
           <div class="badge">
             <span class="dot" aria-hidden="true"></span>
-            ONLINE CHESS PLATFORM
+            ONLINE & OFFLINE CHESS PLATFORM
           </div>
 
           <h1>Grandmaster Grid</h1>
@@ -679,7 +820,8 @@
           <p class="desc">
             Grandmaster Grid adalah platform permainan catur online untuk bermain,
             berlatih, dan mengembangkan kemampuan strategi melalui pengalaman
-            bermain yang modern, cepat, dan nyaman di berbagai perangkat.
+            bermain yang modern, cepat, dan nyaman di berbagai perangkat —
+            <strong>online maupun offline</strong>.
           </p>
 
           <div class="cta-row">
@@ -743,23 +885,23 @@
         <article class="feature" data-reveal>
           <div class="icon" aria-hidden="true">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+              <circle cx="12" cy="12" r="9" opacity=".35"/>
+            </svg>
+          </div>
+          <h3>Bisa Dimainkan Offline</h3>
+          <p>Beberapa mode seperti Lawan AI, Dua Pemain Lokal, Tic-Tac-Toe, dan T-Rex Runner dapat dimainkan tanpa koneksi internet.</p>
+        </article>
+
+        <article class="feature" data-reveal>
+          <div class="icon" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="9"/>
               <path d="M12 7v5l3 3"/>
             </svg>
           </div>
           <h3>Responsif & Cepat</h3>
           <p>Antarmuka yang ringan dan responsif, nyaman dimainkan di ponsel, tablet, maupun desktop tanpa hambatan.</p>
-        </article>
-
-        <article class="feature" data-reveal>
-          <div class="icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 9a3 3 0 013-3h6a3 3 0 013 3v2a3 3 0 01-3 3h-1l-3 3v-3H9a3 3 0 01-3-3V9z"/>
-              <path d="M9 22h6"/>
-            </svg>
-          </div>
-          <h3>Kontrol Sederhana</h3>
-          <p>Kontrol yang intuitif untuk memindahkan bidak catur, sehingga Anda bisa fokus pada strategi dan taktik permainan.</p>
         </article>
 
         <article class="feature" data-reveal>
@@ -779,8 +921,242 @@
             </svg>
           </div>
           <h3>Pengalaman Modern</h3>
-          <p>Tampilan gelap yang elegan dengan animasi halus, dirancang agar nyaman dimainkan dalam sesi panjang.</p>
+          <p>Tampilan terang yang bersih dengan animasi halus, dirancang agar nyaman dimainkan dalam sesi panjang.</p>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAME MODES -->
+  <section id="mode">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Pilih Mode Permainan</span>
+        <h2>Mode Permainan</h2>
+        <p>Berbagai pilihan mode untuk bermain, berlatih, dan bersenang-senang sesuai gaya Anda — online maupun offline.</p>
+      </div>
+
+      <div class="modes">
+        <a href="play.html" class="mode" data-reveal>
+          <div class="mode-icon ranked" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/>
+              <circle cx="12" cy="12" r="5"/>
+              <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="mode-info">
+            <h3>Ranked</h3>
+            <p>Pertandingan kompetitif. 1 menit + 5 detik per langkah.</p>
+          </div>
+          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 6l6 6-6 6"/>
+          </svg>
+        </a>
+
+        <a href="play.html" class="mode" data-reveal>
+          <div class="mode-icon classic" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/>
+            </svg>
+          </div>
+          <div class="mode-info">
+            <h3>Classic</h3>
+            <p>Bertanding tanpa peringkat. Rating & bintang tidak berubah.</p>
+          </div>
+          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 6l6 6-6 6"/>
+          </svg>
+        </a>
+
+        <a href="play.html" class="mode" data-reveal>
+          <div class="mode-icon friend" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="8" r="3"/>
+              <circle cx="17" cy="9" r="2.5"/>
+              <path d="M3 20c0-3 3-5 6-5s6 2 6 5"/>
+              <path d="M15 20c0-2 1.5-3.5 3.5-3.5S22 18 22 20"/>
+            </svg>
+          </div>
+          <div class="mode-info">
+            <h3>Main dengan Teman</h3>
+            <p>Buat room privat dan bagikan kodenya.</p>
+          </div>
+          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 6l6 6-6 6"/>
+          </svg>
+        </a>
+
+        <a href="play.html" class="mode" data-reveal>
+          <div class="mode-icon ai" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="7" width="16" height="12" rx="2"/>
+              <circle cx="9" cy="13" r="1.2" fill="currentColor"/>
+              <circle cx="15" cy="13" r="1.2" fill="currentColor"/>
+              <path d="M12 4v3M9 19v2M15 19v2"/>
+            </svg>
+          </div>
+          <div class="mode-info">
+            <h3>Lawan AI <span class="offline-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>Offline</span></h3>
+            <p>Enam tingkat kesulitan, bisa dimainkan tanpa internet.</p>
+          </div>
+          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 6l6 6-6 6"/>
+          </svg>
+        </a>
+
+        <a href="play.html" class="mode" data-reveal>
+          <div class="mode-icon local" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="2" width="12" height="20" rx="2"/>
+              <path d="M11 18h2"/>
+            </svg>
+          </div>
+          <div class="mode-info">
+            <h3>Dua Pemain Lokal <span class="offline-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>Offline</span></h3>
+            <p>Main berdua di satu perangkat, bergantian tanpa internet.</p>
+          </div>
+          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 6l6 6-6 6"/>
+          </svg>
+        </a>
+
+        <a href="play.html" class="mode" data-reveal>
+          <div class="mode-icon puzzle" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 3h4v3a2 2 0 104 0h3v4h-3a2 2 0 100 4h3v4h-4v-3a2 2 0 10-4 0v3H6v-3a2 2 0 10-4 0v-4h3a2 2 0 100-4H2V7h4a2 2 0 100-4H3V3h7z"/>
+            </svg>
+          </div>
+          <div class="mode-info">
+            <h3>Puzzle Taktik</h3>
+            <p>Latih taktik dengan posisi nyata.</p>
+          </div>
+          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 6l6 6-6 6"/>
+          </svg>
+        </a>
+
+        <a href="play.html" class="mode" data-reveal>
+          <div class="mode-icon tictactoe" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>
+            </svg>
+          </div>
+          <div class="mode-info">
+            <h3>Tic-Tac-Toe <span class="offline-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>Offline</span></h3>
+            <p>Lawan AI atau teman di satu perangkat, tanpa internet.</p>
+          </div>
+          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 6l6 6-6 6"/>
+          </svg>
+        </a>
+
+        <a href="play.html" class="mode" data-reveal>
+          <div class="mode-icon trex" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 20v-4a4 4 0 014-4h4l3-3h4l-2 3 3 1-2 3h-3v4"/>
+              <path d="M4 20h4"/>
+            </svg>
+          </div>
+          <div class="mode-info">
+            <h3>T-Rex Runner <span class="offline-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>Offline</span></h3>
+            <p>Lompat-lompat hindari rintangan, bisa dimainkan offline.</p>
+          </div>
+          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 6l6 6-6 6"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- OFFLINE SECTION (NEW) -->
+  <section id="offline">
+    <div class="container">
+      <div class="offline-wrap">
+        <div class="offline-copy">
+          <span class="eyebrow">Tanpa Koneksi Internet</span>
+          <h2>Bermain Offline, Kapan Saja</h2>
+          <p>
+            Tidak punya koneksi internet? Tidak masalah. Grandmaster Grid menyediakan
+            beberapa mode yang bisa dimainkan <strong>sepenuhnya offline</strong> —
+            cocok saat di perjalanan, sinyal lemah, atau sedang menghemat kuota.
+          </p>
+
+          <ul class="offline-list">
+            <li>
+              <span class="check" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+              </span>
+              <span><b>Lawan AI</b> — berlatih catur melawan komputer dengan 6 tingkat kesulitan.</span>
+            </li>
+            <li>
+              <span class="check" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+              </span>
+              <span><b>Dua Pemain Lokal</b> — bermain berdua bersama teman di satu perangkat, bergantian.</span>
+            </li>
+            <li>
+              <span class="check" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+              </span>
+              <span><b>Tic-Tac-Toe</b> — permainan klasik melawan AI atau teman tanpa internet.</span>
+            </li>
+            <li>
+              <span class="check" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+              </span>
+              <span><b>T-Rex Runner</b> — game lari menghindari rintangan, seperti game offline klasik.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="offline-visual" aria-hidden="true">
+          <div class="offline-card">
+            <div class="mini-icon ai">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="7" width="16" height="12" rx="2"/>
+                <circle cx="9" cy="13" r="1.2" fill="currentColor"/>
+                <circle cx="15" cy="13" r="1.2" fill="currentColor"/>
+                <path d="M12 4v3M9 19v2M15 19v2"/>
+              </svg>
+            </div>
+            <h4>Lawan AI</h4>
+            <p>6 tingkat kesulitan</p>
+          </div>
+
+          <div class="offline-card">
+            <div class="mini-icon local">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="6" y="2" width="12" height="20" rx="2"/>
+                <path d="M11 18h2"/>
+              </svg>
+            </div>
+            <h4>Dua Pemain Lokal</h4>
+            <p>Bergantian satu perangkat</p>
+          </div>
+
+          <div class="offline-card">
+            <div class="mini-icon tictactoe">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>
+              </svg>
+            </div>
+            <h4>Tic-Tac-Toe</h4>
+            <p>Lawan AI atau teman</p>
+          </div>
+
+          <div class="offline-card">
+            <div class="mini-icon trex">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 20v-4a4 4 0 014-4h4l3-3h4l-2 3 3 1-2 3h-3v4"/>
+                <path d="M4 20h4"/>
+              </svg>
+            </div>
+            <h4>T-Rex Runner</h4>
+            <p>Game lari klasik</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -791,7 +1167,7 @@
       <div class="section-head">
         <span class="eyebrow">Langkah Cepat</span>
         <h2>Cara Bermain</h2>
-        <p>Lima langkah sederhana untuk memulai pertandingan catur online di Grandmaster Grid.</p>
+        <p>Lima langkah sederhana untuk memulai pertandingan catur di Grandmaster Grid.</p>
       </div>
 
       <div class="steps">
@@ -807,8 +1183,8 @@
         </div>
         <div class="step" data-reveal>
           <div class="num">03</div>
-          <h4>Masuk ke Halaman Permainan</h4>
-          <p>Anda akan dibawa ke papan catur digital yang siap dimainkan.</p>
+          <h4>Pilih Mode Permainan</h4>
+          <p>Pilih mode favorit: Ranked, Classic, Lawan AI, atau lainnya.</p>
         </div>
         <div class="step" data-reveal>
           <div class="num">04</div>
@@ -822,7 +1198,7 @@
         </div>
       </div>
 
-      <div style="text-align:center;margin-top:44px">
+      <div class="center-cta">
         <a href="play.html" class="btn btn-primary" aria-label="Mulai bermain catur di halaman permainan">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M5 3l14 9-14 9V3z"/>
@@ -894,7 +1270,7 @@
           <ul class="piece-list">
             <li>
               <span class="pico" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20h8M10 20l-1-6 2-2V8a1 1 0 011-1h0a1 1 0 011 1v4l2 2-1 6"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20h8M10 20l-1-6 2-2V8a1 1 0 011-1a1 1 0 011 1v4l2 2-1 6"/></svg>
               </span>
               <b>Raja</b><span>Satu petak, segala arah.</span>
             </li>
@@ -934,32 +1310,6 @@
     </div>
   </section>
 
-  <!-- LEARN / TOPICS -->
-  <section id="pelajari">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">Pelajari Catur</span>
-        <h2>Topik Pembelajaran Catur</h2>
-        <p>Jelajahi dasar-dasar permainan, aturan, taktik, strategi, hingga notasi catur.</p>
-      </div>
-
-      <div class="topics">
-        <div class="topic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg> Dasar Catur</div>
-        <div class="topic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg> Aturan Catur</div>
-        <div class="topic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg> Cara Bermain Catur</div>
-        <div class="topic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg> Strategi Catur</div>
-        <div class="topic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2 4 4 1-3 3 1 4-4-2-4 2 1-4-3-3 4-1z"/></svg> Taktik Catur</div>
-        <div class="topic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19h14M6 15l6-6 6 6M12 9V3"/></svg> Pembukaan Catur</div>
-        <div class="topic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16M6 16h12M8 12h8M10 8h4"/></svg> Endgame Catur</div>
-        <div class="topic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v6M12 22v-6M4 12H2M22 12h-2M6 6L4 4M20 20l-2-2M6 18l-2 2M20 4l-2 2"/><circle cx="12" cy="12" r="3"/></svg> Checkmate</div>
-        <div class="topic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M4 12h16M12 4v16"/></svg> Papan & Koordinat</div>
-        <div class="topic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h10M8 12h10M8 18h6"/><circle cx="4" cy="6" r="1.2"/><circle cx="4" cy="12" r="1.2"/><circle cx="4" cy="18" r="1.2"/></svg> Notasi Catur</div>
-        <div class="topic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v8M8 12h8"/><circle cx="12" cy="12" r="9"/></svg> Rokade & En Passant</div>
-        <div class="topic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 18l4-8 4 4 4-8 4 12"/></svg> Analisis Posisi</div>
-      </div>
-    </div>
-  </section>
-
   <!-- FAQ -->
   <section id="faq">
     <div class="container">
@@ -978,6 +1328,16 @@
         <details>
           <summary>Bagaimana cara memulai permainan di Grandmaster Grid?</summary>
           <p>Tekan tombol <strong>Mulai Bermain</strong> pada halaman ini. Anda akan diarahkan ke halaman permainan, yaitu <em>play.html</em>, tempat papan catur digital siap digunakan.</p>
+        </details>
+
+        <details>
+          <summary>Apakah Grandmaster Grid bisa dimainkan offline?</summary>
+          <p>Ya. Beberapa mode dapat dimainkan <strong>tanpa koneksi internet</strong>: <strong>Lawan AI</strong> (6 tingkat kesulitan), <strong>Dua Pemain Lokal</strong> (bergantian di satu perangkat), <strong>Tic-Tac-Toe</strong> (melawan AI atau teman), dan <strong>T-Rex Runner</strong> (game lari klasik). Sangat cocok dimainkan saat di perjalanan atau saat sinyal lemah.</p>
+        </details>
+
+        <details>
+          <summary>Mode permainan apa saja yang tersedia?</summary>
+          <p>Grandmaster Grid menyediakan berbagai mode: <strong>Ranked</strong> (1 menit + 5 detik per langkah), <strong>Classic</strong> (tanpa peringkat), <strong>Main dengan Teman</strong> (room privat), <strong>Lawan AI</strong>, <strong>Dua Pemain Lokal</strong>, <strong>Puzzle Taktik</strong>, <strong>Tic-Tac-Toe</strong>, dan <strong>T-Rex Runner</strong>. Mode Lawan AI, Dua Pemain Lokal, Tic-Tac-Toe, dan T-Rex Runner bisa dimainkan offline.</p>
         </details>
 
         <details>
@@ -1018,8 +1378,8 @@
     <div class="container">
       <div class="final-cta">
         <h2>Siap Taklukkan Papan?</h2>
-        <p>Buka papan catur digital Grandmaster Grid dan mulai pertandingan Anda sekarang.</p>
-        <a href="play.html" class="btn btn-primary" style="padding:16px 30px;font-size:1.05rem" aria-label="Mulai bermain catur sekarang">
+        <p>Buka papan catur digital Grandmaster Grid dan mulai pertandingan Anda sekarang — online maupun offline.</p>
+        <a href="play.html" class="btn btn-primary" aria-label="Mulai bermain catur sekarang">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M5 3l14 9-14 9V3z"/>
           </svg>
@@ -1037,10 +1397,10 @@
     <div class="foot-grid">
       <div>
         <div class="foot-brand">
-          <img src="https://i.ibb.co.com/7J74C9fh/WA-1790518020718.jpg" alt="Logo Grandmaster Grid" width="36" height="36" loading="lazy">
+          <img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="Logo Grandmaster Grid" width="38" height="38" loading="lazy">
           <span>Grandmaster Grid</span>
         </div>
-        <p>Platform permainan catur online untuk bermain, belajar, dan mengasah strategi langsung melalui browser.</p>
+        <p>Platform permainan catur online untuk bermain, belajar, dan mengasah strategi langsung melalui browser — online maupun offline.</p>
       </div>
 
       <div>
@@ -1048,18 +1408,19 @@
         <ul>
           <li><a href="#beranda">Beranda</a></li>
           <li><a href="#fitur">Fitur</a></li>
+          <li><a href="#mode">Mode</a></li>
+          <li><a href="#offline">Offline</a></li>
           <li><a href="#cara-bermain">Cara Bermain</a></li>
-          <li><a href="#tentang">Tentang</a></li>
         </ul>
       </div>
 
       <div>
-        <h4>Pelajari</h4>
+        <h4>Mode Offline</h4>
         <ul>
-          <li><a href="#pelajari">Dasar Catur</a></li>
-          <li><a href="#pelajari">Taktik & Strategi</a></li>
-          <li><a href="#pelajari">Pembukaan Catur</a></li>
-          <li><a href="#pelajari">Endgame</a></li>
+          <li><a href="#offline">Lawan AI</a></li>
+          <li><a href="#offline">Dua Pemain Lokal</a></li>
+          <li><a href="#offline">Tic-Tac-Toe</a></li>
+          <li><a href="#offline">T-Rex Runner</a></li>
         </ul>
       </div>
 
@@ -1067,6 +1428,7 @@
         <h4>Mulai</h4>
         <ul>
           <li><a href="play.html">Mulai Bermain</a></li>
+          <li><a href="#tentang">Tentang</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
       </div>
@@ -1085,10 +1447,7 @@
 
   // Navbar scroll state
   const nav = document.getElementById('navbar');
-  const onScroll = () => {
-    if (window.scrollY > 20) nav.classList.add('scrolled');
-    else nav.classList.remove('scrolled');
-  };
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 20);
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 
@@ -1112,7 +1471,7 @@
     const io = new IntersectionObserver((entries) => {
       entries.forEach((entry, i) => {
         if (entry.isIntersecting) {
-          entry.target.style.transitionDelay = (i * 60) + 'ms';
+          entry.target.style.transitionDelay = (i * 50) + 'ms';
           entry.target.classList.add('in');
           io.unobserve(entry.target);
         }
@@ -1136,11 +1495,9 @@
   (function buildBoard(){
     const board = document.getElementById('chessBoard');
     if (!board) return;
-    const pieces = {
-      // using unicode-free glyph colors via inline SVG-ish text won't work; use CSS-drawn symbols via text fallback
-    };
-    // Create 64 squares with subtle glow on some
-    const glowIdx = new Set([3, 12, 20, 27, 36, 44, 52, 61, 18, 29, 34, 45]);
+
+    const glowIdx = new Set([3,12,20,27,36,44,52,61,18,29,34,45]);
+
     for (let r = 0; r < 8; r++) {
       for (let c = 0; c < 8; c++) {
         const sq = document.createElement('div');
@@ -1150,40 +1507,23 @@
       }
     }
 
-    // Simple piece glyphs using text (rendered by system fonts)
     const piecesMap = [
-      { r:0, c:0, s:'♜', side:'b' },
-      { r:0, c:1, s:'♞', side:'b' },
-      { r:0, c:2, s:'♝', side:'b' },
-      { r:0, c:3, s:'♛', side:'b' },
-      { r:0, c:4, s:'♚', side:'b' },
-      { r:0, c:5, s:'♝', side:'b' },
-      { r:0, c:6, s:'♞', side:'b' },
-      { r:0, c:7, s:'♜', side:'b' },
-      { r:1, c:0, s:'♟', side:'b' },
-      { r:1, c:1, s:'♟', side:'b' },
-      { r:1, c:2, s:'♟', side:'b' },
-      { r:1, c:3, s:'♟', side:'b' },
-      { r:1, c:4, s:'♟', side:'b' },
-      { r:1, c:5, s:'♟', side:'b' },
-      { r:1, c:6, s:'♟', side:'b' },
-      { r:1, c:7, s:'♟', side:'b' },
-      { r:6, c:0, s:'♙', side:'w' },
-      { r:6, c:1, s:'♙', side:'w' },
-      { r:6, c:2, s:'♙', side:'w' },
-      { r:6, c:3, s:'♙', side:'w' },
-      { r:6, c:4, s:'♙', side:'w' },
-      { r:6, c:5, s:'♙', side:'w' },
-      { r:6, c:6, s:'♙', side:'w' },
-      { r:6, c:7, s:'♙', side:'w' },
-      { r:7, c:0, s:'♖', side:'w' },
-      { r:7, c:1, s:'♘', side:'w' },
-      { r:7, c:2, s:'♗', side:'w' },
-      { r:7, c:3, s:'♕', side:'w' },
-      { r:7, c:4, s:'♔', side:'w' },
-      { r:7, c:5, s:'♗', side:'w' },
-      { r:7, c:6, s:'♘', side:'w' },
-      { r:7, c:7, s:'♖', side:'w' }
+      { r:0, c:0, s:'♜', side:'b' }, { r:0, c:1, s:'♞', side:'b' },
+      { r:0, c:2, s:'♝', side:'b' }, { r:0, c:3, s:'♛', side:'b' },
+      { r:0, c:4, s:'♚', side:'b' }, { r:0, c:5, s:'♝', side:'b' },
+      { r:0, c:6, s:'♞', side:'b' }, { r:0, c:7, s:'♜', side:'b' },
+      { r:1, c:0, s:'♟', side:'b' }, { r:1, c:1, s:'♟', side:'b' },
+      { r:1, c:2, s:'♟', side:'b' }, { r:1, c:3, s:'♟', side:'b' },
+      { r:1, c:4, s:'♟', side:'b' }, { r:1, c:5, s:'♟', side:'b' },
+      { r:1, c:6, s:'♟', side:'b' }, { r:1, c:7, s:'♟', side:'b' },
+      { r:6, c:0, s:'♙', side:'w' }, { r:6, c:1, s:'♙', side:'w' },
+      { r:6, c:2, s:'♙', side:'w' }, { r:6, c:3, s:'♙', side:'w' },
+      { r:6, c:4, s:'♙', side:'w' }, { r:6, c:5, s:'♙', side:'w' },
+      { r:6, c:6, s:'♙', side:'w' }, { r:6, c:7, s:'♙', side:'w' },
+      { r:7, c:0, s:'♖', side:'w' }, { r:7, c:1, s:'♘', side:'w' },
+      { r:7, c:2, s:'♗', side:'w' }, { r:7, c:3, s:'♕', side:'w' },
+      { r:7, c:4, s:'♔', side:'w' }, { r:7, c:5, s:'♗', side:'w' },
+      { r:7, c:6, s:'♘', side:'w' }, { r:7, c:7, s:'♖', side:'w' }
     ];
 
     const cells = board.children;
@@ -1191,25 +1531,12 @@
       const cell = cells[p.r * 8 + p.c];
       if (!cell) return;
       const el = document.createElement('div');
+      el.className = 'piece ' + p.side;
       el.textContent = p.s;
-      el.style.position = 'absolute';
-      el.style.inset = '0';
-      el.style.display = 'flex';
-      el.style.alignItems = 'center';
-      el.style.justifyContent = 'center';
-      el.style.fontSize = 'clamp(18px, 4.5vw, 34px)';
-      el.style.lineHeight = '1';
-      el.style.fontWeight = '700';
-      el.style.textShadow = '0 3px 6px rgba(0,0,0,.55)';
-      el.style.color = p.side === 'w' ? '#F8FAFC' : '#94A3B8';
-      el.style.filter = p.side === 'w'
-        ? 'drop-shadow(0 0 6px rgba(0,212,255,.35))'
-        : 'drop-shadow(0 0 6px rgba(124,92,255,.35))';
-      cell.style.position = 'relative';
       cell.appendChild(el);
     });
   })();
 </script>
 
 </body>
-   </html>
+</html>
