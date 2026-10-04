@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="dark">
+<html lang="id" data-theme="light">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
-<meta name="theme-color" content="#06080f" />
+<meta name="theme-color" content="#eef1f8" />
 <title>Grandmaster Grid</title>
 <link rel="apple-touch-icon" href="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg">
 <link rel="icon" type="image/png" href="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg">
@@ -843,13 +843,53 @@ svg.ic-xl{width:40px;height:40px}
 .res-d{background:var(--surface-3);color:var(--text-dim);border:1px solid var(--border-2)}
 
 /* ============================================================
-   PLAY MENU
+   INFO BANNER — editable oleh admin
    ============================================================ */
-.play-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.info-banner{
+  position:relative;overflow:hidden;border-radius:20px;margin-top:14px;
+  background:linear-gradient(135deg,rgba(109,123,255,.2),rgba(164,108,255,.16)),
+    linear-gradient(180deg,var(--surface),var(--surface-2));
+  border:1px solid rgba(109,123,255,.32);
+  box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.06);
+  isolation:isolate;
+}
+.info-banner::before{
+  content:'';position:absolute;top:-40%;right:-20%;width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(109,123,255,.36),transparent 65%);
+  pointer-events:none;animation:heroFloat 8s ease-in-out infinite;
+}
+.info-banner__media{
+  display:block;width:100%;max-height:200px;object-fit:cover;
+  border-bottom:1px solid var(--border);
+}
+.info-banner__body{
+  padding:14px 16px;display:flex;gap:12px;align-items:flex-start;position:relative;z-index:1;
+}
+.info-banner__icon{
+  width:38px;height:38px;border-radius:12px;flex:none;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;
+  box-shadow:var(--glow-accent);
+}
+.info-banner__icon svg{width:20px;height:20px}
+.info-banner__text{
+  flex:1;min-width:0;font-size:13px;line-height:1.55;color:var(--text);
+  white-space:pre-wrap;word-break:break-word;
+}
+.info-banner__title{font-weight:800;font-size:14px;margin-bottom:3px;letter-spacing:-.01em}
+
+/* ============================================================
+   PLAY MENU — redesigned: image cards, wrapping grid
+   ============================================================ */
+.play-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:14px;
+}
 .play-card{
   position:relative;overflow:hidden;
   background:linear-gradient(180deg,var(--surface),var(--surface-2));
-  border-radius:20px;padding:18px;display:flex;align-items:center;gap:15px;
+  border-radius:20px;padding:0;
+  display:flex;flex-direction:column;
   transition:.28s cubic-bezier(.2,1,.4,1);cursor:pointer;
   box-shadow:var(--shadow-xs),inset 0 1px 0 rgba(255,255,255,.04);
   border:1px solid var(--border);
@@ -860,44 +900,38 @@ svg.ic-xl{width:40px;height:40px}
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;z-index:2;
 }
-.play-card .pc-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit;z-index:0}
-.play-card .pc-bg::before{
-  content:'';position:absolute;top:-40%;right:-30%;width:180px;height:180px;border-radius:50%;
-  opacity:.55;transition:.5s ease;filter:blur(4px);
+.play-card .pc-image{
+  width:100%;aspect-ratio:16/10;
+  display:flex;align-items:center;justify-content:center;
+  font-size:clamp(42px,9vw,68px);
+  position:relative;overflow:hidden;
+  border-bottom:1px solid var(--border);
+  line-height:1;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.25));
+  transition:.35s cubic-bezier(.2,1,.4,1);
 }
-.play-card:hover .pc-bg::before{opacity:.9;transform:translate(-10px,10px) scale(1.1)}
-.play-card.ranked .pc-bg::before{background:radial-gradient(circle,rgba(255,107,107,.38),transparent 65%)}
-.play-card.casual .pc-bg::before{background:radial-gradient(circle,rgba(34,211,238,.32),transparent 65%)}
-.play-card.friend .pc-bg::before{background:radial-gradient(circle,rgba(16,217,141,.32),transparent 65%)}
-.play-card.ai .pc-bg::before{background:radial-gradient(circle,rgba(164,108,255,.38),transparent 65%)}
-.play-card.local .pc-bg::before{background:radial-gradient(circle,rgba(255,176,32,.34),transparent 65%)}
-.play-card.puzzle .pc-bg::before{background:radial-gradient(circle,rgba(109,123,255,.38),transparent 65%)}
-.play-card.tictactoe .pc-bg::before{background:radial-gradient(circle,rgba(34,211,238,.38),transparent 65%)}
-.play-card.trex .pc-bg::before{background:radial-gradient(circle,rgba(255,107,107,.38),transparent 65%)}
-.play-card .pc-icon,.play-card .pc-body,.play-card .pc-arrow{position:relative;z-index:1}
-.play-card:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08);border-color:var(--border-2)}
+.play-card:hover .pc-image{transform:scale(1.06) rotate(-2deg)}
+.play-card .pc-image::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 50% 120%,rgba(255,255,255,.18),transparent 60%);
+}
+.play-card.ranked .pc-image{background:linear-gradient(135deg,#ff6b6b,#ffb020)}
+.play-card.casual .pc-image{background:linear-gradient(135deg,#22d3ee,#6d7bff)}
+.play-card.friend .pc-image{background:linear-gradient(135deg,#10d98d,#22d3ee)}
+.play-card.ai .pc-image{background:linear-gradient(135deg,#a46cff,#6d7bff)}
+.play-card.local .pc-image{background:linear-gradient(135deg,#ffb020,#ff6b6b)}
+.play-card.puzzle .pc-image{background:linear-gradient(135deg,#6d7bff,#a46cff)}
+.play-card.tictactoe .pc-image{background:linear-gradient(135deg,#22d3ee,#6d7bff)}
+.play-card.trex .pc-image{background:linear-gradient(135deg,#ffb020,#ff6b6b)}
+.play-card .pc-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;position:relative;z-index:1}
+.play-card .pc-title{font-size:14px;font-weight:800;letter-spacing:-.02em}
+.play-card .pc-sub{font-size:11.5px;color:var(--text-dim);line-height:1.45}
+.play-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 14px 40px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08);
+  border-color:var(--border-2);
+}
 .play-card:active{transform:translateY(-1px) scale(.995)}
-.play-card .pc-icon{
-  width:56px;height:56px;border-radius:17px;display:grid;place-items:center;flex:none;
-  color:#fff;position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 6px 18px rgba(0,0,0,.2);
-}
-.play-card .pc-icon::after{
-  content:'';position:absolute;inset:0;border-radius:inherit;
-  background:linear-gradient(180deg,rgba(255,255,255,.16),transparent 60%);pointer-events:none;
-}
-.play-card .pc-icon.ranked{background:linear-gradient(135deg,#ff6b6b,#ffb020)}
-.play-card .pc-icon.casual{background:linear-gradient(135deg,#22d3ee,#6d7bff)}
-.play-card .pc-icon.friend{background:linear-gradient(135deg,#10d98d,#22d3ee)}
-.play-card .pc-icon.ai{background:linear-gradient(135deg,#a46cff,#6d7bff)}
-.play-card .pc-icon.local{background:linear-gradient(135deg,#ffb020,#ff6b6b)}
-.play-card .pc-icon.puzzle{background:linear-gradient(135deg,#6d7bff,#a46cff)}
-.play-card .pc-icon.tictactoe{background:linear-gradient(135deg,#22d3ee,#6d7bff)}
-.play-card .pc-icon.trex{background:linear-gradient(135deg,#ffb020,#ff6b6b)}
-.play-card .pc-body{flex:1;min-width:0}
-.play-card .pc-title{font-size:15px;font-weight:800;letter-spacing:-.02em}
-.play-card .pc-sub{font-size:12px;color:var(--text-dim);margin-top:4px;line-height:1.45}
-.play-card .pc-arrow{color:var(--text-dim2);flex:none;transition:.24s}
-.play-card:hover .pc-arrow{color:var(--accent);transform:translateX(4px)}
 
 /* ============================================================
    FRIENDS
@@ -1431,7 +1465,7 @@ svg.ic-xl{width:40px;height:40px}
 /* ============================================================
    MODAL
    ============================================================ */
-.modal-root{position:fixed;inset:0;z-index:600;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-root{position:fixed;inset:0;z-index:1500;display:none;align-items:center;justify-content:center;padding:16px}
 .modal-root.active{display:flex}
 .modal-backdrop{
   position:absolute;inset:0;background:rgba(0,0,0,.72);
@@ -1738,7 +1772,6 @@ svg.ic-xl{width:40px;height:40px}
   .quick-grid{grid-template-columns:repeat(6,1fr)}
   .stat-grid{grid-template-columns:repeat(4,1fr)}
   .view{padding:24px 20px 28px}
-  .play-grid{grid-template-columns:repeat(2,1fr)}
   .lb-podium{gap:14px}
 }
 @media (orientation:landscape) and (max-height:560px){
@@ -1773,16 +1806,16 @@ svg.ic-xl{width:40px;height:40px}
     <div class="auth-header">
       <div class="auth-logo" id="authLogo"></div>
       <h1 class="auth-title">Grandmaster Grid</h1>
-      <div class="auth-tagline" id="authTagline">Masuk untuk melanjutkan</div>
+      <div class="auth-tagline" id="authTagline">Masuk dengan Google untuk melanjutkan</div>
     </div>
-    <div class="auth-tabs" id="authTabs">
+    <div class="auth-tabs" id="authTabs" style="display:none">
       <button data-authtab="login" class="active">Masuk</button>
       <button data-authtab="register">Daftar</button>
     </div>
     <div class="auth-card" id="authCard"></div>
     <div class="auth-foot">
       <span id="authFootIcon"></span>
-      <span id="authFootText">Mode offline tersedia tanpa akun — AI, permainan lokal, dan puzzle berfungsi penuh.</span>
+      <span id="authFootText">Username dapat diatur setelah masuk pertama kali dengan Google.</span>
     </div>
     <button class="btn ghost block" id="btnOffline">
       <span id="btnOfflineIcon"></span>
@@ -1813,6 +1846,7 @@ svg.ic-xl{width:40px;height:40px}
   <main id="views">
     <section class="view" id="view-home">
       <div class="hero" id="heroCard"></div>
+      <div id="bannerSlot"></div>
       <div id="seasonSlot"></div>
       <div class="quick-grid" id="quickGrid"></div>
       <div class="sec-title"><h3>Pertandingan Terakhir</h3><button id="btnAllGames">Semua</button></div>
@@ -2653,7 +2687,7 @@ function pieceSVG(piece,cls){
    ========================================================================== */
 const STORAGE_KEY='gmg_settings_v3';
 const DEFAULT_SETTINGS={
-  theme:'dark',boardTheme:'classic',
+  theme:'light',boardTheme:'classic',
   showCoords:true,showLegal:true,highlightLast:true,highlightCheck:true,
   autoQueen:false,soundEnabled:true,masterVolume:0.6,
   moveSound:true,captureSound:true,checkSound:true,endSound:true,notifySound:true,
@@ -2674,6 +2708,10 @@ function loadSettings(){
 }
 function saveSettings(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(settings));}catch(e){logErr('settings-save',e);}}
 function applySettings(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(!raw){ settings.theme='light'; }
+  }catch(_){}
   document.documentElement.setAttribute('data-theme',settings.theme==='light'?'light':'dark');
   const bt=BOARD_THEMES[settings.boardTheme]||BOARD_THEMES.classic;
   document.documentElement.style.setProperty('--board-l',bt.l);
@@ -2858,7 +2896,8 @@ const App={
   user:null,profile:null,view:'home',
   presenceRef:null,profileTab:'overview',lbTab:'global',
   puzzleState:{index:0,streak:0,rating:1200,solved:false,attempts:0},
-  offlineMode:false
+  offlineMode:false,
+  _bannerData:null
 };
 
 /* ==========================================================================
@@ -2992,6 +3031,90 @@ async function checkSeasonReset(uid,profile){
 }
 
 /* ==========================================================================
+   SECTION: INFO BANNER (editable admin)
+   Struktur Firebase: /banner/info -> { title, text, image, visible, updatedAt }
+   ========================================================================== */
+let bannerUnsub=null;
+function listenBanner(){
+  const slot=$('#bannerSlot');
+  if(!slot) return;
+  if(!FB.ready){ slot.innerHTML=''; return; }
+  if(bannerUnsub){ try{bannerUnsub();}catch(_){} bannerUnsub=null; }
+  bannerUnsub=FB.api.onValue(FB.api.ref(FB.db,'banner/info'),snap=>{
+    const d=snap.val();
+    App._bannerData=d||null;
+    renderBanner(d);
+  },err=>logErr('banner-listener',err));
+}
+function renderBanner(data){
+  const slot=$('#bannerSlot');
+  if(!slot) return;
+  if(!data || data.visible===false || (!data.text && !data.image)){
+    slot.innerHTML='';
+    return;
+  }
+  const title=typeof data.title==='string'?data.title:'';
+  const text=typeof data.text==='string'?data.text:'';
+  const image=(typeof data.image==='string' && data.image.length>10)?data.image:'';
+  slot.innerHTML=
+    '<div class="info-banner">'+
+      (image?'<img class="info-banner__media" src="'+escapeHtml(image)+'" alt="" loading="lazy" />':'')+
+      '<div class="info-banner__body">'+
+        '<div class="info-banner__icon">'+icon('info')+'</div>'+
+        '<div class="info-banner__text">'+
+          (title?'<div class="info-banner__title">'+escapeHtml(title)+'</div>':'')+
+          (text?escapeHtml(text):'')+
+        '</div>'+
+      '</div>'+
+    '</div>';
+}
+function isAdmin(){
+  if(!App.profile) return false;
+  if(App.profile.isAdmin===true) return true;
+  const admins=[];
+  return admins.indexOf(App.profile.uid)>=0;
+}
+function openBannerEditor(){
+  if(!isAdmin()){ toast('Hanya admin dapat mengedit banner.','error'); return; }
+  const d=App._bannerData||{};
+  const box=el('div');
+  box.innerHTML=
+    '<div class="field"><label>Judul</label>'+
+    '<input class="input" id="bTitle" maxlength="80" placeholder="Judul banner" value="'+escapeHtml(d.title||'')+'" /></div>'+
+    '<div class="field"><label>Teks</label>'+
+    '<textarea class="input" id="bText" rows="4" maxlength="400" placeholder="Tulis pengumuman..." style="min-height:100px;resize:vertical">'+escapeHtml(d.text||'')+'</textarea></div>'+
+    '<div class="field"><label>URL Gambar (opsional)</label>'+
+    '<input class="input" id="bImage" type="url" placeholder="https://..." value="'+escapeHtml(d.image||'')+'" /></div>'+
+    '<div class="setting-row" style="border-radius:12px;border:1px solid var(--border)">'+
+    '<div class="st"><div class="t">Tampilkan Banner</div></div>'+
+    '<div class="switch'+(d.visible!==false?' on':'')+'" id="bVisible"></div>'+
+    '</div>';
+  Modal.open({
+    title:'Edit Banner', body:box,
+    buttons:[
+      {label:'Batal',value:null,variant:'ghost'},
+      {label:'Simpan',value:'save',variant:'primary'}
+    ]
+  }).then(async v=>{
+    if(v!=='save') return;
+    const title=$('#bTitle')?$('#bTitle').value.trim():'';
+    const text=$('#bText')?$('#bText').value.trim():'';
+    const image=$('#bImage')?$('#bImage').value.trim():'';
+    const visible=$('#bVisible')?$('#bVisible').classList.contains('on'):true;
+    try{
+      await FB.api.set(FB.api.ref(FB.db,'banner/info'),{
+        title,text,image,visible,
+        updatedAt:Date.now(),
+        updatedBy:App.user?App.user.uid:''
+      });
+      toast('Banner disimpan.','success');
+    }catch(e){ logErr('banner-save',e); toast(errMsg('DATABASE_ERROR'),'error'); }
+  });
+  const sw=$('#bVisible');
+  if(sw) sw.addEventListener('click',()=>sw.classList.toggle('on'));
+}
+
+/* ==========================================================================
    SECTION: SPLASH CONTROL
    ========================================================================== */
 function hideSplash(){
@@ -3006,143 +3129,60 @@ function splashStatus(text){
 }
 
 /* ==========================================================================
-   SECTION: AUTH SCREEN
+   SECTION: AUTH SCREEN — Google only
    ========================================================================== */
 let authMode='login';
 
 function showAuthScreen(){
   const as=$('#authScreen');if(as)as.classList.remove('hidden');
   const app=$('#app');if(app)app.classList.add('hidden');
-  renderAuthScreen(authMode);
+  renderAuthScreen();
 }
 function hideAuthScreen(){
   const as=$('#authScreen');if(as)as.classList.add('hidden');
   const app=$('#app');if(app)app.classList.remove('hidden');
 }
 
-function renderAuthScreen(mode){
-  try {
-    authMode=mode;
+function renderAuthScreen(){
+  try{
     const card=$('#authCard');
     if(!card) return;
     const tagline=$('#authTagline');
-    if(tagline) tagline.textContent = mode==='register'
-      ? 'Buat akun untuk bermain online'
-      : 'Masuk untuk melanjutkan';
-    $$('#authTabs button').forEach(b => b.classList.toggle('active', b.dataset.authtab===mode));
+    if(tagline) tagline.textContent='Masuk dengan Google untuk melanjutkan';
+    const tabs=$('#authTabs');
+    if(tabs) tabs.style.display='none';
+    const footText=$('#authFootText');
+    if(footText) footText.textContent='Username dapat diatur setelah masuk pertama kali dengan Google.';
+
     card.innerHTML='';
-    const form = el('div','auth-form');
+    const form=el('div','auth-form');
+    form.innerHTML=
+      '<button class="btn google block" id="btnGoogleLogin" style="margin-bottom:8px">'+
+      GOOGLE_SVG+' <span>Masuk dengan Google</span></button>'+
+      '<div class="err" id="loginErr" style="margin-top:14px;text-align:center"></div>'+
+      '<div style="text-align:center;font-size:11.5px;color:var(--text-dim);margin-top:16px;line-height:1.6">'+
+      'Dengan masuk, akun Google Anda akan terhubung.<br>'+
+      'Anda akan diminta memilih username setelah login.</div>';
     card.appendChild(form);
-    try {
-      if (mode==='register') renderRegisterForm(form);
-      else renderLoginForm(form);
-    } catch(innerErr) {
-      console.error('[GG:auth-form]', innerErr);
-      form.innerHTML = '<div style="padding:14px;color:#ff5d6c;font-size:13px">' +
-        'Form gagal dimuat: ' + (innerErr && innerErr.message ? innerErr.message : innerErr) +
-        '</div>';
-    }
-  } catch(e) {
-    console.error('[GG:auth-screen]', e);
+
+    const btn=$('#btnGoogleLogin');
+    if(btn) btn.addEventListener('click',()=>doGoogleSignIn());
+  }catch(e){
+    console.error('[GG:auth-screen]',e);
   }
 }
 
+/* Fungsi lama dibiarkan (tidak dipakai) agar tidak merusak referensi lain. */
 function renderLoginForm(container){
   container.innerHTML=
     '<button class="btn google block" id="btnGoogleLogin" style="margin-bottom:16px">'+
-    GOOGLE_SVG+' <span>Masuk dengan Google</span></button>'+
-    '<div class="auth-divider">atau</div>'+
-    '<div class="field"><label for="loginEmail">Email</label>'+
-    '<input class="input" id="loginEmail" type="email" autocomplete="email" placeholder="nama@email.com" /></div>'+
-    '<div class="field"><label for="loginPass">Kata Sandi</label>'+
-    '<input class="input" id="loginPass" type="password" autocomplete="current-password" placeholder="Minimal 6 karakter" /></div>'+
-    '<div class="err" id="loginErr"></div>'+
-    '<button class="btn primary block" id="btnLogin" style="margin-top:4px">Masuk</button>'+
-    '<button class="btn ghost block" id="btnForgot" style="margin-top:9px">Lupa kata sandi</button>';
-
-  const doLogin=async()=>{
-    const email=$('#loginEmail').value.trim();
-    const pass=$('#loginPass').value;
-    const errBox=$('#loginErr');
-    errBox.textContent='';
-    if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errBox.textContent=errMsg('INVALID_EMAIL');return;}
-    if(!pass||pass.length<6){errBox.textContent=errMsg('WEAK_PASSWORD');return;}
-    if(!FB.ready){errBox.textContent=errMsg('OFFLINE');return;}
-    const btn=$('#btnLogin');
-    if(btn.disabled)return;
-    btn.disabled=true;
-    btn.innerHTML='<span class="spinner"></span> Memproses';
-    try{await FB.authApi.signInWithEmailAndPassword(FB.auth,email,pass);}
-    catch(e){
-      logErr('login',e);
-      errBox.textContent=errMsg(mapFbError(e));
-      btn.disabled=false;btn.textContent='Masuk';
-    }
-  };
-  $('#btnLogin').addEventListener('click',doLogin);
-  container.querySelectorAll('input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();}));
-  $('#btnForgot').addEventListener('click',async()=>{
-    const email=$('#loginEmail').value.trim();
-    if(!email){$('#loginErr').textContent='Masukkan email terlebih dahulu.';return;}
-    if(!FB.ready){$('#loginErr').textContent=errMsg('OFFLINE');return;}
-    try{await FB.authApi.sendPasswordResetEmail(FB.auth,email);toast('Email reset terkirim.','success');}
-    catch(e){logErr('reset',e);$('#loginErr').textContent=errMsg(mapFbError(e));}
-  });
+    GOOGLE_SVG+' <span>Masuk dengan Google</span></button>';
   $('#btnGoogleLogin').addEventListener('click',()=>doGoogleSignIn());
 }
-
 function renderRegisterForm(container){
   container.innerHTML=
     '<button class="btn google block" id="btnGoogleRegister" style="margin-bottom:16px">'+
-    GOOGLE_SVG+' <span>Daftar dengan Google</span></button>'+
-    '<div class="auth-divider">atau</div>'+
-    '<div class="field"><label for="regUser">Username</label>'+
-    '<input class="input" id="regUser" type="text" autocomplete="username" placeholder="3-16 karakter" maxlength="16" /></div>'+
-    '<div class="field"><label for="regEmail">Email</label>'+
-    '<input class="input" id="regEmail" type="email" autocomplete="email" placeholder="nama@email.com" /></div>'+
-    '<div class="field"><label for="regPass">Kata Sandi</label>'+
-    '<input class="input" id="regPass" type="password" autocomplete="new-password" placeholder="Minimal 6 karakter" /></div>'+
-    '<div class="field"><label for="regPass2">Konfirmasi</label>'+
-    '<input class="input" id="regPass2" type="password" autocomplete="new-password" placeholder="Ulangi kata sandi" /></div>'+
-    '<div class="err" id="regErr"></div>'+
-    '<button class="btn primary block" id="btnRegister" style="margin-top:4px">Buat Akun</button>';
-
-  const doRegister=async()=>{
-    const username=$('#regUser').value.trim();
-    const email=$('#regEmail').value.trim();
-    const pass=$('#regPass').value;
-    const pass2=$('#regPass2').value;
-    const errBox=$('#regErr');
-    errBox.textContent='';
-    if(username.length<3){errBox.textContent='Username minimal 3 karakter.';return;}
-    if(username.length>16){errBox.textContent='Username maksimal 16 karakter.';return;}
-    if(!/^[A-Za-z0-9_]+$/.test(username)){errBox.textContent='Hanya huruf, angka, dan underscore.';return;}
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errBox.textContent=errMsg('INVALID_EMAIL');return;}
-    if(pass.length<6){errBox.textContent=errMsg('WEAK_PASSWORD');return;}
-    if(pass!==pass2){errBox.textContent='Konfirmasi kata sandi tidak sama.';return;}
-    if(!FB.ready){errBox.textContent=errMsg('OFFLINE');return;}
-    const btn=$('#btnRegister');
-    if(btn.disabled)return;
-    btn.disabled=true;
-    btn.innerHTML='<span class="spinner"></span> Membuat akun';
-    const lower=username.toLowerCase();
-    try{
-      const snap=await FB.api.get(FB.api.ref(FB.db,'usernames/'+lower));
-      if(snap.exists()){errBox.textContent=errMsg('USERNAME_TAKEN');btn.disabled=false;btn.textContent='Buat Akun';return;}
-    }catch(e){logErr('username-check',e);}
-    try{
-      const cred=await FB.authApi.createUserWithEmailAndPassword(FB.auth,email,pass);
-      await createUserProfile(cred.user.uid,username,email);
-      try{await FB.authApi.updateProfile(cred.user,{displayName:username});}catch(_){}
-      toast('Akun berhasil dibuat.','success');
-    }catch(e){
-      logErr('register',e);
-      errBox.textContent=errMsg(mapFbError(e));
-      btn.disabled=false;btn.textContent='Buat Akun';
-    }
-  };
-  $('#btnRegister').addEventListener('click',doRegister);
-  container.querySelectorAll('input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();}));
+    GOOGLE_SVG+' <span>Daftar dengan Google</span></button>';
   $('#btnGoogleRegister').addEventListener('click',()=>doGoogleSignIn());
 }
 
@@ -3276,6 +3316,7 @@ async function loadProfile(uid){
       puzzleRating:Number(v.puzzleRating)||1200,
       stars:Math.max(0,Number(v.stars)||0),
       seasonId:typeof v.seasonId==='string'?v.seasonId:'',
+      isAdmin:v.isAdmin===true,
       createdAt:Number(v.createdAt)||Date.now(),
       lastSeen:Number(v.lastSeen)||Date.now()
     };
@@ -5502,6 +5543,19 @@ function renderHome(){
     const b=$('#btnDaily');
     if(b)b.addEventListener('click',()=>{Sound.button();startDailyPuzzle();});
   }
+
+  // Banner admin (editable)
+  listenBanner();
+  if(isAdmin()){
+    const slot=$('#bannerSlot');
+    if(slot){
+      const editBtn=el('button','btn ghost sm');
+      editBtn.style.cssText='margin-top:8px;width:100%';
+      editBtn.innerHTML=icon('settings','ic-sm')+' Edit Banner';
+      editBtn.addEventListener('click',()=>{Sound.button();openBannerEditor();});
+      slot.appendChild(editBtn);
+    }
+  }
 }
 async function renderRecentGames(){
   const box=$('#recentGames');if(!box)return;
@@ -5574,7 +5628,7 @@ async function renderHomeLeaderboard(){
 }
 
 /* ==========================================================================
-   SECTION: PLAY MENU
+   SECTION: PLAY MENU — redesigned image cards
    ========================================================================== */
 async function loadGameConfig(){
   if(!FB.ready) return null;
@@ -5606,42 +5660,41 @@ async function renderPlayMenu(){
     box.innerHTML = '';
     dynamicGames.forEach(game => {
       const card = el('div', 'play-card ' + (game.modeClass || 'tictactoe'));
+      const emoji = game.emoji || '🎮';
       card.innerHTML =
-        '<div class="pc-bg"></div>' +
-        '<div class="pc-icon ' + (game.iconClass || 'tictactoe') + '">' + icon(game.icon || 'grid3') + '</div>' +
-        '<div class="pc-body"><div class="pc-title">' + escapeHtml(game.title || 'Game') + '</div>' +
-        '<div class="pc-sub">' + escapeHtml(game.description || '') + '</div></div>' +
-        '<div class="pc-arrow">' + icon('chevR') + '</div>';
-      card.addEventListener('click', () => {
-        Sound.button();
-        handlePlayAction(game);
-      });
+        '<div class="pc-image">'+emoji+'</div>'+
+        '<div class="pc-body">'+
+        '<div class="pc-title">'+escapeHtml(game.title||'Game')+'</div>'+
+        '<div class="pc-sub">'+escapeHtml(game.description||'')+'</div>'+
+        '</div>';
+      card.addEventListener('click', () => { Sound.button(); handlePlayAction(game); });
       box.appendChild(card);
     });
-  } else {
-    const staticModes = [
-      {icon:'target',iconClass:'ranked',modeClass:'ranked',title:'Ranked',desc:'Pertandingan kompetitif. 1 menit + 5 detik per langkah.',act:openRankedDialog},
-      {icon:'swords',iconClass:'casual',modeClass:'casual',title:'Classic',desc:'Bertanding tanpa peringkat. Rating & bintang tidak berubah.',act:openClassicDialog},
-      {icon:'users',iconClass:'friend',modeClass:'friend',title:'Main dengan Teman',desc:'Buat room privat dan bagikan kodenya.',act:()=>openFriendRoomDialog()},
-      {icon:'cpu',iconClass:'ai',modeClass:'ai',title:'Lawan AI',desc:'Enam tingkat kesulitan, berjalan offline.',act:openAiDialog},
-      {icon:'chess',iconClass:'local',modeClass:'local',title:'Dua Pemain Lokal',desc:'Satu perangkat, bergantian.',act:openLocalDialog},
-      {icon:'zap',iconClass:'puzzle',modeClass:'puzzle',title:'Puzzle Taktik',desc:'Latih taktik dengan posisi nyata.',act:()=>startPuzzle(App.puzzleState.index)},
-      {icon:'grid3',iconClass:'tictactoe',modeClass:'tictactoe',title:'Tic-Tac-Toe',desc:'Lawan AI atau teman di satu perangkat.',act:openTttDialog},
-      {icon:'dino',iconClass:'trex',modeClass:'trex',title:'T-Rex Runner',desc:'Lompat-lompat hindari rintangan seperti game offline.',act:openTrex}
-    ];
-    box.innerHTML = '';
-    staticModes.forEach(m => {
-      const card = el('div', 'play-card ' + m.modeClass);
-      card.innerHTML =
-        '<div class="pc-bg"></div>' +
-        '<div class="pc-icon ' + m.iconClass + '">' + icon(m.icon) + '</div>' +
-        '<div class="pc-body"><div class="pc-title">' + m.title + '</div>' +
-        '<div class="pc-sub">' + m.desc + '</div></div>' +
-        '<div class="pc-arrow">' + icon('chevR') + '</div>';
-      card.addEventListener('click', () => { Sound.button(); m.act(); });
-      box.appendChild(card);
-    });
+    return;
   }
+
+  const staticModes = [
+    {emoji:'🏆',modeClass:'ranked',title:'Ranked',desc:'Pertandingan kompetitif. 1 menit + 5 detik.',act:openRankedDialog},
+    {emoji:'⚔️',modeClass:'casual',title:'Classic',desc:'Bertanding tanpa peringkat. Rating tidak berubah.',act:openClassicDialog},
+    {emoji:'👥',modeClass:'friend',title:'Main dengan Teman',desc:'Buat room privat dan bagikan kodenya.',act:()=>openFriendRoomDialog()},
+    {emoji:'🤖',modeClass:'ai',title:'Lawan AI',desc:'Enam tingkat kesulitan, berjalan offline.',act:openAiDialog},
+    {emoji:'🎮',modeClass:'local',title:'Dua Pemain Lokal',desc:'Satu perangkat, bergantian.',act:openLocalDialog},
+    {emoji:'🧩',modeClass:'puzzle',title:'Puzzle Taktik',desc:'Latih taktik dengan posisi nyata.',act:()=>startPuzzle(App.puzzleState.index)},
+    {emoji:'⭕',modeClass:'tictactoe',title:'Tic-Tac-Toe',desc:'Lawan AI atau teman di satu perangkat.',act:openTttDialog},
+    {emoji:'🦖',modeClass:'trex',title:'T-Rex Runner',desc:'Lompat hindari rintangan.',act:openTrex}
+  ];
+  box.innerHTML = '';
+  staticModes.forEach(m => {
+    const card = el('div', 'play-card ' + m.modeClass);
+    card.innerHTML =
+      '<div class="pc-image">'+m.emoji+'</div>'+
+      '<div class="pc-body">'+
+      '<div class="pc-title">'+m.title+'</div>'+
+      '<div class="pc-sub">'+m.desc+'</div>'+
+      '</div>';
+    card.addEventListener('click', () => { Sound.button(); m.act(); });
+    box.appendChild(card);
+  });
 }
 
 function handlePlayAction(game){
@@ -6569,7 +6622,6 @@ function trexRender(){
   const col=trexColors();
   ctx.clearRect(0,0,W,H);
 
-  // Background: subtle vertical gradient handled by CSS, add stars
   Trex.stars.forEach(st=>{
     st.tw += 0.02;
     const alpha=0.35 + 0.45*Math.abs(Math.sin(st.tw));
@@ -6581,7 +6633,6 @@ function trexRender(){
     ctx.fill();
   });
 
-  // Clouds
   ctx.fillStyle=col.cloud;
   Trex.clouds.forEach(c=>{
     const cw=46*c.s, ch=10*c.s;
@@ -6591,7 +6642,6 @@ function trexRender(){
     ctx.fill();
   });
 
-  // Ground
   ctx.strokeStyle=col.ground;
   ctx.lineWidth=2;
   ctx.globalAlpha=0.75;
@@ -6609,19 +6659,15 @@ function trexRender(){
   }
   ctx.globalAlpha=1;
 
-  // Obstacles
   Trex.obstacles.forEach(o=>{
     if(o.type==='cactus'){
       ctx.fillStyle=col.cactus;
-      // trunk
       trexRoundRect(ctx,o.x+o.w*0.28,o.y,o.w*0.44,o.h,3);
       ctx.fill();
-      // left arm
       trexRoundRect(ctx,o.x+o.w*0.04,o.y+o.h*0.28,o.w*0.28,o.h*0.42,3);
       ctx.fill();
       trexRoundRect(ctx,o.x+o.w*0.04,o.y+o.h*0.22,o.w*0.18,o.h*0.22,2);
       ctx.fill();
-      // right arm
       trexRoundRect(ctx,o.x+o.w*0.68,o.y+o.h*0.2,o.w*0.28,o.h*0.42,3);
       ctx.fill();
       trexRoundRect(ctx,o.x+o.w*0.78,o.y+o.h*0.14,o.w*0.18,o.h*0.22,2);
@@ -6629,21 +6675,17 @@ function trexRender(){
     } else if(o.type==='bird'){
       ctx.fillStyle=col.bird;
       const cx=o.x+o.w/2, cy=o.y+o.h/2;
-      // body
       trexRoundRect(ctx,cx-14,cy-5,26,10,5);
       ctx.fill();
-      // head
       ctx.beginPath();
       ctx.arc(cx+11,cy-3,5,0,Math.PI*2);
       ctx.fill();
-      // beak
       ctx.beginPath();
       ctx.moveTo(cx+15,cy-3);
       ctx.lineTo(cx+22,cy-1);
       ctx.lineTo(cx+15,cy+1.5);
       ctx.closePath();
       ctx.fill();
-      // wings
       const wingUp=Math.floor(o.wingFrame||0)%2===0;
       ctx.beginPath();
       if(wingUp){
@@ -6660,10 +6702,8 @@ function trexRender(){
     }
   });
 
-  // Dino
   trexDrawDino(ctx);
 
-  // Overlay effect when idle/over
   if(Trex.state==='idle'||Trex.state==='over'){
     ctx.fillStyle=settings.theme==='light'?'rgba(238,241,248,.35)':'rgba(6,8,15,.35)';
     ctx.fillRect(0,0,W,H);
@@ -6679,18 +6719,14 @@ function trexDrawDino(ctx){
   ctx.fillStyle=col.fg;
 
   if(ducking){
-    // Duck body (horizontal)
     trexRoundRect(ctx,x,y+2,w-6,h-4,6);
     ctx.fill();
-    // head at front
     trexRoundRect(ctx,x+w-16,y-2,16,12,3);
     ctx.fill();
-    // eye
     ctx.fillStyle=settings.theme==='light'?'#fff':'#0b0f1c';
     ctx.beginPath();
     ctx.arc(x+w-6,y+3,1.4,0,Math.PI*2);
     ctx.fill();
-    // tail
     ctx.fillStyle=col.fg;
     ctx.beginPath();
     ctx.moveTo(x+2,y+h-4);
@@ -6698,7 +6734,6 @@ function trexDrawDino(ctx){
     ctx.lineTo(x+6,y+h+2);
     ctx.closePath();
     ctx.fill();
-    // legs
     const l1=Math.floor(Trex.legFrame)%2;
     trexRoundRect(ctx,x+8,y+h-2,4,2-(l1?1:0),1);
     ctx.fill();
@@ -6707,8 +6742,6 @@ function trexDrawDino(ctx){
     return;
   }
 
-  // Standing dino
-  // Tail
   ctx.beginPath();
   ctx.moveTo(x+2,y+16);
   ctx.lineTo(x-8,y+8);
@@ -6716,11 +6749,9 @@ function trexDrawDino(ctx){
   ctx.closePath();
   ctx.fill();
 
-  // Body
   trexRoundRect(ctx,x+2,y+10,w-10,h-16,4);
   ctx.fill();
 
-  // Legs
   const l1=Math.floor(Trex.legFrame)%2;
   if(d.onGround){
     trexRoundRect(ctx,x+8,y+h-8,5,8-(l1?2:0),2);
@@ -6734,15 +6765,12 @@ function trexDrawDino(ctx){
     ctx.fill();
   }
 
-  // Head (upper right)
   trexRoundRect(ctx,x+w-18,y,18,14,3);
   ctx.fill();
 
-  // Small arm
   trexRoundRect(ctx,x+w-8,y+15,8,4,1.6);
   ctx.fill();
 
-  // Eye
   ctx.fillStyle=settings.theme==='light'?'#fff':'#0b0f1c';
   ctx.beginPath();
   ctx.arc(x+w-6,y+5,1.5,0,Math.PI*2);
@@ -6768,7 +6796,6 @@ function wireTrexEvents(){
     duckBtn.addEventListener('pointerleave',off);
     duckBtn.addEventListener('pointercancel',off);
   }
-  // Canvas input
   const cv=$('#trexCanvas');
   if(cv){
     cv.addEventListener('pointerdown',ev=>{
@@ -6778,7 +6805,6 @@ function wireTrexEvents(){
       trexJump();
     });
   }
-  // Keyboard
   document.addEventListener('keydown',ev=>{
     const sc=$('#trexScreen');
     if(!sc||!sc.classList.contains('active'))return;
@@ -6888,7 +6914,7 @@ function wireShellEvents(){
       renderProfile();
     }
     const at=ev.target.closest('[data-authtab]');
-    if(at){Sound.button();renderAuthScreen(at.dataset.authtab);}
+    if(at){Sound.button();renderAuthScreen();}
   });
 }
 function updateThemeIcon(){
@@ -6974,7 +7000,6 @@ async function boot(){
   wireTttEvents();
   wireTrexEvents();
 
-  // HTML game screen events
   const htmlBack = $('#btnHtmlGameBack');
   if(htmlBack){
     htmlBack.innerHTML = icon('chevL');
@@ -7047,7 +7072,9 @@ async function boot(){
           splashStatus('Menyiapkan profil...');
           await minSplash;
           hideSplash();
-          showAuthScreen();
+          // Bangun shell agar modal username tampil di atas UI (bukan di balik auth-screen)
+          buildMainShell();
+          hideAuthScreen();
           const username=await promptUsernameForUser(user);
           if(!username){
             try{await FB.authApi.signOut(FB.auth);}catch(_){}
