@@ -1,304 +1,1887 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Game Manager</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        /* Salin Design Tokens dan gaya dari HTML utama Anda di sini, atau buat gaya sederhana baru */
-        :root {
-            --bg: #0a0e1a; --surface: #111828; --surface-2: #182135; --border: rgba(255,255,255,.1);
-            --text: #f0f4fc; --text-dim: #8b96b3; --accent: #6d7bff; --success: #10d98d; --danger: #ff5d6c;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text);
-            display: flex; justify-content: center; padding: 20px; min-height: 100vh;
-        }
-        .admin-container { width: 100%; max-width: 800px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .header h1 { font-size: 24px; font-weight: 800; }
-        .card {
-            background: var(--surface); border-radius: 16px; padding: 24px; border: 1px solid var(--border);
-            box-shadow: 0 10px 30px rgba(0,0,0,.3);
-        }
-        .game-list { margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
-        .game-item {
-            background: var(--surface-2); border-radius: 12px; padding: 16px; border: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .game-info h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-        .game-info p { font-size: 12px; color: var(--text-dim); }
-        .game-actions button { margin-left: 8px; }
-        .btn { padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; border: none; transition: 0.2s; }
-        .btn-primary { background: var(--accent); color: #fff; }
-        .btn-primary:hover { opacity: 0.9; }
-        .btn-danger { background: var(--danger); color: #fff; }
-        .btn-danger:hover { opacity: 0.9; }
-        .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
-        .btn-ghost:hover { background: var(--surface-2); }
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--text-dim); }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 10px 14px; border-radius: 8px; background: var(--bg); border: 1px solid var(--border);
-            color: var(--text); font-family: inherit; font-size: 14px;
-        }
-        .form-group textarea { resize: vertical; min-height: 80px; }
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
-            display: none; justify-content: center; align-items: center; z-index: 100;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-content {
-            background: var(--surface); border-radius: 20px; padding: 24px; width: 90%; max-width: 500px;
-            max-height: 80vh; overflow-y: auto; border: 1px solid var(--border);
-        }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-header h2 { font-size: 20px; font-weight: 800; }
-        .close-btn { background: none; border: none; color: var(--text-dim); font-size: 24px; cursor: pointer; }
-        .hidden { display: none; }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#06080f" />
+<title>Admin Panel · Grandmaster Grid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06080f; --bg-2:#0a0e1a; --surface:#111828; --surface-2:#182135;
+  --surface-3:#212c46; --surface-4:#2a3757;
+  --border:rgba(255,255,255,.07); --border-2:rgba(255,255,255,.12); --border-3:rgba(255,255,255,.2);
+  --text:#f0f4fc; --text-dim:#8b96b3; --text-dim2:#5a6884;
+  --accent:#6d7bff; --accent-2:#a46cff; --accent-3:#22d3ee;
+  --success:#10d98d; --danger:#ff5d6c; --warn:#ffb020;
+  --radius:18px; --radius-sm:12px;
+  --shadow:0 16px 40px rgba(0,0,0,.45);
+  --shadow-lg:0 24px 60px rgba(0,0,0,.6);
+  --glow:0 12px 40px rgba(109,123,255,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+svg{display:block;flex:none}
+i[data-ic]{display:inline-flex;font-style:normal}
+button,input,select,textarea{font-family:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:
+    radial-gradient(1400px 800px at 8% -8%, rgba(109,123,255,.16), transparent 55%),
+    radial-gradient(1200px 700px at 105% 4%, rgba(164,108,255,.14), transparent 55%),
+    radial-gradient(900px 500px at 50% 120%, rgba(34,211,238,.08), transparent 55%),
+    var(--bg);
+  color:var(--text); min-height:100vh; padding:24px 14px 80px;
+  background-attachment:fixed; -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+.wrap{max-width:880px;margin:0 auto}
+.hidden{display:none !important}
+
+/* ========== AUTH SCREEN ========== */
+.auth-scr{
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:24px;background:
+    radial-gradient(900px 700px at 15% 10%, rgba(109,123,255,.22), transparent 55%),
+    radial-gradient(800px 600px at 100% 90%, rgba(164,108,255,.2), transparent 55%),
+    var(--bg);
+  z-index:500;
+}
+.auth-card{
+  width:100%;max-width:440px;padding:32px 26px;border-radius:26px;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 92%,transparent),color-mix(in srgb,var(--surface-2) 92%,transparent));
+  border:1px solid var(--border-2);
+  box-shadow:var(--shadow-lg),inset 0 1px 0 rgba(255,255,255,.06);
+  text-align:center;
+}
+.auth-logo{
+  width:80px;height:80px;margin:0 auto 18px;border-radius:24px;display:grid;place-items:center;
+  color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  box-shadow:0 20px 50px rgba(109,123,255,.45),inset 0 1px 0 rgba(255,255,255,.3);
+}
+.auth-title{font-size:24px;font-weight:900;letter-spacing:-.03em;margin-bottom:6px}
+.auth-sub{font-size:13px;color:var(--text-dim);line-height:1.55;margin-bottom:22px}
+.btn.google{
+  background:#fff;color:#1a1a2e;border:1px solid transparent;
+  box-shadow:0 6px 18px rgba(0,0,0,.2);
+  width:100%;justify-content:center;
+}
+.btn.google:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.28)}
+.btn.google svg{width:20px;height:20px}
+
+/* ========== HEADER ========== */
+.hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:14px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand .logo{
+  width:48px;height:48px;border-radius:14px;display:grid;place-items:center;color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  box-shadow:var(--glow),inset 0 1px 0 rgba(255,255,255,.3);
+}
+.hdr h1{font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.15}
+.hdr .sub{font-size:12.5px;color:var(--text-dim);margin-top:3px}
+.user-chip{
+  display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+}
+.user-chip img,.user-chip .fallback{
+  width:32px;height:32px;border-radius:9px;object-fit:cover;
+  display:grid;place-items:center;font-weight:800;font-size:13px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;
+}
+.user-chip .name{font-size:12.5px;font-weight:700;line-height:1.2}
+.user-chip .role{font-size:10.5px;color:var(--text-dim2);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.user-chip .logout{
+  width:28px;height:28px;border-radius:8px;display:grid;place-items:center;
+  color:var(--text-dim);transition:.15s;
+}
+.user-chip .logout:hover{background:rgba(255,93,108,.14);color:var(--danger)}
+
+/* ========== TABS ========== */
+.tabs{
+  display:flex;gap:4px;background:var(--surface);padding:5px;border-radius:16px;
+  border:1px solid var(--border);overflow-x:auto;scrollbar-width:none;
+  margin-bottom:20px;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{
+  flex:1;padding:10px 16px;border-radius:12px;font-size:12.5px;font-weight:700;
+  color:var(--text-dim);white-space:nowrap;transition:.22s;
+  display:flex;align-items:center;gap:7px;justify-content:center;min-width:fit-content;
+}
+.tabs button.active{
+  background:linear-gradient(180deg,var(--surface-3),var(--surface-2));
+  color:var(--text);box-shadow:0 4px 12px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.tab-panel{display:none;animation:tabIn .28s cubic-bezier(.2,1,.4,1)}
+.tab-panel.active{display:block}
+@keyframes tabIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ========== CARDS ========== */
+.card{
+  background:linear-gradient(180deg,var(--surface),var(--surface-2));
+  border-radius:var(--radius);padding:20px;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.04);
+  margin-bottom:16px;
+}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.card h2{font-size:15px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
+.card h2 i{color:var(--accent)}
+
+/* ========== BUTTONS ========== */
+.btn{
+  padding:11px 18px;border-radius:12px;font-weight:600;font-size:13px;
+  cursor:pointer;border:1px solid var(--border-2);transition:.18s;
+  display:inline-flex;align-items:center;gap:8px;font-family:inherit;
+  white-space:nowrap;min-height:42px;justify-content:center;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn:disabled{opacity:.5;pointer-events:none}
+.btn.primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff;border-color:transparent;
+  box-shadow:0 8px 24px rgba(109,123,255,.4),inset 0 1px 0 rgba(255,255,255,.22);
+}
+.btn.primary:hover{box-shadow:0 12px 30px rgba(109,123,255,.5),inset 0 1px 0 rgba(255,255,255,.22)}
+.btn.danger{background:rgba(255,93,108,.1);color:var(--danger);border-color:rgba(255,93,108,.28)}
+.btn.danger:hover{background:rgba(255,93,108,.18)}
+.btn.ghost{background:var(--surface-2);color:var(--text-dim)}
+.btn.ghost:hover{color:var(--text);border-color:rgba(255,255,255,.22)}
+.btn.success{background:rgba(16,217,141,.1);color:var(--success);border-color:rgba(16,217,141,.28)}
+.btn.success:hover{background:rgba(16,217,141,.18)}
+.btn.sm{padding:7px 12px;font-size:12px;border-radius:9px;gap:6px;min-height:34px}
+.btn.block{width:100%;justify-content:center}
+
+/* ========== STATS ========== */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.stat-card{
+  padding:16px;border-radius:16px;
+  background:linear-gradient(180deg,var(--surface),var(--surface-2));
+  border:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;
+}
+.stat-card .ic{
+  width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex:none;
+  color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  box-shadow:0 6px 18px rgba(109,123,255,.3);
+}
+.stat-card.green .ic{background:linear-gradient(135deg,#10d98d,#0891b2);box-shadow:0 6px 18px rgba(16,217,141,.3)}
+.stat-card.purple .ic{background:linear-gradient(135deg,#a46cff,#6d7bff);box-shadow:0 6px 18px rgba(164,108,255,.3)}
+.stat-card.orange .ic{background:linear-gradient(135deg,#ffb020,#ff5d6c);box-shadow:0 6px 18px rgba(255,176,32,.3)}
+.stat-card .lbl{font-size:10.5px;font-weight:800;color:var(--text-dim);letter-spacing:.14em;text-transform:uppercase}
+.stat-card .val{font-size:24px;font-weight:900;letter-spacing:-.03em;line-height:1;margin-top:4px}
+
+/* ========== DROP ZONE ========== */
+.drop{
+  display:block;border:2px dashed var(--border-2);
+  border-radius:16px;padding:32px 20px;text-align:center;
+  cursor:pointer;transition:.2s;background:var(--bg-2);margin-bottom:16px;
+}
+.drop:hover,.drop.hover{border-color:var(--accent);background:rgba(109,123,255,.07);transform:translateY(-1px)}
+.drop .ic{
+  width:58px;height:58px;margin:0 auto 14px;border-radius:16px;display:grid;place-items:center;
+  color:var(--accent);background:rgba(109,123,255,.12);border:1px solid rgba(109,123,255,.25);
+}
+.drop .t{font-size:14px;font-weight:700;margin-bottom:5px}
+.drop .s{font-size:12px;color:var(--text-dim)}
+.drop input{display:none}
+
+.file-pill{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;
+  background:var(--bg-2);border:1px solid var(--border-2);border-radius:14px;margin-bottom:16px;
+}
+.file-pill .fi{
+  width:40px;height:40px;border-radius:11px;display:grid;place-items:center;flex:none;
+  color:var(--success);background:rgba(16,217,141,.12);
+}
+.file-pill .name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file-pill .size{font-size:11px;color:var(--text-dim);font-weight:500;margin-top:2px}
+.file-pill .rm{
+  width:30px;height:30px;border-radius:9px;border:none;background:rgba(255,93,108,.12);
+  color:var(--danger);cursor:pointer;display:grid;place-items:center;transition:.15s;flex:none;
+}
+.file-pill .rm:hover{background:rgba(255,93,108,.24)}
+
+/* ========== FORMS ========== */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--text-dim);margin-bottom:7px}
+.field label .hint{font-weight:500;color:var(--text-dim2);font-size:11px}
+.field input,.field select,.field textarea{
+  width:100%;padding:11px 14px;border-radius:11px;
+  background:var(--bg-2);border:1.5px solid var(--border-2);
+  color:var(--text);font-family:inherit;font-size:14px;outline:none;transition:.15s;
+}
+.field input::placeholder,.field textarea::placeholder{color:var(--text-dim2)}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--accent);box-shadow:0 0 0 3px rgba(109,123,255,.18);
+}
+.field textarea{resize:vertical;min-height:76px;font-size:13px;font-family:inherit}
+.field .counter{font-size:11px;color:var(--text-dim2);text-align:right;margin-top:4px}
+.field .counter.warn{color:var(--warn)}
+.field .counter.danger{color:var(--danger)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* ========== SEARCH & FILTER ========== */
+.search-bar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.search-bar .search-input{
+  flex:1;min-width:200px;position:relative;
+}
+.search-bar .search-input input{
+  width:100%;padding:11px 14px 11px 42px;border-radius:12px;
+  background:var(--bg-2);border:1.5px solid var(--border-2);
+  color:var(--text);font-size:13.5px;outline:none;transition:.15s;
+}
+.search-bar .search-input input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(109,123,255,.18)}
+.search-bar .search-input svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-dim2);pointer-events:none}
+.filter-pills{display:flex;gap:6px;padding:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+.filter-pills button{
+  padding:8px 14px;border-radius:9px;font-size:12px;font-weight:700;color:var(--text-dim);
+  transition:.15s;white-space:nowrap;
+}
+.filter-pills button.active{background:linear-gradient(180deg,var(--surface-3),var(--surface-2));color:var(--text)}
+
+/* ========== GAME LIST ========== */
+.game-list{display:flex;flex-direction:column;gap:10px}
+.game-item{
+  display:flex;gap:14px;align-items:center;padding:14px;
+  background:var(--bg-2);border:1px solid var(--border);border-radius:14px;transition:.15s;
+}
+.game-item:hover{border-color:rgba(109,123,255,.35);background:#0c1120;transform:translateY(-1px)}
+.gi-icon{
+  width:46px;height:46px;border-radius:13px;flex:none;
+  display:grid;place-items:center;color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  box-shadow:0 6px 16px rgba(109,123,255,.35),inset 0 1px 0 rgba(255,255,255,.25);
+}
+.gi-info{flex:1;min-width:0}
+.gi-info h3{font-size:14px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gi-info p{font-size:12px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gi-info .meta{font-size:10.5px;color:var(--text-dim2);margin-top:4px;display:flex;gap:8px;flex-wrap:wrap}
+.gi-info .meta span{display:inline-flex;align-items:center;gap:3px}
+.gi-side{display:flex;flex-direction:column;gap:8px;align-items:flex-end;flex:none}
+.gi-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 9px;border-radius:999px;font-size:11px;font-weight:600;
+}
+.badge.on{background:rgba(16,217,141,.13);color:var(--success)}
+.badge.off{background:rgba(255,93,108,.13);color:var(--danger)}
+
+.empty{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:13px;line-height:1.5}
+.empty .ic{
+  width:56px;height:56px;margin:0 auto 14px;border-radius:16px;display:grid;place-items:center;
+  color:var(--text-dim2);background:var(--bg-2);border:1px solid var(--border);
+}
+.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ========== ICON PICKER ========== */
+.icon-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}
+.icon-btn{
+  aspect-ratio:1;border-radius:11px;display:grid;place-items:center;
+  background:var(--bg-2);border:1.5px solid var(--border-2);color:var(--text-dim);
+  transition:.15s;
+}
+.icon-btn:hover{border-color:var(--accent);color:var(--text);transform:translateY(-2px)}
+.icon-btn.selected{border-color:var(--accent);background:rgba(109,123,255,.16);color:#fff;box-shadow:0 0 0 3px rgba(109,123,255,.15)}
+.icon-btn svg{width:20px;height:20px}
+
+/* ========== MODAL ========== */
+.modal-ov{
+  position:fixed;inset:0;background:rgba(0,0,0,.72);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  display:none;justify-content:center;align-items:center;
+  padding:16px;z-index:100;
+}
+.modal-ov.active{display:flex;animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{
+  background:linear-gradient(180deg,var(--surface),var(--surface-2));
+  border:1px solid var(--border-2);border-radius:22px;
+  padding:24px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;
+  box-shadow:var(--shadow-lg),inset 0 1px 0 rgba(255,255,255,.06);
+  animation:modalIn .3s cubic-bezier(.2,1,.4,1);
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
+.modal.wide{max-width:720px}
+.modal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:12px}
+.modal-hdr h2{font-size:18px;font-weight:800;letter-spacing:-.02em}
+.close-x{
+  width:34px;height:34px;border-radius:10px;border:none;
+  background:var(--surface-3);color:var(--text-dim);cursor:pointer;
+  display:grid;place-items:center;transition:.15s;flex:none;
+}
+.close-x:hover{background:var(--surface-4);color:var(--text)}
+.modal-actions{display:flex;gap:10px;margin-top:18px}
+.modal-actions .btn{flex:1;justify-content:center}
+.preview-frame{
+  width:100%;aspect-ratio:4/3;background:#000;border-radius:14px;border:1px solid var(--border-2);
+  overflow:hidden;
+}
+.preview-frame iframe{width:100%;height:100%;border:none;background:#000}
+
+/* ========== TOAST ========== */
+.toast-wrap{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:24px;
+  display:flex;flex-direction:column;gap:8px;z-index:300;
+  width:calc(100% - 32px);max-width:400px;pointer-events:none;
+}
+.toast{
+  background:linear-gradient(180deg,var(--surface-3),var(--surface-2));
+  border:1px solid var(--border-2);
+  color:var(--text);padding:12px 16px;border-radius:12px;
+  font-size:13px;font-weight:600;box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:10px;
+  animation:tIn .3s cubic-bezier(.2,1.2,.4,1);
+}
+.toast.success{border-color:rgba(16,217,141,.4)}
+.toast.success svg{color:var(--success)}
+.toast.error{border-color:rgba(255,93,108,.4)}
+.toast.error svg{color:var(--danger)}
+@keyframes tIn{from{opacity:0;transform:translateY(12px) scale(.95)}to{opacity:1;transform:none}}
+.toast.out{animation:tOut .25s forwards}
+@keyframes tOut{to{opacity:0;transform:translateY(8px) scale(.96)}}
+
+/* ========== MISC ========== */
+.section-sub{
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;
+  border-bottom:1px solid var(--border);
+}
+.section-sub h3{font-size:13px;font-weight:800;letter-spacing:-.01em;color:var(--text)}
+.section-sub .pill{
+  font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;
+  background:rgba(109,123,255,.14);color:var(--accent);letter-spacing:.08em;text-transform:uppercase;
+}
+.puzzle-item{
+  display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:12px;
+  background:var(--bg-2);border:1px solid var(--border);
+}
+.puzzle-item .fen{
+  font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.puzzle-item .theme{
+  font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;
+}
+.puzzle-item .title{font-size:13px;font-weight:700}
+
+@media (max-width:520px){
+  .row2,.row3{grid-template-columns:1fr}
+  .game-item{flex-wrap:wrap}
+  .gi-side{flex-direction:row;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap}
+  .hdr h1{font-size:19px}
+  .hdr .sub{font-size:11.5px}
+  .icon-grid{grid-template-columns:repeat(6,1fr)}
+  .modal{padding:18px;border-radius:18px}
+  .tabs button{padding:9px 12px;font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
 </head>
 <body>
 
-<div class="admin-container">
-    <div class="header">
-        <h1>🎮 Game Manager</h1>
-        <button class="btn btn-primary" id="btnAddGame">+ Tambah Game</button>
+<!-- ========== AUTH SCREEN ========== -->
+<div class="auth-scr" id="authScr">
+  <div class="auth-card">
+    <div class="auth-logo" id="authLogo"></div>
+    <h1 class="auth-title">Admin Panel</h1>
+    <p class="auth-sub" id="authSub">Masuk dengan akun admin untuk melanjutkan.</p>
+    <div id="authContent"></div>
+  </div>
+</div>
+
+<!-- ========== MAIN UI ========== -->
+<div class="wrap hidden" id="mainUI">
+  <div class="hdr">
+    <div class="brand">
+      <div class="logo" id="brandLogo"></div>
+      <div>
+        <h1>Admin Panel</h1>
+        <div class="sub">Kelola game, banner, dan puzzle</div>
+      </div>
+    </div>
+    <div class="user-chip" id="userChip"></div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button data-tab="overview" class="active"><i data-ic="grid" data-s="16"></i>Overview</button>
+    <button data-tab="games"><i data-ic="gamepad" data-s="16"></i>Games</button>
+    <button data-tab="banner"><i data-ic="eye" data-s="16"></i>Banner</button>
+    <button data-tab="puzzles"><i data-ic="target" data-s="16"></i>Puzzles</button>
+    <button data-tab="backup"><i data-ic="download" data-s="16"></i>Backup</button>
+  </div>
+
+  <!-- ===== OVERVIEW ===== -->
+  <div class="tab-panel active" id="tab-overview">
+    <div class="stats-grid" id="statsGrid"></div>
+    <div class="card">
+      <div class="card-head">
+        <h2><i data-ic="zap" data-s="18"></i> Aksi Cepat</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
+        <button class="btn primary" data-quick="add-game"><i data-ic="plus" data-s="16"></i>Upload Game</button>
+        <button class="btn" data-quick="banner"><i data-ic="edit" data-s="16"></i>Edit Banner</button>
+        <button class="btn" data-quick="add-puzzle"><i data-ic="target" data-s="16"></i>Tambah Puzzle</button>
+        <button class="btn" data-quick="export"><i data-ic="download" data-s="16"></i>Export Data</button>
+      </div>
     </div>
     <div class="card">
-        <h2>Daftar Game</h2>
-        <div class="game-list" id="gameList"></div>
+      <div class="card-head">
+        <h2><i data-ic="list" data-s="18"></i> Game Terbaru</h2>
+        <button class="btn ghost sm" data-tab-jump="games">Lihat semua</button>
+      </div>
+      <div class="game-list" id="recentGames">
+        <div class="empty"><div class="ic"><i data-ic="loader" data-s="24" class="spin"></i></div>Memuat...</div>
+      </div>
     </div>
+  </div>
+
+  <!-- ===== GAMES ===== -->
+  <div class="tab-panel" id="tab-games">
+    <div class="card">
+      <div class="card-head">
+        <h2><i data-ic="gamepad" data-s="18"></i> Daftar Game</h2>
+        <button class="btn primary sm" id="btnAdd"><i data-ic="plus" data-s="14"></i>Upload Baru</button>
+      </div>
+      <div class="search-bar">
+        <div class="search-input">
+          <span data-ic="search" data-s="16"></span>
+          <input type="text" id="searchBox" placeholder="Cari game berdasarkan judul atau deskripsi..." autocomplete="off" />
+        </div>
+        <div class="filter-pills" id="filterPills">
+          <button data-filter="all" class="active">Semua</button>
+          <button data-filter="visible">Tampil</button>
+          <button data-filter="hidden">Sembunyi</button>
+        </div>
+      </div>
+      <div class="game-list" id="gameList">
+        <div class="empty"><div class="ic"><i data-ic="loader" data-s="24" class="spin"></i></div>Memuat...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BANNER ===== -->
+  <div class="tab-panel" id="tab-banner">
+    <div class="card">
+      <div class="card-head">
+        <h2><i data-ic="eye" data-s="18"></i> Banner Info</h2>
+        <span class="badge" id="bannerStatusBadge">-</span>
+      </div>
+      <p style="font-size:12.5px;color:var(--text-dim);margin-bottom:16px;line-height:1.55">
+        Banner ini akan tampil di halaman Home aplikasi utama. Bisa berisi pengumuman, event, atau info penting.
+      </p>
+      <form id="bannerForm">
+        <div class="field">
+          <label for="bTitle">Judul</label>
+          <input type="text" id="bTitle" placeholder="Judul banner" maxlength="80" />
+          <div class="counter" id="bTitleCount">0 / 80</div>
+        </div>
+        <div class="field">
+          <label for="bText">Teks</label>
+          <textarea id="bText" placeholder="Tulis pengumuman atau informasi..." maxlength="400" style="min-height:100px"></textarea>
+          <div class="counter" id="bTextCount">0 / 400</div>
+        </div>
+        <div class="field">
+          <label for="bImage">URL Gambar <span class="hint">(opsional)</span></label>
+          <input type="url" id="bImage" placeholder="https://..." />
+        </div>
+        <div class="field">
+          <label>Tampilkan Banner</label>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="switch" id="bVisible" role="switch" tabindex="0" aria-checked="false"></div>
+            <span style="font-size:12.5px;color:var(--text-dim)" id="bVisibleLabel">Disembunyikan</span>
+          </div>
+        </div>
+        <button type="submit" class="btn primary block" id="btnSaveBanner">
+          <i data-ic="check" data-s="16"></i> Simpan Banner
+        </button>
+      </form>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2><i data-ic="eye" data-s="18"></i> Preview</h2></div>
+      <div id="bannerPreview" style="border-radius:16px;overflow:hidden;background:linear-gradient(135deg,rgba(109,123,255,.2),rgba(164,108,255,.16)),linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid rgba(109,123,255,.32);padding:0">
+        <div style="padding:16px;color:var(--text-dim);font-size:13px;text-align:center">Banner kosong</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PUZZLES ===== -->
+  <div class="tab-panel" id="tab-puzzles">
+    <div class="card">
+      <div class="card-head">
+        <h2><i data-ic="target" data-s="18"></i> Puzzle Taktik</h2>
+        <button class="btn primary sm" id="btnAddPuzzle"><i data-ic="plus" data-s="14"></i>Tambah</button>
+      </div>
+      <p style="font-size:12.5px;color:var(--text-dim);margin-bottom:14px;line-height:1.55">
+        Puzzle disimpan di <code style="background:var(--bg-2);padding:2px 6px;border-radius:5px;font-size:11px">/puzzles</code>.
+        Format solusi: UCI (contoh: <code style="background:var(--bg-2);padding:2px 6px;border-radius:5px;font-size:11px">e2e4</code>).
+      </p>
+      <div id="puzzleList">
+        <div class="empty"><div class="ic"><i data-ic="loader" data-s="24" class="spin"></i></div>Memuat...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BACKUP ===== -->
+  <div class="tab-panel" id="tab-backup">
+    <div class="card">
+      <div class="card-head"><h2><i data-ic="download" data-s="18"></i> Export Data</h2></div>
+      <p style="font-size:12.5px;color:var(--text-dim);margin-bottom:16px;line-height:1.55">
+        Unduh semua data (games_config, games_html, banner/info, puzzles) sebagai file JSON.
+      </p>
+      <button class="btn primary block" id="btnExport"><i data-ic="download" data-s="16"></i> Export JSON</button>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2><i data-ic="upload" data-s="18"></i> Import Data</h2></div>
+      <p style="font-size:12.5px;color:var(--text-dim);margin-bottom:16px;line-height:1.55">
+        Restore dari file JSON hasil export. Data dengan ID sama akan <b style="color:var(--danger)">ditimpa</b>.
+      </p>
+      <label class="drop" id="importDrop">
+        <input type="file" id="importFile" accept=".json,application/json" />
+        <div class="ic"><i data-ic="upload" data-s="26"></i></div>
+        <div class="t">Klik atau drop file JSON di sini</div>
+        <div class="s">File hasil export dari panel ini</div>
+      </label>
+    </div>
+  </div>
 </div>
 
-<!-- Modal Form -->
-<div class="modal-overlay" id="gameModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 id="modalTitle">Tambah Game Baru</h2>
-            <button class="close-btn" id="btnCloseModal">&times;</button>
-        </div>
-        <form id="gameForm">
-            <input type="hidden" id="gameId">
-            <div class="form-group">
-                <label for="gameTitle">Judul Game</label>
-                <input type="text" id="gameTitle" required placeholder="Contoh: Tic-Tac-Toe">
-            </div>
-            <div class="form-group">
-                <label for="gameDesc">Deskripsi</label>
-                <textarea id="gameDesc" placeholder="Deskripsi singkat..."></textarea>
-            </div>
-            <div class="form-group">
-                <label for="gameIcon">Ikon (Nama dari ICONS)</label>
-                <input type="text" id="gameIcon" placeholder="Contoh: grid3, dino, target">
-            </div>
-            <div class="form-group">
-                <label for="gameIconClass">Icon Class (warna)</label>
-                <input type="text" id="gameIconClass" placeholder="Contoh: tictactoe, trex">
-            </div>
-            <div class="form-group">
-                <label for="gameModeClass">Mode Class (background card)</label>
-                <input type="text" id="gameModeClass" placeholder="Contoh: tictactoe, trex">
-            </div>
-            <div class="form-group">
-                <label for="gameAction">Action (Fungsi JS)</label>
-                <select id="gameAction">
-                    <option value="ttt">openTttDialog</option>
-                    <option value="trex">openTrex</option>
-                    <option value="ranked">openRankedDialog</option>
-                    <option value="casual">openClassicDialog</option>
-                    <option value="ai">openAiDialog</option>
-                    <option value="local">openLocalDialog</option>
-                    <option value="puzzle">startPuzzle</option>
-                    <option value="url">Buka URL Eksternal</option>
-                </select>
-            </div>
-            <div class="form-group hidden" id="urlGroup">
-                <label for="gameUrl">URL Game</label>
-                <input type="text" id="gameUrl" placeholder="https://contoh.com/game">
-            </div>
-            <div class="form-group">
-                <label for="gameOrder">Urutan</label>
-                <input type="number" id="gameOrder" value="0">
-            </div>
-            <div class="form-group">
-                <label for="gameVisible">Tampilkan</label>
-                <select id="gameVisible">
-                    <option value="true">Ya</option>
-                    <option value="false">Tidak</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width:100%;">Simpan Game</button>
-        </form>
-    </div>
+<!-- ========== MODAL (generic) ========== -->
+<div class="modal-ov" id="modal">
+  <div class="modal" id="modalBox"></div>
 </div>
+
+<!-- ========== GAME EDIT MODAL (hidden template) ========== -->
+<div class="modal-ov" id="gameModal">
+  <div class="modal" id="gameModalBox">
+    <div class="modal-hdr">
+      <h2 id="gameModalTitle">Upload Game Baru</h2>
+      <button class="close-x" id="btnCloseGameModal" type="button" aria-label="Tutup"><i data-ic="x" data-s="18"></i></button>
+    </div>
+    <form id="gameForm">
+      <input type="hidden" id="f_id" />
+
+      <div id="uploadSection">
+        <label class="drop" id="drop">
+          <input type="file" id="f_file" accept=".html,.htm,text/html" />
+          <div class="ic"><i data-ic="upload" data-s="26"></i></div>
+          <div class="t">Klik atau tarik file HTML ke sini</div>
+          <div class="s">Maks ~900KB · Tersimpan di Firebase RTDB</div>
+        </label>
+        <div id="filePill" class="file-pill" style="display:none">
+          <div class="fi"><i data-ic="file" data-s="20"></i></div>
+          <div style="flex:1;min-width:0">
+            <div class="name" id="fileName">-</div>
+            <div class="size" id="fileSize">-</div>
+          </div>
+          <button type="button" class="rm" id="btnRemoveFile" title="Hapus"><i data-ic="x" data-s="16"></i></button>
+        </div>
+      </div>
+
+      <div id="replaceSection" style="display:none">
+        <div class="file-pill">
+          <div class="fi"><i data-ic="file" data-s="20"></i></div>
+          <div style="flex:1;min-width:0">
+            <div class="name">File HTML tersimpan</div>
+            <div class="size" id="existingSize">-</div>
+          </div>
+          <button type="button" class="btn ghost sm" id="btnReplaceFile"><i data-ic="refresh" data-s="14"></i>Ganti</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f_title">Judul Game</label>
+        <input type="text" id="f_title" required placeholder="Judul yang tampil di menu" maxlength="60" />
+      </div>
+
+      <div class="field">
+        <label for="f_desc">Deskripsi</label>
+        <textarea id="f_desc" placeholder="Deskripsi singkat game..." maxlength="160"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Icon Game</label>
+        <div class="icon-grid" id="iconPicker"></div>
+      </div>
+
+      <div class="field">
+        <label for="f_modeClass">Warna/Mode Kelas</label>
+        <select id="f_modeClass">
+          <option value="tictactoe">Biru-Cyan (TicTacToe)</option>
+          <option value="ranked">Merah-Oranye (Ranked)</option>
+          <option value="casual">Cyan-Biru (Casual)</option>
+          <option value="friend">Hijau-Cyan (Friend)</option>
+          <option value="ai">Ungu-Biru (AI)</option>
+          <option value="local">Oranye-Merah (Local)</option>
+          <option value="puzzle">Biru-Ungu (Puzzle)</option>
+          <option value="trex">Oranye-Merah (T-Rex)</option>
+        </select>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label for="f_order">Urutan</label>
+          <input type="number" id="f_order" value="0" min="0" max="999" />
+        </div>
+        <div class="field">
+          <label for="f_visible">Status</label>
+          <select id="f_visible">
+            <option value="true">Tampil</option>
+            <option value="false">Sembunyikan</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="btn primary block" id="btnSave" style="margin-top:8px">
+        <i data-ic="check" data-s="16"></i> <span>Simpan Game</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ========== PUZZLE MODAL ========== -->
+<div class="modal-ov" id="puzzleModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h2 id="puzzleModalTitle">Tambah Puzzle</h2>
+      <button class="close-x" id="btnClosePuzzleModal" type="button" aria-label="Tutup"><i data-ic="x" data-s="18"></i></button>
+    </div>
+    <form id="puzzleForm">
+      <input type="hidden" id="p_id" />
+      <div class="field">
+        <label for="p_theme">Tema</label>
+        <input type="text" id="p_theme" required placeholder="Contoh: Back Rank Mate" maxlength="40" />
+      </div>
+      <div class="field">
+        <label for="p_fen">FEN Position</label>
+        <input type="text" id="p_fen" required placeholder="rnbqkbnr/... w KQkq - 0 1" style="font-family:'JetBrains Mono',monospace;font-size:12px" />
+      </div>
+      <div class="field">
+        <label for="p_solution">Solusi (UCI, pisah koma)</label>
+        <input type="text" id="p_solution" required placeholder="e2e4, d7d5" style="font-family:'JetBrains Mono',monospace;font-size:12px" />
+      </div>
+      <div class="field">
+        <label for="p_hint">Hint</label>
+        <input type="text" id="p_hint" placeholder="Petunjuk singkat" maxlength="120" />
+      </div>
+      <div class="field">
+        <label for="p_rating">Rating</label>
+        <input type="number" id="p_rating" value="1000" min="400" max="3000" />
+      </div>
+      <button type="submit" class="btn primary block" id="btnSavePuzzle">
+        <i data-ic="check" data-s="16"></i> <span>Simpan Puzzle</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
 
 <script type="module">
-    // --- Salin Inisialisasi Firebase dari HTML utama Anda ---
-    const firebaseConfig = {
-        apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
-        authDomain: "mygame-68b24.firebaseapp.com",
-        databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
-        projectId: "mygame-68b24",
-        storageBucket: "mygame-68b24.firebasestorage.app",
-        messagingSenderId: "1003182873390",
-        appId: "1:1003182873390:web:aabf3248f759cbc9d678bf"
-    };
+/* =========================================================
+   ADMIN PANEL V2 — dengan auth, tabs, dan CRUD lengkap
+   ========================================================= */
 
-    let db;
-    let currentGames = {};
+const firebaseConfig = {
+  apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
+  authDomain: "mygame-68b24.firebaseapp.com",
+  databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
+  projectId: "mygame-68b24",
+  storageBucket: "mygame-68b24.firebasestorage.app",
+  messagingSenderId: "1003182873390",
+  appId: "1:1003182873390:web:aabf3248f759cbc9d678bf"
+};
 
-    // Inisialisasi Firebase
-    async function initAdmin() {
-        try {
-            const appMod = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
-            const dbMod = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js');
-            const app = appMod.initializeApp(firebaseConfig);
-            db = dbMod.getDatabase(app);
-            window.FB = { api: { ref: dbMod.ref, set: dbMod.set, get: dbMod.get, remove: dbMod.remove, update: dbMod.update } };
-            window.FB.db = db;
-            loadGames();
-        } catch (e) {
-            console.error("Firebase init error:", e);
-            document.getElementById('gameList').innerHTML = '<p style="color:red;">Gagal terhubung ke database.</p>';
-        }
+// ==== Admin whitelist fallback (email yang selalu boleh akses) ====
+// Kamu bisa menambah email owner di sini, atau set `isAdmin: true` di /users/{uid}
+const ADMIN_EMAILS = [];
+
+/* =========================================================
+   ICONS
+   ========================================================= */
+const ICONS = {
+  gamepad:'<line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="4"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  loader:'<path d="M21 12a9 9 0 1 1-6.2-8.55"/>',
+  upload:'<path d="M12 16V4M7 9l5-5 5 5"/><path d="M20 16v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3"/>',
+  download:'<path d="M12 4v12M7 11l5 5 5-5M4 20h16"/>',
+  file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>',
+  inbox:'<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+  edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  trash:'<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  eyeoff:'<path d="M17.94 17.94A10.4 10.4 0 0 1 12 19c-6.5 0-10-7-10-7a18 18 0 0 1 5.06-5.94M9.9 4.24A9.1 9.1 0 0 1 12 4c6.5 0 10 7 10 7a18 18 0 0 1-2.16 3.19M1 1l22 22"/>',
+  grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>',
+  play:'<path d="M6 4l14 8-14 8z"/>',
+  dino:'<path d="M4 20V10l4-4h6l4 4v4h-4v6M8 10h.01M10 20v-4"/>',
+  chess:'<path d="M9 3h6M12 3v3M8 21h8M9 21c0-4 1-6 3-8-2-1-3-3-3-5h6c0 2-1 4-3 5 2 2 3 4 3 8"/>',
+  target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  zap:'<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>',
+  cpu:'<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/>',
+  swords:'<path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2M14.5 6.5 18 3h3v3l-3.5 3.5M5 14l4 4M7 17l-3 3M3 19l2 2"/>',
+  users:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  check:'<circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/>',
+  alert:'<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-3.8-3.8"/>',
+  refresh:'<path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/>',
+  copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/>',
+  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+  bar:'<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>'
+};
+const ic = (n, s=18) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]||ICONS.gamepad}</svg>`;
+function paintIcons(root=document){
+  root.querySelectorAll('[data-ic]').forEach(el => { el.innerHTML = ic(el.dataset.ic, +el.dataset.s || 18); });
+}
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s==null?'':s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+function toast(msg, type){
+  const wrap = $('#toastWrap');
+  const t = document.createElement('div');
+  t.className = 'toast' + (type ? ' '+type : '');
+  t.innerHTML = (type ? ic(type==='error'?'alert':'check', 18) : '') + '<span></span>';
+  t.querySelector('span').textContent = msg;
+  wrap.appendChild(t);
+  setTimeout(()=>{ 
+    t.classList.add('out');
+    setTimeout(()=>t.remove(), 260);
+  }, 2800);
+}
+
+function formatBytes(b){
+  if(!b) return '0 B';
+  if(b < 1024) return b + ' B';
+  if(b < 1024*1024) return (b/1024).toFixed(1) + ' KB';
+  return (b/1024/1024).toFixed(2) + ' MB';
+}
+function slugify(s){
+  return String(s||'game').toLowerCase()
+    .replace(/[^a-z0-9]+/g,'_')
+    .replace(/^_+|_+$/g,'').slice(0,28) || 'game';
+}
+function generateId(title){
+  return slugify(title) + '_' + Math.random().toString(36).slice(2,7);
+}
+function extractTitle(html){
+  const m = html.match(/<title[^>]*>([^<]*)<\/title>/i);
+  return m ? m[1].trim() : '';
+}
+function escapeId(s){ return String(s||'').replace(/[^a-z0-9_\-]/gi,''); }
+
+/* =========================================================
+   STATE
+   ========================================================= */
+let db, api, auth, authApi;
+let currentUser = null;
+let allGames = {};
+let allPuzzles = {};
+let bannerData = {};
+let pendingFile = null;
+let currentGameId = null;
+let currentIconName = 'grid';
+let currentFilter = 'all';
+let currentSearch = '';
+let currentBannerVisible = false;
+
+/* =========================================================
+   FIREBASE INIT
+   ========================================================= */
+async function initFirebase(){
+  const [appMod, dbMod, authMod] = await Promise.all([
+    import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js'),
+    import('https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js'),
+    import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js')
+  ]);
+  const app = appMod.initializeApp(firebaseConfig);
+  db = dbMod.getDatabase(app);
+  auth = authMod.getAuth(app);
+  api = {
+    ref: dbMod.ref, set: dbMod.set, get: dbMod.get,
+    remove: dbMod.remove, update: dbMod.update
+  };
+  authApi = {
+    GoogleAuthProvider: authMod.GoogleAuthProvider,
+    signInWithPopup: authMod.signInWithPopup,
+    signInWithRedirect: authMod.signInWithRedirect,
+    getRedirectResult: authMod.getRedirectResult,
+    signOut: authMod.signOut,
+    onAuthStateChanged: authMod.onAuthStateChanged
+  };
+}
+
+/* =========================================================
+   AUTH CHECK
+   ========================================================= */
+async function isAdmin(uid, email){
+  if(email && ADMIN_EMAILS.includes(email.toLowerCase())) return true;
+  try{
+    const snap = await api.get(api.ref(db, 'users/' + uid + '/isAdmin'));
+    return snap.exists() && snap.val() === true;
+  }catch(e){ console.error('isAdmin check:', e); return false; }
+}
+
+function renderAuthScreen(state = 'login', message){
+  const content = $('#authContent');
+  const sub = $('#authSub');
+  if(state === 'login'){
+    sub.textContent = 'Masuk dengan akun admin untuk melanjutkan.';
+    content.innerHTML = `
+      <button class="btn google" id="btnLogin">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        <span>Masuk dengan Google</span>
+      </button>
+      <div id="loginErr" style="color:var(--danger);font-size:12.5px;margin-top:14px;text-align:center;font-weight:600;min-height:18px"></div>`;
+    $('#btnLogin').addEventListener('click', doGoogleLogin);
+  } else if(state === 'denied'){
+    sub.textContent = message || 'Akun ini bukan admin.';
+    content.innerHTML = `
+      <div style="padding:16px;border-radius:14px;background:rgba(255,93,108,.1);border:1px solid rgba(255,93,108,.28);color:var(--danger);font-size:13px;line-height:1.55;text-align:left">
+        <b>${esc(message||'Akses ditolak')}</b>
+        <div style="margin-top:6px;color:var(--text-dim);font-size:12px">
+          Login dengan email admin, atau minta owner untuk mengatur <code>isAdmin: true</code> di akun Anda.
+        </div>
+      </div>
+      <button class="btn ghost block" id="btnLogoutDenied" style="margin-top:14px">
+        <i data-ic="logout" data-s="16"></i> Keluar
+      </button>`;
+    paintIcons(content);
+    $('#btnLogoutDenied').addEventListener('click', doLogout);
+  } else if(state === 'loading'){
+    sub.textContent = 'Memeriksa akses...';
+    content.innerHTML = `<div style="padding:20px;text-align:center"><div style="display:inline-block" data-ic="loader" data-s="32" class="spin"></div></div>`;
+    paintIcons(content);
+  }
+}
+
+async function doGoogleLogin(){
+  const errBox = $('#loginErr');
+  if(errBox) errBox.textContent = '';
+  const btn = $('#btnLogin');
+  if(btn) btn.disabled = true;
+  try{
+    const provider = new authApi.GoogleAuthProvider();
+    provider.setCustomParameters({prompt: 'select_account'});
+    await authApi.signInWithPopup(auth, provider);
+  }catch(e){
+    console.error('login error:', e);
+    const code = (e && e.code) || '';
+    if(code.includes('popup-blocked')){
+      try{ await authApi.signInWithRedirect(auth, provider); return; }
+      catch(e2){ if(errBox) errBox.textContent = 'Popup diblokir. Izinkan popup lalu coba lagi.'; }
+    } else if(code.includes('cancelled')){}
+    else if(code.includes('unauthorized-domain')){
+      if(errBox) errBox.textContent = 'Domain belum terdaftar di Firebase Authorized Domains.';
+    } else {
+      if(errBox) errBox.textContent = 'Login gagal: ' + (e.message || 'unknown');
     }
+  } finally {
+    if(btn) btn.disabled = false;
+  }
+}
 
-    // --- Fungsi CRUD ---
-    async function loadGames() {
-        const listEl = document.getElementById('gameList');
-        listEl.innerHTML = '<p>Memuat...</p>';
-        try {
-            const snap = await FB.api.get(FB.api.ref(db, 'games_config'));
-            if (snap.exists()) {
-                currentGames = snap.val();
-                renderGameList();
-            } else {
-                listEl.innerHTML = '<p>Belum ada game yang ditambahkan.</p>';
-            }
-        } catch (e) {
-            console.error("Load error:", e);
-            listEl.innerHTML = '<p style="color:red;">Gagal memuat data.</p>';
-        }
-    }
+async function doLogout(){
+  try{ await authApi.signOut(auth); }catch(e){ console.error(e); }
+}
 
-    function renderGameList() {
-        const listEl = document.getElementById('gameList');
-        listEl.innerHTML = '';
-        const games = Object.keys(currentGames).map(id => ({ id, ...currentGames[id] }))
-            .sort((a, b) => (a.order || 0) - (b.order || 0));
+/* =========================================================
+   HEADER USER CHIP
+   ========================================================= */
+function renderUserChip(user){
+  const chip = $('#userChip');
+  if(!chip) return;
+  const name = user.displayName || user.email || 'Admin';
+  const initial = name.charAt(0).toUpperCase();
+  const photo = user.photoURL;
+  chip.innerHTML = `
+    ${photo ? `<img src="${esc(photo)}" alt="" />` : `<div class="fallback">${esc(initial)}</div>`}
+    <div style="min-width:0">
+      <div class="name">${esc(name.split('@')[0])}</div>
+      <div class="role">Admin</div>
+    </div>
+    <button class="logout" id="btnLogout" title="Keluar"><i data-ic="logout" data-s="16"></i></button>`;
+  paintIcons(chip);
+  $('#btnLogout').addEventListener('click', doLogout);
+}
 
-        games.forEach(game => {
-            const item = document.createElement('div');
-            item.className = 'game-item';
-            item.innerHTML = `
-                <div class="game-info">
-                    <h3>${game.title}</h3>
-                    <p>${game.description || 'Tidak ada deskripsi'} | Action: ${game.action}</p>
-                </div>
-                <div class="game-actions">
-                    <button class="btn btn-ghost edit-btn" data-id="${game.id}">Edit</button>
-                    <button class="btn btn-danger delete-btn" data-id="${game.id}">Hapus</button>
-                </div>
-            `;
-            listEl.appendChild(item);
-        });
+/* =========================================================
+   TABS
+   ========================================================= */
+function wireTabs(){
+  $$('#tabs button').forEach(b => {
+    b.addEventListener('click', () => switchTab(b.dataset.tab));
+  });
+  document.addEventListener('click', e => {
+    const jump = e.target.closest('[data-tab-jump]');
+    if(jump) switchTab(jump.dataset.tabJump);
+  });
+}
+function switchTab(name){
+  $$('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  $$('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
 
-        // Tambahkan event listener untuk tombol edit & hapus
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => openEditModal(e.target.dataset.id));
-        });
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => deleteGame(e.target.dataset.id));
-        });
-    }
+/* =========================================================
+   MODAL MANAGER
+   ========================================================= */
+const Modal = (() => {
+  let active = null;
+  function open(id){
+    const ov = $('#' + id);
+    if(!ov) return;
+    ov.classList.add('active');
+    active = id;
+    // focus first input
+    setTimeout(() => {
+      const first = ov.querySelector('input:not([type=hidden]),textarea,select,button');
+      if(first && !first.disabled) first.focus();
+    }, 120);
+  }
+  function close(id){
+    const ov = $('#' + (id || active));
+    if(!ov) return;
+    ov.classList.remove('active');
+    if(active === (id || active)) active = null;
+  }
+  function isOpen(){ return !!active; }
+  function current(){ return active; }
+  return { open, close, isOpen, current };
+})();
 
-    async function saveGame(e) {
-        e.preventDefault();
-        const id = document.getElementById('gameId').value || document.getElementById('gameTitle').value.toLowerCase().replace(/\s+/g, '_');
-        const gameData = {
-            title: document.getElementById('gameTitle').value,
-            description: document.getElementById('gameDesc').value,
-            icon: document.getElementById('gameIcon').value,
-            iconClass: document.getElementById('gameIconClass').value,
-            modeClass: document.getElementById('gameModeClass').value,
-            action: document.getElementById('gameAction').value,
-            url: document.getElementById('gameUrl').value, // untuk aksi 'url'
-            order: parseInt(document.getElementById('gameOrder').value) || 0,
-            visible: document.getElementById('gameVisible').value === 'true'
-        };
+// Escape to close modal
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){
+    if(Modal.isOpen()) { Modal.close(); return; }
+    if($('#gameModal').classList.contains('active')) $('#btnCloseGameModal').click();
+    if($('#puzzleModal').classList.contains('active')) $('#btnClosePuzzleModal').click();
+  }
+});
 
-        try {
-            await FB.api.set(FB.api.ref(db, 'games_config/' + id), gameData);
-            closeModal();
-            loadGames(); // Refresh list
-        } catch (e) {
-            console.error("Save error:", e);
-            alert("Gagal menyimpan game.");
-        }
-    }
+/* Custom confirm — pengganti confirm() native */
+function confirmDialog(title, message, okLabel = 'Ya', danger = true){
+  return new Promise(resolve => {
+    const box = $('#modalBox');
+    box.classList.remove('wide');
+    box.innerHTML = `
+      <div class="modal-hdr">
+        <h2>${esc(title)}</h2>
+        <button class="close-x" data-act="close"><i data-ic="x" data-s="18"></i></button>
+      </div>
+      <p style="font-size:13px;color:var(--text-dim);line-height:1.6;margin-bottom:4px">${esc(message)}</p>
+      <div class="modal-actions">
+        <button class="btn ghost" data-act="cancel">Batal</button>
+        <button class="btn ${danger?'danger':'primary'}" data-act="ok">${esc(okLabel)}</button>
+      </div>`;
+    paintIcons(box);
+    Modal.open('modal');
+    const finish = v => { Modal.close('modal'); resolve(v); };
+    box.querySelector('[data-act=close]').onclick = () => finish(false);
+    box.querySelector('[data-act=cancel]').onclick = () => finish(false);
+    box.querySelector('[data-act=ok]').onclick = () => finish(true);
+  });
+}
 
-    async function deleteGame(id) {
-        if (!confirm('Yakin ingin menghapus game ini?')) return;
-        try {
-            await FB.api.remove(FB.api.ref(db, 'games_config/' + id));
-            loadGames(); // Refresh list
-        } catch (e) {
-            console.error("Delete error:", e);
-            alert("Gagal menghapus game.");
-        }
-    }
+/* =========================================================
+   STATS OVERVIEW
+   ========================================================= */
+function renderStats(){
+  const gameIds = Object.keys(allGames);
+  const visible = gameIds.filter(id => allGames[id].visible !== false).length;
+  const hidden = gameIds.length - visible;
+  const puzzleCount = Object.keys(allPuzzles).length;
+  const bannerActive = bannerData.visible !== false && (bannerData.text || bannerData.image);
 
-    // --- Fungsi UI Modal ---
-    function openAddModal() {
-        document.getElementById('modalTitle').textContent = 'Tambah Game Baru';
-        document.getElementById('gameForm').reset();
-        document.getElementById('gameId').value = '';
-        document.getElementById('gameModal').classList.add('active');
-        toggleUrlField();
-    }
+  const grid = $('#statsGrid');
+  grid.innerHTML = `
+    <div class="stat-card">
+      <div class="ic">${ic('gamepad',22)}</div>
+      <div><div class="lbl">Total Games</div><div class="val">${gameIds.length}</div></div>
+    </div>
+    <div class="stat-card green">
+      <div class="ic">${ic('eye',22)}</div>
+      <div><div class="lbl">Tampil</div><div class="val">${visible}</div></div>
+    </div>
+    <div class="stat-card orange">
+      <div class="ic">${ic('eyeoff',22)}</div>
+      <div><div class="lbl">Sembunyi</div><div class="val">${hidden}</div></div>
+    </div>
+    <div class="stat-card purple">
+      <div class="ic">${ic('target',22)}</div>
+      <div><div class="lbl">Puzzles</div><div class="val">${puzzleCount}</div></div>
+    </div>
+    <div class="stat-card ${bannerActive?'green':'orange'}">
+      <div class="ic">${ic('info',22)}</div>
+      <div><div class="lbl">Banner</div><div class="val" style="font-size:15px">${bannerActive?'Aktif':'Off'}</div></div>
+    </div>`;
+}
 
-    function openEditModal(id) {
-        const game = currentGames[id];
-        if (!game) return;
-        document.getElementById('modalTitle').textContent = 'Edit Game';
-        document.getElementById('gameId').value = id;
-        document.getElementById('gameTitle').value = game.title || '';
-        document.getElementById('gameDesc').value = game.description || '';
-        document.getElementById('gameIcon').value = game.icon || '';
-        document.getElementById('gameIconClass').value = game.iconClass || '';
-        document.getElementById('gameModeClass').value = game.modeClass || '';
-        document.getElementById('gameAction').value = game.action || 'ttt';
-        document.getElementById('gameUrl').value = game.url || '';
-        document.getElementById('gameOrder').value = game.order || 0;
-        document.getElementById('gameVisible').value = game.visible !== false ? 'true' : 'false';
-        document.getElementById('gameModal').classList.add('active');
-        toggleUrlField();
-    }
+function renderRecentGames(){
+  const box = $('#recentGames');
+  const list = Object.keys(allGames)
+    .map(id => ({id, ...allGames[id]}))
+    .sort((a,b) => (b.createdAt||0) - (a.createdAt||0))
+    .slice(0, 4);
+  if(!list.length){
+    box.innerHTML = `<div class="empty"><div class="ic">${ic('inbox',26)}</div>Belum ada game.</div>`;
+    return;
+  }
+  box.innerHTML = '';
+  list.forEach(g => box.appendChild(buildGameItem(g)));
+}
 
-    function closeModal() {
-        document.getElementById('gameModal').classList.remove('active');
-    }
-
-    function toggleUrlField() {
-        const action = document.getElementById('gameAction').value;
-        const urlGroup = document.getElementById('urlGroup');
-        urlGroup.classList.toggle('hidden', action !== 'url');
-    }
-
-    // --- Event Listeners ---
-    document.getElementById('btnAddGame').addEventListener('click', openAddModal);
-    document.getElementById('btnCloseModal').addEventListener('click', closeModal);
-    document.getElementById('gameForm').addEventListener('submit', saveGame);
-    document.getElementById('gameAction').addEventListener('change', toggleUrlField);
-    document.getElementById('gameModal').addEventListener('click', (e) => {
-        if (e.target === document.getElementById('gameModal')) closeModal();
+/* =========================================================
+   GAME LIST
+   ========================================================= */
+function buildGameItem(g){
+  const item = document.createElement('div');
+  item.className = 'game-item';
+  const iconName = g.icon || 'gamepad';
+  const vis = g.visible !== false;
+  const sizeStr = g.size ? formatBytes(g.size) : '—';
+  const createdStr = g.createdAt ? new Date(g.createdAt).toLocaleDateString('id-ID') : '—';
+  const safeId = escapeId(g.id);
+  item.innerHTML = `
+    <div class="gi-icon">${ic(ICONS[iconName] ? iconName : 'gamepad', 22)}</div>
+    <div class="gi-info">
+      <h3>${esc(g.title || 'Tanpa Judul')}</h3>
+      <p>${esc(g.description || 'Tidak ada deskripsi')}</p>
+      <div class="meta">
+        <span>${ic('file',11)} ${sizeStr}</span>
+        <span>${ic('info',11)} ${createdStr}</span>
+        <span>#${g.order || 0}</span>
+      </div>
+    </div>
+    <div class="gi-side">
+      <span class="badge ${vis?'on':'off'}">${ic(vis?'eye':'eyeoff',13)}${vis?'Tampil':'Sembunyi'}</span>
+      <div class="gi-actions">
+        <button class="btn ghost sm" data-act="preview" data-id="${safeId}">${ic('eye',14)}Preview</button>
+        <button class="btn ghost sm" data-act="edit" data-id="${safeId}">${ic('edit',14)}Edit</button>
+        <button class="btn ghost sm" data-act="dup" data-id="${safeId}">${ic('copy',14)}</button>
+        <button class="btn danger sm" data-act="del" data-id="${safeId}">${ic('trash',14)}</button>
+      </div>
+    </div>`;
+  item.querySelectorAll('[data-act]').forEach(b => {
+    b.addEventListener('click', () => {
+      const id = b.dataset.id;
+      if(b.dataset.act === 'edit') openEdit(id);
+      else if(b.dataset.act === 'del') deleteGame(id);
+      else if(b.dataset.act === 'dup') duplicateGame(id);
+      else if(b.dataset.act === 'preview') previewGame(id);
     });
+  });
+  return item;
+}
 
-    // Mulai
-    initAdmin();
+function renderGameList(){
+  const box = $('#gameList');
+  const ids = Object.keys(allGames);
+  if(!ids.length){
+    box.innerHTML = `<div class="empty"><div class="ic">${ic('inbox',26)}</div>Belum ada game. Klik "Upload Baru" untuk mulai.</div>`;
+    return;
+  }
+  let list = ids.map(id => ({id, ...allGames[id]}));
+  // filter
+  if(currentFilter === 'visible') list = list.filter(g => g.visible !== false);
+  else if(currentFilter === 'hidden') list = list.filter(g => g.visible === false);
+  // search
+  if(currentSearch){
+    const q = currentSearch.toLowerCase();
+    list = list.filter(g => 
+      (g.title||'').toLowerCase().includes(q) || 
+      (g.description||'').toLowerCase().includes(q)
+    );
+  }
+  // sort
+  list.sort((a,b) => (a.order||0) - (b.order||0) || (a.title||'').localeCompare(b.title||''));
+
+  if(!list.length){
+    box.innerHTML = `<div class="empty"><div class="ic">${ic('search',26)}</div>Tidak ada hasil untuk filter/pencarian ini.</div>`;
+    return;
+  }
+  box.innerHTML = '';
+  list.forEach(g => box.appendChild(buildGameItem(g)));
+}
+
+async function loadGames(){
+  try{
+    const snap = await api.get(api.ref(db, 'games_config'));
+    allGames = snap.exists() ? (snap.val() || {}) : {};
+    renderGameList();
+    renderRecentGames();
+    renderStats();
+  }catch(e){
+    console.error('loadGames error:', e);
+    $('#gameList').innerHTML = `<div class="empty" style="color:var(--danger)">Gagal memuat data. Periksa koneksi & Firebase Rules.</div>`;
+  }
+}
+
+/* =========================================================
+   GAME MODAL — UPLOAD/EDIT
+   ========================================================= */
+const ICON_OPTIONS = ['grid','play','dino','chess','target','zap','cpu','swords','users','gamepad','file','eye','info','bar'];
+
+function buildIconPicker(selected){
+  const box = $('#iconPicker');
+  box.innerHTML = '';
+  ICON_OPTIONS.forEach(name => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'icon-btn' + (name === selected ? ' selected' : '');
+    b.dataset.icon = name;
+    b.innerHTML = ic(name, 20);
+    b.addEventListener('click', () => {
+      box.querySelectorAll('.icon-btn').forEach(x => x.classList.remove('selected'));
+      b.classList.add('selected');
+      currentIconName = name;
+    });
+    box.appendChild(b);
+  });
+  currentIconName = selected || 'grid';
+}
+
+function resetGameForm(){
+  $('#gameForm').reset();
+  $('#f_id').value = '';
+  pendingFile = null;
+  currentGameId = null;
+  currentIconName = 'grid';
+  $('#filePill').style.display = 'none';
+  $('#drop').style.display = '';
+  $('#uploadSection').style.display = '';
+  $('#replaceSection').style.display = 'none';
+  $('#gameModalTitle').textContent = 'Upload Game Baru';
+  $('#btnSave').querySelector('span').textContent = 'Simpan Game';
+  buildIconPicker('grid');
+}
+
+function openAdd(){
+  resetGameForm();
+  Modal.open('gameModal');
+}
+
+function openEdit(id){
+  const g = allGames[id];
+  if(!g) return;
+  resetGameForm();
+  currentGameId = id;
+  $('#gameModalTitle').textContent = 'Edit Game';
+  $('#btnSave').querySelector('span').textContent = 'Perbarui';
+  $('#f_id').value = id;
+  $('#f_title').value = g.title || '';
+  $('#f_desc').value = g.description || '';
+  $('#f_order').value = g.order || 0;
+  $('#f_visible').value = g.visible !== false ? 'true' : 'false';
+  $('#f_modeClass').value = g.modeClass || 'tictactoe';
+  // Sembunyikan upload, tampilkan replace
+  $('#uploadSection').style.display = 'none';
+  $('#replaceSection').style.display = '';
+  $('#existingSize').textContent = g.size ? formatBytes(g.size) : 'Tidak diketahui';
+  buildIconPicker(g.icon || 'grid');
+  Modal.open('gameModal');
+}
+
+async function handleFile(file){
+  if(!file) return;
+  if(file.size > 900 * 1024){
+    toast('File terlalu besar (maks 900KB).', 'error');
+    return;
+  }
+  try{
+    const text = await file.text();
+    if(!/<html|<!doctype|<\w+[\s>]/i.test(text)){
+      toast('File bukan HTML yang valid.', 'error');
+      return;
+    }
+    pendingFile = { name: file.name, size: file.size, content: text };
+    const autoTitle = extractTitle(text);
+    if(autoTitle && !$('#f_title').value.trim()){
+      $('#f_title').value = autoTitle;
+    }
+    $('#fileName').textContent = file.name;
+    $('#fileSize').textContent = formatBytes(file.size);
+    $('#filePill').style.display = 'flex';
+    $('#drop').style.display = 'none';
+    toast('File siap: ' + file.name, 'success');
+  }catch(e){
+    console.error(e);
+    toast('Gagal membaca file.', 'error');
+  }
+}
+
+function removeFile(){
+  pendingFile = null;
+  $('#f_file').value = '';
+  $('#filePill').style.display = 'none';
+  $('#drop').style.display = '';
+}
+
+/* Replace HTML pada game existing */
+function triggerReplaceFile(){
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.html,.htm,text/html';
+  input.onchange = async () => {
+    const file = input.files && input.files[0];
+    if(!file) return;
+    if(file.size > 900 * 1024){ toast('File terlalu besar (maks 900KB).', 'error'); return; }
+    try{
+      const text = await file.text();
+      if(!/<html|<!doctype|<\w+[\s>]/i.test(text)){
+        toast('File bukan HTML yang valid.', 'error');
+        return;
+      }
+      pendingFile = { name: file.name, size: file.size, content: text };
+      $('#existingSize').textContent = formatBytes(file.size) + ' (baru)';
+      toast('File siap diganti saat menyimpan.', 'success');
+    }catch(e){ toast('Gagal membaca file.', 'error'); }
+  };
+  input.click();
+}
+
+async function saveGame(e){
+  e.preventDefault();
+  const id = $('#f_id').value;
+  const title = $('#f_title').value.trim();
+  const desc = $('#f_desc').value.trim();
+  const order = parseInt($('#f_order').value, 10) || 0;
+  const visible = $('#f_visible').value === 'true';
+  const modeClass = $('#f_modeClass').value;
+
+  if(!title){ toast('Judul wajib diisi.', 'error'); return; }
+
+  const btn = $('#btnSave');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin" style="display:inline-block">' + ic('loader',16) + '</span> Menyimpan...';
+
+  try{
+    if(id){
+      // EDIT: update metadata (+ HTML jika ada file baru)
+      const updateData = { title, description: desc, order, visible, icon: currentIconName, modeClass };
+      if(pendingFile){
+        updateData.size = pendingFile.size;
+      }
+      await api.update(api.ref(db, 'games_config/' + id), updateData);
+      if(pendingFile){
+        await api.set(api.ref(db, 'games_html/' + id), pendingFile.content);
+      }
+      toast('Game diperbarui.', 'success');
+    } else {
+      // ADD: butuh file HTML
+      if(!pendingFile){
+        toast('Pilih file HTML terlebih dahulu.', 'error');
+        btn.disabled = false; btn.innerHTML = originalHTML;
+        return;
+      }
+      let newId = generateId(title);
+      // collision retry
+      let tries = 0;
+      while(tries < 5){
+        const exist = await api.get(api.ref(db, 'games_config/' + newId));
+        if(!exist.exists()) break;
+        newId = generateId(title);
+        tries++;
+      }
+      const meta = {
+        title,
+        description: desc || ('Game ' + title),
+        icon: currentIconName,
+        modeClass,
+        action: 'html',
+        order,
+        visible,
+        createdAt: Date.now(),
+        size: pendingFile.size
+      };
+      await api.set(api.ref(db, 'games_config/' + newId), meta);
+      await api.set(api.ref(db, 'games_html/' + newId), pendingFile.content);
+      toast('Game berhasil diupload!', 'success');
+    }
+    Modal.close('gameModal');
+    await loadGames();
+  }catch(err){
+    console.error('saveGame error:', err);
+    toast('Gagal menyimpan: ' + (err.message || 'unknown'), 'error');
+  }finally{
+    btn.disabled = false;
+    btn.innerHTML = originalHTML;
+  }
+}
+
+async function deleteGame(id){
+  const g = allGames[id];
+  if(!g) return;
+  const ok = await confirmDialog('Hapus Game?', `Hapus "${g.title}"? Tindakan ini tidak bisa dibatalkan.`, 'Hapus');
+  if(!ok) return;
+  try{
+    await api.remove(api.ref(db, 'games_config/' + id));
+    await api.remove(api.ref(db, 'games_html/' + id));
+    toast('Game dihapus.', 'success');
+    await loadGames();
+  }catch(e){
+    console.error(e);
+    toast('Gagal menghapus.', 'error');
+  }
+}
+
+async function duplicateGame(id){
+  const g = allGames[id];
+  if(!g) return;
+  try{
+    const htmlSnap = await api.get(api.ref(db, 'games_html/' + id));
+    const htmlContent = htmlSnap.exists() ? htmlSnap.val() : '';
+    const newTitle = (g.title || 'Game') + ' (Copy)';
+    let newId = generateId(newTitle);
+    let tries = 0;
+    while(tries < 5){
+      const exist = await api.get(api.ref(db, 'games_config/' + newId));
+      if(!exist.exists()) break;
+      newId = generateId(newTitle);
+      tries++;
+    }
+    const meta = { ...g, title: newTitle, createdAt: Date.now() };
+    delete meta.id;
+    await api.set(api.ref(db, 'games_config/' + newId), meta);
+    if(htmlContent) await api.set(api.ref(db, 'games_html/' + newId), htmlContent);
+    toast('Game diduplikasi.', 'success');
+    await loadGames();
+  }catch(e){
+    console.error(e);
+    toast('Gagal menduplikasi.', 'error');
+  }
+}
+
+async function previewGame(id){
+  const g = allGames[id];
+  if(!g) return;
+  const box = $('#modalBox');
+  box.classList.add('wide');
+  box.innerHTML = `
+    <div class="modal-hdr">
+      <h2>${esc(g.title)}</h2>
+      <button class="close-x" data-act="close"><i data-ic="x" data-s="18"></i></button>
+    </div>
+    <div class="preview-frame" id="previewFrame">
+      <div style="display:grid;place-items:center;height:100%;color:var(--text-dim)">
+        <div style="text-align:center">
+          <div data-ic="loader" data-s="32" class="spin" style="display:inline-block"></div>
+          <div style="margin-top:12px;font-size:12px">Memuat preview...</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-act="close">Tutup</button>
+      <button class="btn primary" data-act="open">Buka di Tab Baru</button>
+    </div>`;
+  paintIcons(box);
+  Modal.open('modal');
+  box.querySelectorAll('[data-act=close]').forEach(b => b.onclick = () => Modal.close('modal'));
+
+  try{
+    const snap = await api.get(api.ref(db, 'games_html/' + id));
+    if(!snap.exists()){
+      $('#previewFrame').innerHTML = `<div style="display:grid;place-items:center;height:100%;color:var(--danger);font-size:13px">File HTML tidak ditemukan.</div>`;
+      return;
+    }
+    const html = snap.val();
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const frame = $('#previewFrame');
+    frame.innerHTML = '';
+    const iframe = document.createElement('iframe');
+    iframe.src = url;
+    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-modals allow-popups');
+    frame.appendChild(iframe);
+    box.querySelector('[data-act=open]').onclick = () => {
+      window.open(url, '_blank', 'noopener');
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    };
+  }catch(e){
+    console.error(e);
+    $('#previewFrame').innerHTML = `<div style="display:grid;place-items:center;height:100%;color:var(--danger);font-size:13px">Gagal memuat.</div>`;
+  }
+}
+
+/* =========================================================
+   BANNER
+   ========================================================= */
+async function loadBanner(){
+  try{
+    const snap = await api.get(api.ref(db, 'banner/info'));
+    bannerData = snap.exists() ? (snap.val() || {}) : {};
+    $('#bTitle').value = bannerData.title || '';
+    $('#bText').value = bannerData.text || '';
+    $('#bImage').value = bannerData.image || '';
+    currentBannerVisible = bannerData.visible !== false;
+    updateBannerSwitch();
+    updateBannerCounts();
+    renderBannerPreview();
+    updateBannerStatusBadge();
+    renderStats();
+  }catch(e){
+    console.error('loadBanner error:', e);
+  }
+}
+
+function updateBannerSwitch(){
+  const sw = $('#bVisible');
+  const lbl = $('#bVisibleLabel');
+  sw.classList.toggle('on', currentBannerVisible);
+  sw.setAttribute('aria-checked', currentBannerVisible);
+  lbl.textContent = currentBannerVisible ? 'Ditampilkan' : 'Disembunyikan';
+}
+
+function updateBannerCounts(){
+  const t = $('#bTitle'), x = $('#bText');
+  const tc = $('#bTitleCount'), xc = $('#bTextCount');
+  tc.textContent = t.value.length + ' / 80';
+  xc.textContent = x.value.length + ' / 400';
+  tc.classList.toggle('warn', t.value.length > 60 && t.value.length <= 75);
+  tc.classList.toggle('danger', t.value.length > 75);
+  xc.classList.toggle('warn', x.value.length > 300 && x.value.length <= 360);
+  xc.classList.toggle('danger', x.value.length > 360);
+}
+
+function renderBannerPreview(){
+  const preview = $('#bannerPreview');
+  const title = $('#bTitle').value.trim();
+  const text = $('#bText').value.trim();
+  const image = $('#bImage').value.trim();
+  if(!title && !text && !image){
+    preview.innerHTML = `<div style="padding:16px;color:var(--text-dim);font-size:13px;text-align:center">Banner kosong</div>`;
+    return;
+  }
+  const media = image && /^https?:/i.test(image)
+    ? `<img src="${esc(image)}" style="display:block;width:100%;max-height:180px;object-fit:cover;border-bottom:1px solid var(--border)" onerror="this.style.display='none'" />`
+    : '';
+  preview.innerHTML = `
+    ${media}
+    <div style="padding:14px 16px;display:flex;gap:12px;align-items:flex-start">
+      <div style="width:38px;height:38px;border-radius:12px;flex:none;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff">${ic('info',20)}</div>
+      <div style="flex:1;min-width:0">
+        ${title ? `<div style="font-weight:800;font-size:14px;margin-bottom:3px;letter-spacing:-.01em">${esc(title)}</div>` : ''}
+        <div style="font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word;color:var(--text)">${esc(text)}</div>
+      </div>
+    </div>`;
+}
+
+function updateBannerStatusBadge(){
+  const badge = $('#bannerStatusBadge');
+  const active = currentBannerVisible && (bannerData.text || bannerData.image);
+  if(active){ badge.className = 'badge on'; badge.textContent = 'Aktif'; }
+  else { badge.className = 'badge off'; badge.textContent = 'Tidak Aktif'; }
+}
+
+async function saveBanner(e){
+  e.preventDefault();
+  const btn = $('#btnSaveBanner');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin" style="display:inline-block">' + ic('loader',16) + '</span> Menyimpan...';
+  try{
+    const data = {
+      title: $('#bTitle').value.trim(),
+      text: $('#bText').value.trim(),
+      image: $('#bImage').value.trim(),
+      visible: currentBannerVisible,
+      updatedAt: Date.now(),
+      updatedBy: currentUser ? currentUser.uid : ''
+    };
+    await api.set(api.ref(db, 'banner/info'), data);
+    bannerData = data;
+    updateBannerStatusBadge();
+    renderStats();
+    toast('Banner disimpan.', 'success');
+  }catch(e){
+    console.error(e);
+    toast('Gagal menyimpan banner.', 'error');
+  }finally{
+    btn.disabled = false;
+    btn.innerHTML = originalHTML;
+  }
+}
+
+/* =========================================================
+   PUZZLES
+   ========================================================= */
+function renderPuzzleList(){
+  const box = $('#puzzleList');
+  const ids = Object.keys(allPuzzles);
+  if(!ids.length){
+    box.innerHTML = `<div class="empty"><div class="ic">${ic('target',26)}</div>Belum ada puzzle. Klik "Tambah" untuk mulai.</div>`;
+    return;
+  }
+  const list = ids.map(id => ({id, ...allPuzzles[id]}))
+    .sort((a,b) => (Number(a.rating)||0) - (Number(b.rating)||0));
+  box.innerHTML = '';
+  list.forEach(p => {
+    const item = document.createElement('div');
+    item.className = 'puzzle-item';
+    const sol = Array.isArray(p.solution) ? p.solution.join(', ') : (p.solution || '');
+    item.innerHTML = `
+      <div class="gi-icon" style="width:40px;height:40px;border-radius:11px">${ic('target',18)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="title">${esc(p.theme || 'Puzzle')} <span style="color:var(--text-dim2);font-weight:500;font-size:11px">· ${p.rating||1000}</span></div>
+        <div class="fen">${esc(p.fen || '')}</div>
+        <div style="font-size:10.5px;color:var(--text-dim);margin-top:2px">Solusi: <code style="font-family:'JetBrains Mono',monospace">${esc(sol)}</code></div>
+      </div>
+      <div class="gi-actions">
+        <button class="btn ghost sm" data-act="edit" data-id="${escapeId(p.id)}">${ic('edit',14)}</button>
+        <button class="btn danger sm" data-act="del" data-id="${escapeId(p.id)}">${ic('trash',14)}</button>
+      </div>`;
+    item.querySelector('[data-act=edit]').onclick = () => openEditPuzzle(p.id);
+    item.querySelector('[data-act=del]').onclick = () => deletePuzzle(p.id);
+    box.appendChild(item);
+  });
+}
+
+async function loadPuzzles(){
+  try{
+    const snap = await api.get(api.ref(db, 'puzzles'));
+    allPuzzles = snap.exists() ? (snap.val() || {}) : {};
+    renderPuzzleList();
+    renderStats();
+  }catch(e){
+    console.error('loadPuzzles error:', e);
+    $('#puzzleList').innerHTML = `<div class="empty" style="color:var(--danger)">Gagal memuat puzzle.</div>`;
+  }
+}
+
+function resetPuzzleForm(){
+  $('#puzzleForm').reset();
+  $('#p_id').value = '';
+  $('#p_rating').value = 1000;
+  $('#puzzleModalTitle').textContent = 'Tambah Puzzle';
+  $('#btnSavePuzzle').querySelector('span').textContent = 'Simpan Puzzle';
+}
+
+function openAddPuzzle(){
+  resetPuzzleForm();
+  Modal.open('puzzleModal');
+}
+
+function openEditPuzzle(id){
+  const p = allPuzzles[id];
+  if(!p) return;
+  resetPuzzleForm();
+  $('#puzzleModalTitle').textContent = 'Edit Puzzle';
+  $('#btnSavePuzzle').querySelector('span').textContent = 'Perbarui';
+  $('#p_id').value = id;
+  $('#p_theme').value = p.theme || '';
+  $('#p_fen').value = p.fen || '';
+  $('#p_solution').value = Array.isArray(p.solution) ? p.solution.join(', ') : (p.solution || '');
+  $('#p_hint').value = p.hint || '';
+  $('#p_rating').value = p.rating || 1000;
+  Modal.open('puzzleModal');
+}
+
+async function savePuzzle(e){
+  e.preventDefault();
+  const id = $('#p_id').value;
+  const theme = $('#p_theme').value.trim();
+  const fen = $('#p_fen').value.trim();
+  const solutionRaw = $('#p_solution').value.trim();
+  const hint = $('#p_hint').value.trim();
+  const rating = parseInt($('#p_rating').value, 10) || 1000;
+
+  if(!theme || !fen || !solutionRaw){ toast('Lengkapi semua field yang wajib.', 'error'); return; }
+  const solution = solutionRaw.split(',').map(s => s.trim()).filter(Boolean);
+  if(!solution.length){ toast('Solusi tidak valid.', 'error'); return; }
+
+  const btn = $('#btnSavePuzzle');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin" style="display:inline-block">' + ic('loader',16) + '</span> Menyimpan...';
+  try{
+    const pid = id || ('p_' + Math.random().toString(36).slice(2,9));
+    await api.set(api.ref(db, 'puzzles/' + pid), { theme, fen, solution, hint, rating });
+    toast(id ? 'Puzzle diperbarui.' : 'Puzzle ditambahkan.', 'success');
+    Modal.close('puzzleModal');
+    await loadPuzzles();
+  }catch(err){
+    console.error(err);
+    toast('Gagal menyimpan puzzle.', 'error');
+  }finally{
+    btn.disabled = false;
+    btn.innerHTML = originalHTML;
+  }
+}
+
+async function deletePuzzle(id){
+  const p = allPuzzles[id];
+  if(!p) return;
+  const ok = await confirmDialog('Hapus Puzzle?', `Hapus puzzle "${p.theme || id}"?`, 'Hapus');
+  if(!ok) return;
+  try{
+    await api.remove(api.ref(db, 'puzzles/' + id));
+    toast('Puzzle dihapus.', 'success');
+    await loadPuzzles();
+  }catch(e){
+    console.error(e);
+    toast('Gagal menghapus puzzle.', 'error');
+  }
+}
+
+/* =========================================================
+   BACKUP / RESTORE
+   ========================================================= */
+async function exportData(){
+  const btn = $('#btnExport');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin" style="display:inline-block">' + ic('loader',16) + '</span> Mengumpulkan...';
+  try{
+    const [gamesSnap, htmlSnap, bannerSnap, puzzlesSnap] = await Promise.all([
+      api.get(api.ref(db, 'games_config')),
+      api.get(api.ref(db, 'games_html')),
+      api.get(api.ref(db, 'banner/info')),
+      api.get(api.ref(db, 'puzzles'))
+    ]);
+    const data = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      exportedBy: currentUser ? (currentUser.email || currentUser.uid) : '',
+      games_config: gamesSnap.val() || {},
+      games_html: htmlSnap.val() || {},
+      banner: bannerSnap.val() || {},
+      puzzles: puzzlesSnap.val() || {}
+    };
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'gm-grid-backup-' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+    toast('Data berhasil diexport.', 'success');
+  }catch(e){
+    console.error(e);
+    toast('Gagal export data.', 'error');
+  }finally{
+    btn.disabled = false;
+    btn.innerHTML = originalHTML;
+  }
+}
+
+async function handleImport(file){
+  if(!file) return;
+  try{
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if(!data || typeof data !== 'object'){ toast('Format JSON tidak valid.', 'error'); return; }
+    const counts = {
+      games: Object.keys(data.games_config || {}).length,
+      html: Object.keys(data.games_html || {}).length,
+      puzzles: Object.keys(data.puzzles || {}).length,
+      banner: data.banner && (data.banner.text || data.banner.image) ? 'ada' : 'tidak ada'
+    };
+    const ok = await confirmDialog(
+      'Konfirmasi Import',
+      `Akan mengimpor: ${counts.games} game, ${counts.html} file HTML, ${counts.puzzles} puzzle, banner ${counts.banner}. Data dengan ID sama akan DITIMPA.`,
+      'Import Sekarang'
+    );
+    if(!ok) return;
+    const updates = {};
+    if(data.games_config) updates['games_config'] = data.games_config;
+    if(data.games_html) updates['games_html'] = data.games_html;
+    if(data.puzzles) updates['puzzles'] = data.puzzles;
+    if(data.banner) updates['banner/info'] = data.banner;
+    await api.update(api.ref(db, '/'), updates);
+    toast('Import selesai.', 'success');
+    await Promise.all([loadGames(), loadBanner(), loadPuzzles()]);
+  }catch(e){
+    console.error(e);
+    toast('Gagal import: ' + (e.message || 'invalid JSON'), 'error');
+  }
+}
+
+/* =========================================================
+   WIRE EVENTS
+   ========================================================= */
+function wireEvents(){
+  // Header
+  $('#btnAdd').addEventListener('click', openAdd);
+  $('#btnAddPuzzle').addEventListener('click', openAddPuzzle);
+
+  // Search & Filter
+  $('#searchBox').addEventListener('input', e => {
+    currentSearch = e.target.value;
+    renderGameList();
+  });
+  $$('#filterPills button').forEach(b => {
+    b.addEventListener('click', () => {
+      currentFilter = b.dataset.filter;
+      $$('#filterPills button').forEach(x => x.classList.toggle('active', x === b));
+      renderGameList();
+    });
+  });
+
+  // Game modal
+  $('#btnCloseGameModal').addEventListener('click', () => Modal.close('gameModal'));
+  $('#gameModal').addEventListener('click', e => {
+    if(e.target === $('#gameModal') && !pendingFile) Modal.close('gameModal');
+  });
+  $('#gameForm').addEventListener('submit', saveGame);
+  $('#btnRemoveFile').addEventListener('click', removeFile);
+  $('#btnReplaceFile').addEventListener('click', triggerReplaceFile);
+
+  // Drop / file input
+  const drop = $('#drop');
+  const fileInput = $('#f_file');
+  drop.addEventListener('click', e => {
+    if(e.target !== fileInput) fileInput.click();
+  });
+  fileInput.addEventListener('change', e => {
+    const f = e.target.files && e.target.files[0];
+    if(f) handleFile(f);
+  });
+  ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => {
+    e.preventDefault(); drop.classList.add('hover');
+  }));
+  ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => {
+    e.preventDefault(); drop.classList.remove('hover');
+  }));
+  drop.addEventListener('drop', e => {
+    const f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if(f) handleFile(f);
+  });
+
+  // Banner
+  $('#bannerForm').addEventListener('submit', saveBanner);
+  ['bTitle','bText'].forEach(id => {
+    $('#' + id).addEventListener('input', () => {
+      updateBannerCounts();
+      renderBannerPreview();
+    });
+  });
+  $('#bImage').addEventListener('input', renderBannerPreview);
+  $('#bVisible').addEventListener('click', () => {
+    currentBannerVisible = !currentBannerVisible;
+    updateBannerSwitch();
+    renderBannerPreview();
+    updateBannerStatusBadge();
+  });
+  $('#bVisible').addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      currentBannerVisible = !currentBannerVisible;
+      updateBannerSwitch();
+      renderBannerPreview();
+      updateBannerStatusBadge();
+    }
+  });
+
+  // Puzzle modal
+  $('#btnClosePuzzleModal').addEventListener('click', () => Modal.close('puzzleModal'));
+  $('#puzzleModal').addEventListener('click', e => {
+    if(e.target === $('#puzzleModal')) Modal.close('puzzleModal');
+  });
+  $('#puzzleForm').addEventListener('submit', savePuzzle);
+
+  // Backup
+  $('#btnExport').addEventListener('click', exportData);
+  $('#importFile').addEventListener('change', e => {
+    const f = e.target.files && e.target.files[0];
+    if(f) handleImport(f);
+    e.target.value = '';
+  });
+
+  // Quick actions
+  document.querySelectorAll('[data-quick]').forEach(b => {
+    b.addEventListener('click', () => {
+      const act = b.dataset.quick;
+      if(act === 'add-game') openAdd();
+      else if(act === 'banner') switchTab('banner');
+      else if(act === 'add-puzzle') openAddPuzzle();
+      else if(act === 'export') exportData();
+    });
+  });
+
+  // Modal backdrop close (generic)
+  $('#modal').addEventListener('click', e => {
+    if(e.target === $('#modal')) Modal.close('modal');
+  });
+}
+
+/* =========================================================
+   BOOT
+   ========================================================= */
+async function boot(){
+  paintIcons();
+  $('#authLogo').innerHTML = ic('gamepad', 40);
+  $('#brandLogo').innerHTML = ic('gamepad', 24);
+
+  try{
+    await initFirebase();
+  }catch(e){
+    console.error('Firebase init error:', e);
+    $('#authSub').textContent = 'Gagal terhubung ke Firebase. Periksa koneksi internet.';
+    return;
+  }
+
+  renderAuthScreen('loading');
+
+  // Handle redirect result (jika user sebelumnya pakai signInWithRedirect)
+  try{ await authApi.getRedirectResult(auth); }catch(_){}
+
+  wireEvents();
+  wireTabs();
+
+  authApi.onAuthStateChanged(auth, async (user) => {
+    if(!user){
+      currentUser = null;
+      $('#mainUI').classList.add('hidden');
+      $('#authScr').classList.remove('hidden');
+      renderAuthScreen('login');
+      return;
+    }
+    currentUser = user;
+    renderAuthScreen('loading');
+    const admin = await isAdmin(user.uid, user.email);
+    if(!admin){
+      renderAuthScreen('denied', 'Akun ' + (user.email||user.uid) + ' tidak memiliki akses admin.');
+      $('#mainUI').classList.add('hidden');
+      return;
+    }
+    // Berhasil login & admin
+    renderUserChip(user);
+    $('#authScr').classList.add('hidden');
+    $('#mainUI').classList.remove('hidden');
+    // Load data paralel
+    try{
+      await Promise.all([loadGames(), loadBanner(), loadPuzzles()]);
+    }catch(e){
+      console.error('Data load error:', e);
+    }
+  });
+}
+
+boot().catch(e => {
+  console.error('Boot error:', e);
+  document.body.innerHTML = '<div style="padding:40px;text-align:center;font-family:Inter,sans-serif;color:#f0f4fc;background:#06080f;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center"><h2>Gagal memuat admin panel</h2><p style="color:#8b96b3;margin-top:8px">Cek console untuk detail.</p></div>';
+});
 </script>
 </body>
-</html>
+    </html>
