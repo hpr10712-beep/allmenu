@@ -133,7 +133,7 @@ svg.ic-xl{width:40px;height:40px}
 .hidden{display:none !important}
 
 /* ============================================================
-   SPLASH / BOOT SCREEN — refined, no heavy glow
+   SPLASH / BOOT SCREEN
    ============================================================ */
 .splash{
   position:fixed;inset:0;z-index:2000;
@@ -347,7 +347,7 @@ svg.ic-xl{width:40px;height:40px}
 @keyframes viewIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
 
 /* ============================================================
-   BOTTOM NAV — iPhone dock style
+   BOTTOM NAV
    ============================================================ */
 .bottomnav{
   position:fixed;
@@ -713,18 +713,6 @@ svg.ic-xl{width:40px;height:40px}
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
 }
 .auth-tagline{font-size:13px;font-weight:600;color:var(--text-dim);letter-spacing:.03em}
-.auth-tabs{
-  display:flex;gap:4px;background:var(--surface);padding:5px;border-radius:16px;
-  border:1px solid var(--border-2);box-shadow:inset 0 1px 2px rgba(0,0,0,.25);
-}
-.auth-tabs button{
-  flex:1;padding:11px 14px;border-radius:12px;font-size:13px;font-weight:800;
-  color:var(--text-dim);transition:.24s cubic-bezier(.2,1,.4,1);letter-spacing:.01em;
-}
-.auth-tabs button.active{
-  background:linear-gradient(180deg,var(--surface-3),var(--surface-2));
-  color:var(--text);box-shadow:var(--shadow-sm),inset 0 1px 0 rgba(255,255,255,.06);
-}
 .auth-card{
   position:relative;
   background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 92%,transparent),color-mix(in srgb,var(--surface-2) 92%,transparent));
@@ -790,9 +778,7 @@ svg.ic-xl{width:40px;height:40px}
 .hero-stats b{display:block;font-size:22px;font-weight:900;color:var(--text);letter-spacing:-.035em;margin-top:3px}
 .hero-stats b small{font-size:12px;font-weight:700;opacity:.55}
 
-/* ============================================================
-   HOME BANNER (INFO)
-   ============================================================ */
+/* HOME BANNER (INFO) */
 .home-banner{
   position:relative;overflow:hidden;
   border-radius:18px;padding:14px 16px;margin-bottom:14px;
@@ -831,43 +817,139 @@ svg.ic-xl{width:40px;height:40px}
 .home-banner .hb-close:hover{background:var(--surface-3);color:var(--text)}
 .home-banner.hidden{display:none !important}
 
-.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:18px}
+/* PHOTO BANNER (SLIDESHOW) */
+.photo-banner{
+  position:relative;overflow:hidden;
+  border-radius:20px;margin:26px 0 8px;
+  aspect-ratio:16/7;
+  background:linear-gradient(135deg,var(--surface-2),var(--surface-3));
+  box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.08);
+  isolation:isolate;
+}
+.photo-banner.hidden{display:none !important}
+.photo-banner-track{
+  display:flex;height:100%;
+  transition:transform .55s cubic-bezier(.2,1,.4,1);
+  will-change:transform;
+}
+.photo-banner-slide{
+  flex:0 0 100%;height:100%;
+  position:relative;overflow:hidden;
+}
+.photo-banner-slide img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  -webkit-user-drag:none;user-select:none;
+}
+.photo-banner-slide a{display:block;width:100%;height:100%}
+.photo-banner-slide::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.35) 100%);
+}
+.photo-banner-dots{
+  position:absolute;
+  bottom:10px;left:50%;transform:translateX(-50%);
+  display:flex;gap:6px;z-index:3;
+  padding:5px 9px;border-radius:99px;
+  background:rgba(0,0,0,.4);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.12);
+}
+.photo-banner-dot{
+  width:7px;height:7px;border-radius:99px;
+  background:rgba(255,255,255,.45);
+  transition:.28s cubic-bezier(.2,1,.4,1);
+  cursor:pointer;border:none;padding:0;
+}
+.photo-banner-dot.active{
+  background:#fff;
+  width:20px;
+  box-shadow:0 0 8px rgba(255,255,255,.6);
+}
+.photo-banner-btn{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(0,0,0,.48);
+  color:#fff;display:grid;place-items:center;
+  z-index:3;opacity:0;transition:.22s;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.15);
+  cursor:pointer;
+}
+.photo-banner-btn svg{width:18px;height:18px}
+.photo-banner:hover .photo-banner-btn{opacity:.9}
+.photo-banner-btn:active{transform:translateY(-50%) scale(.9)}
+.photo-banner-btn.prev{left:10px}
+.photo-banner-btn.next{right:10px}
+
+/* QUICK MENU (HOME) — Versi baru lebih keren */
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
 .quick{
   position:relative;overflow:hidden;
-  background:linear-gradient(180deg,var(--surface),var(--surface-2));
-  border-radius:18px;padding:16px 10px;
-  display:flex;flex-direction:column;align-items:center;gap:10px;
-  transition:.26s cubic-bezier(.2,1,.4,1);
-  min-height:104px;justify-content:center;
-  box-shadow:var(--shadow-xs),inset 0 1px 0 rgba(255,255,255,.04);
+  background:linear-gradient(165deg,var(--surface),var(--surface-2));
+  border-radius:22px;
+  padding:16px 10px 14px;
+  display:flex;flex-direction:column;align-items:center;gap:11px;
+  transition:.3s cubic-bezier(.2,1,.4,1);
+  min-height:132px;justify-content:flex-start;
+  box-shadow:var(--shadow-xs),inset 0 1px 0 rgba(255,255,255,.05);
   border:1px solid var(--border);
+  isolation:isolate;
 }
 .quick::before{
   content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;
-  background:linear-gradient(155deg,rgba(255,255,255,.1),rgba(255,255,255,0) 40%,rgba(255,255,255,.05));
+  background:linear-gradient(155deg,rgba(255,255,255,.14),rgba(255,255,255,0) 40%,rgba(255,255,255,.05));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
+  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;z-index:2;
 }
 .quick::after{
   content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background:radial-gradient(circle at 50% 100%,rgba(109,123,255,.2),transparent 60%);
-  opacity:0;transition:.35s;
+  background:radial-gradient(circle at 50% 130%,rgba(109,123,255,.28),transparent 60%);
+  opacity:0;transition:.4s;z-index:0;
 }
 .quick:hover::after{opacity:1}
-.quick:hover{transform:translateY(-4px);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.08);border-color:var(--border-2)}
-.quick:active{transform:translateY(-1px) scale(.98)}
+.quick:hover{
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:0 20px 44px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.1);
+  border-color:var(--border-3);
+}
+.quick:active{transform:translateY(-2px) scale(.99)}
 .quick .qi{
-  width:44px;height:44px;border-radius:14px;display:grid;place-items:center;
-  color:var(--accent);background:linear-gradient(135deg,var(--accent-soft),transparent);
-  border:1px solid rgba(109,123,255,.2);transition:.26s;
+  width:66px;height:66px;border-radius:20px;flex:none;
+  display:grid;place-items:center;overflow:hidden;
+  color:#fff;position:relative;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  box-shadow:
+    0 12px 28px rgba(109,123,255,.4),
+    inset 0 1px 0 rgba(255,255,255,.25);
+  transition:.32s cubic-bezier(.2,1.4,.4,1);
+  z-index:1;
+}
+.quick .qi::after{
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(180deg,rgba(255,255,255,.22),transparent 55%);
+  pointer-events:none;
+}
+.quick .qi svg{width:32px;height:32px;position:relative;z-index:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25))}
+.quick .qi img{
+  width:100%;height:100%;object-fit:cover;display:block;position:relative;z-index:0;
 }
 .quick:hover .qi{
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  color:#fff;border-color:transparent;box-shadow:var(--glow-accent);transform:scale(1.05);
-  animation:qiPop .5s cubic-bezier(.2,1.4,.4,1);
+  transform:translateY(-3px) scale(1.08) rotate(-3deg);
+  box-shadow:
+    0 18px 38px rgba(109,123,255,.55),
+    inset 0 1px 0 rgba(255,255,255,.32);
 }
-@keyframes qiPop{0%{transform:scale(1)}50%{transform:scale(1.14) rotate(-4deg)}100%{transform:scale(1.05)}}
-.quick span{font-size:11.5px;font-weight:800;text-align:center;line-height:1.25;letter-spacing:-.005em}
+.quick .qlabel{
+  font-size:11.5px;font-weight:800;
+  text-align:center;line-height:1.25;letter-spacing:-.005em;
+  position:relative;z-index:1;
+  color:var(--text);
+}
+.quick .qsub{
+  font-size:9.5px;font-weight:700;color:var(--text-dim2);
+  margin-top:-6px;letter-spacing:.02em;
+  position:relative;z-index:1;
+}
 
 .list-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;transition:.2s cubic-bezier(.2,1,.4,1);position:relative}
 .list-item + .list-item{border-top:1px solid var(--border)}
@@ -884,63 +966,89 @@ svg.ic-xl{width:40px;height:40px}
 .res-d{background:var(--surface-3);color:var(--text-dim);border:1px solid var(--border-2)}
 
 /* ============================================================
-   PLAY MENU
+   PLAY MENU — Versi baru dengan gambar
    ============================================================ */
 .play-grid{display:grid;grid-template-columns:1fr;gap:12px}
 .play-card{
   position:relative;overflow:hidden;
-  background:linear-gradient(180deg,var(--surface),var(--surface-2));
-  border-radius:20px;padding:18px;display:flex;align-items:center;gap:15px;
-  transition:.28s cubic-bezier(.2,1,.4,1);cursor:pointer;
-  box-shadow:var(--shadow-xs),inset 0 1px 0 rgba(255,255,255,.04);
+  background:linear-gradient(155deg,var(--surface),var(--surface-2));
+  border-radius:22px;
+  padding:16px 18px;
+  display:flex;align-items:center;gap:16px;
+  transition:.3s cubic-bezier(.2,1,.4,1);cursor:pointer;
+  box-shadow:var(--shadow-xs),inset 0 1px 0 rgba(255,255,255,.05);
   border:1px solid var(--border);
+  isolation:isolate;
 }
 .play-card::before{
   content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;
-  background:linear-gradient(155deg,rgba(255,255,255,.09),rgba(255,255,255,0) 40%,rgba(255,255,255,.05));
+  background:linear-gradient(155deg,rgba(255,255,255,.12),rgba(255,255,255,0) 40%,rgba(255,255,255,.06));
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;z-index:2;
 }
 .play-card .pc-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit;z-index:0}
 .play-card .pc-bg::before{
-  content:'';position:absolute;top:-40%;right:-30%;width:180px;height:180px;border-radius:50%;
-  opacity:.55;transition:.5s ease;filter:blur(4px);
+  content:'';position:absolute;top:-40%;right:-30%;width:200px;height:200px;border-radius:50%;
+  opacity:.5;transition:.5s ease;filter:blur(6px);
 }
 .play-card:hover .pc-bg::before{opacity:.9;transform:translate(-10px,10px) scale(1.1)}
-.play-card.ranked .pc-bg::before{background:radial-gradient(circle,rgba(255,107,107,.38),transparent 65%)}
-.play-card.casual .pc-bg::before{background:radial-gradient(circle,rgba(34,211,238,.32),transparent 65%)}
-.play-card.friend .pc-bg::before{background:radial-gradient(circle,rgba(16,217,141,.32),transparent 65%)}
-.play-card.ai .pc-bg::before{background:radial-gradient(circle,rgba(164,108,255,.38),transparent 65%)}
-.play-card.local .pc-bg::before{background:radial-gradient(circle,rgba(255,176,32,.34),transparent 65%)}
-.play-card.puzzle .pc-bg::before{background:radial-gradient(circle,rgba(109,123,255,.38),transparent 65%)}
-.play-card.tictactoe .pc-bg::before{background:radial-gradient(circle,rgba(34,211,238,.38),transparent 65%)}
-.play-card.trex .pc-bg::before{background:radial-gradient(circle,rgba(255,107,107,.38),transparent 65%)}
-.play-card.custom .pc-bg::before{background:radial-gradient(circle,rgba(109,123,255,.4),transparent 65%)}
-.play-card .pc-icon,.play-card .pc-body,.play-card .pc-arrow{position:relative;z-index:1}
-.play-card:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08);border-color:var(--border-2)}
+.play-card.ranked .pc-bg::before{background:radial-gradient(circle,rgba(255,107,107,.4),transparent 65%)}
+.play-card.casual .pc-bg::before{background:radial-gradient(circle,rgba(34,211,238,.36),transparent 65%)}
+.play-card.friend .pc-bg::before{background:radial-gradient(circle,rgba(16,217,141,.36),transparent 65%)}
+.play-card.ai .pc-bg::before{background:radial-gradient(circle,rgba(164,108,255,.4),transparent 65%)}
+.play-card.local .pc-bg::before{background:radial-gradient(circle,rgba(255,176,32,.38),transparent 65%)}
+.play-card.puzzle .pc-bg::before{background:radial-gradient(circle,rgba(109,123,255,.4),transparent 65%)}
+.play-card.tictactoe .pc-bg::before{background:radial-gradient(circle,rgba(34,211,238,.4),transparent 65%)}
+.play-card.trex .pc-bg::before{background:radial-gradient(circle,rgba(255,107,107,.4),transparent 65%)}
+.play-card.custom .pc-bg::before{background:radial-gradient(circle,rgba(109,123,255,.42),transparent 65%)}
+.play-card .pc-image,.play-card .pc-body,.play-card .pc-arrow{position:relative;z-index:1}
+.play-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 16px 42px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.1);
+  border-color:var(--border-3);
+}
 .play-card:active{transform:translateY(-1px) scale(.995)}
-.play-card .pc-icon{
-  width:56px;height:56px;border-radius:17px;display:grid;place-items:center;flex:none;
-  color:#fff;position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 6px 18px rgba(0,0,0,.2);
+.play-card .pc-image{
+  width:72px;height:72px;border-radius:20px;flex:none;overflow:hidden;
+  position:relative;
+  display:grid;place-items:center;
+  color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  box-shadow:
+    0 12px 28px rgba(0,0,0,.32),
+    inset 0 1px 0 rgba(255,255,255,.22);
+  transition:.3s cubic-bezier(.2,1.4,.4,1);
 }
-.play-card .pc-icon::after{
+.play-card .pc-image::after{
   content:'';position:absolute;inset:0;border-radius:inherit;
-  background:linear-gradient(180deg,rgba(255,255,255,.16),transparent 60%);pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.18),transparent 60%);
+  pointer-events:none;z-index:1;
 }
-.play-card .pc-icon.ranked{background:linear-gradient(135deg,#ff6b6b,#ffb020)}
-.play-card .pc-icon.casual{background:linear-gradient(135deg,#22d3ee,#6d7bff)}
-.play-card .pc-icon.friend{background:linear-gradient(135deg,#10d98d,#22d3ee)}
-.play-card .pc-icon.ai{background:linear-gradient(135deg,#a46cff,#6d7bff)}
-.play-card .pc-icon.local{background:linear-gradient(135deg,#ffb020,#ff6b6b)}
-.play-card .pc-icon.puzzle{background:linear-gradient(135deg,#6d7bff,#a46cff)}
-.play-card .pc-icon.tictactoe{background:linear-gradient(135deg,#22d3ee,#6d7bff)}
-.play-card .pc-icon.trex{background:linear-gradient(135deg,#ffb020,#ff6b6b)}
-.play-card .pc-icon.custom{background:linear-gradient(135deg,#6d7bff,#a46cff)}
+.play-card:hover .pc-image{
+  transform:scale(1.05) rotate(-2deg);
+}
+.play-card .pc-image img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  position:relative;z-index:0;
+}
+.play-card .pc-image svg{
+  width:36px;height:36px;position:relative;z-index:1;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));
+}
+.play-card .pc-image.ranked{background:linear-gradient(135deg,#ff6b6b,#ffb020)}
+.play-card .pc-image.casual{background:linear-gradient(135deg,#22d3ee,#6d7bff)}
+.play-card .pc-image.friend{background:linear-gradient(135deg,#10d98d,#22d3ee)}
+.play-card .pc-image.ai{background:linear-gradient(135deg,#a46cff,#6d7bff)}
+.play-card .pc-image.local{background:linear-gradient(135deg,#ffb020,#ff6b6b)}
+.play-card .pc-image.puzzle{background:linear-gradient(135deg,#6d7bff,#a46cff)}
+.play-card .pc-image.tictactoe{background:linear-gradient(135deg,#22d3ee,#6d7bff)}
+.play-card .pc-image.trex{background:linear-gradient(135deg,#ffb020,#ff6b6b)}
+.play-card .pc-image.custom{background:linear-gradient(135deg,#6d7bff,#a46cff)}
 .play-card .pc-body{flex:1;min-width:0}
-.play-card .pc-title{font-size:15px;font-weight:800;letter-spacing:-.02em}
-.play-card .pc-sub{font-size:12px;color:var(--text-dim);margin-top:4px;line-height:1.45}
-.play-card .pc-arrow{color:var(--text-dim2);flex:none;transition:.24s}
-.play-card:hover .pc-arrow{color:var(--accent);transform:translateX(4px)}
+.play-card .pc-title{font-size:16px;font-weight:900;letter-spacing:-.02em}
+.play-card .pc-sub{font-size:12px;color:var(--text-dim);margin-top:5px;line-height:1.45;font-weight:600}
+.play-card .pc-arrow{color:var(--text-dim2);flex:none;transition:.26s;font-size:20px;line-height:1}
+.play-card:hover .pc-arrow{color:var(--accent);transform:translateX(5px)}
 
 .admin-custom-games{display:contents}
 
@@ -951,7 +1059,7 @@ svg.ic-xl{width:40px;height:40px}
 .search-bar .input{flex:1;min-width:0}
 
 /* ============================================================
-   LEADERBOARD
+   LEADERBOARD (glow sudah dirapikan)
    ============================================================ */
 .lb-podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:10px;margin-bottom:14px;align-items:end}
 .podium{
@@ -987,70 +1095,37 @@ svg.ic-xl{width:40px;height:40px}
 .podium.rank-1 .name{font-size:13.5px}
 .podium.rank-1 .score{font-size:20px}
 
-/* ============================================================
-   LEADERBOARD TOP-3 BACKGROUND ANIMATIONS
-   ============================================================ */
+/* LB ROWS — glow tipis, rapi, tanpa efek berlebihan */
 .lb-row{display:grid;grid-template-columns:38px 1fr auto;gap:11px;align-items:center;padding:12px 13px;border-radius:14px;transition:.22s cubic-bezier(.2,1,.4,1);border:1px solid transparent;position:relative;overflow:hidden}
 .lb-row:hover{background:linear-gradient(135deg,var(--surface-2),var(--surface-3));transform:translateX(2px);border-color:var(--border-2)}
 .lb-row.me{background:linear-gradient(135deg,var(--accent-soft),var(--accent-soft-2));border:1px solid rgba(109,123,255,.28)}
 .lb-row.rank-1,.lb-row.rank-2,.lb-row.rank-3{padding:14px 15px;margin:4px 0;border-radius:16px}
+
 .lb-row.rank-1{
-  background:linear-gradient(135deg,rgba(255,200,60,.14),rgba(255,200,60,.02) 50%,transparent) !important;
-  border:1px solid rgba(255,200,60,.42) !important;
+  background:linear-gradient(135deg,rgba(255,200,60,.09),rgba(255,200,60,.015) 50%,transparent) !important;
+  border:1px solid rgba(255,200,60,.3) !important;
 }
-.lb-row.rank-1::before{
-  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(circle at 15% 50%,rgba(255,200,60,.3),transparent 55%);
-  animation:rank1Glow 3.4s ease-in-out infinite;
-}
-@keyframes rank1Glow{0%,100%{opacity:.55;transform:translate(0,0)}50%{opacity:1;transform:translate(6px,-4px)}}
-.lb-row.rank-1::after{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background-image:
-    radial-gradient(2px 2px at 12% 20%,rgba(255,220,120,.9),transparent 100%),
-    radial-gradient(1.5px 1.5px at 78% 30%,rgba(255,220,120,.7),transparent 100%),
-    radial-gradient(1.5px 1.5px at 45% 80%,rgba(255,240,180,.8),transparent 100%);
-  animation:rank1Sparkle 3s ease-in-out infinite;
-}
-@keyframes rank1Sparkle{0%,100%{opacity:.35}50%{opacity:.9}}
 .lb-row.rank-2{
-  background:linear-gradient(135deg,rgba(200,208,220,.12),rgba(200,208,220,.02) 50%,transparent) !important;
-  border:1px solid rgba(200,208,220,.32) !important;
+  background:linear-gradient(135deg,rgba(200,208,220,.07),rgba(200,208,220,.01) 50%,transparent) !important;
+  border:1px solid rgba(200,208,220,.22) !important;
 }
-.lb-row.rank-2::before{
-  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(circle at 15% 50%,rgba(200,208,220,.22),transparent 55%);
-  animation:rank2Glow 3.8s ease-in-out infinite;
-}
-@keyframes rank2Glow{0%,100%{opacity:.5;transform:translate(0,0)}50%{opacity:.95;transform:translate(5px,-3px)}}
 .lb-row.rank-3{
-  background:linear-gradient(135deg,rgba(227,155,92,.14),rgba(227,155,92,.02) 50%,transparent) !important;
-  border:1px solid rgba(227,155,92,.36) !important;
+  background:linear-gradient(135deg,rgba(227,155,92,.09),rgba(227,155,92,.015) 50%,transparent) !important;
+  border:1px solid rgba(227,155,92,.26) !important;
 }
-.lb-row.rank-3::before{
-  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(circle at 15% 50%,rgba(227,155,92,.22),transparent 55%);
-  animation:rank3Glow 4.2s ease-in-out infinite;
-}
-@keyframes rank3Glow{0%,100%{opacity:.5;transform:translate(0,0)}50%{opacity:.9;transform:translate(4px,-3px)}}
 .lb-row.rank-1>*,.lb-row.rank-2>*,.lb-row.rank-3>*{position:relative;z-index:1}
+
 .podium.rank-1{
-  background:linear-gradient(135deg,rgba(255,200,60,.14),rgba(255,200,60,.02) 50%,transparent) !important;
-  border:1px solid rgba(255,200,60,.42) !important;
+  background:linear-gradient(135deg,rgba(255,200,60,.09),rgba(255,200,60,.015) 50%,transparent) !important;
+  border:1px solid rgba(255,200,60,.3) !important;
 }
-.podium.rank-1::after{
-  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(circle at 15% 50%,rgba(255,200,60,.3),transparent 55%);
-  animation:rank1Glow 3.4s ease-in-out infinite;
-}
-.podium.rank-1>*{position:relative;z-index:1}
 .podium.rank-2{
-  background:linear-gradient(135deg,rgba(200,208,220,.12),rgba(200,208,220,.02) 50%,transparent) !important;
-  border:1px solid rgba(200,208,220,.32) !important;
+  background:linear-gradient(135deg,rgba(200,208,220,.07),rgba(200,208,220,.01) 50%,transparent) !important;
+  border:1px solid rgba(200,208,220,.22) !important;
 }
 .podium.rank-3{
-  background:linear-gradient(135deg,rgba(227,155,92,.14),rgba(227,155,92,.02) 50%,transparent) !important;
-  border:1px solid rgba(227,155,92,.36) !important;
+  background:linear-gradient(135deg,rgba(227,155,92,.09),rgba(227,155,92,.015) 50%,transparent) !important;
+  border:1px solid rgba(227,155,92,.26) !important;
 }
 .lb-pos{
   font-weight:900;font-size:14px;color:var(--text-dim);text-align:center;
@@ -1058,8 +1133,7 @@ svg.ic-xl{width:40px;height:40px}
   width:30px;height:30px;border-radius:10px;background:var(--surface-3);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
 }
-.lb-pos.top1{background:linear-gradient(135deg,#ffca3c,#f59e0b);color:#fff;animation:posGlow 2.8s ease-in-out infinite}
-@keyframes posGlow{0%,100%{box-shadow:0 4px 14px rgba(255,200,60,.4)}50%{box-shadow:0 4px 20px rgba(255,200,60,.7)}}
+.lb-pos.top1{background:linear-gradient(135deg,#ffca3c,#f59e0b);color:#fff}
 .lb-pos.top2{background:linear-gradient(135deg,#c5cdda,#8a95a8);color:#fff}
 .lb-pos.top3{background:linear-gradient(135deg,#e39b5c,#a0683a);color:#fff}
 .lb-rating{font-weight:900;font-size:14.5px;font-variant-numeric:tabular-nums;letter-spacing:-.02em;padding:4px 8px;border-radius:9px;background:rgba(0,0,0,.14);border:1px solid var(--border)}
@@ -1554,9 +1628,6 @@ svg.ic-xl{width:40px;height:40px}
 }
 @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.85)}}
 
-/* ============================================================
-   SEARCH OVERLAY — REDESIGNED
-   ============================================================ */
 .search-overlay{
   position:fixed;inset:0;z-index:400;
   background:
@@ -1751,9 +1822,10 @@ svg.ic-xl{width:40px;height:40px}
 @media (max-width:360px){
   .view{padding:14px 11px 18px}
   .quick-grid{gap:9px}
-  .quick{padding:13px 6px;min-height:96px}
-  .quick span{font-size:10.5px}
-  .quick .qi{width:40px;height:40px;border-radius:13px}
+  .quick{padding:13px 6px;min-height:118px}
+  .quick .qi{width:56px;height:56px}
+  .quick .qi svg{width:26px;height:26px}
+  .quick .qlabel{font-size:10.5px}
   .brand .wm .s{display:none}
   .hero-stats{gap:10px}
   .hero-stats b{font-size:19px}
@@ -1782,7 +1854,8 @@ svg.ic-xl{width:40px;height:40px}
   .lb-row.rank-1::before,.lb-row.rank-2::before,.lb-row.rank-3::before,.lb-row.rank-1::after,
   .podium.rank-1,.podium.rank-1 .medal.r1,.search-radar-ring,.search-radar-icon,
   .season-card::before,.season-progress-bar i,.lb-pos.top1,.quick:hover .qi,
-  .season-countdown,.search-radar,.ttt-cell.win,.home-banner,.home-banner::before{animation:none !important;transition:none !important}
+  .season-countdown,.search-radar,.ttt-cell.win,.home-banner,.home-banner::before,
+  .photo-banner-track{animation:none !important;transition:none !important}
 }
 </style>
 </head>
@@ -1805,7 +1878,6 @@ svg.ic-xl{width:40px;height:40px}
       <h1 class="auth-title">Grandmaster Grid</h1>
       <div class="auth-tagline" id="authTagline">Masuk untuk melanjutkan</div>
     </div>
-    <!-- Auth tabs dihilangkan: login hanya via Google -->
     <div class="auth-card" id="authCard"></div>
     <div class="auth-foot">
       <span id="authFootIcon"></span>
@@ -1839,7 +1911,6 @@ svg.ic-xl{width:40px;height:40px}
 
   <main id="views">
     <section class="view" id="view-home">
-      <!-- Banner Informasi -->
       <div class="home-banner" id="homeBanner"></div>
       <div class="hero" id="heroCard"></div>
       <div id="seasonSlot"></div>
@@ -1847,6 +1918,8 @@ svg.ic-xl{width:40px;height:40px}
       <!-- Daftar pertandingan terakhir disembunyikan -->
       <div class="sec-title hidden" id="recentGamesTitle"><h3>Pertandingan Terakhir</h3><button id="btnAllGames">Semua</button></div>
       <div class="card flat hidden" id="recentGames"></div>
+      <!-- Banner foto di atas papan peringkat -->
+      <div class="photo-banner hidden" id="photoBanner"></div>
       <div class="sec-title"><h3>Papan Peringkat</h3><button data-goto="leaderboard">Lihat</button></div>
       <div class="card flat" id="homeLeaderboard"></div>
       <div class="sec-title"><h3>Tantangan Harian</h3></div>
@@ -2088,74 +2161,291 @@ function formatLastSeen(ts){
 }
 
 /* ==========================================================================
-   SECTION: ADMIN CONFIG (Game tambahan menu Play + Banner Home)
+   SECTION: ADMIN CONFIG
    ==========================================================================
-   Admin dapat:
-   1. Menambahkan game baru di menu Play dengan mengisi ADMIN_PLAY_MENU_HTML_DEFAULT
-      di bawah ini (format HTML, bebas). Setiap elemen .play-card akan otomatis
-      mendapat styling yang sama seperti card bawaan.
-   2. Mengubah konten banner di Home lewat DEFAULT_HOME_BANNER.
-   3. (Opsional) Override via Firebase database:
-        adminConfig/playMenuHtml   -> string HTML atau {html:"..."}
-        adminConfig/homeBanner     -> {icon:"...", title:"...", text:"..."}
+   Semua konfigurasi admin dapat diubah:
+   1. LANGSUNG DI KODE INI (constanta di bawah)
+   2. MELALUI FIREBASE database:
+        adminConfig/playMenuHtml    -> string HTML / {html:"..."}
+        adminConfig/homeBanner      -> {icon:"...", title:"...", text:"..."}
+        adminConfig/photoBanner     -> {images:[{url,link,alt}], autoSlideInterval:5000}
+        adminConfig/playMenuItems   -> array konfigurasi item menu Play
+        adminConfig/quickMenuItems  -> array konfigurasi quick menu Home
    ========================================================================== */
-const ADMIN_PLAY_MENU_HTML_DEFAULT = `
-<!-- ====== MULAI: Game tambahan (diedit oleh admin) ====== -->
-<!--
-  CONTOH MENAMBAH GAME — salin template di bawah, lalu sesuaikan:
 
-  <div class="play-card custom" data-admin-action="url" data-admin-url="https://example.com/game">
+/* ---- 1. PLAY MENU ITEMS (menu Play) ---- */
+const PLAY_MENU_ITEMS_DEFAULT = [
+  {id:'ranked', title:'Ranked', desc:'Pertandingan kompetitif. 1 menit + 5 detik per langkah.', image:'', icon:'target', iconClass:'ranked', modeClass:'ranked', action:'ranked'},
+  {id:'casual', title:'Classic', desc:'Bertanding tanpa peringkat. Rating & bintang tidak berubah.', image:'', icon:'swords', iconClass:'casual', modeClass:'casual', action:'casual'},
+  {id:'friend', title:'Main dengan Teman', desc:'Buat room privat dan bagikan kodenya.', image:'', icon:'users', iconClass:'friend', modeClass:'friend', action:'friend'},
+  {id:'ai', title:'Lawan AI', desc:'Enam tingkat kesulitan, berjalan offline.', image:'', icon:'cpu', iconClass:'ai', modeClass:'ai', action:'ai'},
+  {id:'local', title:'Dua Pemain Lokal', desc:'Satu perangkat, bergantian.', image:'', icon:'chess', iconClass:'local', modeClass:'local', action:'local'},
+  {id:'puzzle', title:'Puzzle Taktik', desc:'Latih taktik dengan posisi nyata.', image:'', icon:'zap', iconClass:'puzzle', modeClass:'puzzle', action:'puzzle'},
+  {id:'tictactoe', title:'Tic-Tac-Toe', desc:'Lawan AI atau teman di satu perangkat.', image:'', icon:'grid3', iconClass:'tictactoe', modeClass:'tictactoe', action:'tictactoe'},
+  {id:'trex', title:'T-Rex Runner', desc:'Lompat-lompat hindari rintangan seperti game offline.', image:'', icon:'dino', iconClass:'trex', modeClass:'trex', action:'trex'}
+];
+
+/* ---- 2. QUICK MENU ITEMS (Home) ---- */
+const QUICK_MENU_ITEMS_DEFAULT = [
+  {id:'ranked', label:'Ranked', sub:'Kompetitif', image:'', icon:'target', action:'ranked'},
+  {id:'casual', label:'Classic', sub:'Santai', image:'', icon:'swords', action:'casual'},
+  {id:'friend', label:'Teman', sub:'Privat', image:'', icon:'users', action:'friend'},
+  {id:'ai', label:'vs AI', sub:'6 Level', image:'', icon:'cpu', action:'ai'},
+  {id:'local', label:'Lokal', sub:'2 Pemain', image:'', icon:'chess', action:'local'},
+  {id:'puzzle', label:'Puzzle', sub:'Taktik', image:'', icon:'zap', action:'puzzle'}
+];
+
+/* ---- 3. HTML TAMBAHAN UNTUK MENU PLAY (opsional) ---- */
+const ADMIN_PLAY_MENU_HTML_DEFAULT = `
+<!-- ====== Game tambahan dari admin (opsional) ======
+  Salin template di bawah untuk menambahkan game baru.
+  Atribut yang didukung:
+    data-admin-action="url" + data-admin-url="..."
+    data-admin-action="fn"  + data-admin-fn="namaFungsiGlobal"
+
+  Contoh:
+  <div class="play-card custom" data-admin-action="url" data-admin-url="https://example.com">
     <div class="pc-bg"></div>
-    <div class="pc-icon custom">${'' /* ikon SVG bisa diisi manual */}</div>
+    <div class="pc-image custom"><img src="URL_GAMBAR" alt=""></div>
     <div class="pc-body">
       <div class="pc-title">Nama Game</div>
-      <div class="pc-sub">Deskripsi singkat game.</div>
+      <div class="pc-sub">Deskripsi game.</div>
     </div>
     <div class="pc-arrow">›</div>
   </div>
-
-  Atribut yang didukung:
-    data-admin-action="url"  -> membuka data-admin-url di tab baru
-    data-admin-action="fn"   -> memanggil fungsi global pada data-admin-fn
-                                (fungsi harus didaftarkan ke window.<nama>)
-  Kelas pc-icon: custom | ranked | casual | friend | ai | local | puzzle
 -->
-<!-- ====== SELESAI: Game tambahan ====== -->
 `;
 let adminPlayMenuHtml = ADMIN_PLAY_MENU_HTML_DEFAULT;
-async function loadAdminPlayMenuHtml(){
-  if(!FB.ready) return;
-  try{
-    const snap = await FB.api.get(FB.api.ref(FB.db,'adminConfig/playMenuHtml'));
-    if(snap.exists()){
-      const val = snap.val();
-      const remote = (typeof val==='string') ? val : (val && typeof val.html==='string' ? val.html : '');
-      if(remote) adminPlayMenuHtml = ADMIN_PLAY_MENU_HTML_DEFAULT + '\n' + remote;
-    }
-  }catch(e){ logErr('admin-play-load', e); }
-}
 
+/* ---- 4. HOME BANNER (teks) ---- */
 const DEFAULT_HOME_BANNER = {
   icon:'info',
   title:'Selamat Datang di Grandmaster Grid!',
   text:'Mainkan catur, taktik, dan game menarik lainnya. Login dengan Google untuk menyimpan progres Anda.'
 };
 let homeBannerConfig = Object.assign({}, DEFAULT_HOME_BANNER);
-async function loadHomeBannerConfig(){
+
+/* ---- 5. PHOTO BANNER (slideshow foto di atas papan peringkat) ---- */
+const DEFAULT_PHOTO_BANNER = {
+  // Setiap item: {url:'https://...', link:'https://...', alt:'teks alternatif'}
+  images: [],
+  autoSlideInterval: 5000
+};
+let photoBannerConfig = JSON.parse(JSON.stringify(DEFAULT_PHOTO_BANNER));
+
+/* ---- 6. PLAY & QUICK MENU (aktif) ---- */
+let playMenuItems = PLAY_MENU_ITEMS_DEFAULT.map(x=>Object.assign({},x));
+let quickMenuItems = QUICK_MENU_ITEMS_DEFAULT.map(x=>Object.assign({},x));
+
+async function loadAdminConfigs(){
   if(!FB.ready) return;
-  try{
-    const snap = await FB.api.get(FB.api.ref(FB.db,'adminConfig/homeBanner'));
-    if(snap.exists()){
-      const v = snap.val();
-      if(v && typeof v==='object'){
-        homeBannerConfig = {
-          icon: typeof v.icon==='string' ? v.icon : DEFAULT_HOME_BANNER.icon,
-          title: typeof v.title==='string' ? v.title : DEFAULT_HOME_BANNER.title,
-          text: typeof v.text==='string' ? v.text : DEFAULT_HOME_BANNER.text
-        };
+  const tasks = [];
+  // playMenuHtml
+  tasks.push((async()=>{
+    try{
+      const snap = await FB.api.get(FB.api.ref(FB.db,'adminConfig/playMenuHtml'));
+      if(snap.exists()){
+        const val = snap.val();
+        const remote = (typeof val==='string') ? val : (val && typeof val.html==='string' ? val.html : '');
+        if(remote) adminPlayMenuHtml = ADMIN_PLAY_MENU_HTML_DEFAULT + '\n' + remote;
       }
+    }catch(e){ logErr('admin-play-html', e); }
+  })());
+  // homeBanner
+  tasks.push((async()=>{
+    try{
+      const snap = await FB.api.get(FB.api.ref(FB.db,'adminConfig/homeBanner'));
+      if(snap.exists()){
+        const v = snap.val();
+        if(v && typeof v==='object'){
+          homeBannerConfig = {
+            icon: typeof v.icon==='string' ? v.icon : DEFAULT_HOME_BANNER.icon,
+            title: typeof v.title==='string' ? v.title : DEFAULT_HOME_BANNER.title,
+            text: typeof v.text==='string' ? v.text : DEFAULT_HOME_BANNER.text
+          };
+        }
+      }
+    }catch(e){ logErr('home-banner-load', e); }
+  })());
+  // photoBanner
+  tasks.push((async()=>{
+    try{
+      const snap = await FB.api.get(FB.api.ref(FB.db,'adminConfig/photoBanner'));
+      if(snap.exists()){
+        const v = snap.val();
+        if(v && typeof v === 'object'){
+          let imgs = [];
+          if(Array.isArray(v.images)) imgs = v.images;
+          else if(v.images && typeof v.images === 'object') imgs = Object.values(v.images);
+          photoBannerConfig.images = imgs
+            .filter(x => x && typeof x === 'object' && typeof x.url === 'string' && x.url.length>0)
+            .map(x => ({url:String(x.url), link:typeof x.link==='string'?x.link:'', alt:typeof x.alt==='string'?x.alt:''}));
+          if(typeof v.autoSlideInterval === 'number' && v.autoSlideInterval >= 2000){
+            photoBannerConfig.autoSlideInterval = v.autoSlideInterval;
+          }
+        }
+      }
+    }catch(e){ logErr('photo-banner-load', e); }
+  })());
+  // playMenuItems
+  tasks.push((async()=>{
+    try{
+      const snap = await FB.api.get(FB.api.ref(FB.db,'adminConfig/playMenuItems'));
+      if(snap.exists()){
+        const v = snap.val();
+        let arr = Array.isArray(v) ? v : (v && typeof v==='object' ? Object.values(v) : null);
+        if(arr && arr.length){
+          const clean = arr.filter(x=>x && typeof x==='object' && typeof x.title==='string').map(x=>({
+            id: typeof x.id==='string'?x.id:('custom-'+(Math.random().toString(36).slice(2,8))),
+            title: String(x.title),
+            desc: typeof x.desc==='string'?x.desc:'',
+            image: typeof x.image==='string'?x.image:'',
+            icon: typeof x.icon==='string'?x.icon:'grid3',
+            iconClass: typeof x.iconClass==='string'?x.iconClass:'custom',
+            modeClass: typeof x.modeClass==='string'?x.modeClass:'custom',
+            action: typeof x.action==='string'?x.action:'custom',
+            url: typeof x.url==='string'?x.url:''
+          }));
+          if(clean.length) playMenuItems = clean;
+        }
+      }
+    }catch(e){ logErr('play-items-load', e); }
+  })());
+  // quickMenuItems
+  tasks.push((async()=>{
+    try{
+      const snap = await FB.api.get(FB.api.ref(FB.db,'adminConfig/quickMenuItems'));
+      if(snap.exists()){
+        const v = snap.val();
+        let arr = Array.isArray(v) ? v : (v && typeof v==='object' ? Object.values(v) : null);
+        if(arr && arr.length){
+          const clean = arr.filter(x=>x && typeof x==='object' && typeof x.label==='string').map(x=>({
+            id: typeof x.id==='string'?x.id:('quick-'+(Math.random().toString(36).slice(2,8))),
+            label: String(x.label),
+            sub: typeof x.sub==='string'?x.sub:'',
+            image: typeof x.image==='string'?x.image:'',
+            icon: typeof x.icon==='string'?x.icon:'grid3',
+            action: typeof x.action==='string'?x.action:'custom',
+            url: typeof x.url==='string'?x.url:''
+          }));
+          if(clean.length) quickMenuItems = clean;
+        }
+      }
+    }catch(e){ logErr('quick-items-load', e); }
+  })());
+  await Promise.all(tasks);
+}
+
+/* ==========================================================================
+   SECTION: PHOTO BANNER (SLIDESHOW)
+   ========================================================================== */
+const photoBannerState = {index:0, timerId:null};
+
+function stopPhotoBannerAutoSlide(){
+  if(photoBannerState.timerId){
+    clearInterval(photoBannerState.timerId);
+    photoBannerState.timerId = null;
+  }
+}
+function photoBannerImages(){
+  return (photoBannerConfig.images||[]).filter(x => x && typeof x.url==='string' && x.url.length>0);
+}
+function photoBannerApplyTransform(){
+  const track = $('#photoBannerTrack');
+  if(!track) return;
+  const count = photoBannerImages().length;
+  if(count<=0) return;
+  const i = ((photoBannerState.index % count) + count) % count;
+  track.style.transform = 'translateX(' + (-i * 100) + '%)';
+  const dots = document.querySelectorAll('#photoBannerDots .photo-banner-dot');
+  dots.forEach((d,idx)=> d.classList.toggle('active', idx === i));
+}
+function photoBannerGo(dir){
+  const count = photoBannerImages().length;
+  if(count<=1) return;
+  photoBannerState.index = (photoBannerState.index + dir + count) % count;
+  photoBannerApplyTransform();
+  photoBannerRestartAutoSlide();
+}
+function photoBannerStartAutoSlide(){
+  const count = photoBannerImages().length;
+  if(count<=1) return;
+  stopPhotoBannerAutoSlide();
+  photoBannerState.timerId = setInterval(()=>{
+    photoBannerState.index = (photoBannerState.index + 1) % count;
+    photoBannerApplyTransform();
+  }, Math.max(2000, Number(photoBannerConfig.autoSlideInterval)||5000));
+}
+function photoBannerRestartAutoSlide(){
+  stopPhotoBannerAutoSlide();
+  photoBannerStartAutoSlide();
+}
+function renderPhotoBanner(){
+  const banner = $('#photoBanner');
+  if(!banner) return;
+  stopPhotoBannerAutoSlide();
+  const images = photoBannerImages();
+  if(!images.length){
+    banner.classList.add('hidden');
+    banner.innerHTML = '';
+    return;
+  }
+  banner.classList.remove('hidden');
+  const showNav = images.length > 1;
+  banner.innerHTML =
+    '<div class="photo-banner-track" id="photoBannerTrack">'+
+    images.map((img,i)=>{
+      const alt = escapeHtml(img.alt||('Banner '+(i+1)));
+      const inner = '<img src="'+escapeHtml(img.url)+'" alt="'+alt+'" loading="lazy" />';
+      const content = img.link
+        ? '<a href="'+escapeHtml(img.link)+'" target="_blank" rel="noopener">'+inner+'</a>'
+        : inner;
+      return '<div class="photo-banner-slide">'+content+'</div>';
+    }).join('')+
+    '</div>'+
+    (showNav?(
+      '<button class="photo-banner-btn prev" aria-label="Sebelumnya">'+icon('chevL')+'</button>'+
+      '<button class="photo-banner-btn next" aria-label="Berikutnya">'+icon('chevR')+'</button>'+
+      '<div class="photo-banner-dots" id="photoBannerDots">'+
+        images.map((_,i)=>'<button class="photo-banner-dot'+(i===0?' active':'')+'" data-dot="'+i+'" aria-label="Slide '+(i+1)+'"></button>').join('')+
+      '</div>'
+    ):'');
+
+  photoBannerState.index = 0;
+  photoBannerApplyTransform();
+
+  if(showNav){
+    const prev = banner.querySelector('.photo-banner-btn.prev');
+    const next = banner.querySelector('.photo-banner-btn.next');
+    if(prev) prev.addEventListener('click', (ev)=>{ ev.stopPropagation(); photoBannerGo(-1); });
+    if(next) next.addEventListener('click', (ev)=>{ ev.stopPropagation(); photoBannerGo(1); });
+    banner.querySelectorAll('.photo-banner-dot').forEach(d => {
+      d.addEventListener('click', (ev)=>{
+        ev.stopPropagation();
+        const i = Number(d.dataset.dot);
+        if(!Number.isFinite(i)) return;
+        photoBannerState.index = i;
+        photoBannerApplyTransform();
+        photoBannerRestartAutoSlide();
+      });
+    });
+    // Swipe gesture
+    let startX = 0, moved = false;
+    const track = banner.querySelector('.photo-banner-track');
+    if(track){
+      track.addEventListener('touchstart', (e)=>{ startX = e.touches[0].clientX; moved=false; }, {passive:true});
+      track.addEventListener('touchmove', ()=>{ moved=true; }, {passive:true});
+      track.addEventListener('touchend', (e)=>{
+        if(!moved) return;
+        const endX = (e.changedTouches&&e.changedTouches[0]) ? e.changedTouches[0].clientX : startX;
+        const dx = endX - startX;
+        if(Math.abs(dx) > 40){
+          photoBannerGo(dx < 0 ? 1 : -1);
+        }
+      });
     }
-  }catch(e){ logErr('home-banner-load', e); }
+    photoBannerStartAutoSlide();
+  }
 }
 
 /* ==========================================================================
@@ -3099,12 +3389,10 @@ function splashStatus(text){
 /* ==========================================================================
    SECTION: AUTH SCREEN — HANYA LOGIN GOOGLE
    ========================================================================== */
-let authMode='login';
-
 function showAuthScreen(){
   const as=$('#authScreen');if(as)as.classList.remove('hidden');
   const app=$('#app');if(app)app.classList.add('hidden');
-  renderAuthScreen('login');
+  renderAuthScreen();
 }
 function hideAuthScreen(){
   const as=$('#authScreen');if(as)as.classList.add('hidden');
@@ -4214,7 +4502,7 @@ function sendDrawOffer(){
     }).catch(e=>logErr('draw-offer',e));
 }
 
-/* -------- MATCHMAKING (RATING-BASED, RENTANG DINAMIS) -------- */
+/* -------- MATCHMAKING -------- */
 let matchmakingActive=false;
 let matchmakingCleanups=[];
 async function findMatch(tc, mode){
@@ -4261,7 +4549,6 @@ async function findMatch(tc, mode){
     matchmakingActive=false;
   };
 
-  // Timer elapsed
   const timeId=setInterval(()=>{
     if(matched)return;
     const tEl=$('#searchTimer');
@@ -4272,7 +4559,6 @@ async function findMatch(tc, mode){
   },500);
   cleanups.push(()=>clearInterval(timeId));
 
-  // Timeout 90s
   const timeoutId=setTimeout(()=>{
     if(matched)return;
     matched='timeout';
@@ -5395,6 +5681,7 @@ async function doLogout(){
     stopAi();
     stopClock();
     stopSeasonCountdown();
+    stopPhotoBannerAutoSlide();
     closeGameScreen();
     Game.chess=null;Game.mode=null;Game.running=false;Game.finished=false;
     if(FB.ready&&App.user){
@@ -5474,26 +5761,10 @@ function renderHome(){
       '</div>';
   }
   renderSeasonCard();
-  const qg=$('#quickGrid');
-  if(qg){
-    const items=[
-      {ic:'target',label:'Ranked',act:()=>openRankedDialog()},
-      {ic:'swords',label:'Classic',act:()=>openClassicDialog()},
-      {ic:'users',label:'Teman',act:()=>openFriendRoomDialog()},
-      {ic:'cpu',label:'vs AI',act:()=>openAiDialog()},
-      {ic:'chess',label:'Lokal',act:()=>openLocalDialog()},
-      {ic:'zap',label:'Puzzle',act:()=>startPuzzle(App.puzzleState.index)}
-    ];
-    qg.innerHTML='';
-    items.forEach(it=>{
-      const b=el('button','quick');
-      b.innerHTML='<div class="qi">'+icon(it.ic)+'</div><span>'+it.label+'</span>';
-      b.addEventListener('click',()=>{Sound.button();it.act();});
-      qg.appendChild(b);
-    });
-  }
-  /* Daftar pertandingan terakhir disembunyikan sesuai permintaan */
+  renderQuickMenu();
+  /* Daftar pertandingan terakhir disembunyikan */
   // renderRecentGames();
+  renderPhotoBanner();
   renderHomeLeaderboard();
   const daily=$('#dailyCard');
   if(daily){
@@ -5509,6 +5780,38 @@ function renderHome(){
     if(b)b.addEventListener('click',()=>{Sound.button();startDailyPuzzle();});
   }
 }
+
+/* ---- Aksi untuk setiap action id ---- */
+function runAction(action, url){
+  if(action==='ranked') return openRankedDialog();
+  if(action==='casual') return openClassicDialog();
+  if(action==='friend') return openFriendRoomDialog();
+  if(action==='ai') return openAiDialog();
+  if(action==='local') return openLocalDialog();
+  if(action==='puzzle') return startPuzzle(App.puzzleState.index);
+  if(action==='tictactoe') return openTttDialog();
+  if(action==='trex') return openTrex();
+  if(action==='url' && url) return window.open(url, '_blank', 'noopener');
+  if(action==='fn' && url && typeof window[url]==='function'){ try{ window[url](); }catch(e){ logErr('admin-fn', e); } }
+}
+
+function renderQuickMenu(){
+  const qg=$('#quickGrid');if(!qg) return;
+  qg.innerHTML='';
+  quickMenuItems.forEach(item=>{
+    const b=el('button','quick');
+    const iconHtml = item.image
+      ? '<img src="'+escapeHtml(item.image)+'" alt="'+escapeHtml(item.label)+'" loading="lazy" />'
+      : icon(item.icon||'grid3');
+    b.innerHTML =
+      '<div class="qi">'+iconHtml+'</div>'+
+      '<span class="qlabel">'+escapeHtml(item.label)+'</span>'+
+      (item.sub?'<span class="qsub">'+escapeHtml(item.sub)+'</span>':'');
+    b.addEventListener('click',()=>{ Sound.button(); runAction(item.action, item.url); });
+    qg.appendChild(b);
+  });
+}
+
 async function renderRecentGames(){
   const box=$('#recentGames');if(!box)return;
   if(!FB.ready||!App.user){
@@ -5580,39 +5883,27 @@ async function renderHomeLeaderboard(){
 }
 
 /* ==========================================================================
-   SECTION: PLAY MENU
+   SECTION: PLAY MENU — dengan gambar & admin editable
    ========================================================================== */
 function renderPlayMenu(){
   const box=$('#playModes');if(!box)return;
-  const modes=[
-    {icon:'target',iconClass:'ranked',modeClass:'ranked',title:'Ranked',desc:'Pertandingan kompetitif. 1 menit + 5 detik per langkah.',act:openRankedDialog},
-    {icon:'swords',iconClass:'casual',modeClass:'casual',title:'Classic',desc:'Bertanding tanpa peringkat. Rating & bintang tidak berubah.',act:openClassicDialog},
-    {icon:'users',iconClass:'friend',modeClass:'friend',title:'Main dengan Teman',desc:'Buat room privat dan bagikan kodenya.',act:()=>openFriendRoomDialog()},
-    {icon:'cpu',iconClass:'ai',modeClass:'ai',title:'Lawan AI',desc:'Enam tingkat kesulitan, berjalan offline.',act:openAiDialog},
-    {icon:'chess',iconClass:'local',modeClass:'local',title:'Dua Pemain Lokal',desc:'Satu perangkat, bergantian.',act:openLocalDialog},
-    {icon:'zap',iconClass:'puzzle',modeClass:'puzzle',title:'Puzzle Taktik',desc:'Latih taktik dengan posisi nyata.',act:()=>startPuzzle(App.puzzleState.index)},
-    {icon:'grid3',iconClass:'tictactoe',modeClass:'tictactoe',title:'Tic-Tac-Toe',desc:'Lawan AI atau teman di satu perangkat.',act:openTttDialog},
-    {icon:'dino',iconClass:'trex',modeClass:'trex',title:'T-Rex Runner',desc:'Lompat-lompat hindari rintangan seperti game offline.',act:openTrex}
-  ];
   box.innerHTML='';
-  modes.forEach(m=>{
-    const card=el('div','play-card '+m.modeClass);
+  playMenuItems.forEach(m=>{
+    const card=el('div','play-card '+(m.modeClass||'custom'));
+    const iconHtml = m.image
+      ? '<img src="'+escapeHtml(m.image)+'" alt="'+escapeHtml(m.title)+'" loading="lazy" />'
+      : icon(m.icon||'grid3');
     card.innerHTML=
       '<div class="pc-bg"></div>'+
-      '<div class="pc-icon '+m.iconClass+'">'+icon(m.icon)+'</div>'+
-      '<div class="pc-body"><div class="pc-title">'+m.title+'</div>'+
-      '<div class="pc-sub">'+m.desc+'</div></div>'+
+      '<div class="pc-image '+(m.iconClass||'custom')+'">'+iconHtml+'</div>'+
+      '<div class="pc-body"><div class="pc-title">'+escapeHtml(m.title)+'</div>'+
+      (m.desc?'<div class="pc-sub">'+escapeHtml(m.desc)+'</div>':'')+'</div>'+
       '<div class="pc-arrow">'+icon('chevR')+'</div>';
-    card.addEventListener('click',()=>{Sound.button();m.act();});
+    card.addEventListener('click',()=>{Sound.button(); runAction(m.action, m.url);});
     box.appendChild(card);
   });
 
-  /* ================= ADMIN CUSTOM GAMES =================
-     Menambahkan HTML dari ADMIN_PLAY_MENU_HTML_DEFAULT dan/atau
-     adminConfig/playMenuHtml (Firebase). Setiap child akan
-     ditambahkan ke dalam grid, dan handler klik dipasang otomatis
-     berdasarkan data-admin-action / data-admin-url / data-admin-fn.
-     ====================================================== */
+  /* ================= HTML TAMBAHAN DARI ADMIN ================= */
   if(adminPlayMenuHtml && typeof adminPlayMenuHtml === 'string'){
     try{
       const temp = document.createElement('div');
@@ -5620,7 +5911,6 @@ function renderPlayMenu(){
       const nodes = Array.from(temp.children);
       nodes.forEach(node=>{
         box.appendChild(node);
-        // Pasang handler klik untuk data-admin-action
         const attach = (element)=>{
           const action = element.getAttribute && element.getAttribute('data-admin-action');
           if(!action) return;
@@ -5640,7 +5930,6 @@ function renderPlayMenu(){
           });
         };
         attach(node);
-        // Juga pasang ke descendant yang punya data-admin-action
         node.querySelectorAll('[data-admin-action]').forEach(attach);
       });
     }catch(e){
@@ -6798,8 +7087,6 @@ function wireShellEvents(){
       $$('#profileTabs button').forEach(b=>b.classList.toggle('active',b===pt));
       renderProfile();
     }
-    const at=ev.target.closest('[data-authtab]');
-    if(at){Sound.button();renderAuthScreen(at.dataset.authtab);}
   });
 }
 function updateThemeIcon(){
@@ -6910,14 +7197,9 @@ async function boot(){
 
   try{ await resolveGoogleRedirect(); }catch(_){}
 
-  // Muat konfigurasi admin (game tambahan Play + banner Home)
+  // Muat konfigurasi admin (game tambahan Play, banner Home, banner foto, menu items)
   if(FB.ready){
-    try{
-      await Promise.all([
-        loadAdminPlayMenuHtml(),
-        loadHomeBannerConfig()
-      ]);
-    }catch(e){ logErr('admin-config-load', e); }
+    try{ await loadAdminConfigs(); }catch(e){ logErr('admin-config-load', e); }
   }
 
   const minSplash=delay(900);
@@ -6946,28 +7228,45 @@ async function boot(){
         }
         let profile=await loadProfile(user.uid);
         if(!profile){
+          // === USER BARU: LANGSUNG MASUK HOME, lalu popup username ===
           splashStatus('Menyiapkan profil...');
           await minSplash;
           hideSplash();
-          showAuthScreen();
+          App.profile=defaultProfile(user.uid,user.displayName||'Pemain');
+          if(firstCallback){firstCallback=false;}
+          enterApp();
           const username=await promptUsernameForUser(user);
           if(!username){
+            // User batal — logout
             try{await FB.authApi.signOut(FB.auth);}catch(_){}
             App.user=null;
+            App.profile=null;
             showAuthScreen();
             return;
           }
-          try{await createUserProfile(user.uid,username,user.email||'');}
-          catch(e){
+          try{
+            await createUserProfile(user.uid,username,user.email||'');
+          }catch(e){
             logErr('create-profile-google',e);
             toast(errMsg('DATABASE_ERROR'),'error');
             try{await FB.authApi.signOut(FB.auth);}catch(_){}
             App.user=null;
+            App.profile=null;
             showAuthScreen();
             return;
           }
-          profile=await loadProfile(user.uid);
+          // Refresh profile setelah dibuat
+          const newProfile=await loadProfile(user.uid);
+          if(newProfile){
+            App.profile=newProfile;
+            saveProfileCache(user.uid,newProfile);
+            if(App.view==='home')renderHome();
+            if(App.view==='profile')renderProfile();
+          }
+          toast('Akun berhasil dibuat!','success');
+          return;
         }
+        // === USER LAMA: jalur normal ===
         if(profile) profile=await checkSeasonReset(user.uid,profile);
         App.profile=profile||defaultProfile(user.uid,user.displayName||'Pemain');
         saveProfileCache(user.uid,App.profile);
@@ -6996,7 +7295,7 @@ async function boot(){
   },60000);
 
   window.addEventListener('beforeunload',()=>{
-    stopClock();stopAi();stopSeasonCountdown();clearAllListeners();
+    stopClock();stopAi();stopSeasonCountdown();stopPhotoBannerAutoSlide();clearAllListeners();
     if(Trex.rafId){ cancelAnimationFrame(Trex.rafId); Trex.rafId=null; }
     if(FB.ready&&App.user){
       try{FB.api.set(FB.api.ref(FB.db,'presence/'+App.user.uid),{online:false,lastSeen:FB.api.serverTimestamp(),status:'offline'});}catch(_){}
