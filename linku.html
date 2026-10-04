@@ -1,1887 +1,1398 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="dark">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#06080f" />
 <title>Admin Panel · Grandmaster Grid</title>
+<link rel="icon" type="image/png" href="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#06080f; --bg-2:#0a0e1a; --surface:#111828; --surface-2:#182135;
-  --surface-3:#212c46; --surface-4:#2a3757;
-  --border:rgba(255,255,255,.07); --border-2:rgba(255,255,255,.12); --border-3:rgba(255,255,255,.2);
-  --text:#f0f4fc; --text-dim:#8b96b3; --text-dim2:#5a6884;
-  --accent:#6d7bff; --accent-2:#a46cff; --accent-3:#22d3ee;
-  --success:#10d98d; --danger:#ff5d6c; --warn:#ffb020;
-  --radius:18px; --radius-sm:12px;
-  --shadow:0 16px 40px rgba(0,0,0,.45);
-  --shadow-lg:0 24px 60px rgba(0,0,0,.6);
-  --glow:0 12px 40px rgba(109,123,255,.35);
+  --bg:#06080f;--bg-2:#0a0e1a;--surface:#111828;--surface-2:#182135;--surface-3:#212c46;--surface-4:#2a3757;
+  --border:rgba(255,255,255,.055);--border-2:rgba(255,255,255,.11);--border-3:rgba(255,255,255,.18);
+  --text:#f0f4fc;--text-dim:#8b96b3;--text-dim2:#5a6884;
+  --accent:#6d7bff;--accent-2:#a46cff;--accent-3:#22d3ee;
+  --accent-soft:rgba(109,123,255,.14);
+  --success:#10d98d;--success-soft:rgba(16,217,141,.14);
+  --danger:#ff5d6c;--danger-soft:rgba(255,93,108,.14);
+  --warn:#ffb020;--warn-soft:rgba(255,176,32,.14);
+  --radius:16px;--radius-lg:22px;
+  --shadow-sm:0 4px 12px rgba(0,0,0,.35);
+  --shadow:0 12px 32px rgba(0,0,0,.45);
+  --shadow-lg:0 24px 60px rgba(0,0,0,.55);
+  --glow-accent:0 12px 40px rgba(109,123,255,.35);
 }
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-svg{display:block;flex:none}
-i[data-ic]{display:inline-flex;font-style:normal}
-button,input,select,textarea{font-family:inherit;color:inherit}
-button{cursor:pointer;border:none;background:none}
+[data-theme="light"]{
+  --bg:#eef1f8;--bg-2:#e6eaf4;--surface:#fff;--surface-2:#f5f7fc;--surface-3:#eaf0fa;--surface-4:#dfe7f5;
+  --border:rgba(20,30,60,.07);--border-2:rgba(20,30,60,.12);--border-3:rgba(20,30,60,.2);
+  --text:#0a0f1e;--text-dim:#5f6c88;--text-dim2:#95a0ba;
+  --accent:#4c5cf0;--accent-2:#8b46e8;--accent-3:#0891b2;
+  --accent-soft:rgba(76,92,240,.1);
+  --success:#0a9f68;--danger:#e7344a;--warn:#d68a00;
+  --shadow-sm:0 4px 12px rgba(20,30,60,.08);
+  --shadow:0 12px 32px rgba(20,30,60,.11);
+  --shadow-lg:0 24px 60px rgba(20,30,60,.16);
+  --glow-accent:0 12px 40px rgba(76,92,240,.24);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
 body{
-  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  font-size:14px;line-height:1.5;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  padding-top:env(safe-area-inset-top);
+}
+[data-theme="dark"] body{
   background:
     radial-gradient(1400px 800px at 8% -8%, rgba(109,123,255,.16), transparent 55%),
     radial-gradient(1200px 700px at 105% 4%, rgba(164,108,255,.14), transparent 55%),
-    radial-gradient(900px 500px at 50% 120%, rgba(34,211,238,.08), transparent 55%),
     var(--bg);
-  color:var(--text); min-height:100vh; padding:24px 14px 80px;
-  background-attachment:fixed; -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
+  background-attachment:fixed;
 }
-.wrap{max-width:880px;margin:0 auto}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit;background:none;border:none}
+button{cursor:pointer;padding:0}
+a{color:var(--accent);text-decoration:none}
+h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.022em;line-height:1.2}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:6px;border:2px solid var(--bg)}
+::-webkit-scrollbar-track{background:transparent}
 .hidden{display:none !important}
 
-/* ========== AUTH SCREEN ========== */
-.auth-scr{
-  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-  padding:24px;background:
+/* ---------- LOADER ---------- */
+#loader{
+  position:fixed;inset:0;z-index:2000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+  background:var(--bg);transition:opacity .5s,visibility .5s;
+}
+#loader.gone{opacity:0;visibility:hidden;pointer-events:none}
+.loader-mark{
+  width:84px;height:84px;border-radius:26px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff;box-shadow:0 20px 50px rgba(109,123,255,.5);
+  animation:float 3s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.loader-mark svg{width:44px;height:44px}
+.loader-title{font-size:20px;font-weight:900;letter-spacing:-.03em}
+.loader-status{font-size:12.5px;color:var(--text-dim);font-weight:600}
+.spinner{
+  width:22px;height:22px;border-radius:50%;
+  border:2.5px solid color-mix(in srgb,currentColor 22%,transparent);
+  border-top-color:currentColor;animation:spin .72s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- LOGIN SCREEN (PIN) ---------- */
+#loginScreen{
+  position:fixed;inset:0;z-index:900;
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  background:
     radial-gradient(900px 700px at 15% 10%, rgba(109,123,255,.22), transparent 55%),
     radial-gradient(800px 600px at 100% 90%, rgba(164,108,255,.2), transparent 55%),
     var(--bg);
-  z-index:500;
 }
-.auth-card{
-  width:100%;max-width:440px;padding:32px 26px;border-radius:26px;
-  background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 92%,transparent),color-mix(in srgb,var(--surface-2) 92%,transparent));
-  border:1px solid var(--border-2);
-  box-shadow:var(--shadow-lg),inset 0 1px 0 rgba(255,255,255,.06);
-  text-align:center;
-}
-.auth-logo{
-  width:80px;height:80px;margin:0 auto 18px;border-radius:24px;display:grid;place-items:center;
-  color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  box-shadow:0 20px 50px rgba(109,123,255,.45),inset 0 1px 0 rgba(255,255,255,.3);
-}
-.auth-title{font-size:24px;font-weight:900;letter-spacing:-.03em;margin-bottom:6px}
-.auth-sub{font-size:13px;color:var(--text-dim);line-height:1.55;margin-bottom:22px}
-.btn.google{
-  background:#fff;color:#1a1a2e;border:1px solid transparent;
-  box-shadow:0 6px 18px rgba(0,0,0,.2);
-  width:100%;justify-content:center;
-}
-.btn.google:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.28)}
-.btn.google svg{width:20px;height:20px}
-
-/* ========== HEADER ========== */
-.hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:14px}
-.brand{display:flex;align-items:center;gap:14px}
-.brand .logo{
-  width:48px;height:48px;border-radius:14px;display:grid;place-items:center;color:#fff;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  box-shadow:var(--glow),inset 0 1px 0 rgba(255,255,255,.3);
-}
-.hdr h1{font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.15}
-.hdr .sub{font-size:12.5px;color:var(--text-dim);margin-top:3px}
-.user-chip{
-  display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;
-  background:var(--surface);border:1px solid var(--border);border-radius:12px;
-}
-.user-chip img,.user-chip .fallback{
-  width:32px;height:32px;border-radius:9px;object-fit:cover;
-  display:grid;place-items:center;font-weight:800;font-size:13px;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;
-}
-.user-chip .name{font-size:12.5px;font-weight:700;line-height:1.2}
-.user-chip .role{font-size:10.5px;color:var(--text-dim2);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
-.user-chip .logout{
-  width:28px;height:28px;border-radius:8px;display:grid;place-items:center;
-  color:var(--text-dim);transition:.15s;
-}
-.user-chip .logout:hover{background:rgba(255,93,108,.14);color:var(--danger)}
-
-/* ========== TABS ========== */
-.tabs{
-  display:flex;gap:4px;background:var(--surface);padding:5px;border-radius:16px;
-  border:1px solid var(--border);overflow-x:auto;scrollbar-width:none;
-  margin-bottom:20px;
-}
-.tabs::-webkit-scrollbar{display:none}
-.tabs button{
-  flex:1;padding:10px 16px;border-radius:12px;font-size:12.5px;font-weight:700;
-  color:var(--text-dim);white-space:nowrap;transition:.22s;
-  display:flex;align-items:center;gap:7px;justify-content:center;min-width:fit-content;
-}
-.tabs button.active{
-  background:linear-gradient(180deg,var(--surface-3),var(--surface-2));
-  color:var(--text);box-shadow:0 4px 12px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.06);
-}
-.tab-panel{display:none;animation:tabIn .28s cubic-bezier(.2,1,.4,1)}
-.tab-panel.active{display:block}
-@keyframes tabIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-
-/* ========== CARDS ========== */
-.card{
+.login-box{
+  width:100%;max-width:400px;
   background:linear-gradient(180deg,var(--surface),var(--surface-2));
-  border-radius:var(--radius);padding:20px;
-  border:1px solid var(--border);
-  box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.04);
-  margin-bottom:16px;
+  border-radius:26px;padding:32px 28px;text-align:center;
+  box-shadow:var(--shadow-lg),inset 0 1px 0 rgba(255,255,255,.06);
+  border:1px solid var(--border-2);
+  animation:pop .5s cubic-bezier(.2,1.2,.4,1);
 }
-.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
-.card h2{font-size:15px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
-.card h2 i{color:var(--accent)}
+@keyframes pop{from{opacity:0;transform:scale(.92) translateY(14px)}to{opacity:1;transform:none}}
+.login-logo{
+  width:72px;height:72px;border-radius:22px;margin:0 auto 16px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff;box-shadow:0 16px 40px rgba(109,123,255,.5);
+}
+.login-logo svg{width:36px;height:36px}
+.login-title{font-size:22px;margin-bottom:6px;letter-spacing:-.03em}
+.login-sub{font-size:13px;color:var(--text-dim);margin-bottom:22px}
 
-/* ========== BUTTONS ========== */
-.btn{
-  padding:11px 18px;border-radius:12px;font-weight:600;font-size:13px;
-  cursor:pointer;border:1px solid var(--border-2);transition:.18s;
-  display:inline-flex;align-items:center;gap:8px;font-family:inherit;
-  white-space:nowrap;min-height:42px;justify-content:center;
+.pin-input{
+  width:100%;padding:16px 18px;border-radius:14px;
+  background:var(--bg-2);border:1.5px solid var(--border-2);color:var(--text);
+  outline:none;transition:.2s;font-size:24px;font-weight:900;
+  font-family:'JetBrains Mono',ui-monospace,monospace;
+  letter-spacing:.5em;text-align:center;
 }
-.btn:hover{transform:translateY(-1px)}
-.btn:active{transform:translateY(0) scale(.98)}
-.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.btn:disabled{opacity:.5;pointer-events:none}
+.pin-input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 4px var(--accent-soft);
+  background:var(--surface);
+}
+.pin-input::placeholder{color:var(--text-dim2);letter-spacing:.5em}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:13px 20px;border-radius:13px;font-weight:700;font-size:13.5px;
+  background:linear-gradient(180deg,var(--surface-2),var(--surface-3));
+  color:var(--text);transition:.16s;min-height:48px;
+  border:1px solid var(--border-2);box-shadow:var(--shadow-sm);
+  letter-spacing:-.005em;white-space:nowrap;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.42;pointer-events:none}
 .btn.primary{
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
   color:#fff;border-color:transparent;
-  box-shadow:0 8px 24px rgba(109,123,255,.4),inset 0 1px 0 rgba(255,255,255,.22);
+  box-shadow:0 8px 24px rgba(109,123,255,.42),inset 0 1px 0 rgba(255,255,255,.22);
 }
-.btn.primary:hover{box-shadow:0 12px 30px rgba(109,123,255,.5),inset 0 1px 0 rgba(255,255,255,.22)}
-.btn.danger{background:rgba(255,93,108,.1);color:var(--danger);border-color:rgba(255,93,108,.28)}
-.btn.danger:hover{background:rgba(255,93,108,.18)}
-.btn.ghost{background:var(--surface-2);color:var(--text-dim)}
-.btn.ghost:hover{color:var(--text);border-color:rgba(255,255,255,.22)}
-.btn.success{background:rgba(16,217,141,.1);color:var(--success);border-color:rgba(16,217,141,.28)}
-.btn.success:hover{background:rgba(16,217,141,.18)}
-.btn.sm{padding:7px 12px;font-size:12px;border-radius:9px;gap:6px;min-height:34px}
-.btn.block{width:100%;justify-content:center}
+.btn.danger{
+  background:linear-gradient(180deg,rgba(255,93,108,.16),rgba(255,93,108,.1));
+  color:var(--danger);border-color:rgba(255,93,108,.32);
+}
+.btn.ghost{background:transparent;border-color:var(--border-2);box-shadow:none;color:var(--text-dim)}
+.btn.ghost:hover{background:var(--surface-2);color:var(--text)}
+.btn.block{width:100%}
+.btn.sm{min-height:38px;padding:9px 14px;font-size:12.5px;border-radius:11px;gap:7px}
+.error-msg{
+  margin-top:14px;padding:12px 14px;border-radius:12px;
+  background:var(--danger-soft);color:var(--danger);
+  font-size:12.5px;font-weight:600;line-height:1.5;text-align:left;
+  border:1px solid rgba(255,93,108,.28);
+}
+.error-msg.hidden{display:none}
 
-/* ========== STATS ========== */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
-.stat-card{
-  padding:16px;border-radius:16px;
-  background:linear-gradient(180deg,var(--surface),var(--surface-2));
-  border:1px solid var(--border);
-  display:flex;align-items:center;gap:14px;
+/* ---------- APP ---------- */
+#app{min-height:100vh;display:none;flex-direction:column}
+#app.active{display:flex}
+.topbar{
+  position:sticky;top:0;z-index:60;
+  display:flex;align-items:center;gap:12px;padding:12px 20px;
+  padding-top:calc(12px + env(safe-area-inset-top));
+  background:color-mix(in srgb,var(--bg) 78%,transparent);
+  backdrop-filter:blur(22px) saturate(1.6);-webkit-backdrop-filter:blur(22px) saturate(1.6);
+  border-bottom:1px solid var(--border);
 }
-.stat-card .ic{
-  width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex:none;
-  color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  box-shadow:0 6px 18px rgba(109,123,255,.3);
-}
-.stat-card.green .ic{background:linear-gradient(135deg,#10d98d,#0891b2);box-shadow:0 6px 18px rgba(16,217,141,.3)}
-.stat-card.purple .ic{background:linear-gradient(135deg,#a46cff,#6d7bff);box-shadow:0 6px 18px rgba(164,108,255,.3)}
-.stat-card.orange .ic{background:linear-gradient(135deg,#ffb020,#ff5d6c);box-shadow:0 6px 18px rgba(255,176,32,.3)}
-.stat-card .lbl{font-size:10.5px;font-weight:800;color:var(--text-dim);letter-spacing:.14em;text-transform:uppercase}
-.stat-card .val{font-size:24px;font-weight:900;letter-spacing:-.03em;line-height:1;margin-top:4px}
-
-/* ========== DROP ZONE ========== */
-.drop{
-  display:block;border:2px dashed var(--border-2);
-  border-radius:16px;padding:32px 20px;text-align:center;
-  cursor:pointer;transition:.2s;background:var(--bg-2);margin-bottom:16px;
-}
-.drop:hover,.drop.hover{border-color:var(--accent);background:rgba(109,123,255,.07);transform:translateY(-1px)}
-.drop .ic{
-  width:58px;height:58px;margin:0 auto 14px;border-radius:16px;display:grid;place-items:center;
-  color:var(--accent);background:rgba(109,123,255,.12);border:1px solid rgba(109,123,255,.25);
-}
-.drop .t{font-size:14px;font-weight:700;margin-bottom:5px}
-.drop .s{font-size:12px;color:var(--text-dim)}
-.drop input{display:none}
-
-.file-pill{
-  display:flex;align-items:center;gap:12px;padding:12px 14px;
-  background:var(--bg-2);border:1px solid var(--border-2);border-radius:14px;margin-bottom:16px;
-}
-.file-pill .fi{
-  width:40px;height:40px;border-radius:11px;display:grid;place-items:center;flex:none;
-  color:var(--success);background:rgba(16,217,141,.12);
-}
-.file-pill .name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.file-pill .size{font-size:11px;color:var(--text-dim);font-weight:500;margin-top:2px}
-.file-pill .rm{
-  width:30px;height:30px;border-radius:9px;border:none;background:rgba(255,93,108,.12);
-  color:var(--danger);cursor:pointer;display:grid;place-items:center;transition:.15s;flex:none;
-}
-.file-pill .rm:hover{background:rgba(255,93,108,.24)}
-
-/* ========== FORMS ========== */
-.field{margin-bottom:14px}
-.field label{display:block;font-size:12px;font-weight:600;color:var(--text-dim);margin-bottom:7px}
-.field label .hint{font-weight:500;color:var(--text-dim2);font-size:11px}
-.field input,.field select,.field textarea{
-  width:100%;padding:11px 14px;border-radius:11px;
-  background:var(--bg-2);border:1.5px solid var(--border-2);
-  color:var(--text);font-family:inherit;font-size:14px;outline:none;transition:.15s;
-}
-.field input::placeholder,.field textarea::placeholder{color:var(--text-dim2)}
-.field input:focus,.field select:focus,.field textarea:focus{
-  border-color:var(--accent);box-shadow:0 0 0 3px rgba(109,123,255,.18);
-}
-.field textarea{resize:vertical;min-height:76px;font-size:13px;font-family:inherit}
-.field .counter{font-size:11px;color:var(--text-dim2);text-align:right;margin-top:4px}
-.field .counter.warn{color:var(--warn)}
-.field .counter.danger{color:var(--danger)}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-
-/* ========== SEARCH & FILTER ========== */
-.search-bar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-.search-bar .search-input{
-  flex:1;min-width:200px;position:relative;
-}
-.search-bar .search-input input{
-  width:100%;padding:11px 14px 11px 42px;border-radius:12px;
-  background:var(--bg-2);border:1.5px solid var(--border-2);
-  color:var(--text);font-size:13.5px;outline:none;transition:.15s;
-}
-.search-bar .search-input input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(109,123,255,.18)}
-.search-bar .search-input svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-dim2);pointer-events:none}
-.filter-pills{display:flex;gap:6px;padding:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px}
-.filter-pills button{
-  padding:8px 14px;border-radius:9px;font-size:12px;font-weight:700;color:var(--text-dim);
-  transition:.15s;white-space:nowrap;
-}
-.filter-pills button.active{background:linear-gradient(180deg,var(--surface-3),var(--surface-2));color:var(--text)}
-
-/* ========== GAME LIST ========== */
-.game-list{display:flex;flex-direction:column;gap:10px}
-.game-item{
-  display:flex;gap:14px;align-items:center;padding:14px;
-  background:var(--bg-2);border:1px solid var(--border);border-radius:14px;transition:.15s;
-}
-.game-item:hover{border-color:rgba(109,123,255,.35);background:#0c1120;transform:translateY(-1px)}
-.gi-icon{
-  width:46px;height:46px;border-radius:13px;flex:none;
-  display:grid;place-items:center;color:#fff;
+.brand{display:flex;align-items:center;gap:11px;flex:1;min-width:0}
+.brand-mark{
+  width:36px;height:36px;border-radius:12px;flex:none;
+  display:grid;place-items:center;
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  box-shadow:0 6px 16px rgba(109,123,255,.35),inset 0 1px 0 rgba(255,255,255,.25);
+  color:#fff;box-shadow:var(--glow-accent);
 }
-.gi-info{flex:1;min-width:0}
-.gi-info h3{font-size:14px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.gi-info p{font-size:12px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.gi-info .meta{font-size:10.5px;color:var(--text-dim2);margin-top:4px;display:flex;gap:8px;flex-wrap:wrap}
-.gi-info .meta span{display:inline-flex;align-items:center;gap:3px}
-.gi-side{display:flex;flex-direction:column;gap:8px;align-items:flex-end;flex:none}
-.gi-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.badge{
-  display:inline-flex;align-items:center;gap:5px;
-  padding:4px 9px;border-radius:999px;font-size:11px;font-weight:600;
-}
-.badge.on{background:rgba(16,217,141,.13);color:var(--success)}
-.badge.off{background:rgba(255,93,108,.13);color:var(--danger)}
-
-.empty{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:13px;line-height:1.5}
-.empty .ic{
-  width:56px;height:56px;margin:0 auto 14px;border-radius:16px;display:grid;place-items:center;
-  color:var(--text-dim2);background:var(--bg-2);border:1px solid var(--border);
-}
-.spin{animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ========== ICON PICKER ========== */
-.icon-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:8px}
+.brand-mark svg{width:22px;height:22px}
+.brand-text{line-height:1;min-width:0}
+.brand-text .t{font-size:14.5px;font-weight:800;letter-spacing:-.02em}
+.brand-text .s{font-size:10px;font-weight:800;color:var(--text-dim2);letter-spacing:.18em;text-transform:uppercase;margin-top:3px}
+.topbar-right{display:flex;align-items:center;gap:8px;flex:none}
 .icon-btn{
-  aspect-ratio:1;border-radius:11px;display:grid;place-items:center;
-  background:var(--bg-2);border:1.5px solid var(--border-2);color:var(--text-dim);
-  transition:.15s;
+  width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+  color:var(--text-dim);transition:.18s;flex:none;position:relative;
 }
-.icon-btn:hover{border-color:var(--accent);color:var(--text);transform:translateY(-2px)}
-.icon-btn.selected{border-color:var(--accent);background:rgba(109,123,255,.16);color:#fff;box-shadow:0 0 0 3px rgba(109,123,255,.15)}
+.icon-btn:hover{background:var(--surface-2);color:var(--text)}
 .icon-btn svg{width:20px;height:20px}
 
-/* ========== MODAL ========== */
-.modal-ov{
-  position:fixed;inset:0;background:rgba(0,0,0,.72);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  display:none;justify-content:center;align-items:center;
-  padding:16px;z-index:100;
-}
-.modal-ov.active{display:flex;animation:fadeIn .2s}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal{
-  background:linear-gradient(180deg,var(--surface),var(--surface-2));
-  border:1px solid var(--border-2);border-radius:22px;
-  padding:24px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;
-  box-shadow:var(--shadow-lg),inset 0 1px 0 rgba(255,255,255,.06);
-  animation:modalIn .3s cubic-bezier(.2,1,.4,1);
-}
-@keyframes modalIn{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
-.modal.wide{max-width:720px}
-.modal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:12px}
-.modal-hdr h2{font-size:18px;font-weight:800;letter-spacing:-.02em}
-.close-x{
-  width:34px;height:34px;border-radius:10px;border:none;
-  background:var(--surface-3);color:var(--text-dim);cursor:pointer;
-  display:grid;place-items:center;transition:.15s;flex:none;
-}
-.close-x:hover{background:var(--surface-4);color:var(--text)}
-.modal-actions{display:flex;gap:10px;margin-top:18px}
-.modal-actions .btn{flex:1;justify-content:center}
-.preview-frame{
-  width:100%;aspect-ratio:4/3;background:#000;border-radius:14px;border:1px solid var(--border-2);
-  overflow:hidden;
-}
-.preview-frame iframe{width:100%;height:100%;border:none;background:#000}
+.container{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:24px 20px 120px}
 
-/* ========== TOAST ========== */
-.toast-wrap{
-  position:fixed;left:50%;transform:translateX(-50%);bottom:24px;
-  display:flex;flex-direction:column;gap:8px;z-index:300;
-  width:calc(100% - 32px);max-width:400px;pointer-events:none;
+/* ---------- TABS ---------- */
+.tabs{
+  display:flex;gap:4px;background:var(--surface);padding:5px;
+  border-radius:16px;border:1px solid var(--border-2);
+  overflow-x:auto;scrollbar-width:none;margin-bottom:22px;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.24);
+}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{
+  flex:1;min-width:fit-content;padding:11px 16px;border-radius:12px;
+  font-size:12.5px;font-weight:800;color:var(--text-dim);white-space:nowrap;
+  transition:.22s cubic-bezier(.2,1,.4,1);letter-spacing:.005em;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.tabs button svg{width:16px;height:16px}
+.tabs button.active{
+  background:linear-gradient(180deg,var(--surface-3),var(--surface-2));
+  color:var(--text);box-shadow:var(--shadow-sm),inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+/* ---------- PANELS ---------- */
+.panel{display:none;animation:fadeUp .4s cubic-bezier(.2,1,.4,1)}
+.panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.panel-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+  margin-bottom:18px;flex-wrap:wrap;
+}
+.panel-head h2{font-size:20px;letter-spacing:-.03em;margin-bottom:4px}
+.panel-head p{font-size:12.5px;color:var(--text-dim);margin:0;line-height:1.55}
+.panel-head .btn{flex:none}
+
+.card{
+  position:relative;
+  background:linear-gradient(180deg,var(--surface),var(--surface-2));
+  border-radius:var(--radius-lg);padding:20px;
+  box-shadow:var(--shadow-sm),inset 0 1px 0 rgba(255,255,255,.035);
+  border:1px solid var(--border);
+}
+.card + .card{margin-top:14px}
+
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.field label{
+  display:block;font-size:11.5px;font-weight:800;color:var(--text-dim);
+  margin-bottom:8px;letter-spacing:.09em;text-transform:uppercase;
+}
+.field label .hint{
+  display:inline-block;margin-left:6px;font-weight:600;
+  color:var(--text-dim2);text-transform:none;letter-spacing:0;font-size:11px;
+}
+.input,textarea.input,select.input{
+  width:100%;padding:12px 14px;border-radius:12px;
+  background:var(--bg-2);border:1.5px solid var(--border-2);color:var(--text);
+  outline:none;transition:.2s;font-size:14px;font-weight:500;font-family:inherit;
+}
+.input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 4px var(--accent-soft);
+  background:var(--surface);
+}
+.input::placeholder{color:var(--text-dim2)}
+textarea.input{min-height:110px;resize:vertical;line-height:1.55;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px}
+select.input{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238b96b3' stroke-width='2' stroke-linecap='round'><polyline points='6 9 12 15 18 9'/></svg>");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:640px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+}
+
+/* ---------- ITEM LIST ---------- */
+.item-list{display:flex;flex-direction:column;gap:12px}
+.item{
+  background:var(--surface);border:1px solid var(--border-2);
+  border-radius:var(--radius);padding:14px;
+  display:flex;gap:14px;align-items:flex-start;
+  transition:.22s cubic-bezier(.2,1,.4,1);
+}
+.item:hover{border-color:var(--border-3);background:var(--surface-2)}
+.item-drag{
+  cursor:grab;color:var(--text-dim2);padding:6px 4px;flex:none;
+  display:flex;flex-direction:column;gap:3px;user-select:none;
+  align-self:stretch;align-items:center;justify-content:center;
+}
+.item-drag svg{width:16px;height:16px}
+.item-preview{
+  width:64px;height:64px;border-radius:14px;flex:none;overflow:hidden;
+  background:var(--surface-3);display:grid;place-items:center;
+  position:relative;color:#fff;
+  box-shadow:0 4px 12px rgba(0,0,0,.24);
+}
+.item-preview img{width:100%;height:100%;object-fit:cover}
+.item-preview svg{width:30px;height:30px}
+.item-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
+.item-actions{display:flex;gap:6px;flex:none;flex-direction:column}
+.item-actions .icon-btn{width:34px;height:34px;border-radius:10px}
+.item-actions .icon-btn svg{width:16px;height:16px}
+.item-actions .icon-btn.danger{color:var(--danger)}
+.item-actions .icon-btn.danger:hover{background:var(--danger-soft)}
+
+/* ---------- PHOTO PREVIEW ---------- */
+.photo-slideshow-preview{
+  position:relative;aspect-ratio:16/7;border-radius:16px;overflow:hidden;
+  background:linear-gradient(135deg,var(--surface-2),var(--surface-3));
+  border:1px solid var(--border-2);margin-bottom:14px;
+}
+.photo-slideshow-preview .track{
+  display:flex;height:100%;transition:transform .5s cubic-bezier(.2,1,.4,1);
+}
+.photo-slideshow-preview .slide{flex:0 0 100%;height:100%;overflow:hidden}
+.photo-slideshow-preview img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-slideshow-preview .dots{
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  display:flex;gap:6px;padding:5px 9px;border-radius:99px;
+  background:rgba(0,0,0,.4);backdrop-filter:blur(8px);
+}
+.photo-slideshow-preview .dots i{
+  width:7px;height:7px;border-radius:99px;background:rgba(255,255,255,.45);
+  transition:.28s;
+}
+.photo-slideshow-preview .dots i.active{background:#fff;width:20px}
+
+/* ---------- TOAST ---------- */
+#toastRoot{
+  position:fixed;left:50%;transform:translateX(-50%);z-index:1200;
+  bottom:calc(24px + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;gap:9px;align-items:center;
+  pointer-events:none;width:calc(100% - 28px);max-width:440px;
 }
 .toast{
-  background:linear-gradient(180deg,var(--surface-3),var(--surface-2));
+  background:linear-gradient(180deg,var(--surface-2),var(--surface-3));
+  color:var(--text);padding:13px 17px;border-radius:15px;
+  font-size:13px;font-weight:700;
+  box-shadow:var(--shadow-lg),inset 0 1px 0 rgba(255,255,255,.08);
+  display:flex;align-items:center;gap:11px;max-width:100%;
   border:1px solid var(--border-2);
-  color:var(--text);padding:12px 16px;border-radius:12px;
-  font-size:13px;font-weight:600;box-shadow:var(--shadow);
-  display:flex;align-items:center;gap:10px;
-  animation:tIn .3s cubic-bezier(.2,1.2,.4,1);
+  animation:toastIn .36s cubic-bezier(.2,1.2,.4,1);
 }
+.toast.out{animation:toastOut .26s forwards}
 .toast.success{border-color:rgba(16,217,141,.4)}
 .toast.success svg{color:var(--success)}
 .toast.error{border-color:rgba(255,93,108,.4)}
 .toast.error svg{color:var(--danger)}
-@keyframes tIn{from{opacity:0;transform:translateY(12px) scale(.95)}to{opacity:1;transform:none}}
-.toast.out{animation:tOut .25s forwards}
-@keyframes tOut{to{opacity:0;transform:translateY(8px) scale(.96)}}
+.toast svg{width:16px;height:16px;flex:none}
+@keyframes toastIn{from{opacity:0;transform:translateY(20px) scale(.92)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(14px) scale(.92)}}
 
-/* ========== MISC ========== */
-.section-sub{
-  display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;
-  border-bottom:1px solid var(--border);
+/* ---------- MISC ---------- */
+.save-bar{
+  position:fixed;left:0;right:0;bottom:0;z-index:70;
+  padding:14px 20px calc(14px + env(safe-area-inset-bottom));
+  background:color-mix(in srgb,var(--bg) 82%,transparent);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex;gap:10px;justify-content:flex-end;align-items:center;
 }
-.section-sub h3{font-size:13px;font-weight:800;letter-spacing:-.01em;color:var(--text)}
-.section-sub .pill{
-  font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;
-  background:rgba(109,123,255,.14);color:var(--accent);letter-spacing:.08em;text-transform:uppercase;
+.save-bar .status{
+  flex:1;font-size:12px;color:var(--text-dim);font-weight:600;
+  display:flex;align-items:center;gap:8px;
 }
-.puzzle-item{
-  display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:12px;
-  background:var(--bg-2);border:1px solid var(--border);
-}
-.puzzle-item .fen{
-  font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim2);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.puzzle-item .theme{
-  font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;
-}
-.puzzle-item .title{font-size:13px;font-weight:700}
+.save-bar .status.dirty{color:var(--warn)}
+.save-bar .status.saved{color:var(--success)}
+.save-bar .status.saving{color:var(--accent)}
+.save-bar .dot{width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor}
 
-@media (max-width:520px){
-  .row2,.row3{grid-template-columns:1fr}
-  .game-item{flex-wrap:wrap}
-  .gi-side{flex-direction:row;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap}
-  .hdr h1{font-size:19px}
-  .hdr .sub{font-size:11.5px}
-  .icon-grid{grid-template-columns:repeat(6,1fr)}
-  .modal{padding:18px;border-radius:18px}
-  .tabs button{padding:9px 12px;font-size:12px}
+.empty-state{
+  text-align:center;padding:48px 20px;color:var(--text-dim2);
 }
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.empty-state svg{width:48px;height:48px;margin:0 auto 12px;opacity:.4}
+.empty-state p{margin:0;font-size:13px;font-weight:600}
+
+.info-box{
+  padding:13px 15px;border-radius:12px;
+  background:var(--accent-soft);border:1px solid rgba(109,123,255,.22);
+  color:var(--text-dim);font-size:12px;line-height:1.6;
+  margin-bottom:16px;display:flex;gap:10px;
+}
+.info-box svg{width:16px;height:16px;color:var(--accent);flex:none;margin-top:2px}
+.warn-box{
+  padding:13px 15px;border-radius:12px;
+  background:var(--warn-soft);border:1px solid rgba(255,176,32,.28);
+  color:var(--text-dim);font-size:12px;line-height:1.6;
+  margin-bottom:16px;display:flex;gap:10px;
+}
+.warn-box svg{width:16px;height:16px;color:var(--warn);flex:none;margin-top:2px}
+
+.badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:99px;
+  font-size:10px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;
+  background:var(--surface-3);color:var(--text-dim);border:1px solid var(--border-2);
+}
+.badge.accent{background:var(--accent-soft);color:var(--accent);border-color:rgba(109,123,255,.28)}
+.badge.success{background:var(--success-soft);color:var(--success);border-color:rgba(16,217,141,.28)}
+.badge.warn{background:var(--warn-soft);color:var(--warn);border-color:rgba(255,176,32,.28)}
+.badge.danger{background:var(--danger-soft);color:var(--danger);border-color:rgba(255,93,108,.28)}
 </style>
 </head>
 <body>
 
-<!-- ========== AUTH SCREEN ========== -->
-<div class="auth-scr" id="authScr">
-  <div class="auth-card">
-    <div class="auth-logo" id="authLogo"></div>
-    <h1 class="auth-title">Admin Panel</h1>
-    <p class="auth-sub" id="authSub">Masuk dengan akun admin untuk melanjutkan.</p>
-    <div id="authContent"></div>
+<!-- ============ LOADER ============ -->
+<div id="loader">
+  <div class="loader-mark" id="loaderMark"></div>
+  <div style="text-align:center">
+    <div class="loader-title">Admin Panel</div>
+    <div class="loader-status" id="loaderStatus" style="margin-top:6px">Menyiapkan...</div>
   </div>
 </div>
 
-<!-- ========== MAIN UI ========== -->
-<div class="wrap hidden" id="mainUI">
-  <div class="hdr">
+<!-- ============ LOGIN SCREEN (PIN) ============ -->
+<div id="loginScreen" class="hidden">
+  <div class="login-box">
+    <div class="login-logo" id="loginLogo"></div>
+    <h1 class="login-title">Admin Panel</h1>
+    <p class="login-sub">Masukkan PIN untuk melanjutkan</p>
+    <input type="password" class="pin-input" id="pinInput" placeholder="••••••" maxlength="12" inputmode="numeric" autocomplete="off" />
+    <button class="btn primary block" id="btnPinLogin" style="margin-top:16px">Masuk</button>
+    <div class="error-msg hidden" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+  <header class="topbar">
     <div class="brand">
-      <div class="logo" id="brandLogo"></div>
-      <div>
-        <h1>Admin Panel</h1>
-        <div class="sub">Kelola game, banner, dan puzzle</div>
+      <div class="brand-mark" id="brandMark"></div>
+      <div class="brand-text">
+        <div class="t">Admin Panel</div>
+        <div class="s">Grandmaster Grid</div>
       </div>
     </div>
-    <div class="user-chip" id="userChip"></div>
-  </div>
-
-  <div class="tabs" id="tabs">
-    <button data-tab="overview" class="active"><i data-ic="grid" data-s="16"></i>Overview</button>
-    <button data-tab="games"><i data-ic="gamepad" data-s="16"></i>Games</button>
-    <button data-tab="banner"><i data-ic="eye" data-s="16"></i>Banner</button>
-    <button data-tab="puzzles"><i data-ic="target" data-s="16"></i>Puzzles</button>
-    <button data-tab="backup"><i data-ic="download" data-s="16"></i>Backup</button>
-  </div>
-
-  <!-- ===== OVERVIEW ===== -->
-  <div class="tab-panel active" id="tab-overview">
-    <div class="stats-grid" id="statsGrid"></div>
-    <div class="card">
-      <div class="card-head">
-        <h2><i data-ic="zap" data-s="18"></i> Aksi Cepat</h2>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
-        <button class="btn primary" data-quick="add-game"><i data-ic="plus" data-s="16"></i>Upload Game</button>
-        <button class="btn" data-quick="banner"><i data-ic="edit" data-s="16"></i>Edit Banner</button>
-        <button class="btn" data-quick="add-puzzle"><i data-ic="target" data-s="16"></i>Tambah Puzzle</button>
-        <button class="btn" data-quick="export"><i data-ic="download" data-s="16"></i>Export Data</button>
-      </div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="btnTheme" aria-label="Tema"></button>
+      <button class="icon-btn" id="btnPreview" aria-label="Lihat aplikasi" title="Buka aplikasi">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </button>
+      <button class="icon-btn" id="btnLogout" aria-label="Keluar" title="Keluar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+      </button>
     </div>
-    <div class="card">
-      <div class="card-head">
-        <h2><i data-ic="list" data-s="18"></i> Game Terbaru</h2>
-        <button class="btn ghost sm" data-tab-jump="games">Lihat semua</button>
-      </div>
-      <div class="game-list" id="recentGames">
-        <div class="empty"><div class="ic"><i data-ic="loader" data-s="24" class="spin"></i></div>Memuat...</div>
-      </div>
-    </div>
-  </div>
+  </header>
 
-  <!-- ===== GAMES ===== -->
-  <div class="tab-panel" id="tab-games">
-    <div class="card">
-      <div class="card-head">
-        <h2><i data-ic="gamepad" data-s="18"></i> Daftar Game</h2>
-        <button class="btn primary sm" id="btnAdd"><i data-ic="plus" data-s="14"></i>Upload Baru</button>
-      </div>
-      <div class="search-bar">
-        <div class="search-input">
-          <span data-ic="search" data-s="16"></span>
-          <input type="text" id="searchBox" placeholder="Cari game berdasarkan judul atau deskripsi..." autocomplete="off" />
-        </div>
-        <div class="filter-pills" id="filterPills">
-          <button data-filter="all" class="active">Semua</button>
-          <button data-filter="visible">Tampil</button>
-          <button data-filter="hidden">Sembunyi</button>
-        </div>
-      </div>
-      <div class="game-list" id="gameList">
-        <div class="empty"><div class="ic"><i data-ic="loader" data-s="24" class="spin"></i></div>Memuat...</div>
-      </div>
+  <div class="container">
+    <!-- TABS -->
+    <div class="tabs" id="mainTabs">
+      <button data-tab="dashboard" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6"/></svg>
+        Dashboard
+      </button>
+      <button data-tab="homeBanner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+        Banner Teks
+      </button>
+      <button data-tab="photoBanner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Banner Foto
+      </button>
+      <button data-tab="quickMenu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>
+        Quick Menu Home
+      </button>
+      <button data-tab="playMenu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5v15l13-7.5z"/></svg>
+        Menu Play
+      </button>
+      <button data-tab="customHtml">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        HTML Tambahan
+      </button>
     </div>
-  </div>
 
-  <!-- ===== BANNER ===== -->
-  <div class="tab-panel" id="tab-banner">
-    <div class="card">
-      <div class="card-head">
-        <h2><i data-ic="eye" data-s="18"></i> Banner Info</h2>
-        <span class="badge" id="bannerStatusBadge">-</span>
+    <!-- ============ TAB: DASHBOARD ============ -->
+    <section class="panel active" id="panel-dashboard">
+      <div class="panel-head">
+        <div>
+          <h2>Selamat datang di Admin Panel</h2>
+          <p>Kelola semua konten yang tampil di aplikasi Grandmaster Grid.</p>
+        </div>
       </div>
-      <p style="font-size:12.5px;color:var(--text-dim);margin-bottom:16px;line-height:1.55">
-        Banner ini akan tampil di halaman Home aplikasi utama. Bisa berisi pengumuman, event, atau info penting.
-      </p>
-      <form id="bannerForm">
-        <div class="field">
-          <label for="bTitle">Judul</label>
-          <input type="text" id="bTitle" placeholder="Judul banner" maxlength="80" />
-          <div class="counter" id="bTitleCount">0 / 80</div>
+
+      <div class="info-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+        <div>Semua perubahan <b>langsung tersimpan ke Firebase</b> dan akan tampil di aplikasi saat pengguna membuka/refresh halaman. Tidak perlu deploy ulang.</div>
+      </div>
+
+      <div class="grid-3" style="margin-bottom:14px">
+        <div class="card">
+          <div style="font-size:11px;font-weight:800;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Menu Play</div>
+          <div style="font-size:32px;font-weight:900;letter-spacing:-.04em" id="statPlay">0</div>
+          <div style="font-size:11.5px;color:var(--text-dim2);margin-top:4px">game aktif</div>
         </div>
-        <div class="field">
-          <label for="bText">Teks</label>
-          <textarea id="bText" placeholder="Tulis pengumuman atau informasi..." maxlength="400" style="min-height:100px"></textarea>
-          <div class="counter" id="bTextCount">0 / 400</div>
+        <div class="card">
+          <div style="font-size:11px;font-weight:800;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Quick Menu</div>
+          <div style="font-size:32px;font-weight:900;letter-spacing:-.04em" id="statQuick">0</div>
+          <div style="font-size:11.5px;color:var(--text-dim2);margin-top:4px">shortcut home</div>
         </div>
-        <div class="field">
-          <label for="bImage">URL Gambar <span class="hint">(opsional)</span></label>
-          <input type="url" id="bImage" placeholder="https://..." />
+        <div class="card">
+          <div style="font-size:11px;font-weight:800;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Foto Banner</div>
+          <div style="font-size:32px;font-weight:900;letter-spacing:-.04em" id="statPhoto">0</div>
+          <div style="font-size:11.5px;color:var(--text-dim2);margin-top:4px">slide aktif</div>
         </div>
-        <div class="field">
-          <label>Tampilkan Banner</label>
-          <div style="display:flex;align-items:center;gap:12px">
-            <div class="switch" id="bVisible" role="switch" tabindex="0" aria-checked="false"></div>
-            <span style="font-size:12.5px;color:var(--text-dim)" id="bVisibleLabel">Disembunyikan</span>
+      </div>
+
+      <div class="card">
+        <div class="field" style="margin-bottom:12px">
+          <label>Cara Pakai Singkat</label>
+          <div style="font-size:13px;color:var(--text-dim);line-height:1.75">
+            <b style="color:var(--text)">1.</b> Pilih tab di atas sesuai konten yang ingin diedit.<br>
+            <b style="color:var(--text)">2.</b> Isi form, unggah/ganti data, atau drag item untuk mengatur urutan.<br>
+            <b style="color:var(--text)">3.</b> Klik <b style="color:var(--text)">Simpan</b> di bagian bawah untuk mem-publish perubahan.<br>
+            <b style="color:var(--text)">4.</b> Refresh aplikasi (tab lain) untuk melihat hasilnya.
           </div>
         </div>
-        <button type="submit" class="btn primary block" id="btnSaveBanner">
-          <i data-ic="check" data-s="16"></i> Simpan Banner
-        </button>
-      </form>
-    </div>
-    <div class="card">
-      <div class="card-head"><h2><i data-ic="eye" data-s="18"></i> Preview</h2></div>
-      <div id="bannerPreview" style="border-radius:16px;overflow:hidden;background:linear-gradient(135deg,rgba(109,123,255,.2),rgba(164,108,255,.16)),linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid rgba(109,123,255,.32);padding:0">
-        <div style="padding:16px;color:var(--text-dim);font-size:13px;text-align:center">Banner kosong</div>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- ===== PUZZLES ===== -->
-  <div class="tab-panel" id="tab-puzzles">
-    <div class="card">
-      <div class="card-head">
-        <h2><i data-ic="target" data-s="18"></i> Puzzle Taktik</h2>
-        <button class="btn primary sm" id="btnAddPuzzle"><i data-ic="plus" data-s="14"></i>Tambah</button>
-      </div>
-      <p style="font-size:12.5px;color:var(--text-dim);margin-bottom:14px;line-height:1.55">
-        Puzzle disimpan di <code style="background:var(--bg-2);padding:2px 6px;border-radius:5px;font-size:11px">/puzzles</code>.
-        Format solusi: UCI (contoh: <code style="background:var(--bg-2);padding:2px 6px;border-radius:5px;font-size:11px">e2e4</code>).
-      </p>
-      <div id="puzzleList">
-        <div class="empty"><div class="ic"><i data-ic="loader" data-s="24" class="spin"></i></div>Memuat...</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== BACKUP ===== -->
-  <div class="tab-panel" id="tab-backup">
-    <div class="card">
-      <div class="card-head"><h2><i data-ic="download" data-s="18"></i> Export Data</h2></div>
-      <p style="font-size:12.5px;color:var(--text-dim);margin-bottom:16px;line-height:1.55">
-        Unduh semua data (games_config, games_html, banner/info, puzzles) sebagai file JSON.
-      </p>
-      <button class="btn primary block" id="btnExport"><i data-ic="download" data-s="16"></i> Export JSON</button>
-    </div>
-    <div class="card">
-      <div class="card-head"><h2><i data-ic="upload" data-s="18"></i> Import Data</h2></div>
-      <p style="font-size:12.5px;color:var(--text-dim);margin-bottom:16px;line-height:1.55">
-        Restore dari file JSON hasil export. Data dengan ID sama akan <b style="color:var(--danger)">ditimpa</b>.
-      </p>
-      <label class="drop" id="importDrop">
-        <input type="file" id="importFile" accept=".json,application/json" />
-        <div class="ic"><i data-ic="upload" data-s="26"></i></div>
-        <div class="t">Klik atau drop file JSON di sini</div>
-        <div class="s">File hasil export dari panel ini</div>
-      </label>
-    </div>
-  </div>
-</div>
-
-<!-- ========== MODAL (generic) ========== -->
-<div class="modal-ov" id="modal">
-  <div class="modal" id="modalBox"></div>
-</div>
-
-<!-- ========== GAME EDIT MODAL (hidden template) ========== -->
-<div class="modal-ov" id="gameModal">
-  <div class="modal" id="gameModalBox">
-    <div class="modal-hdr">
-      <h2 id="gameModalTitle">Upload Game Baru</h2>
-      <button class="close-x" id="btnCloseGameModal" type="button" aria-label="Tutup"><i data-ic="x" data-s="18"></i></button>
-    </div>
-    <form id="gameForm">
-      <input type="hidden" id="f_id" />
-
-      <div id="uploadSection">
-        <label class="drop" id="drop">
-          <input type="file" id="f_file" accept=".html,.htm,text/html" />
-          <div class="ic"><i data-ic="upload" data-s="26"></i></div>
-          <div class="t">Klik atau tarik file HTML ke sini</div>
-          <div class="s">Maks ~900KB · Tersimpan di Firebase RTDB</div>
-        </label>
-        <div id="filePill" class="file-pill" style="display:none">
-          <div class="fi"><i data-ic="file" data-s="20"></i></div>
-          <div style="flex:1;min-width:0">
-            <div class="name" id="fileName">-</div>
-            <div class="size" id="fileSize">-</div>
-          </div>
-          <button type="button" class="rm" id="btnRemoveFile" title="Hapus"><i data-ic="x" data-s="16"></i></button>
+    <!-- ============ TAB: HOME BANNER ============ -->
+    <section class="panel" id="panel-homeBanner">
+      <div class="panel-head">
+        <div>
+          <h2>Banner Teks (Home)</h2>
+          <p>Banner informasi berikon yang muncul di atas kartu profil pengguna.</p>
         </div>
       </div>
 
-      <div id="replaceSection" style="display:none">
-        <div class="file-pill">
-          <div class="fi"><i data-ic="file" data-s="20"></i></div>
-          <div style="flex:1;min-width:0">
-            <div class="name">File HTML tersimpan</div>
-            <div class="size" id="existingSize">-</div>
-          </div>
-          <button type="button" class="btn ghost sm" id="btnReplaceFile"><i data-ic="refresh" data-s="14"></i>Ganti</button>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="f_title">Judul Game</label>
-        <input type="text" id="f_title" required placeholder="Judul yang tampil di menu" maxlength="60" />
-      </div>
-
-      <div class="field">
-        <label for="f_desc">Deskripsi</label>
-        <textarea id="f_desc" placeholder="Deskripsi singkat game..." maxlength="160"></textarea>
-      </div>
-
-      <div class="field">
-        <label>Icon Game</label>
-        <div class="icon-grid" id="iconPicker"></div>
-      </div>
-
-      <div class="field">
-        <label for="f_modeClass">Warna/Mode Kelas</label>
-        <select id="f_modeClass">
-          <option value="tictactoe">Biru-Cyan (TicTacToe)</option>
-          <option value="ranked">Merah-Oranye (Ranked)</option>
-          <option value="casual">Cyan-Biru (Casual)</option>
-          <option value="friend">Hijau-Cyan (Friend)</option>
-          <option value="ai">Ungu-Biru (AI)</option>
-          <option value="local">Oranye-Merah (Local)</option>
-          <option value="puzzle">Biru-Ungu (Puzzle)</option>
-          <option value="trex">Oranye-Merah (T-Rex)</option>
-        </select>
-      </div>
-
-      <div class="row2">
+      <div class="card">
         <div class="field">
-          <label for="f_order">Urutan</label>
-          <input type="number" id="f_order" value="0" min="0" max="999" />
+          <label>Judul <span class="hint">wajib</span></label>
+          <input class="input" id="hbTitle" placeholder="Contoh: Selamat Datang!" />
         </div>
         <div class="field">
-          <label for="f_visible">Status</label>
-          <select id="f_visible">
-            <option value="true">Tampil</option>
-            <option value="false">Sembunyikan</option>
+          <label>Teks / Deskripsi</label>
+          <textarea class="input" id="hbText" placeholder="Contoh: Login dengan Google untuk menyimpan progres." style="min-height:80px"></textarea>
+        </div>
+        <div class="field">
+          <label>Ikon <span class="hint">nama dari katalog ikon</span></label>
+          <select class="input" id="hbIcon">
+            <option value="info">Info (default)</option>
+            <option value="bell">Lonceng</option>
+            <option value="zap">Petir</option>
+            <option value="trophy">Trofi</option>
+            <option value="crown">Mahkota</option>
+            <option value="star">Bintang</option>
+            <option value="shield">Perisai</option>
+            <option value="target">Target</option>
+            <option value="chess">Catur</option>
+            <option value="swords">Pedang</option>
+            <option value="flag">Bendera</option>
+            <option value="book">Buku</option>
+            <option value="message">Pesan</option>
+            <option value="search">Kaca Pembesar</option>
           </select>
         </div>
+        <div class="field" style="margin-bottom:0">
+          <label>Pratinjau</label>
+          <div id="hbPreview" style="padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,rgba(109,123,255,.14),rgba(164,108,255,.1)),linear-gradient(180deg,var(--surface-2),var(--surface-3));border:1px solid rgba(109,123,255,.3);display:flex;align-items:center;gap:12px">
+            <div id="hbPreviewIcon" style="width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;flex:none;box-shadow:0 6px 20px rgba(109,123,255,.45)"></div>
+            <div style="flex:1;min-width:0">
+              <div id="hbPreviewTitle" style="font-size:13.5px;font-weight:800"></div>
+              <div id="hbPreviewText" style="font-size:12px;color:var(--text-dim);margin-top:4px;line-height:1.5"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TAB: PHOTO BANNER ============ -->
+    <section class="panel" id="panel-photoBanner">
+      <div class="panel-head">
+        <div>
+          <h2>Banner Foto (Slideshow)</h2>
+          <p>Slideshow foto yang muncul di menu Home, di atas Papan Peringkat.</p>
+        </div>
+        <button class="btn primary sm" id="btnAddPhoto">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Tambah Foto
+        </button>
       </div>
 
-      <button type="submit" class="btn primary block" id="btnSave" style="margin-top:8px">
-        <i data-ic="check" data-s="16"></i> <span>Simpan Game</span>
-      </button>
-    </form>
-  </div>
-</div>
+      <div class="info-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+        <div>Jika <b>lebih dari 1 foto</b>, slideshow otomatis berjalan + tombol navigasi muncul. Jika <b>hanya 1 foto</b>, tampil statis tanpa slide. Rekomendasi ukuran: <b>1200×525 px</b> (rasio 16:7).</div>
+      </div>
 
-<!-- ========== PUZZLE MODAL ========== -->
-<div class="modal-ov" id="puzzleModal">
-  <div class="modal">
-    <div class="modal-hdr">
-      <h2 id="puzzleModalTitle">Tambah Puzzle</h2>
-      <button class="close-x" id="btnClosePuzzleModal" type="button" aria-label="Tutup"><i data-ic="x" data-s="18"></i></button>
+      <div class="card" style="margin-bottom:14px">
+        <div class="field" style="margin-bottom:0">
+          <label>Interval Auto-Slide <span class="hint">milidetik, minimal 2000</span></label>
+          <input class="input" id="pbInterval" type="number" min="2000" step="500" value="5000" />
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px">
+        <div class="field" style="margin-bottom:0">
+          <label>Pratinjau Slideshow</label>
+          <div class="photo-slideshow-preview" id="pbPreview">
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-dim2);font-size:12.5px;font-weight:600;text-align:center;padding:20px">
+              Belum ada foto. Klik "Tambah Foto" untuk mulai.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="item-list" id="photoList"></div>
+    </section>
+
+    <!-- ============ TAB: QUICK MENU ============ -->
+    <section class="panel" id="panel-quickMenu">
+      <div class="panel-head">
+        <div>
+          <h2>Quick Menu Home</h2>
+          <p>Tombol shortcut yang muncul di grid bawah hero card di menu Home.</p>
+        </div>
+        <button class="btn primary sm" id="btnAddQuick">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Tambah Item
+        </button>
+      </div>
+
+      <div class="info-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+        <div>Isi <b>URL Gambar</b> untuk tampilan gambar, atau kosongkan untuk pakai ikon SVG bawaan. Tombol ↑↓ untuk mengatur urutan.</div>
+      </div>
+
+      <div class="item-list" id="quickList"></div>
+    </section>
+
+    <!-- ============ TAB: PLAY MENU ============ -->
+    <section class="panel" id="panel-playMenu">
+      <div class="panel-head">
+        <div>
+          <h2>Menu Play</h2>
+          <p>Daftar mode/game yang muncul di halaman Play. Bisa ditambah game apapun.</p>
+        </div>
+        <button class="btn primary sm" id="btnAddPlay">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Tambah Game
+        </button>
+      </div>
+
+      <div class="warn-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div><b>Action</b> menentukan apa yang terjadi saat item diklik. Untuk game eksternal, pilih <b>Buka URL</b> dan isi kolom URL.</div>
+      </div>
+
+      <div class="item-list" id="playList"></div>
+    </section>
+
+    <!-- ============ TAB: CUSTOM HTML ============ -->
+    <section class="panel" id="panel-customHtml">
+      <div class="panel-head">
+        <div>
+          <h2>HTML Tambahan (Menu Play)</h2>
+          <p>Kode HTML mentah yang akan disisipkan di akhir daftar menu Play.</p>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+        <div>
+          Gunakan class <code style="background:var(--bg-2);padding:2px 6px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:11.5px">.play-card</code> untuk styling otomatis. Atribut yang didukung:
+          <code style="background:var(--bg-2);padding:2px 6px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:11.5px">data-admin-action="url"</code> +
+          <code style="background:var(--bg-2);padding:2px 6px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:11.5px">data-admin-url="..."</code> untuk buka link, atau
+          <code style="background:var(--bg-2);padding:2px 6px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:11.5px">data-admin-action="fn"</code> +
+          <code style="background:var(--bg-2);padding:2px 6px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:11.5px">data-admin-fn="namaFungsi"</code> untuk panggil fungsi global.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="field" style="margin-bottom:0">
+          <label>Kode HTML <span class="hint">opsional</span></label>
+          <textarea class="input" id="customHtml" style="min-height:300px" placeholder='&lt;div class="play-card custom" data-admin-action="url" data-admin-url="https://example.com"&gt;
+  &lt;div class="pc-bg"&gt;&lt;/div&gt;
+  &lt;div class="pc-image custom"&gt;&lt;img src="URL_GAMBAR" alt=""&gt;&lt;/div&gt;
+  &lt;div class="pc-body"&gt;
+    &lt;div class="pc-title"&gt;Nama Game&lt;/div&gt;
+    &lt;div class="pc-sub"&gt;Deskripsi&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="pc-arrow"&gt;›&lt;/div&gt;
+&lt;/div&gt;'></textarea>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- SAVE BAR -->
+  <div class="save-bar">
+    <div class="status" id="saveStatus">
+      <span class="dot"></span>
+      <span id="saveStatusText">Siap</span>
     </div>
-    <form id="puzzleForm">
-      <input type="hidden" id="p_id" />
-      <div class="field">
-        <label for="p_theme">Tema</label>
-        <input type="text" id="p_theme" required placeholder="Contoh: Back Rank Mate" maxlength="40" />
-      </div>
-      <div class="field">
-        <label for="p_fen">FEN Position</label>
-        <input type="text" id="p_fen" required placeholder="rnbqkbnr/... w KQkq - 0 1" style="font-family:'JetBrains Mono',monospace;font-size:12px" />
-      </div>
-      <div class="field">
-        <label for="p_solution">Solusi (UCI, pisah koma)</label>
-        <input type="text" id="p_solution" required placeholder="e2e4, d7d5" style="font-family:'JetBrains Mono',monospace;font-size:12px" />
-      </div>
-      <div class="field">
-        <label for="p_hint">Hint</label>
-        <input type="text" id="p_hint" placeholder="Petunjuk singkat" maxlength="120" />
-      </div>
-      <div class="field">
-        <label for="p_rating">Rating</label>
-        <input type="number" id="p_rating" value="1000" min="400" max="3000" />
-      </div>
-      <button type="submit" class="btn primary block" id="btnSavePuzzle">
-        <i data-ic="check" data-s="16"></i> <span>Simpan Puzzle</span>
-      </button>
-    </form>
+    <button class="btn ghost sm" id="btnReset">Reset</button>
+    <button class="btn primary" id="btnSave">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Simpan
+    </button>
   </div>
 </div>
 
-<div class="toast-wrap" id="toastWrap"></div>
+<!-- TOASTS -->
+<div id="toastRoot"></div>
 
 <script type="module">
-/* =========================================================
-   ADMIN PANEL V2 — dengan auth, tabs, dan CRUD lengkap
-   ========================================================= */
+/* ==========================================================================
+   ⚙️  KONFIGURASI ADMIN
+   ==========================================================================
+   Ganti PIN di bawah ini sesuka Anda.
+   ========================================================================== */
+const ADMIN_PIN = '201199';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
-  authDomain: "mygame-68b24.firebaseapp.com",
-  databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
-  projectId: "mygame-68b24",
-  storageBucket: "mygame-68b24.firebasestorage.app",
-  messagingSenderId: "1003182873390",
-  appId: "1:1003182873390:web:aabf3248f759cbc9d678bf"
+/* ==========================================================================
+   FIREBASE
+   ========================================================================== */
+const firebaseConfig={
+  apiKey:"AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
+  authDomain:"mygame-68b24.firebaseapp.com",
+  databaseURL:"https://mygame-68b24-default-rtdb.firebaseio.com",
+  projectId:"mygame-68b24",
+  storageBucket:"mygame-68b24.firebasestorage.app",
+  messagingSenderId:"1003182873390",
+  appId:"1:1003182873390:web:aabf3248f759cbc9d678bf"
 };
+const FB={ready:false,app:null,db:null,api:null};
+let unlocked=false;
 
-// ==== Admin whitelist fallback (email yang selalu boleh akses) ====
-// Kamu bisa menambah email owner di sini, atau set `isAdmin: true` di /users/{uid}
-const ADMIN_EMAILS = [radityahadipangestu23@gmail.com];
-
-/* =========================================================
+/* ==========================================================================
    ICONS
-   ========================================================= */
-const ICONS = {
-  gamepad:'<line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="4"/>',
-  plus:'<path d="M12 5v14M5 12h14"/>',
-  x:'<path d="M18 6 6 18M6 6l12 12"/>',
-  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
-  loader:'<path d="M21 12a9 9 0 1 1-6.2-8.55"/>',
-  upload:'<path d="M12 16V4M7 9l5-5 5 5"/><path d="M20 16v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3"/>',
-  download:'<path d="M12 4v12M7 11l5 5 5-5M4 20h16"/>',
-  file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>',
-  inbox:'<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
-  edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
-  trash:'<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/>',
-  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
-  eyeoff:'<path d="M17.94 17.94A10.4 10.4 0 0 1 12 19c-6.5 0-10-7-10-7a18 18 0 0 1 5.06-5.94M9.9 4.24A9.1 9.1 0 0 1 12 4c6.5 0 10 7 10 7a18 18 0 0 1-2.16 3.19M1 1l22 22"/>',
-  grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>',
-  play:'<path d="M6 4l14 8-14 8z"/>',
-  dino:'<path d="M4 20V10l4-4h6l4 4v4h-4v6M8 10h.01M10 20v-4"/>',
-  chess:'<path d="M9 3h6M12 3v3M8 21h8M9 21c0-4 1-6 3-8-2-1-3-3-3-5h6c0 2-1 4-3 5 2 2 3 4 3 8"/>',
-  target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
-  zap:'<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>',
-  cpu:'<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/>',
-  swords:'<path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2M14.5 6.5 18 3h3v3l-3.5 3.5M5 14l4 4M7 17l-3 3M3 19l2 2"/>',
-  users:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
-  check:'<circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/>',
-  alert:'<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>',
-  search:'<circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-3.8-3.8"/>',
-  refresh:'<path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/>',
+   ========================================================================== */
+const ICONS={
+  drag:'<circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/>',
+  trash:'<path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6"/>',
   copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/>',
-  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  check:'<path d="m4.5 12 5 5L20 6.5"/>',
+  x:'<path d="M6 6l12 12M18 6 6 18"/>',
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
-  bar:'<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>'
+  chevL:'<path d="m15 5-7 7 7 7"/>',
+  chevR:'<path d="m9 5 7 7-7 7"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'
 };
-const ic = (n, s=18) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]||ICONS.gamepad}</svg>`;
-function paintIcons(root=document){
-  root.querySelectorAll('[data-ic]').forEach(el => { el.innerHTML = ic(el.dataset.ic, +el.dataset.s || 18); });
+function icon(name,size){
+  const s=size||20;
+  return '<svg viewBox="0 0 24 24" width="'+s+'" height="'+s+'" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONS[name]||'')+'</svg>';
 }
 
-/* =========================================================
-   HELPERS
-   ========================================================= */
-const $ = s => document.querySelector(s);
-const $$ = s => Array.from(document.querySelectorAll(s));
-const esc = s => String(s==null?'':s)
-  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-  .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+/* ==========================================================================
+   UTILITIES
+   ========================================================================== */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const el=(tag,cls,html)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(html!=null)n.innerHTML=html;return n;};
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const logErr=(scope,e)=>console.error('[Admin:'+scope+']',e);
 
-function toast(msg, type){
-  const wrap = $('#toastWrap');
-  const t = document.createElement('div');
-  t.className = 'toast' + (type ? ' '+type : '');
-  t.innerHTML = (type ? ic(type==='error'?'alert':'check', 18) : '') + '<span></span>';
-  t.querySelector('span').textContent = msg;
-  wrap.appendChild(t);
-  setTimeout(()=>{ 
-    t.classList.add('out');
-    setTimeout(()=>t.remove(), 260);
-  }, 2800);
+function toast(msg,type){
+  const root=$('#toastRoot');if(!root)return;
+  const t=el('div','toast'+(type?' '+type:''));
+  t.innerHTML=(type==='success'?icon('check',16):type==='error'?icon('x',16):icon('info',16))+'<span>'+esc(msg)+'</span>';
+  root.appendChild(t);
+  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),260);},3000);
 }
+function setStatus(text,kind){
+  const box=$('#saveStatus');
+  const label=$('#saveStatusText');
+  if(!box||!label)return;
+  box.className='status'+(kind?' '+kind:'');
+  label.textContent=text;
+}
+function markDirty(){setStatus('Ada perubahan belum disimpan','dirty');}
+function markSaved(){setStatus('Tersimpan','saved');setTimeout(()=>setStatus('Siap',''),1800);}
 
-function formatBytes(b){
-  if(!b) return '0 B';
-  if(b < 1024) return b + ' B';
-  if(b < 1024*1024) return (b/1024).toFixed(1) + ' KB';
-  return (b/1024/1024).toFixed(2) + ' MB';
-}
-function slugify(s){
-  return String(s||'game').toLowerCase()
-    .replace(/[^a-z0-9]+/g,'_')
-    .replace(/^_+|_+$/g,'').slice(0,28) || 'game';
-}
-function generateId(title){
-  return slugify(title) + '_' + Math.random().toString(36).slice(2,7);
-}
-function extractTitle(html){
-  const m = html.match(/<title[^>]*>([^<]*)<\/title>/i);
-  return m ? m[1].trim() : '';
-}
-function escapeId(s){ return String(s||'').replace(/[^a-z0-9_\-]/gi,''); }
-
-/* =========================================================
+/* ==========================================================================
    STATE
-   ========================================================= */
-let db, api, auth, authApi;
-let currentUser = null;
-let allGames = {};
-let allPuzzles = {};
-let bannerData = {};
-let pendingFile = null;
-let currentGameId = null;
-let currentIconName = 'grid';
-let currentFilter = 'all';
-let currentSearch = '';
-let currentBannerVisible = false;
+   ========================================================================== */
+const State={
+  homeBanner:{icon:'info',title:'',text:''},
+  photoBanner:{images:[],autoSlideInterval:5000},
+  quickMenuItems:[],
+  playMenuItems:[],
+  customHtml:''
+};
 
-/* =========================================================
-   FIREBASE INIT
-   ========================================================= */
+/* ==========================================================================
+   DEFAULT DATA
+   ========================================================================== */
+const DEFAULT_HOME_BANNER = {icon:'info',title:'Selamat Datang di Grandmaster Grid!',text:'Mainkan catur, taktik, dan game menarik lainnya. Login dengan Google untuk menyimpan progres Anda.'};
+const DEFAULT_PHOTO_BANNER = {images:[],autoSlideInterval:5000};
+const DEFAULT_QUICK_ITEMS = [
+  {id:'ranked', label:'Ranked', sub:'Kompetitif', image:'', icon:'target', action:'ranked'},
+  {id:'casual', label:'Classic', sub:'Santai', image:'', icon:'swords', action:'casual'},
+  {id:'friend', label:'Teman', sub:'Privat', image:'', icon:'users', action:'friend'},
+  {id:'ai', label:'vs AI', sub:'6 Level', image:'', icon:'cpu', action:'ai'},
+  {id:'local', label:'Lokal', sub:'2 Pemain', image:'', icon:'chess', action:'local'},
+  {id:'puzzle', label:'Puzzle', sub:'Taktik', image:'', icon:'zap', action:'puzzle'}
+];
+const DEFAULT_PLAY_ITEMS = [
+  {id:'ranked', title:'Ranked', desc:'Pertandingan kompetitif. 1 menit + 5 detik per langkah.', image:'', icon:'target', iconClass:'ranked', modeClass:'ranked', action:'ranked'},
+  {id:'casual', title:'Classic', desc:'Bertanding tanpa peringkat. Rating & bintang tidak berubah.', image:'', icon:'swords', iconClass:'casual', modeClass:'casual', action:'casual'},
+  {id:'friend', title:'Main dengan Teman', desc:'Buat room privat dan bagikan kodenya.', image:'', icon:'users', iconClass:'friend', modeClass:'friend', action:'friend'},
+  {id:'ai', title:'Lawan AI', desc:'Enam tingkat kesulitan, berjalan offline.', image:'', icon:'cpu', iconClass:'ai', modeClass:'ai', action:'ai'},
+  {id:'local', title:'Dua Pemain Lokal', desc:'Satu perangkat, bergantian.', image:'', icon:'chess', iconClass:'local', modeClass:'local', action:'local'},
+  {id:'puzzle', title:'Puzzle Taktik', desc:'Latih taktik dengan posisi nyata.', image:'', icon:'zap', iconClass:'puzzle', modeClass:'puzzle', action:'puzzle'},
+  {id:'tictactoe', title:'Tic-Tac-Toe', desc:'Lawan AI atau teman di satu perangkat.', image:'', icon:'grid3', iconClass:'tictactoe', modeClass:'tictactoe', action:'tictactoe'},
+  {id:'trex', title:'T-Rex Runner', desc:'Lompat-lompat hindari rintangan seperti game offline.', image:'', icon:'dino', iconClass:'trex', modeClass:'trex', action:'trex'}
+];
+
+const ACTION_OPTIONS=[
+  {value:'ranked',label:'Ranked Match'},
+  {value:'casual',label:'Classic Match'},
+  {value:'friend',label:'Main dengan Teman'},
+  {value:'ai',label:'Lawan AI'},
+  {value:'local',label:'Dua Pemain Lokal'},
+  {value:'puzzle',label:'Puzzle Taktik'},
+  {value:'tictactoe',label:'Tic-Tac-Toe'},
+  {value:'trex',label:'T-Rex Runner'},
+  {value:'url',label:'Buka URL (eksternal)'},
+  {value:'fn',label:'Panggil Fungsi Global'}
+];
+const ICON_OPTIONS=[
+  'info','bell','zap','trophy','crown','star','shield','target','chess','swords','flag','book','message','search',
+  'cpu','users','user','play','play2','grid3','dino'
+];
+
+/* ==========================================================================
+   INIT FIREBASE
+   ========================================================================== */
 async function initFirebase(){
-  const [appMod, dbMod, authMod] = await Promise.all([
+  const [appMod,dbMod]=await Promise.all([
     import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js'),
-    import('https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js'),
-    import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js')
+    import('https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js')
   ]);
-  const app = appMod.initializeApp(firebaseConfig);
-  db = dbMod.getDatabase(app);
-  auth = authMod.getAuth(app);
-  api = {
-    ref: dbMod.ref, set: dbMod.set, get: dbMod.get,
-    remove: dbMod.remove, update: dbMod.update
-  };
-  authApi = {
-    GoogleAuthProvider: authMod.GoogleAuthProvider,
-    signInWithPopup: authMod.signInWithPopup,
-    signInWithRedirect: authMod.signInWithRedirect,
-    getRedirectResult: authMod.getRedirectResult,
-    signOut: authMod.signOut,
-    onAuthStateChanged: authMod.onAuthStateChanged
-  };
+  FB.app=appMod.initializeApp(firebaseConfig);
+  FB.db=dbMod.getDatabase(FB.app);
+  FB.api={ref:dbMod.ref,set:dbMod.set,get:dbMod.get,update:dbMod.update,remove:dbMod.remove};
+  FB.ready=true;
 }
 
-/* =========================================================
-   AUTH CHECK
-   ========================================================= */
-async function isAdmin(uid, email){
-  if(email && ADMIN_EMAILS.includes(email.toLowerCase())) return true;
-  try{
-    const snap = await api.get(api.ref(db, 'users/' + uid + '/isAdmin'));
-    return snap.exists() && snap.val() === true;
-  }catch(e){ console.error('isAdmin check:', e); return false; }
-}
+/* ==========================================================================
+   LOAD CONFIGS
+   ========================================================================== */
+async function loadConfigs(){
+  // Home Banner
+  const hbSnap=await FB.api.get(FB.api.ref(FB.db,'adminConfig/homeBanner'));
+  State.homeBanner = hbSnap.exists()
+    ? Object.assign({},DEFAULT_HOME_BANNER,hbSnap.val()||{})
+    : Object.assign({},DEFAULT_HOME_BANNER);
 
-function renderAuthScreen(state = 'login', message){
-  const content = $('#authContent');
-  const sub = $('#authSub');
-  if(state === 'login'){
-    sub.textContent = 'Masuk dengan akun admin untuk melanjutkan.';
-    content.innerHTML = `
-      <button class="btn google" id="btnLogin">
-        <svg viewBox="0 0 48 48" aria-hidden="true">
-          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-        </svg>
-        <span>Masuk dengan Google</span>
-      </button>
-      <div id="loginErr" style="color:var(--danger);font-size:12.5px;margin-top:14px;text-align:center;font-weight:600;min-height:18px"></div>`;
-    $('#btnLogin').addEventListener('click', doGoogleLogin);
-  } else if(state === 'denied'){
-    sub.textContent = message || 'Akun ini bukan admin.';
-    content.innerHTML = `
-      <div style="padding:16px;border-radius:14px;background:rgba(255,93,108,.1);border:1px solid rgba(255,93,108,.28);color:var(--danger);font-size:13px;line-height:1.55;text-align:left">
-        <b>${esc(message||'Akses ditolak')}</b>
-        <div style="margin-top:6px;color:var(--text-dim);font-size:12px">
-          Login dengan email admin, atau minta owner untuk mengatur <code>isAdmin: true</code> di akun Anda.
-        </div>
-      </div>
-      <button class="btn ghost block" id="btnLogoutDenied" style="margin-top:14px">
-        <i data-ic="logout" data-s="16"></i> Keluar
-      </button>`;
-    paintIcons(content);
-    $('#btnLogoutDenied').addEventListener('click', doLogout);
-  } else if(state === 'loading'){
-    sub.textContent = 'Memeriksa akses...';
-    content.innerHTML = `<div style="padding:20px;text-align:center"><div style="display:inline-block" data-ic="loader" data-s="32" class="spin"></div></div>`;
-    paintIcons(content);
+  // Photo Banner
+  const pbSnap=await FB.api.get(FB.api.ref(FB.db,'adminConfig/photoBanner'));
+  if(pbSnap.exists()){
+    const v=pbSnap.val()||{};
+    let imgs=[];
+    if(Array.isArray(v.images)) imgs=v.images;
+    else if(v.images && typeof v.images==='object') imgs=Object.values(v.images);
+    State.photoBanner.images = imgs
+      .filter(x=>x && typeof x==='object' && typeof x.url==='string')
+      .map(x=>({url:String(x.url),link:typeof x.link==='string'?x.link:'',alt:typeof x.alt==='string'?x.alt:''}));
+    State.photoBanner.autoSlideInterval = Number(v.autoSlideInterval)||5000;
+  }else{
+    State.photoBanner = JSON.parse(JSON.stringify(DEFAULT_PHOTO_BANNER));
   }
-}
 
-async function doGoogleLogin(){
-  const errBox = $('#loginErr');
-  if(errBox) errBox.textContent = '';
-  const btn = $('#btnLogin');
-  if(btn) btn.disabled = true;
-  try{
-    const provider = new authApi.GoogleAuthProvider();
-    provider.setCustomParameters({prompt: 'select_account'});
-    await authApi.signInWithPopup(auth, provider);
-  }catch(e){
-    console.error('login error:', e);
-    const code = (e && e.code) || '';
-    if(code.includes('popup-blocked')){
-      try{ await authApi.signInWithRedirect(auth, provider); return; }
-      catch(e2){ if(errBox) errBox.textContent = 'Popup diblokir. Izinkan popup lalu coba lagi.'; }
-    } else if(code.includes('cancelled')){}
-    else if(code.includes('unauthorized-domain')){
-      if(errBox) errBox.textContent = 'Domain belum terdaftar di Firebase Authorized Domains.';
-    } else {
-      if(errBox) errBox.textContent = 'Login gagal: ' + (e.message || 'unknown');
+  // Quick items
+  const qSnap=await FB.api.get(FB.api.ref(FB.db,'adminConfig/quickMenuItems'));
+  if(qSnap.exists()){
+    const v=qSnap.val();
+    let arr=Array.isArray(v)?v:(v && typeof v==='object'?Object.values(v):null);
+    if(arr && arr.length){
+      State.quickMenuItems = arr.filter(x=>x && typeof x==='object' && typeof x.label==='string')
+        .map(x=>({
+          id:typeof x.id==='string'?x.id:('quick-'+Math.random().toString(36).slice(2,8)),
+          label:String(x.label),
+          sub:typeof x.sub==='string'?x.sub:'',
+          image:typeof x.image==='string'?x.image:'',
+          icon:typeof x.icon==='string'?x.icon:'grid3',
+          action:typeof x.action==='string'?x.action:'custom',
+          url:typeof x.url==='string'?x.url:''
+        }));
+    }else{
+      State.quickMenuItems = DEFAULT_QUICK_ITEMS.map(x=>Object.assign({},x));
     }
-  } finally {
-    if(btn) btn.disabled = false;
+  }else{
+    State.quickMenuItems = DEFAULT_QUICK_ITEMS.map(x=>Object.assign({},x));
+  }
+
+  // Play items
+  const pSnap=await FB.api.get(FB.api.ref(FB.db,'adminConfig/playMenuItems'));
+  if(pSnap.exists()){
+    const v=pSnap.val();
+    let arr=Array.isArray(v)?v:(v && typeof v==='object'?Object.values(v):null);
+    if(arr && arr.length){
+      State.playMenuItems = arr.filter(x=>x && typeof x==='object' && typeof x.title==='string')
+        .map(x=>({
+          id:typeof x.id==='string'?x.id:('play-'+Math.random().toString(36).slice(2,8)),
+          title:String(x.title),
+          desc:typeof x.desc==='string'?x.desc:'',
+          image:typeof x.image==='string'?x.image:'',
+          icon:typeof x.icon==='string'?x.icon:'grid3',
+          iconClass:typeof x.iconClass==='string'?x.iconClass:'custom',
+          modeClass:typeof x.modeClass==='string'?x.modeClass:'custom',
+          action:typeof x.action==='string'?x.action:'custom',
+          url:typeof x.url==='string'?x.url:''
+        }));
+    }else{
+      State.playMenuItems = DEFAULT_PLAY_ITEMS.map(x=>Object.assign({},x));
+    }
+  }else{
+    State.playMenuItems = DEFAULT_PLAY_ITEMS.map(x=>Object.assign({},x));
+  }
+
+  // Custom HTML
+  const chSnap=await FB.api.get(FB.api.ref(FB.db,'adminConfig/playMenuHtml'));
+  if(chSnap.exists()){
+    const v=chSnap.val();
+    State.customHtml = typeof v==='string' ? v : (v && typeof v.html==='string' ? v.html : '');
+  }else{
+    State.customHtml='';
   }
 }
 
-async function doLogout(){
-  try{ await authApi.signOut(auth); }catch(e){ console.error(e); }
+/* ==========================================================================
+   RENDER — HOME BANNER
+   ========================================================================== */
+function renderHomeBannerForm(){
+  $('#hbTitle').value=State.homeBanner.title||'';
+  $('#hbText').value=State.homeBanner.text||'';
+  $('#hbIcon').value=State.homeBanner.icon||'info';
+  updateHomeBannerPreview();
+}
+function updateHomeBannerPreview(){
+  const iconName=$('#hbIcon').value;
+  const title=$('#hbTitle').value||'(Judul kosong)';
+  const text=$('#hbText').value||'(Deskripsi kosong)';
+  const iconBox=$('#hbPreviewIcon');
+  const iconDef=ICONS[iconName]||ICONS.info;
+  iconBox.innerHTML='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+iconDef+'</svg>';
+  $('#hbPreviewTitle').textContent=title;
+  $('#hbPreviewText').textContent=text;
 }
 
-/* =========================================================
-   HEADER USER CHIP
-   ========================================================= */
-function renderUserChip(user){
-  const chip = $('#userChip');
-  if(!chip) return;
-  const name = user.displayName || user.email || 'Admin';
-  const initial = name.charAt(0).toUpperCase();
-  const photo = user.photoURL;
-  chip.innerHTML = `
-    ${photo ? `<img src="${esc(photo)}" alt="" />` : `<div class="fallback">${esc(initial)}</div>`}
-    <div style="min-width:0">
-      <div class="name">${esc(name.split('@')[0])}</div>
-      <div class="role">Admin</div>
-    </div>
-    <button class="logout" id="btnLogout" title="Keluar"><i data-ic="logout" data-s="16"></i></button>`;
-  paintIcons(chip);
-  $('#btnLogout').addEventListener('click', doLogout);
+/* ==========================================================================
+   RENDER — PHOTO BANNER
+   ========================================================================== */
+function renderPhotoBannerForm(){
+  $('#pbInterval').value=State.photoBanner.autoSlideInterval||5000;
+  renderPhotoList();
+  updatePhotoPreview();
 }
-
-/* =========================================================
-   TABS
-   ========================================================= */
-function wireTabs(){
-  $$('#tabs button').forEach(b => {
-    b.addEventListener('click', () => switchTab(b.dataset.tab));
-  });
-  document.addEventListener('click', e => {
-    const jump = e.target.closest('[data-tab-jump]');
-    if(jump) switchTab(jump.dataset.tabJump);
-  });
-}
-function switchTab(name){
-  $$('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
-  $$('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
-  window.scrollTo({top: 0, behavior: 'smooth'});
-}
-
-/* =========================================================
-   MODAL MANAGER
-   ========================================================= */
-const Modal = (() => {
-  let active = null;
-  function open(id){
-    const ov = $('#' + id);
-    if(!ov) return;
-    ov.classList.add('active');
-    active = id;
-    // focus first input
-    setTimeout(() => {
-      const first = ov.querySelector('input:not([type=hidden]),textarea,select,button');
-      if(first && !first.disabled) first.focus();
-    }, 120);
-  }
-  function close(id){
-    const ov = $('#' + (id || active));
-    if(!ov) return;
-    ov.classList.remove('active');
-    if(active === (id || active)) active = null;
-  }
-  function isOpen(){ return !!active; }
-  function current(){ return active; }
-  return { open, close, isOpen, current };
-})();
-
-// Escape to close modal
-document.addEventListener('keydown', e => {
-  if(e.key === 'Escape'){
-    if(Modal.isOpen()) { Modal.close(); return; }
-    if($('#gameModal').classList.contains('active')) $('#btnCloseGameModal').click();
-    if($('#puzzleModal').classList.contains('active')) $('#btnClosePuzzleModal').click();
-  }
-});
-
-/* Custom confirm — pengganti confirm() native */
-function confirmDialog(title, message, okLabel = 'Ya', danger = true){
-  return new Promise(resolve => {
-    const box = $('#modalBox');
-    box.classList.remove('wide');
-    box.innerHTML = `
-      <div class="modal-hdr">
-        <h2>${esc(title)}</h2>
-        <button class="close-x" data-act="close"><i data-ic="x" data-s="18"></i></button>
-      </div>
-      <p style="font-size:13px;color:var(--text-dim);line-height:1.6;margin-bottom:4px">${esc(message)}</p>
-      <div class="modal-actions">
-        <button class="btn ghost" data-act="cancel">Batal</button>
-        <button class="btn ${danger?'danger':'primary'}" data-act="ok">${esc(okLabel)}</button>
-      </div>`;
-    paintIcons(box);
-    Modal.open('modal');
-    const finish = v => { Modal.close('modal'); resolve(v); };
-    box.querySelector('[data-act=close]').onclick = () => finish(false);
-    box.querySelector('[data-act=cancel]').onclick = () => finish(false);
-    box.querySelector('[data-act=ok]').onclick = () => finish(true);
-  });
-}
-
-/* =========================================================
-   STATS OVERVIEW
-   ========================================================= */
-function renderStats(){
-  const gameIds = Object.keys(allGames);
-  const visible = gameIds.filter(id => allGames[id].visible !== false).length;
-  const hidden = gameIds.length - visible;
-  const puzzleCount = Object.keys(allPuzzles).length;
-  const bannerActive = bannerData.visible !== false && (bannerData.text || bannerData.image);
-
-  const grid = $('#statsGrid');
-  grid.innerHTML = `
-    <div class="stat-card">
-      <div class="ic">${ic('gamepad',22)}</div>
-      <div><div class="lbl">Total Games</div><div class="val">${gameIds.length}</div></div>
-    </div>
-    <div class="stat-card green">
-      <div class="ic">${ic('eye',22)}</div>
-      <div><div class="lbl">Tampil</div><div class="val">${visible}</div></div>
-    </div>
-    <div class="stat-card orange">
-      <div class="ic">${ic('eyeoff',22)}</div>
-      <div><div class="lbl">Sembunyi</div><div class="val">${hidden}</div></div>
-    </div>
-    <div class="stat-card purple">
-      <div class="ic">${ic('target',22)}</div>
-      <div><div class="lbl">Puzzles</div><div class="val">${puzzleCount}</div></div>
-    </div>
-    <div class="stat-card ${bannerActive?'green':'orange'}">
-      <div class="ic">${ic('info',22)}</div>
-      <div><div class="lbl">Banner</div><div class="val" style="font-size:15px">${bannerActive?'Aktif':'Off'}</div></div>
-    </div>`;
-}
-
-function renderRecentGames(){
-  const box = $('#recentGames');
-  const list = Object.keys(allGames)
-    .map(id => ({id, ...allGames[id]}))
-    .sort((a,b) => (b.createdAt||0) - (a.createdAt||0))
-    .slice(0, 4);
-  if(!list.length){
-    box.innerHTML = `<div class="empty"><div class="ic">${ic('inbox',26)}</div>Belum ada game.</div>`;
+function renderPhotoList(){
+  const box=$('#photoList');if(!box)return;
+  box.innerHTML='';
+  if(!State.photoBanner.images.length){
+    box.innerHTML='<div class="empty-state">'+icon('plus',48)+'<p>Belum ada foto banner.</p></div>';
     return;
   }
-  box.innerHTML = '';
-  list.forEach(g => box.appendChild(buildGameItem(g)));
-}
-
-/* =========================================================
-   GAME LIST
-   ========================================================= */
-function buildGameItem(g){
-  const item = document.createElement('div');
-  item.className = 'game-item';
-  const iconName = g.icon || 'gamepad';
-  const vis = g.visible !== false;
-  const sizeStr = g.size ? formatBytes(g.size) : '—';
-  const createdStr = g.createdAt ? new Date(g.createdAt).toLocaleDateString('id-ID') : '—';
-  const safeId = escapeId(g.id);
-  item.innerHTML = `
-    <div class="gi-icon">${ic(ICONS[iconName] ? iconName : 'gamepad', 22)}</div>
-    <div class="gi-info">
-      <h3>${esc(g.title || 'Tanpa Judul')}</h3>
-      <p>${esc(g.description || 'Tidak ada deskripsi')}</p>
-      <div class="meta">
-        <span>${ic('file',11)} ${sizeStr}</span>
-        <span>${ic('info',11)} ${createdStr}</span>
-        <span>#${g.order || 0}</span>
-      </div>
-    </div>
-    <div class="gi-side">
-      <span class="badge ${vis?'on':'off'}">${ic(vis?'eye':'eyeoff',13)}${vis?'Tampil':'Sembunyi'}</span>
-      <div class="gi-actions">
-        <button class="btn ghost sm" data-act="preview" data-id="${safeId}">${ic('eye',14)}Preview</button>
-        <button class="btn ghost sm" data-act="edit" data-id="${safeId}">${ic('edit',14)}Edit</button>
-        <button class="btn ghost sm" data-act="dup" data-id="${safeId}">${ic('copy',14)}</button>
-        <button class="btn danger sm" data-act="del" data-id="${safeId}">${ic('trash',14)}</button>
-      </div>
-    </div>`;
-  item.querySelectorAll('[data-act]').forEach(b => {
-    b.addEventListener('click', () => {
-      const id = b.dataset.id;
-      if(b.dataset.act === 'edit') openEdit(id);
-      else if(b.dataset.act === 'del') deleteGame(id);
-      else if(b.dataset.act === 'dup') duplicateGame(id);
-      else if(b.dataset.act === 'preview') previewGame(id);
+  State.photoBanner.images.forEach((img,i)=>{
+    const item=el('div','item');
+    item.innerHTML=
+      '<div class="item-drag">'+icon('drag',16)+'</div>'+
+      '<div class="item-preview">'+(img.url?'<img src="'+esc(img.url)+'" alt="">':'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>')+'</div>'+
+      '<div class="item-body">'+
+        '<div class="field" style="margin-bottom:10px"><label>URL Gambar</label><input class="input" data-field="url" value="'+esc(img.url)+'" placeholder="https://example.com/banner.jpg"></div>'+
+        '<div class="grid-2">'+
+          '<div class="field" style="margin-bottom:0"><label>Link <span class="hint">opsional</span></label><input class="input" data-field="link" value="'+esc(img.link)+'" placeholder="https://..."></div>'+
+          '<div class="field" style="margin-bottom:0"><label>Alt <span class="hint">opsional</span></label><input class="input" data-field="alt" value="'+esc(img.alt)+'" placeholder="Deskripsi"></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="item-actions">'+
+        '<button class="icon-btn danger" data-act="remove" title="Hapus">'+icon('trash',16)+'</button>'+
+      '</div>';
+    item.querySelector('[data-act="remove"]').addEventListener('click',()=>{
+      if(!confirm('Hapus foto ini?'))return;
+      State.photoBanner.images.splice(i,1);
+      renderPhotoList();updatePhotoPreview();markDirty();
     });
-  });
-  return item;
-}
-
-function renderGameList(){
-  const box = $('#gameList');
-  const ids = Object.keys(allGames);
-  if(!ids.length){
-    box.innerHTML = `<div class="empty"><div class="ic">${ic('inbox',26)}</div>Belum ada game. Klik "Upload Baru" untuk mulai.</div>`;
-    return;
-  }
-  let list = ids.map(id => ({id, ...allGames[id]}));
-  // filter
-  if(currentFilter === 'visible') list = list.filter(g => g.visible !== false);
-  else if(currentFilter === 'hidden') list = list.filter(g => g.visible === false);
-  // search
-  if(currentSearch){
-    const q = currentSearch.toLowerCase();
-    list = list.filter(g => 
-      (g.title||'').toLowerCase().includes(q) || 
-      (g.description||'').toLowerCase().includes(q)
-    );
-  }
-  // sort
-  list.sort((a,b) => (a.order||0) - (b.order||0) || (a.title||'').localeCompare(b.title||''));
-
-  if(!list.length){
-    box.innerHTML = `<div class="empty"><div class="ic">${ic('search',26)}</div>Tidak ada hasil untuk filter/pencarian ini.</div>`;
-    return;
-  }
-  box.innerHTML = '';
-  list.forEach(g => box.appendChild(buildGameItem(g)));
-}
-
-async function loadGames(){
-  try{
-    const snap = await api.get(api.ref(db, 'games_config'));
-    allGames = snap.exists() ? (snap.val() || {}) : {};
-    renderGameList();
-    renderRecentGames();
-    renderStats();
-  }catch(e){
-    console.error('loadGames error:', e);
-    $('#gameList').innerHTML = `<div class="empty" style="color:var(--danger)">Gagal memuat data. Periksa koneksi & Firebase Rules.</div>`;
-  }
-}
-
-/* =========================================================
-   GAME MODAL — UPLOAD/EDIT
-   ========================================================= */
-const ICON_OPTIONS = ['grid','play','dino','chess','target','zap','cpu','swords','users','gamepad','file','eye','info','bar'];
-
-function buildIconPicker(selected){
-  const box = $('#iconPicker');
-  box.innerHTML = '';
-  ICON_OPTIONS.forEach(name => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'icon-btn' + (name === selected ? ' selected' : '');
-    b.dataset.icon = name;
-    b.innerHTML = ic(name, 20);
-    b.addEventListener('click', () => {
-      box.querySelectorAll('.icon-btn').forEach(x => x.classList.remove('selected'));
-      b.classList.add('selected');
-      currentIconName = name;
+    item.querySelectorAll('[data-field]').forEach(input=>{
+      input.addEventListener('input',()=>{
+        const f=input.dataset.field;
+        State.photoBanner.images[i][f]=input.value;
+        if(f==='url'){
+          const prev=item.querySelector('.item-preview');
+          prev.innerHTML=input.value?'<img src="'+esc(input.value)+'" alt="">':'';
+        }
+        updatePhotoPreview();markDirty();
+      });
     });
-    box.appendChild(b);
+    box.appendChild(item);
   });
-  currentIconName = selected || 'grid';
 }
-
-function resetGameForm(){
-  $('#gameForm').reset();
-  $('#f_id').value = '';
-  pendingFile = null;
-  currentGameId = null;
-  currentIconName = 'grid';
-  $('#filePill').style.display = 'none';
-  $('#drop').style.display = '';
-  $('#uploadSection').style.display = '';
-  $('#replaceSection').style.display = 'none';
-  $('#gameModalTitle').textContent = 'Upload Game Baru';
-  $('#btnSave').querySelector('span').textContent = 'Simpan Game';
-  buildIconPicker('grid');
-}
-
-function openAdd(){
-  resetGameForm();
-  Modal.open('gameModal');
-}
-
-function openEdit(id){
-  const g = allGames[id];
-  if(!g) return;
-  resetGameForm();
-  currentGameId = id;
-  $('#gameModalTitle').textContent = 'Edit Game';
-  $('#btnSave').querySelector('span').textContent = 'Perbarui';
-  $('#f_id').value = id;
-  $('#f_title').value = g.title || '';
-  $('#f_desc').value = g.description || '';
-  $('#f_order').value = g.order || 0;
-  $('#f_visible').value = g.visible !== false ? 'true' : 'false';
-  $('#f_modeClass').value = g.modeClass || 'tictactoe';
-  // Sembunyikan upload, tampilkan replace
-  $('#uploadSection').style.display = 'none';
-  $('#replaceSection').style.display = '';
-  $('#existingSize').textContent = g.size ? formatBytes(g.size) : 'Tidak diketahui';
-  buildIconPicker(g.icon || 'grid');
-  Modal.open('gameModal');
-}
-
-async function handleFile(file){
-  if(!file) return;
-  if(file.size > 900 * 1024){
-    toast('File terlalu besar (maks 900KB).', 'error');
+function updatePhotoPreview(){
+  const prev=$('#pbPreview');if(!prev)return;
+  const imgs=State.photoBanner.images.filter(x=>x.url);
+  if(!imgs.length){
+    prev.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-dim2);font-size:12.5px;font-weight:600;text-align:center;padding:20px">Belum ada foto. Klik "Tambah Foto" untuk mulai.</div>';
+    if(prev._timer) clearInterval(prev._timer);
     return;
   }
-  try{
-    const text = await file.text();
-    if(!/<html|<!doctype|<\w+[\s>]/i.test(text)){
-      toast('File bukan HTML yang valid.', 'error');
-      return;
-    }
-    pendingFile = { name: file.name, size: file.size, content: text };
-    const autoTitle = extractTitle(text);
-    if(autoTitle && !$('#f_title').value.trim()){
-      $('#f_title').value = autoTitle;
-    }
-    $('#fileName').textContent = file.name;
-    $('#fileSize').textContent = formatBytes(file.size);
-    $('#filePill').style.display = 'flex';
-    $('#drop').style.display = 'none';
-    toast('File siap: ' + file.name, 'success');
-  }catch(e){
-    console.error(e);
-    toast('Gagal membaca file.', 'error');
+  prev.innerHTML=
+    '<div class="track" id="pbPreviewTrack" style="display:flex;height:100%">'+
+      imgs.map(x=>'<div class="slide" style="flex:0 0 100%;height:100%;overflow:hidden"><img src="'+esc(x.url)+'" style="width:100%;height:100%;object-fit:cover;display:block"></div>').join('')+
+    '</div>'+
+    (imgs.length>1?'<div class="dots">'+imgs.map((_,i)=>'<i class="'+(i===0?'active':'')+'"></i>').join('')+'</div>':'');
+  if(imgs.length>1){
+    let idx=0;
+    if(prev._timer) clearInterval(prev._timer);
+    prev._timer=setInterval(()=>{
+      const track=$('#pbPreviewTrack');
+      if(!track) return;
+      idx=(idx+1)%imgs.length;
+      track.style.transform='translateX('+(-idx*100)+'%)';
+      prev.querySelectorAll('.dots i').forEach((d,i)=>d.classList.toggle('active',i===idx));
+    },1800);
   }
 }
 
-function removeFile(){
-  pendingFile = null;
-  $('#f_file').value = '';
-  $('#filePill').style.display = 'none';
-  $('#drop').style.display = '';
-}
-
-/* Replace HTML pada game existing */
-function triggerReplaceFile(){
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.html,.htm,text/html';
-  input.onchange = async () => {
-    const file = input.files && input.files[0];
-    if(!file) return;
-    if(file.size > 900 * 1024){ toast('File terlalu besar (maks 900KB).', 'error'); return; }
-    try{
-      const text = await file.text();
-      if(!/<html|<!doctype|<\w+[\s>]/i.test(text)){
-        toast('File bukan HTML yang valid.', 'error');
-        return;
-      }
-      pendingFile = { name: file.name, size: file.size, content: text };
-      $('#existingSize').textContent = formatBytes(file.size) + ' (baru)';
-      toast('File siap diganti saat menyimpan.', 'success');
-    }catch(e){ toast('Gagal membaca file.', 'error'); }
-  };
-  input.click();
-}
-
-async function saveGame(e){
-  e.preventDefault();
-  const id = $('#f_id').value;
-  const title = $('#f_title').value.trim();
-  const desc = $('#f_desc').value.trim();
-  const order = parseInt($('#f_order').value, 10) || 0;
-  const visible = $('#f_visible').value === 'true';
-  const modeClass = $('#f_modeClass').value;
-
-  if(!title){ toast('Judul wajib diisi.', 'error'); return; }
-
-  const btn = $('#btnSave');
-  const originalHTML = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin" style="display:inline-block">' + ic('loader',16) + '</span> Menyimpan...';
-
-  try{
-    if(id){
-      // EDIT: update metadata (+ HTML jika ada file baru)
-      const updateData = { title, description: desc, order, visible, icon: currentIconName, modeClass };
-      if(pendingFile){
-        updateData.size = pendingFile.size;
-      }
-      await api.update(api.ref(db, 'games_config/' + id), updateData);
-      if(pendingFile){
-        await api.set(api.ref(db, 'games_html/' + id), pendingFile.content);
-      }
-      toast('Game diperbarui.', 'success');
-    } else {
-      // ADD: butuh file HTML
-      if(!pendingFile){
-        toast('Pilih file HTML terlebih dahulu.', 'error');
-        btn.disabled = false; btn.innerHTML = originalHTML;
-        return;
-      }
-      let newId = generateId(title);
-      // collision retry
-      let tries = 0;
-      while(tries < 5){
-        const exist = await api.get(api.ref(db, 'games_config/' + newId));
-        if(!exist.exists()) break;
-        newId = generateId(title);
-        tries++;
-      }
-      const meta = {
-        title,
-        description: desc || ('Game ' + title),
-        icon: currentIconName,
-        modeClass,
-        action: 'html',
-        order,
-        visible,
-        createdAt: Date.now(),
-        size: pendingFile.size
-      };
-      await api.set(api.ref(db, 'games_config/' + newId), meta);
-      await api.set(api.ref(db, 'games_html/' + newId), pendingFile.content);
-      toast('Game berhasil diupload!', 'success');
-    }
-    Modal.close('gameModal');
-    await loadGames();
-  }catch(err){
-    console.error('saveGame error:', err);
-    toast('Gagal menyimpan: ' + (err.message || 'unknown'), 'error');
-  }finally{
-    btn.disabled = false;
-    btn.innerHTML = originalHTML;
-  }
-}
-
-async function deleteGame(id){
-  const g = allGames[id];
-  if(!g) return;
-  const ok = await confirmDialog('Hapus Game?', `Hapus "${g.title}"? Tindakan ini tidak bisa dibatalkan.`, 'Hapus');
-  if(!ok) return;
-  try{
-    await api.remove(api.ref(db, 'games_config/' + id));
-    await api.remove(api.ref(db, 'games_html/' + id));
-    toast('Game dihapus.', 'success');
-    await loadGames();
-  }catch(e){
-    console.error(e);
-    toast('Gagal menghapus.', 'error');
-  }
-}
-
-async function duplicateGame(id){
-  const g = allGames[id];
-  if(!g) return;
-  try{
-    const htmlSnap = await api.get(api.ref(db, 'games_html/' + id));
-    const htmlContent = htmlSnap.exists() ? htmlSnap.val() : '';
-    const newTitle = (g.title || 'Game') + ' (Copy)';
-    let newId = generateId(newTitle);
-    let tries = 0;
-    while(tries < 5){
-      const exist = await api.get(api.ref(db, 'games_config/' + newId));
-      if(!exist.exists()) break;
-      newId = generateId(newTitle);
-      tries++;
-    }
-    const meta = { ...g, title: newTitle, createdAt: Date.now() };
-    delete meta.id;
-    await api.set(api.ref(db, 'games_config/' + newId), meta);
-    if(htmlContent) await api.set(api.ref(db, 'games_html/' + newId), htmlContent);
-    toast('Game diduplikasi.', 'success');
-    await loadGames();
-  }catch(e){
-    console.error(e);
-    toast('Gagal menduplikasi.', 'error');
-  }
-}
-
-async function previewGame(id){
-  const g = allGames[id];
-  if(!g) return;
-  const box = $('#modalBox');
-  box.classList.add('wide');
-  box.innerHTML = `
-    <div class="modal-hdr">
-      <h2>${esc(g.title)}</h2>
-      <button class="close-x" data-act="close"><i data-ic="x" data-s="18"></i></button>
-    </div>
-    <div class="preview-frame" id="previewFrame">
-      <div style="display:grid;place-items:center;height:100%;color:var(--text-dim)">
-        <div style="text-align:center">
-          <div data-ic="loader" data-s="32" class="spin" style="display:inline-block"></div>
-          <div style="margin-top:12px;font-size:12px">Memuat preview...</div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn ghost" data-act="close">Tutup</button>
-      <button class="btn primary" data-act="open">Buka di Tab Baru</button>
-    </div>`;
-  paintIcons(box);
-  Modal.open('modal');
-  box.querySelectorAll('[data-act=close]').forEach(b => b.onclick = () => Modal.close('modal'));
-
-  try{
-    const snap = await api.get(api.ref(db, 'games_html/' + id));
-    if(!snap.exists()){
-      $('#previewFrame').innerHTML = `<div style="display:grid;place-items:center;height:100%;color:var(--danger);font-size:13px">File HTML tidak ditemukan.</div>`;
-      return;
-    }
-    const html = snap.val();
-    const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const frame = $('#previewFrame');
-    frame.innerHTML = '';
-    const iframe = document.createElement('iframe');
-    iframe.src = url;
-    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-modals allow-popups');
-    frame.appendChild(iframe);
-    box.querySelector('[data-act=open]').onclick = () => {
-      window.open(url, '_blank', 'noopener');
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
-    };
-  }catch(e){
-    console.error(e);
-    $('#previewFrame').innerHTML = `<div style="display:grid;place-items:center;height:100%;color:var(--danger);font-size:13px">Gagal memuat.</div>`;
-  }
-}
-
-/* =========================================================
-   BANNER
-   ========================================================= */
-async function loadBanner(){
-  try{
-    const snap = await api.get(api.ref(db, 'banner/info'));
-    bannerData = snap.exists() ? (snap.val() || {}) : {};
-    $('#bTitle').value = bannerData.title || '';
-    $('#bText').value = bannerData.text || '';
-    $('#bImage').value = bannerData.image || '';
-    currentBannerVisible = bannerData.visible !== false;
-    updateBannerSwitch();
-    updateBannerCounts();
-    renderBannerPreview();
-    updateBannerStatusBadge();
-    renderStats();
-  }catch(e){
-    console.error('loadBanner error:', e);
-  }
-}
-
-function updateBannerSwitch(){
-  const sw = $('#bVisible');
-  const lbl = $('#bVisibleLabel');
-  sw.classList.toggle('on', currentBannerVisible);
-  sw.setAttribute('aria-checked', currentBannerVisible);
-  lbl.textContent = currentBannerVisible ? 'Ditampilkan' : 'Disembunyikan';
-}
-
-function updateBannerCounts(){
-  const t = $('#bTitle'), x = $('#bText');
-  const tc = $('#bTitleCount'), xc = $('#bTextCount');
-  tc.textContent = t.value.length + ' / 80';
-  xc.textContent = x.value.length + ' / 400';
-  tc.classList.toggle('warn', t.value.length > 60 && t.value.length <= 75);
-  tc.classList.toggle('danger', t.value.length > 75);
-  xc.classList.toggle('warn', x.value.length > 300 && x.value.length <= 360);
-  xc.classList.toggle('danger', x.value.length > 360);
-}
-
-function renderBannerPreview(){
-  const preview = $('#bannerPreview');
-  const title = $('#bTitle').value.trim();
-  const text = $('#bText').value.trim();
-  const image = $('#bImage').value.trim();
-  if(!title && !text && !image){
-    preview.innerHTML = `<div style="padding:16px;color:var(--text-dim);font-size:13px;text-align:center">Banner kosong</div>`;
+/* ==========================================================================
+   RENDER — QUICK MENU
+   ========================================================================== */
+function renderQuickList(){
+  const box=$('#quickList');if(!box)return;
+  box.innerHTML='';
+  if(!State.quickMenuItems.length){
+    box.innerHTML='<div class="empty-state">'+icon('plus',48)+'<p>Belum ada item. Klik "Tambah Item" untuk mulai.</p></div>';
     return;
   }
-  const media = image && /^https?:/i.test(image)
-    ? `<img src="${esc(image)}" style="display:block;width:100%;max-height:180px;object-fit:cover;border-bottom:1px solid var(--border)" onerror="this.style.display='none'" />`
-    : '';
-  preview.innerHTML = `
-    ${media}
-    <div style="padding:14px 16px;display:flex;gap:12px;align-items:flex-start">
-      <div style="width:38px;height:38px;border-radius:12px;flex:none;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff">${ic('info',20)}</div>
-      <div style="flex:1;min-width:0">
-        ${title ? `<div style="font-weight:800;font-size:14px;margin-bottom:3px;letter-spacing:-.01em">${esc(title)}</div>` : ''}
-        <div style="font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word;color:var(--text)">${esc(text)}</div>
-      </div>
-    </div>`;
-}
-
-function updateBannerStatusBadge(){
-  const badge = $('#bannerStatusBadge');
-  const active = currentBannerVisible && (bannerData.text || bannerData.image);
-  if(active){ badge.className = 'badge on'; badge.textContent = 'Aktif'; }
-  else { badge.className = 'badge off'; badge.textContent = 'Tidak Aktif'; }
-}
-
-async function saveBanner(e){
-  e.preventDefault();
-  const btn = $('#btnSaveBanner');
-  const originalHTML = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin" style="display:inline-block">' + ic('loader',16) + '</span> Menyimpan...';
-  try{
-    const data = {
-      title: $('#bTitle').value.trim(),
-      text: $('#bText').value.trim(),
-      image: $('#bImage').value.trim(),
-      visible: currentBannerVisible,
-      updatedAt: Date.now(),
-      updatedBy: currentUser ? currentUser.uid : ''
-    };
-    await api.set(api.ref(db, 'banner/info'), data);
-    bannerData = data;
-    updateBannerStatusBadge();
-    renderStats();
-    toast('Banner disimpan.', 'success');
-  }catch(e){
-    console.error(e);
-    toast('Gagal menyimpan banner.', 'error');
-  }finally{
-    btn.disabled = false;
-    btn.innerHTML = originalHTML;
-  }
-}
-
-/* =========================================================
-   PUZZLES
-   ========================================================= */
-function renderPuzzleList(){
-  const box = $('#puzzleList');
-  const ids = Object.keys(allPuzzles);
-  if(!ids.length){
-    box.innerHTML = `<div class="empty"><div class="ic">${ic('target',26)}</div>Belum ada puzzle. Klik "Tambah" untuk mulai.</div>`;
-    return;
-  }
-  const list = ids.map(id => ({id, ...allPuzzles[id]}))
-    .sort((a,b) => (Number(a.rating)||0) - (Number(b.rating)||0));
-  box.innerHTML = '';
-  list.forEach(p => {
-    const item = document.createElement('div');
-    item.className = 'puzzle-item';
-    const sol = Array.isArray(p.solution) ? p.solution.join(', ') : (p.solution || '');
-    item.innerHTML = `
-      <div class="gi-icon" style="width:40px;height:40px;border-radius:11px">${ic('target',18)}</div>
-      <div style="flex:1;min-width:0">
-        <div class="title">${esc(p.theme || 'Puzzle')} <span style="color:var(--text-dim2);font-weight:500;font-size:11px">· ${p.rating||1000}</span></div>
-        <div class="fen">${esc(p.fen || '')}</div>
-        <div style="font-size:10.5px;color:var(--text-dim);margin-top:2px">Solusi: <code style="font-family:'JetBrains Mono',monospace">${esc(sol)}</code></div>
-      </div>
-      <div class="gi-actions">
-        <button class="btn ghost sm" data-act="edit" data-id="${escapeId(p.id)}">${ic('edit',14)}</button>
-        <button class="btn danger sm" data-act="del" data-id="${escapeId(p.id)}">${ic('trash',14)}</button>
-      </div>`;
-    item.querySelector('[data-act=edit]').onclick = () => openEditPuzzle(p.id);
-    item.querySelector('[data-act=del]').onclick = () => deletePuzzle(p.id);
+  State.quickMenuItems.forEach((it,i)=>{
+    const item=el('div','item');
+    item.innerHTML=
+      '<div class="item-drag">'+icon('drag',16)+'</div>'+
+      '<div class="item-preview">'+(it.image?'<img src="'+esc(it.image)+'" alt="">':(it.icon?icon(it.icon,30):icon('grid3',30)))+'</div>'+
+      '<div class="item-body">'+
+        '<div class="grid-2">'+
+          '<div class="field" style="margin-bottom:0"><label>Label</label><input class="input" data-field="label" value="'+esc(it.label)+'" placeholder="Ranked"></div>'+
+          '<div class="field" style="margin-bottom:0"><label>Sub-label</label><input class="input" data-field="sub" value="'+esc(it.sub)+'" placeholder="Kompetitif"></div>'+
+        '</div>'+
+        '<div class="field" style="margin-bottom:0"><label>URL Gambar <span class="hint">kosongkan untuk pakai ikon</span></label><input class="input" data-field="image" value="'+esc(it.image)+'" placeholder="https://example.com/icon.png"></div>'+
+        '<div class="grid-2">'+
+          '<div class="field" style="margin-bottom:0"><label>Ikon <span class="hint">fallback</span></label>'+
+            '<select class="input" data-field="icon">'+ICON_OPTIONS.map(n=>'<option value="'+n+'"'+(n===it.icon?' selected':'')+'>'+n+'</option>').join('')+'</select>'+
+          '</div>'+
+          '<div class="field" style="margin-bottom:0"><label>Aksi</label>'+
+            '<select class="input" data-field="action">'+ACTION_OPTIONS.map(a=>'<option value="'+a.value+'"'+(a.value===it.action?' selected':'')+'>'+a.label+'</option>').join('')+'</select>'+
+          '</div>'+
+        '</div>'+
+        (it.action==='url'||it.action==='fn'?'<div class="field" style="margin-bottom:0"><label>'+(it.action==='url'?'URL Target':'Nama Fungsi Global')+'</label><input class="input" data-field="url" value="'+esc(it.url)+'" placeholder="'+(it.action==='url'?'https://...':'myCustomFunction')+'"></div>':'')+
+      '</div>'+
+      '<div class="item-actions">'+
+        '<button class="icon-btn" data-act="up" title="Naik">'+icon('chevL',16)+'</button>'+
+        '<button class="icon-btn" data-act="down" title="Turun">'+icon('chevR',16)+'</button>'+
+        '<button class="icon-btn danger" data-act="remove" title="Hapus">'+icon('trash',16)+'</button>'+
+      '</div>';
+    item.querySelector('[data-act="remove"]').addEventListener('click',()=>{
+      if(!confirm('Hapus "'+it.label+'"?'))return;
+      State.quickMenuItems.splice(i,1);renderQuickList();updateStats();markDirty();
+    });
+    item.querySelector('[data-act="up"]').addEventListener('click',()=>{
+      if(i<=0)return;
+      [State.quickMenuItems[i-1],State.quickMenuItems[i]]=[State.quickMenuItems[i],State.quickMenuItems[i-1]];
+      renderQuickList();markDirty();
+    });
+    item.querySelector('[data-act="down"]').addEventListener('click',()=>{
+      if(i>=State.quickMenuItems.length-1)return;
+      [State.quickMenuItems[i+1],State.quickMenuItems[i]]=[State.quickMenuItems[i],State.quickMenuItems[i+1]];
+      renderQuickList();markDirty();
+    });
+    item.querySelectorAll('[data-field]').forEach(input=>{
+      input.addEventListener('input',()=>{
+        const f=input.dataset.field;
+        State.quickMenuItems[i][f]=input.value;
+        if(f==='image'||f==='icon'){
+          const prev=item.querySelector('.item-preview');
+          const it2=State.quickMenuItems[i];
+          prev.innerHTML=it2.image?'<img src="'+esc(it2.image)+'" alt="">':(it2.icon?icon(it2.icon,30):icon('grid3',30));
+        }
+        if(f==='action'){ renderQuickList(); }
+        markDirty();
+      });
+    });
     box.appendChild(item);
   });
 }
 
-async function loadPuzzles(){
-  try{
-    const snap = await api.get(api.ref(db, 'puzzles'));
-    allPuzzles = snap.exists() ? (snap.val() || {}) : {};
-    renderPuzzleList();
-    renderStats();
-  }catch(e){
-    console.error('loadPuzzles error:', e);
-    $('#puzzleList').innerHTML = `<div class="empty" style="color:var(--danger)">Gagal memuat puzzle.</div>`;
+/* ==========================================================================
+   RENDER — PLAY MENU
+   ========================================================================== */
+function renderPlayList(){
+  const box=$('#playList');if(!box)return;
+  box.innerHTML='';
+  if(!State.playMenuItems.length){
+    box.innerHTML='<div class="empty-state">'+icon('plus',48)+'<p>Belum ada game. Klik "Tambah Game" untuk mulai.</p></div>';
+    return;
   }
+  State.playMenuItems.forEach((it,i)=>{
+    const item=el('div','item');
+    item.innerHTML=
+      '<div class="item-drag">'+icon('drag',16)+'</div>'+
+      '<div class="item-preview">'+(it.image?'<img src="'+esc(it.image)+'" alt="">':(it.icon?icon(it.icon,30):icon('play',30)))+'</div>'+
+      '<div class="item-body">'+
+        '<div class="grid-2">'+
+          '<div class="field" style="margin-bottom:0"><label>Judul</label><input class="input" data-field="title" value="'+esc(it.title)+'" placeholder="Nama Game"></div>'+
+          '<div class="field" style="margin-bottom:0"><label>Deskripsi</label><input class="input" data-field="desc" value="'+esc(it.desc)+'" placeholder="Deskripsi singkat"></div>'+
+        '</div>'+
+        '<div class="field" style="margin-bottom:0"><label>URL Gambar <span class="hint">kosongkan untuk pakai ikon</span></label><input class="input" data-field="image" value="'+esc(it.image)+'" placeholder="https://example.com/game.jpg"></div>'+
+        '<div class="grid-3">'+
+          '<div class="field" style="margin-bottom:0"><label>Ikon</label>'+
+            '<select class="input" data-field="icon">'+ICON_OPTIONS.map(n=>'<option value="'+n+'"'+(n===it.icon?' selected':'')+'>'+n+'</option>').join('')+'</select>'+
+          '</div>'+
+          '<div class="field" style="margin-bottom:0"><label>Warna Kartu</label>'+
+            '<select class="input" data-field="modeClass">'+
+              ['ranked','casual','friend','ai','local','puzzle','tictactoe','trex','custom'].map(c=>'<option value="'+c+'"'+(c===it.modeClass?' selected':'')+'>'+c+'</option>').join('')+
+            '</select>'+
+          '</div>'+
+          '<div class="field" style="margin-bottom:0"><label>Aksi</label>'+
+            '<select class="input" data-field="action">'+ACTION_OPTIONS.map(a=>'<option value="'+a.value+'"'+(a.value===it.action?' selected':'')+'>'+a.label+'</option>').join('')+'</select>'+
+          '</div>'+
+        '</div>'+
+        (it.action==='url'||it.action==='fn'?'<div class="field" style="margin-bottom:0"><label>'+(it.action==='url'?'URL Target':'Nama Fungsi Global')+'</label><input class="input" data-field="url" value="'+esc(it.url)+'" placeholder="'+(it.action==='url'?'https://...':'myCustomGame')+'"></div>':'')+
+      '</div>'+
+      '<div class="item-actions">'+
+        '<button class="icon-btn" data-act="up" title="Naik">'+icon('chevL',16)+'</button>'+
+        '<button class="icon-btn" data-act="down" title="Turun">'+icon('chevR',16)+'</button>'+
+        '<button class="icon-btn danger" data-act="remove" title="Hapus">'+icon('trash',16)+'</button>'+
+      '</div>';
+    item.querySelector('[data-act="remove"]').addEventListener('click',()=>{
+      if(!confirm('Hapus "'+it.title+'"?'))return;
+      State.playMenuItems.splice(i,1);renderPlayList();updateStats();markDirty();
+    });
+    item.querySelector('[data-act="up"]').addEventListener('click',()=>{
+      if(i<=0)return;
+      [State.playMenuItems[i-1],State.playMenuItems[i]]=[State.playMenuItems[i],State.playMenuItems[i-1]];
+      renderPlayList();markDirty();
+    });
+    item.querySelector('[data-act="down"]').addEventListener('click',()=>{
+      if(i>=State.playMenuItems.length-1)return;
+      [State.playMenuItems[i+1],State.playMenuItems[i]]=[State.playMenuItems[i],State.playMenuItems[i+1]];
+      renderPlayList();markDirty();
+    });
+    item.querySelectorAll('[data-field]').forEach(input=>{
+      input.addEventListener('input',()=>{
+        const f=input.dataset.field;
+        State.playMenuItems[i][f]=input.value;
+        if(f==='image'||f==='icon'){
+          const prev=item.querySelector('.item-preview');
+          const it2=State.playMenuItems[i];
+          prev.innerHTML=it2.image?'<img src="'+esc(it2.image)+'" alt="">':(it2.icon?icon(it2.icon,30):icon('play',30));
+        }
+        if(f==='action'){ renderPlayList(); }
+        markDirty();
+      });
+    });
+    box.appendChild(item);
+  });
 }
 
-function resetPuzzleForm(){
-  $('#puzzleForm').reset();
-  $('#p_id').value = '';
-  $('#p_rating').value = 1000;
-  $('#puzzleModalTitle').textContent = 'Tambah Puzzle';
-  $('#btnSavePuzzle').querySelector('span').textContent = 'Simpan Puzzle';
+/* ==========================================================================
+   STATS
+   ========================================================================== */
+function updateStats(){
+  const a=$('#statPlay'); if(a) a.textContent=String(State.playMenuItems.length);
+  const b=$('#statQuick'); if(b) b.textContent=String(State.quickMenuItems.length);
+  const c=$('#statPhoto'); if(c) c.textContent=String(State.photoBanner.images.length);
 }
 
-function openAddPuzzle(){
-  resetPuzzleForm();
-  Modal.open('puzzleModal');
-}
-
-function openEditPuzzle(id){
-  const p = allPuzzles[id];
-  if(!p) return;
-  resetPuzzleForm();
-  $('#puzzleModalTitle').textContent = 'Edit Puzzle';
-  $('#btnSavePuzzle').querySelector('span').textContent = 'Perbarui';
-  $('#p_id').value = id;
-  $('#p_theme').value = p.theme || '';
-  $('#p_fen').value = p.fen || '';
-  $('#p_solution').value = Array.isArray(p.solution) ? p.solution.join(', ') : (p.solution || '');
-  $('#p_hint').value = p.hint || '';
-  $('#p_rating').value = p.rating || 1000;
-  Modal.open('puzzleModal');
-}
-
-async function savePuzzle(e){
-  e.preventDefault();
-  const id = $('#p_id').value;
-  const theme = $('#p_theme').value.trim();
-  const fen = $('#p_fen').value.trim();
-  const solutionRaw = $('#p_solution').value.trim();
-  const hint = $('#p_hint').value.trim();
-  const rating = parseInt($('#p_rating').value, 10) || 1000;
-
-  if(!theme || !fen || !solutionRaw){ toast('Lengkapi semua field yang wajib.', 'error'); return; }
-  const solution = solutionRaw.split(',').map(s => s.trim()).filter(Boolean);
-  if(!solution.length){ toast('Solusi tidak valid.', 'error'); return; }
-
-  const btn = $('#btnSavePuzzle');
-  const originalHTML = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin" style="display:inline-block">' + ic('loader',16) + '</span> Menyimpan...';
+/* ==========================================================================
+   SAVE / RESET
+   ========================================================================== */
+async function saveAll(){
+  if(!FB.ready){toast('Firebase belum siap','error');return;}
+  const btn=$('#btnSave');
+  if(btn.disabled) return;
+  btn.disabled=true;
+  setStatus('Menyimpan...','saving');
   try{
-    const pid = id || ('p_' + Math.random().toString(36).slice(2,9));
-    await api.set(api.ref(db, 'puzzles/' + pid), { theme, fen, solution, hint, rating });
-    toast(id ? 'Puzzle diperbarui.' : 'Puzzle ditambahkan.', 'success');
-    Modal.close('puzzleModal');
-    await loadPuzzles();
-  }catch(err){
-    console.error(err);
-    toast('Gagal menyimpan puzzle.', 'error');
-  }finally{
-    btn.disabled = false;
-    btn.innerHTML = originalHTML;
-  }
-}
-
-async function deletePuzzle(id){
-  const p = allPuzzles[id];
-  if(!p) return;
-  const ok = await confirmDialog('Hapus Puzzle?', `Hapus puzzle "${p.theme || id}"?`, 'Hapus');
-  if(!ok) return;
-  try{
-    await api.remove(api.ref(db, 'puzzles/' + id));
-    toast('Puzzle dihapus.', 'success');
-    await loadPuzzles();
-  }catch(e){
-    console.error(e);
-    toast('Gagal menghapus puzzle.', 'error');
-  }
-}
-
-/* =========================================================
-   BACKUP / RESTORE
-   ========================================================= */
-async function exportData(){
-  const btn = $('#btnExport');
-  const originalHTML = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin" style="display:inline-block">' + ic('loader',16) + '</span> Mengumpulkan...';
-  try{
-    const [gamesSnap, htmlSnap, bannerSnap, puzzlesSnap] = await Promise.all([
-      api.get(api.ref(db, 'games_config')),
-      api.get(api.ref(db, 'games_html')),
-      api.get(api.ref(db, 'banner/info')),
-      api.get(api.ref(db, 'puzzles'))
-    ]);
-    const data = {
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      exportedBy: currentUser ? (currentUser.email || currentUser.uid) : '',
-      games_config: gamesSnap.val() || {},
-      games_html: htmlSnap.val() || {},
-      banner: bannerSnap.val() || {},
-      puzzles: puzzlesSnap.val() || {}
+    const updates={
+      'adminConfig/homeBanner':State.homeBanner,
+      'adminConfig/photoBanner':{
+        images:State.photoBanner.images.filter(x=>x && x.url),
+        autoSlideInterval:Number(State.photoBanner.autoSlideInterval)||5000
+      },
+      'adminConfig/quickMenuItems':State.quickMenuItems,
+      'adminConfig/playMenuItems':State.playMenuItems,
+      'adminConfig/playMenuHtml':State.customHtml||''
     };
-    const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'gm-grid-backup-' + new Date().toISOString().slice(0,10) + '.json';
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 3000);
-    toast('Data berhasil diexport.', 'success');
+    await FB.api.update(FB.api.ref(FB.db),updates);
+    markSaved();
+    toast('Semua perubahan tersimpan!','success');
   }catch(e){
-    console.error(e);
-    toast('Gagal export data.', 'error');
+    logErr('save',e);
+    setStatus('Gagal menyimpan','');
+    toast('Gagal menyimpan: '+(e.message||'unknown'),'error');
   }finally{
-    btn.disabled = false;
-    btn.innerHTML = originalHTML;
+    btn.disabled=false;
   }
 }
 
-async function handleImport(file){
-  if(!file) return;
-  try{
-    const text = await file.text();
-    const data = JSON.parse(text);
-    if(!data || typeof data !== 'object'){ toast('Format JSON tidak valid.', 'error'); return; }
-    const counts = {
-      games: Object.keys(data.games_config || {}).length,
-      html: Object.keys(data.games_html || {}).length,
-      puzzles: Object.keys(data.puzzles || {}).length,
-      banner: data.banner && (data.banner.text || data.banner.image) ? 'ada' : 'tidak ada'
-    };
-    const ok = await confirmDialog(
-      'Konfirmasi Import',
-      `Akan mengimpor: ${counts.games} game, ${counts.html} file HTML, ${counts.puzzles} puzzle, banner ${counts.banner}. Data dengan ID sama akan DITIMPA.`,
-      'Import Sekarang'
-    );
-    if(!ok) return;
-    const updates = {};
-    if(data.games_config) updates['games_config'] = data.games_config;
-    if(data.games_html) updates['games_html'] = data.games_html;
-    if(data.puzzles) updates['puzzles'] = data.puzzles;
-    if(data.banner) updates['banner/info'] = data.banner;
-    await api.update(api.ref(db, '/'), updates);
-    toast('Import selesai.', 'success');
-    await Promise.all([loadGames(), loadBanner(), loadPuzzles()]);
-  }catch(e){
-    console.error(e);
-    toast('Gagal import: ' + (e.message || 'invalid JSON'), 'error');
-  }
+async function resetAll(){
+  if(!confirm('Reset semua konfigurasi ke default? Perubahan yang belum disimpan akan hilang.'))return;
+  State.homeBanner=Object.assign({},DEFAULT_HOME_BANNER);
+  State.photoBanner=JSON.parse(JSON.stringify(DEFAULT_PHOTO_BANNER));
+  State.quickMenuItems=DEFAULT_QUICK_ITEMS.map(x=>Object.assign({},x));
+  State.playMenuItems=DEFAULT_PLAY_ITEMS.map(x=>Object.assign({},x));
+  State.customHtml='';
+  renderAll();
+  setStatus('Direset ke default (belum disimpan)','dirty');
 }
 
-/* =========================================================
-   WIRE EVENTS
-   ========================================================= */
+function renderAll(){
+  renderHomeBannerForm();
+  renderPhotoBannerForm();
+  renderQuickList();
+  renderPlayList();
+  $('#customHtml').value=State.customHtml||'';
+  updateStats();
+}
+
+/* ==========================================================================
+   EVENT WIRING
+   ========================================================================== */
 function wireEvents(){
-  // Header
-  $('#btnAdd').addEventListener('click', openAdd);
-  $('#btnAddPuzzle').addEventListener('click', openAddPuzzle);
-
-  // Search & Filter
-  $('#searchBox').addEventListener('input', e => {
-    currentSearch = e.target.value;
-    renderGameList();
+  // Theme toggle
+  const themeBtn=$('#btnTheme');
+  const savedTheme=localStorage.getItem('adminTheme')||'dark';
+  document.documentElement.setAttribute('data-theme',savedTheme);
+  themeBtn.innerHTML=icon(savedTheme==='dark'?'sun':'moon');
+  themeBtn.addEventListener('click',()=>{
+    const cur=document.documentElement.getAttribute('data-theme')||'dark';
+    const next=cur==='dark'?'light':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    localStorage.setItem('adminTheme',next);
+    themeBtn.innerHTML=icon(next==='dark'?'sun':'moon');
   });
-  $$('#filterPills button').forEach(b => {
-    b.addEventListener('click', () => {
-      currentFilter = b.dataset.filter;
-      $$('#filterPills button').forEach(x => x.classList.toggle('active', x === b));
-      renderGameList();
+
+  // Preview app
+  $('#btnPreview').addEventListener('click',()=>{
+    window.open('index.html','_blank','noopener');
+  });
+
+  // Logout
+  $('#btnLogout').addEventListener('click',()=>{
+    if(!confirm('Keluar dari panel admin?'))return;
+    sessionStorage.removeItem('adminUnlocked');
+    unlocked=false;
+    showLoginScreen();
+  });
+
+  // Tabs
+  $$('#mainTabs button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const tab=b.dataset.tab;
+      $$('#mainTabs button').forEach(x=>x.classList.toggle('active',x===b));
+      $$('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+tab));
     });
   });
 
-  // Game modal
-  $('#btnCloseGameModal').addEventListener('click', () => Modal.close('gameModal'));
-  $('#gameModal').addEventListener('click', e => {
-    if(e.target === $('#gameModal') && !pendingFile) Modal.close('gameModal');
-  });
-  $('#gameForm').addEventListener('submit', saveGame);
-  $('#btnRemoveFile').addEventListener('click', removeFile);
-  $('#btnReplaceFile').addEventListener('click', triggerReplaceFile);
+  // Home banner form
+  $('#hbTitle').addEventListener('input',()=>{State.homeBanner.title=$('#hbTitle').value;updateHomeBannerPreview();markDirty();});
+  $('#hbText').addEventListener('input',()=>{State.homeBanner.text=$('#hbText').value;updateHomeBannerPreview();markDirty();});
+  $('#hbIcon').addEventListener('change',()=>{State.homeBanner.icon=$('#hbIcon').value;updateHomeBannerPreview();markDirty();});
 
-  // Drop / file input
-  const drop = $('#drop');
-  const fileInput = $('#f_file');
-  drop.addEventListener('click', e => {
-    if(e.target !== fileInput) fileInput.click();
-  });
-  fileInput.addEventListener('change', e => {
-    const f = e.target.files && e.target.files[0];
-    if(f) handleFile(f);
-  });
-  ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => {
-    e.preventDefault(); drop.classList.add('hover');
-  }));
-  ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => {
-    e.preventDefault(); drop.classList.remove('hover');
-  }));
-  drop.addEventListener('drop', e => {
-    const f = e.dataTransfer.files && e.dataTransfer.files[0];
-    if(f) handleFile(f);
+  // Photo banner interval
+  $('#pbInterval').addEventListener('input',()=>{
+    State.photoBanner.autoSlideInterval=Number($('#pbInterval').value)||5000;
+    markDirty();
   });
 
-  // Banner
-  $('#bannerForm').addEventListener('submit', saveBanner);
-  ['bTitle','bText'].forEach(id => {
-    $('#' + id).addEventListener('input', () => {
-      updateBannerCounts();
-      renderBannerPreview();
+  // Add photo
+  $('#btnAddPhoto').addEventListener('click',()=>{
+    State.photoBanner.images.push({url:'',link:'',alt:''});
+    renderPhotoList();updatePhotoPreview();markDirty();
+  });
+
+  // Add quick
+  $('#btnAddQuick').addEventListener('click',()=>{
+    State.quickMenuItems.push({
+      id:'quick-'+Math.random().toString(36).slice(2,8),
+      label:'Item Baru',sub:'',image:'',icon:'grid3',action:'puzzle',url:''
     });
-  });
-  $('#bImage').addEventListener('input', renderBannerPreview);
-  $('#bVisible').addEventListener('click', () => {
-    currentBannerVisible = !currentBannerVisible;
-    updateBannerSwitch();
-    renderBannerPreview();
-    updateBannerStatusBadge();
-  });
-  $('#bVisible').addEventListener('keydown', e => {
-    if(e.key === 'Enter' || e.key === ' '){
-      e.preventDefault();
-      currentBannerVisible = !currentBannerVisible;
-      updateBannerSwitch();
-      renderBannerPreview();
-      updateBannerStatusBadge();
-    }
+    renderQuickList();updateStats();markDirty();
   });
 
-  // Puzzle modal
-  $('#btnClosePuzzleModal').addEventListener('click', () => Modal.close('puzzleModal'));
-  $('#puzzleModal').addEventListener('click', e => {
-    if(e.target === $('#puzzleModal')) Modal.close('puzzleModal');
-  });
-  $('#puzzleForm').addEventListener('submit', savePuzzle);
-
-  // Backup
-  $('#btnExport').addEventListener('click', exportData);
-  $('#importFile').addEventListener('change', e => {
-    const f = e.target.files && e.target.files[0];
-    if(f) handleImport(f);
-    e.target.value = '';
-  });
-
-  // Quick actions
-  document.querySelectorAll('[data-quick]').forEach(b => {
-    b.addEventListener('click', () => {
-      const act = b.dataset.quick;
-      if(act === 'add-game') openAdd();
-      else if(act === 'banner') switchTab('banner');
-      else if(act === 'add-puzzle') openAddPuzzle();
-      else if(act === 'export') exportData();
+  // Add play
+  $('#btnAddPlay').addEventListener('click',()=>{
+    State.playMenuItems.push({
+      id:'play-'+Math.random().toString(36).slice(2,8),
+      title:'Game Baru',desc:'Deskripsi game.',image:'',icon:'grid3',
+      iconClass:'custom',modeClass:'custom',action:'puzzle',url:''
     });
+    renderPlayList();updateStats();markDirty();
   });
 
-  // Modal backdrop close (generic)
-  $('#modal').addEventListener('click', e => {
-    if(e.target === $('#modal')) Modal.close('modal');
+  // Custom HTML
+  $('#customHtml').addEventListener('input',()=>{
+    State.customHtml=$('#customHtml').value;
+    markDirty();
   });
+
+  // Save / Reset
+  $('#btnSave').addEventListener('click',saveAll);
+  $('#btnReset').addEventListener('click',resetAll);
 }
 
-/* =========================================================
-   BOOT
-   ========================================================= */
-async function boot(){
-  paintIcons();
-  $('#authLogo').innerHTML = ic('gamepad', 40);
-  $('#brandLogo').innerHTML = ic('gamepad', 24);
+/* ==========================================================================
+   LOGIN / APP VIEW
+   ========================================================================== */
+function showLoginError(msg){
+  const b=$('#loginError');
+  b.textContent=msg;
+  b.classList.remove('hidden');
+}
+function showLoginScreen(){
+  $('#loginScreen').classList.remove('hidden');
+  $('#app').classList.remove('active');
+  $('#loader').classList.add('gone');
+  $('#pinInput').value='';
+}
+function showApp(){
+  $('#loginScreen').classList.add('hidden');
+  $('#app').classList.add('active');
+  $('#loader').classList.add('gone');
+}
 
+async function tryUnlock(){
+  const pin=$('#pinInput').value.trim();
+  const err=$('#loginError');
+  if(err) err.classList.add('hidden');
+  if(!pin){ showLoginError('Masukkan PIN terlebih dahulu.'); return; }
+  if(pin !== ADMIN_PIN){
+    showLoginError('PIN salah. Coba lagi.');
+    $('#pinInput').value='';
+    $('#pinInput').focus();
+    return;
+  }
+  // PIN benar
+  unlocked=true;
+  sessionStorage.setItem('adminUnlocked','1');
+  await enterAdmin();
+}
+
+async function enterAdmin(){
   try{
-    await initFirebase();
+    $('#loader').classList.remove('gone');
+    $('#loaderStatus').textContent='Menghubungkan ke database...';
+    if(!FB.ready) await initFirebase();
+    $('#loaderStatus').textContent='Memuat konfigurasi...';
+    await loadConfigs();
+    renderAll();
+    showApp();
+    setStatus('Siap','');
   }catch(e){
-    console.error('Firebase init error:', e);
-    $('#authSub').textContent = 'Gagal terhubung ke Firebase. Periksa koneksi internet.';
+    logErr('enterAdmin',e);
+    $('#loader').classList.add('gone');
+    showLoginScreen();
+    showLoginError('Gagal memuat data: '+(e.message||'unknown'));
+  }
+}
+
+/* ==========================================================================
+   BOOT
+   ========================================================================== */
+async function boot(){
+  // Icons
+  $('#loaderMark').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 0-2.9 3.8L8 12h8l-1.1-5.2A3 3 0 0 0 12 3z"/><rect x="8" y="12.5" width="8" height="2" rx="1"/><rect x="6" y="15" width="12" height="4" rx="1.4"/></svg>';
+  $('#loginLogo').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+  $('#brandMark').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 0-2.9 3.8L8 12h8l-1.1-5.2A3 3 0 0 0 12 3z"/><rect x="8" y="12.5" width="8" height="2" rx="1"/><rect x="6" y="15" width="12" height="4" rx="1.4"/></svg>';
+
+  wireEvents();
+
+  // Check session
+  if(sessionStorage.getItem('adminUnlocked')==='1'){
+    unlocked=true;
+    await enterAdmin();
     return;
   }
 
-  renderAuthScreen('loading');
+  // Show login screen
+  $('#loader').classList.add('gone');
+  showLoginScreen();
+  $('#pinInput').focus();
 
-  // Handle redirect result (jika user sebelumnya pakai signInWithRedirect)
-  try{ await authApi.getRedirectResult(auth); }catch(_){}
-
-  wireEvents();
-  wireTabs();
-
-  authApi.onAuthStateChanged(auth, async (user) => {
-    if(!user){
-      currentUser = null;
-      $('#mainUI').classList.add('hidden');
-      $('#authScr').classList.remove('hidden');
-      renderAuthScreen('login');
-      return;
-    }
-    currentUser = user;
-    renderAuthScreen('loading');
-    const admin = await isAdmin(user.uid, user.email);
-    if(!admin){
-      renderAuthScreen('denied', 'Akun ' + (user.email||user.uid) + ' tidak memiliki akses admin.');
-      $('#mainUI').classList.add('hidden');
-      return;
-    }
-    // Berhasil login & admin
-    renderUserChip(user);
-    $('#authScr').classList.add('hidden');
-    $('#mainUI').classList.remove('hidden');
-    // Load data paralel
-    try{
-      await Promise.all([loadGames(), loadBanner(), loadPuzzles()]);
-    }catch(e){
-      console.error('Data load error:', e);
-    }
+  // Wire login
+  $('#btnPinLogin').addEventListener('click',tryUnlock);
+  $('#pinInput').addEventListener('keydown',(e)=>{
+    if(e.key==='Enter') tryUnlock();
+  });
+  $('#pinInput').addEventListener('input',()=>{
+    const err=$('#loginError');
+    if(err) err.classList.add('hidden');
   });
 }
 
-boot().catch(e => {
-  console.error('Boot error:', e);
-  document.body.innerHTML = '<div style="padding:40px;text-align:center;font-family:Inter,sans-serif;color:#f0f4fc;background:#06080f;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center"><h2>Gagal memuat admin panel</h2><p style="color:#8b96b3;margin-top:8px">Cek console untuk detail.</p></div>';
+boot().catch(e=>{
+  logErr('boot',e);
+  $('#loader').classList.add('gone');
+  document.body.innerHTML='<div style="padding:40px;text-align:center;font-family:Inter,sans-serif;color:#f0f4fc;background:#06080f;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center">'+
+    '<h2 style="font-size:22px;margin-bottom:10px">Gagal memuat</h2>'+
+    '<p style="color:#8b96b3;margin:0">Refresh halaman untuk mencoba lagi.</p></div>';
 });
 </script>
 </body>
-    </html>
+</html>
