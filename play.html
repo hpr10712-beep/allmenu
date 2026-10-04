@@ -5551,230 +5551,98 @@ async function renderHomeLeaderboard(){
 /* ==========================================================================
    SECTION: PLAY MENU
    ========================================================================== */
-function renderPlayMenu(){
-  const box=$('#playModes');if(!box)return;
-  const modes=[
-    {icon:'target',iconClass:'ranked',modeClass:'ranked',title:'Ranked',desc:'Pertandingan kompetitif. 1 menit + 5 detik per langkah.',act:openRankedDialog},
-    {icon:'swords',iconClass:'casual',modeClass:'casual',title:'Classic',desc:'Bertanding tanpa peringkat. Rating & bintang tidak berubah.',act:openClassicDialog},
-    {icon:'users',iconClass:'friend',modeClass:'friend',title:'Main dengan Teman',desc:'Buat room privat dan bagikan kodenya.',act:()=>openFriendRoomDialog()},
-    {icon:'cpu',iconClass:'ai',modeClass:'ai',title:'Lawan AI',desc:'Enam tingkat kesulitan, berjalan offline.',act:openAiDialog},
-    {icon:'chess',iconClass:'local',modeClass:'local',title:'Dua Pemain Lokal',desc:'Satu perangkat, bergantian.',act:openLocalDialog},
-    {icon:'zap',iconClass:'puzzle',modeClass:'puzzle',title:'Puzzle Taktik',desc:'Latih taktik dengan posisi nyata.',act:()=>startPuzzle(App.puzzleState.index)},
-    {icon:'grid3',iconClass:'tictactoe',modeClass:'tictactoe',title:'Tic-Tac-Toe',desc:'Lawan AI atau teman di satu perangkat.',act:openTttDialog},
-    {icon:'dino',iconClass:'trex',modeClass:'trex',title:'T-Rex Runner',desc:'Lompat-lompat hindari rintangan seperti game offline.',act:openTrex}
-  ];
-  box.innerHTML='';
-  modes.forEach(m=>{
-    const card=el('div','play-card '+m.modeClass);
-    card.innerHTML=
-      '<div class="pc-bg"></div>'+
-      '<div class="pc-icon '+m.iconClass+'">'+icon(m.icon)+'</div>'+
-      '<div class="pc-body"><div class="pc-title">'+m.title+'</div>'+
-      '<div class="pc-sub">'+m.desc+'</div></div>'+
-      '<div class="pc-arrow">'+icon('chevR')+'</div>';
-    card.addEventListener('click',()=>{Sound.button();m.act();});
-    box.appendChild(card);
-  });
-}
-const TIME_CONTROLS=['1+0','1+1','2+1','3+0','3+2','5+0','5+3','10+0','10+5','15+10','30+0'];
-function tcSelectHtml(id,value){
-  return '<select class="input" id="'+id+'">'+
-    TIME_CONTROLS.map(t=>'<option value="'+t+'"'+(t===(value||'10+0')?' selected':'')+'>'+
-      t.replace('+',' menit + ')+' detik</option>').join('')+
-    '</select>';
-}
-function openRankedDialog(){
-  if(!FB.ready||!App.user){
-    Modal.open({
-      title:'Perlu Masuk',
-      message:'Mode Ranked memerlukan akun online. Anda masih dapat bermain AI atau mode lokal secara offline.',
-      buttons:[{label:'Mengerti',value:null,variant:'primary'}]
-    });
-    return;
-  }
-  const box=el('div');
-  box.innerHTML=
-    '<p style="font-size:13px;color:var(--text-dim);margin:0 0 12px;text-align:center;line-height:1.55">'+
-    'Format: <b style="color:var(--text)">1 menit</b> + <b style="color:var(--text)">5 detik</b> per langkah.<br>'+
-    'Menang = +1★ · Kalah = -1★ · Seri = 0★<br>'+
-    '<span style="font-size:11.5px">Lawan dicari berdasarkan rating Anda (rentang bertambah otomatis).</span></p>';
-  Modal.open({
-    title:'Ranked Match',body:box,
-    buttons:[{label:'Batal',value:null,variant:'ghost'},{label:'Cari Lawan',value:'go',variant:'primary'}]
-  }).then(v=>{
-    if(v!=='go')return;
-    Game.lastTc='1+5';
-    Game.isRanked=true;
-    findMatch('1+5','ranked');
-  });
-}
-function openClassicDialog(){
-  if(!FB.ready||!App.user){
-    Modal.open({
-      title:'Perlu Masuk',
-      message:'Mode Classic memerlukan akun online. Anda masih dapat bermain AI atau mode lokal secara offline.',
-      buttons:[{label:'Mengerti',value:null,variant:'primary'}]
-    });
-    return;
-  }
-  const box=el('div');
-  box.innerHTML=
-    '<p style="font-size:13px;color:var(--text-dim);margin:0 0 12px;text-align:center;line-height:1.55">'+
-    'Format: <b style="color:var(--text)">1 menit</b> + <b style="color:var(--text)">5 detik</b> per langkah.<br>'+
-    'Permainan santai tanpa peringkat. Rating & bintang tidak berubah.</p>';
-  Modal.open({
-    title:'Classic Match',body:box,
-    buttons:[{label:'Batal',value:null,variant:'ghost'},{label:'Cari Lawan',value:'go',variant:'primary'}]
-  }).then(v=>{
-    if(v!=='go')return;
-    Game.lastTc='1+5';
-    Game.isRanked=false;
-    findMatch('1+5','casual');
-  });
-}
-function openFriendRoomDialog(casual){
-  if(!FB.ready||!App.user){
-    Modal.open({
-      title:'Perlu Masuk',
-      message:'Mode online memerlukan akun. Gunakan mode AI atau Lokal untuk bermain offline.',
-      buttons:[{label:'Mengerti',value:null,variant:'primary'}]
-    });
-    return;
-  }
-  const box=el('div');
-  box.innerHTML=
-    '<div class="field"><label for="roomTc">Time Control</label>'+tcSelectHtml('roomTc','10+0')+'</div>'+
-    '<button class="btn primary block" id="btnCreateRoom">'+icon('plus','ic-sm')+' Buat Room</button>'+
-    '<div class="auth-divider" style="margin:18px 0">atau gabung dengan kode</div>'+
-    '<div style="display:flex;gap:8px">'+
-    '<input class="input" id="joinCode" placeholder="KODE ROOM" maxlength="8" style="text-transform:uppercase;letter-spacing:.18em;text-align:center" />'+
-    '<button class="btn" id="btnJoinRoom">Gabung</button>'+
-    '</div>'+
-    '<div class="err" id="roomErr"></div>';
-  Modal.open({
-    title:'Main dengan Teman',body:box,
-    buttons:[{label:'Tutup',value:null,variant:'ghost'}]
-  });
-  const createBtn=$('#btnCreateRoom');
-  if(createBtn){
-    createBtn.addEventListener('click',async()=>{
-      if(createBtn.disabled)return;
-      createBtn.disabled=true;
-      createBtn.innerHTML='<span class="spinner"></span> Membuat';
-      const tc=$('#roomTc')?$('#roomTc').value:'10+0';
-      const code=await createOnlineRoom(tc);
-      if(!code){createBtn.disabled=false;createBtn.innerHTML=icon('plus','ic-sm')+' Buat Room';return;}
-      Game.lastTc=tc;
-      Modal.close(null);
-      showRoomLobby(code);
-      listenForGuest(code);
-    });
-  }
-  const joinBtn=$('#btnJoinRoom');
-  if(joinBtn){
-    joinBtn.addEventListener('click',async()=>{
-      const code=$('#joinCode')?$('#joinCode').value.trim():'';
-      const errBox=$('#roomErr');
-      if(errBox)errBox.textContent='';
-      if(!code){if(errBox)errBox.textContent='Masukkan kode room.';return;}
-      if(joinBtn.disabled)return;
-      joinBtn.disabled=true;
-      joinBtn.innerHTML='<span class="spinner"></span>';
-      const res=await joinOnlineRoom(code);
-      joinBtn.disabled=false;
-      joinBtn.textContent='Gabung';
-      if(!res.ok){if(errBox)errBox.textContent=errMsg(res.code);return;}
-      Game.lastTc=res.room.timeControl||'10+0';
-      Modal.close(null);
-      await beginRoomGame(res.code,res.room);
-    });
-  }
-}
-function listenForGuest(code){
-  unregisterListener('room:'+code);
-  const uid=App.user.uid;
-  const unsub=FB.api.onValue(FB.api.ref(FB.db,'rooms/'+code),async snap=>{
-    const room=snap.val();
-    if(!room){unregisterListener('room:'+code);return;}
-    if(room.guestUid&&room.guestUid!==uid&&room.status==='ready'){
-      unregisterListener('room:'+code);
-      await beginRoomGame(code,room);
+/* ==========================================================================
+   SECTION: DYNAMIC PLAY MENU
+   ========================================================================== */
+async function loadGameConfig() {
+    if (!FB.ready) return null;
+    try {
+        const snap = await FB.api.get(FB.api.ref(FB.db, 'games_config'));
+        if (snap.exists()) {
+            const val = snap.val();
+            // Ubah object menjadi array, filter yang visible, lalu urutkan
+            return Object.keys(val).map(k => ({ id: k, ...val[k] }))
+                .filter(g => g.visible !== false)
+                .sort((a, b) => (a.order || 0) - (b.order || 0));
+        }
+        return null;
+    } catch (e) {
+        logErr('load-game-config', e);
+        return null; // Kembalikan null jika gagal, agar fallback ke daftar statis
     }
-  },err=>logErr('room-listen',err));
-  registerListener('room:'+code,unsub);
 }
-async function beginRoomGame(code,room){
-  const uid=App.user.uid;
-  const hostUid=room.hostUid,guestUid=room.guestUid;
-  const colors=assignColors(hostUid,guestUid);
-  const whiteUid=room.whiteUid||colors.white;
-  const blackUid=room.blackUid||colors.black;
-  const gRef=FB.api.ref(FB.db,'games/'+code);
-  try{
-    const s=await FB.api.get(gRef);
-    if(!s.exists()){
-      const t=timeControlToSeconds(room.timeControl||'10+0');
-      await FB.api.set(gRef,{
-        players:{white:whiteUid,black:blackUid},
-        status:'playing',
-        fen:'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-        turn:'w',
-        clocks:{w:t.base,b:t.base},
-        lastMove:null,result:null,resultReason:null,
-        timeControl:room.timeControl||'10+0',increment:t.inc,
-        createdAt:Date.now(),updatedAt:Date.now(),mode:'classic'
-      });
+
+async function renderPlayMenu(){
+    const box = $('#playModes'); 
+    if (!box) return;
+
+    // Tampilkan loading
+    box.innerHTML = '<div class="empty">' + icon('info', 'ic-lg') + '<p>Memuat daftar game...</p></div>';
+
+    // 1. Coba muat konfigurasi game dari Firebase
+    const dynamicGames = await loadGameConfig();
+
+    if (dynamicGames && dynamicGames.length > 0) {
+        // 2. JIKA BERHASIL: Render game secara dinamis
+        box.innerHTML = '';
+        dynamicGames.forEach(game => {
+            const card = el('div', 'play-card ' + (game.modeClass || ''));
+            card.innerHTML =
+                '<div class="pc-bg"></div>' +
+                '<div class="pc-icon ' + (game.iconClass || '') + '">' + icon(game.icon || 'play') + '</div>' +
+                '<div class="pc-body"><div class="pc-title">' + escapeHtml(game.title) + '</div>' +
+                '<div class="pc-sub">' + escapeHtml(game.description) + '</div></div>' +
+                '<div class="pc-arrow">' + icon('chevR') + '</div>';
+            
+            // Tambahkan event listener berdasarkan 'action'
+            card.addEventListener('click', () => {
+                Sound.button();
+                switch(game.action) {
+                    case 'ranked': openRankedDialog(); break;
+                    case 'casual': openClassicDialog(); break;
+                    case 'friend': openFriendRoomDialog(); break;
+                    case 'ai': openAiDialog(); break;
+                    case 'local': openLocalDialog(); break;
+                    case 'puzzle': startPuzzle(App.puzzleState.index); break;
+                    case 'ttt': openTttDialog(); break;
+                    case 'trex': openTrex(); break;
+                    default: 
+                        // Jika action tidak dikenal, mungkin game ini adalah game baru 
+                        // yang perlu diarahkan ke URL eksternal
+                        if (game.url) {
+                            window.location.href = game.url;
+                        } else {
+                            toast('Game ini belum dapat dibuka.', 'error');
+                        }
+                }
+            });
+            box.appendChild(card);
+        });
+    } else {
+        // 3. FALLBACK: Jika gagal memuat config, gunakan daftar statis seperti semula
+        const staticModes = [
+            {icon: 'target', iconClass: 'ranked', modeClass: 'ranked', title: 'Ranked', desc: 'Pertandingan kompetitif. 1 menit + 5 detik per langkah.', act: openRankedDialog},
+            {icon: 'swords', iconClass: 'casual', modeClass: 'casual', title: 'Classic', desc: 'Bertanding tanpa peringkat. Rating & bintang tidak berubah.', act: openClassicDialog},
+            {icon: 'users', iconClass: 'friend', modeClass: 'friend', title: 'Main dengan Teman', desc: 'Buat room privat dan bagikan kodenya.', act: () => openFriendRoomDialog()},
+            {icon: 'cpu', iconClass: 'ai', modeClass: 'ai', title: 'Lawan AI', desc: 'Enam tingkat kesulitan, berjalan offline.', act: openAiDialog},
+            {icon: 'chess', iconClass: 'local', modeClass: 'local', title: 'Dua Pemain Lokal', desc: 'Satu perangkat, bergantian.', act: openLocalDialog},
+            {icon: 'zap', iconClass: 'puzzle', modeClass: 'puzzle', title: 'Puzzle Taktik', desc: 'Latih taktik dengan posisi nyata.', act: () => startPuzzle(App.puzzleState.index)},
+            {icon: 'grid3', iconClass: 'tictactoe', modeClass: 'tictactoe', title: 'Tic-Tac-Toe', desc: 'Lawan AI atau teman di satu perangkat.', act: openTttDialog},
+            {icon: 'dino', iconClass: 'trex', modeClass: 'trex', title: 'T-Rex Runner', desc: 'Lompat-lompat hindari rintangan seperti game offline.', act: openTrex}
+        ];
+        box.innerHTML = '';
+        staticModes.forEach(m => {
+            const card = el('div', 'play-card ' + m.modeClass);
+            card.innerHTML =
+                '<div class="pc-bg"></div>' +
+                '<div class="pc-icon ' + m.iconClass + '">' + icon(m.icon) + '</div>' +
+                '<div class="pc-body"><div class="pc-title">' + m.title + '</div>' +
+                '<div class="pc-sub">' + m.desc + '</div></div>' +
+                '<div class="pc-arrow">' + icon('chevR') + '</div>';
+            card.addEventListener('click', () => { Sound.button(); m.act(); });
+            box.appendChild(card);
+        });
     }
-  }catch(e){logErr('create-game-record',e);toast(errMsg('DATABASE_ERROR'),'error');return;}
-  const oppUid=uid===hostUid?guestUid:hostUid;
-  const oppProfile=await loadProfile(oppUid);
-  Game.opponentUid=oppUid;
-  Game.opponentName=oppProfile?oppProfile.username:'Lawan';
-  Game.opponentRating=oppProfile?oppProfile.rating:1200;
-  Game.opponentProfile=oppProfile||null;
-  Game.myName=App.profile?App.profile.username:'Anda';
-  Game.myRating=App.profile?App.profile.rating:1200;
-  Game.lastTc=room.timeControl||'10+0';
-  Game.isRanked=false;
-  await showMatchFound(Game.opponentName,Game.opponentRating,oppProfile);
-  startOnlineGame({gameId:code,whiteUid,blackUid,timeControl:room.timeControl||'10+0',myUid:uid,isRanked:false});
-}
-function openAiDialog(){
-  const box=el('div');
-  box.innerHTML=
-    '<div class="field"><label for="aiLevel">Tingkat Kesulitan</label>'+
-    '<select class="input" id="aiLevel">'+
-    Object.keys(AI_LEVELS).map(k=>'<option value="'+k+'"'+(k==='medium'?' selected':'')+'>'+AI_LEVELS[k].label+'</option>').join('')+
-    '</select></div>'+
-    '<div class="field"><label for="aiColor">Warna Anda</label>'+
-    '<select class="input" id="aiColor">'+
-    '<option value="w">Putih</option><option value="b">Hitam</option><option value="random" selected>Acak</option>'+
-    '</select></div>'+
-    '<div class="field"><label for="aiTc">Time Control</label>'+tcSelectHtml('aiTc','10+0')+'</div>';
-  Modal.open({
-    title:'Lawan AI',body:box,
-    buttons:[{label:'Batal',value:null,variant:'ghost'},{label:'Mulai',value:'go',variant:'primary'}]
-  }).then(v=>{
-    if(v!=='go')return;
-    const lvl=$('#aiLevel')?$('#aiLevel').value:'medium';
-    const col=$('#aiColor')?$('#aiColor').value:'random';
-    const tc=$('#aiTc')?$('#aiTc').value:'10+0';
-    Game.lastTc=tc;
-    startAiGame(lvl,col,tc);
-  });
-}
-function openLocalDialog(){
-  const box=el('div');
-  box.innerHTML='<div class="field"><label for="localTc">Time Control</label>'+tcSelectHtml('localTc','10+0')+'</div>';
-  Modal.open({
-    title:'Dua Pemain Lokal',body:box,
-    buttons:[{label:'Batal',value:null,variant:'ghost'},{label:'Mulai',value:'go',variant:'primary'}]
-  }).then(v=>{
-    if(v!=='go')return;
-    const tc=$('#localTc')?$('#localTc').value:'10+0';
-    Game.lastTc=tc;
-    startLocalGame(tc);
-  });
 }
 
 /* ==========================================================================
