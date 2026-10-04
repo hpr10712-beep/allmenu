@@ -790,6 +790,47 @@ svg.ic-xl{width:40px;height:40px}
 .hero-stats b{display:block;font-size:22px;font-weight:900;color:var(--text);letter-spacing:-.035em;margin-top:3px}
 .hero-stats b small{font-size:12px;font-weight:700;opacity:.55}
 
+/* ============================================================
+   HOME BANNER (INFO)
+   ============================================================ */
+.home-banner{
+  position:relative;overflow:hidden;
+  border-radius:18px;padding:14px 16px;margin-bottom:14px;
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgba(34,211,238,.22), transparent 55%),
+    linear-gradient(135deg,rgba(109,123,255,.16),rgba(164,108,255,.12)),
+    linear-gradient(180deg,var(--surface),var(--surface-2));
+  border:1px solid rgba(109,123,255,.32);
+  display:flex;align-items:center;gap:12px;
+  box-shadow:var(--shadow-sm),inset 0 1px 0 rgba(255,255,255,.08);
+  animation:bannerFadeIn .5s cubic-bezier(.2,1,.4,1);
+}
+@keyframes bannerFadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.home-banner::before{
+  content:'';position:absolute;top:-40%;right:-10%;width:160px;height:160px;border-radius:50%;
+  background:radial-gradient(circle,rgba(109,123,255,.3),transparent 65%);
+  pointer-events:none;animation:heroFloat 7s ease-in-out infinite;
+}
+.home-banner .hb-icon{
+  width:42px;height:42px;border-radius:13px;flex:none;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff;
+  box-shadow:0 6px 20px rgba(109,123,255,.45),inset 0 1px 0 rgba(255,255,255,.25);
+  position:relative;z-index:1;
+}
+.home-banner .hb-icon svg{width:22px;height:22px}
+.home-banner .hb-content{flex:1;min-width:0;position:relative;z-index:1}
+.home-banner .hb-title{font-size:13.5px;font-weight:800;letter-spacing:-.01em;color:var(--text)}
+.home-banner .hb-text{font-size:12px;color:var(--text-dim);margin-top:4px;line-height:1.5}
+.home-banner .hb-close{
+  width:30px;height:30px;border-radius:9px;flex:none;display:grid;place-items:center;
+  color:var(--text-dim2);transition:.2s ease;cursor:pointer;
+  position:relative;z-index:1;background:transparent;
+}
+.home-banner .hb-close:hover{background:var(--surface-3);color:var(--text)}
+.home-banner.hidden{display:none !important}
+
 .quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:18px}
 .quick{
   position:relative;overflow:hidden;
@@ -874,6 +915,7 @@ svg.ic-xl{width:40px;height:40px}
 .play-card.puzzle .pc-bg::before{background:radial-gradient(circle,rgba(109,123,255,.38),transparent 65%)}
 .play-card.tictactoe .pc-bg::before{background:radial-gradient(circle,rgba(34,211,238,.38),transparent 65%)}
 .play-card.trex .pc-bg::before{background:radial-gradient(circle,rgba(255,107,107,.38),transparent 65%)}
+.play-card.custom .pc-bg::before{background:radial-gradient(circle,rgba(109,123,255,.4),transparent 65%)}
 .play-card .pc-icon,.play-card .pc-body,.play-card .pc-arrow{position:relative;z-index:1}
 .play-card:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08);border-color:var(--border-2)}
 .play-card:active{transform:translateY(-1px) scale(.995)}
@@ -893,11 +935,14 @@ svg.ic-xl{width:40px;height:40px}
 .play-card .pc-icon.puzzle{background:linear-gradient(135deg,#6d7bff,#a46cff)}
 .play-card .pc-icon.tictactoe{background:linear-gradient(135deg,#22d3ee,#6d7bff)}
 .play-card .pc-icon.trex{background:linear-gradient(135deg,#ffb020,#ff6b6b)}
+.play-card .pc-icon.custom{background:linear-gradient(135deg,#6d7bff,#a46cff)}
 .play-card .pc-body{flex:1;min-width:0}
 .play-card .pc-title{font-size:15px;font-weight:800;letter-spacing:-.02em}
 .play-card .pc-sub{font-size:12px;color:var(--text-dim);margin-top:4px;line-height:1.45}
 .play-card .pc-arrow{color:var(--text-dim2);flex:none;transition:.24s}
 .play-card:hover .pc-arrow{color:var(--accent);transform:translateX(4px)}
+
+.admin-custom-games{display:contents}
 
 /* ============================================================
    FRIENDS
@@ -1737,7 +1782,7 @@ svg.ic-xl{width:40px;height:40px}
   .lb-row.rank-1::before,.lb-row.rank-2::before,.lb-row.rank-3::before,.lb-row.rank-1::after,
   .podium.rank-1,.podium.rank-1 .medal.r1,.search-radar-ring,.search-radar-icon,
   .season-card::before,.season-progress-bar i,.lb-pos.top1,.quick:hover .qi,
-  .season-countdown,.search-radar,.ttt-cell.win{animation:none !important;transition:none !important}
+  .season-countdown,.search-radar,.ttt-cell.win,.home-banner,.home-banner::before{animation:none !important;transition:none !important}
 }
 </style>
 </head>
@@ -1760,14 +1805,11 @@ svg.ic-xl{width:40px;height:40px}
       <h1 class="auth-title">Grandmaster Grid</h1>
       <div class="auth-tagline" id="authTagline">Masuk untuk melanjutkan</div>
     </div>
-    <div class="auth-tabs" id="authTabs">
-      <button data-authtab="login" class="active">Masuk</button>
-      <button data-authtab="register">Daftar</button>
-    </div>
+    <!-- Auth tabs dihilangkan: login hanya via Google -->
     <div class="auth-card" id="authCard"></div>
     <div class="auth-foot">
       <span id="authFootIcon"></span>
-      <span id="authFootText">Mode offline tersedia tanpa akun — AI, permainan lokal, dan puzzle berfungsi penuh.</span>
+      <span id="authFootText">Login hanya melalui Google. Jika belum memiliki akun, Anda akan diminta membuat username setelah berhasil masuk.</span>
     </div>
     <button class="btn ghost block" id="btnOffline">
       <span id="btnOfflineIcon"></span>
@@ -1797,11 +1839,14 @@ svg.ic-xl{width:40px;height:40px}
 
   <main id="views">
     <section class="view" id="view-home">
+      <!-- Banner Informasi -->
+      <div class="home-banner" id="homeBanner"></div>
       <div class="hero" id="heroCard"></div>
       <div id="seasonSlot"></div>
       <div class="quick-grid" id="quickGrid"></div>
-      <div class="sec-title"><h3>Pertandingan Terakhir</h3><button id="btnAllGames">Semua</button></div>
-      <div class="card flat" id="recentGames"></div>
+      <!-- Daftar pertandingan terakhir disembunyikan -->
+      <div class="sec-title hidden" id="recentGamesTitle"><h3>Pertandingan Terakhir</h3><button id="btnAllGames">Semua</button></div>
+      <div class="card flat hidden" id="recentGames"></div>
       <div class="sec-title"><h3>Papan Peringkat</h3><button data-goto="leaderboard">Lihat</button></div>
       <div class="card flat" id="homeLeaderboard"></div>
       <div class="sec-title"><h3>Tantangan Harian</h3></div>
@@ -2040,6 +2085,77 @@ function formatLastSeen(ts){
   const week=Math.floor(day/7);
   if(week<4) return week+' minggu lalu';
   return new Date(Number(ts)).toLocaleDateString('id-ID');
+}
+
+/* ==========================================================================
+   SECTION: ADMIN CONFIG (Game tambahan menu Play + Banner Home)
+   ==========================================================================
+   Admin dapat:
+   1. Menambahkan game baru di menu Play dengan mengisi ADMIN_PLAY_MENU_HTML_DEFAULT
+      di bawah ini (format HTML, bebas). Setiap elemen .play-card akan otomatis
+      mendapat styling yang sama seperti card bawaan.
+   2. Mengubah konten banner di Home lewat DEFAULT_HOME_BANNER.
+   3. (Opsional) Override via Firebase database:
+        adminConfig/playMenuHtml   -> string HTML atau {html:"..."}
+        adminConfig/homeBanner     -> {icon:"...", title:"...", text:"..."}
+   ========================================================================== */
+const ADMIN_PLAY_MENU_HTML_DEFAULT = `
+<!-- ====== MULAI: Game tambahan (diedit oleh admin) ====== -->
+<!--
+  CONTOH MENAMBAH GAME — salin template di bawah, lalu sesuaikan:
+
+  <div class="play-card custom" data-admin-action="url" data-admin-url="https://example.com/game">
+    <div class="pc-bg"></div>
+    <div class="pc-icon custom">${'' /* ikon SVG bisa diisi manual */}</div>
+    <div class="pc-body">
+      <div class="pc-title">Nama Game</div>
+      <div class="pc-sub">Deskripsi singkat game.</div>
+    </div>
+    <div class="pc-arrow">›</div>
+  </div>
+
+  Atribut yang didukung:
+    data-admin-action="url"  -> membuka data-admin-url di tab baru
+    data-admin-action="fn"   -> memanggil fungsi global pada data-admin-fn
+                                (fungsi harus didaftarkan ke window.<nama>)
+  Kelas pc-icon: custom | ranked | casual | friend | ai | local | puzzle
+-->
+<!-- ====== SELESAI: Game tambahan ====== -->
+`;
+let adminPlayMenuHtml = ADMIN_PLAY_MENU_HTML_DEFAULT;
+async function loadAdminPlayMenuHtml(){
+  if(!FB.ready) return;
+  try{
+    const snap = await FB.api.get(FB.api.ref(FB.db,'adminConfig/playMenuHtml'));
+    if(snap.exists()){
+      const val = snap.val();
+      const remote = (typeof val==='string') ? val : (val && typeof val.html==='string' ? val.html : '');
+      if(remote) adminPlayMenuHtml = ADMIN_PLAY_MENU_HTML_DEFAULT + '\n' + remote;
+    }
+  }catch(e){ logErr('admin-play-load', e); }
+}
+
+const DEFAULT_HOME_BANNER = {
+  icon:'info',
+  title:'Selamat Datang di Grandmaster Grid!',
+  text:'Mainkan catur, taktik, dan game menarik lainnya. Login dengan Google untuk menyimpan progres Anda.'
+};
+let homeBannerConfig = Object.assign({}, DEFAULT_HOME_BANNER);
+async function loadHomeBannerConfig(){
+  if(!FB.ready) return;
+  try{
+    const snap = await FB.api.get(FB.api.ref(FB.db,'adminConfig/homeBanner'));
+    if(snap.exists()){
+      const v = snap.val();
+      if(v && typeof v==='object'){
+        homeBannerConfig = {
+          icon: typeof v.icon==='string' ? v.icon : DEFAULT_HOME_BANNER.icon,
+          title: typeof v.title==='string' ? v.title : DEFAULT_HOME_BANNER.title,
+          text: typeof v.text==='string' ? v.text : DEFAULT_HOME_BANNER.text
+        };
+      }
+    }
+  }catch(e){ logErr('home-banner-load', e); }
 }
 
 /* ==========================================================================
@@ -2981,144 +3097,41 @@ function splashStatus(text){
 }
 
 /* ==========================================================================
-   SECTION: AUTH SCREEN
+   SECTION: AUTH SCREEN — HANYA LOGIN GOOGLE
    ========================================================================== */
 let authMode='login';
 
 function showAuthScreen(){
   const as=$('#authScreen');if(as)as.classList.remove('hidden');
   const app=$('#app');if(app)app.classList.add('hidden');
-  renderAuthScreen(authMode);
+  renderAuthScreen('login');
 }
 function hideAuthScreen(){
   const as=$('#authScreen');if(as)as.classList.add('hidden');
   const app=$('#app');if(app)app.classList.remove('hidden');
 }
 
-function renderAuthScreen(mode){
+function renderAuthScreen(){
   try {
-    authMode=mode;
     const card=$('#authCard');
     if(!card) return;
     const tagline=$('#authTagline');
-    if(tagline) tagline.textContent = mode==='register'
-      ? 'Buat akun untuk bermain online'
-      : 'Masuk untuk melanjutkan';
-    $$('#authTabs button').forEach(b => b.classList.toggle('active', b.dataset.authtab===mode));
+    if(tagline) tagline.textContent = 'Masuk dengan Google untuk melanjutkan';
     card.innerHTML='';
     const form = el('div','auth-form');
     card.appendChild(form);
-    try {
-      if (mode==='register') renderRegisterForm(form);
-      else renderLoginForm(form);
-    } catch(innerErr) {
-      console.error('[GG:auth-form]', innerErr);
-      form.innerHTML = '<div style="padding:14px;color:#ff5d6c;font-size:13px">' +
-        'Form gagal dimuat: ' + (innerErr && innerErr.message ? innerErr.message : innerErr) +
-        '</div>';
-    }
+    form.innerHTML =
+      '<button class="btn google block" id="btnGoogleLogin">'+
+      GOOGLE_SVG+' <span>Masuk dengan Google</span></button>'+
+      '<p style="font-size:12.5px;color:var(--text-dim);text-align:center;margin:16px 0 0;line-height:1.55">'+
+      'Login hanya tersedia melalui Google.<br>'+
+      '<span style="color:var(--text-dim2)">Jika belum memiliki akun, Anda akan diminta membuat username setelah masuk.</span>'+
+      '</p>';
+    const gb = form.querySelector('#btnGoogleLogin');
+    if(gb) gb.addEventListener('click', ()=>doGoogleSignIn());
   } catch(e) {
     console.error('[GG:auth-screen]', e);
   }
-}
-
-function renderLoginForm(container){
-  container.innerHTML=
-    '<button class="btn google block" id="btnGoogleLogin" style="margin-bottom:16px">'+
-    GOOGLE_SVG+' <span>Masuk dengan Google</span></button>'+
-    '<div class="auth-divider">atau</div>'+
-    '<div class="field"><label for="loginEmail">Email</label>'+
-    '<input class="input" id="loginEmail" type="email" autocomplete="email" placeholder="nama@email.com" /></div>'+
-    '<div class="field"><label for="loginPass">Kata Sandi</label>'+
-    '<input class="input" id="loginPass" type="password" autocomplete="current-password" placeholder="Minimal 6 karakter" /></div>'+
-    '<div class="err" id="loginErr"></div>'+
-    '<button class="btn primary block" id="btnLogin" style="margin-top:4px">Masuk</button>'+
-    '<button class="btn ghost block" id="btnForgot" style="margin-top:9px">Lupa kata sandi</button>';
-
-  const doLogin=async()=>{
-    const email=$('#loginEmail').value.trim();
-    const pass=$('#loginPass').value;
-    const errBox=$('#loginErr');
-    errBox.textContent='';
-    if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errBox.textContent=errMsg('INVALID_EMAIL');return;}
-    if(!pass||pass.length<6){errBox.textContent=errMsg('WEAK_PASSWORD');return;}
-    if(!FB.ready){errBox.textContent=errMsg('OFFLINE');return;}
-    const btn=$('#btnLogin');
-    if(btn.disabled)return;
-    btn.disabled=true;
-    btn.innerHTML='<span class="spinner"></span> Memproses';
-    try{await FB.authApi.signInWithEmailAndPassword(FB.auth,email,pass);}
-    catch(e){
-      logErr('login',e);
-      errBox.textContent=errMsg(mapFbError(e));
-      btn.disabled=false;btn.textContent='Masuk';
-    }
-  };
-  $('#btnLogin').addEventListener('click',doLogin);
-  container.querySelectorAll('input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();}));
-  $('#btnForgot').addEventListener('click',async()=>{
-    const email=$('#loginEmail').value.trim();
-    if(!email){$('#loginErr').textContent='Masukkan email terlebih dahulu.';return;}
-    if(!FB.ready){$('#loginErr').textContent=errMsg('OFFLINE');return;}
-    try{await FB.authApi.sendPasswordResetEmail(FB.auth,email);toast('Email reset terkirim.','success');}
-    catch(e){logErr('reset',e);$('#loginErr').textContent=errMsg(mapFbError(e));}
-  });
-  $('#btnGoogleLogin').addEventListener('click',()=>doGoogleSignIn());
-}
-
-function renderRegisterForm(container){
-  container.innerHTML=
-    '<button class="btn google block" id="btnGoogleRegister" style="margin-bottom:16px">'+
-    GOOGLE_SVG+' <span>Daftar dengan Google</span></button>'+
-    '<div class="auth-divider">atau</div>'+
-    '<div class="field"><label for="regUser">Username</label>'+
-    '<input class="input" id="regUser" type="text" autocomplete="username" placeholder="3-16 karakter" maxlength="16" /></div>'+
-    '<div class="field"><label for="regEmail">Email</label>'+
-    '<input class="input" id="regEmail" type="email" autocomplete="email" placeholder="nama@email.com" /></div>'+
-    '<div class="field"><label for="regPass">Kata Sandi</label>'+
-    '<input class="input" id="regPass" type="password" autocomplete="new-password" placeholder="Minimal 6 karakter" /></div>'+
-    '<div class="field"><label for="regPass2">Konfirmasi</label>'+
-    '<input class="input" id="regPass2" type="password" autocomplete="new-password" placeholder="Ulangi kata sandi" /></div>'+
-    '<div class="err" id="regErr"></div>'+
-    '<button class="btn primary block" id="btnRegister" style="margin-top:4px">Buat Akun</button>';
-
-  const doRegister=async()=>{
-    const username=$('#regUser').value.trim();
-    const email=$('#regEmail').value.trim();
-    const pass=$('#regPass').value;
-    const pass2=$('#regPass2').value;
-    const errBox=$('#regErr');
-    errBox.textContent='';
-    if(username.length<3){errBox.textContent='Username minimal 3 karakter.';return;}
-    if(username.length>16){errBox.textContent='Username maksimal 16 karakter.';return;}
-    if(!/^[A-Za-z0-9_]+$/.test(username)){errBox.textContent='Hanya huruf, angka, dan underscore.';return;}
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errBox.textContent=errMsg('INVALID_EMAIL');return;}
-    if(pass.length<6){errBox.textContent=errMsg('WEAK_PASSWORD');return;}
-    if(pass!==pass2){errBox.textContent='Konfirmasi kata sandi tidak sama.';return;}
-    if(!FB.ready){errBox.textContent=errMsg('OFFLINE');return;}
-    const btn=$('#btnRegister');
-    if(btn.disabled)return;
-    btn.disabled=true;
-    btn.innerHTML='<span class="spinner"></span> Membuat akun';
-    const lower=username.toLowerCase();
-    try{
-      const snap=await FB.api.get(FB.api.ref(FB.db,'usernames/'+lower));
-      if(snap.exists()){errBox.textContent=errMsg('USERNAME_TAKEN');btn.disabled=false;btn.textContent='Buat Akun';return;}
-    }catch(e){logErr('username-check',e);}
-    try{
-      const cred=await FB.authApi.createUserWithEmailAndPassword(FB.auth,email,pass);
-      await createUserProfile(cred.user.uid,username,email);
-      try{await FB.authApi.updateProfile(cred.user,{displayName:username});}catch(_){}
-      toast('Akun berhasil dibuat.','success');
-    }catch(e){
-      logErr('register',e);
-      errBox.textContent=errMsg(mapFbError(e));
-      btn.disabled=false;btn.textContent='Buat Akun';
-    }
-  };
-  $('#btnRegister').addEventListener('click',doRegister);
-  container.querySelectorAll('input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();}));
-  $('#btnGoogleRegister').addEventListener('click',()=>doGoogleSignIn());
 }
 
 async function doGoogleSignIn(){
@@ -5418,7 +5431,24 @@ function showView(name){
 /* ==========================================================================
    SECTION: HOME
    ========================================================================== */
+function renderHomeBanner(){
+  const banner=$('#homeBanner');
+  if(!banner) return;
+  if(!homeBannerConfig || !homeBannerConfig.title){ banner.classList.add('hidden'); return; }
+  banner.classList.remove('hidden');
+  banner.innerHTML =
+    '<div class="hb-icon">'+icon(homeBannerConfig.icon || 'info')+'</div>'+
+    '<div class="hb-content">'+
+      '<div class="hb-title">'+escapeHtml(homeBannerConfig.title)+'</div>'+
+      (homeBannerConfig.text ? '<div class="hb-text">'+escapeHtml(homeBannerConfig.text)+'</div>' : '')+
+    '</div>'+
+    '<button class="hb-close" aria-label="Tutup banner">'+icon('x','ic-sm')+'</button>';
+  const closeBtn = banner.querySelector('.hb-close');
+  if(closeBtn) closeBtn.addEventListener('click', ()=>{ banner.classList.add('hidden'); });
+}
+
 function renderHome(){
+  renderHomeBanner();
   const p=App.profile||defaultProfile(App.user?App.user.uid:'guest',App.user?'Pemain':'Tamu');
   const info=starInfo(p.stars||0);
   const prog=info.progress;
@@ -5462,7 +5492,8 @@ function renderHome(){
       qg.appendChild(b);
     });
   }
-  renderRecentGames();
+  /* Daftar pertandingan terakhir disembunyikan sesuai permintaan */
+  // renderRecentGames();
   renderHomeLeaderboard();
   const daily=$('#dailyCard');
   if(daily){
@@ -5575,6 +5606,47 @@ function renderPlayMenu(){
     card.addEventListener('click',()=>{Sound.button();m.act();});
     box.appendChild(card);
   });
+
+  /* ================= ADMIN CUSTOM GAMES =================
+     Menambahkan HTML dari ADMIN_PLAY_MENU_HTML_DEFAULT dan/atau
+     adminConfig/playMenuHtml (Firebase). Setiap child akan
+     ditambahkan ke dalam grid, dan handler klik dipasang otomatis
+     berdasarkan data-admin-action / data-admin-url / data-admin-fn.
+     ====================================================== */
+  if(adminPlayMenuHtml && typeof adminPlayMenuHtml === 'string'){
+    try{
+      const temp = document.createElement('div');
+      temp.innerHTML = adminPlayMenuHtml;
+      const nodes = Array.from(temp.children);
+      nodes.forEach(node=>{
+        box.appendChild(node);
+        // Pasang handler klik untuk data-admin-action
+        const attach = (element)=>{
+          const action = element.getAttribute && element.getAttribute('data-admin-action');
+          if(!action) return;
+          element.style.cursor = element.style.cursor || 'pointer';
+          element.addEventListener('click', (ev)=>{
+            ev.preventDefault();
+            Sound.button();
+            if(action === 'url'){
+              const url = element.getAttribute('data-admin-url');
+              if(url) window.open(url, '_blank', 'noopener');
+            } else if(action === 'fn'){
+              const fnName = element.getAttribute('data-admin-fn');
+              if(fnName && typeof window[fnName] === 'function'){
+                try{ window[fnName](element); }catch(e){ logErr('admin-fn', e); }
+              }
+            }
+          });
+        };
+        attach(node);
+        // Juga pasang ke descendant yang punya data-admin-action
+        node.querySelectorAll('[data-admin-action]').forEach(attach);
+      });
+    }catch(e){
+      logErr('render-admin-games', e);
+    }
+  }
 }
 const TIME_CONTROLS=['1+0','1+1','2+1','3+0','3+2','5+0','5+3','10+0','10+5','15+10','30+0'];
 function tcSelectHtml(id,value){
@@ -6322,7 +6394,6 @@ function trexUpdate(dt){
   Trex.legFrame += s*0.22;
   Trex.groundOffset = (Trex.groundOffset + Trex.speed*s*0.6)%20;
 
-  // Dino physics
   const d=Trex.dino;
   if(!d.onGround){
     d.vy += 0.72*s;
@@ -6332,7 +6403,6 @@ function trexUpdate(dt){
     d.y=Trex.groundY;
   }
 
-  // Spawn
   Trex.spawnTimer -= dt;
   if(Trex.spawnTimer<=0){
     trexSpawnObstacle();
@@ -6340,7 +6410,6 @@ function trexUpdate(dt){
     Trex.spawnTimer=base+Math.random()*640;
   }
 
-  // Move obstacles
   for(let i=Trex.obstacles.length-1;i>=0;i--){
     const o=Trex.obstacles[i];
     let sp=Trex.speed;
@@ -6350,7 +6419,6 @@ function trexUpdate(dt){
     if(o.x + o.w < -30) Trex.obstacles.splice(i,1);
   }
 
-  // Clouds
   Trex.cloudTimer -= dt;
   if(Trex.cloudTimer<=0){
     Trex.clouds.push({
@@ -6366,7 +6434,6 @@ function trexUpdate(dt){
     if(c.x < -110) Trex.clouds.splice(i,1);
   }
 
-  // Collision
   const dStandW=d.w, dStandH=d.h;
   const dDuckW=60, dDuckH=26;
   const dW=d.ducking?dDuckW:dStandW;
@@ -6440,7 +6507,6 @@ function trexRender(){
   const col=trexColors();
   ctx.clearRect(0,0,W,H);
 
-  // Background: subtle vertical gradient handled by CSS, add stars
   Trex.stars.forEach(st=>{
     st.tw += 0.02;
     const alpha=0.35 + 0.45*Math.abs(Math.sin(st.tw));
@@ -6452,7 +6518,6 @@ function trexRender(){
     ctx.fill();
   });
 
-  // Clouds
   ctx.fillStyle=col.cloud;
   Trex.clouds.forEach(c=>{
     const cw=46*c.s, ch=10*c.s;
@@ -6462,7 +6527,6 @@ function trexRender(){
     ctx.fill();
   });
 
-  // Ground
   ctx.strokeStyle=col.ground;
   ctx.lineWidth=2;
   ctx.globalAlpha=0.75;
@@ -6480,19 +6544,15 @@ function trexRender(){
   }
   ctx.globalAlpha=1;
 
-  // Obstacles
   Trex.obstacles.forEach(o=>{
     if(o.type==='cactus'){
       ctx.fillStyle=col.cactus;
-      // trunk
       trexRoundRect(ctx,o.x+o.w*0.28,o.y,o.w*0.44,o.h,3);
       ctx.fill();
-      // left arm
       trexRoundRect(ctx,o.x+o.w*0.04,o.y+o.h*0.28,o.w*0.28,o.h*0.42,3);
       ctx.fill();
       trexRoundRect(ctx,o.x+o.w*0.04,o.y+o.h*0.22,o.w*0.18,o.h*0.22,2);
       ctx.fill();
-      // right arm
       trexRoundRect(ctx,o.x+o.w*0.68,o.y+o.h*0.2,o.w*0.28,o.h*0.42,3);
       ctx.fill();
       trexRoundRect(ctx,o.x+o.w*0.78,o.y+o.h*0.14,o.w*0.18,o.h*0.22,2);
@@ -6500,21 +6560,17 @@ function trexRender(){
     } else if(o.type==='bird'){
       ctx.fillStyle=col.bird;
       const cx=o.x+o.w/2, cy=o.y+o.h/2;
-      // body
       trexRoundRect(ctx,cx-14,cy-5,26,10,5);
       ctx.fill();
-      // head
       ctx.beginPath();
       ctx.arc(cx+11,cy-3,5,0,Math.PI*2);
       ctx.fill();
-      // beak
       ctx.beginPath();
       ctx.moveTo(cx+15,cy-3);
       ctx.lineTo(cx+22,cy-1);
       ctx.lineTo(cx+15,cy+1.5);
       ctx.closePath();
       ctx.fill();
-      // wings
       const wingUp=Math.floor(o.wingFrame||0)%2===0;
       ctx.beginPath();
       if(wingUp){
@@ -6531,10 +6587,8 @@ function trexRender(){
     }
   });
 
-  // Dino
   trexDrawDino(ctx);
 
-  // Overlay effect when idle/over
   if(Trex.state==='idle'||Trex.state==='over'){
     ctx.fillStyle=settings.theme==='light'?'rgba(238,241,248,.35)':'rgba(6,8,15,.35)';
     ctx.fillRect(0,0,W,H);
@@ -6550,18 +6604,14 @@ function trexDrawDino(ctx){
   ctx.fillStyle=col.fg;
 
   if(ducking){
-    // Duck body (horizontal)
     trexRoundRect(ctx,x,y+2,w-6,h-4,6);
     ctx.fill();
-    // head at front
     trexRoundRect(ctx,x+w-16,y-2,16,12,3);
     ctx.fill();
-    // eye
     ctx.fillStyle=settings.theme==='light'?'#fff':'#0b0f1c';
     ctx.beginPath();
     ctx.arc(x+w-6,y+3,1.4,0,Math.PI*2);
     ctx.fill();
-    // tail
     ctx.fillStyle=col.fg;
     ctx.beginPath();
     ctx.moveTo(x+2,y+h-4);
@@ -6569,7 +6619,6 @@ function trexDrawDino(ctx){
     ctx.lineTo(x+6,y+h+2);
     ctx.closePath();
     ctx.fill();
-    // legs
     const l1=Math.floor(Trex.legFrame)%2;
     trexRoundRect(ctx,x+8,y+h-2,4,2-(l1?1:0),1);
     ctx.fill();
@@ -6578,8 +6627,6 @@ function trexDrawDino(ctx){
     return;
   }
 
-  // Standing dino
-  // Tail
   ctx.beginPath();
   ctx.moveTo(x+2,y+16);
   ctx.lineTo(x-8,y+8);
@@ -6587,11 +6634,9 @@ function trexDrawDino(ctx){
   ctx.closePath();
   ctx.fill();
 
-  // Body
   trexRoundRect(ctx,x+2,y+10,w-10,h-16,4);
   ctx.fill();
 
-  // Legs
   const l1=Math.floor(Trex.legFrame)%2;
   if(d.onGround){
     trexRoundRect(ctx,x+8,y+h-8,5,8-(l1?2:0),2);
@@ -6605,15 +6650,12 @@ function trexDrawDino(ctx){
     ctx.fill();
   }
 
-  // Head (upper right)
   trexRoundRect(ctx,x+w-18,y,18,14,3);
   ctx.fill();
 
-  // Small arm
   trexRoundRect(ctx,x+w-8,y+15,8,4,1.6);
   ctx.fill();
 
-  // Eye
   ctx.fillStyle=settings.theme==='light'?'#fff':'#0b0f1c';
   ctx.beginPath();
   ctx.arc(x+w-6,y+5,1.5,0,Math.PI*2);
@@ -6639,7 +6681,6 @@ function wireTrexEvents(){
     duckBtn.addEventListener('pointerleave',off);
     duckBtn.addEventListener('pointercancel',off);
   }
-  // Canvas input
   const cv=$('#trexCanvas');
   if(cv){
     cv.addEventListener('pointerdown',ev=>{
@@ -6649,7 +6690,6 @@ function wireTrexEvents(){
       trexJump();
     });
   }
-  // Keyboard
   document.addEventListener('keydown',ev=>{
     const sc=$('#trexScreen');
     if(!sc||!sc.classList.contains('active'))return;
@@ -6870,6 +6910,16 @@ async function boot(){
 
   try{ await resolveGoogleRedirect(); }catch(_){}
 
+  // Muat konfigurasi admin (game tambahan Play + banner Home)
+  if(FB.ready){
+    try{
+      await Promise.all([
+        loadAdminPlayMenuHtml(),
+        loadHomeBannerConfig()
+      ]);
+    }catch(e){ logErr('admin-config-load', e); }
+  }
+
   const minSplash=delay(900);
 
   if(FB.ready&&FB.authApi){
@@ -6986,4 +7036,4 @@ boot().catch(e=>{
 });
 </script>
 </body>
-   </html>
+</html>
