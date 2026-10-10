@@ -1,1934 +1,848 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>CAZOO — 3D Racing Multiplayer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<title>CAZOO — 3D Racing</title>
 <link rel="icon" href="https://i.ibb.co.com/67V2PpkF/file-00000000e8948207be00a221094a9d3c.png" />
 <style>
-  /* ============================================================
-     CAZOO — Design tokens
-     ============================================================ */
-  :root{
-    --bg-0:#05070d;
-    --bg-1:#0a0e1a;
-    --bg-2:#0f1524;
-    --panel:rgba(14,20,34,0.72);
-    --panel-solid:#0e1422;
-    --border:rgba(90,180,255,0.14);
-    --border-strong:rgba(90,180,255,0.32);
-    --text:#e6f0ff;
-    --muted:#7c8aa6;
-    --cyan:#22e6ff;
-    --cyan-dim:#0fa9c9;
-    --violet:#8a5cff;
-    --pink:#ff3ea5;
-    --danger:#ff4d6d;
-    --ok:#3ddc97;
-    --warn:#ffb454;
-    --grad:linear-gradient(135deg,#22e6ff 0%,#8a5cff 100%);
-    --shadow:0 10px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(90,180,255,0.08) inset;
-    --radius:14px;
-    --radius-sm:10px;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  html,body{height:100%}
-  body{
-    font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
-    background:radial-gradient(ellipse at top,#0b1226 0%,#05070d 60%);
-    color:var(--text);
-    overflow:hidden;
-    user-select:none;
-    font-size:14px;
-  }
-  button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
-  button{cursor:pointer;border:none;background:none}
-  a{color:var(--cyan);text-decoration:none}
-  ::-webkit-scrollbar{width:8px;height:8px}
-  ::-webkit-scrollbar-track{background:transparent}
-  ::-webkit-scrollbar-thumb{background:rgba(90,180,255,0.18);border-radius:8px}
-  ::-webkit-scrollbar-thumb:hover{background:rgba(90,180,255,0.32)}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+  html,body{width:100%;height:100%;overflow:hidden;background:#05070d;font-family:'Segoe UI',system-ui,sans-serif;color:#e6f0ff}
+  canvas{display:block}
 
-  /* App shell */
-  #app{position:fixed;inset:0;display:flex;flex-direction:column}
-  #stage{position:absolute;inset:0;z-index:0}
+  /* ---------- ROTATE PROMPT ---------- */
+  #rotate{
+    position:fixed;inset:0;z-index:9999;display:none;
+    background:radial-gradient(circle at 50% 50%,#0b1226,#05070d);
+    flex-direction:column;align-items:center;justify-content:center;gap:24px;text-align:center;padding:24px;
+  }
+  #rotate.show{display:flex}
+  #rotate .phone{
+    width:70px;height:120px;border:3px solid #22e6ff;border-radius:14px;
+    position:relative;animation:tilt 1.8s ease-in-out infinite;
+    box-shadow:0 0 30px rgba(34,230,255,0.5);
+  }
+  #rotate .phone::after{content:"";position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:24px;height:3px;background:#22e6ff;border-radius:2px}
+  @keyframes tilt{0%,100%{transform:rotate(0)}50%{transform:rotate(-90deg)}}
+  #rotate h2{font-size:20px;letter-spacing:2px;font-weight:800}
+  #rotate p{color:#7c8aa6;font-size:13px;letter-spacing:1px}
+  @media (orientation:portrait) and (max-width:900px){ #rotate.show{display:flex!important} }
 
-  /* ============ SCREEN: Auth ============ */
-  .auth-screen{
-    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    background:radial-gradient(circle at 50% 40%,#0d1638 0%,#05070d 70%);
-    z-index:50;padding:20px;
+  /* ---------- MENU ---------- */
+  #menu{
+    position:fixed;inset:0;z-index:10;
+    background:radial-gradient(ellipse at 50% 40%,#0e1a3a 0%,#05070d 70%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;
+    padding:20px;overflow:hidden;
   }
-  .auth-card{
-    width:100%;max-width:420px;background:var(--panel);
-    backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-    border:1px solid var(--border-strong);border-radius:var(--radius);
-    padding:32px 28px;box-shadow:var(--shadow);
+  #menu .glow{
+    position:absolute;width:70vw;height:70vw;max-width:800px;max-height:800px;
+    border-radius:50%;background:radial-gradient(circle,rgba(34,230,255,0.18),transparent 60%);
+    filter:blur(40px);animation:pulse 4s ease-in-out infinite;pointer-events:none;
   }
-  .auth-logo{display:flex;align-items:center;gap:14px;margin-bottom:6px}
-  .auth-logo img{width:52px;height:52px;border-radius:14px}
-  .auth-logo .wordmark{font-size:28px;font-weight:900;letter-spacing:3px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .auth-sub{color:var(--muted);font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
-  .field{margin-bottom:14px}
-  .field label{display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-  .field input{
-    width:100%;padding:12px 14px;background:rgba(0,0,0,0.35);
-    border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;
-    transition:border-color .15s,box-shadow .15s;
-  }
-  .field input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,230,255,0.12)}
-  .btn{
-    display:inline-flex;align-items:center;justify-content:center;gap:8px;
-    padding:12px 18px;border-radius:var(--radius-sm);font-weight:700;letter-spacing:.6px;
-    transition:transform .1s,box-shadow .15s,background .15s;
-    border:1px solid transparent;white-space:nowrap;
-  }
-  .btn:active{transform:translateY(1px)}
-  .btn-primary{background:var(--grad);color:#04121c;box-shadow:0 8px 28px rgba(34,230,255,0.25)}
-  .btn-primary:hover{box-shadow:0 8px 34px rgba(34,230,255,0.45)}
-  .btn-ghost{background:rgba(255,255,255,0.04);border-color:var(--border);color:var(--text)}
-  .btn-ghost:hover{background:rgba(255,255,255,0.08);border-color:var(--border-strong)}
-  .btn-danger{background:rgba(255,77,109,0.14);border-color:rgba(255,77,109,0.4);color:#ff8fa3}
-  .btn-block{width:100%}
-  .auth-switch{margin-top:16px;text-align:center;font-size:12px;color:var(--muted)}
-  .auth-switch button{color:var(--cyan);font-weight:600}
-  .auth-err{margin-top:10px;color:#ff8fa3;font-size:12px;min-height:16px}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.15);opacity:1}}
 
-  /* ============ MAIN MENU ============ */
-  .main-menu{
-    position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;
-    background:radial-gradient(ellipse at 50% 120%,#0e1a3a 0%,#05070d 60%);
-    padding:24px;overflow:auto;
+  #menu .logo{
+    display:flex;align-items:center;gap:14px;z-index:1;
   }
-  .mm-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:8px}
-  .brand{display:flex;align-items:center;gap:12px}
-  .brand img{width:40px;height:40px;border-radius:10px}
-  .brand .wordmark{font-size:22px;font-weight:900;letter-spacing:3px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .mm-user{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--panel);border:1px solid var(--border);border-radius:99px}
-  .mm-user .avatar{width:30px;height:30px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:800;color:#04121c}
-  .mm-user .name{font-weight:600;font-size:13px}
-  .mm-user .rating{font-size:11px;color:var(--cyan)}
-  .mm-hero{text-align:center;margin:26px 0 24px}
-  .mm-hero h1{font-size:clamp(34px,8vw,68px);font-weight:900;letter-spacing:4px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
-  .mm-hero p{color:var(--muted);letter-spacing:3px;text-transform:uppercase;font-size:11px;margin-top:8px}
-  .mm-grid{
-    display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;
-    max-width:1000px;width:100%;margin:0 auto;
+  #menu .logo img{width:56px;height:56px;border-radius:14px;box-shadow:0 0 30px rgba(34,230,255,0.5)}
+  #menu .logo h1{
+    font-size:clamp(38px,9vw,72px);font-weight:900;letter-spacing:6px;
+    background:linear-gradient(135deg,#22e6ff,#8a5cff);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
   }
-  .menu-card{
-    background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
-    padding:18px;text-align:left;transition:transform .15s,border-color .15s,box-shadow .15s;
-    display:flex;flex-direction:column;gap:10px;min-height:120px;position:relative;overflow:hidden;
-    backdrop-filter:blur(12px);
-  }
-  .menu-card::after{
-    content:"";position:absolute;inset:0;border-radius:var(--radius);
-    background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(34,230,255,0.14),transparent 55%);
-    opacity:0;transition:opacity .2s;pointer-events:none;
-  }
-  .menu-card:hover{transform:translateY(-2px);border-color:var(--border-strong);box-shadow:0 12px 30px rgba(0,0,0,0.35)}
-  .menu-card:hover::after{opacity:1}
-  .menu-card .ico{width:36px;height:36px;color:var(--cyan)}
-  .menu-card .ico svg{width:100%;height:100%}
-  .menu-card .title{font-weight:800;letter-spacing:1.5px;font-size:14px;text-transform:uppercase}
-  .menu-card .desc{color:var(--muted);font-size:11.5px;line-height:1.45}
-  .menu-card.accent{border-color:rgba(138,92,255,0.4);background:linear-gradient(160deg,rgba(138,92,255,0.14),rgba(34,230,255,0.06))}
-  .menu-card.accent .ico{color:var(--violet)}
-  .menu-card.disabled{opacity:.5;pointer-events:none}
+  #menu .tag{color:#7c8aa6;letter-spacing:4px;font-size:11px;text-transform:uppercase;z-index:1;margin-top:-10px}
 
-  /* ============ PAGE (generic full-screen) ============ */
-  .page{
-    position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;
-    background:radial-gradient(ellipse at top,#0a1124 0%,#05070d 70%);
-    overflow:hidden;
-  }
-  .page.hidden{display:none}
-  .page-header{
-    display:flex;align-items:center;gap:14px;padding:16px 20px;
-    border-bottom:1px solid var(--border);background:rgba(6,10,20,0.7);backdrop-filter:blur(14px);
-    flex-shrink:0;
-  }
-  .back-btn{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;border:1px solid var(--border)}
-  .back-btn:hover{background:rgba(255,255,255,0.09)}
-  .back-btn svg{width:18px;height:18px}
-  .page-title{font-size:16px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
-  .page-title small{display:block;font-weight:500;font-size:10.5px;letter-spacing:1.4px;color:var(--muted);margin-top:2px}
-  .page-body{flex:1;overflow:auto;padding:20px}
-  .page-body.pad-0{padding:0}
+  #menu .buttons{display:flex;flex-direction:column;gap:12px;width:100%;max-width:340px;z-index:1;margin-top:14px}
 
-  .card{
-    background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
-    padding:18px;margin-bottom:14px;backdrop-filter:blur(10px);
+  .btn-main{
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    padding:16px 20px;border-radius:14px;border:none;cursor:pointer;
+    font-weight:800;letter-spacing:2px;font-size:14px;text-transform:uppercase;
+    transition:transform .1s,box-shadow .2s;
+    font-family:inherit;
   }
-  .card h3{font-size:13px;letter-spacing:1.6px;text-transform:uppercase;color:var(--cyan);margin-bottom:12px}
-  .row{display:flex;gap:10px;flex-wrap:wrap}
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .stat{background:rgba(0,0,0,0.28);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px}
-  .stat .label{font-size:10.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted)}
-  .stat .value{font-size:22px;font-weight:800;margin-top:6px;color:var(--text)}
-  .stat .value.cyan{color:var(--cyan)}
-  .stat .value.violet{color:var(--violet)}
-  .stat .value.ok{color:var(--ok)}
-  .empty{padding:36px 20px;text-align:center;color:var(--muted);font-size:13px}
-  .empty svg{width:44px;height:44px;color:var(--border-strong);margin-bottom:10px}
-  .chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:99px;background:rgba(255,255,255,0.05);border:1px solid var(--border);font-size:11px;letter-spacing:.6px}
-  .chip.ok{background:rgba(61,220,151,0.1);border-color:rgba(61,220,151,0.35);color:var(--ok)}
-  .chip.warn{background:rgba(255,180,84,0.1);border-color:rgba(255,180,84,0.35);color:var(--warn)}
-  .chip.err{background:rgba(255,77,109,0.1);border-color:rgba(255,77,109,0.35);color:#ff8fa3}
-  .chip.muted{color:var(--muted)}
+  .btn-main:active{transform:translateY(2px)}
+  .btn-main svg{width:20px;height:20px}
 
-  /* Toast */
-  #toasts{position:fixed;top:18px;right:18px;z-index:1000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-  .toast{
-    background:rgba(10,16,30,0.95);border:1px solid var(--border-strong);border-left:3px solid var(--cyan);
-    padding:12px 16px;border-radius:var(--radius-sm);min-width:220px;max-width:340px;font-size:13px;
-    box-shadow:var(--shadow);animation:slideIn .25s ease;pointer-events:auto;
+  .btn-start{
+    background:linear-gradient(135deg,#22e6ff,#8a5cff);color:#04121c;
+    box-shadow:0 10px 40px rgba(34,230,255,0.45),0 0 0 1px rgba(255,255,255,0.15) inset;
+    padding:20px;font-size:18px;letter-spacing:4px;
   }
-  .toast.err{border-left-color:var(--danger)}
-  .toast.ok{border-left-color:var(--ok)}
-  @keyframes slideIn{from{transform:translateX(30px);opacity:0}to{transform:translateX(0);opacity:1}}
+  .btn-start:hover{box-shadow:0 14px 50px rgba(34,230,255,0.7),0 0 0 1px rgba(255,255,255,0.2) inset}
+  .btn-sec{
+    background:rgba(255,255,255,0.06);border:1px solid rgba(90,180,255,0.25);color:#e6f0ff;
+  }
+  .btn-sec:hover{background:rgba(255,255,255,0.1);border-color:rgba(90,180,255,0.5)}
 
-  /* ============ 3D RACING HUD ============ */
-  #race-canvas{position:absolute;inset:0;display:block}
-  .race-hud{position:absolute;inset:0;pointer-events:none;z-index:35}
-  .hud-speed{
-    position:absolute;bottom:24px;left:24px;
-    background:rgba(6,10,20,0.6);backdrop-filter:blur(12px);border:1px solid var(--border);
-    border-radius:var(--radius);padding:14px 22px;text-align:center;
+  #menu .footer{position:absolute;bottom:16px;font-size:11px;color:#4a5670;letter-spacing:2px;z-index:1}
+
+  /* ---------- GAME HUD ---------- */
+  #game{position:fixed;inset:0;z-index:5;display:none}
+  #game.on{display:block}
+  #gameCanvas{position:absolute;inset:0;width:100%;height:100%}
+
+  .hud{position:absolute;pointer-events:none;z-index:6}
+  .hud-box{
+    background:rgba(6,10,20,0.7);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(90,180,255,0.3);border-radius:14px;padding:10px 16px;
+    box-shadow:0 6px 24px rgba(0,0,0,0.5);
   }
-  .hud-speed .num{font-size:42px;font-weight:900;letter-spacing:1px;line-height:1;color:var(--cyan);font-variant-numeric:tabular-nums}
-  .hud-speed .unit{font-size:10px;letter-spacing:3px;color:var(--muted);margin-top:4px}
-  .hud-lap{
-    position:absolute;top:24px;left:24px;background:rgba(6,10,20,0.6);backdrop-filter:blur(12px);
-    border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;
+  #hud-lap{top:16px;left:16px}
+  #hud-lap .lbl{font-size:9px;letter-spacing:2px;color:#7c8aa6}
+  #hud-lap .val{font-size:20px;font-weight:900;margin-top:2px}
+
+  #hud-time{top:16px;right:16px;text-align:right}
+  #hud-time .lbl{font-size:9px;letter-spacing:2px;color:#7c8aa6}
+  #hud-time .val{font-size:20px;font-weight:900;margin-top:2px;font-variant-numeric:tabular-nums}
+
+  #hud-speed{
+    bottom:16px;left:16px;
   }
-  .hud-lap .lbl{font-size:10px;letter-spacing:2px;color:var(--muted)}
-  .hud-lap .val{font-size:22px;font-weight:800;color:var(--text);margin-top:2px}
-  .hud-time{
-    position:absolute;top:24px;right:24px;background:rgba(6,10,20,0.6);backdrop-filter:blur(12px);
-    border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;text-align:right;
+  #hud-speed .num{font-size:40px;font-weight:900;color:#22e6ff;line-height:1;font-variant-numeric:tabular-nums;text-shadow:0 0 20px rgba(34,230,255,0.5)}
+  #hud-speed .unit{font-size:10px;letter-spacing:3px;color:#7c8aa6;margin-top:4px}
+
+  #hud-nitro{
+    position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+    width:min(260px,50vw);height:10px;border-radius:99px;
+    background:rgba(0,0,0,0.6);border:1px solid rgba(90,180,255,0.3);overflow:hidden;
+    z-index:6;
   }
-  .hud-time .lbl{font-size:10px;letter-spacing:2px;color:var(--muted)}
-  .hud-time .val{font-size:20px;font-weight:800;color:var(--text);margin-top:2px;font-variant-numeric:tabular-nums}
-  .hud-nitro{
-    position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
-    width:min(280px,60vw);height:12px;border-radius:99px;background:rgba(0,0,0,0.5);
-    border:1px solid var(--border);overflow:hidden;
+  #hud-nitro .fill{
+    height:100%;width:100%;background:linear-gradient(90deg,#22e6ff,#8a5cff);
+    transition:width .1s linear;box-shadow:0 0 20px rgba(34,230,255,0.8);
   }
-  .hud-nitro .fill{height:100%;width:100%;background:linear-gradient(90deg,#22e6ff,#8a5cff);transition:width .1s linear}
-  .hud-controls{
-    position:absolute;bottom:16px;right:16px;pointer-events:auto;display:flex;gap:8px;
+  #hud-nitro .lbl{
+    position:absolute;top:-16px;left:50%;transform:translateX(-50%);
+    font-size:9px;letter-spacing:2px;color:#7c8aa6;
   }
-  .hud-btn{
-    width:56px;height:56px;border-radius:50%;background:rgba(6,10,20,0.7);border:1px solid var(--border-strong);
-    display:flex;align-items:center;justify-content:center;color:var(--cyan);backdrop-filter:blur(10px);
-    pointer-events:auto;
-  }
-  .hud-btn:active{background:rgba(34,230,255,0.15)}
-  .hud-btn svg{width:24px;height:24px}
-  .hud-msg{
+
+  #hud-msg{
     position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-    font-size:clamp(28px,6vw,60px);font-weight:900;letter-spacing:6px;
-    color:var(--cyan);text-shadow:0 0 40px rgba(34,230,255,0.6);opacity:0;transition:opacity .3s;
-    text-align:center;text-transform:uppercase;
+    font-size:clamp(40px,10vw,90px);font-weight:900;letter-spacing:8px;
+    color:#22e6ff;text-shadow:0 0 60px rgba(34,230,255,0.8),0 0 20px rgba(34,230,255,1);
+    opacity:0;transition:opacity .25s;pointer-events:none;z-index:7;text-transform:uppercase;
   }
-  .hud-msg.show{opacity:1}
-  .touch-pad{
-    position:absolute;bottom:16px;left:16px;pointer-events:auto;display:flex;gap:12px;
+  #hud-msg.show{opacity:1}
+
+  /* Controls — touch */
+  .ctrl{
+    position:absolute;bottom:16px;z-index:8;
+    width:70px;height:70px;border-radius:50%;
+    background:rgba(6,10,20,0.75);backdrop-filter:blur(12px);
+    border:2px solid rgba(34,230,255,0.5);
+    display:flex;align-items:center;justify-content:center;
+    color:#22e6ff;cursor:pointer;
+    box-shadow:0 4px 24px rgba(0,0,0,0.6),0 0 20px rgba(34,230,255,0.2) inset;
+    transition:transform .08s,background .1s;
   }
-  @media (max-width:760px){
-    .hud-speed{bottom:88px;left:16px;padding:10px 16px}
-    .hud-speed .num{font-size:32px}
-    .touch-pad{bottom:16px}
-  }
+  .ctrl:active{transform:scale(0.92);background:rgba(34,230,255,0.25)}
+  .ctrl svg{width:30px;height:30px}
 
-  /* ============ 3D SKIN STUDIO ============ */
-  .studio{display:grid;grid-template-columns:64px 1fr 280px;grid-template-rows:56px 1fr 180px;height:100%;width:100%;gap:1px;background:#05070d}
-  .studio > *{background:var(--bg-1)}
-  .studio-top{grid-column:1/-1;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid var(--border)}
-  .studio-tools{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0;overflow-y:auto}
-  .tool-btn{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--muted);border:1px solid transparent;transition:all .12s}
-  .tool-btn:hover{background:rgba(255,255,255,0.05);color:var(--text)}
-  .tool-btn.active{background:rgba(34,230,255,0.12);color:var(--cyan);border-color:rgba(34,230,255,0.4)}
-  .tool-btn svg{width:20px;height:20px}
-  .studio-viewport{position:relative;overflow:hidden}
-  .studio-viewport canvas{display:block;width:100%;height:100%}
-  .studio-props{padding:14px;overflow-y:auto;border-left:1px solid var(--border)}
-  .studio-props h4{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--cyan);margin:12px 0 8px}
-  .studio-props h4:first-child{margin-top:0}
-  .studio-props .field{margin-bottom:10px}
-  .studio-props input[type="range"]{width:100%;accent-color:var(--cyan)}
-  .studio-props input[type="color"]{width:100%;height:38px;border:1px solid var(--border);border-radius:8px;background:transparent;padding:2px;cursor:pointer}
-  .studio-props input[type="text"], .studio-props input[type="number"]{width:100%;padding:8px 10px;background:rgba(0,0,0,0.35);border:1px solid var(--border);border-radius:8px;outline:none;font-size:12px}
-  .studio-bottom{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid var(--border);overflow-x:auto}
-  .layer-chip{display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;font-size:12px;white-space:nowrap;flex-shrink:0}
-  .layer-chip.active{border-color:var(--cyan);background:rgba(34,230,255,0.08)}
-  .layer-chip .thumb{width:36px;height:36px;border-radius:6px;background:linear-gradient(45deg,#111,#333);border:1px solid var(--border);background-size:cover}
-  .layer-chip button{color:var(--muted);padding:2px}
-  .layer-chip button:hover{color:var(--danger)}
-
-  .top-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:9px;background:rgba(255,255,255,0.04);border:1px solid var(--border);font-size:12px;font-weight:600;letter-spacing:.4px}
-  .top-btn:hover{background:rgba(255,255,255,0.08)}
-  .top-btn svg{width:15px;height:15px}
-  .top-btn.primary{background:var(--grad);color:#04121c;border-color:transparent}
-  .top-btn.danger{background:rgba(255,77,109,0.14);color:#ff8fa3;border-color:rgba(255,77,109,0.35)}
-
-  @media (max-width:900px){
-    .studio{grid-template-columns:48px 1fr;grid-template-rows:52px 1fr auto 160px}
-    .studio-props{grid-column:1/-1;border-left:none;border-top:1px solid var(--border);max-height:220px;order:5}
-    .studio-bottom{grid-row:4;grid-column:1/-1}
-    .studio-viewport{grid-column:2;grid-row:2}
+  #ctrl-left{left:16px}
+  #ctrl-right{left:100px}
+  #ctrl-gas{right:16px;background:rgba(34,230,255,0.15);border-color:#22e6ff;width:80px;height:80px}
+  #ctrl-nitro{right:108px;border-color:#8a5cff;color:#8a5cff}
+  #ctrl-exit{
+    position:absolute;top:16px;left:50%;transform:translateX(-50%);
+    z-index:8;padding:8px 16px;border-radius:99px;
+    background:rgba(6,10,20,0.75);backdrop-filter:blur(12px);
+    border:1px solid rgba(90,180,255,0.3);color:#e6f0ff;
+    font-size:11px;letter-spacing:2px;cursor:pointer;font-family:inherit;font-weight:700;
+    text-transform:uppercase;
   }
 
-  /* Utility */
-  .hidden{display:none !important}
-  .text-muted{color:var(--muted)}
-  .mt-8{margin-top:8px}.mt-16{margin-top:16px}
-  .row-between{display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .loading{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;padding:12px 0}
-  .spinner{width:16px;height:16px;border:2px solid rgba(34,230,255,0.2);border-top-color:var(--cyan);border-radius:50%;animation:spin 1s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .table{width:100%;border-collapse:collapse;font-size:13px}
-  .table th{text-align:left;padding:10px;color:var(--muted);font-weight:600;font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;border-bottom:1px solid var(--border)}
-  .table td{padding:10px;border-bottom:1px solid rgba(90,180,255,0.06)}
-  .table tr:hover td{background:rgba(255,255,255,0.02)}
+  /* Result modal */
+  #result{
+    position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;
+    background:rgba(5,7,13,0.85);backdrop-filter:blur(20px);padding:20px;
+  }
+  #result.on{display:flex}
+  #result .card{
+    background:rgba(14,20,34,0.9);border:1px solid rgba(90,180,255,0.35);border-radius:20px;
+    padding:32px 28px;text-align:center;max-width:400px;width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,0.8),0 0 60px rgba(34,230,255,0.2);
+  }
+  #result .ttl{
+    font-size:32px;font-weight:900;letter-spacing:4px;
+    background:linear-gradient(135deg,#22e6ff,#8a5cff);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    margin-bottom:8px;
+  }
+  #result .time{font-size:44px;font-weight:900;color:#e6f0ff;font-variant-numeric:tabular-nums;margin:16px 0}
+  #result .sub{color:#7c8aa6;font-size:12px;letter-spacing:2px;margin-bottom:24px;text-transform:uppercase}
+  #result .btns{display:flex;flex-direction:column;gap:10px}
+
+  /* Landscape warning */
+  @media (orientation:portrait) and (max-width:900px){
+    #menu, #game { display:none !important; }
+    #rotate.show{display:flex !important}
+  }
 </style>
 </head>
 <body>
 
-<div id="app">
-  <!-- Persistent Three.js stage used by menu/backgrounds & racing -->
-  <div id="stage"></div>
+<!-- ========== ROTATE PROMPT (portrait HP) ========== -->
+<div id="rotate">
+  <div class="phone"></div>
+  <h2>MIRINGKAN HP</h2>
+  <p>Putar perangkat untuk mode lanskap</p>
+</div>
 
-  <!-- ================= AUTH SCREEN ================= -->
-  <section id="screen-auth" class="auth-screen">
-    <div class="auth-card">
-      <div class="auth-logo">
-        <img src="https://i.ibb.co.com/67V2PpkF/file-00000000e8948207be00a221094a9d3c.png" alt="CAZOO"/>
-        <div>
-          <div class="wordmark">CAZOO</div>
-          <div class="auth-sub">Race Together • Climb • Become Legend</div>
-        </div>
-      </div>
-      <div class="field">
-        <label>Email</label>
-        <input id="auth-email" type="email" placeholder="you@example.com" autocomplete="email"/>
-      </div>
-      <div class="field">
-        <label>Password</label>
-        <input id="auth-pass" type="password" placeholder="••••••••" autocomplete="current-password"/>
-      </div>
-      <div class="field hidden" id="auth-name-field">
-        <label>Username</label>
-        <input id="auth-name" type="text" placeholder="racer_name" maxlength="18"/>
-      </div>
-      <div class="auth-err" id="auth-err"></div>
-      <button class="btn btn-primary btn-block" id="btn-auth-submit">Sign In</button>
-      <div class="auth-switch">
-        <span id="auth-switch-label">No account?</span>
-        <button id="btn-auth-switch">Create one</button>
-        &nbsp;•&nbsp;
-        <button id="btn-auth-reset">Forgot password</button>
-      </div>
+<!-- ========== MAIN MENU ========== -->
+<div id="menu">
+  <div class="glow"></div>
+
+  <div class="logo">
+    <img src="https://i.ibb.co.com/67V2PpkF/file-00000000e8948207be00a221094a9d3c.png" alt="CAZOO"/>
+    <h1>CAZOO</h1>
+  </div>
+  <div class="tag">3D Racing • Race Together • Become Legend</div>
+
+  <div class="buttons">
+    <button class="btn-main btn-start" id="btn-start">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      MULAI BALAPAN
+    </button>
+    <button class="btn-main btn-sec" id="btn-multi">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/>
+        <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M14 20c0-2.5 1.7-4.5 4-4.5"/>
+      </svg>
+      MULTIPLAYER
+    </button>
+    <button class="btn-main btn-sec" id="btn-garage">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 13 5 7h14l2 6v6h-3v-2H6v2H3v-6z"/>
+        <circle cx="7.5" cy="13.5" r="1.5"/><circle cx="16.5" cy="13.5" r="1.5"/>
+      </svg>
+      GARASI
+    </button>
+  </div>
+
+  <div class="footer">CAZOO © 2026 — v0.1</div>
+</div>
+
+<!-- ========== GAME ========== -->
+<div id="game">
+  <canvas id="gameCanvas"></canvas>
+
+  <div class="hud hud-box" id="hud-lap">
+    <div class="lbl">LAP</div>
+    <div class="val" id="lapVal">1 / 3</div>
+  </div>
+
+  <div class="hud hud-box" id="hud-time">
+    <div class="lbl">TIME</div>
+    <div class="val" id="timeVal">00:00.00</div>
+  </div>
+
+  <div class="hud hud-box" id="hud-speed">
+    <div class="num" id="speedVal">0</div>
+    <div class="unit">KM/H</div>
+  </div>
+
+  <div id="hud-nitro">
+    <div class="lbl">NITRO</div>
+    <div class="fill" id="nitroFill"></div>
+  </div>
+
+  <div id="hud-msg"></div>
+
+  <button class="ctrl" id="ctrl-left">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+  </button>
+  <button class="ctrl" id="ctrl-right">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+  </button>
+  <button class="ctrl" id="ctrl-nitro">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+  </button>
+  <button class="ctrl" id="ctrl-gas">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+
+  <button id="ctrl-exit">KELUAR</button>
+</div>
+
+<!-- ========== RESULT MODAL ========== -->
+<div id="result">
+  <div class="card">
+    <div class="ttl" id="resultTitle">FINISH</div>
+    <div class="sub">WAKTU TOTAL</div>
+    <div class="time" id="resultTime">00:00.00</div>
+    <div class="btns">
+      <button class="btn-main btn-start" id="btn-again">ULANGI</button>
+      <button class="btn-main btn-sec" id="btn-home">KE MENU</button>
     </div>
-  </section>
-
-  <!-- ================= MAIN MENU ================= -->
-  <section id="screen-menu" class="main-menu hidden">
-    <div class="mm-top">
-      <div class="brand">
-        <img src="https://i.ibb.co.com/67V2PpkF/file-00000000e8948207be00a221094a9d3c.png" alt="CAZOO"/>
-        <div class="wordmark">CAZOO</div>
-      </div>
-      <div class="mm-user" id="mm-user" title="Profile">
-        <div class="avatar" id="mm-avatar">?</div>
-        <div>
-          <div class="name" id="mm-name">Racer</div>
-          <div class="rating" id="mm-rating">Rating —</div>
-        </div>
-        <button class="top-btn" id="btn-logout" title="Logout" style="padding:6px 8px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-        </button>
-      </div>
-    </div>
-
-    <div class="mm-hero">
-      <h1>CAZOO</h1>
-      <p id="mm-season">Season — · Ranked available after login</p>
-    </div>
-
-    <div class="mm-grid">
-      <button class="menu-card accent" data-nav="quick">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
-        <div class="title">Quick Race</div>
-        <div class="desc">Jump into a real-time match. Find a lobby or create one.</div>
-      </button>
-
-      <button class="menu-card" data-nav="multiplayer">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M14 20c0-2.5 1.7-4.5 4-4.5"/></svg></div>
-        <div class="title">Multiplayer</div>
-        <div class="desc">Create / join rooms, invite friends, real-time lobbies.</div>
-      </button>
-
-      <button class="menu-card" data-nav="ranked">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z"/></svg></div>
-        <div class="title">Ranked</div>
-        <div class="desc">Rating, divisions, season progress, matchmaking.</div>
-      </button>
-
-      <button class="menu-card" data-nav="tournaments">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v4a6 6 0 0 1-12 0V3zM4 5H2v2a4 4 0 0 0 4 4M20 5h2v2a4 4 0 0 1-4 4M9 17h6M12 13v4M8 21h8"/></svg></div>
-        <div class="title">Tournaments</div>
-        <div class="desc">Register with a code, view brackets, watch live.</div>
-      </button>
-
-      <button class="menu-card" data-nav="events">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 2v3M16 2v3M3 8h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></svg></div>
-        <div class="title">Events</div>
-        <div class="desc">Time-limited challenges and reward weeks.</div>
-      </button>
-
-      <button class="menu-card" data-nav="studio">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 2 3.5 6L22 9l-5 5 1.5 7L12 18l-6.5 3L7 14 2 9l6.5-1z"/></svg></div>
-        <div class="title">Skin Studio</div>
-        <div class="desc">Paint, decal, and customize your car in real 3D.</div>
-      </button>
-
-      <button class="menu-card" data-nav="garage">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 13 5 7h14l2 6v6h-3v-2H6v2H3v-6z"/><circle cx="7.5" cy="13.5" r="1.5"/><circle cx="16.5" cy="13.5" r="1.5"/></svg></div>
-        <div class="title">Garage</div>
-        <div class="desc">Your cars, saved designs, presets.</div>
-      </button>
-
-      <button class="menu-card" data-nav="leaderboard">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M12 20V4M20 20v-7"/></svg></div>
-        <div class="title">Leaderboard</div>
-        <div class="desc">Season global rankings.</div>
-      </button>
-
-      <button class="menu-card" data-nav="profile">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></div>
-        <div class="title">Profile</div>
-        <div class="desc">Stats, match history, settings.</div>
-      </button>
-
-      <button class="menu-card hidden" id="mm-admin" data-nav="admin">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z"/><path d="M9 12l2 2 4-4"/></svg></div>
-        <div class="title">Control Center</div>
-        <div class="desc">Admin dashboard — role required.</div>
-      </button>
-    </div>
-  </section>
-
-  <!-- ================= PAGE: RACE ================= -->
-  <section id="screen-race" class="page hidden">
-    <canvas id="race-canvas"></canvas>
-    <div class="race-hud">
-      <div class="hud-lap"><div class="lbl">LAP</div><div class="val" id="hud-lap">1 / 3</div></div>
-      <div class="hud-time"><div class="lbl">TIME</div><div class="val" id="hud-time">00:00.00</div></div>
-      <div class="hud-speed"><div class="num" id="hud-speed">0</div><div class="unit">KM/H</div></div>
-      <div class="hud-nitro"><div class="fill" id="hud-nitro"></div></div>
-      <div class="hud-msg" id="hud-msg"></div>
-      <div class="touch-pad">
-        <button class="hud-btn" id="btn-left">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
-        </button>
-        <button class="hud-btn" id="btn-right">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-      </div>
-      <div class="hud-controls">
-        <button class="hud-btn" id="btn-nitro">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
-        </button>
-        <button class="hud-btn" id="btn-exit">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= PAGE: RANKED ================= -->
-  <section id="screen-ranked" class="page hidden">
-    <div class="page-header">
-      <button class="back-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
-      <div class="page-title">Ranked<small id="ranked-season-label">Season —</small></div>
-    </div>
-    <div class="page-body">
-      <div class="grid-3" id="ranked-stats">
-        <div class="stat"><div class="label">Rating</div><div class="value cyan" id="rk-rating">—</div></div>
-        <div class="stat"><div class="label">Division</div><div class="value violet" id="rk-division">—</div></div>
-        <div class="stat"><div class="label">Global Rank</div><div class="value" id="rk-rank">—</div></div>
-        <div class="stat"><div class="label">Wins</div><div class="value ok" id="rk-wins">0</div></div>
-        <div class="stat"><div class="label">Losses</div><div class="value" id="rk-losses">0</div></div>
-        <div class="stat"><div class="label">Win Rate</div><div class="value" id="rk-wr">—</div></div>
-      </div>
-
-      <div class="card">
-        <h3>Season Progress</h3>
-        <div id="rk-progress-label" class="text-muted" style="font-size:12px;margin-bottom:8px">—</div>
-        <div style="height:10px;border-radius:99px;background:rgba(0,0,0,0.4);overflow:hidden;border:1px solid var(--border)">
-          <div id="rk-progress" style="height:100%;width:0%;background:var(--grad);transition:width .3s"></div>
-        </div>
-      </div>
-
-      <button class="btn btn-primary btn-block" id="btn-ranked-queue">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-        Find Ranked Match
-      </button>
-
-      <div class="card mt-16">
-        <h3>Match History</h3>
-        <div id="rk-history" class="empty">No ranked matches yet.</div>
-      </div>
-
-      <div class="card">
-        <h3>Note on Rating</h3>
-        <div class="text-muted" style="font-size:12px;line-height:1.55">
-          Rating and match results are <b>authoritative on the backend only</b>. The client can never write rating, wins, losses, or match results — those are enforced by Realtime Database Security Rules and (when you deploy it) a Cloud Function / Node.js game server that verifies the finish event.
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= PAGE: TOURNAMENTS ================= -->
-  <section id="screen-tournaments" class="page hidden">
-    <div class="page-header">
-      <button class="back-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
-      <div class="page-title">Tournaments<small>Compete · Brackets · Prizes</small></div>
-    </div>
-    <div class="page-body">
-      <div class="card">
-        <h3>Join with Code</h3>
-        <div class="row">
-          <input id="tourney-code" type="text" placeholder="CAZ-XXXX-XXXX" style="flex:1;padding:12px 14px;background:rgba(0,0,0,0.35);border:1px solid var(--border);border-radius:10px;outline:none;text-transform:uppercase;letter-spacing:2px;font-weight:700"/>
-          <button class="btn btn-primary" id="btn-join-code">Join</button>
-        </div>
-        <div class="text-muted mt-8" style="font-size:11.5px">Codes are verified against the backend. The client never stores secret codes.</div>
-      </div>
-
-      <div class="card">
-        <h3>Active Tournaments</h3>
-        <div id="tourney-list" class="empty"><div class="loading"><div class="spinner"></div> Loading…</div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= PAGE: EVENTS ================= -->
-  <section id="screen-events" class="page hidden">
-    <div class="page-header">
-      <button class="back-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
-      <div class="page-title">Events<small>Limited-time challenges</small></div>
-    </div>
-    <div class="page-body">
-      <div id="events-list" class="empty"><div class="loading"><div class="spinner"></div> Loading…</div></div>
-    </div>
-  </section>
-
-  <!-- ================= PAGE: MULTIPLAYER ================= -->
-  <section id="screen-multiplayer" class="page hidden">
-    <div class="page-header">
-      <button class="back-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
-      <div class="page-title">Multiplayer<small>Lobbies & Rooms</small></div>
-    </div>
-    <div class="page-body">
-      <div class="card">
-        <h3>Quick Match</h3>
-        <p class="text-muted" style="font-size:12px;margin-bottom:12px">Find a public lobby or create one if none exist.</p>
-        <button class="btn btn-primary btn-block" id="btn-quickmatch">Find / Create Lobby</button>
-      </div>
-      <div class="card">
-        <h3>Create Room</h3>
-        <div class="grid-2">
-          <select id="room-track" style="padding:10px;background:rgba(0,0,0,0.35);border:1px solid var(--border);border-radius:10px">
-            <option value="neon_city">Neon City Loop</option>
-            <option value="sunset">Sunset Highway</option>
-            <option value="oval">Speed Oval</option>
-          </select>
-          <select id="room-visibility" style="padding:10px;background:rgba(0,0,0,0.35);border:1px solid var(--border);border-radius:10px">
-            <option value="public">Public</option>
-            <option value="private">Private</option>
-          </select>
-        </div>
-        <button class="btn btn-ghost btn-block mt-8" id="btn-create-room">Create Room</button>
-      </div>
-      <div class="card">
-        <h3>Public Lobbies</h3>
-        <div id="lobby-list" class="empty"><div class="loading"><div class="spinner"></div> Loading…</div></div>
-      </div>
-      <div class="card">
-        <h3>Architecture note</h3>
-        <div class="text-muted" style="font-size:12px;line-height:1.55">
-          Firebase RTDB handles lobby state and matchmaking. It <b>cannot</b> be the physics tick loop — a game server (Node.js + WebSocket, e.g. Colyseus / custom) must run authoritative car physics. The lobby below is real and works; the in-race sync adapter stub shows exactly where to plug the server.
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= PAGE: GARAGE ================= -->
-  <section id="screen-garage" class="page hidden">
-    <div class="page-header">
-      <button class="back-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
-      <div class="page-title">Garage<small>Your Vehicles & Designs</small></div>
-    </div>
-    <div class="page-body">
-      <div id="garage-list" class="empty"><div class="loading"><div class="spinner"></div> Loading…</div></div>
-    </div>
-  </section>
-
-  <!-- ================= PAGE: LEADERBOARD ================= -->
-  <section id="screen-leaderboard" class="page hidden">
-    <div class="page-header">
-      <button class="back-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
-      <div class="page-title">Leaderboard<small id="lb-season-label">Season —</small></div>
-    </div>
-    <div class="page-body">
-      <div id="lb-list" class="empty"><div class="loading"><div class="spinner"></div> Loading…</div></div>
-    </div>
-  </section>
-
-  <!-- ================= PAGE: PROFILE ================= -->
-  <section id="screen-profile" class="page hidden">
-    <div class="page-header">
-      <button class="back-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
-      <div class="page-title">Profile<small>Account & Stats</small></div>
-    </div>
-    <div class="page-body">
-      <div class="card">
-        <h3>Account</h3>
-        <div class="grid-2">
-          <div class="stat"><div class="label">Username</div><div class="value" id="pf-name" style="font-size:16px">—</div></div>
-          <div class="stat"><div class="label">UID</div><div class="value" id="pf-uid" style="font-size:11px;font-family:monospace;word-break:break-all">—</div></div>
-          <div class="stat"><div class="label">Joined</div><div class="value" id="pf-joined" style="font-size:13px">—</div></div>
-          <div class="stat"><div class="label">Status</div><div class="value" id="pf-status" style="font-size:13px">—</div></div>
-        </div>
-      </div>
-      <div class="card">
-        <h3>Public Stats</h3>
-        <div class="grid-3">
-          <div class="stat"><div class="label">Rating</div><div class="value cyan" id="pf-rating">—</div></div>
-          <div class="stat"><div class="label">Wins</div><div class="value ok" id="pf-wins">0</div></div>
-          <div class="stat"><div class="label">Losses</div><div class="value" id="pf-losses">0</div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= PAGE: ADMIN (shell, real RBAC) ================= -->
-  <section id="screen-admin" class="page hidden">
-    <div class="page-header">
-      <button class="back-btn" data-back><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
-      <div class="page-title">CAZOO Control Center<small id="admin-role-label">Role: —</small></div>
-    </div>
-    <div class="page-body">
-      <div class="card">
-        <h3>Access</h3>
-        <div id="admin-access" class="empty">Verifying permissions…</div>
-      </div>
-      <div id="admin-panels" class="hidden">
-        <div class="card"><h3>Live Monitoring</h3><div id="admin-live" class="text-muted" style="font-size:12px">Reading database…</div></div>
-        <div class="card"><h3>Players</h3><div id="admin-players" class="text-muted" style="font-size:12px">—</div></div>
-        <div class="card">
-          <h3>Audit Log</h3>
-          <div id="admin-audit" class="text-muted" style="font-size:12px">—</div>
-        </div>
-        <div class="card">
-          <h3>Backend Required</h3>
-          <div class="text-muted" style="font-size:12px;line-height:1.55">
-            Destructive admin actions (ban, adjust rating, create tournament, generate codes) must be executed by a <b>Cloud Function or Admin SDK script</b> — never from this page. This page only <b>reads</b> data the rules permit. See the README below for how to deploy the trusted backend.
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= PAGE: SKIN STUDIO ================= -->
-  <section id="screen-studio" class="page hidden">
-    <div class="studio">
-      <!-- Top bar -->
-      <div class="studio-top">
-        <button class="back-btn" data-back style="width:36px;height:36px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="m15 18-6-6 6-6"/></svg>
-        </button>
-        <div style="flex:1;min-width:0">
-          <div style="font-weight:800;letter-spacing:1.4px;font-size:12px;text-transform:uppercase">CAZOO 3D SKIN STUDIO</div>
-          <div class="text-muted" id="studio-status" style="font-size:11px">Unsaved Changes · 1024×1024 · 1 layer</div>
-        </div>
-        <button class="top-btn" id="st-undo" title="Undo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6M3 13a9 9 0 1 0 3-7"/></svg>
-        </button>
-        <button class="top-btn" id="st-redo" title="Redo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6M21 13a9 9 0 1 1-3-7"/></svg>
-        </button>
-        <button class="top-btn primary" id="st-save">Save</button>
-        <button class="top-btn" id="st-export">Export PNG</button>
-      </div>
-
-      <!-- Tools column -->
-      <div class="studio-tools">
-        <button class="tool-btn active" data-tool="brush" title="Brush (B)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 3a4 4 0 0 1 4 4v1l-9 9-4 1 1-4 9-9z"/><path d="m14 6 4 4"/></svg>
-        </button>
-        <button class="tool-btn" data-tool="eraser" title="Eraser (E)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 21 5-5M21 3 3 21M18 6l-8 8"/></svg>
-        </button>
-        <button class="tool-btn" data-tool="fill" title="Fill (F)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m19 11-8-8-8 8 8 8 8-8zM5 19h14"/></svg>
-        </button>
-        <button class="tool-btn" data-tool="picker" title="Eyedropper (I)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m14 5 5 5-9 9H5v-5l9-9zM13 6l5 5"/></svg>
-        </button>
-        <button class="tool-btn" data-tool="camera" title="Orbit camera (Space)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/></svg>
-        </button>
-      </div>
-
-      <!-- Viewport -->
-      <div class="studio-viewport" id="studio-viewport"></div>
-
-      <!-- Properties -->
-      <div class="studio-props">
-        <h4>Brush</h4>
-        <div class="field"><label>Color</label><input type="color" id="st-color" value="#22e6ff"/></div>
-        <div class="field"><label>Size <span id="st-size-val" class="text-muted">24</span></label><input type="range" id="st-size" min="1" max="200" value="24"/></div>
-        <div class="field"><label>Opacity <span id="st-opacity-val" class="text-muted">1.00</span></label><input type="range" id="st-opacity" min="1" max="100" value="100"/></div>
-        <div class="field"><label>Hardness <span id="st-hard-val" class="text-muted">0.6</span></label><input type="range" id="st-hard" min="0" max="100" value="60"/></div>
-
-        <h4>Symmetry</h4>
-        <div class="row">
-          <label class="chip" style="cursor:pointer"><input type="checkbox" id="st-sym-x"/> X-Axis</label>
-        </div>
-
-        <h4>Palette</h4>
-        <div class="row" id="st-palette"></div>
-
-        <h4>Layer</h4>
-        <div class="text-muted" style="font-size:11.5px">Paint is applied to the <b>base color</b> texture of the selected material (Body). Additional decal layers can be added with the "+" button below.</div>
-      </div>
-
-      <!-- Bottom: layers -->
-      <div class="studio-bottom">
-        <button class="top-btn" id="st-add-layer">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M12 5v14M5 12h14"/></svg>
-          Add Layer
-        </button>
-        <div id="st-layers"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Toasts -->
-  <div id="toasts"></div>
+  </div>
 </div>
 
 <script type="importmap">
 {
   "imports": {
-    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
   }
 }
 </script>
 
 <script type="module">
-/* ==================================================================
-   CAZOO 3D RACING — frontend
-   Modules:
-     1. firebase.js       — init + auth + rtdb helpers
-     2. ui.js             — screen routing, toasts
-     3. stage.js          — background 3D scene (menu)
-     4. race.js           — racing game (three.js)
-     5. studio.js         — 3D skin editor
-     6. main.js           — bootstrap
-   All state mutation that must be trusted (rating, results,
-   roles, prize payouts, tournament codes) is NOT done here.
-   See README in the code comments at the bottom.
-================================================================== */
-
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-/* =================== 1. FIREBASE =================== */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-  signOut, onAuthStateChanged, sendPasswordResetEmail
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {
-  getDatabase, ref, set, get, update, onValue, push, serverTimestamp,
-  query, orderByChild, limitToLast, equalTo, remove, onDisconnect, child
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+/* =================================================================
+   CAZOO — simplified 3D racing demo
+   - Landscape only
+   - Big START button
+   - Real 3D track, real car, real lap timing
+   - Touch controls + keyboard
+================================================================= */
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
-  authDomain: "mygame-68b24.firebaseapp.com",
-  databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
-  projectId: "mygame-68b24",
-  storageBucket: "mygame-68b24.firebasestorage.app",
-  messagingSenderId: "1003182873390",
-  appId: "1:1003182873390:web:aabf3248f759cbc9d678bf",
-  measurementId: "G-4C0MYZ19YW"
-};
+const $ = (s) => document.querySelector(s);
+const canvas = $('#gameCanvas');
+const gameEl = $('#game');
+const menuEl = $('#menu');
 
-const fbApp = initializeApp(firebaseConfig);
-const auth  = getAuth(fbApp);
-const db    = getDatabase(fbApp);
-
-/* =================== 2. UI HELPERS =================== */
-const $  = (s, r=document) => r.querySelector(s);
-const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
-const screens = {
-  auth:      $('#screen-auth'),
-  menu:      $('#screen-menu'),
-  race:      $('#screen-race'),
-  ranked:    $('#screen-ranked'),
-  tournaments: $('#screen-tournaments'),
-  events:    $('#screen-events'),
-  multiplayer: $('#screen-multiplayer'),
-  garage:    $('#screen-garage'),
-  leaderboard: $('#screen-leaderboard'),
-  profile:   $('#screen-profile'),
-  admin:     $('#screen-admin'),
-  studio:    $('#screen-studio'),
-};
-let currentScreen = 'auth';
-function showScreen(name){
-  Object.values(screens).forEach(s=>s.classList.add('hidden'));
-  if (screens[name]) screens[name].classList.remove('hidden');
-  currentScreen = name;
+/* ---------- Rotate prompt ---------- */
+function checkOrientation(){
+  const isPortrait = window.innerHeight > window.innerWidth;
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 900;
+  $('#rotate').classList.toggle('show', isPortrait && isMobile);
 }
-function toast(msg, kind=''){
-  const el = document.createElement('div');
-  el.className = 'toast ' + kind;
-  el.textContent = msg;
-  $('#toasts').appendChild(el);
-  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(), 320); }, 3200);
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
+checkOrientation();
+
+/* ---------- THREE.js setup ---------- */
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x05070d);
+scene.fog = new THREE.Fog(0x05070d, 60, 220);
+
+const camera = new THREE.PerspectiveCamera(65, 1, 0.1, 500);
+
+function resize(){
+  const w = window.innerWidth, h = window.innerHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
 }
-function escapeHtml(s){ return String(s ?? '').replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+window.addEventListener('resize', resize);
+resize();
 
-/* =================== 3. BACKGROUND STAGE (menus) =================== */
-const stage = (() => {
-  const container = $('#stage');
-  const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x05070d, 0.035);
-  const cam = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 300);
-  cam.position.set(0, 6, 18);
-  const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.setSize(innerWidth, innerHeight);
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
-  container.appendChild(renderer.domElement);
+/* ---------- Lights ---------- */
+scene.add(new THREE.HemisphereLight(0x4466aa, 0x05070d, 0.85));
+const sun = new THREE.DirectionalLight(0xffffff, 1.3);
+sun.position.set(30, 60, 20);
+scene.add(sun);
+const neonA = new THREE.PointLight(0x22e6ff, 1.6, 100);
+neonA.position.set(0, 15, 0);
+scene.add(neonA);
+const neonB = new THREE.PointLight(0x8a5cff, 1.4, 100);
+neonB.position.set(40, 12, -40);
+scene.add(neonB);
 
-  // Ground grid
-  const grid = new THREE.GridHelper(200, 60, 0x1a3352, 0x0d1830);
-  grid.position.y = -1;
-  scene.add(grid);
+/* ---------- Ground ---------- */
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(600, 600),
+  new THREE.MeshStandardMaterial({ color: 0x0a0f1a, roughness: 0.95, metalness: 0.05 })
+);
+ground.rotation.x = -Math.PI / 2;
+scene.add(ground);
 
-  // Lights
-  scene.add(new THREE.HemisphereLight(0x3355aa, 0x000000, 0.6));
-  const d1 = new THREE.DirectionalLight(0x22e6ff, 1.2); d1.position.set(6,10,8); scene.add(d1);
-  const p1 = new THREE.PointLight(0x8a5cff, 1.4, 40); p1.position.set(-8,5,-6); scene.add(p1);
+/* ---------- Track (rounded loop) ---------- */
+const trackCurve = (() => {
+  const W = 70, H = 46;
+  const pts = [];
+  for (let i = 0; i < 16; i++){
+    const a = (i / 16) * Math.PI * 2;
+    pts.push(new THREE.Vector3(Math.cos(a) * W / 2, 0, Math.sin(a) * H / 2));
+  }
+  return new THREE.CatmullRomCurve3(pts, true);
+})();
 
-  // Distant neon billboards
-  for (let i=0;i<24;i++){
-    const g = new THREE.BoxGeometry(2+Math.random()*3, 1+Math.random()*2, 0.4);
-    const m = new THREE.MeshBasicMaterial({ color: new THREE.Color().setHSL(0.5 + Math.random()*0.25, 1, 0.55), transparent:true, opacity:0.6 });
+const trackPoints = trackCurve.getPoints(400);
+const TRACK_WIDTH = 10;
+
+// Build road ribbon
+(function buildRoad(){
+  const left = [], right = [];
+  for (let i = 0; i < trackPoints.length; i++){
+    const p = trackPoints[i];
+    const n = trackPoints[(i + 1) % trackPoints.length];
+    const dir = new THREE.Vector3().subVectors(n, p).normalize();
+    const side = new THREE.Vector3(-dir.z, 0, dir.x).multiplyScalar(TRACK_WIDTH / 2);
+    left.push(p.clone().add(side).setY(0.02));
+    right.push(p.clone().sub(side).setY(0.02));
+  }
+  const verts = [], idx = [];
+  for (let i = 0; i < left.length; i++){
+    verts.push(left[i].x, left[i].y, left[i].z, right[i].x, right[i].y, right[i].z);
+  }
+  for (let i = 0; i < left.length - 1; i++){
+    const a = i * 2, b = i * 2 + 1, c = (i + 1) * 2, d = (i + 1) * 2 + 1;
+    idx.push(a, b, c, b, d, c);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+  geo.setIndex(idx);
+  geo.computeVertexNormals();
+  const road = new THREE.Mesh(
+    geo,
+    new THREE.MeshStandardMaterial({ color: 0x14181f, roughness: 0.75, metalness: 0.15 })
+  );
+  scene.add(road);
+
+  // Lane markers
+  const lineGeo = new THREE.BoxGeometry(0.15, 0.02, 1.2);
+  const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent:true, opacity:0.5 });
+  for (let i = 0; i < trackPoints.length; i += 8){
+    const p = trackPoints[i];
+    const n = trackPoints[(i + 1) % trackPoints.length];
+    const m = new THREE.Mesh(lineGeo, lineMat);
+    m.position.copy(p).setY(0.03);
+    m.lookAt(n.x, 0.03, n.z);
+    scene.add(m);
+  }
+
+  // Neon rails
+  const railGeo = new THREE.BoxGeometry(0.18, 0.5, 1.6);
+  const railMatA = new THREE.MeshBasicMaterial({ color: 0x22e6ff });
+  const railMatB = new THREE.MeshBasicMaterial({ color: 0x8a5cff });
+  for (let i = 0; i < left.length; i += 5){
+    const a = new THREE.Mesh(railGeo, railMatA);
+    a.position.copy(left[i]).setY(0.25);
+    const aN = left[(i + 5) % left.length];
+    a.lookAt(aN.x, a.position.y, aN.z);
+    scene.add(a);
+
+    const b = new THREE.Mesh(railGeo, railMatB);
+    b.position.copy(right[i]).setY(0.25);
+    const bN = right[(i + 5) % right.length];
+    b.lookAt(bN.x, b.position.y, bN.z);
+    scene.add(b);
+  }
+
+  // Start line
+  const start = new THREE.Mesh(
+    new THREE.BoxGeometry(TRACK_WIDTH, 0.02, 1.5),
+    new THREE.MeshBasicMaterial({ color: 0xffffff })
+  );
+  start.position.copy(trackPoints[0]).setY(0.04);
+  const sN = trackPoints[1];
+  start.lookAt(sN.x, 0.04, sN.z);
+  scene.add(start);
+})();
+
+/* ---------- Distant city ---------- */
+(function buildCity(){
+  for (let i = 0; i < 40; i++){
+    const h = 6 + Math.random() * 25;
+    const g = new THREE.BoxGeometry(2 + Math.random() * 3, h, 2 + Math.random() * 3);
+    const hue = 0.5 + Math.random() * 0.25;
+    const color = new THREE.Color().setHSL(hue, 1, 0.15);
+    const m = new THREE.MeshStandardMaterial({
+      color,
+      emissive: new THREE.Color().setHSL(hue, 1, 0.35),
+      emissiveIntensity: 0.4,
+      roughness: 0.7
+    });
     const box = new THREE.Mesh(g, m);
-    const ang = Math.random()*Math.PI*2;
-    const r = 40 + Math.random()*40;
-    box.position.set(Math.cos(ang)*r, 2 + Math.random()*8, Math.sin(ang)*r);
-    box.lookAt(0, box.position.y, 0);
+    const ang = Math.random() * Math.PI * 2;
+    const r = 130 + Math.random() * 60;
+    box.position.set(Math.cos(ang) * r, h / 2, Math.sin(ang) * r);
     scene.add(box);
   }
-
-  // Placeholder car (visually nice; also used by studio before a real GLB loads)
-  const { group: carGroup, bodyMaterial } = makePlaceholderCar();
-  carGroup.position.set(0, 0, 0);
-  scene.add(carGroup);
-
-  function makePlaceholderCar(){
-    const g = new THREE.Group();
-    const bodyMat = new THREE.MeshStandardMaterial({ color: 0x22e6ff, metalness: 0.9, roughness: 0.25 });
-    const body = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.55, 4.2), bodyMat);
-    body.position.y = 0.45;
-    g.add(body);
-    const cabin = new THREE.Mesh(
-      new THREE.BoxGeometry(1.6, 0.5, 2.0),
-      new THREE.MeshStandardMaterial({ color: 0x081018, metalness: 0.6, roughness: 0.1, transparent:true, opacity:0.85 })
-    );
-    cabin.position.set(0, 0.9, -0.15); g.add(cabin);
-    const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
-    const wheelGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.32, 20);
-    [[-1.05,0,1.35],[1.05,0,1.35],[-1.05,0,-1.35],[1.05,0,-1.35]].forEach(([x,y,z])=>{
-      const w = new THREE.Mesh(wheelGeo, wheelMat);
-      w.rotation.z = Math.PI/2;
-      w.position.set(x,0.42,z);
-      g.add(w);
-    });
-    // Tail lights
-    const tl = new THREE.MeshBasicMaterial({ color: 0xff3ea5 });
-    const t1 = new THREE.Mesh(new THREE.BoxGeometry(0.4,0.1,0.05), tl); t1.position.set(-0.6,0.5,2.12); g.add(t1);
-    const t2 = t1.clone(); t2.position.x = 0.6; g.add(t2);
-    return { group: g, bodyMaterial: bodyMat };
-  }
-
-  let t = 0;
-  function animate(){
-    requestAnimationFrame(animate);
-    t += 0.005;
-    carGroup.rotation.y = t * 0.6;
-    carGroup.position.y = Math.sin(t*3)*0.05;
-    renderer.render(scene, cam);
-  }
-  animate();
-
-  addEventListener('resize', ()=>{
-    cam.aspect = innerWidth/innerHeight; cam.updateProjectionMatrix();
-    renderer.setSize(innerWidth, innerHeight);
-  });
-
-  return { scene, cam, renderer, carGroup, bodyMaterial };
 })();
 
-/* =================== 4. RACE GAME (three.js) =================== */
-const race = (() => {
-  let init = false;
-  let renderer, scene, cam;
-  let car, carVel = new THREE.Vector3();
-  let keys = {};
-  let speed = 0;
-  let nitro = 1;
-  let boost = 0;
-  let lap = 1, totalLaps = 3;
-  let startTime = 0, raceActive = false;
-  let checkpoints = [];
-  let nextCP = 0;
-  const trackPts = [];
+/* ---------- Car ---------- */
+function makeCar(color = 0x22e6ff){
+  const g = new THREE.Group();
+  const bodyMat = new THREE.MeshStandardMaterial({ color, metalness: 0.9, roughness: 0.2 });
 
-  function buildTrack(){
-    // A rounded rectangle circuit
-    const w = 60, h = 40, r = 12;
-    const seg = 60;
-    const pts = [];
-    // Build corners with arcs
-    for (let i=0;i<=seg;i++){
-      const a = (i/seg)*Math.PI*2;
-      pts.push(new THREE.Vector3(Math.cos(a)*(w/2-r) + Math.sign(Math.cos(a))*r, 0, Math.sin(a)*(h/2-r) + Math.sign(Math.sin(a))*r));
-    }
-    // Simpler: use Catmull-Rom through 12 points
-    const base = [];
-    for (let i=0;i<12;i++){
-      const a = (i/12)*Math.PI*2;
-      base.push(new THREE.Vector3(Math.cos(a)*(w/2), 0, Math.sin(a)*(h/2)));
-    }
-    const curve = new THREE.CatmullRomCurve3(base, true);
-    return curve.getPoints(400);
-  }
+  const body = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.55, 4.2), bodyMat);
+  body.position.y = 0.5;
+  g.add(body);
 
-  function build(){
-    const canvas = $('#race-canvas');
-    renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setSize(innerWidth, innerHeight);
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+  const hood = new THREE.Mesh(
+    new THREE.BoxGeometry(1.85, 0.2, 1.6),
+    new THREE.MeshStandardMaterial({ color, metalness: 0.9, roughness: 0.15 })
+  );
+  hood.position.set(0, 0.85, 1.2);
+  g.add(hood);
 
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x05070d);
-    scene.fog = new THREE.FogExp2(0x05070d, 0.012);
+  const cabin = new THREE.Mesh(
+    new THREE.BoxGeometry(1.6, 0.55, 2.0),
+    new THREE.MeshStandardMaterial({ color: 0x061018, metalness: 0.7, roughness: 0.1, transparent: true, opacity: 0.9 })
+  );
+  cabin.position.set(0, 0.95, -0.1);
+  g.add(cabin);
 
-    cam = new THREE.PerspectiveCamera(65, innerWidth/innerHeight, 0.1, 500);
-
-    // Lights
-    scene.add(new THREE.HemisphereLight(0x4466aa, 0x000000, 0.9));
-    const sun = new THREE.DirectionalLight(0xffffff, 1.2); sun.position.set(20,40,20); scene.add(sun);
-    const neon = new THREE.PointLight(0x22e6ff, 1.5, 60); neon.position.set(0,10,0); scene.add(neon);
-
-    // Ground
-    const ground = new THREE.Mesh(
-      new THREE.PlaneGeometry(400, 400),
-      new THREE.MeshStandardMaterial({ color: 0x0a0f1a, roughness: 0.9 })
-    );
-    ground.rotation.x = -Math.PI/2;
-    scene.add(ground);
-
-    // Track
-    const pts = buildTrack();
-    const roadGeo = new THREE.BufferGeometry().setFromPoints(pts.map(p=>p.clone().setY(0.02)));
-    // widen road: create ribbon
-    const width = 8;
-    const left=[], right=[];
-    for (let i=0;i<pts.length;i++){
-      const p = pts[i];
-      const n = pts[(i+1)%pts.length];
-      const dir = new THREE.Vector3().subVectors(n,p).normalize();
-      const side = new THREE.Vector3(-dir.z,0,dir.x).multiplyScalar(width/2);
-      left.push(p.clone().add(side).setY(0.02));
-      right.push(p.clone().sub(side).setY(0.02));
-    }
-    const verts = [], idx = [];
-    for (let i=0;i<left.length;i++){ verts.push(left[i].x,left[i].y,left[i].z, right[i].x,right[i].y,right[i].z); }
-    for (let i=0;i<left.length-1;i++){
-      const a=i*2,b=i*2+1,c=(i+1)*2,d=(i+1)*2+1;
-      idx.push(a,b,c, b,d,c);
-    }
-    const road = new THREE.Mesh(
-      new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(verts,3)).setIndex(idx),
-      new THREE.MeshStandardMaterial({ color: 0x14181f, roughness: 0.7, metalness: 0.1 })
-    );
-    road.geometry.computeVertexNormals();
-    scene.add(road);
-
-    // Neon rails
-    const railMat = new THREE.MeshBasicMaterial({ color: 0x22e6ff });
-    const railGeo = new THREE.BoxGeometry(0.15, 0.4, 1);
-    left.forEach((p,i)=>{
-      if (i%4) return;
-      const r = new THREE.Mesh(railGeo, railMat); r.position.copy(p).setY(0.2);
-      const n = left[(i+4)%left.length];
-      r.lookAt(n.x, r.position.y, n.z);
-      scene.add(r);
-    });
-    const railMat2 = new THREE.MeshBasicMaterial({ color: 0x8a5cff });
-    right.forEach((p,i)=>{
-      if (i%4) return;
-      const r = new THREE.Mesh(railGeo, railMat2); r.position.copy(p).setY(0.2);
-      const n = right[(i+4)%right.length];
-      r.lookAt(n.x, r.position.y, n.z);
-      scene.add(r);
-    });
-
-    // Checkpoints
-    checkpoints = [];
-    for (let i=0;i<8;i++){
-      const p = pts[Math.floor(pts.length * i/8)];
-      checkpoints.push(p.clone().setY(0));
-    }
-
-    // Car
-    car = stage.carGroup.clone(); // reuse placeholder look (real project: load GLB)
-    car.scale.set(1,1,1);
-    // copy material so we don't mutate menu
-    car.traverse(o=>{ if (o.isMesh){ o.material = o.material.clone(); } });
-    scene.add(car);
-
-    // start line
-    const start = new THREE.Mesh(new THREE.BoxGeometry(width, 0.02, 1), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-    start.position.copy(pts[0]).setY(0.03);
-    scene.add(start);
-
-    addEventListener('resize', ()=>{
-      cam.aspect = innerWidth/innerHeight; cam.updateProjectionMatrix();
-      renderer.setSize(innerWidth, innerHeight);
-    });
-    init = true;
-  }
-
-  function fmt(t){
-    const m = Math.floor(t/60);
-    const s = Math.floor(t%60);
-    const ms = Math.floor((t*100)%100);
-    return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(2,'0')}`;
-  }
-
-  function setMsg(txt, dur=900){
-    const el = $('#hud-msg');
-    el.textContent = txt;
-    el.classList.add('show');
-    clearTimeout(el._t);
-    el._t = setTimeout(()=>el.classList.remove('show'), dur);
-  }
-
-  function start(){
-    if (!init) build();
-    raceActive = false;
-    speed = 0; lap = 1; nextCP = 0; nitro = 1; boost = 0;
-    carVel.set(0,0,0);
-    // Place car on track at start
-    const p0 = checkpoints[0].clone().add(new THREE.Vector3(0,0,0));
-    car.position.copy(p0).setY(0);
-    const p1 = checkpoints[1];
-    car.lookAt(p1.x, car.position.y, p1.z);
-    startTime = performance.now();
-    setMsg('3');
-    let c = 3;
-    const iv = setInterval(()=>{
-      c--;
-      if (c > 0) setMsg(String(c));
-      else if (c === 0){ setMsg('GO!', 700); raceActive = true; startTime = performance.now(); clearInterval(iv); }
-    }, 800);
-  }
-
-  function loop(){
-    if (currentScreen !== 'race'){ requestAnimationFrame(loop); return; }
-    requestAnimationFrame(loop);
-
-    const dt = Math.min(0.05, (performance.now() - (loop._last || performance.now()))/1000);
-    loop._last = performance.now();
-
-    if (!init) return;
-
-    // Steering
-    const steer = (keys['a']||keys['arrowleft']||keys['btnL'] ? 1:0) - (keys['d']||keys['arrowright']||keys['btnR'] ? 1:0);
-    const accel = (keys['w']||keys['arrowup']) ? 1 : 0;
-    const brake = (keys['s']||keys['arrowdown']) ? 1 : 0;
-    const nitroKey = keys['shift'];
-
-    if (raceActive){
-      if (accel) speed += 22*dt;
-      if (brake) speed -= 40*dt;
-      speed -= speed * 0.6 * dt;
-      speed = Math.max(0, Math.min(58 + boost*30, speed));
-
-      if (nitroKey && nitro > 0.05 && speed > 5){
-        boost = Math.min(1, boost + dt*2);
-        nitro = Math.max(0, nitro - dt*0.35);
-      } else {
-        boost = Math.max(0, boost - dt*0.8);
-        nitro = Math.min(1, nitro + dt*0.06);
-      }
-
-      // Rotate car
-      const turnRate = 1.6 * (0.4 + speed/60);
-      car.rotation.y += steer * turnRate * dt * (speed>1?1:0);
-    } else {
-      speed *= 0.9;
-    }
-
-    // Move forward
-    const fwd = new THREE.Vector3(0,0,1).applyQuaternion(car.quaternion);
-    car.position.addScaledVector(fwd, speed * dt);
-
-    // Camera follow
-    const camTarget = car.position.clone().add(new THREE.Vector3(0,1.4,0));
-    const desired = car.position.clone().add(fwd.clone().multiplyScalar(-7)).add(new THREE.Vector3(0,3.5,0));
-    cam.position.lerp(desired, 1 - Math.pow(0.001, dt));
-    cam.lookAt(camTarget);
-
-    // Track boundary check: keep car near track (simple: repel from center away from nearest checkpoint path)
-    // Not physical realism, but keeps car visible.
-    // (Real project: physics engine + collider mesh.)
-
-    // Checkpoint / lap
-    if (raceActive){
-      const cp = checkpoints[nextCP];
-      if (car.position.distanceTo(cp) < 8){
-        nextCP = (nextCP + 1) % checkpoints.length;
-        if (nextCP === 0){
-          lap++;
-          if (lap > totalLaps){
-            raceActive = false;
-            setMsg('FINISH', 3000);
-            onRaceFinish();
-          } else {
-            setMsg('LAP ' + lap, 900);
-          }
-        }
-      }
-    }
-
-    // HUD
-    $('#hud-speed').textContent = Math.round(speed * 3.6);
-    $('#hud-lap').textContent = Math.min(lap,totalLaps) + ' / ' + totalLaps;
-    $('#hud-time').textContent = fmt((performance.now() - startTime)/1000);
-    $('#hud-nitro').style.width = (nitro*100) + '%';
-
-    renderer.render(scene, cam);
-  }
-  loop();
-
-  async function onRaceFinish(){
-    // BACKEND REQUIRED: Do not trust this finish event. Send to your game server
-    // which will validate the lap times from server-side checkpoints and only
-    // then update rating/leaderboard via Firebase Admin SDK.
-    // For now, since this is a single-player practice run, we record to a
-    // *local, non-competitive* history node that is user-writable in rules.
-    if (auth.currentUser){
-      try {
-        const hRef = push(ref(db, `users/${auth.currentUser.uid}/practiceHistory`));
-        await set(hRef, {
-          laps: totalLaps, durationMs: Math.round(performance.now()-startTime),
-          trackId: 'neon_city', at: serverTimestamp()
-        });
-      } catch(e){ /* ignore */ }
-    }
-    toast('Race finished — practice run recorded.', 'ok');
-    setTimeout(()=>{ exit(); }, 2000);
-  }
-
-  function exit(){ showScreen('menu'); }
-
-  addEventListener('keydown', e=>{ keys[e.key.toLowerCase()] = true; });
-  addEventListener('keyup',   e=>{ keys[e.key.toLowerCase()] = false; });
-  $('#btn-left').addEventListener('pointerdown', ()=>keys['btnL']=true);
-  $('#btn-left').addEventListener('pointerup',   ()=>keys['btnL']=false);
-  $('#btn-right').addEventListener('pointerdown', ()=>keys['btnR']=true);
-  $('#btn-right').addEventListener('pointerup',   ()=>keys['btnR']=false);
-  $('#btn-nitro').addEventListener('pointerdown', ()=>keys['shift']=true);
-  $('#btn-nitro').addEventListener('pointerup',   ()=>keys['shift']=false);
-  $('#btn-exit').addEventListener('click', exit);
-
-  return { start, exit };
-})();
-
-/* =================== 5. SKIN STUDIO =================== */
-const studio = (() => {
-  let init = false;
-  let renderer, scene, cam, controls;
-  let carBodyMesh;                // the mesh whose material we paint
-  let baseCanvas, baseCtx, baseTex;
-  let tool = 'brush';
-  let painting = false;
-  let lastUV = null;
-  let history = [], historyIdx = -1;
-  let strokeStarted = false;
-  let strokeSnapshot = null;
-  let layers = [
-    { id: 1, name: 'Base Paint', visible: true, active: true, type: 'paint' }
-  ];
-
-  function build(){
-    const container = $('#studio-viewport');
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a0e1a);
-    cam = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.1, 200);
-    cam.position.set(5,3,7);
-    renderer = new THREE.WebGLRenderer({ antialias:true, preserveDrawingBuffer:true });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    container.appendChild(renderer.domElement);
-
-    controls = new OrbitControls(cam, renderer.domElement);
-    controls.enableDamping = true; controls.dampingFactor = 0.08;
-    controls.minDistance = 4; controls.maxDistance = 20;
-    controls.target.set(0,0.6,0);
-
-    // Lights
-    scene.add(new THREE.HemisphereLight(0x334466, 0x000000, 0.8));
-    const k = new THREE.DirectionalLight(0xffffff, 1.3); k.position.set(5,8,6); scene.add(k);
-    const r = new THREE.PointLight(0x22e6ff, 1.5, 30); r.position.set(-6,4,-4); scene.add(r);
-    const b = new THREE.PointLight(0x8a5cff, 1.5, 30); b.position.set(6,3,-6); scene.add(b);
-
-    // Ground
-    const grid = new THREE.GridHelper(40, 40, 0x1a3352, 0x0d1830); grid.position.y = 0; scene.add(grid);
-    const floor = new THREE.Mesh(new THREE.PlaneGeometry(40,40), new THREE.MeshStandardMaterial({ color: 0x0b1120, roughness: 0.9 }));
-    floor.rotation.x = -Math.PI/2; floor.position.y = -0.001; scene.add(floor);
-
-    // Car — build a custom, paintable placeholder with its own UV
-    const car = buildPaintableCar();
-    carBodyMesh = car.body;
-    scene.add(car.group);
-
-    // Set up base texture canvas
-    const size = 1024;
-    baseCanvas = document.createElement('canvas'); baseCanvas.width = baseCanvas.height = size;
-    baseCtx = baseCanvas.getContext('2d');
-    baseCtx.fillStyle = '#22e6ff';
-    baseCtx.fillRect(0,0,size,size);
-    // some decorative bands so painting is visible
-    baseCtx.fillStyle = '#0a0e1a';
-    baseCtx.fillRect(0, size*0.45, size, size*0.1);
-    baseTex = new THREE.CanvasTexture(baseCanvas);
-    baseTex.anisotropy = 4;
-    baseTex.colorSpace = THREE.SRGBColorSpace;
-    carBodyMesh.material.map = baseTex;
-    carBodyMesh.material.color.set(0xffffff);
-    carBodyMesh.material.needsUpdate = true;
-
-    snapshot('Initial state');
-
-    // Painting events
-    renderer.domElement.addEventListener('pointerdown', onDown);
-    renderer.domElement.addEventListener('pointermove', onMove);
-    addEventListener('pointerup', onUp);
-
-    // Resize
-    const ro = new ResizeObserver(()=>{
-      const w = container.clientWidth, h = container.clientHeight;
-      if (!w || !h) return;
-      cam.aspect = w/h; cam.updateProjectionMatrix();
-      renderer.setSize(w,h);
-    });
-    ro.observe(container);
-
-    // Palette
-    const palette = ['#ffffff','#000000','#22e6ff','#8a5cff','#ff3ea5','#3ddc97','#ffb454','#ff4d6d','#00d4ff','#a0ff00'];
-    const pal = $('#st-palette');
-    pal.innerHTML = '';
-    palette.forEach(c=>{
-      const b = document.createElement('button');
-      b.style.cssText = `width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:${c};cursor:pointer`;
-      b.addEventListener('click', ()=>{ $('#st-color').value = c; });
-      pal.appendChild(b);
-    });
-
-    init = true;
-  }
-
-  // Painter-friendly car: separate planar UV per face (unwrapped simple)
-  function buildPaintableCar(){
-    const g = new THREE.Group();
-    // Body: box with proper UVs (BoxGeometry already has per-face UVs)
-    const bodyGeo = new THREE.BoxGeometry(2.0, 0.55, 4.2);
-    const bodyMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.6, roughness: 0.35, map: null });
-    const body = new THREE.Mesh(bodyGeo, bodyMat);
-    body.position.y = 0.45;
-    g.add(body);
-
-    const cabin = new THREE.Mesh(
-      new THREE.BoxGeometry(1.6, 0.5, 2.0),
-      new THREE.MeshStandardMaterial({ color: 0x081018, metalness: 0.6, roughness: 0.1, transparent:true, opacity:0.85 })
-    );
-    cabin.position.set(0, 0.9, -0.15);
-    g.add(cabin);
-
-    const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
-    const wheelGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.32, 20);
-    [[-1.05,0.42,1.35],[1.05,0.42,1.35],[-1.05,0.42,-1.35],[1.05,0.42,-1.35]].forEach(([x,y,z])=>{
-      const w = new THREE.Mesh(wheelGeo, wheelMat);
-      w.rotation.z = Math.PI/2;
-      w.position.set(x,y,z);
-      g.add(w);
-    });
-
-    return { group: g, body };
-  }
-
-  /* ====== Painting ====== */
-  const raycaster = new THREE.Raycaster();
-  const pointer = new THREE.Vector2();
-
-  function getUV(ev){
-    const r = renderer.domElement.getBoundingClientRect();
-    pointer.x = ((ev.clientX - r.left) / r.width) * 2 - 1;
-    pointer.y = -((ev.clientY - r.top) / r.height) * 2 + 1;
-    raycaster.setFromCamera(pointer, cam);
-    const hits = raycaster.intersectObject(carBodyMesh, false);
-    if (!hits.length || !hits[0].uv) return null;
-    return hits[0].uv;
-  }
-
-  function paintAt(uv, size, color, opacity, hardness, erase){
-    if (!uv) return;
-    const S = baseCanvas.width;
-    const x = uv.x * S;
-    const y = (1 - uv.y) * S; // UV v is flipped on canvas
-    const r = size/2;
-    const g = baseCtx.createRadialGradient(x, y, 0, x, y, r);
-    if (erase){
-      baseCtx.globalCompositeOperation = 'destination-out';
-      g.addColorStop(0, `rgba(0,0,0,1)`);
-      g.addColorStop(hardness, `rgba(0,0,0,${opacity})`);
-      g.addColorStop(1, 'rgba(0,0,0,0)');
-    } else {
-      baseCtx.globalCompositeOperation = 'source-over';
-      const c = new THREE.Color(color);
-      const rgb = `${Math.round(c.r*255)},${Math.round(c.g*255)},${Math.round(c.b*255)}`;
-      g.addColorStop(0, `rgba(${rgb},${opacity})`);
-      g.addColorStop(hardness, `rgba(${rgb},${opacity})`);
-      g.addColorStop(1, `rgba(${rgb},0)`);
-    }
-    baseCtx.fillStyle = g;
-    baseCtx.beginPath(); baseCtx.arc(x, y, r, 0, Math.PI*2); baseCtx.fill();
-    baseCtx.globalCompositeOperation = 'source-over';
-    baseTex.needsUpdate = true;
-
-    if (tool === 'brush' && $('#st-sym-x').checked){
-      // Mirror across U=0.5 (rough approximation for symmetric decals)
-      const mx = (1 - uv.x) * S;
-      const g2 = baseCtx.createRadialGradient(mx, y, 0, mx, y, r);
-      if (erase){
-        baseCtx.globalCompositeOperation = 'destination-out';
-        g2.addColorStop(0, `rgba(0,0,0,1)`);
-        g2.addColorStop(hardness, `rgba(0,0,0,${opacity})`);
-        g2.addColorStop(1, 'rgba(0,0,0,0)');
-      } else {
-        const c = new THREE.Color(color);
-        const rgb = `${Math.round(c.r*255)},${Math.round(c.g*255)},${Math.round(c.b*255)}`;
-        g2.addColorStop(0, `rgba(${rgb},${opacity})`);
-        g2.addColorStop(hardness, `rgba(${rgb},${opacity})`);
-        g2.addColorStop(1, `rgba(${rgb},0)`);
-      }
-      baseCtx.fillStyle = g2;
-      baseCtx.beginPath(); baseCtx.arc(mx, y, r, 0, Math.PI*2); baseCtx.fill();
-      baseCtx.globalCompositeOperation = 'source-over';
-      baseTex.needsUpdate = true;
-    }
-  }
-
-  function onDown(ev){
-    if (tool === 'camera') return; // let OrbitControls take it
-    const uv = getUV(ev);
-    if (!uv) return;
-
-    if (tool === 'picker'){
-      const S = baseCanvas.width;
-      const x = Math.max(0, Math.min(S-1, uv.x*S));
-      const y = Math.max(0, Math.min(S-1, (1-uv.y)*S));
-      const d = baseCtx.getImageData(x, y, 1, 1).data;
-      const hex = '#' + [d[0],d[1],d[2]].map(v=>v.toString(16).padStart(2,'0')).join('');
-      $('#st-color').value = hex;
-      return;
-    }
-    if (tool === 'fill'){
-      const S = baseCanvas.width;
-      // Simple: fill whole active texture with color (structural fill would need UV island detection)
-      baseCtx.fillStyle = $('#st-color').value;
-      baseCtx.globalAlpha = $('#st-opacity').value/100;
-      baseCtx.fillRect(0,0,S,S);
-      baseCtx.globalAlpha = 1;
-      baseTex.needsUpdate = true;
-      snapshot('Fill');
-      return;
-    }
-    // brush / eraser
-    painting = true;
-    strokeStarted = true;
-    strokeSnapshot = baseCtx.getImageData(0,0,baseCanvas.width, baseCanvas.height);
-    applyTool(uv);
-  }
-  function onMove(ev){
-    if (!painting) return;
-    const uv = getUV(ev);
-    if (!uv) return;
-    applyTool(uv);
-    lastUV = uv;
-  }
-  function onUp(){
-    if (painting && strokeStarted){
-      painting = false;
-      snapshot(tool === 'eraser' ? 'Erase stroke' : 'Brush stroke');
-      strokeStarted = false;
-      strokeSnapshot = null;
-    } else {
-      painting = false;
-    }
-  }
-  function applyTool(uv){
-    const size = +$('#st-size').value;
-    const opacity = +$('#st-opacity').value/100;
-    const hardness = +$('#st-hard').value/100;
-    const color = $('#st-color').value;
-    if (tool === 'brush')  paintAt(uv, size, color, opacity, hardness, false);
-    if (tool === 'eraser') paintAt(uv, size, '#000', opacity, hardness, true);
-  }
-
-  /* ====== History (base texture snapshots) ====== */
-  function snapshot(label){
-    const data = baseCtx.getImageData(0,0,baseCanvas.width,baseCanvas.height);
-    history = history.slice(0, historyIdx+1);
-    history.push({ label, data });
-    historyIdx = history.length - 1;
-    updateStatus();
-  }
-  function undo(){
-    if (historyIdx <= 0) return;
-    historyIdx--;
-    baseCtx.putImageData(history[historyIdx].data, 0, 0);
-    baseTex.needsUpdate = true;
-    updateStatus();
-  }
-  function redo(){
-    if (historyIdx >= history.length - 1) return;
-    historyIdx++;
-    baseCtx.putImageData(history[historyIdx].data, 0, 0);
-    baseTex.needsUpdate = true;
-    updateStatus();
-  }
-
-  function updateStatus(){
-    $('#studio-status').textContent =
-      `${historyIdx === history.length-1 ? 'Saved State' : 'Undo Available'} · ${baseCanvas.width}×${baseCanvas.height} · ${layers.length} layer${layers.length>1?'s':''}`;
-    $('#st-undo').style.opacity = historyIdx > 0 ? 1 : 0.4;
-    $('#st-redo').style.opacity = historyIdx < history.length-1 ? 1 : 0.4;
-    // render layer chips
-    const wrap = $('#st-layers'); wrap.innerHTML = '';
-    layers.forEach((L,i)=>{
-      const el = document.createElement('div');
-      el.className = 'layer-chip' + (L.active ? ' active' : '');
-      el.innerHTML = `<div class="thumb"></div><span>${escapeHtml(L.name)}</span>
-        <button title="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`;
-      el.addEventListener('click', e=>{
-        if (e.target.closest('button')) return;
-        layers.forEach(x=>x.active=false); L.active = true; updateStatus();
-      });
-      el.querySelector('button').addEventListener('click', ()=>{
-        if (layers.length<=1) return toast('At least one layer must remain.', 'err');
-        if (!confirm(`Delete layer "${L.name}"?`)) return;
-        layers = layers.filter(x=>x!==L); updateStatus(); toast('Layer deleted.', 'ok');
-      });
-      wrap.appendChild(el);
-    });
-  }
-
-  function save(){
-    // Real save is to Firebase Storage; here we save a small local draft + a
-    // DB record pointing at the JSON of the design metadata.
-    // BACKEND REQUIRED for image: Firebase Storage upload.
-    if (!auth.currentUser) return toast('Sign in required.', 'err');
-    try {
-      const thumb = baseCanvas.toDataURL('image/png').slice(0, 512); // small preview only
-      const projectId = 'design_' + Date.now();
-      set(ref(db, `users/${auth.currentUser.uid}/designs/${projectId}`), {
-        name: 'Untitled Design',
-        vehicleModelId: 'cazoo_gt01_placeholder',
-        textureResolution: baseCanvas.width,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-        // Note: full texture PNG must go to Storage; this is metadata only.
-      }).then(()=>toast('Design metadata saved.', 'ok'))
-        .catch(err=>toast('Save failed: ' + err.message, 'err'));
-    } catch(e){
-      toast('Save error: ' + e.message, 'err');
-    }
-  }
-  function exportPNG(){
-    try {
-      const a = document.createElement('a');
-      a.href = baseCanvas.toDataURL('image/png');
-      a.download = 'cazoo_texture_' + Date.now() + '.png';
-      a.click();
-      toast('Texture exported.', 'ok');
-    } catch(e){ toast('Export failed: ' + e.message, 'err'); }
-  }
-
-  // UI bindings
-  $$('.tool-btn[data-tool]').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      $$('.tool-btn[data-tool]').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
-      tool = b.dataset.tool;
-      controls.enabled = (tool === 'camera');
-    });
-  });
-  $('#st-size').addEventListener('input', e=> $('#st-size-val').textContent = e.target.value);
-  $('#st-opacity').addEventListener('input', e=> $('#st-opacity-val').textContent = (+e.target.value/100).toFixed(2));
-  $('#st-hard').addEventListener('input', e=> $('#st-hard-val').textContent = (+e.target.value/100).toFixed(2));
-  $('#st-undo').addEventListener('click', undo);
-  $('#st-redo').addEventListener('click', redo);
-  $('#st-save').addEventListener('click', save);
-  $('#st-export').addEventListener('click', exportPNG);
-  $('#st-add-layer').addEventListener('click', ()=>{
-    const name = prompt('Layer name:', 'Layer ' + (layers.length+1));
-    if (!name) return;
-    layers.forEach(x=>x.active=false);
-    layers.push({ id: Date.now(), name, visible:true, active:true, type:'paint' });
-    updateStatus();
-  });
-  // Keyboard shortcuts
-  addEventListener('keydown', e=>{
-    if (currentScreen !== 'studio') return;
-    if (e.target.matches('input,textarea')) return;
-    if (e.key === 'b') { document.querySelector('[data-tool="brush"]').click(); }
-    if (e.key === 'e') { document.querySelector('[data-tool="eraser"]').click(); }
-    if (e.key === 'i') { document.querySelector('[data-tool="picker"]').click(); }
-    if ((e.ctrlKey||e.metaKey) && e.key === 'z' && !e.shiftKey){ e.preventDefault(); undo(); }
-    if ((e.ctrlKey||e.metaKey) && e.key === 'z' &&  e.shiftKey){ e.preventDefault(); redo(); }
-    if ((e.ctrlKey||e.metaKey) && e.key === 's'){ e.preventDefault(); save(); }
+  // Wheels
+  const wheelGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.34, 24);
+  const wheelMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 0.9 });
+  const rimMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 1, roughness: 0.2 });
+  const wheels = [];
+  [[-1.08, 0.45, 1.35], [1.08, 0.45, 1.35], [-1.08, 0.45, -1.35], [1.08, 0.45, -1.35]].forEach(([x, y, z]) => {
+    const w = new THREE.Mesh(wheelGeo, wheelMat);
+    w.rotation.z = Math.PI / 2;
+    w.position.set(x, y, z);
+    const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.36, 16), rimMat);
+    rim.rotation.z = Math.PI / 2;
+    w.add(rim);
+    g.add(w);
+    wheels.push(w);
   });
 
-  function animate(){
-    requestAnimationFrame(animate);
-    if (!init) return;
-    if (currentScreen !== 'studio') return;
-    controls.update();
-    renderer.render(scene, cam);
-  }
-  animate();
+  // Lights
+  const headMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const tailMat = new THREE.MeshBasicMaterial({ color: 0xff3ea5 });
+  const h1 = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.15, 0.05), headMat);
+  h1.position.set(-0.6, 0.65, 2.12); g.add(h1);
+  const h2 = h1.clone(); h2.position.x = 0.6; g.add(h2);
+  const t1 = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.15, 0.05), tailMat);
+  t1.position.set(-0.6, 0.6, -2.12); g.add(t1);
+  const t2 = t1.clone(); t2.position.x = 0.6; g.add(t2);
 
-  function open(){
-    if (!init) build();
-    // ensure resize after showing (container now has size)
-    requestAnimationFrame(()=>{
-      const c = $('#studio-viewport');
-      cam.aspect = c.clientWidth / c.clientHeight; cam.updateProjectionMatrix();
-      renderer.setSize(c.clientWidth, c.clientHeight);
-    });
-  }
+  // Boost glow under car
+  const glow = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.4, 4.6),
+    new THREE.MeshBasicMaterial({ color: 0x22e6ff, transparent: true, opacity: 0.25 })
+  );
+  glow.rotation.x = -Math.PI / 2;
+  glow.position.y = 0.02;
+  g.add(glow);
 
-  return { open };
-})();
-
-/* =================== 6. MAIN BOOTSTRAP =================== */
-let currentUser = null;
-let isAdmin = false;
-
-// Auth UI
-let authMode = 'signin';
-$('#btn-auth-switch').addEventListener('click', ()=>{
-  authMode = authMode === 'signin' ? 'signup' : 'signin';
-  $('#auth-name-field').classList.toggle('hidden', authMode === 'signin');
-  $('#btn-auth-submit').textContent = authMode === 'signin' ? 'Sign In' : 'Create Account';
-  $('#auth-switch-label').textContent = authMode === 'signin' ? 'No account?' : 'Have an account?';
-  $('#btn-auth-switch').textContent = authMode === 'signin' ? 'Create one' : 'Sign in';
-});
-$('#btn-auth-reset').addEventListener('click', async ()=>{
-  const email = $('#auth-email').value.trim();
-  if (!email) return $('#auth-err').textContent = 'Enter your email first.';
-  try { await sendPasswordResetEmail(auth, email); $('#auth-err').textContent = 'Reset email sent.'; }
-  catch(e){ $('#auth-err').textContent = e.message; }
-});
-$('#btn-auth-submit').addEventListener('click', async ()=>{
-  const email = $('#auth-email').value.trim();
-  const pass  = $('#auth-pass').value;
-  const name  = $('#auth-name').value.trim();
-  $('#auth-err').textContent = '';
-  if (!email || !pass) return $('#auth-err').textContent = 'Email and password required.';
-  try {
-    if (authMode === 'signup'){
-      if (name.length < 3) return $('#auth-err').textContent = 'Username must be at least 3 characters.';
-      if (!/^[a-zA-Z0-9_]+$/.test(name)) return $('#auth-err').textContent = 'Only letters, numbers, and underscore allowed.';
-      const cred = await createUserWithEmailAndPassword(auth, email, pass);
-      // Public profile (rules restrict: user can create own profile once)
-      await set(ref(db, `users/${cred.user.uid}/public`), {
-        username: name,
-        displayName: name,
-        avatar: '',
-        createdAt: serverTimestamp(),
-        rating: 1000,
-        wins: 0,
-        losses: 0,
-        status: 'active'
-      });
-      // Seed leaderboard entry at 1000 (rules: only server should adjust rating later)
-      await set(ref(db, `leaderboards/season_1/${cred.user.uid}`), {
-        username: name, rating: 1000, wins: 0, losses: 0, updatedAt: serverTimestamp()
-      });
-    } else {
-      await signInWithEmailAndPassword(auth, email, pass);
-    }
-  } catch(e){
-    $('#auth-err').textContent = e.message;
-  }
-});
-$('#btn-logout').addEventListener('click', async ()=>{
-  await signOut(auth);
-});
-
-// Routing
-function navigate(name){
-  if (name === 'race'){ showScreen('race'); race.start(); return; }
-  if (name === 'studio'){ showScreen('studio'); studio.open(); return; }
-  if (screens[name]) showScreen(name);
+  return { group: g, wheels, glow };
 }
-$$('[data-nav]').forEach(el=>{
-  el.addEventListener('click', ()=>{
-    const nav = el.dataset.nav;
-    if (nav === 'quick'){ // quick match shortcut
-      navigate('multiplayer');
-      // Auto-trigger quick matchmaking
-      setTimeout(()=>$('#btn-quickmatch').click(), 50);
-      return;
-    }
-    navigate(nav);
-  });
-});
-$$('[data-back]').forEach(el=>{
-  el.addEventListener('click', ()=> showScreen('menu'));
-});
 
-// Auth listener
-onAuthStateChanged(auth, async (user)=>{
-  if (!user){
-    currentUser = null; isAdmin = false;
-    $('#mm-admin').classList.add('hidden');
-    showScreen('auth');
+const car = makeCar();
+scene.add(car.group);
+
+/* ---------- Checkpoints ---------- */
+const checkpoints = [];
+for (let i = 0; i < 8; i++){
+  const p = trackPoints[Math.floor(trackPoints.length * i / 8)];
+  checkpoints.push(p.clone());
+}
+const CP_RADIUS = 9;
+
+/* ---------- Game state ---------- */
+const state = {
+  active: false,
+  countdown: 0,
+  speed: 0,
+  nitro: 1,
+  boost: 0,
+  lap: 1,
+  totalLaps: 3,
+  nextCP: 0,
+  startTime: 0,
+  elapsed: 0,
+  finished: false,
+  steering: 0,
+  throttle: 0,
+  keys: {}
+};
+
+/* ---------- Reset / Start ---------- */
+function resetCar(){
+  const p0 = checkpoints[0].clone();
+  car.group.position.copy(p0);
+  car.group.position.y = 0;
+  const p1 = checkpoints[1];
+  car.group.lookAt(p1.x, car.group.position.y, p1.z);
+  state.speed = 0;
+  state.nitro = 1;
+  state.boost = 0;
+  state.lap = 1;
+  state.nextCP = 0;
+  state.elapsed = 0;
+  state.finished = false;
+  state.steering = 0;
+  state.throttle = 0;
+  updateHUD();
+}
+
+function startRace(){
+  resetCar();
+  gameEl.classList.add('on');
+  menuEl.style.display = 'none';
+  $('#result').classList.remove('on');
+
+  state.active = false;
+  state.countdown = 3;
+
+  let c = 3;
+  showMsg(String(c));
+  const iv = setInterval(() => {
+    c--;
+    if (c > 0){
+      showMsg(String(c));
+    } else if (c === 0){
+      showMsg('GO!', 700);
+      state.active = true;
+      state.startTime = performance.now();
+      clearInterval(iv);
+    }
+  }, 800);
+}
+
+function exitRace(){
+  state.active = false;
+  gameEl.classList.remove('on');
+  menuEl.style.display = 'flex';
+  $('#result').classList.remove('on');
+}
+
+function showResult(){
+  state.finished = true;
+  state.active = false;
+  const t = state.elapsed;
+  const m = Math.floor(t / 60);
+  const s = Math.floor(t % 60);
+  const ms = Math.floor((t * 100) % 100);
+  const str = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(2,'0')}`;
+  $('#resultTime').textContent = str;
+  $('#resultTitle').textContent = 'FINISH';
+  $('#result').classList.add('on');
+}
+
+/* ---------- HUD ---------- */
+function showMsg(text, dur = 800){
+  const el = $('#hud-msg');
+  el.textContent = text;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), dur);
+}
+
+function fmtTime(t){
+  const m = Math.floor(t / 60);
+  const s = Math.floor(t % 60);
+  const ms = Math.floor((t * 100) % 100);
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(2,'0')}`;
+}
+
+function updateHUD(){
+  $('#speedVal').textContent = Math.round(state.speed * 3.6);
+  $('#lapVal').textContent = Math.min(state.lap, state.totalLaps) + ' / ' + state.totalLaps;
+  $('#timeVal').textContent = fmtTime(state.elapsed);
+  $('#nitroFill').style.width = (state.nitro * 100) + '%';
+}
+
+/* ---------- Main loop ---------- */
+let lastT = performance.now();
+function loop(now){
+  requestAnimationFrame(loop);
+  const dt = Math.min(0.05, (now - lastT) / 1000);
+  lastT = now;
+
+  if (gameEl.classList.contains('on')){
+    updateCar(dt);
+    updateCamera(dt);
+    updateHUD();
+  }
+
+  renderer.render(scene, camera);
+}
+
+function updateCar(dt){
+  if (!state.active || state.finished) {
+    state.speed *= 0.92;
+    // still move a tiny bit so it doesn't look frozen
+    const fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(car.group.quaternion);
+    car.group.position.addScaledVector(fwd, state.speed * dt);
     return;
   }
-  currentUser = user;
 
-  // Read own public profile
-  const uSnap = await get(ref(db, `users/${user.uid}/public`));
-  const profile = uSnap.val() || {};
-  $('#mm-name').textContent = profile.displayName || profile.username || user.email;
-  $('#mm-avatar').textContent = (profile.username || 'U')[0].toUpperCase();
-  $('#mm-rating').textContent = 'Rating ' + (profile.rating ?? '—');
+  state.elapsed = (performance.now() - state.startTime) / 1000;
 
-  // Determine admin via token claims
-  try {
-    const token = await user.getIdTokenResult(true);
-    isAdmin = !!token.claims.admin || !!token.claims.role;
-    if (isAdmin) $('#mm-admin').classList.remove('hidden');
-  } catch(e){ isAdmin = false; }
+  // --- Input ---
+  let steerInput = 0;
+  if (state.keys['a'] || state.keys['arrowleft'] || state.keys['left']) steerInput += 1;
+  if (state.keys['d'] || state.keys['arrowright'] || state.keys['right']) steerInput -= 1;
 
-  showScreen('menu');
-  initRealtimeListeners();
-});
+  let throttleInput = 0;
+  if (state.keys['w'] || state.keys['arrowup'] || state.keys['up'] || state.keys['gas']) throttleInput += 1;
+  if (state.keys['s'] || state.keys['arrowdown'] || state.keys['down']) throttleInput -= 1;
 
-// Realtime: lobby list, tournaments, events
-let unsubLobbies, unsubTourneys, unsubEvents;
-function initRealtimeListeners(){
-  if (unsubLobbies) unsubLobbies();
-  if (unsubTourneys) unsubTourneys();
-  if (unsubEvents) unsubEvents();
+  const wantNitro = state.keys['shift'] || state.keys['nitro'];
 
-  // Lobbies
-  const lobbiesRef = query(ref(db, 'lobbies'), orderByChild('status'), equalTo('open'));
-  unsubLobbies = onValue(lobbiesRef, (snap)=>{
-    const el = $('#lobby-list'); if (!el) return;
-    const val = snap.val() || {};
-    const list = Object.entries(val);
-    if (!list.length){ el.innerHTML = '<div class="empty">No public lobbies right now. Create one!</div>'; return; }
-    el.innerHTML = '';
-    list.forEach(([id, L])=>{
-      const d = document.createElement('div');
-      d.className = 'stat'; d.style.marginBottom = '8px';
-      d.innerHTML = `<div class="row-between">
-        <div><div style="font-weight:700">${escapeHtml(L.trackId || 'track')}</div>
-        <div class="text-muted" style="font-size:11px">${L.playerCount||1} player(s) · host ${escapeHtml((L.hostUid||'').slice(0,6))}…</div></div>
-        <button class="btn btn-ghost" data-join="${id}">Join</button></div>`;
-      el.appendChild(d);
-    });
-    el.querySelectorAll('[data-join]').forEach(b=>{
-      b.addEventListener('click', ()=>joinLobby(b.dataset.join));
-    });
-  });
+  // --- Physics (arcade) ---
+  const MAX_SPEED = 60;
+  const BASE_ACCEL = 28;
+  const BRAKE = 45;
 
-  // Tournaments
-  unsubTourneys = onValue(ref(db, 'tournaments'), (snap)=>{
-    const el = $('#tourney-list'); if (!el) return;
-    const val = snap.val() || {};
-    const list = Object.entries(val).filter(([_,t])=> t.status === 'registration' || t.status === 'active');
-    if (!list.length){ el.innerHTML = '<div class="empty">No active tournaments. Check back soon.</div>'; return; }
-    el.innerHTML = '';
-    list.forEach(([id, T])=>{
-      const d = document.createElement('div');
-      d.className = 'stat'; d.style.marginBottom = '8px';
-      d.innerHTML = `<div class="row-between">
-        <div>
-          <div style="font-weight:700">${escapeHtml(T.name||'Tournament')}</div>
-          <div class="text-muted" style="font-size:11px">
-            ${escapeHtml(T.format||'single_elim')} · ${T.maxParticipants||0} slots · <span class="chip">${escapeHtml(T.status)}</span>
-          </div>
-        </div>
-        <button class="btn btn-ghost" data-t="${id}">View</button>
-      </div>`;
-      el.appendChild(d);
-    });
-  });
-
-  // Events
-  unsubEvents = onValue(ref(db, 'events'), (snap)=>{
-    const el = $('#events-list'); if (!el) return;
-    const val = snap.val() || {};
-    const list = Object.entries(val);
-    if (!list.length){ el.innerHTML = '<div class="empty">No events configured yet.</div>'; return; }
-    el.innerHTML = '';
-    list.forEach(([id, E])=>{
-      const c = document.createElement('div');
-      c.className = 'card';
-      c.innerHTML = `<div class="row-between">
-        <div>
-          <div style="font-weight:800;letter-spacing:1px">${escapeHtml(E.name||'Event')}</div>
-          <div class="text-muted" style="font-size:12px;margin-top:6px">${escapeHtml(E.description||'')}</div>
-          <div style="margin-top:8px"><span class="chip ${E.status==='active'?'ok':'muted'}">${escapeHtml(E.status||'—')}</span>
-            ${E.trackId?`<span class="chip">${escapeHtml(E.trackId)}</span>`:''}
-          </div>
-        </div>
-      </div>`;
-      el.appendChild(c);
-    });
-  });
-}
-
-// Create room
-$('#btn-create-room').addEventListener('click', async ()=>{
-  if (!currentUser) return toast('Sign in required.', 'err');
-  const track = $('#room-track').value;
-  const vis = $('#room-visibility').value;
-  const roomId = 'room_' + Math.random().toString(36).slice(2,8);
-  try {
-    await set(ref(db, `lobbies/${roomId}`), {
-      hostUid: currentUser.uid,
-      trackId: track,
-      visibility: vis,
-      status: 'open',
-      playerCount: 1,
-      createdAt: serverTimestamp(),
-      players: { [currentUser.uid]: { ready:false, selectedCar:'gt01', connectionStatus:'online' } }
-    });
-    // Register onDisconnect to close if we drop
-    onDisconnect(ref(db, `lobbies/${roomId}/players/${currentUser.uid}`)).remove();
-    toast('Room created: ' + roomId, 'ok');
-  } catch(e){ toast('Failed: ' + e.message, 'err'); }
-});
-
-// Quick match
-$('#btn-quickmatch').addEventListener('click', async ()=>{
-  if (!currentUser) return toast('Sign in required.', 'err');
-  const snap = await get(ref(db, 'lobbies'));
-  const val = snap.val() || {};
-  const open = Object.entries(val).find(([_,L])=> L.status === 'open' && L.visibility === 'public' && L.playerCount < 4);
-  if (open){
-    joinLobby(open[0]);
+  if (throttleInput > 0){
+    state.speed += BASE_ACCEL * dt;
+  } else if (throttleInput < 0){
+    state.speed -= BRAKE * dt;
   } else {
-    // create one
-    $('#btn-create-room').click();
+    state.speed -= state.speed * 0.9 * dt;
   }
-});
-async function joinLobby(roomId){
-  if (!currentUser) return toast('Sign in required.', 'err');
-  try {
-    const L = (await get(ref(db, `lobbies/${roomId}`))).val();
-    if (!L || L.status !== 'open') return toast('Room is closed.', 'err');
-    if (L.playerCount >= 4) return toast('Room is full.', 'err');
-    await update(ref(db, `lobbies/${roomId}/players/${currentUser.uid}`), {
-      ready:false, selectedCar:'gt01', connectionStatus:'online'
-    });
-    await update(ref(db, `lobbies/${roomId}`), { playerCount: (L.playerCount||0) + 1 });
-    onDisconnect(ref(db, `lobbies/${roomId}/players/${currentUser.uid}`)).remove();
-    toast('Joined ' + roomId, 'ok');
-    // In a full build: navigate to a lobby screen and start the match
-    // when all players ready; then hand off to the authoritative server.
-  } catch(e){ toast('Join failed: ' + e.message, 'err'); }
-}
 
-// Ranked page
-async function loadRanked(){
-  if (!currentUser) return;
-  const uSnap = await get(ref(db, `users/${currentUser.uid}/public`));
-  const p = uSnap.val() || {};
-  $('#rk-rating').textContent = p.rating ?? '—';
-  const r = p.rating ?? 1000;
-  const divisions = [
-    {n:'Rookie',   min:0,    max:999},
-    {n:'Bronze',   min:1000, max:1199},
-    {n:'Silver',   min:1200, max:1399},
-    {n:'Gold',     min:1400, max:1599},
-    {n:'Platinum', min:1600, max:1799},
-    {n:'Diamond',  min:1800, max:1999},
-    {n:'Elite',    min:2000, max:2199},
-    {n:'Legend',   min:2200, max:9999},
-  ];
-  const div = divisions.find(d=> r>=d.min && r<=d.max) || divisions[0];
-  $('#rk-division').textContent = div.n;
-  $('#rk-wins').textContent = p.wins ?? 0;
-  $('#rk-losses').textContent = p.losses ?? 0;
-  const total = (p.wins??0) + (p.losses??0);
-  $('#rk-wr').textContent = total ? Math.round((p.wins/total)*100) + '%' : '—';
-  const span = div.max - div.min + 1;
-  const prog = Math.max(0, Math.min(1, (r - div.min) / span));
-  $('#rk-progress').style.width = (prog*100) + '%';
-  $('#rk-progress-label').textContent = `${r} / ${div.max+1} to next division`;
-}
-
-$('#btn-ranked-queue').addEventListener('click', ()=>{
-  toast('Matchmaking requires the authoritative server. See README.','err');
-});
-
-// Leaderboard
-async function loadLeaderboard(){
-  const snap = await get(query(ref(db, 'leaderboards/season_1'), orderByChild('rating'), limitToLast(50)));
-  const val = snap.val() || {};
-  const rows = Object.entries(val).sort((a,b)=> (b[1].rating||0)-(a[1].rating||0));
-  const el = $('#lb-list');
-  if (!rows.length){ el.innerHTML = '<div class="empty">No ranked players yet.</div>'; return; }
-  let html = '<table class="table"><thead><tr><th>#</th><th>Player</th><th>Rating</th><th>W/L</th></tr></thead><tbody>';
-  rows.forEach(([uid, r], i)=>{
-    html += `<tr><td>${i+1}</td><td>${escapeHtml(r.username||uid.slice(0,8))}</td><td class="text-muted" style="color:var(--cyan)">${r.rating}</td><td>${r.wins||0}/${r.losses||0}</td></tr>`;
-  });
-  html += '</tbody></table>';
-  el.innerHTML = html;
-}
-
-// Profile
-async function loadProfile(){
-  if (!currentUser) return;
-  const snap = await get(ref(db, `users/${currentUser.uid}/public`));
-  const p = snap.val() || {};
-  $('#pf-name').textContent = p.displayName || p.username || '—';
-  $('#pf-uid').textContent = currentUser.uid;
-  $('#pf-joined').textContent = p.createdAt ? new Date(p.createdAt).toLocaleDateString() : '—';
-  $('#pf-status').textContent = p.status || 'active';
-  $('#pf-rating').textContent = p.rating ?? '—';
-  $('#pf-wins').textContent = p.wins ?? 0;
-  $('#pf-losses').textContent = p.losses ?? 0;
-}
-
-// Admin page
-async function loadAdmin(){
-  const access = $('#admin-access');
-  if (!currentUser){ access.innerHTML = '<div class="empty">Not signed in.</div>'; return; }
-  const token = await currentUser.getIdTokenResult(true);
-  const role = token.claims.role || (token.claims.admin ? 'admin' : null);
-  $('#admin-role-label').textContent = 'Role: ' + (role || 'none');
-  if (!role){
-    access.innerHTML = '<div class="chip err">Access denied — you do not have an admin role.</div>';
-    $('#admin-panels').classList.add('hidden');
-    return;
+  // Nitro
+  if (wantNitro && state.nitro > 0.05 && state.speed > 5){
+    state.boost = Math.min(1, state.boost + dt * 2.5);
+    state.nitro = Math.max(0, state.nitro - dt * 0.35);
+  } else {
+    state.boost = Math.max(0, state.boost - dt * 1.2);
+    state.nitro = Math.min(1, state.nitro + dt * 0.08);
   }
-  access.innerHTML = `<div class="chip ok">Signed in as ${escapeHtml(role)}</div>`;
-  $('#admin-panels').classList.remove('hidden');
-  // Read live counters (only permitted paths)
-  const [lobbies, tournaments, events] = await Promise.all([
-    get(ref(db, 'lobbies')), get(ref(db, 'tournaments')), get(ref(db, 'events'))
-  ]);
-  $('#admin-live').innerHTML = `
-    <div class="grid-3">
-      <div class="stat"><div class="label">Active Lobbies</div><div class="value cyan">${Object.keys(lobbies.val()||{}).length}</div></div>
-      <div class="stat"><div class="label">Tournaments</div><div class="value violet">${Object.keys(tournaments.val()||{}).length}</div></div>
-      <div class="stat"><div class="label">Events</div><div class="value ok">${Object.keys(events.val()||{}).length}</div></div>
-    </div>`;
-  // Audit log read
-  const audit = await get(query(ref(db, 'adminAuditLogs'), orderByChild('timestamp'), limitToLast(20)));
-  const av = audit.val() || {};
-  const rows = Object.values(av).reverse();
-  $('#admin-audit').innerHTML = rows.length
-    ? rows.map(r=>`<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
-        <b>${escapeHtml(r.action||'')}</b> · ${escapeHtml(r.targetType||'')} ${escapeHtml(r.targetId||'')}
-        <span class="text-muted"> — ${new Date(r.timestamp||0).toLocaleString()}</span></div>`).join('')
-    : '<div class="empty">No audit entries.</div>';
+
+  const maxNow = MAX_SPEED + state.boost * 30;
+  state.speed = Math.max(-10, Math.min(maxNow, state.speed));
+
+  // Steering (less at high speed)
+  const steerPower = 1.8 * (1 - Math.min(0.5, state.speed / MAX_SPEED * 0.5));
+  const sign = state.speed >= 0 ? 1 : -1;
+  car.group.rotation.y += steerInput * steerPower * sign * dt * (0.3 + Math.min(1, Math.abs(state.speed) / 20));
+
+  // Move
+  const fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(car.group.quaternion);
+  car.group.position.addScaledVector(fwd, state.speed * dt);
+  car.group.position.y = 0;
+
+  // Wheel spin
+  car.wheels.forEach(w => w.rotation.x += state.speed * dt * 2);
+
+  // Glow pulse when boosting
+  car.glow.material.opacity = 0.15 + state.boost * 0.5;
+  car.glow.material.color.setHex(state.boost > 0.1 ? 0x8a5cff : 0x22e6ff);
+
+  // --- Checkpoint / lap ---
+  const cp = checkpoints[state.nextCP];
+  const dx = car.group.position.x - cp.x;
+  const dz = car.group.position.z - cp.z;
+  if (dx*dx + dz*dz < CP_RADIUS * CP_RADIUS){
+    state.nextCP = (state.nextCP + 1) % checkpoints.length;
+    if (state.nextCP === 0){
+      state.lap++;
+      if (state.lap > state.totalLaps){
+        showResult();
+      } else {
+        showMsg('LAP ' + state.lap, 900);
+      }
+    }
+  }
+
+  // Keep car near track (soft wall)
+  const nearest = nearestTrackPoint(car.group.position);
+  const dist = distanceToSegment(car.group.position, nearest.a, nearest.b);
+  if (dist > TRACK_WIDTH * 0.9){
+    // push back
+    const dir = new THREE.Vector3().subVectors(car.group.position, nearest.center).normalize();
+    const push = (dist - TRACK_WIDTH * 0.9);
+    car.group.position.x -= dir.x * push;
+    car.group.position.z -= dir.z * push;
+    state.speed *= 0.96;
+  }
 }
 
-// Tournaments: join with code (BACKEND REQUIRED: code verification)
-$('#btn-join-code').addEventListener('click', async ()=>{
-  const code = $('#tourney-code').value.trim().toUpperCase();
-  if (!code) return;
-  // BACKEND REQUIRED: In production, this must call a Cloud Function
-  // (or an API on your game server) that hashes the code and checks
-  // it against tournaments/{id}/codeMetadata. The code itself must
-  // never be readable in the DB. Below is a placeholder that only
-  // checks the public "codePublicId" field which is safe to expose
-  // (it is a NON-secret reference — do not store real codes here).
-  const snap = await get(ref(db, 'tournaments'));
-  const val = snap.val() || {};
-  const found = Object.entries(val).find(([_, T]) => T.codePublicId === code);
-  if (!found) return toast('Invalid or expired code.', 'err');
-  const [id, T] = found;
-  if (T.status !== 'registration') return toast('Registration is not open for this tournament.', 'err');
-  try {
-    await set(ref(db, `tournamentParticipants/${id}/${currentUser.uid}`), {
-      registeredAt: serverTimestamp(), eligibilityStatus: 'pending', seed: 0
-    });
-    toast('Registered!', 'ok');
-  } catch(e){ toast('Registration failed: ' + e.message, 'err'); }
-});
-
-// Page hooks
-$$('[data-nav]').forEach(el=>{
-  el.addEventListener('click', ()=>{
-    const nav = el.dataset.nav;
-    if (nav === 'ranked') loadRanked();
-    if (nav === 'leaderboard') loadLeaderboard();
-    if (nav === 'profile') loadProfile();
-    if (nav === 'admin') loadAdmin();
-  });
-});
-
-// Global key to escape back to menu (except in studio/race)
-addEventListener('keydown', e=>{
-  if (e.key === 'Escape' && currentScreen !== 'menu' && currentScreen !== 'auth' && currentScreen !== 'race' && currentScreen !== 'studio'){
-    showScreen('menu');
+function nearestTrackPoint(pos){
+  let bestI = 0, bestD = Infinity;
+  for (let i = 0; i < trackPoints.length; i++){
+    const p = trackPoints[i];
+    const d = (p.x - pos.x) ** 2 + (p.z - pos.z) ** 2;
+    if (d < bestD){ bestD = d; bestI = i; }
   }
+  const a = trackPoints[bestI];
+  const b = trackPoints[(bestI + 1) % trackPoints.length];
+  const center = new THREE.Vector3().addVectors(a, b).multiplyScalar(0.5);
+  return { a, b, center, index: bestI };
+}
+
+function distanceToSegment(p, a, b){
+  const abx = b.x - a.x, abz = b.z - a.z;
+  const apx = p.x - a.x, apz = p.z - a.z;
+  const abLenSq = abx*abx + abz*abz;
+  const t = abLenSq > 0 ? Math.max(0, Math.min(1, (apx*abx + apz*abz) / abLenSq)) : 0;
+  const cx = a.x + abx * t, cz = a.z + abz * t;
+  const dx = p.x - cx, dz = p.z - cz;
+  return Math.sqrt(dx*dx + dz*dz);
+}
+
+function updateCamera(dt){
+  const fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(car.group.quaternion);
+  const camTarget = car.group.position.clone().add(new THREE.Vector3(0, 1.4, 0));
+  const desired = car.group.position.clone()
+    .add(fwd.clone().multiplyScalar(-8 - state.speed * 0.05))
+    .add(new THREE.Vector3(0, 4, 0));
+
+  const lerp = 1 - Math.pow(0.001, dt);
+  camera.position.lerp(desired, lerp);
+  camera.lookAt(camTarget);
+}
+
+/* ---------- Input: keyboard ---------- */
+window.addEventListener('keydown', e => {
+  state.keys[e.key.toLowerCase()] = true;
+});
+window.addEventListener('keyup', e => {
+  state.keys[e.key.toLowerCase()] = false;
 });
 
-// Expose for debugging
-window.CAZOO = { fbApp, auth, db };
-console.log('%cCAZOO', 'font-weight:900;font-size:18px;color:#22e6ff');
-console.log('Firebase connected. Project:', firebaseConfig.projectId);
+/* ---------- Input: touch buttons ---------- */
+function bindHold(el, key){
+  const down = (e) => { e.preventDefault(); state.keys[key] = true; };
+  const up = (e) => { e.preventDefault(); state.keys[key] = false; };
+  el.addEventListener('pointerdown', down);
+  el.addEventListener('pointerup', up);
+  el.addEventListener('pointercancel', up);
+  el.addEventListener('pointerleave', up);
+}
+bindHold($('#ctrl-left'), 'left');
+bindHold($('#ctrl-right'), 'right');
+bindHold($('#ctrl-gas'), 'gas');
+bindHold($('#ctrl-nitro'), 'nitro');
+
+/* ---------- Buttons ---------- */
+$('#btn-start').addEventListener('click', startRace);
+$('#ctrl-exit').addEventListener('click', exitRace);
+$('#btn-again').addEventListener('click', startRace);
+$('#btn-home').addEventListener('click', exitRace);
+
+$('#btn-multi').addEventListener('click', () => {
+  alert('Multiplayer akan segera hadir. Butuh server backend.');
+});
+$('#btn-garage').addEventListener('click', () => {
+  alert('Garasi akan segera hadir.');
+});
+
+/* ---------- Loop kick off ---------- */
+resetCar();
+camera.position.set(0, 6, 15);
+requestAnimationFrame(loop);
+
+/* ---------- Menu background: slowly rotate car in preview ---------- */
+setInterval(() => {
+  if (!gameEl.classList.contains('on')){
+    car.group.rotation.y += 0.008;
+  }
+}, 30);
+
+// Idle spin for menu
+(function menuSpin(){
+  if (!gameEl.classList.contains('on')){
+    // put car at origin for menu preview
+    if (!state.active){
+      car.group.position.set(0, 0, 0);
+      car.group.rotation.y += 0.01;
+      camera.position.set(0, 3.5, 9);
+      camera.lookAt(0, 0.7, 0);
+    }
+  } else if (state.active || state.finished){
+    // game mode camera handled in updateCamera
+  }
+  requestAnimationFrame(menuSpin);
+})();
+
+console.log('%cCAZOO ready', 'color:#22e6ff;font-weight:900;font-size:16px');
 </script>
 </body>
 </html>
