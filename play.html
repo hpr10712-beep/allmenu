@@ -2,131 +2,651 @@
 <html lang="id" data-theme="dark">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#0b0f0d" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+<meta name="theme-color" content="#0a0e0d" />
 <title>CAZOO — Platform Catur Online</title>
 <link rel="icon" href="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" />
 <link rel="apple-touch-icon" href="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" />
-<meta property="og:title" content="CAZOO" />
-<meta property="og:image" content="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" />
 <style>
-:root{--bg:#0b0f0d;--bg-2:#111814;--panel:#172019;--panel-2:#1e2a22;--fg:#e7efe9;--muted:#8aa093;--line:#233028;--accent:#34d399;--accent-2:#22d3ee;--danger:#ef4444;--warn:#f59e0b;--radius:14px;--shadow:0 10px 30px rgba(0,0,0,.45)}
-[data-theme="light"]{--bg:#f4f7f5;--bg-2:#fff;--panel:#fff;--panel-2:#eef2ef;--fg:#0e1a14;--muted:#5c6f66;--line:#d9e2dc;--shadow:0 8px 24px rgba(20,40,30,.08)}
-*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:radial-gradient(1200px 800px at 80% -10%,#16352a22,transparent),var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
-button{font:inherit;color:inherit;cursor:pointer}input,textarea,select{font:inherit;color:inherit}img{max-width:100%;display:block}[hidden]{display:none!important}
-.loading-screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg);z-index:50}
-.loading-logo{width:84px;height:84px;border-radius:20px;box-shadow:var(--shadow)}
-.loading-screen p{color:var(--muted);margin:0;font-size:13px}
-.loading-bar{width:180px;height:4px;border-radius:999px;background:var(--panel-2);overflow:hidden}
-.loading-bar span{display:block;height:100%;width:40%;background:linear-gradient(90deg,var(--accent),var(--accent-2));animation:slide 1.2s ease-in-out infinite}
-@keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(320%)}}
-.app-shell{display:grid;grid-template-columns:240px 1fr;min-height:100dvh}
-@media(max-width:780px){.app-shell{grid-template-columns:1fr}}
-.sidebar{background:var(--bg-2);border-right:1px solid var(--line);padding:16px 12px;display:flex;flex-direction:column;gap:8px}
-@media(max-width:780px){.sidebar{flex-direction:row;align-items:center;padding:10px 12px;border-right:none;border-bottom:1px solid var(--line);overflow-x:auto}.sidebar nav{display:flex;gap:6px}.sidebar .brand span{display:none}}
-.brand{display:flex;align-items:center;gap:10px;font-weight:700;padding:6px 8px}
-.brand img{width:28px;height:28px;border-radius:8px}
-.sidebar nav{display:flex;flex-direction:column;gap:4px;flex:1}
-.sidebar nav button{background:transparent;border:none;text-align:left;padding:10px 12px;border-radius:10px;color:var(--muted);transition:.15s;white-space:nowrap}
-.sidebar nav button:hover{background:var(--panel-2);color:var(--fg)}
-.sidebar nav button.active{background:var(--panel);color:var(--fg);box-shadow:inset 0 0 0 1px var(--line)}
-.view-root{padding:24px;max-width:1100px;width:100%;margin:0 auto}
-@media(max-width:780px){.view-root{padding:14px}}
-.view{display:flex;flex-direction:column;gap:16px;animation:fade .25s ease}
-@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.view-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
-h1{font-size:22px;margin:0}h2{font-size:15px;margin:18px 0 6px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
-.muted{color:var(--muted)}
-.btn,.btn-primary,.btn-ghost,.btn-danger{border:1px solid var(--line);background:var(--panel);padding:10px 16px;border-radius:10px;transition:.15s}
-.btn:hover,.btn-ghost:hover{background:var(--panel-2)}
-.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#04120c;font-weight:700;border-color:transparent}
-.btn-primary:disabled{opacity:.6;cursor:not-allowed}
-.btn-danger{background:transparent;color:var(--danger);border-color:color-mix(in srgb,var(--danger) 40%,var(--line))}
-.btn-primary.big{padding:14px 22px;font-size:16px;width:100%;max-width:360px}
-.login{align-items:center;justify-content:center;text-align:center;gap:18px;padding-top:8vh}
-.login .brand-logo{width:108px;height:108px;border-radius:28px;box-shadow:var(--shadow)}
-.login h1{font-size:38px;background:linear-gradient(135deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
-.fineprint{color:var(--muted);font-size:12px;max-width:420px;text-align:center}
-.form{display:flex;flex-direction:column;gap:14px;max-width:480px}
-.form label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted);font-weight:500}
-.form input,.form textarea,.form select{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--fg);outline:none;transition:.15s}
-.form input:focus,.form textarea:focus{border-color:var(--accent)}
-.hint{font-size:11px}.hint.ok{color:var(--accent)}.hint.error{color:var(--danger)}
-.counter{font-size:11px;text-align:right}
-.photo-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;background:var(--panel-2)}
-.dash-header{display:flex;align-items:center;gap:14px;padding:16px;background:var(--panel);border-radius:var(--radius);box-shadow:var(--shadow)}
-.dash-header .avatar{width:56px;height:56px}
-.dash-header strong{display:block;font-size:17px}
-.rank-chip{margin-left:auto;text-align:right;display:flex;flex-direction:column;gap:2px}
-.rank-chip .rank-name{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.rank-chip .rating{font-size:22px;font-weight:800;color:var(--accent)}
-.rank-progress{display:flex;flex-direction:column;gap:6px}
-.rank-progress .bar{height:6px;background:var(--panel-2);border-radius:999px;overflow:hidden}
-.rank-progress .bar span{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .6s}
-.mode-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
-.mode-card{text-align:left;padding:16px;border-radius:var(--radius);background:var(--panel);border:1px solid var(--line);transition:.15s}
-.mode-card:hover{transform:translateY(-2px);border-color:var(--accent);background:var(--panel-2)}
-.mode-card h3{margin:0 0 4px;font-size:16px}
-.mode-card p{margin:0;color:var(--muted);font-size:13px}
-.mode-card[disabled]{opacity:.5;cursor:not-allowed}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
-.stat{padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;gap:2px}
-.stat small{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
-.stat strong{font-size:18px}
-.board-wrap{display:flex;justify-content:center}
-.cazoo-board{width:min(92vw,520px);aspect-ratio:1/1;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line)}
-.board-grid{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:100%;height:100%}
-.sq{position:relative;border:0;padding:0;margin:0;background:transparent;display:flex;align-items:center;justify-content:center;font-size:clamp(22px,6vw,38px);line-height:1;user-select:none}
-.sq.light{background:#ebecd0}.sq.dark{background:#6d8b74}
-[data-theme="light"] .sq.light{background:#f0d9b5}[data-theme="light"] .sq.dark{background:#b58863}
-.sq.selected{box-shadow:inset 0 0 0 3px var(--accent)}
-.sq.last-move{box-shadow:inset 0 0 0 3px #f0c24a55}
-.sq.legal-target::after{content:"";position:absolute;width:26%;height:26%;border-radius:50%;background:#00000055}
-.sq.in-check{background:#ff4d4d!important}
-.piece{pointer-events:auto;cursor:grab;filter:drop-shadow(0 1px 0 rgba(0,0,0,.35))}
-.piece.w{color:#fff;-webkit-text-stroke:1px #1a1a1a}
-.piece.b{color:#1a1a1a;-webkit-text-stroke:1px #fff}
-.cazoo-board.locked .piece{pointer-events:none}
-.coord{position:absolute;font-size:9px;opacity:.55;font-weight:600}
-.coord.rank{top:2px;left:3px}.coord.file{bottom:2px;right:3px}
-.player-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.p-card{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--panel);border-radius:10px;border:1px solid var(--line)}
-.p-card strong{font-size:13px}
-.p-card .clock{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:700;font-size:16px}
-.p-card.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
-.p-card.low .clock{color:var(--danger)}
-.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
-.dot.white{background:#f0f0f0;border:1px solid #999}
-.dot.black{background:#1a1a1a;border:1px solid #666}
-.controls{display:flex;gap:8px;flex-wrap:wrap}
-.status{text-align:center;color:var(--muted);margin:0}
-.warn{color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent);padding:10px 12px;border-radius:10px;font-size:13px;margin:0}
-.setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--panel);border-radius:10px;border:1px solid var(--line);gap:12px}
-#toast-root{position:fixed;top:16px;right:16px;display:flex;flex-direction:column;gap:8px;z-index:100;max-width:320px}
-.toast{padding:12px 14px;border-radius:10px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);opacity:0;transform:translateX(20px);transition:.25s;font-size:13px}
-.toast.show{opacity:1;transform:none}
-.toast.ok{border-left:3px solid var(--accent)}.toast.error{border-left:3px solid var(--danger)}.toast.info{border-left:3px solid var(--accent-2)}
-.modal-backdrop{position:fixed;inset:0;background:#000000aa;display:flex;align-items:center;justify-content:center;z-index:80}
-.modal{background:var(--panel);padding:20px;border-radius:var(--radius);max-width:380px;width:calc(100% - 40px);box-shadow:var(--shadow);border:1px solid var(--line)}
-.modal h3{margin:0 0 12px}.modal .row{display:flex;gap:8px;margin-top:16px}.modal .row button{flex:1}
-.promo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.promo-grid button{font-size:30px;padding:10px 0;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
-.lb-row{display:grid;grid-template-columns:50px 1fr 80px 60px;gap:10px;padding:10px 14px;background:var(--panel);border-radius:10px;border:1px solid var(--line);align-items:center}
-.lb-row.top1{background:linear-gradient(135deg,#b8860b22,#ffd70022);border-color:#ffd70066}
-.lb-row.top2{background:linear-gradient(135deg,#c0c0c022,#e0e0e022);border-color:#c0c0c066}
-.lb-row.top3{background:linear-gradient(135deg,#cd7f3222,#e0a06022);border-color:#cd7f3266}
-.room-code{font-family:ui-monospace,monospace;font-size:22px;font-weight:800;letter-spacing:4px;color:var(--accent);background:var(--panel-2);padding:12px 16px;border-radius:10px;text-align:center;border:2px dashed var(--line)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:560px){.grid2{grid-template-columns:1fr}}
-.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);padding-bottom:0;overflow-x:auto}
-.tabs button{background:transparent;border:none;padding:10px 14px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
-.tabs button.active{color:var(--fg);border-bottom-color:var(--accent)}
-.presence-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);display:inline-block}
-.presence-dot.online{background:var(--accent);box-shadow:0 0 6px var(--accent)}
+/* ============================================================
+   CAZOO Design System
+   ============================================================ */
+:root {
+  /* Surfaces */
+  --bg: #0a0e0d;
+  --surface-1: #111614;
+  --surface-2: #171e1b;
+  --surface-3: #1f2925;
+  --overlay: rgba(6,10,9,.75);
+
+  /* Text */
+  --text: #e9efed;
+  --text-dim: #93a5a0;
+  --text-faint: #5f7069;
+
+  /* Lines */
+  --line: #1c2623;
+  --line-strong: #2a3833;
+
+  /* Brand */
+  --brand: #10b981;
+  --brand-dim: #0d8f65;
+  --brand-soft: rgba(16,185,129,.12);
+  --brand-glow: rgba(16,185,129,.28);
+
+  /* States */
+  --danger: #ef4444;
+  --danger-soft: rgba(239,68,68,.12);
+  --warn: #f59e0b;
+  --warn-soft: rgba(245,158,11,.12);
+  --info: #38bdf8;
+
+  /* Radii */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.35);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.5);
+
+  /* Motion */
+  --ease: cubic-bezier(.32,.72,.24,1);
+  --t-fast: .12s var(--ease);
+  --t-base: .22s var(--ease);
+}
+
+[data-theme="light"] {
+  --bg: #f5f7f6;
+  --surface-1: #ffffff;
+  --surface-2: #f0f3f1;
+  --surface-3: #e6ebe8;
+  --overlay: rgba(255,255,255,.75);
+  --text: #0d1a15;
+  --text-dim: #566862;
+  --text-faint: #88978f;
+  --line: #e3e8e5;
+  --line-strong: #cdd6d1;
+  --brand-soft: rgba(16,185,129,.08);
+  --brand-glow: rgba(16,185,129,.20);
+  --shadow-sm: 0 1px 2px rgba(15,40,30,.06);
+  --shadow-md: 0 4px 16px rgba(15,40,30,.08);
+  --shadow-lg: 0 12px 40px rgba(15,40,30,.12);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 400 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; padding: 0; }
+input, textarea, select { font: inherit; color: inherit; }
+img { max-width: 100%; display: block; }
+[hidden] { display: none !important; }
+::selection { background: var(--brand-glow); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+/* ============================================================
+   Typography
+   ============================================================ */
+h1 { font-size: 22px; font-weight: 600; letter-spacing: -.02em; margin: 0; line-height: 1.25; }
+h2 { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); margin: 24px 0 10px; }
+h3 { font-size: 15px; font-weight: 600; margin: 0; letter-spacing: -.01em; }
+.muted { color: var(--text-dim); }
+.faint { color: var(--text-faint); }
+.mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+.small { font-size: 12px; }
+.tiny { font-size: 11px; }
+strong { font-weight: 600; }
+
+/* ============================================================
+   Layout
+   ============================================================ */
+#app { min-height: 100dvh; display: flex; flex-direction: column; }
+
+.shell { display: flex; flex: 1; min-height: 100dvh; }
+.shell-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+/* Desktop sidebar */
+.nav-side {
+  width: 240px; flex-shrink: 0;
+  background: var(--surface-1);
+  border-right: 1px solid var(--line);
+  display: flex; flex-direction: column;
+  padding: 16px 10px;
+  position: sticky; top: 0; height: 100dvh;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px 20px;
+}
+.nav-brand img { width: 30px; height: 30px; border-radius: 8px; }
+.nav-brand span { font-weight: 700; font-size: 16px; letter-spacing: -.02em; }
+.nav-brand span::first-letter { color: var(--brand); }
+
+.nav-items { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: var(--r-md);
+  color: var(--text-dim); font-size: 14px; font-weight: 500;
+  transition: background var(--t-fast), color var(--t-fast);
+  text-align: left; width: 100%;
+}
+.nav-item svg { width: 18px; height: 18px; flex-shrink: 0; opacity: .8; }
+.nav-item:hover { background: var(--surface-2); color: var(--text); }
+.nav-item.active { background: var(--brand-soft); color: var(--brand); }
+.nav-item.active svg { opacity: 1; }
+
+.nav-footer { padding: 10px; }
+
+/* Mobile bottom nav */
+.nav-bottom {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: color-mix(in srgb, var(--surface-1) 92%, transparent);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--line);
+  padding: 4px 4px calc(4px + env(safe-area-inset-bottom));
+  z-index: 40;
+}
+.nav-bottom-inner { display: grid; grid-template-columns: repeat(5, 1fr); }
+.nav-bottom-item {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 8px 4px; border-radius: 10px;
+  color: var(--text-faint); font-size: 10px; font-weight: 500;
+  transition: color var(--t-fast);
+}
+.nav-bottom-item svg { width: 22px; height: 22px; }
+.nav-bottom-item.active { color: var(--brand); }
+
+/* Desktop vs mobile */
+@media (max-width: 860px) {
+  .nav-side { display: none; }
+  .nav-bottom { display: block; }
+  .shell-main { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
+  .main { padding: 16px 16px 24px; }
+}
+@media (min-width: 861px) {
+  .main { padding: 28px 32px 40px; }
+}
+
+.main { flex: 1; max-width: 960px; width: 100%; margin: 0 auto; }
+
+/* ============================================================
+   Loading screen
+   ============================================================ */
+.loading-screen {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 20px; background: var(--bg); z-index: 100;
+}
+.loading-logo {
+  width: 88px; height: 88px; border-radius: 22px;
+  box-shadow: var(--shadow-lg);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+.loading-bar { width: 160px; height: 3px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+.loading-bar span {
+  display: block; height: 100%; width: 40%;
+  background: linear-gradient(90deg, var(--brand), #34d399);
+  border-radius: 999px;
+  animation: slide 1.4s cubic-bezier(.5,0,.2,1) infinite;
+}
+@keyframes slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(320%); } }
+.loading-screen p { color: var(--text-faint); font-size: 13px; margin: 0; letter-spacing: .02em; }
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 16px; border-radius: var(--r-md);
+  font-size: 14px; font-weight: 500;
+  border: 1px solid var(--line-strong);
+  background: var(--surface-2);
+  color: var(--text);
+  transition: transform var(--t-fast), background var(--t-fast), border-color var(--t-fast), opacity var(--t-fast);
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) { background: var(--surface-3); border-color: var(--text-faint); }
+.btn:active:not(:disabled) { transform: scale(.97); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn svg { width: 16px; height: 16px; }
+
+.btn-primary {
+  background: var(--brand); color: #031a10; border-color: transparent; font-weight: 600;
+  box-shadow: 0 2px 12px var(--brand-glow);
+}
+.btn-primary:hover:not(:disabled) { background: #1ec48f; box-shadow: 0 4px 20px var(--brand-glow); }
+.btn-primary:active:not(:disabled) { transform: scale(.97); }
+
+.btn-danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 35%, transparent); background: var(--danger-soft); }
+.btn-danger:hover:not(:disabled) { background: color-mix(in srgb, var(--danger) 18%, transparent); border-color: var(--danger); }
+
+.btn-ghost { background: transparent; border-color: transparent; color: var(--text-dim); }
+.btn-ghost:hover:not(:disabled) { background: var(--surface-2); color: var(--text); }
+
+.btn-lg { padding: 14px 22px; font-size: 15px; border-radius: var(--r-lg); }
+.btn-block { width: 100%; }
+.btn-icon { width: 36px; height: 36px; padding: 0; border-radius: 10px; }
+
+/* ============================================================
+   Inputs
+   ============================================================ */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field > label { font-size: 12px; font-weight: 500; color: var(--text-dim); letter-spacing: .01em; }
+.input {
+  width: 100%; padding: 11px 14px;
+  border-radius: var(--r-md); border: 1px solid var(--line-strong);
+  background: var(--surface-2); color: var(--text);
+  outline: none; transition: border-color var(--t-fast), background var(--t-fast);
+}
+.input:focus { border-color: var(--brand); background: var(--surface-1); }
+.input::placeholder { color: var(--text-faint); }
+.input-hint { font-size: 11px; color: var(--text-faint); }
+.input-hint.error { color: var(--danger); }
+.input-hint.ok { color: var(--brand); }
+
+/* ============================================================
+   Cards
+   ============================================================ */
+.card {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 16px;
+}
+.card-tight { padding: 12px; }
+
+.row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 12px 14px;
+  background: var(--surface-1); border: 1px solid var(--line);
+  border-radius: var(--r-md); margin-bottom: 8px;
+}
+.row:last-child { margin-bottom: 0; }
+.row-label { color: var(--text-dim); font-size: 13px; }
+.row-value { font-weight: 500; text-align: right; }
+
+/* ============================================================
+   Avatar
+   ============================================================ */
+.avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  object-fit: cover; background: var(--surface-3);
+  border: 2px solid var(--line-strong);
+  flex-shrink: 0;
+}
+.avatar-lg { width: 56px; height: 56px; border-width: 2px; }
+
+/* ============================================================
+   Login
+   ============================================================ */
+.login-wrap {
+  min-height: 100dvh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 32px 24px; gap: 8px; text-align: center;
+}
+.login-logo {
+  width: 96px; height: 96px; border-radius: 26px;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 12px;
+}
+.login-title {
+  font-size: 40px; font-weight: 800; letter-spacing: -.04em;
+  background: linear-gradient(135deg, var(--brand), #34d399);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  margin: 0;
+}
+.login-tag { color: var(--text-dim); margin: 4px 0 28px; font-size: 15px; max-width: 320px; }
+.login-terms { color: var(--text-faint); font-size: 11px; margin-top: 24px; max-width: 320px; line-height: 1.6; }
+
+/* ============================================================
+   Page header
+   ============================================================ */
+.page-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-bottom: 20px;
+}
+.page-head-actions { display: flex; gap: 8px; align-items: center; }
+
+/* ============================================================
+   Dashboard hero
+   ============================================================ */
+.hero {
+  display: flex; align-items: center; gap: 14px;
+  padding: 20px; background: var(--surface-1);
+  border: 1px solid var(--line); border-radius: var(--r-lg);
+  margin-bottom: 16px;
+  background-image: radial-gradient(circle at 0% 0%, var(--brand-soft), transparent 60%);
+}
+.hero-info { flex: 1; min-width: 0; }
+.hero-name { font-size: 16px; font-weight: 600; line-height: 1.3; }
+.hero-user { color: var(--text-dim); font-size: 13px; }
+.hero-rank { text-align: right; }
+.hero-rank-name { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; color: var(--text-dim); margin-bottom: 2px; }
+.hero-rank-rating { font-size: 26px; font-weight: 700; letter-spacing: -.02em; line-height: 1; }
+
+/* Progress to next rank */
+.progress { margin-bottom: 20px; }
+.progress-track { height: 6px; background: var(--surface-3); border-radius: 999px; overflow: hidden; margin-bottom: 8px; }
+.progress-fill { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--brand), #34d399); border-radius: 999px; transition: width .6s var(--ease); }
+.progress-text { font-size: 12px; color: var(--text-dim); }
+
+/* Stats grid */
+.stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 10px; margin-bottom: 24px;
+}
+@media (max-width: 540px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+.stat {
+  padding: 14px; background: var(--surface-1);
+  border: 1px solid var(--line); border-radius: var(--r-md);
+}
+.stat-label { font-size: 10px; font-weight: 600; color: var(--text-faint); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+.stat-value { font-size: 20px; font-weight: 700; letter-spacing: -.02em; line-height: 1; }
+
+/* Mode grid */
+.modes { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.mode {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px; background: var(--surface-1);
+  border: 1px solid var(--line); border-radius: var(--r-lg);
+  text-align: left; width: 100%;
+  transition: transform var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+.mode:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--brand); background: var(--surface-2); }
+.mode:active:not(:disabled) { transform: translateY(0); }
+.mode:disabled { opacity: .45; cursor: not-allowed; }
+.mode-icon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--brand-soft); border-radius: 10px;
+  color: var(--brand);
+}
+.mode-icon svg { width: 22px; height: 22px; }
+.mode-body { flex: 1; min-width: 0; }
+.mode-title { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+.mode-desc { font-size: 12.5px; color: var(--text-dim); line-height: 1.4; }
+
+/* ============================================================
+   Board
+   ============================================================ */
+.board-container {
+  display: flex; flex-direction: column; gap: 12px;
+  width: 100%; max-width: 560px; margin: 0 auto;
+}
+
+.player-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; background: var(--surface-1);
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  transition: border-color var(--t-fast), background var(--t-fast);
+}
+.player-bar.active { border-color: var(--brand); background: var(--brand-soft); }
+.player-bar.low .clock { color: var(--danger); }
+.player-bar .avatar { width: 34px; height: 34px; border-width: 2px; }
+.player-name { flex: 1; min-width: 0; font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.player-color { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.player-color.w { background: #f0f0f0; border: 1px solid #888; }
+.player-color.b { background: #1a1a1a; border: 1px solid #666; }
+.clock {
+  font-variant-numeric: tabular-nums; font-weight: 700;
+  font-size: 18px; letter-spacing: -.01em; padding: 4px 10px;
+  background: var(--surface-2); border-radius: 8px; min-width: 68px; text-align: center;
+  transition: color var(--t-fast), background var(--t-fast);
+}
+.player-bar.active .clock { background: var(--brand); color: #031a10; }
+
+.board-frame {
+  aspect-ratio: 1/1; width: 100%;
+  border-radius: var(--r-md); overflow: hidden;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  user-select: none;
+}
+.board-grid {
+  display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr);
+  width: 100%; height: 100%;
+}
+.sq {
+  position: relative; padding: 0; margin: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: min(9.5vw, 52px); line-height: 1;
+  background: transparent; border: 0;
+  transition: box-shadow var(--t-fast);
+}
+.sq.light { background: #edeed1; }
+.sq.dark { background: #769656; }
+[data-theme="light"] .sq.light { background: #f0d9b5; }
+[data-theme="light"] .sq.dark { background: #b58863; }
+
+.sq.last-from, .sq.last-to { box-shadow: inset 0 0 0 200px rgba(255,206,84,.34); }
+.sq.selected { box-shadow: inset 0 0 0 3px var(--brand); }
+.sq.in-check { background: radial-gradient(circle, #ff4d4d 20%, transparent 72%) !important; }
+
+.sq.legal-empty::after {
+  content: ""; position: absolute;
+  width: 26%; height: 26%; border-radius: 50%;
+  background: rgba(0,0,0,.22);
+  pointer-events: none;
+}
+.sq.legal-capture::after {
+  content: ""; position: absolute; inset: 6%;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 6px rgba(0,0,0,.22);
+  pointer-events: none;
+}
+[data-theme="light"] .sq.legal-empty::after { background: rgba(0,0,0,.18); }
+[data-theme="light"] .sq.legal-capture::after { box-shadow: inset 0 0 0 6px rgba(0,0,0,.18); }
+
+.piece {
+  position: relative; z-index: 1;
+  cursor: grab;
+  pointer-events: auto;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.25));
+  transition: transform var(--t-fast);
+}
+.piece.w { color: #ffffff; -webkit-text-stroke: 1.5px #1a1a1a; }
+.piece.b { color: #141414; -webkit-text-stroke: 1.5px #dcdcdc; }
+.piece:active { cursor: grabbing; }
+.board-frame.locked .piece { pointer-events: none; cursor: default; }
+
+/* Coordinates */
+.coord {
+  position: absolute; font-size: 10px; font-weight: 700;
+  color: rgba(255,255,255,.55); pointer-events: none;
+}
+[data-theme="light"] .coord { color: rgba(0,0,0,.5); }
+.coord-file { bottom: 2px; right: 3px; }
+.coord-rank { top: 2px; left: 3px; }
+.sq.light .coord { color: rgba(90,110,80,.7); }
+[data-theme="light"] .sq.light .coord { color: rgba(140,90,60,.8); }
+
+/* ============================================================
+   Controls under board
+   ============================================================ */
+.board-controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.status-text { text-align: center; font-size: 13px; color: var(--text-dim); margin: 4px 0; min-height: 20px; }
+.status-text.check { color: var(--danger); font-weight: 600; }
+
+/* ============================================================
+   Room / code
+   ============================================================ */
+.code-display {
+  font-family: ui-monospace, monospace; font-size: 20px; font-weight: 700;
+  letter-spacing: .15em; color: var(--brand);
+  background: var(--surface-2); border: 1px dashed var(--line-strong);
+  padding: 14px; border-radius: var(--r-md); text-align: center;
+  word-break: break-all;
+}
+.copy-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* ============================================================
+   Matchmaking spinner
+   ============================================================ */
+.search-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 60px 20px; gap: 20px; text-align: center;
+}
+.spinner {
+  width: 64px; height: 64px; border-radius: 50%;
+  border: 3px solid var(--surface-3); border-top-color: var(--brand);
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.search-status { font-size: 15px; font-weight: 500; }
+.search-hint { color: var(--text-faint); font-size: 13px; max-width: 300px; }
+
+/* ============================================================
+   Leaderboard
+   ============================================================ */
+.lb { display: flex; flex-direction: column; gap: 6px; }
+.lb-row {
+  display: grid; grid-template-columns: 40px 1fr auto auto;
+  gap: 12px; align-items: center;
+  padding: 12px 14px; background: var(--surface-1);
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  transition: background var(--t-fast);
+}
+.lb-row:hover { background: var(--surface-2); }
+.lb-rank {
+  font-size: 15px; font-weight: 700;
+  color: var(--text-faint); text-align: center;
+}
+.lb-row.top1 .lb-rank { color: #ffd700; }
+.lb-row.top2 .lb-rank { color: #c0c0c0; }
+.lb-row.top3 .lb-rank { color: #cd7f32; }
+.lb-name { font-weight: 500; font-size: 14px; }
+.lb-user { color: var(--text-faint); font-size: 12px; }
+.lb-tier { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.lb-rating { font-weight: 700; font-size: 16px; min-width: 44px; text-align: right; }
+
+/* ============================================================
+   Tabs
+   ============================================================ */
+.tabs {
+  display: flex; gap: 4px; padding: 4px;
+  background: var(--surface-2); border-radius: var(--r-md);
+  margin-bottom: 16px; overflow-x: auto;
+}
+.tab {
+  flex: 1; padding: 8px 14px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; color: var(--text-dim);
+  transition: background var(--t-fast), color var(--t-fast);
+  white-space: nowrap;
+}
+.tab:hover { color: var(--text); }
+.tab.active { background: var(--surface-1); color: var(--text); box-shadow: var(--shadow-sm); }
+
+/* ============================================================
+   Empty state
+   ============================================================ */
+.empty {
+  text-align: center; padding: 48px 24px;
+  color: var(--text-faint); font-size: 14px;
+}
+.empty-icon {
+  width: 48px; height: 48px; margin: 0 auto 12px;
+  color: var(--text-faint); opacity: .5;
+}
+
+/* ============================================================
+   Toast
+   ============================================================ */
+#toast-root {
+  position: fixed; top: 16px; right: 16px; left: 16px;
+  display: flex; flex-direction: column; gap: 8px;
+  z-index: 200; pointer-events: none;
+}
+@media (min-width: 600px) { #toast-root { left: auto; max-width: 360px; } }
+.toast {
+  padding: 12px 14px; border-radius: var(--r-md);
+  background: var(--surface-2); border: 1px solid var(--line-strong);
+  box-shadow: var(--shadow-lg);
+  font-size: 13px; font-weight: 500;
+  opacity: 0; transform: translateY(-8px);
+  transition: opacity .2s var(--ease), transform .2s var(--ease);
+  pointer-events: auto;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.ok { border-left: 3px solid var(--brand); }
+.toast.error { border-left: 3px solid var(--danger); }
+.toast.info { border-left: 3px solid var(--info); }
+
+/* ============================================================
+   Modal
+   ============================================================ */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 150;
+  background: rgba(0,0,0,.6); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; animation: fadeIn .15s var(--ease);
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal {
+  background: var(--surface-1); border: 1px solid var(--line-strong);
+  border-radius: var(--r-lg); padding: 22px;
+  max-width: 400px; width: 100%; box-shadow: var(--shadow-lg);
+  animation: slideUp .2s var(--ease);
+}
+@keyframes slideUp { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal h3 { font-size: 17px; margin-bottom: 8px; }
+.modal p { color: var(--text-dim); font-size: 13.5px; margin: 0 0 20px; line-height: 1.5; }
+.modal-actions { display: flex; gap: 8px; }
+.modal-actions .btn { flex: 1; }
+.modal-actions .btn-primary { flex: 1.4; }
+
+.promo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.promo-btn {
+  font-size: 34px; padding: 12px 0;
+  background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: var(--r-md); transition: background var(--t-fast), transform var(--t-fast), border-color var(--t-fast);
+  color: #e9efed; -webkit-text-stroke: 1px #1a1a1a;
+}
+.promo-btn:hover { background: var(--surface-3); border-color: var(--brand); transform: scale(1.04); }
+
+/* ============================================================
+   Utilities
+   ============================================================ */
+.stack { display: flex; flex-direction: column; gap: 12px; }
+.stack-sm { gap: 8px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 560px) { .grid-2 { grid-template-columns: 1fr; } }
+.flex-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.mb-0 { margin-bottom: 0; }
+.mt-4 { margin-top: 4px; }
+.mt-8 { margin-top: 8px; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+
+.banner {
+  padding: 12px 14px; border-radius: var(--r-md);
+  font-size: 13px; line-height: 1.5;
+  background: var(--warn-soft); color: var(--warn);
+  border: 1px solid color-mix(in srgb, var(--warn) 25%, transparent);
+}
+.banner svg { display: inline-block; vertical-align: -2px; margin-right: 6px; }
+
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--text-faint); vertical-align: middle; }
+.dot.online { background: var(--brand); box-shadow: 0 0 8px var(--brand-glow); }
 </style>
 </head>
 <body>
+
 <div id="loading" class="loading-screen">
   <img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="CAZOO" class="loading-logo" />
   <div class="loading-bar"><span></span></div>
@@ -149,7 +669,7 @@ h1{font-size:22px;margin:0}h2{font-size:15px;margin:18px 0 6px;color:var(--muted
 <script type="module">
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
-import { getDatabase, ref, get, set, update, onValue, off, push, remove, serverTimestamp, runTransaction, onDisconnect, query, orderByChild, limitToLast } from "firebase/database";
+import { getDatabase, ref, get, set, update, onValue, push, remove, serverTimestamp, runTransaction, onDisconnect, query, orderByChild, limitToLast } from "firebase/database";
 import { Chess } from "chess.js";
 
 /* ============ FIREBASE ============ */
@@ -169,15 +689,43 @@ const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
 setPersistence(auth, browserLocalPersistence).catch(() => {});
 
-/* ============ PWA MANIFEST INLINE ============ */
+/* ============ PWA ============ */
 (() => {
   const icon = "https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg";
-  const m = { name:"CAZOO", short_name:"CAZOO", start_url:".", display:"standalone", background_color:"#0b0f0d", theme_color:"#0b0f0d",
+  const m = { name:"CAZOO", short_name:"CAZOO", start_url:".", display:"standalone", background_color:"#0a0e0d", theme_color:"#0a0e0d",
     icons:[{src:icon,sizes:"192x192",type:"image/jpeg"},{src:icon,sizes:"512x512",type:"image/jpeg"}] };
   const link = document.createElement("link"); link.rel="manifest";
   link.href = URL.createObjectURL(new Blob([JSON.stringify(m)],{type:"application/manifest+json"}));
   document.head.appendChild(link);
 })();
+
+/* ============ ICONS ============ */
+const ICONS = {
+  home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+  play: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>`,
+  trophy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>`,
+  chart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>`,
+  users: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  clock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+  settings: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+  logout: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>`,
+  bot: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>`,
+  board: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
+  sword: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="19" y1="21" x2="21" y2="19"/></svg>`,
+  link: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
+  copy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`,
+  share: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`,
+  back: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>`,
+  plus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+  refresh: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>`,
+  flip: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`,
+  flag: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>`,
+  search: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+  warn: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  check: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+  x: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  google: `<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.4 1.1 7.3 2.8l5.7-5.7C33.6 7.1 29 5 24 5 13.5 5 5 13.5 5 24s8.5 19 19 19 19-8.5 19-19c0-1.3-.1-2.6-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15 19 12 24 12c2.8 0 5.4 1.1 7.3 2.8l5.7-5.7C33.6 7.1 29 5 24 5 16.3 5 9.7 9.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 43c5 0 9.6-1.9 13-5l-6-5.2c-1.9 1.4-4.3 2.2-7 2.2-5.2 0-9.6-3.4-11.2-8l-6.5 5C9.5 38.6 16.2 43 24 43z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.3 4.1-4.2 5.3l6 5.2C40.2 35.5 43 30.4 43 24c0-1.3-.1-2.6-.4-3.5z"/></svg>`
+};
 
 /* ============ CONSTANTS ============ */
 const ICON = "https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg";
@@ -209,13 +757,18 @@ function toast(msg,kind="info"){
   const r=$("#toast-root"); const el=document.createElement("div");
   el.className="toast "+kind; el.textContent=msg; r.appendChild(el);
   requestAnimationFrame(()=>el.classList.add("show"));
-  setTimeout(()=>{el.classList.remove("show");setTimeout(()=>el.remove(),300);},3200);
+  setTimeout(()=>{el.classList.remove("show");setTimeout(()=>el.remove(),300);},3400);
 }
+
 function confirmDialog(title,msg){
   return new Promise(res=>{
     const b=document.createElement("div"); b.className="modal-backdrop";
-    b.innerHTML=`<div class="modal"><h3>${esc(title)}</h3><p class="muted">${esc(msg)}</p>
-      <div class="row"><button class="btn-ghost" data-no>Batal</button><button class="btn-primary" data-yes>Ya</button></div></div>`;
+    b.innerHTML=`<div class="modal" role="dialog">
+      <h3>${esc(title)}</h3><p>${esc(msg)}</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" data-no>Batal</button>
+        <button class="btn btn-primary" data-yes>Lanjut</button>
+      </div></div>`;
     document.body.appendChild(b);
     const done=v=>{b.remove();res(v);};
     $("[data-no]",b).onclick=()=>done(false);
@@ -223,11 +776,18 @@ function confirmDialog(title,msg){
     b.addEventListener("click",e=>{if(e.target===b)done(false);});
   });
 }
+
 function promotionDialog(){
   return new Promise(res=>{
     const b=document.createElement("div"); b.className="modal-backdrop";
-    b.innerHTML=`<div class="modal"><h3>Promosi</h3><div class="promo-grid">
-      <button data-p="q">♕</button><button data-p="r">♖</button><button data-p="b">♗</button><button data-p="n">♘</button></div></div>`;
+    b.innerHTML=`<div class="modal" role="dialog">
+      <h3>Pilih Promosi</h3><p>Ubah pion menjadi bidak:</p>
+      <div class="promo-grid">
+        <button class="promo-btn" data-p="q">♕</button>
+        <button class="promo-btn" data-p="r">♖</button>
+        <button class="promo-btn" data-p="b">♗</button>
+        <button class="promo-btn" data-p="n">♘</button>
+      </div></div>`;
     document.body.appendChild(b);
     const done=v=>{b.remove();res(v);};
     $$("[data-p]",b).forEach(x=>x.onclick=()=>done(x.dataset.p));
@@ -235,7 +795,7 @@ function promotionDialog(){
   });
 }
 
-/* ============ CHESS BOARD ============ */
+/* ============ BOARD ============ */
 class Board {
   constructor(root,game,opts={}){
     this.root=root; this.game=game;
@@ -248,23 +808,36 @@ class Board {
   setInteractive(v){this.opts.interactive=v;this.root.classList.toggle("locked",!v);}
   highlight(m){this.lastMove=m;this._render();}
   _render(){
-    const r=this.root; r.classList.add("cazoo-board"); r.innerHTML="";
+    const r=this.root; r.classList.add("board-frame"); r.innerHTML="";
     const grid=document.createElement("div"); grid.className="board-grid";
     const files="abcdefgh".split(""), ranks=[8,7,6,5,4,3,2,1];
     const o=this.opts.orientation;
     const fs = o==="w"?files:[...files].reverse();
     const rs = o==="w"?ranks:[...ranks].reverse();
-    const targets = this.selected ? this.game.moves({square:this.selected,verbose:true}).map(m=>m.to) : [];
+    const legalMoves = this.selected ? this.game.moves({square:this.selected,verbose:true}) : [];
+    const legalTargets = legalMoves.map(m=>m.to);
+    const legalCaptures = legalMoves.filter(m=>m.captured || m.flags.includes("e")).map(m=>m.to);
     const inChk = this.game.isCheck?.() ?? this.game.inCheck?.() ?? false;
     const kingSq = inChk ? this._findKing(this.game.turn()) : null;
+
     for(const rk of rs) for(const fl of fs){
       const sq=fl+rk, isLight=(fl.charCodeAt(0)-97+rk)%2===1;
       const btn=document.createElement("button");
-      btn.type="button"; btn.className="sq "+(isLight?"light":"dark"); btn.dataset.square=sq; btn.setAttribute("aria-label",sq);
-      if(this.selected===sq)btn.classList.add("selected");
-      if(this.lastMove&&(this.lastMove.from===sq||this.lastMove.to===sq))btn.classList.add("last-move");
-      if(targets.includes(sq))btn.classList.add("legal-target");
-      if(kingSq===sq)btn.classList.add("in-check");
+      btn.type="button";
+      btn.className="sq "+(isLight?"light":"dark");
+      btn.dataset.square=sq;
+      btn.setAttribute("aria-label",sq);
+
+      if(this.selected===sq) btn.classList.add("selected");
+      if(this.lastMove){
+        if(this.lastMove.from===sq) btn.classList.add("last-from");
+        if(this.lastMove.to===sq) btn.classList.add("last-to");
+      }
+      if(legalTargets.includes(sq)) {
+        btn.classList.add(legalCaptures.includes(sq) ? "legal-capture" : "legal-empty");
+      }
+      if(kingSq===sq) btn.classList.add("in-check");
+
       const p=this.game.get(sq);
       if(p){
         const sp=document.createElement("span");
@@ -274,8 +847,12 @@ class Board {
         btn.appendChild(sp);
       }
       if(this.opts.coordinates){
-        if(fl===fs[fs.length-1]){const x=document.createElement("small");x.className="coord rank";x.textContent=rk;btn.appendChild(x);}
-        if(rk===rs[rs.length-1]){const x=document.createElement("small");x.className="coord file";x.textContent=fl;btn.appendChild(x);}
+        if(fl===fs[fs.length-1]){
+          const x=document.createElement("small"); x.className="coord coord-rank"; x.textContent=rk; btn.appendChild(x);
+        }
+        if(rk===rs[rs.length-1]){
+          const x=document.createElement("small"); x.className="coord coord-file"; x.textContent=fl; btn.appendChild(x);
+        }
       }
       btn.addEventListener("click",()=>this._click(sq));
       btn.addEventListener("dragover",e=>e.preventDefault());
@@ -314,7 +891,7 @@ class Board {
   }
 }
 
-/* ============ AI (minimax alpha-beta) ============ */
+/* ============ AI ============ */
 const PV={p:100,n:320,b:330,r:500,q:900,k:20000};
 const CT=[[0,0,0,0,0,0,0,0],[0,1,1,1,1,1,1,0],[0,1,2,2,2,2,1,0],[0,1,2,3,3,2,1,0],[0,1,2,3,3,2,1,0],[0,1,2,2,2,2,1,0],[0,1,1,1,1,1,1,0],[0,0,0,0,0,0,0,0]];
 function evalB(g){let s=0;for(let r=0;r<8;r++)for(let f=0;f<8;f++){const p=g.get("abcdefgh"[f]+(8-r));if(!p)continue;const sg=p.color==="w"?1:-1;s+=sg*(PV[p.type]+CT[r][f]*5);}return s;}
@@ -336,39 +913,8 @@ async function aiMove(fen,ai,d){
   return best;
 }
 
-/* ============ RATING (Elo) ============ */
+/* ============ ELO ============ */
 function elo(rA,rB,scoreA,gamesA=100){ const K=gamesA<30?40:32; const e=1/(1+Math.pow(10,(rB-rA)/400)); return Math.round(K*(scoreA-e)); }
-
-async function applyRatingResult(uid, opponentUid, result){
-  // result: "win" | "loss" | "draw"
-  const myRef = ref(db, `users/${uid}/ratings/ranked`);
-  const statRef = ref(db, `users/${uid}/statistics/ranked`);
-  await runTransaction(myRef, cur => {
-    const d = cur || {rating:1000,peak:1000,games:0};
-    return d;
-  });
-  const snap = await get(myRef);
-  const oppSnap = await get(ref(db, `users/${opponentUid}/ratings/ranked`));
-  const me = snap.val() || {rating:1000,peak:1000,games:0};
-  const opp = oppSnap.val() || {rating:1000,peak:1000,games:0};
-  const score = result==="win"?1:result==="loss"?0:0.5;
-  const oppScore = 1-score;
-  const delta = elo(me.rating, opp.rating, score, me.games);
-  const oppDelta = elo(opp.rating, me.rating, oppScore, opp.games);
-  const newMe = { rating: me.rating+delta, peak: Math.max(me.peak||0, me.rating+delta), games:(me.games||0)+1, provisional:(me.games||0)+1<10 };
-  const newOpp = { rating: opp.rating+oppDelta, peak: Math.max(opp.peak||0, opp.rating+oppDelta), games:(opp.games||0)+1, provisional:(opp.games||0)+1<10 };
-  await set(myRef, newMe);
-  await set(ref(db, `users/${opponentUid}/ratings/ranked`), newOpp);
-  // Stats
-  const statKey = result==="win"?"wins":result==="loss"?"losses":"draws";
-  const oppKey = result==="win"?"losses":result==="loss"?"wins":"draws";
-  await runTransaction(statRef, c => { const s=c||{wins:0,losses:0,draws:0}; s[statKey]=(s[statKey]||0)+1; return s; });
-  await runTransaction(ref(db, `users/${opponentUid}/statistics/ranked`), c => { const s=c||{wins:0,losses:0,draws:0}; s[oppKey]=(s[oppKey]||0)+1; return s; });
-  // Rating history
-  await push(ref(db, `ratingHistory/${uid}`), { delta, before: me.rating, after: newMe.rating, ts: serverTimestamp() });
-  await push(ref(db, `ratingHistory/${opponentUid}`), { delta: oppDelta, before: opp.rating, after: newOpp.rating, ts: serverTimestamp() });
-  return { delta, newRating: newMe.rating };
-}
 
 /* ============ PRESENCE ============ */
 function setupPresence(uid){
@@ -382,29 +928,32 @@ function setupPresence(uid){
   });
 }
 
-/* ============ STATE & ROUTER ============ */
+/* ============ STATE ============ */
 const state = { user:null, profile:null, cleanup:null, view:"login" };
-
 function renderView(html){ $("#app").innerHTML = html; }
 
+/* ============ LOGIN ============ */
 function renderLogin(){
-  renderView(`<section class="view login">
-    <img class="brand-logo" src="${ICON}" alt="CAZOO" />
-    <h1>CAZOO</h1>
-    <p class="muted">Platform catur online. Bertanding, belajar, naik peringkat.</p>
-    <button class="btn-primary big" id="signin">Masuk dengan Google</button>
-    <p class="fineprint">Dengan masuk, Anda menyetujui Ketentuan Layanan dan Kebijakan Privasi CAZOO.</p>
+  renderView(`<section class="login-wrap">
+    <img class="login-logo" src="${ICON}" alt="CAZOO" />
+    <h1 class="login-title">CAZOO</h1>
+    <p class="login-tag">Platform catur online. Bertanding, belajar, naik peringkat.</p>
+    <button class="btn btn-primary btn-lg" id="signin" style="min-width:260px;">
+      ${ICONS.google}<span>Masuk dengan Google</span>
+    </button>
+    <p class="login-terms">Dengan masuk, Anda menyetujui Ketentuan Layanan dan Kebijakan Privasi CAZOO.</p>
   </section>`);
   $("#signin").onclick = async () => {
-    const b=$("#signin"); b.disabled=true; b.textContent="Menghubungkan…";
+    const b=$("#signin"); b.disabled=true; b.innerHTML="Menghubungkan…";
     try { await signInWithPopup(auth, provider); }
-    catch(err){ toast(mapAuthErr(err.code),"error"); b.disabled=false; b.textContent="Masuk dengan Google"; }
+    catch(err){ toast(mapAuthErr(err.code),"error"); b.disabled=false; b.innerHTML=`${ICONS.google}<span>Masuk dengan Google</span>`; }
   };
 }
 function mapAuthErr(c){
   return {"auth/popup-closed-by-user":"Login dibatalkan.","auth/network-request-failed":"Koneksi bermasalah.","auth/unauthorized-domain":"Domain belum diizinkan di Firebase Console.","auth/popup-blocked":"Popup diblokir.","auth/operation-not-allowed":"Google Sign-In belum diaktifkan."}[c]||"Login gagal: "+c;
 }
 
+/* ============ AUTH STATE ============ */
 onAuthStateChanged(auth, async user => {
   $("#loading").hidden=true; $("#app").hidden=false;
   state.user = user;
@@ -416,34 +965,52 @@ onAuthStateChanged(auth, async user => {
   else renderShell("dashboard");
 });
 
+/* ============ PROFILE SETUP ============ */
 function renderProfileSetup(){
   const u=state.user;
-  renderView(`<section class="view">
-    <h1>Siapkan Profil CAZOO</h1>
-    <p class="muted">Buat identitasmu sebelum memasuki dunia catur CAZOO.</p>
-    <form id="pf" class="form">
-      <label>Username<input name="username" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" autocomplete="off"><small class="hint" data-hint></small></label>
-      <label>Nama Tampilan<input name="displayName" required minlength="2" maxlength="30" value="${esc(u.displayName||"")}"></label>
-      <label>Bio (opsional)<textarea name="bio" maxlength="160" rows="3"></textarea><small class="counter">0/160</small></label>
-      <button class="btn-primary big" type="submit">Simpan & Lanjutkan</button>
-    </form>
-  </section>`);
+  renderView(`<div class="shell">
+    <div class="shell-main">
+      <div class="main" style="max-width:520px;">
+        <div style="padding:32px 0 24px;">
+          <h1>Siapkan Profil</h1>
+          <p class="muted mt-8">Buat identitasmu sebelum memasuki dunia catur CAZOO.</p>
+        </div>
+        <form id="pf" class="stack">
+          <div class="field">
+            <label>Username</label>
+            <input class="input" name="username" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" autocomplete="off" placeholder="cth: pemain_catur">
+            <small class="input-hint" data-hint>3–20 karakter, huruf/angka/underscore.</small>
+          </div>
+          <div class="field">
+            <label>Nama Tampilan</label>
+            <input class="input" name="displayName" required minlength="2" maxlength="30" value="${esc(u.displayName||"")}" placeholder="Nama yang ditampilkan">
+          </div>
+          <div class="field">
+            <label>Bio <span class="faint">(opsional)</span></label>
+            <textarea class="input" name="bio" maxlength="160" rows="3" placeholder="Ceritakan sedikit tentang dirimu…"></textarea>
+            <small class="input-hint" style="text-align:right;">0/160</small>
+          </div>
+          <button class="btn btn-primary btn-lg btn-block mt-8" type="submit">Simpan & Lanjutkan</button>
+        </form>
+      </div>
+    </div>
+  </div>`);
   const f=$("#pf"), ui=f.username, h=$("[data-hint]",f);
   let t;
   ui.addEventListener("input",()=>{
     clearTimeout(t);
     const v=ui.value.trim();
-    if(v.length<3){h.textContent="Min 3 karakter";h.className="hint error";return;}
-    if(!/^[A-Za-z0-9_]+$/.test(v)){h.textContent="Hanya huruf/angka/_";h.className="hint error";return;}
-    if(RESERVED.has(v.toLowerCase())){h.textContent="Dicadangkan";h.className="hint error";return;}
-    h.textContent="Memeriksa…";h.className="hint";
+    if(v.length<3){h.textContent="Minimal 3 karakter.";h.className="input-hint error";return;}
+    if(!/^[A-Za-z0-9_]+$/.test(v)){h.textContent="Hanya huruf, angka, underscore.";h.className="input-hint error";return;}
+    if(RESERVED.has(v.toLowerCase())){h.textContent="Username ini dicadangkan.";h.className="input-hint error";return;}
+    h.textContent="Memeriksa…";h.className="input-hint";
     t=setTimeout(async()=>{
       const s=await get(ref(db,`usernames/${v.toLowerCase()}`));
-      h.textContent=s.exists()?"Sudah dipakai":"Tersedia ✓"; h.className="hint "+(s.exists()?"error":"ok");
+      h.textContent=s.exists()?"Sudah digunakan.":"Tersedia"; h.className="input-hint "+(s.exists()?"error":"ok");
     },300);
   });
   const bio=f.bio;
-  bio.addEventListener("input",()=>f.querySelector(".counter").textContent=`${bio.value.length}/160`);
+  bio.addEventListener("input",()=>f.querySelector(".input-hint:not([data-hint])").textContent=`${bio.value.length}/160`);
   f.addEventListener("submit",async e=>{
     e.preventDefault();
     const un=f.username.value.trim(), dn=f.displayName.value.trim(), bv=f.bio.value.trim();
@@ -473,35 +1040,49 @@ function renderProfileSetup(){
   });
 }
 
-/* ============ APP SHELL ============ */
+/* ============ SHELL ============ */
 const NAV = [
-  {id:"dashboard",label:"Beranda"},
-  {id:"play",label:"Main"},
-  {id:"leaderboard",label:"Leaderboard"},
-  {id:"friends",label:"Teman"},
-  {id:"tournaments",label:"Turnamen"},
-  {id:"history",label:"Riwayat"},
-  {id:"settings",label:"Pengaturan"}
+  {id:"dashboard",label:"Beranda",icon:"home"},
+  {id:"play",label:"Main",icon:"play"},
+  {id:"leaderboard",label:"Rank",icon:"chart"},
+  {id:"friends",label:"Teman",icon:"users"},
+  {id:"settings",label:"Akun",icon:"settings"}
 ];
+const MOBILE_NAV = ["dashboard","play","leaderboard","friends","settings"];
 
 function renderShell(active){
   const p=state.profile;
-  renderView(`<div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand"><img src="${ICON}" alt=""><span>CAZOO</span></div>
-      <nav>
-        ${NAV.map(n=>`<button data-nav="${n.id}" class="${n.id===active?"active":""}">${n.label}</button>`).join("")}
-      </nav>
-      <button class="btn-ghost" data-act="logout">Logout</button>
+  const navItems = NAV.map(n=>`<button class="nav-item ${n.id===active?"active":""}" data-nav="${n.id}">${ICONS[n.icon]}<span>${n.label}</span></button>`).join("");
+  const mobileItems = MOBILE_NAV.map(id=>{
+    const n = NAV.find(x=>x.id===id);
+    return `<button class="nav-bottom-item ${id===active?"active":""}" data-nav="${id}">${ICONS[n.icon]}<span>${n.label}</span></button>`;
+  }).join("");
+
+  renderView(`<div class="shell">
+    <aside class="nav-side">
+      <div class="nav-brand"><img src="${ICON}" alt=""><span>Cazoo</span></div>
+      <div class="nav-items">${navItems}</div>
+      <div class="nav-footer">
+        <button class="nav-item" data-act="logout">${ICONS.logout}<span>Keluar</span></button>
+      </div>
     </aside>
-    <main id="view-root" class="view-root"></main>
-  </div>`);
+    <div class="shell-main">
+      <main id="view-root" class="main"></main>
+    </div>
+  </div>
+  <nav class="nav-bottom">
+    <div class="nav-bottom-inner">${mobileItems}</div>
+  </nav>`);
+
   $$("[data-nav]").forEach(b=>b.addEventListener("click",()=>{
-    $$("[data-nav]").forEach(x=>x.classList.toggle("active",x===b));
-    renderInner(b.dataset.nav);
+    const n=b.dataset.nav;
+    $$("[data-nav]").forEach(x=>x.classList.toggle("active",x.dataset.nav===n));
+    renderInner(n);
+    // scroll top
+    window.scrollTo({top:0,behavior:"smooth"});
   }));
   $('[data-act="logout"]').onclick = async () => {
-    if(!await confirmDialog("Logout?","Anda akan keluar dari akun.")) return;
+    if(!await confirmDialog("Keluar?","Anda akan keluar dari akun CAZOO.")) return;
     await signOut(auth);
   };
   renderInner(active);
@@ -510,73 +1091,119 @@ function renderShell(active){
 function renderInner(name){
   state.cleanup?.(); state.cleanup=null;
   const root=$("#view-root");
-  if(name==="dashboard") state.cleanup=mountDashboard(root);
-  else if(name==="play") state.cleanup=mountPlay(root);
-  else if(name==="leaderboard") state.cleanup=mountLeaderboard(root);
-  else if(name==="friends") state.cleanup=mountFriends(root);
-  else if(name==="tournaments") state.cleanup=mountTournaments(root);
-  else if(name==="history") state.cleanup=mountHistory(root);
-  else if(name==="settings") state.cleanup=mountSettings(root);
-  else state.cleanup=mountDashboard(root);
+  const m = {dashboard:mountDashboard, play:mountPlay, leaderboard:mountLeaderboard, friends:mountFriends, settings:mountSettings}[name] || mountDashboard;
+  state.cleanup = m(root);
 }
 
 /* ============ DASHBOARD ============ */
 function mountDashboard(root){
   const uid=state.user.uid, p=state.profile;
-  root.innerHTML=`<section class="view">
-    <header class="dash-header">
-      <img class="avatar" src="${p.photoURL||ICON}" alt="">
-      <div><strong>${esc(p.displayName)}</strong><span class="muted">@${esc(p.username)}</span></div>
-      <div class="rank-chip"><span class="rank-name" data-rank>—</span><span class="rating" data-rating>—</span></div>
-    </header>
-    <div class="rank-progress"><div class="bar"><span data-bar></span></div><small class="muted" data-prog>—</small></div>
-    <div class="stats-grid">
-      <div class="stat"><small>Rating</small><strong data-s="r">—</strong></div>
-      <div class="stat"><small>Peak</small><strong data-s="pk">—</strong></div>
-      <div class="stat"><small>Game</small><strong data-s="g">—</strong></div>
-      <div class="stat"><small>W / L / D</small><strong data-s="wld">—</strong></div>
+  root.innerHTML=`<section>
+    <div class="hero">
+      <img class="avatar avatar-lg" src="${p.photoURL||ICON}" alt="">
+      <div class="hero-info">
+        <div class="hero-name">${esc(p.displayName)}</div>
+        <div class="hero-user">@${esc(p.username)}</div>
+      </div>
+      <div class="hero-rank">
+        <div class="hero-rank-name" data-rank>—</div>
+        <div class="hero-rank-rating" data-rating>—</div>
+      </div>
     </div>
-    <div class="mode-grid">
-      <button class="mode-card" data-go="play"><h3>Main</h3><p>Ranked, Classic, Teman, Lokal, AI.</p></button>
-      <button class="mode-card" data-go="leaderboard"><h3>Leaderboard</h3><p>Peringkat global.</p></button>
-      <button class="mode-card" data-go="tournaments"><h3>Turnamen</h3><p>Turnamen dengan kode.</p></button>
-      <button class="mode-card" data-go="friends"><h3>Teman</h3><p>Cari & undang pemain.</p></button>
+
+    <div class="progress">
+      <div class="progress-track"><span class="progress-fill" data-bar></span></div>
+      <div class="progress-text" data-prog>—</div>
     </div>
-    <p class="warn">⚠ Model Host-Authoritative: host memvalidasi langkah. Berfungsi penuh, tapi bisa dicurangi host. Untuk anti-cheat sejati, deploy Cloud Functions (lihat README di bagian akhir).</p>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Rating</div><div class="stat-value" data-s="r">—</div></div>
+      <div class="stat"><div class="stat-label">Peak</div><div class="stat-value" data-s="pk">—</div></div>
+      <div class="stat"><div class="stat-label">Game</div><div class="stat-value" data-s="g">—</div></div>
+      <div class="stat"><div class="stat-label">W · L · D</div><div class="stat-value" data-s="wld">—</div></div>
+    </div>
+
+    <h2>Mulai Bermain</h2>
+    <div class="modes">
+      <button class="mode" data-go="play">
+        <div class="mode-icon">${ICONS.sword}</div>
+        <div class="mode-body"><div class="mode-title">Ranked / Classic</div><div class="mode-desc">Matchmaking otomatis. 10 menit.</div></div>
+      </button>
+      <button class="mode" data-go="friend">
+        <div class="mode-icon">${ICONS.link}</div>
+        <div class="mode-body"><div class="mode-title">Lawan Teman</div><div class="mode-desc">Room privat + kode.</div></div>
+      </button>
+      <button class="mode" data-go="local">
+        <div class="mode-icon">${ICONS.board}</div>
+        <div class="mode-body"><div class="mode-title">Lokal</div><div class="mode-desc">Dua pemain, satu perangkat.</div></div>
+      </button>
+      <button class="mode" data-go="ai">
+        <div class="mode-icon">${ICONS.bot}</div>
+        <div class="mode-body"><div class="mode-title">Lawan AI</div><div class="mode-desc">8 level: Easy sampai Crazy.</div></div>
+      </button>
+    </div>
+
+    <div class="banner mt-24">
+      ${ICONS.warn} Model <strong>Host-Authoritative</strong>: host memvalidasi langkah & menghitung rating. Untuk anti-cheat sejati, deploy Cloud Functions.
+    </div>
   </section>`;
+
   $$("[data-go]",root).forEach(b=>b.onclick=()=>{
-    $$("[data-nav]").forEach(x=>x.classList.toggle("active",x.dataset.nav===b.dataset.go));
-    renderInner(b.dataset.go);
+    const target=b.dataset.go;
+    if(target==="friend"){ renderInner("play"); setTimeout(()=>{ const r=$("#view-root"); if(r) mountFriendMenu(r); },50); }
+    else if(target==="local"){ renderInner("play"); setTimeout(()=>{ const r=$("#view-root"); if(r) mountLocalGame(r); },50); }
+    else if(target==="ai"){ renderInner("play"); setTimeout(()=>{ const r=$("#view-root"); if(r) mountAIGame(r); },50); }
+    else renderInner(target);
   });
+
   const o1=onValue(ref(db,`users/${uid}/ratings/ranked`),s=>{
     const d=s.val()||{rating:1000,peak:1000,games:0};
     const rk=rankFor(d.rating);
-    $("[data-rank]",root).textContent=rk.name;
+    const el=$("[data-rank]",root); if(!el) return;
+    el.textContent=rk.name; el.style.color=rk.color;
     $("[data-rating]",root).textContent=d.rating;
     $('[data-s="r"]',root).textContent=d.rating;
     $('[data-s="pk"]',root).textContent=d.peak;
     $('[data-s="g"]',root).textContent=d.games;
     const n=nextRank(d.rating);
-    if(n){ const pct=Math.max(0,Math.min(1,(d.rating-rk.min)/(n.min-rk.min)))*100; $("[data-bar]",root).style.width=pct+"%"; $("[data-prog]",root).textContent=`${Math.round(pct)}% → ${n.name}`; }
-    else { $("[data-bar]",root).style.width="100%"; $("[data-prog]",root).textContent="Rank tertinggi"; }
+    if(n){ const pct=Math.max(0,Math.min(1,(d.rating-rk.min)/(n.min-rk.min)))*100; $("[data-bar]",root).style.width=pct+"%"; $("[data-prog]",root).textContent=`${Math.round(pct)}% menuju ${n.name}`; }
+    else { $("[data-bar]",root).style.width="100%"; $("[data-prog]",root).textContent="Rank tertinggi tercapai"; }
   });
   const o2=onValue(ref(db,`users/${uid}/statistics/ranked`),s=>{
     const v=s.val()||{wins:0,losses:0,draws:0};
-    $('[data-s="wld"]',root).textContent=`${v.wins} / ${v.losses} / ${v.draws}`;
+    const el=$('[data-s="wld"]',root); if(!el) return;
+    el.textContent=`${v.wins} · ${v.losses} · ${v.draws}`;
   });
   return ()=>{o1();o2();};
 }
 
 /* ============ PLAY MENU ============ */
 function mountPlay(root){
-  root.innerHTML=`<section class="view">
-    <h1>Main</h1>
-    <div class="mode-grid">
-      <button class="mode-card" data-m="ranked"><h3>Ranked</h3><p>Matchmaking rating. 3/5/10/15 menit.</p></button>
-      <button class="mode-card" data-m="classic"><h3>Classic</h3><p>Online tanpa rating.</p></button>
-      <button class="mode-card" data-m="friend"><h3>Lawan Teman</h3><p>Room privat + kode.</p></button>
-      <button class="mode-card" data-m="local"><h3>Lokal</h3><p>Satu perangkat, 10 menit.</p></button>
-      <button class="mode-card" data-m="ai"><h3>Lawan AI</h3><p>8 level (minimax asli).</p></button>
+  root.innerHTML=`<section>
+    <div class="page-head">
+      <h1>Main</h1>
+    </div>
+    <div class="modes">
+      <button class="mode" data-m="ranked">
+        <div class="mode-icon">${ICONS.sword}</div>
+        <div class="mode-body"><div class="mode-title">Ranked</div><div class="mode-desc">Pertandingan memengaruhi rating Anda.</div></div>
+      </button>
+      <button class="mode" data-m="classic">
+        <div class="mode-icon">${ICONS.play}</div>
+        <div class="mode-body"><div class="mode-title">Classic</div><div class="mode-desc">Online tanpa rating.</div></div>
+      </button>
+      <button class="mode" data-m="friend">
+        <div class="mode-icon">${ICONS.link}</div>
+        <div class="mode-body"><div class="mode-title">Lawan Teman</div><div class="mode-desc">Buat room privat, bagikan kode.</div></div>
+      </button>
+      <button class="mode" data-m="local">
+        <div class="mode-icon">${ICONS.board}</div>
+        <div class="mode-body"><div class="mode-title">Lokal</div><div class="mode-desc">Dua pemain, satu perangkat, 10 menit.</div></div>
+      </button>
+      <button class="mode" data-m="ai">
+        <div class="mode-icon">${ICONS.bot}</div>
+        <div class="mode-body"><div class="mode-title">Lawan AI</div><div class="mode-desc">8 level, mesin minimax di browser.</div></div>
+      </button>
     </div>
   </section>`;
   $$("[data-m]",root).forEach(b=>b.onclick=()=>{
@@ -586,25 +1213,39 @@ function mountPlay(root){
     else if(m==="friend") mountFriendMenu(root);
     else mountMatchmaking(root,m);
   });
+  return null;
 }
 
 /* ============ LOCAL ============ */
 function mountLocalGame(root){
-  root.innerHTML=`<section class="view">
-    <header class="view-header"><h1>Mode Lokal</h1><button class="btn-ghost" data-back>← Kembali</button></header>
-    <div class="player-strip">
-      <div class="p-card" data-side="b"><span class="dot black"></span><strong>Hitam</strong><span class="clock" data-clock="b">10:00</span></div>
-      <div class="p-card" data-side="w"><span class="dot white"></span><strong>Putih</strong><span class="clock" data-clock="w">10:00</span></div>
+  root.innerHTML=`<section>
+    <div class="page-head">
+      <h1>Mode Lokal</h1>
+      <div class="page-head-actions">
+        <button class="btn btn-ghost btn-icon" data-back title="Kembali">${ICONS.back}</button>
+      </div>
     </div>
-    <div class="board-wrap" id="brd"></div>
-    <p class="status" id="st">Giliran Putih</p>
-    <div class="controls">
-      <button class="btn" data-flip>Balik</button>
-      <button class="btn" data-rst>Ulangi</button>
-      <button class="btn-danger" data-rgn>Menyerah</button>
+    <div class="board-container">
+      <div class="player-bar" data-side="b">
+        <span class="player-color b"></span>
+        <span class="player-name">Hitam</span>
+        <span class="clock" data-clock="b">10:00</span>
+      </div>
+      <div id="brd"></div>
+      <div class="player-bar" data-side="w">
+        <span class="player-color w"></span>
+        <span class="player-name">Putih</span>
+        <span class="clock" data-clock="w">10:00</span>
+      </div>
+      <p class="status-text" id="st">Giliran Putih</p>
+      <div class="board-controls">
+        <button class="btn btn-icon" data-flip title="Balik papan">${ICONS.flip}</button>
+        <button class="btn" data-rst>${ICONS.refresh}<span>Ulangi</span></button>
+        <button class="btn btn-danger" data-rgn>${ICONS.flag}<span>Menyerah</span></button>
+      </div>
     </div>
   </section>`;
-  $("[data-back]",root).onclick=()=>{state.cleanup?.();mountPlay(root);};
+  $("[data-back]",root).onclick=()=>{ state.cleanup?.(); renderInner("play"); };
 
   const g=new Chess(); const INIT=10*60*1000;
   let rem={w:INIT,b:INIT}, last=performance.now(), running=true, raf=null;
@@ -622,21 +1263,23 @@ function mountLocalGame(root){
   function getSt(gg){
     if(gg.isCheckmate()) return {over:true,result:gg.turn()==="w"?"b":"w",reason:"Skakmat"};
     if(gg.isStalemate()) return {over:true,result:"draw",reason:"Pat"};
-    if(gg.isThreefoldRepetition?.()) return {over:true,result:"draw",reason:"Pengulangan 3x"};
-    if(gg.isInsufficientMaterial?.()) return {over:true,result:"draw",reason:"Materi kurang"};
+    if(gg.isThreefoldRepetition?.()) return {over:true,result:"draw",reason:"Pengulangan 3×"};
+    if(gg.isInsufficientMaterial?.()) return {over:true,result:"draw",reason:"Materi tidak cukup"};
     if(gg.isDraw()) return {over:true,result:"draw",reason:"Remis 50 langkah"};
     return {over:false,inChk:gg.isCheck?.() ?? gg.inCheck?.() ?? false};
   }
   function updSt(){
     const s=getSt(g); if(s.over)return;
     const t=g.turn()==="w"?"Putih":"Hitam";
-    $("#st",root).textContent=s.inChk?`SKAK! ${t}`:`Giliran ${t}`;
-    $$(".p-card",root).forEach(c=>c.classList.toggle("active",c.dataset.side===g.turn()));
+    const el=$("#st",root);
+    el.textContent=s.inChk?`Skak! Giliran ${t}`:`Giliran ${t}`;
+    el.classList.toggle("check", s.inChk);
+    $$(".player-bar",root).forEach(c=>c.classList.toggle("active",c.dataset.side===g.turn()));
   }
   function updateClocks(){
     $('[data-clock="w"]',root).textContent=fmt(rem.w);
     $('[data-clock="b"]',root).textContent=fmt(rem.b);
-    $$(".p-card",root).forEach(c=>c.classList.toggle("low",rem[c.dataset.side]<30000));
+    $$(".player-bar",root).forEach(c=>c.classList.toggle("low",rem[c.dataset.side]<30000));
   }
   function tick(){
     if(!running)return;
@@ -647,32 +1290,44 @@ function mountLocalGame(root){
   }
   function finish(s){
     running=false; board.setInteractive(false);
-    const m = s.result==="w"?`Putih menang (${s.reason})`:s.result==="b"?`Hitam menang (${s.reason})`:`Remis (${s.reason})`;
-    $("#st",root).textContent=m; toast(m,"ok");
+    const m = s.result==="w"?`Putih menang — ${s.reason}`:s.result==="b"?`Hitam menang — ${s.reason}`:`Remis — ${s.reason}`;
+    const el=$("#st",root); el.textContent=m; el.classList.remove("check");
+    toast(m,"ok");
   }
   $("[data-flip]",root).onclick=()=>{board.opts.orientation=board.opts.orientation==="w"?"b":"w";board._render();};
-  $("[data-rst]",root).onclick=async()=>{ if(!await confirmDialog("Ulangi?","Papan reset, jam mulai ulang."))return; g.reset();board.setGame(g);rem={w:INIT,b:INIT};running=true;last=performance.now();board.setInteractive(true);updateClocks();updSt();raf=requestAnimationFrame(tick); };
-  $("[data-rgn]",root).onclick=async()=>{ if(!await confirmDialog("Menyerah?","Anda akan dinyatakan kalah."))return; finish({over:true,result:g.turn()==="w"?"b":"w",reason:"Menyerah"}); };
+  $("[data-rst]",root).onclick=async()=>{ if(!await confirmDialog("Ulangi permainan?","Papan akan direset dan jam mulai ulang."))return; g.reset();board.setGame(g);rem={w:INIT,b:INIT};running=true;last=performance.now();board.setInteractive(true);updateClocks();updSt();raf=requestAnimationFrame(tick); };
+  $("[data-rgn]",root).onclick=async()=>{ if(!await confirmDialog("Menyerah?","Pihak yang sedang jalan akan dinyatakan kalah."))return; finish({over:true,result:g.turn()==="w"?"b":"w",reason:"Menyerah"}); };
 
   updateClocks(); updSt(); raf=requestAnimationFrame(tick);
   state.cleanup=()=>{running=false;if(raf)cancelAnimationFrame(raf);};
+  return ()=>{running=false;if(raf)cancelAnimationFrame(raf);};
 }
 
 /* ============ AI ============ */
 function mountAIGame(root){
   let board=null, game=null, aiC="b", level=4, busy=false;
-  root.innerHTML=`<section class="view">
-    <header class="view-header"><h1>Lawan AI</h1><button class="btn-ghost" data-back>← Kembali</button></header>
-    <div class="grid2">
-      <label>Level<select id="lv">${Object.entries(AI_LEVELS).map(([k,v])=>`<option value="${k}" ${k==4?"selected":""}>${k}. ${v.name}</option>`).join("")}</select></label>
-      <label>Warna<select id="cl"><option value="w">Putih</option><option value="b" selected>Hitam</option></select></label>
+  root.innerHTML=`<section>
+    <div class="page-head">
+      <h1>Lawan AI</h1>
+      <button class="btn btn-ghost btn-icon" data-back>${ICONS.back}</button>
     </div>
-    <button class="btn-primary" id="start">Mulai Baru</button>
-    <div class="board-wrap" id="brd"></div>
-    <p class="status" id="st">Klik Mulai Baru.</p>
-    <p class="warn">Minimax alpha-beta (kedalaman 1–4 ply), berjalan di browser. Bukan Stockfish.</p>
+    <div class="grid-2" style="margin-bottom:16px;">
+      <div class="field"><label>Level</label>
+        <select class="input" id="lv">${Object.entries(AI_LEVELS).map(([k,v])=>`<option value="${k}" ${k==4?"selected":""}>${k}. ${v.name}</option>`).join("")}</select>
+      </div>
+      <div class="field"><label>Warna Anda</label>
+        <select class="input" id="cl"><option value="w">Putih</option><option value="b" selected>Hitam</option></select>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-block" id="start" style="margin-bottom:16px;">Mulai Permainan</button>
+    <div class="board-container">
+      <div id="brd"></div>
+      <p class="status-text" id="st">Klik Mulai Permainan.</p>
+    </div>
+    <div class="banner mt-16">${ICONS.warn} Mesin minimax alpha-beta (kedalaman 1–4 ply) berjalan di browser. Bukan Stockfish.</div>
   </section>`;
-  $("[data-back]",root).onclick=()=>{state.cleanup?.();mountPlay(root);};
+  $("[data-back]",root).onclick=()=>{state.cleanup?.();renderInner("play");};
+
   async function start(){
     if(busy)return;
     game=new Chess();
@@ -681,7 +1336,7 @@ function mountAIGame(root){
     if(board) board.setGame(game);
     else board=new Board($("#brd",root),game,{orientation:$("#cl",root).value,onPromotion:promotionDialog,onMove:async()=>{ if(chkEnd())return; await aiTurn(); }});
     board.opts.orientation=$("#cl",root).value; board._render(); board.setInteractive(true);
-    $("#st",root).textContent="Mulai.";
+    $("#st",root).textContent="Permainan dimulai.";
     if(aiC==="w") await aiTurn();
   }
   async function aiTurn(){
@@ -697,47 +1352,31 @@ function mountAIGame(root){
     let m=null;
     if(game.isCheckmate()) m=`Skakmat — ${game.turn()==="w"?"Hitam":"Putih"} menang`;
     else if(game.isStalemate()) m="Pat — Remis";
-    else if(game.isThreefoldRepetition?.()) m="Pengulangan 3x — Remis";
-    else if(game.isInsufficientMaterial?.()) m="Materi kurang — Remis";
-    else if(game.isDraw()) m="Remis 50 langkah";
+    else if(game.isThreefoldRepetition?.()) m="Pengulangan 3× — Remis";
+    else if(game.isInsufficientMaterial?.()) m="Materi tidak cukup — Remis";
+    else if(game.isDraw()) m="Remis — 50 langkah";
     if(m){ $("#st",root).textContent=m; board.setInteractive(false); toast(m,"ok"); return true; }
     return false;
   }
   $("#start",root).onclick=start;
-  state.cleanup=()=>{busy=false;};
+  return ()=>{busy=false;};
 }
 
 /* ================================================================
-   ONLINE — HOST-AUTHORITATIVE
-   Skema:
-     /rooms/{id} = {
-       host:{uid,name,color}, guest:{uid,name,color},
-       timeMs, tcMinutes, mode, status:"waiting|ready|playing|ended",
-       fen, moves:[], turn:"w", createdAt,
-       hostReady, guestReady,
-       clocks:{w:ms,b:ms}, lastTickAt:{w:ts,b:ts},
-       result:{winner,reason,at}, rated
-     }
-     /rooms/{id}/moveRequests/{seq} = {from,to,promotion,byUid,ts}
-     /rooms/{id}/clockSync = {w, b, ts, turn} (ditulis host)
+   ONLINE
    ================================================================ */
-
 async function createRoom({mode="friend",tcMinutes=10,hostColor="w"}){
   const uid=state.user.uid, p=state.profile;
-  const id = uid8()+uid8(); // 16 char hex
+  const id = uid8()+uid8();
   const room = {
     id, mode, tcMinutes, timeMs: TC[tcMinutes]||TC[10],
     host:{uid,name:p.displayName,color:hostColor},
-    guest:null,
-    status:"waiting",
-    fen:new Chess().fen(),
-    moves:[],
-    turn:"w",
+    guest:null, status:"waiting",
+    fen:new Chess().fen(), moves:[], turn:"w",
     clocks:{w:TC[tcMinutes]||TC[10], b:TC[tcMinutes]||TC[10]},
     lastTickAt:{w:Date.now(), b:Date.now()},
     hostReady:false, guestReady:false,
-    createdAt:Date.now(),
-    rated: mode==="ranked"
+    createdAt:Date.now(), rated: mode==="ranked"
   };
   await set(ref(db,`rooms/${id}`), room);
   return id;
@@ -749,87 +1388,101 @@ async function joinRoom(roomId){
   if(!rSnap.exists()) throw new Error("Room tidak ditemukan.");
   const r = rSnap.val();
   if(r.host.uid===uid) return r;
-  if(r.guest && r.guest.uid!==uid) throw new Error("Room penuh.");
+  if(r.guest && r.guest.uid!==uid) throw new Error("Room sudah penuh.");
   if(r.guest?.uid===uid) return r;
   if(r.status==="ended") throw new Error("Room sudah selesai.");
   if(r.mode==="ranked") throw new Error("Room ranked tidak bisa digabung manual.");
   const guestColor = r.host.color==="w"?"b":"w";
-  await update(ref(db,`rooms/${roomId}`), {
-    guest:{uid,name:p.displayName,color:guestColor},
-    status:"ready"
-  });
+  await update(ref(db,`rooms/${roomId}`), { guest:{uid,name:p.displayName,color:guestColor}, status:"ready" });
   const s = await get(ref(db,`rooms/${roomId}`));
   return s.val();
 }
 
 function mountFriendMenu(root){
-  root.innerHTML=`<section class="view">
-    <header class="view-header"><h1>Lawan Teman</h1><button class="btn-ghost" data-back>←</button></header>
-    <div class="grid2">
-      <div>
-        <h2>Buat Room</h2>
-        <label>Kontrol waktu<select id="tc"><option value="3">3 menit</option><option value="5">5 menit</option><option value="10" selected>10 menit</option><option value="15">15 menit</option></select></label>
-        <label>Warna Anda<select id="hc"><option value="w">Putih</option><option value="b">Hitam</option><option value="r">Acak</option></select></label>
-        <button class="btn-primary" id="mk" style="margin-top:10px;">Buat Room</button>
+  root.innerHTML=`<section>
+    <div class="page-head">
+      <h1>Lawan Teman</h1>
+      <button class="btn btn-ghost btn-icon" data-back>${ICONS.back}</button>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h3 style="margin-bottom:14px;">Buat Room</h3>
+        <div class="stack">
+          <div class="field"><label>Kontrol waktu</label>
+            <select class="input" id="tc"><option value="3">3 menit</option><option value="5">5 menit</option><option value="10" selected>10 menit</option><option value="15">15 menit</option></select>
+          </div>
+          <div class="field"><label>Warna Anda</label>
+            <select class="input" id="hc"><option value="w">Putih</option><option value="b">Hitam</option><option value="r">Acak</option></select>
+          </div>
+          <button class="btn btn-primary btn-block" id="mk">${ICONS.plus}<span>Buat Room</span></button>
+        </div>
       </div>
-      <div>
-        <h2>Gabung Room</h2>
-        <label>Kode Room<input id="jc" placeholder="Contoh: a1b2c3d4" autocomplete="off"></label>
-        <button class="btn-primary" id="jn" style="margin-top:10px;">Gabung</button>
+      <div class="card">
+        <h3 style="margin-bottom:14px;">Gabung Room</h3>
+        <div class="stack">
+          <div class="field"><label>Kode Room</label>
+            <input class="input mono" id="jc" placeholder="cth: a1b2c3d4e5f6" autocomplete="off" spellcheck="false">
+          </div>
+          <button class="btn btn-primary btn-block" id="jn">${ICONS.link}<span>Gabung</span></button>
+        </div>
       </div>
     </div>
   </section>`;
-  $("[data-back]",root).onclick=()=>{state.cleanup?.();mountPlay(root);};
+  $("[data-back]",root).onclick=()=>{state.cleanup?.();renderInner("play");};
   $("#mk",root).onclick=async()=>{
     let hc=$("#hc",root).value;
     if(hc==="r") hc=Math.random()<0.5?"w":"b";
     const tc=Number($("#tc",root).value);
     try{
       const id=await createRoom({mode:"friend",tcMinutes:tc,hostColor:hc});
-      toast("Room dibuat: "+id.slice(0,8),"ok");
+      toast("Room dibuat","ok");
       mountRoomView(root,id,true);
     }catch(e){toast("Gagal buat room: "+e.message,"error");}
   };
   $("#jn",root).onclick=async()=>{
     const id=$("#jc",root).value.trim();
     if(id.length<6){toast("Kode tidak valid","error");return;}
-    try{
-      await joinRoom(id);
-      toast("Bergabung ke room","ok");
-      mountRoomView(root,id,false);
-    }catch(e){toast(e.message,"error");}
+    try{ await joinRoom(id); toast("Bergabung ke room","ok"); mountRoomView(root,id,false); }
+    catch(e){toast(e.message,"error");}
   };
+  return null;
 }
 
 function mountRoomView(root, roomId, isHost){
   const uid=state.user.uid;
-  let board=null, game=new Chess(), isMyTurn=false, roomData=null, myColor=null, cleanupFns=[];
-  let lastMoveSeen = 0;
-  let clockRaf = null;
-  let gameOver = false;
+  let board=null, game=new Chess(), isMyTurn=false, roomData=null, myColor=null;
+  let lastMoveSeen = 0, clockInt=null, gameOver=false;
+  const cleanupFns=[];
 
-  root.innerHTML=`<section class="view">
-    <header class="view-header">
-      <h1>Room ${roomId.slice(0,8)}</h1>
-      <button class="btn-ghost" data-leave>Keluar</button>
-    </header>
-    <div class="room-code" data-code>${roomId.slice(0,8)}</div>
-    <p class="muted" style="text-align:center;font-size:12px;">Bagikan kode lengkap atau link:</p>
-    <div style="display:flex;gap:8px;">
-      <button class="btn" data-copy style="flex:1;">Salin Kode</button>
-      <button class="btn" data-share style="flex:1;">Bagikan Link</button>
+  root.innerHTML=`<section>
+    <div class="page-head">
+      <h1>Room</h1>
+      <button class="btn btn-ghost btn-icon" data-leave>${ICONS.back}</button>
     </div>
-    <div class="player-strip">
-      <div class="p-card" data-side="w"><span class="dot white"></span><strong data-n="w">—</strong><span class="clock" data-c="w">--:--</span></div>
-      <div class="p-card" data-side="b"><span class="dot black"></span><strong data-n="b">—</strong><span class="clock" data-c="b">--:--</span></div>
+    <div class="card mb-0" style="margin-bottom:16px;">
+      <div class="code-display" style="margin-bottom:12px;">${roomId}</div>
+      <div class="copy-row">
+        <button class="btn" data-copy>${ICONS.copy}<span>Salin Kode</span></button>
+        <button class="btn" data-share>${ICONS.share}<span>Bagikan</span></button>
+      </div>
     </div>
-    <div class="board-wrap" id="brd"></div>
-    <p class="status" id="st">Menunggu lawan…</p>
-    <div class="controls" data-controls></div>
+    <div class="board-container">
+      <div class="player-bar" data-side="b">
+        <span class="player-color b"></span>
+        <span class="player-name" data-n="b">—</span>
+        <span class="clock" data-c="b">--:--</span>
+      </div>
+      <div id="brd"></div>
+      <div class="player-bar" data-side="w">
+        <span class="player-color w"></span>
+        <span class="player-name" data-n="w">—</span>
+        <span class="clock" data-c="w">--:--</span>
+      </div>
+      <p class="status-text" id="st">Menunggu lawan…</p>
+      <div class="board-controls" data-controls></div>
+    </div>
   </section>`;
 
-  const codeEl = $("[data-code]",root);
-  codeEl.textContent = roomId; // full code
   $("[data-copy]",root).onclick=async()=>{ await navigator.clipboard.writeText(roomId); toast("Kode disalin","ok"); };
   $("[data-share]",root).onclick=async()=>{
     const url = location.origin+location.pathname+"#join="+roomId;
@@ -837,57 +1490,40 @@ function mountRoomView(root, roomId, isHost){
     else { await navigator.clipboard.writeText(url); toast("Link disalin","ok"); }
   };
   $("[data-leave]",root).onclick=async()=>{
-    if(!await confirmDialog("Keluar?","Jika Anda host, room akan dihapus.")) return;
+    if(!await confirmDialog("Keluar dari room?","Room akan ditutup.")) return;
     try{ if(isHost) await remove(ref(db,`rooms/${roomId}`)); else await update(ref(db,`rooms/${roomId}`), {guest:null,status:"waiting"}); }catch{}
-    state.cleanup?.(); mountPlay(root);
+    state.cleanup?.(); renderInner("play");
   };
 
-  // Room listener
   const offRoom = onValue(ref(db,`rooms/${roomId}`), snap => {
-    if(!snap.exists()){ toast("Room dihapus","error"); state.cleanup?.(); mountPlay(root); return; }
+    if(!snap.exists()){ toast("Room dihapus","error"); state.cleanup?.(); renderInner("play"); return; }
     const r = snap.val(); roomData = r;
 
-    // Detect my color
     if(r.host.uid===uid) myColor = r.host.color;
     else if(r.guest?.uid===uid) myColor = r.guest.color;
 
-    // Update names
     $('[data-n="w"]',root).textContent = r.host.color==="w"?r.host.name:(r.guest?.name||"Menunggu…");
     $('[data-n="b"]',root).textContent = r.host.color==="b"?r.host.name:(r.guest?.name||"Menunggu…");
 
-    // Reload game if moves changed
     if((r.moves||[]).length !== lastMoveSeen){
       lastMoveSeen = (r.moves||[]).length;
       game = new Chess();
       for(const m of r.moves||[]) { try{ game.move(m); }catch{} }
-      if(!board){
-        board = new Board($("#brd",root), game, {
-          orientation: myColor||"w",
-          interactive: false,
-          onPromotion: promotionDialog,
-          onMove: (mv)=>{} // di-override di bawah
-        });
-      } else board.setGame(game);
+      if(!board) board = new Board($("#brd",root), game, {orientation: myColor||"w", interactive:false, onPromotion:promotionDialog, onMove:()=>{}});
+      else board.setGame(game);
       if(r.moves?.length) board.highlight(r.moves[r.moves.length-1]);
     }
 
-    // Status & controls
     updateStatusAndControls(r);
 
-    // My turn?
     isMyTurn = r.status==="playing" && r.turn===myColor && !r.result;
-    if(board && myColor) {
-      board.setOrientation(myColor);
-      board.setInteractive(isMyTurn);
-    }
+    if(board && myColor) { board.setOrientation(myColor); board.setInteractive(isMyTurn); }
 
-    // Game ended
     if(r.result && !gameOver){
       gameOver = true;
-      const w = r.result.winner; // "w"|"b"|"draw"
-      let msg = w==="draw" ? `Remis (${r.result.reason})` :
-        (w===myColor ? `Menang! (${r.result.reason})` : `Kalah (${r.result.reason})`);
-      $("#st",root).textContent = msg;
+      const w = r.result.winner;
+      let msg = w==="draw" ? `Remis — ${r.result.reason}` : (w===myColor ? `Anda menang — ${r.result.reason}` : `Anda kalah — ${r.result.reason}`);
+      const el=$("#st",root); el.textContent=msg; el.classList.remove("check");
       toast(msg, w===myColor?"ok":"error");
     }
   });
@@ -896,7 +1532,6 @@ function mountRoomView(root, roomId, isHost){
   function updateStatusAndControls(r){
     const st = $("#st",root);
     const ctr = $("[data-controls]",root);
-
     if(!r.guest){
       st.textContent = "Menunggu lawan bergabung…";
       ctr.innerHTML = "";
@@ -905,17 +1540,12 @@ function mountRoomView(root, roomId, isHost){
     if(r.status==="ready"){
       st.textContent = `Lawan bergabung: ${r.guest.name}`;
       const myReady = r.host.uid===uid ? r.hostReady : r.guestReady;
-      ctr.innerHTML = myReady
-        ? `<button class="btn" data-unready>Batal Siap</button>`
-        : `<button class="btn-primary" data-ready>Siap</button>`;
+      ctr.innerHTML = myReady ? `<button class="btn btn-ghost" data-unready>Batal Siap</button>` : `<button class="btn btn-primary" data-ready>${ICONS.check}<span>Siap</span></button>`;
       $("[data-ready]",ctr)?.addEventListener("click", async ()=>{
         const key = r.host.uid===uid?"hostReady":"guestReady";
         await update(ref(db,`rooms/${roomId}`),{[key]:true});
-        // Cek apakah keduanya siap & host memulai
         const fresh = (await get(ref(db,`rooms/${roomId}`))).val();
-        if(fresh.hostReady && fresh.guestReady && r.host.uid===uid){
-          await startGame(fresh);
-        }
+        if(fresh.hostReady && fresh.guestReady && r.host.uid===uid) await startGame(fresh);
       });
       $("[data-unready]",ctr)?.addEventListener("click", async ()=>{
         const key = r.host.uid===uid?"hostReady":"guestReady";
@@ -926,102 +1556,78 @@ function mountRoomView(root, roomId, isHost){
     if(r.status==="playing"){
       st.textContent = r.result ? "Selesai" : `Giliran ${r.turn==="w"?"Putih":"Hitam"}${r.turn===myColor?" (Anda)":""}`;
       ctr.innerHTML = `
-        <button class="btn" data-flip>Balik</button>
-        <button class="btn-danger" data-resign>Menyerah</button>
-        <button class="btn" data-draw>Ajukan Remis</button>`;
+        <button class="btn btn-icon" data-flip title="Balik">${ICONS.flip}</button>
+        <button class="btn btn-danger" data-resign>${ICONS.flag}<span>Menyerah</span></button>`;
       $("[data-flip]",ctr).onclick=()=>{ if(board){ board.opts.orientation=board.opts.orientation==="w"?"b":"w"; board._render(); } };
       $("[data-resign]",ctr).onclick=async()=>{
-        if(!await confirmDialog("Menyerah?","Anda kalah.")) return;
+        if(!await confirmDialog("Menyerah?","Anda akan dinyatakan kalah.")) return;
         const winner = myColor==="w"?"b":"w";
         await update(ref(db,`rooms/${roomId}`), { result:{winner,reason:"Menyerah",at:Date.now()}, status:"ended" });
         if(r.rated && r.host.uid===uid) await finishRated(r, winner);
       };
-      $("[data-draw]",ctr).onclick=()=>toast("Ajukan remis ke lawan (implementasi dialog lanjutan di roadmap).","info");
       return;
     }
     if(r.status==="ended"){
-      ctr.innerHTML = `<button class="btn-primary" data-rematch>Rematch</button><button class="btn-ghost" data-backplay>Menu</button>`;
+      ctr.innerHTML = `<button class="btn btn-primary" data-rematch>${ICONS.refresh}<span>Rematch</span></button><button class="btn btn-ghost" data-backplay>Menu</button>`;
       $("[data-rematch]",ctr).onclick=async()=>{
         if(r.host.uid===uid){
           await update(ref(db,`rooms/${roomId}`),{ fen:new Chess().fen(), moves:[], turn:"w", status:"ready", hostReady:false, guestReady:false, result:null,
             clocks:{w:r.timeMs,b:r.timeMs}, lastTickAt:{w:Date.now(),b:Date.now()} });
-          lastMoveSeen=0;
+          lastMoveSeen=0; gameOver=false;
         } else toast("Menunggu host memulai ulang.","info");
       };
-      $("[data-backplay]",ctr).onclick=()=>{ state.cleanup?.(); mountPlay(root); };
+      $("[data-backplay]",ctr).onclick=()=>{ state.cleanup?.(); renderInner("play"); };
     }
-  }
-
-  // ========== HOST: set up board onMove that writes to RTDB ==========
-  // We attach an override after board created
-  async function ensureBoardHook(){
-    if(!board) return;
-    board.opts.onPromotion = promotionDialog;
-    board.opts.onMove = async (mv) => {
-      // HOST-only: validasi sudah dilakukan oleh chess.js saat move.
-      if(!isHost) return;
-      const r = (await get(ref(db,`rooms/${roomId}`))).val();
-      if(!r || r.status!=="playing" || r.result) return;
-      const now = Date.now();
-      const prevTurn = r.turn === "w" ? "b" : "w";
-      // Hitung sisa waktu pemain yang baru selesai
-      const turnJustMoved = r.turn;
-      const elapsed = now - (r.lastTickAt?.[turnJustMoved] || now);
-      const newClocks = { ...(r.clocks||{}), [turnJustMoved]: Math.max(0, (r.clocks?.[turnJustMoved]||r.timeMs) - elapsed) };
-      if(newClocks[turnJustMoved] <= 0){
-        const winner = turnJustMoved === "w" ? "b" : "w";
-        await update(ref(db,`rooms/${roomId}`), { result:{winner,reason:"Waktu habis",at:now}, status:"ended" });
-        if(r.rated) await finishRated(r, winner);
-        return;
-      }
-      // Serialize move ke SAN-like object agar bisa di-replay
-      const sanObj = { from: mv.from, to: mv.to, promotion: mv.promotion||"q" };
-      const newMoves = [...(r.moves||[]), sanObj];
-      const newLast = { ...(r.lastTickAt||{}), [prevTurn]: now };
-      const newFen = game.fen();
-      // Cek skakmat / pat
-      let result = null;
-      if(game.isCheckmate()) result = { winner: turnJustMoved, reason:"Skakmat", at:now };
-      else if(game.isStalemate()) result = { winner:"draw", reason:"Pat", at:now };
-      else if(game.isThreefoldRepetition?.()) result = { winner:"draw", reason:"Pengulangan 3x", at:now };
-      else if(game.isInsufficientMaterial?.()) result = { winner:"draw", reason:"Materi kurang", at:now };
-      else if(game.isDraw()) result = { winner:"draw", reason:"Remis 50 langkah", at:now };
-
-      const updates = {
-        fen:newFen, moves:newMoves,
-        turn: prevTurn, // giliran berganti
-        clocks:newClocks,
-        lastTickAt:newLast
-      };
-      if(result){ updates.result=result; updates.status="ended"; }
-      await update(ref(db,`rooms/${roomId}`), updates);
-      if(result && r.rated) await finishRated(r, result.winner);
-    };
   }
 
   async function startGame(fresh){
     await update(ref(db,`rooms/${roomId}`), {
-      status:"playing",
-      fen:new Chess().fen(),
-      moves:[],
-      turn:"w",
+      status:"playing", fen:new Chess().fen(), moves:[], turn:"w",
       clocks:{w:fresh.timeMs, b:fresh.timeMs},
-      lastTickAt:{w:Date.now(), b:Date.now()},
-      result:null
+      lastTickAt:{w:Date.now(), b:Date.now()}, result:null
     });
-    lastMoveSeen = 0;
+    lastMoveSeen = 0; gameOver=false;
   }
 
-  // Attach board hook after we know color (Board dibuat di listener)
+  // Hook board for host
   const waitBoard = setInterval(()=>{
     if(board){
-      ensureBoardHook();
+      board.opts.onPromotion = promotionDialog;
+      board.opts.onMove = async (mv) => {
+        if(!isHost) return;
+        const r = (await get(ref(db,`rooms/${roomId}`))).val();
+        if(!r || r.status!=="playing" || r.result) return;
+        const now = Date.now();
+        const prevTurn = r.turn === "w" ? "b" : "w";
+        const turnJustMoved = r.turn;
+        const elapsed = now - (r.lastTickAt?.[turnJustMoved] || now);
+        const newClocks = { ...(r.clocks||{}), [turnJustMoved]: Math.max(0, (r.clocks?.[turnJustMoved]||r.timeMs) - elapsed) };
+        if(newClocks[turnJustMoved] <= 0){
+          const winner = turnJustMoved === "w" ? "b" : "w";
+          await update(ref(db,`rooms/${roomId}`), { result:{winner,reason:"Waktu habis",at:now}, status:"ended" });
+          if(r.rated) await finishRated(r, winner);
+          return;
+        }
+        const sanObj = { from: mv.from, to: mv.to, promotion: mv.promotion||"q" };
+        const newMoves = [...(r.moves||[]), sanObj];
+        const newLast = { ...(r.lastTickAt||{}), [prevTurn]: now };
+        let result = null;
+        if(game.isCheckmate()) result = { winner: turnJustMoved, reason:"Skakmat", at:now };
+        else if(game.isStalemate()) result = { winner:"draw", reason:"Pat", at:now };
+        else if(game.isThreefoldRepetition?.()) result = { winner:"draw", reason:"Pengulangan 3×", at:now };
+        else if(game.isInsufficientMaterial?.()) result = { winner:"draw", reason:"Materi tidak cukup", at:now };
+        else if(game.isDraw()) result = { winner:"draw", reason:"Remis 50 langkah", at:now };
+
+        const updates = { fen:game.fen(), moves:newMoves, turn: prevTurn, clocks:newClocks, lastTickAt:newLast };
+        if(result){ updates.result=result; updates.status="ended"; }
+        await update(ref(db,`rooms/${roomId}`), updates);
+        if(result && r.rated) await finishRated(r, result.winner);
+      };
       clearInterval(waitBoard);
     }
   }, 300);
   cleanupFns.push(()=>clearInterval(waitBoard));
 
-  // Clock render
   function renderClocks(){
     const r = roomData; if(!r || !r.clocks) return;
     const now = Date.now();
@@ -1029,19 +1635,24 @@ function mountRoomView(root, roomId, isHost){
     const b = r.result ? (r.clocks.b||0) : (r.turn==="b" ? Math.max(0,(r.clocks.b||0) - (now - (r.lastTickAt?.b||now))) : (r.clocks.b||0));
     $('[data-c="w"]',root).textContent = fmt(w);
     $('[data-c="b"]',root).textContent = fmt(b);
+    $$(".player-bar",root).forEach(el=>el.classList.toggle("active", el.dataset.side===r.turn && !r.result));
+    $$(".player-bar",root).forEach(el=>{
+      const ms = el.dataset.side==="w"?w:b;
+      el.classList.toggle("low", ms<30000);
+    });
   }
-  clockRaf = setInterval(renderClocks, 250);
-  cleanupFns.push(()=>clearInterval(clockRaf));
+  clockInt = setInterval(renderClocks, 250);
+  cleanupFns.push(()=>clearInterval(clockInt));
 
   state.cleanup=()=>{cleanupFns.forEach(f=>{try{f();}catch{}});};
+  return ()=>{cleanupFns.forEach(f=>{try{f();}catch{}});};
 }
 
 async function finishRated(r, winner){
-  // HOST-only: hitung Elo & update kedua pemain
   if(r.host.uid!==state.user.uid) return;
   const hostUid = r.host.uid, guestUid = r.guest?.uid;
   if(!guestUid) return;
-  const hColor = r.host.color, gColor = r.guest.color;
+  const hColor = r.host.color;
   const scoreHost = winner==="draw"?0.5 : winner===hColor ? 1 : 0;
   const scoreGuest = 1 - scoreHost;
   try{
@@ -1061,63 +1672,71 @@ async function finishRated(r, winner){
     await runTransaction(ref(db,`users/${guestUid}/statistics/ranked`), c=>{ const s=c||{wins:0,losses:0,draws:0}; s[gKey]=(s[gKey]||0)+1; return s; });
     await push(ref(db,`ratingHistory/${hostUid}`), { delta:dH, before:h.rating, after:newH.rating, ts:Date.now() });
     await push(ref(db,`ratingHistory/${guestUid}`), { delta:dG, before:g.rating, after:newG.rating, ts:Date.now() });
-    toast(`Rating Anda: ${dH>=0?"+":""}${dH} → ${newH.rating}`, "info");
+    toast(`Rating: ${dH>=0?"+":""}${dH} → ${newH.rating}`, "info");
   }catch(e){ console.error("finishRated:",e); }
 }
 
-/* ============ MATCHMAKING (Ranked / Classic) ============ */
+/* ============ MATCHMAKING ============ */
 function mountMatchmaking(root, mode){
   const uid=state.user.uid, p=state.profile;
   const tcMinutes = 10;
   const queueRef = ref(db, `matchmaking/${mode}/queue`);
-  let searching = false;
-  let pollTimer = null;
-  let myQueuedAt = null;
-  let cleanupFns = [];
+  let searching = false, pollTimer = null, myQueuedAt = null;
+  const cleanupFns = [];
 
-  root.innerHTML=`<section class="view">
-    <header class="view-header"><h1>${mode==="ranked"?"Ranked":"Classic"}</h1><button class="btn-ghost" data-back>←</button></header>
-    <p class="muted">${mode==="ranked"?"Pertandingan memengaruhi rating.":"Tanpa rating."} Kontrol waktu 10 menit.</p>
-    <div class="setting-row"><span>Rating Anda</span><strong data-myrating>—</strong></div>
-    <div style="display:flex;flex-direction:column;gap:10px;align-items:center;padding:30px 0;">
-      <div data-spinner hidden style="width:60px;height:60px;border-radius:50%;border:4px solid var(--panel-2);border-top-color:var(--accent);animation:spin 1s linear infinite;"></div>
-      <p class="status" data-st>Belum mencari lawan.</p>
-      <button class="btn-primary big" data-search>Cari Lawan</button>
+  root.innerHTML=`<section>
+    <div class="page-head">
+      <h1>${mode==="ranked"?"Ranked":"Classic"}</h1>
+      <button class="btn btn-ghost btn-icon" data-back>${ICONS.back}</button>
+    </div>
+    <div class="card mb-0" style="margin-bottom:20px;">
+      <div class="row" style="border:none;background:transparent;padding:0;">
+        <span class="row-label">Kontrol waktu</span><span class="row-value">10 menit</span>
+      </div>
+      ${mode==="ranked"?`<div class="row" style="border:none;background:transparent;padding:8px 0 0;">
+        <span class="row-label">Rating Anda</span><span class="row-value" data-myrating>—</span>
+      </div>`:""}
+    </div>
+    <div class="search-wrap">
+      <div class="spinner" data-spinner hidden></div>
+      <div class="search-status" data-st>${mode==="ranked"?"Siap mencari lawan":"Siap mencari lawan"}</div>
+      <div class="search-hint" data-hint>${mode==="ranked"?"Rating Anda akan berubah setelah pertandingan.":"Pertandingan tidak memengaruhi rating."}</div>
+      <button class="btn btn-primary btn-lg" data-search>${ICONS.search}<span>Cari Lawan</span></button>
       <button class="btn" data-cancel hidden>Batalkan</button>
     </div>
-    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
   </section>`;
-  $("[data-back]",root).onclick=()=>{stopSearch();state.cleanup?.();mountPlay(root);};
+  $("[data-back]",root).onclick=()=>{stopSearch();state.cleanup?.();renderInner("play");};
 
-  // Tampilkan rating
-  const offR = onValue(ref(db,`users/${uid}/ratings/ranked`),s=>{
-    const d=s.val()||{rating:1000};
-    $("[data-myrating]",root).textContent = mode==="ranked"?d.rating:"—";
-  });
-  cleanupFns.push(offR);
+  if(mode==="ranked"){
+    const offR = onValue(ref(db,`users/${uid}/ratings/ranked`),s=>{
+      const d=s.val()||{rating:1000};
+      const el=$("[data-myrating]",root); if(el) el.textContent=d.rating;
+    });
+    cleanupFns.push(offR);
+  }
 
   function stopSearch(){
     searching=false;
     if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
     if(myQueuedAt) remove(ref(db,`matchmaking/${mode}/queue/${uid}`)).catch(()=>{});
-    $("[data-spinner]",root).hidden=true;
-    $("[data-cancel]",root).hidden=true;
-    $("[data-search]",root).hidden=false;
-    $("[data-st]",root).textContent="Belum mencari lawan.";
+    const sp=$("[data-spinner]",root), c=$("[data-cancel]",root), s=$("[data-search]",root), st=$("[data-st]",root);
+    if(sp) sp.hidden=true;
+    if(c) c.hidden=true;
+    if(s) s.hidden=false;
+    if(st) st.textContent="Siap mencari lawan";
   }
 
   $("[data-search]",root).onclick=async()=>{
     searching=true;
     const rating = mode==="ranked" ? ((await get(ref(db,`users/${uid}/ratings/ranked`))).val()?.rating||1000) : 0;
     myQueuedAt = Date.now();
-    await set(ref(db,`matchmaking/${mode}/queue/${uid}`), {
-      uid, name:p.displayName, rating, joinedAt:myQueuedAt, tcMinutes
-    });
+    await set(ref(db,`matchmaking/${mode}/queue/${uid}`), { uid, name:p.displayName, rating, joinedAt:myQueuedAt, tcMinutes });
     onDisconnect(ref(db,`matchmaking/${mode}/queue/${uid}`)).remove();
     $("[data-spinner]",root).hidden=false;
     $("[data-cancel]",root).hidden=false;
     $("[data-search]",root).hidden=true;
     $("[data-st]",root).textContent="Mencari lawan…";
+    $("[data-hint]",root).textContent="Mohon tunggu, biasanya < 30 detik.";
     pollTimer = setInterval(pollMatch, 1200);
     pollMatch();
   };
@@ -1130,59 +1749,41 @@ function mountMatchmaking(root, mode){
       if(!snap.exists()) return;
       const q = snap.val();
       const me = q[uid];
-      if(!me){ // kita sudah dihapus - mungkin sudah diambil
-        // Cek apakah kita berada di room baru
-        // (disederhanakan: berhenti)
-        return;
-      }
-      // Cari kandidat
+      if(!me) return;
       const others = Object.values(q).filter(x => x.uid!==uid);
       if(!others.length) return;
-      // Sort: yang menunggu paling lama, rating terdekat
       others.sort((a,b)=>{
         const dt = a.joinedAt - b.joinedAt;
         if(Math.abs(dt) > 3000) return dt;
         return Math.abs((a.rating||0)-(me.rating||0)) - Math.abs((b.rating||0)-(me.rating||0));
       });
       const opp = others[0];
-
-      // Siapa host? Yang joinedAt lebih kecil
       const iAmHost = me.joinedAt <= opp.joinedAt;
 
-      // Race: host yang membuat room
       if(iAmHost){
-        // Coba hapus opp dari queue (atomic)
         const oppRef = ref(db,`matchmaking/${mode}/queue/${opp.uid}`);
         const tx = await runTransaction(oppRef, (cur) => {
-          if(cur===null) return; // sudah hilang, abort
+          if(cur===null) return;
           if(cur.uid===opp.uid && cur.joinedAt===opp.joinedAt) return null;
           return;
         });
-        if(!tx.committed){ return; } // opp diambil orang lain
-        // Buat room
+        if(!tx.committed){ return; }
         const id = await createRoom({mode, tcMinutes, hostColor: Math.random()<0.5?"w":"b"});
-        // Update room dengan guest
-        const guestColor = (await get(ref(db,`rooms/${id}/host/color`))).val()==="w"?"b":"w";
+        const hostColor = (await get(ref(db,`rooms/${id}/host/color`))).val();
+        const guestColor = hostColor==="w"?"b":"w";
         await update(ref(db,`rooms/${id}`), {
           guest:{uid:opp.uid, name:opp.name, color:guestColor},
-          status:"playing",
-          fen:new Chess().fen(),
-          moves:[],
-          turn:"w",
+          status:"playing", fen:new Chess().fen(), moves:[], turn:"w",
           clocks:{w:TC[tcMinutes], b:TC[tcMinutes]},
           lastTickAt:{w:Date.now(), b:Date.now()}
         });
-        // Update matchmaking hasil untuk opp
         await set(ref(db,`matchmaking/${mode}/matched/${opp.uid}`), {roomId:id, ts:Date.now()});
-        // Hapus diri dari queue
         await remove(ref(db,`matchmaking/${mode}/queue/${uid}`));
         onDisconnect(ref(db,`matchmaking/${mode}/queue/${uid}`)).cancel();
         searching=false; clearInterval(pollTimer);
         toast("Lawan ditemukan!","ok");
-        // Pindah ke room sebagai host
         state.cleanup?.(); mountRoomView(root, id, true);
       } else {
-        // Guest: tunggu host assign room
         const mSnap = await get(ref(db,`matchmaking/${mode}/matched/${uid}`));
         if(mSnap.exists()){
           const {roomId} = mSnap.val();
@@ -1196,40 +1797,46 @@ function mountMatchmaking(root, mode){
   }
 
   state.cleanup=()=>{ stopSearch(); cleanupFns.forEach(f=>{try{f();}catch{}}); };
+  return ()=>{ stopSearch(); cleanupFns.forEach(f=>{try{f();}catch{}}); };
 }
 
 /* ============ LEADERBOARD ============ */
 function mountLeaderboard(root){
-  root.innerHTML=`<section class="view">
-    <h1>Leaderboard</h1>
-    <p class="muted">Top 50 pemain berdasarkan rating ranked.</p>
-    <div id="lb-list" style="display:flex;flex-direction:column;gap:8px;"></div>
-    <p class="status" data-empty hidden>Belum ada pemain dengan pertandingan ranked.</p>
+  root.innerHTML=`<section>
+    <div class="page-head">
+      <h1>Leaderboard</h1>
+      <span class="muted small">Top 50</span>
+    </div>
+    <div id="lb-list" class="lb"></div>
+    <div class="empty" data-empty hidden>
+      <div class="empty-icon">${ICONS.trophy}</div>
+      <div>Belum ada pemain dengan pertandingan ranked.</div>
+    </div>
   </section>`;
 
   const usersRef = query(ref(db,"users"), orderByChild("ratings/ranked/rating"), limitToLast(50));
   const off = onValue(usersRef, snap => {
-    const list = $("#lb-list",root); list.innerHTML="";
-    if(!snap.exists()){ $("[data-empty]",root).hidden=false; return; }
+    const list = $("#lb-list",root);
+    const empty = $("[data-empty]",root);
+    list.innerHTML="";
+    if(!snap.exists()){ empty.hidden=false; return; }
     const arr = [];
     snap.forEach(ch => {
       const v = ch.val();
       const r = v.ratings?.ranked;
-      if(r && v.profile?.profileCompleted){
-        arr.push({ uid:ch.key, ...v, rating:r.rating, games:r.games||0 });
-      }
+      if(r && v.profile?.profileCompleted) arr.push({ uid:ch.key, ...v, rating:r.rating });
     });
     arr.sort((a,b)=>b.rating-a.rating);
-    if(!arr.length){ $("[data-empty]",root).hidden=false; return; }
-    $("[data-empty]",root).hidden=true;
+    if(!arr.length){ empty.hidden=false; return; }
+    empty.hidden=true;
     arr.forEach((u,i)=>{
       const rank = rankFor(u.rating);
       const row=document.createElement("div");
       row.className="lb-row"+(i===0?" top1":i===1?" top2":i===2?" top3":"");
-      row.innerHTML=`<strong style="font-size:18px;">#${i+1}</strong>
-        <div><strong>${esc(u.profile.displayName)}</strong><br><small class="muted">@${esc(u.profile.username)}</small></div>
-        <span style="color:${rank.color};font-size:12px;font-weight:600;">${rank.name}</span>
-        <strong style="text-align:right;">${u.rating}</strong>`;
+      row.innerHTML=`<div class="lb-rank">${i+1}</div>
+        <div><div class="lb-name">${esc(u.profile.displayName)}</div><div class="lb-user">@${esc(u.profile.username)}</div></div>
+        <div class="lb-tier" style="color:${rank.color};">${esc(rank.name)}</div>
+        <div class="lb-rating">${u.rating}</div>`;
       list.appendChild(row);
     });
   });
@@ -1239,17 +1846,19 @@ function mountLeaderboard(root){
 /* ============ FRIENDS ============ */
 function mountFriends(root){
   const uid=state.user.uid, p=state.profile;
-  root.innerHTML=`<section class="view">
-    <h1>Teman</h1>
-    <div class="grid2">
-      <div>
-        <h2>Cari Pemain</h2>
-        <label>Username<input id="fs" placeholder="username" autocomplete="off"></label>
-        <button class="btn-primary" id="fs-btn" style="margin-top:8px;">Cari</button>
+  root.innerHTML=`<section>
+    <div class="page-head"><h1>Teman</h1></div>
+    <div class="grid-2" style="margin-bottom:20px;">
+      <div class="card">
+        <h3 style="margin-bottom:12px;">Cari Pemain</h3>
+        <div class="field" style="margin-bottom:10px;">
+          <input class="input" id="fs" placeholder="username" autocomplete="off">
+        </div>
+        <button class="btn btn-primary btn-block" id="fs-btn">${ICONS.search}<span>Cari</span></button>
         <div id="fs-res" style="margin-top:12px;"></div>
       </div>
-      <div>
-        <h2>Permintaan Masuk</h2>
+      <div class="card">
+        <h3 style="margin-bottom:12px;">Permintaan Masuk</h3>
         <div id="req-list"></div>
       </div>
     </div>
@@ -1262,163 +1871,107 @@ function mountFriends(root){
     const res = $("#fs-res",root); res.innerHTML="";
     if(name.length<3){toast("Min 3 karakter","error");return;}
     const uSnap = await get(ref(db,`usernames/${name}`));
-    if(!uSnap.exists()){res.innerHTML='<p class="muted">Tidak ditemukan.</p>';return;}
+    if(!uSnap.exists()){res.innerHTML='<div class="empty">Tidak ditemukan.</div>';return;}
     const targetUid = uSnap.val().uid;
-    if(targetUid===uid){res.innerHTML='<p class="muted">Itu akun Anda.</p>';return;}
+    if(targetUid===uid){res.innerHTML='<div class="empty">Itu akun Anda.</div>';return;}
     const prof = (await get(ref(db,`users/${targetUid}/profile`))).val();
-    res.innerHTML=`<div class="setting-row">
-      <span>${esc(prof.displayName)} <small class="muted">@${esc(prof.username)}</small></span>
-      <button class="btn-primary" data-add="${targetUid}">Tambah</button>
+    res.innerHTML=`<div class="row" style="margin-top:8px;">
+      <div><div style="font-weight:500;">${esc(prof.displayName)}</div><div class="muted small">@${esc(prof.username)}</div></div>
+      <button class="btn btn-primary" data-add>Tambah</button>
     </div>`;
     $("[data-add]",res).onclick=async()=>{
       await set(ref(db,`friendRequests/${targetUid}/${uid}`), { from:uid, fromName:p.displayName, ts:Date.now() });
       toast("Permintaan dikirim","ok");
+      $("[data-add]",res).disabled=true;
+      $("[data-add]",res).textContent="Terkirim";
     };
   };
 
   const off1 = onValue(ref(db,`friendRequests/${uid}`), s=>{
     const el = $("#req-list",root); el.innerHTML="";
-    if(!s.exists()){ el.innerHTML='<p class="muted">Tidak ada.</p>'; return; }
+    if(!s.exists()){ el.innerHTML='<div class="empty" style="padding:12px;">Tidak ada permintaan.</div>'; return; }
     s.forEach(ch=>{
       const v=ch.val();
-      const row=document.createElement("div"); row.className="setting-row"; row.style.marginBottom="6px";
+      const row=document.createElement("div"); row.className="row";
       row.innerHTML=`<span>${esc(v.fromName||v.from)}</span>`;
-      const bWrap=document.createElement("div"); bWrap.style.display="flex";bWrap.style.gap="6px";
-      const bA=document.createElement("button"); bA.className="btn-primary"; bA.textContent="Terima";
-      const bR=document.createElement("button"); bR.className="btn-ghost"; bR.textContent="Tolak";
+      const wrap=document.createElement("div"); wrap.style.display="flex";wrap.style.gap="6px";
+      const bA=document.createElement("button"); bA.className="btn btn-primary btn-icon"; bA.innerHTML=ICONS.check; bA.title="Terima";
+      const bR=document.createElement("button"); bR.className="btn btn-ghost btn-icon"; bR.innerHTML=ICONS.x; bR.title="Tolak";
       bA.onclick=async()=>{ await set(ref(db,`friends/${uid}/${ch.key}`),{since:Date.now()}); await set(ref(db,`friends/${ch.key}/${uid}`),{since:Date.now()}); await remove(ref(db,`friendRequests/${uid}/${ch.key}`)); toast("Diterima","ok"); };
       bR.onclick=()=>remove(ref(db,`friendRequests/${uid}/${ch.key}`));
-      bWrap.appendChild(bA); bWrap.appendChild(bR); row.appendChild(bWrap); el.appendChild(row);
+      wrap.appendChild(bA); wrap.appendChild(bR); row.appendChild(wrap); el.appendChild(row);
     });
   });
 
   const off2 = onValue(ref(db,`friends/${uid}`), async s=>{
     const el=$("#fr-list",root); el.innerHTML="";
-    if(!s.exists()){ el.innerHTML='<p class="muted">Belum ada teman.</p>'; return; }
+    if(!s.exists()){ el.innerHTML='<div class="empty">Belum ada teman. Cari pemain di atas untuk menambahkan.</div>'; return; }
     const arr=[]; s.forEach(c=>arr.push(c.key));
     for(const fuid of arr){
       const pr=(await get(ref(db,`users/${fuid}/profile`))).val();
       const on=(await get(ref(db,`presence/${fuid}/online`))).val()===true;
-      const row=document.createElement("div"); row.className="setting-row"; row.style.marginBottom="6px";
-      row.innerHTML=`<span><span class="presence-dot ${on?"online":""}"></span> ${esc(pr?.displayName||fuid)} <small class="muted">@${esc(pr?.username||"")}</small></span>
-        <button class="btn-ghost" data-chat>Chat</button>`;
-      $("[data-chat]",row).onclick=()=>toast("Chat pribadi belum diimplementasi.","info");
+      const row=document.createElement("div"); row.className="row";
+      row.innerHTML=`<span style="display:flex;align-items:center;gap:8px;">
+        <span class="dot ${on?"online":""}"></span>
+        <img class="avatar" style="width:32px;height:32px;" src="${pr?.photoURL||ICON}" alt="">
+        <span><div style="font-weight:500;">${esc(pr?.displayName||"")}</div><div class="muted small">@${esc(pr?.username||"")}</div></span>
+      </span>`;
       el.appendChild(row);
     }
   });
   return ()=>{off1();off2();};
 }
 
-/* ============ TOURNAMENTS ============ */
-function mountTournaments(root){
-  const uid=state.user.uid, p=state.profile;
-  root.innerHTML=`<section class="view">
-    <h1>Turnamen</h1>
-    <div class="grid2">
-      <div>
-        <h2>Gabung Turnamen</h2>
-        <label>Kode Turnamen<input id="jtc" placeholder="6 karakter" maxlength="6" autocomplete="off"></label>
-        <button class="btn-primary" id="jt-btn" style="margin-top:8px;">Gabung</button>
-      </div>
-      <div>
-        <h2>Buat Turnamen (Host)</h2>
-        <label>Nama<input id="ct-name" placeholder="Turnamen Catur RT 05"></label>
-        <label>Kontrol waktu<select id="ct-tc"><option value="5">5 menit</option><option value="10" selected>10 menit</option></select></label>
-        <button class="btn-primary" id="ct-btn" style="margin-top:8px;">Buat</button>
-      </div>
-    </div>
-    <h2>Turnamen Aktif</h2>
-    <div id="t-list"><p class="muted">Memuat…</p></div>
-  </section>`;
-
-  $("#ct-btn",root).onclick=async()=>{
-    const name=$("#ct-name",root).value.trim();
-    if(name.length<3){toast("Nama minimal 3 karakter","error");return;}
-    const tc=Number($("#ct-tc",root).value);
-    const code = Array.from({length:6},()=> "ABCDEFGHJKMNPQRSTUVWXYZ23456789"[Math.floor(Math.random()*31)]).join("");
-    const tid = "t"+Date.now().toString(36);
-    await set(ref(db,`tournaments/${tid}`), {
-      id:tid, name, code, host:uid, hostName:p.displayName, timeMinutes:tc,
-      status:"registering", createdAt:Date.now(), players:{}, matches:{}, standings:{}
-    });
-    toast(`Turnamen dibuat. Kode: ${code}`,"ok");
-  };
-
-  $("#jt-btn",root).onclick=async()=>{
-    const code = $("#jtc",root).value.trim().toUpperCase();
-    if(code.length!==6){toast("Kode harus 6 karakter","error");return;}
-    const snap = await get(ref(db,"tournaments"));
-    if(!snap.exists()){toast("Kode salah","error");return;}
-    let found=null;
-    snap.forEach(c=>{ const v=c.val(); if(v.code===code) found=v; });
-    if(!found){toast("Turnamen tidak ditemukan","error");return;}
-    await set(ref(db,`tournaments/${found.id}/players/${uid}`), { uid, name:p.displayName, joinedAt:Date.now() });
-    toast("Bergabung dengan turnamen","ok");
-  };
-
-  const off = onValue(ref(db,"tournaments"), s=>{
-    const el=$("#t-list",root); el.innerHTML="";
-    if(!s.exists()){ el.innerHTML='<p class="muted">Belum ada turnamen.</p>'; return; }
-    s.forEach(ch=>{
-      const t=ch.val();
-      const pcount = Object.keys(t.players||{}).length;
-      const row=document.createElement("div"); row.className="setting-row"; row.style.marginBottom="6px";
-      row.innerHTML=`<div><strong>${esc(t.name)}</strong><br><small class="muted">Kode: ${esc(t.code)} · ${pcount} peserta · ${t.status}</small></div>`;
-      const b=document.createElement("button"); b.className="btn-ghost"; b.textContent="Detail";
-      b.onclick=()=>toast("Detail turnamen & auto-pairing di roadmap berikutnya.","info");
-      row.appendChild(b); el.appendChild(row);
-    });
-  });
-  return ()=>off();
-}
-
-/* ============ HISTORY ============ */
-function mountHistory(root){
-  const uid=state.user.uid;
-  root.innerHTML=`<section class="view">
-    <h1>Riwayat Rating</h1>
-    <div id="h-list"><p class="muted">Memuat…</p></div>
-  </section>`;
-  const off = onValue(ref(db,`ratingHistory/${uid}`), s=>{
-    const el=$("#h-list",root); el.innerHTML="";
-    if(!s.exists()){ el.innerHTML='<p class="muted">Belum ada perubahan rating.</p>'; return; }
-    const arr=[]; s.forEach(c=>arr.push(c.val()));
-    arr.sort((a,b)=>(b.ts||0)-(a.ts||0));
-    arr.forEach(h=>{
-      const row=document.createElement("div"); row.className="setting-row"; row.style.marginBottom="6px";
-      const sign = h.delta>=0?"+":"";
-      const color = h.delta>0?"var(--accent)":h.delta<0?"var(--danger)":"var(--muted)";
-      row.innerHTML=`<span>${new Date(h.ts).toLocaleString()}</span>
-        <strong style="color:${color}">${sign}${h.delta} → ${h.after}</strong>`;
-      el.appendChild(row);
-    });
-  });
-  return ()=>off();
-}
-
 /* ============ SETTINGS ============ */
 function mountSettings(root){
   const uid=state.user.uid, p=state.profile;
-  root.innerHTML=`<section class="view">
-    <h1>Pengaturan</h1>
-    <h2>Akun</h2>
-    <div class="setting-row"><span>Username</span><strong>@${esc(p.username)}</strong></div>
-    <div class="setting-row"><span>Nama</span><strong>${esc(p.displayName)}</strong></div>
+  root.innerHTML=`<section>
+    <div class="page-head"><h1>Akun</h1></div>
+
+    <div class="card" style="display:flex;gap:14px;align-items:center;margin-bottom:20px;">
+      <img class="avatar avatar-lg" src="${p.photoURL||ICON}" alt="">
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;">${esc(p.displayName)}</div>
+        <div class="muted small">@${esc(p.username)}</div>
+      </div>
+    </div>
+
+    <h2>Profil</h2>
+    <div class="row"><span class="row-label">Username</span><span class="row-value">@${esc(p.username)}</span></div>
+    <div class="row"><span class="row-label">Nama</span><span class="row-value">${esc(p.displayName)}</span></div>
+    ${p.bio?`<div class="row"><span class="row-label">Bio</span><span class="row-value muted" style="max-width:60%;">${esc(p.bio)}</span></div>`:""}
+
     <h2>Tampilan</h2>
-    <label class="setting-row"><span>Mode Gelap</span><input type="checkbox" id="s-d" ${document.documentElement.dataset.theme==="dark"?"checked":""}></label>
-    <h2>Info</h2>
-    <div class="setting-row"><span>Versi</span><strong>1.0.0</strong></div>
-    <div class="setting-row"><span>Model online</span><strong>Host-Authoritative</strong></div>
-    <div class="setting-row"><span>UID</span><code class="muted">${uid.slice(0,10)}…</code></div>
-    <button class="btn-primary" id="sv" style="margin-top:12px;">Simpan</button>
+    <label class="row" style="cursor:pointer;">
+      <span class="row-label">Mode Gelap</span>
+      <input type="checkbox" id="s-d" ${document.documentElement.dataset.theme==="dark"?"checked":""} style="width:auto;">
+    </label>
+
+    <h2>Sesi</h2>
+    <div class="row"><span class="row-label">Penyedia</span><span class="row-value">Google</span></div>
+    <div class="row"><span class="row-label">UID</span><span class="row-value mono small">${uid.slice(0,12)}…</span></div>
+
+    <h2>Tentang</h2>
+    <div class="row"><span class="row-label">Versi</span><span class="row-value">1.0.0</span></div>
+    <div class="row"><span class="row-label">Model online</span><span class="row-value">Host-Authoritative</span></div>
+
+    <div class="stack mt-24">
+      <button class="btn btn-primary btn-block" id="sv">Simpan Preferensi</button>
+      <button class="btn btn-danger btn-block" id="lo">${ICONS.logout}<span>Keluar dari Akun</span></button>
+    </div>
   </section>`;
+
   $("#sv",root).onclick=async()=>{
     const theme=$("#s-d",root).checked?"dark":"light";
     document.documentElement.dataset.theme=theme;
     await update(ref(db,`users/${uid}/preferences`),{theme});
-    toast("Disimpan","ok");
+    toast("Preferensi disimpan","ok");
   };
-  return ()=>{};
+  $("#lo",root).onclick=async()=>{
+    if(!await confirmDialog("Keluar?","Anda akan keluar dari akun CAZOO.")) return;
+    await signOut(auth);
+  };
+  return null;
 }
 
 /* ============ AUTO-JOIN VIA HASH ============ */
@@ -1430,120 +1983,11 @@ setTimeout(()=>{
       try{
         await joinRoom(id);
         renderShell("play");
-        setTimeout(()=>mountRoomView($("#view-root"), id, false), 100);
+        setTimeout(()=>{ const r=$("#view-root"); if(r) mountRoomView(r, id, false); }, 100);
       }catch(e){ toast("Gagal join: "+e.message,"error"); }
     })();
   }
 }, 1500);
 </script>
-
-<!--
-============================================================
-  CATATAN PENTING — BACA SEBELUM PAKAI
-============================================================
-
-1. AKTIFKAN GOOGLE SIGN-IN
-   Firebase Console → Authentication → Sign-in method → Google → Enable.
-   → Authentication → Settings → Authorized domains → tambahkan domain
-     tempat file ini di-host (localhost, github.io, dll).
-
-2. REALTIME DATABASE RULES (WAJIB — ganti default "test mode")
-   Firebase Console → Realtime Database → Rules → tempel:
-
-   {
-     "rules": {
-       "users": {
-         "$uid": {
-           ".read": "auth != null",
-           ".write": "auth != null && auth.uid === $uid",
-           "ratings": {
-             ".write": "auth != null"
-           },
-           "statistics": {
-             ".write": "auth != null"
-           }
-         }
-       },
-       "usernames": {
-         "$name": {
-           ".read": "auth != null",
-           ".write": "auth != null && (!data.exists() || data.child('uid').val() === auth.uid)"
-         }
-       },
-       "rooms": {
-         "$roomId": {
-           ".read": "auth != null",
-           ".write": "auth != null"
-         }
-       },
-       "matchmaking": {
-         "$mode": {
-           ".read": "auth != null",
-           ".write": "auth != null"
-         }
-       },
-       "presence": { "$uid": { ".read": "auth != null", ".write": "auth != null && auth.uid === $uid" } },
-       "friendRequests": { "$uid": { ".read": "auth != null", ".write": "auth != null" } },
-       "friends": { "$uid": { ".read": "auth != null", ".write": "auth != null" } },
-       "tournaments": { ".read": "auth != null", ".write": "auth != null" },
-       "ratingHistory": { "$uid": { ".read": "auth != null", ".write": "auth != null" } }
-     }
-   }
-
-   CATATAN JUJUR: Rules di atas mengizinkan klien menulis rating sendiri.
-   Ini KONSEKUENSI dari model Host-Authoritative tanpa Cloud Functions.
-   Pemain teknis BISA memanipulasi rating via DevTools.
-
-   Untuk ANTI-CHEAT NYATA, wajib deploy Cloud Functions:
-     - onCall("submitMove")   — validasi langkah otoritatif
-     - onCall("finishGame")   — update rating di server
-     - onCall("joinQueue")    — matchmaking server-side
-   Firestore/Functions butuh Blaze plan (bayar per panggilan).
-
-3. UNDANG TEMAN
-   Link: https://domain-anda/index.html#join=KODE_ROOM
-   Buka link → otomatis join room setelah login.
-
-4. FITUR YANG SUDAH BERJALAN:
-   ✓ Login Google + Profil + Klaim username atomik
-   ✓ Dashboard (rating/rank/statistik live)
-   ✓ Mode Lokal 10 menit (skak, skakmat, pat, promosi, remis)
-   ✓ Mode AI 8 level (minimax + alpha-beta asli, bukan fake)
-   ✓ Lawan Teman (room + kode + share link + auto-join via hash)
-   ✓ Matchmaking Ranked & Classic (queue + rating proximity)
-   ✓ Rating Elo (K=32, K=40 provisional) diupdate host setelah game
-   ✓ Leaderboard top 50
-   ✓ Friends (cari, request, accept/reject)
-   ✓ Turnamen basic (buat kode 6 char + join)
-   ✓ Riwayat rating
-   ✓ Presence (online indicator)
-   ✓ PWA manifest inline
-
-5. FITUR YANG BELUM:
-   - Cloud Functions (anti-cheat sejati)
-   - Chat pribadi
-   - Auto-pairing turnamen (Swiss / eliminasi)
-   - Spectator mode
-   - Admin control center
-   - Stockfish engine
-   - Analisis engine
-   - Puzzle
-   - Notifikasi push
-
-6. HOST-AUTHORITATIVE — CARA KERJA
-   - Pembuat room = host = hakim
-   - Host memvalidasi setiap langkah via chess.js
-   - Host menghitung clock server-side (Date.now di host)
-   - Host yang menulis state ke RTDB
-   - Host yang mengupdate rating setelah game selesai
-   - Guest hanya menerima state (read-only)
-   
-   KELEMAHAN: Host yang curang bisa:
-   - Mengubah state di RTDB secara manual
-   - Memberi dirinya kemenangan
-   - Mengubah rating kedua pemain
-   
-   Untuk menutup celah ini 100%, wajib Cloud Functions.
--->
 </body>
-</html>
+  </html>
