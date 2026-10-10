@@ -45,7 +45,6 @@ h3 { font-size:15px; font-weight:600; margin:0; }
 .mono { font-family:ui-monospace,Menlo,monospace; }
 strong { font-weight:600; }
 
-/* ============ LOADING ============ */
 .loading-screen {
   position:fixed; inset:0; display:flex; flex-direction:column;
   align-items:center; justify-content:center; gap:20px;
@@ -58,7 +57,6 @@ strong { font-weight:600; }
 @keyframes slide { 0% { transform:translateX(-100%); } 100% { transform:translateX(320%); } }
 .loading-screen p { color:var(--text-faint); font-size:13px; margin:0; }
 
-/* ============ CENTERED AUTH ============ */
 .center-wrap {
   min-height:100dvh; display:flex; flex-direction:column;
   align-items:center; justify-content:center; padding:32px 24px; gap:16px; text-align:center;
@@ -76,7 +74,6 @@ strong { font-weight:600; }
 .badge-warn { background:var(--warn-soft); color:var(--warn); border:1px solid color-mix(in srgb,var(--warn) 30%,transparent); }
 .badge-danger { background:var(--danger-soft); color:var(--danger); border:1px solid color-mix(in srgb,var(--danger) 30%,transparent); }
 
-/* ============ LAYOUT ============ */
 .shell { display:flex; min-height:100dvh; }
 .sidebar {
   width:240px; flex-shrink:0;
@@ -103,8 +100,6 @@ strong { font-weight:600; }
 .nav-item:hover { background:var(--surface-2); color:var(--text); }
 .nav-item.active { background:var(--brand-soft); color:var(--brand); }
 .nav-item.active svg { opacity:1; }
-.nav-divider { height:1px; background:var(--line); margin:8px 4px; }
-.nav-group-label { padding:10px 12px 4px; font-size:10px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.08em; font-weight:600; }
 .sidebar-footer { padding:8px 10px 0; border-top:1px solid var(--line); margin-top:8px; }
 .user-chip {
   display:flex; align-items:center; gap:10px; padding:8px 8px;
@@ -137,7 +132,6 @@ strong { font-weight:600; }
 }
 .mobile-menu .nav-item { font-size:15px; padding:14px 16px; }
 
-/* ============ PAGE HEAD ============ */
 .page-head {
   display:flex; align-items:center; justify-content:space-between;
   gap:16px; margin-bottom:24px; flex-wrap:wrap;
@@ -146,7 +140,6 @@ strong { font-weight:600; }
 .page-sub { color:var(--text-dim); font-size:13px; margin-top:2px; }
 .page-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 
-/* ============ BUTTONS ============ */
 .btn {
   display:inline-flex; align-items:center; justify-content:center; gap:8px;
   padding:9px 14px; border-radius:10px;
@@ -168,7 +161,6 @@ strong { font-weight:600; }
 .btn-icon { width:34px; height:34px; padding:0; }
 .btn-block { width:100%; }
 
-/* ============ INPUTS ============ */
 .field { display:flex; flex-direction:column; gap:6px; }
 .field > label { font-size:12px; font-weight:500; color:var(--text-dim); }
 .input {
@@ -180,14 +172,12 @@ strong { font-weight:600; }
 .input:focus { border-color:var(--brand); background:var(--surface-1); }
 .input::placeholder { color:var(--text-faint); }
 
-/* ============ CARDS ============ */
 .card {
   background:var(--surface-1); border:1px solid var(--line);
   border-radius:var(--r-lg); padding:18px;
 }
 .card-flush { padding:0; overflow:hidden; }
 
-/* ============ STATS ============ */
 .stat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; }
 .stat {
   padding:16px; background:var(--surface-1);
@@ -198,30 +188,20 @@ strong { font-weight:600; }
 .stat-sub { font-size:11px; color:var(--text-dim); margin-top:4px; }
 .stat.accent { background:linear-gradient(135deg,var(--brand-soft),transparent); border-color:color-mix(in srgb,var(--brand) 25%,transparent); }
 
-/* ============ TABLE ============ */
 .table-wrap { overflow-x:auto; }
-.table {
-  width:100%; border-collapse:collapse;
-  font-size:13.5px;
-}
+.table { width:100%; border-collapse:collapse; font-size:13.5px; }
 .table th {
   text-align:left; padding:10px 14px;
   font-size:11px; font-weight:600; color:var(--text-faint);
   text-transform:uppercase; letter-spacing:.06em;
-  border-bottom:1px solid var(--line);
-  white-space:nowrap;
+  border-bottom:1px solid var(--line); white-space:nowrap;
 }
-.table td {
-  padding:12px 14px;
-  border-bottom:1px solid var(--line);
-  vertical-align:middle;
-}
+.table td { padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:middle; }
 .table tr:last-child td { border-bottom:none; }
 .table tbody tr { transition:.1s; }
 .table tbody tr:hover { background:var(--surface-2); }
 .table-actions { display:flex; gap:6px; justify-content:flex-end; }
 
-/* ============ SEARCH/FILTER BAR ============ */
 .toolbar {
   display:flex; gap:10px; align-items:center; flex-wrap:wrap;
   margin-bottom:16px; padding:12px 14px;
@@ -232,7 +212,6 @@ strong { font-weight:600; }
 .toolbar .field > label { white-space:nowrap; font-size:12px; }
 .toolbar select.input { width:auto; min-width:130px; }
 
-/* ============ ROW LIST ============ */
 .row-list { display:flex; flex-direction:column; gap:8px; }
 .row-item {
   display:flex; align-items:center; gap:12px;
@@ -246,14 +225,12 @@ strong { font-weight:600; }
 .row-item-sub { color:var(--text-dim); font-size:12px; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .row-item-actions { display:flex; gap:6px; flex-shrink:0; }
 
-/* ============ AVATAR ============ */
 .avatar {
   width:36px; height:36px; border-radius:50%; object-fit:cover;
   background:var(--surface-3); border:1.5px solid var(--line-strong); flex-shrink:0;
 }
 .avatar-sm { width:28px; height:28px; }
 
-/* ============ TOGGLE ============ */
 .toggle {
   position:relative; width:42px; height:24px; border-radius:999px;
   background:var(--surface-3); border:1px solid var(--line-strong);
@@ -267,7 +244,6 @@ strong { font-weight:600; }
 .toggle.on { background:var(--brand); border-color:var(--brand); }
 .toggle.on::after { background:#fff; transform:translateX(18px); }
 
-/* ============ MODAL ============ */
 .modal-backdrop {
   position:fixed; inset:0; z-index:150;
   background:rgba(0,0,0,.65); backdrop-filter:blur(8px);
@@ -287,14 +263,9 @@ strong { font-weight:600; }
 .modal-actions { display:flex; gap:8px; margin-top:20px; }
 .modal-actions .btn { flex:1; }
 
-/* ============ EMPTY ============ */
-.empty {
-  text-align:center; padding:60px 24px;
-  color:var(--text-faint); font-size:14px;
-}
+.empty { text-align:center; padding:60px 24px; color:var(--text-faint); font-size:14px; }
 .empty svg { width:48px; height:48px; opacity:.3; margin:0 auto 12px; display:block; }
 
-/* ============ TOAST ============ */
 #toast-root {
   position:fixed; top:16px; right:16px; left:16px;
   display:flex; flex-direction:column; gap:8px;
@@ -313,7 +284,6 @@ strong { font-weight:600; }
 .toast.error { border-left:3px solid var(--danger); }
 .toast.info { border-left:3px solid var(--info); }
 
-/* ============ BADGE SMALL ============ */
 .chip {
   display:inline-flex; align-items:center; gap:4px;
   padding:3px 8px; border-radius:6px;
@@ -325,7 +295,6 @@ strong { font-weight:600; }
 .chip-warn { background:var(--warn-soft); color:var(--warn); }
 .chip-info { background:var(--info-soft); color:var(--info); }
 
-/* ============ UTILS ============ */
 .stack { display:flex; flex-direction:column; gap:12px; }
 .stack-sm { gap:8px; }
 .flex { display:flex; align-items:center; gap:10px; }
@@ -388,6 +357,9 @@ const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
 setPersistence(auth, browserLocalPersistence).catch(() => {});
 
+/* ============ ACCESS CODE ============ */
+const ADMIN_ACCESS_CODE = "201199";
+
 /* ============ ICONS ============ */
 const I = {
   dashboard:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>`,
@@ -396,13 +368,11 @@ const I = {
   room:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>`,
   report:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
   shield:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
-  flag:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>`,
   bell:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,
   list:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
   settings:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
   logout:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>`,
   search:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
-  ban:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>`,
   edit:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
   trash:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>`,
   refresh:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>`,
@@ -420,7 +390,6 @@ const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
 const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fmtTime = ts => { if(!ts) return "—"; const d=new Date(ts); return d.toLocaleString("id-ID",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}); };
 const fmtTimeAgo = ts => { if(!ts) return "—"; const s=(Date.now()-ts)/1000; if(s<60) return "baru saja"; if(s<3600) return `${Math.floor(s/60)} mnt lalu`; if(s<86400) return `${Math.floor(s/3600)} jam lalu`; return `${Math.floor(s/86400)} hr lalu`; };
-const fmtDuration = ms => { if(!ms||ms<0) return "—"; const s=Math.floor(ms/1000); const m=Math.floor(s/60); const h=Math.floor(m/60); if(h>0) return `${h}j ${m%60}m`; return `${m}m ${s%60}s`; };
 
 function toast(msg,kind="info"){
   const r=$("#toast-root"); const el=document.createElement("div");
@@ -497,7 +466,7 @@ async function audit(action, target, details={}) {
 const state = {
   user: null,
   profile: null,
-  role: null,       // "superadmin" | "admin" | "moderator" | "spectator" | null
+  role: null,
   view: "overview",
   cleanup: null,
 };
@@ -524,34 +493,26 @@ onAuthStateChanged(auth, async user => {
   state.user = user;
   if (!user) { renderLogin(); return; }
 
-  // Ambil profil (untuk display)
+  // Ambil profil
   try {
     const snap = await get(ref(db, `users/${user.uid}/profile`));
     state.profile = snap.exists() ? snap.val() : null;
   } catch { state.profile = null; }
 
-  // Cek role
+  // Cek role dari DB
   try {
     const rSnap = await get(ref(db, `userRoles/${user.uid}/role`));
     state.role = rSnap.exists() ? rSnap.val() : null;
   } catch { state.role = null; }
 
+  // Sudah punya role → langsung masuk
   if (state.role) {
     renderShell(state.view);
     return;
   }
 
-  // Tidak punya role → cek bootstrap
-  try {
-    const bootSnap = await get(ref(db, "system/bootstrapKey"));
-    if (bootSnap.exists() && bootSnap.val()) {
-      renderBootstrap();
-    } else {
-      renderAccessDenied();
-    }
-  } catch(e) {
-    renderAccessDenied("Tidak dapat memverifikasi. Coba lagi nanti.");
-  }
+  // Belum punya role → minta kode akses
+  renderAccessCodeGate();
 });
 
 /* ============ LOGIN SCREEN ============ */
@@ -575,72 +536,75 @@ function renderLogin() {
   };
 }
 
-/* ============ BOOTSTRAP ============ */
-function renderBootstrap() {
+/* ============ ACCESS CODE GATE ============ */
+function renderAccessCodeGate() {
   $("#app").innerHTML = `<div class="center-wrap">
     <img class="center-logo" src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
-    <span class="badge badge-warn">Setup Pertama Kali</span>
-    <h1 class="center-title" style="font-size:22px;margin-top:12px;">Bootstrap Super Admin</h1>
-    <p class="center-sub">Belum ada admin di sistem ini. Masukkan <strong>bootstrap key</strong> yang Anda buat di Firebase Console untuk menjadikan akun ini super admin.</p>
+    <span class="badge badge-warn">Akses Terbatas</span>
+    <h1 class="center-title" style="font-size:22px;margin-top:12px;">Kode Akses Admin</h1>
+    <p class="center-sub">Masukkan kode akses untuk melanjutkan ke Control Center.</p>
+
     <div class="center-narrow">
       <div class="field">
-        <label>Bootstrap Key</label>
-        <input class="input mono" id="bk" type="password" placeholder="Kunci rahasia dari /system/bootstrapKey" autocomplete="off" spellcheck="false">
+        <label>Kode Akses</label>
+        <input class="input mono" id="bk" type="password" placeholder="••••••"
+               autocomplete="off" spellcheck="false" inputmode="numeric"
+               style="text-align:center;letter-spacing:.5em;font-size:22px;font-weight:700;padding:14px;">
       </div>
-      <button class="btn btn-primary btn-block" id="go" style="margin-top:16px;">${I.key}<span>Aktivasi Super Admin</span></button>
-      <p class="faint tiny mt-16" style="line-height:1.6;">
-        Setelah aktivasi, kunci ini akan <strong>dihapus otomatis</strong> dari database. Tidak akan ada cara lain untuk mendaftar sebagai admin selain di-promote oleh super admin lewat panel Users.
+      <button class="btn btn-primary btn-block" id="go" style="margin-top:16px;padding:12px;">
+        ${I.key}<span>Masuk sebagai Admin</span>
+      </button>
+      <button class="btn btn-ghost btn-block" id="out" style="margin-top:8px;">
+        ${I.logout}<span>Keluar</span>
+      </button>
+      <p class="faint tiny mt-16" style="line-height:1.6;text-align:center;">
+        Hanya staf resmi CAZOO yang boleh mengakses panel ini. Setiap percobaan login dicatat.
       </p>
     </div>
   </div>`;
 
-  $("#go").onclick = async () => {
-    const key = $("#bk").value.trim();
-    if (!key) { toast("Masukkan bootstrap key", "error"); return; }
-    const btn = $("#go"); btn.disabled = true; btn.innerHTML = "Memverifikasi…";
+  const input = $("#bk");
+  const btn = $("#go");
+  input.focus();
+
+  async function attempt() {
+    const code = input.value.trim();
+    if (!code) { toast("Masukkan kode akses.", "error"); return; }
+
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spin">${I.refresh}</span><span>Memverifikasi…</span>`;
+
+    if (code !== ADMIN_ACCESS_CODE) {
+      await audit("admin_login_failed", state.user.uid, { email: state.user.email });
+      toast("Kode akses salah.", "error");
+      input.value = "";
+      input.focus();
+      btn.disabled = false;
+      btn.innerHTML = `${I.key}<span>Masuk sebagai Admin</span>`;
+      return;
+    }
+
     try {
-      // Atomic: pastikan key masih sama, dan langsung hapus
-      const result = await runTransaction(ref(db, "system/bootstrapKey"), cur => {
-        if (cur === key) return null; // cocok → hapus
-        return; // tidak cocok → abort
-      });
-      if (!result.committed) {
-        toast("Bootstrap key salah atau sudah dipakai.", "error");
-        btn.disabled = false; btn.innerHTML = `${I.key}<span>Aktivasi Super Admin</span>`;
-        return;
-      }
-      // Set role super admin
       await set(ref(db, `userRoles/${state.user.uid}`), {
         role: "superadmin",
-        grantedBy: "bootstrap",
+        grantedBy: "access_code",
         grantedAt: Date.now(),
-        grantedByName: "Bootstrap"
+        grantedByName: "Access Code"
       });
-      await update(ref(db, "system"), { adminBootstrappedAt: Date.now(), adminBootstrappedBy: state.user.uid });
-      await audit("bootstrap_superadmin", state.user.uid, { email: state.user.email });
+      await audit("admin_login_success", state.user.uid, { email: state.user.email });
       state.role = "superadmin";
-      toast("Super admin aktif.", "ok");
-      setTimeout(() => renderShell("overview"), 500);
-    } catch(e) {
+      toast("Selamat datang, Admin.", "ok");
+      setTimeout(() => renderShell("overview"), 400);
+    } catch (e) {
       console.error(e);
-      toast("Gagal: " + e.message, "error");
-      btn.disabled = false; btn.innerHTML = `${I.key}<span>Aktivasi Super Admin</span>`;
+      toast("Gagal menyimpan role: " + e.message + " — cek Security Rules.", "error");
+      btn.disabled = false;
+      btn.innerHTML = `${I.key}<span>Masuk sebagai Admin</span>`;
     }
-  };
-}
+  }
 
-/* ============ ACCESS DENIED ============ */
-function renderAccessDenied(reason) {
-  $("#app").innerHTML = `<div class="center-wrap">
-    <img class="center-logo" src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
-    <span class="badge badge-danger">Akses Ditolak</span>
-    <h1 class="center-title" style="font-size:22px;margin-top:12px;">Bukan Admin</h1>
-    <p class="center-sub">${esc(reason || "Akun ini tidak memiliki hak akses ke Control Center.")}</p>
-    <div class="flex" style="gap:8px;">
-      <button class="btn btn-ghost" id="out">${I.logout}<span>Keluar</span></button>
-    </div>
-    <p class="faint tiny mt-16" style="max-width:340px;">Jika Anda yakin ini kesalahan, hubungi super admin untuk meminta role di panel Users.</p>
-  </div>`;
+  btn.onclick = attempt;
+  input.addEventListener("keydown", e => { if (e.key === "Enter") attempt(); });
   $("#out").onclick = async () => { await signOut(auth); };
 }
 
@@ -728,7 +692,6 @@ function renderShell(active) {
 
   $("#userchip").onclick = () => openUserMenu();
 
-  // Render page
   state.cleanup?.(); state.cleanup = null;
   const page = $("#page");
   const fn = PAGES[active] || PAGES.overview;
@@ -1166,7 +1129,7 @@ function pageRooms(root) {
 }
 
 /* ============================================================
-   PAGE: GAMES (rating history)
+   PAGE: GAMES
    ============================================================ */
 function pageGames(root) {
   root.innerHTML = `
@@ -1179,7 +1142,7 @@ function pageGames(root) {
     <div class="card card-flush">
       <div class="table-wrap">
         <table class="table">
-          <thead><tr><th>Waktu</th><th>UID</th><th>Δ Rating</th><th>Setelah</th></tr></thead>
+          <thead><tr><th>Waktu</th><th>Pemain</th><th>Δ Rating</th><th>Setelah</th></tr></thead>
           <tbody id="rows"><tr><td colspan="4"><div class="empty">Memuat…</div></td></tr></tbody>
         </table>
       </div>
@@ -1200,7 +1163,6 @@ function pageGames(root) {
     const recent = entries.slice(0, 100);
     if (!recent.length) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty">Belum ada riwayat rating.</div></td></tr>`; return; }
 
-    // Ambil username untuk label
     const uids = [...new Set(recent.map(e => e.uid))];
     const profiles = {};
     for (const uid of uids) {
@@ -1262,13 +1224,12 @@ function pageReports(root) {
     $$("[data-res]", root).forEach(b => b.onclick = async () => {
       const id = b.dataset.res;
       const r = arr.find(x => x.id === id);
-      const choice = await modal({
+      await modal({
         title: "Proses Laporan",
         body: `
           <p>Kategori: <strong>${esc(r.category || "—")}</strong></p>
           <p>Target: <strong>${esc(r.targetName || r.targetUid || "—")}</strong></p>
-          <p>Alasan: <em>${esc(r.reason || "—")}</em></p>
-          <p class="mt-16">Pilih tindakan:</p>`,
+          <p>Alasan: <em>${esc(r.reason || "—")}</em></p>`,
         actions: [
           { label: "Tolak Laporan", onClick: async () => {
             await update(ref(db, `reports/${id}`), { status: "rejected", resolvedBy: state.user.uid, resolvedAt: Date.now() });
@@ -1313,14 +1274,10 @@ function pageFeatures(root) {
       </div>
     </div>
     <div class="card mb-24" style="border-color:color-mix(in srgb,var(--warn) 30%,var(--line));background:var(--warn-soft);">
-      <div class="flex" style="gap:10px;align-items:flex-start;">
-        <div style="flex:1;">
-          <strong style="color:var(--warn);">Catatan penting</strong>
-          <p class="small" style="margin:6px 0 0;line-height:1.55;color:var(--text);">
-            Feature flags ini hanya dibaca oleh aplikasi CAZOO utama jika Anda menambahkan pengecekan <code class="mono">/config/features/{key}</code> di sana. Tanpa itu, flag di sini hanya tersimpan sebagai metadata. Keamanan inti (auth, rules) <strong>tidak</strong> boleh dinonaktifkan lewat menu ini.
-          </p>
-        </div>
-      </div>
+      <strong style="color:var(--warn);">Catatan penting</strong>
+      <p class="small" style="margin:6px 0 0;line-height:1.55;color:var(--text);">
+        Feature flags ini hanya dibaca oleh aplikasi CAZOO utama jika Anda menambahkan pengecekan <code class="mono">/config/features/{key}</code> di sana. Tanpa itu, flag di sini hanya tersimpan sebagai metadata.
+      </p>
     </div>
     <div class="row-list" id="list"><div class="empty">Memuat…</div></div>`;
 
@@ -1491,37 +1448,25 @@ function pageSettings(root) {
         <div class="page-sub">Konfigurasi sistem & info</div>
       </div>
     </div>
-    <h2>Sistem</h2>
+    <h2>Mode Maintenance</h2>
     <div class="row-item mb-16">
       <div class="row-item-main">
-        <div class="row-item-title">Bootstrap Status</div>
-        <div class="row-item-sub" id="bootstatus">Memuat…</div>
-      </div>
-    </div>
-    <div class="row-item mb-16">
-      <div class="row-item-main">
-        <div class="row-item-title">Mode Maintenance</div>
-        <div class="row-item-sub">Saat aktif, aplikasi utama akan menampilkan layar pemeliharaan (jika client mendukung).</div>
+        <div class="row-item-title">Aktifkan Pemeliharaan</div>
+        <div class="row-item-sub">Saat aktif, aplikasi utama dapat menampilkan layar pemeliharaan.</div>
       </div>
       <div class="toggle" id="maintoggle" role="switch"></div>
     </div>
-    <h2>Pemeliharaan</h2>
-    <div class="card mb-16">
+    <div class="card mb-24">
       <div class="field mb-16">
         <label>Pesan pemeliharaan</label>
         <textarea class="input" id="maintmsg" rows="2" maxlength="200" placeholder="cth: Server sedang diperbarui, kembali dalam 15 menit."></textarea>
       </div>
-      <button class="btn btn-primary" id="savemaint">Simpan</button>
+      <button class="btn btn-primary" id="savemaint">Simpan Pesan</button>
     </div>
     <h2>Info</h2>
     <div class="row-item mb-16"><div class="row-item-main"><div class="row-item-title">Nama</div><div class="row-item-sub">CAZOO Control Center</div></div></div>
     <div class="row-item mb-16"><div class="row-item-main"><div class="row-item-title">Versi</div><div class="row-item-sub">1.0.0</div></div></div>
     <div class="row-item"><div class="row-item-main"><div class="row-item-title">Role Anda</div><div class="row-item-sub">${esc(state.role || "—")}</div></div></div>`;
-
-  get(ref(db, "system")).then(s => {
-    const v = s.val() || {};
-    $("#bootstatus", root).textContent = v.adminBootstrappedAt ? `Aktif sejak ${fmtTime(v.adminBootstrappedAt)}` : "Belum di-bootstrap";
-  });
 
   const off = onValue(ref(db, "system/maintenance"), snap => {
     const v = snap.val() || {};
@@ -1559,155 +1504,5 @@ const PAGES = {
   settings: pageSettings,
 };
 </script>
-
-<!--
-============================================================
-  CARA PAKAI (WAJIB BACA)
-============================================================
-
-1. BOOTSTRAP SUPER ADMIN PERTAMA (hanya sekali)
-
-   a. Buka Firebase Console → Realtime Database → Data
-   b. Buat node:
-        /system/bootstrapKey  →  "cazoo-admin-2026-x7k9"   (atau kata sandi pilihan Anda)
-   c. Buka file admin ini di browser (harus HTTPS / localhost)
-   d. Klik "Masuk dengan Google"
-   e. Masukkan bootstrap key yang sama
-   f. Akun Anda sekarang SUPER ADMIN
-   g. Bootstrap key otomatis terhapus dari DB
-   h. Tidak ada cara lain masuk admin setelah ini
-
-   Keamanan: hanya orang yang punya akses Firebase Console
-   yang bisa membuat super admin pertama. Tidak ada backdoor
-   di kode.
-
-2. MENAMBAH ADMIN LAIN
-
-   - Login sebagai super admin
-   - Buka Users → cari user → klik ikon edit
-   - Ubah role: spectator / moderator / admin / superadmin
-   - Perubahan tercatat di Audit Log
-
-3. REALTIME DATABASE RULES (WAJIB — ganti default test mode)
-
-   Firebase Console → Realtime Database → Rules → tempel:
-
-{
-  "rules": {
-    "system": {
-      "bootstrapKey": {
-        ".read": "auth != null",
-        ".write": "auth != null"
-      },
-      "maintenance": {
-        ".read": "auth != null",
-        ".write": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin'"
-      },
-      "adminBootstrappedAt": { ".read": "auth != null", ".write": "auth != null" },
-      "adminBootstrappedBy": { ".read": "auth != null", ".write": "auth != null" }
-    },
-
-    "userRoles": {
-      ".read": "auth != null",
-      "$uid": {
-        ".write": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin'"
-      }
-    },
-
-    "auditLogs": {
-      ".read": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin' || root.child('userRoles').child(auth.uid).child('role').val() === 'moderator'",
-      ".write": "auth != null",
-      "$id": {
-        ".read": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin'",
-        ".write": false
-      }
-    },
-
-    "users": {
-      "$uid": {
-        ".read": "auth != null",
-        ".write": "auth != null && (auth.uid === $uid || root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin')",
-        "status": {
-          ".write": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin' || root.child('userRoles').child(auth.uid).child('role').val() === 'moderator'"
-        }
-      }
-    },
-
-    "reports": {
-      ".read": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin' || root.child('userRoles').child(auth.uid).child('role').val() === 'moderator'",
-      ".write": "auth != null"
-    },
-
-    "announcements": {
-      ".read": "auth != null",
-      ".write": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin'"
-    },
-
-    "config": {
-      "features": {
-        ".read": "auth != null",
-        ".write": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin'"
-      }
-    },
-
-    "rooms": { ".read": "auth != null", ".write": "auth != null" },
-    "matchmaking": { ".read": "auth != null", ".write": "auth != null" },
-    "usernames": {
-      "$name": {
-        ".read": "auth != null",
-        ".write": "auth != null && (!data.exists() || data.child('uid').val() === auth.uid)"
-      }
-    },
-    "presence": { "$uid": { ".read": "auth != null", ".write": "auth != null && auth.uid === $uid" } },
-    "friendRequests": { "$uid": { ".read": "auth != null", ".write": "auth != null" } },
-    "friends": { "$uid": { ".read": "auth != null", ".write": "auth != null" } },
-    "ratingHistory": { "$uid": { ".read": "auth != null", ".write": "auth != null" } },
-    "tournaments": { ".read": "auth != null", ".write": "auth != null" }
-  }
-}
-
-CATATAN: `.write` di `/userRoles/$uid` HANYA untuk superadmin. Ini
-mencegah admin/moderator promote diri sendiri ke role lebih tinggi.
-
-4. FITUR YANG BERJALAN DI PANEL INI
-
-   ✓ Auth Google + role gate (tanpa backdoor)
-   ✓ Bootstrap super admin satu kali via DB key
-   ✓ Overview dengan statistik real dari Firebase
-   ✓ Users: list, filter, cari, detail, ban/unban, set role
-   ✓ Rooms: monitor room aktif, filter status
-   ✓ Games: riwayat perubahan rating
-   ✓ Reports: list & proses (resolve/reject)
-   ✓ Features: toggle flag
-   ✓ Announcements: buat & hapus
-   ✓ Audit Log: setiap aksi tercatat otomatis
-   ✓ Settings: maintenance mode
-
-5. ROLE
-
-   - superadmin: semua akses termasuk ubah role
-   - admin: semua kecuali ubah role
-   - moderator: user read + reports + audit read
-   - spectator: overview + games read-only
-
-6. BATASAN YANG JUJUR
-
-   - Panel ini bergantung pada Firebase Security Rules yang benar.
-     Tanpa rules di atas, user bisa promosi diri sendiri.
-   - Fitur "Cloud Functions", "Tournament management", "Live spectator"
-     BELUM ada di panel ini. Itu butuh backend terpisah.
-   - "Reports" hanya menampilkan data yang ditulis oleh aplikasi utama.
-     Aplikasi utama belum punya tombol "laporkan pemain" — Anda perlu
-     menambahkannya di CAZOO utama agar report bisa masuk ke sini.
-
-7. UJI CEPAT SETELAH DEPLOY
-
-   a. Login sebagai non-admin → harus melihat "Akses Ditolak"
-   b. Buka DevTools → coba tulis ke /userRoles/{uid} langsung → harus
-      ditolak oleh Security Rules
-   c. Sebagai admin biasa → coba ubah role user → harus ditolak
-   d. Sebagai superadmin → ubah role → harus berhasil & tercatat di
-      Audit Log
--->
 </body>
-  </html>
+</html>
