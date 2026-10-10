@@ -1,346 +1,704 @@
-<!doctype html>
-<html lang="id" data-theme="dark">
+<!DOCTYPE html>
+<html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#0a0e0d" />
-<title>CAZOO Control Center</title>
-<link rel="icon" href="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0a0e14">
+<title>CAZOO — Online Chess Platform</title>
+<link rel="icon" href="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg">
+<link rel="apple-touch-icon" href="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg">
+<meta name="description" content="CAZOO — Platform catur online modern. Ranked, Classic, Lawan AI, dan Lokal.">
+<link rel="manifest" href='data:application/manifest+json,{"name":"CAZOO","short_name":"CAZOO","start_url":"./","display":"standalone","background_color":"%230a0e14","theme_color":"%230a0e14","icons":[{"src":"https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg","sizes":"192x192","type":"image/jpeg"},{"src":"https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg","sizes":"512x512","type":"image/jpeg"}]}'>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 <style>
-:root {
-  --bg:#0a0e0d; --surface-1:#111614; --surface-2:#171e1b; --surface-3:#1f2925;
-  --text:#e9efed; --text-dim:#93a5a0; --text-faint:#5f7069;
-  --line:#1c2623; --line-strong:#2a3833;
-  --brand:#10b981; --brand-soft:rgba(16,185,129,.12); --brand-glow:rgba(16,185,129,.28);
-  --danger:#ef4444; --danger-soft:rgba(239,68,68,.12);
-  --warn:#f59e0b; --warn-soft:rgba(245,158,11,.12);
-  --info:#38bdf8; --info-soft:rgba(56,189,248,.12);
-  --r-sm:8px; --r-md:12px; --r-lg:16px;
-  --shadow-md:0 4px 16px rgba(0,0,0,.35);
-  --shadow-lg:0 12px 40px rgba(0,0,0,.5);
-  --ease:cubic-bezier(.32,.72,.24,1);
+:root{
+  --bg:#070a0f;
+  --bg-2:#0d1219;
+  --panel:#111823;
+  --panel-2:#161f2e;
+  --border:#1f2a3a;
+  --border-2:#2a3a52;
+  --text:#e8eef7;
+  --text-dim:#8a99ad;
+  --text-mute:#5b6a80;
+  --gold:#d4af37;
+  --gold-2:#f5d76e;
+  --emerald:#10b981;
+  --emerald-2:#34d399;
+  --blue:#3b82f6;
+  --red:#ef4444;
+  --purple:#8b5cf6;
+  --board-light:#ebd9b8;
+  --board-dark:#7a5c3e;
+  --board-light-2:#f0e0c0;
+  --board-dark-2:#8a6a48;
+  --highlight:#f5d76e;
+  --shadow:0 20px 60px rgba(0,0,0,.5);
 }
-* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html,body { height:100%; margin:0; }
-body {
-  background:var(--bg); color:var(--text);
-  font:400 14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  -webkit-font-smoothing:antialiased; overscroll-behavior:none;
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:15px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
 }
-button { font:inherit; color:inherit; cursor:pointer; border:0; background:none; padding:0; }
-input,textarea,select { font:inherit; color:inherit; }
-img { max-width:100%; display:block; }
-[hidden] { display:none !important; }
-::-webkit-scrollbar { width:8px; height:8px; }
-::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:var(--line-strong); border-radius:4px; }
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 0%,rgba(212,175,55,.08),transparent 60%),
+    radial-gradient(ellipse 70% 50% at 90% 100%,rgba(16,185,129,.08),transparent 60%),
+    radial-gradient(ellipse 100% 80% at 50% 50%,rgba(59,130,246,.04),transparent 70%);
+  pointer-events:none;z-index:0;
+}
+#app{position:relative;z-index:1;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 
-h1 { font-size:22px; font-weight:600; letter-spacing:-.02em; margin:0; }
-h2 { font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); margin:24px 0 10px; }
-h3 { font-size:15px; font-weight:600; margin:0; }
-.muted { color:var(--text-dim); }
-.faint { color:var(--text-faint); }
-.small { font-size:12px; }
-.tiny { font-size:11px; }
-.mono { font-family:ui-monospace,Menlo,monospace; }
-strong { font-weight:600; }
+/* ===== SCREENS ===== */
+.screen{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden;opacity:0;transition:opacity .35s ease}
+.screen.active{display:flex;opacity:1}
+.scrollable{overflow-y:auto;overflow-x:hidden;flex:1;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--border-2) transparent}
+.scrollable::-webkit-scrollbar{width:6px}
+.scrollable::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px}
 
-.loading-screen {
-  position:fixed; inset:0; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:20px;
-  background:var(--bg); z-index:100;
+/* ===== LOADING ===== */
+#loading{align-items:center;justify-content:center;gap:24px}
+.logo-mark{
+  width:88px;height:88px;border-radius:22px;overflow:hidden;
+  box-shadow:0 12px 40px rgba(212,175,55,.35),0 0 0 1px rgba(212,175,55,.3) inset;
+  animation:pulse 2s ease-in-out infinite;
 }
-.loading-logo { width:80px; height:80px; border-radius:22px; box-shadow:var(--shadow-lg); animation:pulse 2s ease-in-out infinite; }
-@keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.04); } }
-.loading-bar { width:160px; height:3px; border-radius:999px; background:var(--surface-3); overflow:hidden; }
-.loading-bar span { display:block; height:100%; width:40%; background:linear-gradient(90deg,var(--brand),#34d399); animation:slide 1.4s cubic-bezier(.5,0,.2,1) infinite; }
-@keyframes slide { 0% { transform:translateX(-100%); } 100% { transform:translateX(320%); } }
-.loading-screen p { color:var(--text-faint); font-size:13px; margin:0; }
+.logo-mark img{width:100%;height:100%;object-fit:cover;display:block}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.loading-text{font-weight:800;letter-spacing:.5em;font-size:20px;background:linear-gradient(135deg,var(--gold-2),var(--gold),#a8871f);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.loading-bar{width:180px;height:3px;background:var(--panel);border-radius:3px;overflow:hidden}
+.loading-bar::after{content:'';display:block;height:100%;width:40%;background:linear-gradient(90deg,var(--gold),var(--emerald));animation:load 1.4s ease infinite}
+@keyframes load{0%{transform:translateX(-100%)}100%{transform:translateX(350%)}}
 
-.center-wrap {
-  min-height:100dvh; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; padding:32px 24px; gap:16px; text-align:center;
-}
-.center-logo { width:80px; height:80px; border-radius:22px; box-shadow:var(--shadow-lg); margin-bottom:8px; }
-.center-title { font-size:28px; font-weight:800; letter-spacing:-.03em; margin:0; }
-.center-sub { color:var(--text-dim); font-size:14px; margin:4px 0 20px; max-width:400px; line-height:1.6; }
-.center-narrow { max-width:440px; width:100%; text-align:left; }
-.badge {
-  display:inline-flex; align-items:center; gap:6px;
-  padding:4px 10px; border-radius:999px;
-  font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
-}
-.badge-admin { background:var(--brand-soft); color:var(--brand); border:1px solid color-mix(in srgb,var(--brand) 30%,transparent); }
-.badge-warn { background:var(--warn-soft); color:var(--warn); border:1px solid color-mix(in srgb,var(--warn) 30%,transparent); }
-.badge-danger { background:var(--danger-soft); color:var(--danger); border:1px solid color-mix(in srgb,var(--danger) 30%,transparent); }
-
-.shell { display:flex; min-height:100dvh; }
-.sidebar {
-  width:240px; flex-shrink:0;
-  background:var(--surface-1); border-right:1px solid var(--line);
-  display:flex; flex-direction:column; padding:16px 10px;
-  position:sticky; top:0; height:100dvh;
-}
-.brand {
-  display:flex; align-items:center; gap:10px;
-  padding:8px 10px 20px;
-}
-.brand img { width:28px; height:28px; border-radius:8px; }
-.brand-info { flex:1; min-width:0; }
-.brand-name { font-weight:700; font-size:15px; letter-spacing:-.02em; line-height:1.2; }
-.brand-sub { font-size:10px; color:var(--text-faint); letter-spacing:.06em; text-transform:uppercase; }
-.nav-items { display:flex; flex-direction:column; gap:2px; flex:1; overflow-y:auto; }
-.nav-item {
-  display:flex; align-items:center; gap:12px;
-  padding:9px 12px; border-radius:var(--r-md);
-  color:var(--text-dim); font-size:13.5px; font-weight:500;
-  transition:.12s var(--ease); text-align:left; width:100%;
-}
-.nav-item svg { width:16px; height:16px; flex-shrink:0; opacity:.85; }
-.nav-item:hover { background:var(--surface-2); color:var(--text); }
-.nav-item.active { background:var(--brand-soft); color:var(--brand); }
-.nav-item.active svg { opacity:1; }
-.sidebar-footer { padding:8px 10px 0; border-top:1px solid var(--line); margin-top:8px; }
-.user-chip {
-  display:flex; align-items:center; gap:10px; padding:8px 8px;
-  border-radius:var(--r-md); transition:.12s;
-}
-.user-chip:hover { background:var(--surface-2); }
-.user-chip img { width:28px; height:28px; border-radius:50%; }
-.user-chip-info { flex:1; min-width:0; text-align:left; }
-.user-chip-name { font-size:12.5px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.user-chip-role { font-size:10px; color:var(--brand); text-transform:uppercase; letter-spacing:.06em; font-weight:600; }
-
-.main { flex:1; min-width:0; }
-.main-inner { max-width:1100px; margin:0 auto; padding:28px 32px 60px; }
-@media (max-width:860px) {
-  .sidebar { display:none; }
-  .main-inner { padding:16px 16px 32px; }
-  .mobile-bar { display:flex !important; }
-}
-.mobile-bar {
-  display:none; position:sticky; top:0; z-index:30;
-  background:color-mix(in srgb,var(--surface-1) 92%,transparent);
+/* ===== LOGIN ===== */
+#login{align-items:center;justify-content:center;padding:24px;text-align:center}
+.login-card{
+  max-width:420px;width:100%;
+  background:linear-gradient(180deg,rgba(22,31,46,.9),rgba(13,18,25,.95));
+  border:1px solid var(--border);border-radius:28px;
+  padding:44px 32px 36px;
+  box-shadow:var(--shadow),0 0 0 1px rgba(212,175,55,.08) inset;
   backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--line);
-  padding:12px 16px; align-items:center; gap:12px;
+  animation:rise .6s cubic-bezier(.2,.9,.3,1.2);
 }
-.mobile-bar img { width:26px; height:26px; border-radius:7px; }
-.mobile-menu {
-  position:fixed; inset:0; z-index:50;
-  background:var(--bg); overflow-y:auto; padding:20px;
+@keyframes rise{from{opacity:0;transform:translateY(30px) scale(.96)}to{opacity:1;transform:none}}
+.login-logo{width:96px;height:96px;border-radius:24px;margin:0 auto 20px;overflow:hidden;box-shadow:0 16px 50px rgba(212,175,55,.4),0 0 0 2px rgba(212,175,55,.25)}
+.login-logo img{width:100%;height:100%;object-fit:cover;display:block}
+.login-title{font-size:32px;font-weight:900;letter-spacing:.3em;margin-left:.3em;background:linear-gradient(135deg,var(--gold-2),var(--gold),#8a6a1a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.login-sub{color:var(--text-dim);font-size:13px;margin-top:6px;letter-spacing:.15em;text-transform:uppercase;font-weight:500}
+.login-desc{color:var(--text-mute);font-size:14px;margin:18px 0 28px;line-height:1.6}
+.btn-google{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:12px;
+  background:#fff;color:#1a1a1a;border:none;border-radius:14px;
+  padding:16px;font-size:15px;font-weight:600;cursor:pointer;
+  transition:transform .2s,box-shadow .2s;
+  font-family:inherit;
 }
-.mobile-menu .nav-item { font-size:15px; padding:14px 16px; }
+.btn-google:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(255,255,255,.15)}
+.btn-google:active{transform:translateY(0)}
+.btn-google:disabled{opacity:.6;cursor:not-allowed}
+.btn-google svg{width:20px;height:20px;flex-shrink:0}
+.login-note{color:var(--text-mute);font-size:11.5px;margin-top:20px;line-height:1.6}
+.login-note a{color:var(--gold);text-decoration:none}
+.err-msg{
+  background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);
+  color:#fca5a5;padding:12px 14px;border-radius:12px;font-size:13px;margin-top:16px;
+  display:none;text-align:left;
+}
+.err-msg.show{display:block;animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
-.page-head {
-  display:flex; align-items:center; justify-content:space-between;
-  gap:16px; margin-bottom:24px; flex-wrap:wrap;
+/* ===== APP SHELL ===== */
+.app-header{
+  display:flex;align-items:center;gap:12px;padding:12px 16px;
+  background:rgba(13,18,25,.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);flex-shrink:0;
+  padding-top:max(12px,env(safe-area-inset-top));
 }
-.page-title-group { min-width:0; }
-.page-sub { color:var(--text-dim); font-size:13px; margin-top:2px; }
-.page-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.app-header .logo-sm{width:38px;height:38px;border-radius:10px;overflow:hidden;flex-shrink:0;box-shadow:0 4px 14px rgba(212,175,55,.3)}
+.app-header .logo-sm img{width:100%;height:100%;object-fit:cover;display:block}
+.app-header h1{font-size:17px;font-weight:800;letter-spacing:.25em;background:linear-gradient(135deg,var(--gold-2),var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.header-user{margin-left:auto;display:flex;align-items:center;gap:10px}
+.user-pill{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--border);border-radius:100px;padding:5px 12px 5px 5px}
+.user-avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;background:var(--panel-2);flex-shrink:0}
+.user-uname{font-size:12.5px;font-weight:600;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.icon-btn{
+  width:38px;height:38px;border-radius:11px;background:var(--panel);border:1px solid var(--border);
+  color:var(--text-dim);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:.2s;flex-shrink:0;padding:0;
+}
+.icon-btn:hover{background:var(--panel-2);color:var(--gold);border-color:var(--border-2)}
+.icon-btn svg{width:18px;height:18px}
 
-.btn {
-  display:inline-flex; align-items:center; justify-content:center; gap:8px;
-  padding:9px 14px; border-radius:10px;
-  font-size:13.5px; font-weight:500;
-  border:1px solid var(--line-strong); background:var(--surface-2); color:var(--text);
-  transition:.12s var(--ease); white-space:nowrap;
+/* ===== DASHBOARD ===== */
+.dash{padding:20px 16px 100px}
+.hero-card{
+  background:
+    linear-gradient(135deg,rgba(212,175,55,.15),rgba(16,185,129,.08)),
+    linear-gradient(180deg,var(--panel),var(--bg-2));
+  border:1px solid var(--border-2);border-radius:22px;padding:22px;
+  position:relative;overflow:hidden;margin-bottom:16px;
 }
-.btn:hover:not(:disabled) { background:var(--surface-3); border-color:var(--text-faint); }
-.btn:active:not(:disabled) { transform:scale(.97); }
-.btn:disabled { opacity:.4; cursor:not-allowed; }
-.btn svg { width:15px; height:15px; }
-.btn-primary { background:var(--brand); color:#031a10; border-color:transparent; font-weight:600; box-shadow:0 2px 12px var(--brand-glow); }
-.btn-primary:hover:not(:disabled) { background:#1ec48f; }
-.btn-danger { color:var(--danger); border-color:color-mix(in srgb,var(--danger) 35%,transparent); background:var(--danger-soft); }
-.btn-danger:hover:not(:disabled) { background:color-mix(in srgb,var(--danger) 18%,transparent); border-color:var(--danger); }
-.btn-ghost { background:transparent; border-color:transparent; color:var(--text-dim); }
-.btn-ghost:hover:not(:disabled) { background:var(--surface-2); color:var(--text); }
-.btn-sm { padding:6px 10px; font-size:12px; }
-.btn-icon { width:34px; height:34px; padding:0; }
-.btn-block { width:100%; }
+.hero-card::after{
+  content:'';position:absolute;top:-40%;right:-20%;width:220px;height:220px;
+  background:radial-gradient(circle,rgba(212,175,55,.22),transparent 70%);
+  pointer-events:none;
+}
+.hero-row{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+.hero-avatar{width:64px;height:64px;border-radius:18px;object-fit:cover;border:2px solid rgba(212,175,55,.5);flex-shrink:0;background:var(--panel-2)}
+.hero-info{flex:1;min-width:0}
+.hero-name{font-size:19px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hero-uname{font-size:13px;color:var(--text-mute);margin-top:1px}
+.rank-chip{
+  display:inline-flex;align-items:center;gap:6px;margin-top:8px;
+  background:linear-gradient(135deg,rgba(212,175,55,.2),rgba(212,175,55,.06));
+  border:1px solid rgba(212,175,55,.35);border-radius:100px;
+  padding:5px 12px;font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--gold-2);
+}
+.rank-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold)}
+.rating-big{margin-left:auto;text-align:right;flex-shrink:0}
+.rating-big .val{font-size:26px;font-weight:900;font-family:'JetBrains Mono',monospace;color:var(--gold-2)}
+.rating-big .lbl{font-size:10px;color:var(--text-mute);letter-spacing:.15em;text-transform:uppercase;margin-top:2px}
 
-.field { display:flex; flex-direction:column; gap:6px; }
-.field > label { font-size:12px; font-weight:500; color:var(--text-dim); }
-.input {
-  width:100%; padding:10px 13px;
-  border-radius:10px; border:1px solid var(--line-strong);
-  background:var(--surface-2); color:var(--text);
-  outline:none; transition:.12s var(--ease);
+.section-title{font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text-mute);margin:22px 4px 12px}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mode-card{
+  background:linear-gradient(180deg,var(--panel),var(--bg-2));
+  border:1px solid var(--border);border-radius:18px;padding:16px;
+  cursor:pointer;transition:.25s;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;gap:8px;
 }
-.input:focus { border-color:var(--brand); background:var(--surface-1); }
-.input::placeholder { color:var(--text-faint); }
+.mode-card:hover{transform:translateY(-3px);border-color:var(--border-2);box-shadow:0 14px 30px rgba(0,0,0,.4)}
+.mode-card:active{transform:scale(.98)}
+.mode-card .mc-icon{
+  width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  background:var(--panel-2);border:1px solid var(--border);
+}
+.mode-card .mc-icon svg{width:22px;height:22px}
+.mode-card h3{font-size:15px;font-weight:800;letter-spacing:.02em}
+.mode-card p{font-size:11.5px;color:var(--text-mute);line-height:1.4}
+.mode-card.ranked .mc-icon{background:linear-gradient(135deg,rgba(212,175,55,.25),rgba(212,175,55,.08));color:var(--gold-2);border-color:rgba(212,175,55,.3)}
+.mode-card.classic .mc-icon{background:linear-gradient(135deg,rgba(59,130,246,.25),rgba(59,130,246,.08));color:#93c5fd;border-color:rgba(59,130,246,.3)}
+.mode-card.friend .mc-icon{background:linear-gradient(135deg,rgba(139,92,246,.25),rgba(139,92,246,.08));color:#c4b5fd;border-color:rgba(139,92,246,.3)}
+.mode-card.local .mc-icon{background:linear-gradient(135deg,rgba(16,185,129,.25),rgba(16,185,129,.08));color:#6ee7b7;border-color:rgba(16,185,129,.3)}
+.mode-card.ai .mc-icon{background:linear-gradient(135deg,rgba(239,68,68,.25),rgba(239,68,68,.08));color:#fca5a5;border-color:rgba(239,68,68,.3)}
+.mode-grid .mode-card.full{grid-column:1/-1}
 
-.card {
-  background:var(--surface-1); border:1px solid var(--line);
-  border-radius:var(--r-lg); padding:18px;
-}
-.card-flush { padding:0; overflow:hidden; }
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+.stat-box{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center}
+.stat-box .v{font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace}
+.stat-box .l{font-size:10px;color:var(--text-mute);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
 
-.stat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; }
-.stat {
-  padding:16px; background:var(--surface-1);
-  border:1px solid var(--line); border-radius:var(--r-md);
+.notice{
+  background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);
+  border-radius:14px;padding:12px 14px;font-size:12px;color:#93c5fd;
+  margin-top:14px;line-height:1.5;
 }
-.stat-label { font-size:10px; font-weight:600; color:var(--text-faint); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; }
-.stat-value { font-size:24px; font-weight:700; letter-spacing:-.03em; line-height:1; }
-.stat-sub { font-size:11px; color:var(--text-dim); margin-top:4px; }
-.stat.accent { background:linear-gradient(135deg,var(--brand-soft),transparent); border-color:color-mix(in srgb,var(--brand) 25%,transparent); }
 
-.table-wrap { overflow-x:auto; }
-.table { width:100%; border-collapse:collapse; font-size:13.5px; }
-.table th {
-  text-align:left; padding:10px 14px;
-  font-size:11px; font-weight:600; color:var(--text-faint);
-  text-transform:uppercase; letter-spacing:.06em;
-  border-bottom:1px solid var(--line); white-space:nowrap;
+/* ===== GAME SCREEN ===== */
+.game-wrap{flex:1;display:flex;flex-direction:column;padding:8px;gap:8px;overflow:hidden}
+.player-bar{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  background:var(--panel);border:1px solid var(--border);border-radius:14px;
+  transition:.25s;
 }
-.table td { padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:middle; }
-.table tr:last-child td { border-bottom:none; }
-.table tbody tr { transition:.1s; }
-.table tbody tr:hover { background:var(--surface-2); }
-.table-actions { display:flex; gap:6px; justify-content:flex-end; }
+.player-bar.turn{border-color:rgba(212,175,55,.5);box-shadow:0 0 0 1px rgba(212,175,55,.25),0 6px 20px rgba(212,175,55,.15)}
+.player-bar .p-av{width:36px;height:36px;border-radius:10px;object-fit:cover;background:var(--panel-2);flex-shrink:0}
+.player-bar .p-name{font-size:13.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.player-bar .p-sub{font-size:11px;color:var(--text-mute)}
+.player-bar .p-clock{
+  margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;
+  letter-spacing:.02em;padding:4px 12px;border-radius:10px;background:var(--bg-2);
+  border:1px solid var(--border);transition:.25s;
+}
+.player-bar .p-clock.active{color:var(--gold-2);border-color:rgba(212,175,55,.4);background:rgba(212,175,55,.08)}
+.player-bar .p-clock.low{color:#fca5a5;border-color:rgba(239,68,68,.5);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
 
-.toolbar {
-  display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-  margin-bottom:16px; padding:12px 14px;
-  background:var(--surface-1); border:1px solid var(--line); border-radius:var(--r-md);
+.board-holder{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  min-height:0;padding:2px;
 }
-.toolbar .input { width:auto; min-width:200px; flex:1; }
-.toolbar .field { flex-direction:row; align-items:center; gap:8px; flex:0 0 auto; }
-.toolbar .field > label { white-space:nowrap; font-size:12px; }
-.toolbar select.input { width:auto; min-width:130px; }
+.board{
+  display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);
+  aspect-ratio:1/1;width:100%;max-width:min(100%,520px);max-height:100%;
+  border-radius:12px;overflow:hidden;
+  box-shadow:0 20px 50px rgba(0,0,0,.6),0 0 0 1px rgba(212,175,55,.2),0 0 0 6px rgba(0,0,0,.35);
+  user-select:none;touch-action:manipulation;
+}
+.sq{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .12s;
+}
+.sq.light{background:var(--board-light)}
+.sq.dark{background:var(--board-dark)}
+.sq.last-from{box-shadow:inset 0 0 0 3px rgba(245,215,110,.7)}
+.sq.last-to{box-shadow:inset 0 0 0 3px rgba(245,215,110,.9)}
+.sq.sel{background:rgba(16,185,129,.55)!important}
+.sq.legal::after{
+  content:'';position:absolute;width:26%;height:26%;border-radius:50%;
+  background:rgba(16,185,129,.55);pointer-events:none;
+}
+.sq.legal.cap::after{width:88%;height:88%;background:transparent;border:4px solid rgba(239,68,68,.7);border-radius:50%}
+.sq.check{background:radial-gradient(circle,rgba(239,68,68,.85),rgba(239,68,68,.4) 60%,transparent 70%)!important}
+.piece{
+  font-size:min(8vw,44px);line-height:1;pointer-events:none;
+  filter:drop-shadow(0 3px 4px rgba(0,0,0,.4));
+  transition:transform .15s;
+}
+.piece.w{color:#fff;text-shadow:0 0 2px #000,0 0 2px #000,0 1px 0 #666,0 -1px 0 #666,1px 0 0 #666,-1px 0 0 #666}
+.piece.b{color:#1a1a1a;text-shadow:0 0 2px #000,0 1px 0 #444,0 -1px 0 #444,1px 0 0 #444,-1px 0 0 #444}
 
-.row-list { display:flex; flex-direction:column; gap:8px; }
-.row-item {
-  display:flex; align-items:center; gap:12px;
-  padding:12px 14px; background:var(--surface-1);
-  border:1px solid var(--line); border-radius:var(--r-md);
-  transition:.12s;
+.game-controls{display:flex;gap:8px;padding:0 2px 4px;flex-wrap:wrap;justify-content:center}
+.ctrl-btn{
+  flex:1;min-width:72px;background:var(--panel);border:1px solid var(--border);
+  color:var(--text);padding:11px 12px;border-radius:12px;font-size:12.5px;font-weight:600;
+  cursor:pointer;transition:.2s;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;gap:6px;
 }
-.row-item:hover { background:var(--surface-2); }
-.row-item-main { flex:1; min-width:0; }
-.row-item-title { font-weight:500; font-size:13.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.row-item-sub { color:var(--text-dim); font-size:12px; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.row-item-actions { display:flex; gap:6px; flex-shrink:0; }
+.ctrl-btn:hover{background:var(--panel-2);border-color:var(--border-2)}
+.ctrl-btn:active{transform:scale(.97)}
+.ctrl-btn svg{width:15px;height:15px}
+.ctrl-btn.primary{background:linear-gradient(135deg,var(--gold),#a8871f);color:#111;border-color:var(--gold)}
+.ctrl-btn.danger{color:#fca5a5;border-color:rgba(239,68,68,.35)}
 
-.avatar {
-  width:36px; height:36px; border-radius:50%; object-fit:cover;
-  background:var(--surface-3); border:1.5px solid var(--line-strong); flex-shrink:0;
+/* ===== MODAL ===== */
+.modal-back{
+  position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;
+  opacity:0;transition:opacity .2s;
 }
-.avatar-sm { width:28px; height:28px; }
+.modal-back.show{display:flex;opacity:1}
+.modal{
+  background:linear-gradient(180deg,var(--panel-2),var(--panel));
+  border:1px solid var(--border-2);border-radius:22px;padding:24px;
+  max-width:400px;width:100%;max-height:90vh;overflow-y:auto;
+  box-shadow:var(--shadow);
+  animation:rise .3s cubic-bezier(.2,.9,.3,1.2);
+}
+.modal h2{font-size:20px;font-weight:800;margin-bottom:6px}
+.modal p.sub{color:var(--text-dim);font-size:13px;margin-bottom:18px;line-height:1.5}
+.modal-actions{display:flex;gap:10px;margin-top:20px}
+.modal-actions .ctrl-btn{flex:1}
+.result-badge{text-align:center;padding:16px 0 8px}
+.result-badge .big{font-size:34px;font-weight:900;letter-spacing:.1em;background:linear-gradient(135deg,var(--gold-2),var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.result-badge .big.lose{background:linear-gradient(135deg,#fca5a5,#ef4444);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.result-badge .big.draw{background:linear-gradient(135deg,#93c5fd,#3b82f6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.result-badge .reason{font-size:13px;color:var(--text-mute);margin-top:4px}
 
-.toggle {
-  position:relative; width:42px; height:24px; border-radius:999px;
-  background:var(--surface-3); border:1px solid var(--line-strong);
-  transition:.2s var(--ease); cursor:pointer; flex-shrink:0;
+/* ===== FORMS ===== */
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-dim);margin-bottom:7px}
+.field input,.field textarea,.field select{
+  width:100%;background:var(--bg-2);border:1px solid var(--border);border-radius:12px;
+  padding:13px 14px;color:var(--text);font-size:14px;font-family:inherit;
+  transition:.2s;outline:none;
 }
-.toggle::after {
-  content:""; position:absolute; top:2px; left:2px;
-  width:18px; height:18px; border-radius:50%; background:var(--text-faint);
-  transition:.2s var(--ease);
-}
-.toggle.on { background:var(--brand); border-color:var(--brand); }
-.toggle.on::after { background:#fff; transform:translateX(18px); }
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.15)}
+.field .hint{font-size:11px;color:var(--text-mute);margin-top:5px}
+.field .err{font-size:11.5px;color:#fca5a5;margin-top:5px;display:none}
+.field.invalid input{border-color:var(--red)}
+.field.invalid .err{display:block}
 
-.modal-backdrop {
-  position:fixed; inset:0; z-index:150;
-  background:rgba(0,0,0,.65); backdrop-filter:blur(8px);
-  display:flex; align-items:center; justify-content:center;
-  padding:20px; animation:fade .15s var(--ease);
-}
-@keyframes fade { from { opacity:0; } to { opacity:1; } }
-.modal {
-  background:var(--surface-1); border:1px solid var(--line-strong);
-  border-radius:var(--r-lg); padding:22px;
-  max-width:480px; width:100%; max-height:85vh; overflow-y:auto;
-  box-shadow:var(--shadow-lg); animation:slideUp .2s var(--ease);
-}
-@keyframes slideUp { from { transform:translateY(12px); opacity:0; } to { transform:none; opacity:1; } }
-.modal h3 { font-size:17px; margin-bottom:8px; }
-.modal > p { color:var(--text-dim); font-size:13.5px; margin:0 0 20px; line-height:1.55; }
-.modal-actions { display:flex; gap:8px; margin-top:20px; }
-.modal-actions .btn { flex:1; }
+/* ===== PROFILE SETUP ===== */
+#setup{padding:24px 18px 40px;align-items:center}
+.setup-card{max-width:480px;width:100%;background:linear-gradient(180deg,var(--panel),var(--bg-2));border:1px solid var(--border);border-radius:24px;padding:28px 22px}
+.setup-card h2{font-size:22px;font-weight:800;margin-bottom:6px}
+.setup-card p.sub{color:var(--text-dim);font-size:13.5px;margin-bottom:24px;line-height:1.5}
+.avatar-picker{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:22px}
+.avatar-preview{width:96px;height:96px;border-radius:24px;object-fit:cover;background:var(--panel-2);border:2px solid var(--border-2)}
+.avatar-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.mini-btn{background:var(--panel-2);border:1px solid var(--border);color:var(--text-dim);padding:8px 14px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s}
+.mini-btn:hover{color:var(--gold);border-color:var(--border-2)}
 
-.empty { text-align:center; padding:60px 24px; color:var(--text-faint); font-size:14px; }
-.empty svg { width:48px; height:48px; opacity:.3; margin:0 auto 12px; display:block; }
+/* ===== TOAST ===== */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120%);background:var(--panel-2);border:1px solid var(--border-2);color:var(--text);padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:2000;transition:transform .35s cubic-bezier(.2,.9,.3,1.2);box-shadow:var(--shadow);max-width:90vw;text-align:center}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast.err{border-color:rgba(239,68,68,.5);color:#fca5a5}
+#toast.ok{border-color:rgba(16,185,129,.5);color:#6ee7b7}
 
-#toast-root {
-  position:fixed; top:16px; right:16px; left:16px;
-  display:flex; flex-direction:column; gap:8px;
-  z-index:200; pointer-events:none;
+/* ===== PROMOTION ===== */
+.promo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.promo-btn{aspect-ratio:1;background:var(--board-light);border:2px solid var(--border);border-radius:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:40px;line-height:1;transition:.2s;color:#1a1a1a;text-shadow:0 0 2px #fff}
+.promo-btn:hover{border-color:var(--gold);transform:scale(1.05)}
+
+/* ===== LOBBY ===== */
+.lobby-list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.lobby-item{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;transition:.2s}
+.lobby-item:hover{border-color:var(--gold);transform:translateX(3px)}
+.lobby-item .li-av{width:40px;height:40px;border-radius:10px;object-fit:cover;background:var(--panel-2)}
+.lobby-item .li-info{flex:1;min-width:0}
+.lobby-item .li-name{font-size:14px;font-weight:700}
+.lobby-item .li-sub{font-size:11.5px;color:var(--text-mute);margin-top:2px}
+.lobby-item .li-arrow{color:var(--text-mute)}
+
+/* ===== SETTINGS ===== */
+.setting-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-row .sr-info{flex:1}
+.setting-row .sr-title{font-size:14px;font-weight:600}
+.setting-row .sr-sub{font-size:11.5px;color:var(--text-mute);margin-top:2px}
+.switch{position:relative;width:46px;height:26px;background:var(--panel-2);border:1px solid var(--border);border-radius:100px;cursor:pointer;transition:.2s;flex-shrink:0}
+.switch::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:var(--text-mute);border-radius:50%;transition:.25s}
+.switch.on{background:rgba(212,175,55,.25);border-color:var(--gold)}
+.switch.on::after{left:22px;background:var(--gold)}
+.setting-group{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:4px 16px;margin-bottom:14px}
+.setting-group-title{font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--text-mute);margin:20px 4px 10px}
+
+@media (max-width:420px){
+  .login-card{padding:36px 22px 28px}
+  .login-title{font-size:26px}
+  .mode-grid{grid-template-columns:1fr}
+  .rating-big .val{font-size:22px}
+  .hero-avatar{width:54px;height:54px}
 }
-@media (min-width:600px) { #toast-root { left:auto; max-width:380px; } }
-.toast {
-  padding:12px 14px; border-radius:var(--r-md);
-  background:var(--surface-2); border:1px solid var(--line-strong);
-  box-shadow:var(--shadow-lg); font-size:13px; font-weight:500;
-  opacity:0; transform:translateY(-8px);
-  transition:.2s var(--ease); pointer-events:auto;
-}
-.toast.show { opacity:1; transform:none; }
-.toast.ok { border-left:3px solid var(--brand); }
-.toast.error { border-left:3px solid var(--danger); }
-.toast.info { border-left:3px solid var(--info); }
-
-.chip {
-  display:inline-flex; align-items:center; gap:4px;
-  padding:3px 8px; border-radius:6px;
-  font-size:11px; font-weight:600; letter-spacing:.02em;
-  background:var(--surface-3); color:var(--text-dim);
-}
-.chip-brand { background:var(--brand-soft); color:var(--brand); }
-.chip-danger { background:var(--danger-soft); color:var(--danger); }
-.chip-warn { background:var(--warn-soft); color:var(--warn); }
-.chip-info { background:var(--info-soft); color:var(--info); }
-
-.stack { display:flex; flex-direction:column; gap:12px; }
-.stack-sm { gap:8px; }
-.flex { display:flex; align-items:center; gap:10px; }
-.flex-between { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-@media (max-width:640px) { .grid-2 { grid-template-columns:1fr; } }
-.mt-8 { margin-top:8px; } .mt-16 { margin-top:16px; } .mt-24 { margin-top:24px; }
-.mb-0 { margin-bottom:0; } .mb-16 { margin-bottom:16px; } .mb-24 { margin-bottom:24px; }
-.text-right { text-align:right; }
-.spin { animation:spin 1s linear infinite; display:inline-block; }
-@keyframes spin { to { transform:rotate(360deg); } }
-
-.dot { width:8px; height:8px; border-radius:50%; display:inline-block; background:var(--text-faint); }
-.dot.online { background:var(--brand); box-shadow:0 0 8px var(--brand-glow); }
-.dot.banned { background:var(--danger); }
 </style>
 </head>
 <body>
+<div id="app">
 
-<div id="loading" class="loading-screen">
-  <img class="loading-logo" src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
-  <div class="loading-bar"><span></span></div>
-  <p>Memuat Control Center…</p>
+  <!-- LOADING -->
+  <div class="screen active" id="loading">
+    <div class="logo-mark"><img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="CAZOO"></div>
+    <div class="loading-text">CAZOO</div>
+    <div class="loading-bar"></div>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="screen" id="login">
+    <div class="login-card">
+      <div class="login-logo"><img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="CAZOO"></div>
+      <div class="login-title">CAZOO</div>
+      <div class="login-sub">Online Chess Platform</div>
+      <p class="login-desc">Masuk untuk bertanding, bermain dengan teman, menghadapi AI, dan bersaing di leaderboard global.</p>
+      <button class="btn-google" id="googleBtn">
+        <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35 24 35c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.2-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 5.1 29.6 3 24 3 16.3 3 9.7 7.4 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c5.2 0 10-2 13.6-5.2l-6.3-5.3C29.2 36.1 26.7 37 24 37c-5.2 0-9.6-2.6-11.3-6.5l-6.6 5.1C9.5 41.4 16.2 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.3 5.3C41 35.6 45 30.5 45 24c0-1.2-.1-2.3-.4-3.5z"/></svg>
+        <span id="googleBtnText">Masuk dengan Google</span>
+      </button>
+      <div class="err-msg" id="loginErr"></div>
+      <p class="login-note">Dengan masuk, Anda menyetujui <a href="#" onclick="toast('Halaman Ketentuan akan tersedia.');return false">Ketentuan Penggunaan</a> dan <a href="#" onclick="toast('Halaman Privasi akan tersedia.');return false">Kebijakan Privasi</a> CAZOO.</p>
+    </div>
+  </div>
+
+  <!-- PROFILE SETUP -->
+  <div class="screen" id="setup">
+    <div class="scrollable" style="width:100%;display:flex;justify-content:center;padding:24px 18px 40px">
+      <div class="setup-card">
+        <h2>Siapkan Profil CAZOO</h2>
+        <p class="sub">Buat identitasmu sebelum memasuki dunia catur CAZOO.</p>
+
+        <div class="avatar-picker">
+          <img class="avatar-preview" id="avatarPreview" src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
+          <div class="avatar-actions">
+            <button class="mini-btn" id="useGooglePhoto">Gunakan Foto Google</button>
+            <button class="mini-btn" onclick="toast('Unggah foto memerlukan Firebase Storage yang dikonfigurasi.')">Pilih Foto</button>
+          </div>
+        </div>
+
+        <div class="field" id="fUsername">
+          <label>Username *</label>
+          <input type="text" id="inUsername" maxlength="20" placeholder="cth: cazoo_master" autocomplete="off">
+          <div class="hint">3–20 karakter, huruf/angka/underscore. Harus unik.</div>
+          <div class="err" id="eUsername">Username tidak valid.</div>
+        </div>
+
+        <div class="field" id="fName">
+          <label>Nama Tampilan *</label>
+          <input type="text" id="inName" maxlength="30" placeholder="Nama kamu">
+          <div class="err" id="eName">Nama minimal 2 karakter.</div>
+        </div>
+
+        <div class="field">
+          <label>Bio (opsional)</label>
+          <textarea id="inBio" maxlength="160" rows="2" placeholder="Ceritakan sedikit tentangmu..."></textarea>
+          <div class="hint"><span id="bioCount">0</span>/160</div>
+        </div>
+
+        <button class="ctrl-btn primary" id="saveProfile" style="width:100%;padding:15px;font-size:14px">Simpan & Lanjutkan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="screen" id="dash">
+    <div class="app-header">
+      <div class="logo-sm"><img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt=""></div>
+      <h1>CAZOO</h1>
+      <div class="header-user">
+        <button class="icon-btn" id="openSettings" title="Pengaturan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <div class="user-pill">
+          <img class="user-avatar" id="hdrAvatar" src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
+          <span class="user-uname" id="hdrUname">player</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scrollable dash">
+      <div class="hero-card">
+        <div class="hero-row">
+          <img class="hero-avatar" id="heroAvatar" src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
+          <div class="hero-info">
+            <div class="hero-name" id="heroName">Player</div>
+            <div class="hero-uname" id="heroUname">@player</div>
+            <div class="rank-chip"><span class="rank-dot"></span><span id="heroRank">IRON</span></div>
+          </div>
+          <div class="rating-big">
+            <div class="val" id="heroRating">1200</div>
+            <div class="lbl">Rating</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Mode Permainan</div>
+      <div class="mode-grid">
+        <div class="mode-card local" data-mode="local">
+          <div class="mc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h3>Lokal</h3>
+          <p>Dua pemain, satu perangkat.</p>
+        </div>
+        <div class="mode-card ai" data-mode="ai">
+          <div class="mc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg>
+          </div>
+          <h3>Lawan AI</h3>
+          <p>Latihan melawan mesin.</p>
+        </div>
+        <div class="mode-card ranked" data-mode="ranked">
+          <div class="mc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+          </div>
+          <h3>Ranked</h3>
+          <p>Butuh backend aktif.</p>
+        </div>
+        <div class="mode-card friend" data-mode="friend">
+          <div class="mc-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+          </div>
+          <h3>Lawan Teman</h3>
+          <p>Butuh backend aktif.</p>
+        </div>
+      </div>
+
+      <div class="section-title">Statistik</div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="v" id="statGames">0</div><div class="l">Games</div></div>
+        <div class="stat-box"><div class="v" id="statWins" style="color:var(--emerald-2)">0</div><div class="l">Menang</div></div>
+        <div class="stat-box"><div class="v" id="statLoss" style="color:#fca5a5">0</div><div class="l">Kalah</div></div>
+      </div>
+
+      <div class="notice">
+        <strong>Catatan:</strong> Mode Lokal dan Lawan AI berfungsi penuh secara offline. Untuk Ranked, Classic, dan Lawan Teman online, diperlukan konfigurasi Cloud Functions & Realtime Database pada Firebase Console.
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div class="screen" id="game">
+    <div class="app-header">
+      <button class="icon-btn" id="backBtn" title="Kembali">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <h1 id="gameTitle" style="font-size:14px">LOKAL</h1>
+      <div class="header-user">
+        <div class="user-pill" style="padding:6px 12px">
+          <span class="user-uname" id="gameClockInfo" style="font-family:'JetBrains Mono',monospace;color:var(--gold-2)">10:00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-wrap">
+      <div class="player-bar" id="topPlayer">
+        <img class="p-av" id="topAvatar" src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
+        <div>
+          <div class="p-name" id="topName">Hitam</div>
+          <div class="p-sub" id="topSub">♚ Hitam</div>
+        </div>
+        <div class="p-clock" id="topClock">10:00</div>
+      </div>
+
+      <div class="board-holder">
+        <div class="board" id="board"></div>
+      </div>
+
+      <div class="player-bar" id="bottomPlayer">
+        <img class="p-av" id="botAvatar" src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
+        <div>
+          <div class="p-name" id="botName">Putih</div>
+          <div class="p-sub" id="botSub">♔ Putih</div>
+        </div>
+        <div class="p-clock active" id="botClock">10:00</div>
+      </div>
+
+      <div class="game-controls">
+        <button class="ctrl-btn" id="flipBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          Balik
+        </button>
+        <button class="ctrl-btn" id="undoBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7v6h6M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>
+          Batal
+        </button>
+        <button class="ctrl-btn danger" id="resignBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"/></svg>
+          Menyerah
+        </button>
+        <button class="ctrl-btn" id="newBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Baru
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="screen" id="settingsScreen">
+    <div class="app-header">
+      <button class="icon-btn" id="settingsBack" title="Kembali">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <h1 style="font-size:14px">PENGATURAN</h1>
+    </div>
+    <div class="scrollable" style="padding:16px 16px 40px">
+      <div class="setting-group-title">Akun</div>
+      <div class="setting-group">
+        <div class="setting-row">
+          <div class="sr-info">
+            <div class="sr-title" id="setName">Player</div>
+            <div class="sr-sub" id="setUname">@player</div>
+          </div>
+          <div class="user-avatar" id="setAvatar" style="width:38px;height:38px;border-radius:12px;background:url(https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg) center/cover"></div>
+        </div>
+      </div>
+
+      <div class="setting-group-title">Permainan</div>
+      <div class="setting-group">
+        <div class="setting-row">
+          <div class="sr-info">
+            <div class="sr-title">Sorot langkah legal</div>
+            <div class="sr-sub">Tampilkan titik pada langkah yang mungkin</div>
+          </div>
+          <div class="switch on" data-setting="showLegal"></div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-info">
+            <div class="sr-title">Sorot langkah terakhir</div>
+            <div class="sr-sub">Tandai dari & ke kotak terakhir</div>
+          </div>
+          <div class="switch on" data-setting="showLast"></div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-info">
+            <div class="sr-title">Koordinat papan</div>
+            <div class="sr-sub">Tampilkan a–h dan 1–8</div>
+          </div>
+          <div class="switch" data-setting="coords"></div>
+        </div>
+      </div>
+
+      <div class="setting-group-title">Akun & Sesi</div>
+      <div class="setting-group">
+        <div class="setting-row" style="cursor:pointer" id="logoutRow">
+          <div class="sr-info">
+            <div class="sr-title" style="color:#fca5a5">Keluar dari CAZOO</div>
+            <div class="sr-sub">Logout dari akun Google</div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5b6a80" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+      </div>
+
+      <div class="notice" style="margin-top:20px">
+        <strong>CAZOO v1.0.0</strong> — Build single-file. Firebase Auth aktif. Untuk fitur online lanjutan (Ranked, Friend, Tournament), konfigurasi Cloud Functions dan Realtime Database Rules diperlukan.
+      </div>
+    </div>
+  </div>
+
+  <!-- PROMOTION MODAL -->
+  <div class="modal-back" id="promoModal">
+    <div class="modal" style="max-width:340px">
+      <h2 style="text-align:center">Promosi Pion</h2>
+      <p class="sub" style="text-align:center">Pilih bidak pengganti</p>
+      <div class="promo-grid" id="promoGrid"></div>
+    </div>
+  </div>
+
+  <!-- RESULT MODAL -->
+  <div class="modal-back" id="resultModal">
+    <div class="modal" style="max-width:380px">
+      <div class="result-badge">
+        <div class="big" id="resBig">SERI</div>
+        <div class="reason" id="resReason">Keterangan</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px">
+        <div class="stat-box"><div class="v" id="resMoves" style="font-size:16px">0</div><div class="l">Langkah</div></div>
+        <div class="stat-box"><div class="v" id="resDur" style="font-size:16px">0:00</div><div class="l">Durasi</div></div>
+      </div>
+      <div class="modal-actions">
+        <button class="ctrl-btn" id="resHome">Beranda</button>
+        <button class="ctrl-btn primary" id="resAgain">Main Lagi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRM MODAL -->
+  <div class="modal-back" id="confirmModal">
+    <div class="modal" style="max-width:340px">
+      <h2 id="cfTitle">Konfirmasi</h2>
+      <p class="sub" id="cfMsg">Yakin?</p>
+      <div class="modal-actions">
+        <button class="ctrl-btn" id="cfNo">Batal</button>
+        <button class="ctrl-btn danger" id="cfYes">Ya</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI SETTINGS MODAL -->
+  <div class="modal-back" id="aiModal">
+    <div class="modal">
+      <h2>Lawan AI</h2>
+      <p class="sub">Pilih tingkat kesulitan dan warna bidakmu.</p>
+      <div class="field">
+        <label>Tingkat Kesulitan</label>
+        <select id="aiLevel">
+          <option value="1">Mudah (Kedalaman 1)</option>
+          <option value="2" selected>Normal (Kedalaman 2)</option>
+          <option value="3">Sulit (Kedalaman 3)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Warna Bidak</label>
+        <select id="aiColor">
+          <option value="w" selected>Putih (Jalan Duluan)</option>
+          <option value="b">Hitam</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="ctrl-btn" id="aiCancel">Batal</button>
+        <button class="ctrl-btn primary" id="aiStart">Mulai</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
 </div>
-<div id="app" hidden></div>
-<div id="toast-root" aria-live="polite"></div>
-
-<script type="importmap">
-{
-  "imports": {
-    "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
-    "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
-    "firebase/database": "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"
-  }
-}
-</script>
 
 <script type="module">
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
-import {
-  getDatabase, ref, get, set, update, remove, push, onValue, off,
-  serverTimestamp, runTransaction, query, orderByChild, limitToLast
-} from "firebase/database";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, updateProfile }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, get, set, update, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-/* ============ FIREBASE ============ */
 const firebaseConfig = {
   apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
   authDomain: "mygame-68b24.firebaseapp.com",
@@ -348,1161 +706,826 @@ const firebaseConfig = {
   projectId: "mygame-68b24",
   storageBucket: "mygame-68b24.firebasestorage.app",
   messagingSenderId: "1003182873390",
-  appId: "1:1003182873390:web:aabf3248f759cbc9d678bf"
+  appId: "1:1003182873390:web:aabf3248f759cbc9d678bf",
+  measurementId: "G-4C0MYZ19YW"
 };
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 const provider = new GoogleAuthProvider();
-provider.setCustomParameters({ prompt: "select_account" });
-setPersistence(auth, browserLocalPersistence).catch(() => {});
-
-/* ============ ACCESS CODE ============ */
-const ADMIN_ACCESS_CODE = "201199";
-
-/* ============ ICONS ============ */
-const I = {
-  dashboard:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>`,
-  users:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-  game:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
-  room:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>`,
-  report:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
-  shield:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
-  bell:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,
-  list:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
-  settings:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
-  logout:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>`,
-  search:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
-  edit:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
-  trash:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>`,
-  refresh:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>`,
-  key:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3"/></svg>`,
-  chevron:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`,
-  menu:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
-  check:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
-  x:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
-  google:`<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.4 1.1 7.3 2.8l5.7-5.7C33.6 7.1 29 5 24 5 13.5 5 5 13.5 5 24s8.5 19 19 19 19-8.5 19-19c0-1.3-.1-2.6-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15 19 12 24 12c2.8 0 5.4 1.1 7.3 2.8l5.7-5.7C33.6 7.1 29 5 24 5 16.3 5 9.7 9.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 43c5 0 9.6-1.9 13-5l-6-5.2c-1.9 1.4-4.3 2.2-7 2.2-5.2 0-9.6-3.4-11.2-8l-6.5 5C9.5 38.6 16.2 43 24 43z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.3 4.1-4.2 5.3l6 5.2C40.2 35.5 43 30.4 43 24c0-1.3-.1-2.6-.4-3.5z"/></svg>`
-};
-
-/* ============ UTILS ============ */
-const $ = (s,el=document)=>el.querySelector(s);
-const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
-const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const fmtTime = ts => { if(!ts) return "—"; const d=new Date(ts); return d.toLocaleString("id-ID",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}); };
-const fmtTimeAgo = ts => { if(!ts) return "—"; const s=(Date.now()-ts)/1000; if(s<60) return "baru saja"; if(s<3600) return `${Math.floor(s/60)} mnt lalu`; if(s<86400) return `${Math.floor(s/3600)} jam lalu`; return `${Math.floor(s/86400)} hr lalu`; };
-
-function toast(msg,kind="info"){
-  const r=$("#toast-root"); const el=document.createElement("div");
-  el.className="toast "+kind; el.textContent=msg; r.appendChild(el);
-  requestAnimationFrame(()=>el.classList.add("show"));
-  setTimeout(()=>{el.classList.remove("show");setTimeout(()=>el.remove(),300);},3400);
-}
-
-function modal({title, body, actions=[{label:"Tutup",primary:false,onClick:()=>{}}]}) {
-  return new Promise(res=>{
-    const b=document.createElement("div"); b.className="modal-backdrop";
-    b.innerHTML=`<div class="modal" role="dialog">
-      <h3>${title}</h3>
-      <div class="modal-body">${body}</div>
-      <div class="modal-actions"></div>
-    </div>`;
-    const actionsEl = $(".modal-actions", b);
-    const close = v => { b.remove(); res(v); };
-    actions.forEach(a=>{
-      const btn = document.createElement("button");
-      btn.className = "btn " + (a.primary?"btn-primary":(a.danger?"btn-danger":"btn-ghost"));
-      btn.textContent = a.label;
-      btn.onclick = async () => {
-        if (a.onClick) {
-          btn.disabled = true;
-          try { const r = await a.onClick(b); if (r === false) { btn.disabled = false; return; } }
-          catch(e){ btn.disabled = false; return; }
-        }
-        close(true);
-      };
-      actionsEl.appendChild(btn);
-    });
-    document.body.appendChild(b);
-    b.addEventListener("click", e => { if(e.target===b) close(false); });
-  });
-}
-
-async function confirmAction(title, msg, confirmLabel="Konfirmasi") {
-  return new Promise(res=>{
-    const b=document.createElement("div"); b.className="modal-backdrop";
-    b.innerHTML=`<div class="modal" role="dialog">
-      <h3>${esc(title)}</h3><p>${esc(msg)}</p>
-      <div class="modal-actions">
-        <button class="btn btn-ghost" data-no>Batal</button>
-        <button class="btn btn-primary" data-yes>${esc(confirmLabel)}</button>
-      </div>
-    </div>`;
-    document.body.appendChild(b);
-    const done=v=>{b.remove();res(v);};
-    $("[data-no]",b).onclick=()=>done(false);
-    $("[data-yes]",b).onclick=()=>done(true);
-    b.addEventListener("click",e=>{if(e.target===b)done(false);});
-  });
-}
-
-/* ============ AUDIT LOG ============ */
-async function audit(action, target, details={}) {
-  const u = auth.currentUser;
-  if (!u) return;
-  try {
-    await push(ref(db, "auditLogs"), {
-      ts: Date.now(),
-      actorUid: u.uid,
-      actorName: state.profile?.displayName || u.displayName || u.email || "—",
-      actorEmail: u.email || "",
-      action,
-      target: target || null,
-      details: details || {},
-    });
-  } catch(e) { console.warn("audit failed:", e); }
-}
+provider.setCustomParameters({ prompt: 'select_account' });
 
 /* ============ STATE ============ */
 const state = {
   user: null,
   profile: null,
-  role: null,
-  view: "overview",
-  cleanup: null,
+  game: null,
+  chess: null,
+  mode: null,       // 'local' | 'ai'
+  aiColor: 'b',
+  aiLevel: 2,
+  flipped: false,
+  selected: null,
+  legalMoves: [],
+  lastMove: null,
+  gameStart: 0,
+  clock: { w: 600, b: 600 }, // seconds
+  clockTimer: null,
+  settings: {
+    showLegal: true,
+    showLast: true,
+    coords: false
+  },
+  busy: false
 };
 
-const PERMISSIONS = {
-  superadmin: ["*"],
-  admin: ["overview","users","rooms","games","reports","features","announcements","audit","settings"],
-  moderator: ["overview","users.read","reports","audit.read"],
-  spectator: ["overview","games"],
-};
-
-function hasPerm(perm) {
-  const role = state.role;
-  if (!role) return false;
-  if (role === "superadmin") return true;
-  const perms = PERMISSIONS[role] || [];
-  return perms.includes(perm) || perms.includes(perm.split(".")[0]);
+/* ============ UTIL ============ */
+const $ = id => document.getElementById(id);
+function show(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
 }
+let toastTimer;
+function toast(msg, type=''){
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = type;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+function fmtTime(sec){
+  sec = Math.max(0, Math.floor(sec));
+  const m = Math.floor(sec/60);
+  const s = sec % 60;
+  return `${m}:${String(s).padStart(2,'0')}`;
+}
+function openModal(id){ $(id).classList.add('show'); }
+function closeModal(id){ $(id).classList.remove('show'); }
 
-/* ============ INIT / AUTH GATE ============ */
-onAuthStateChanged(auth, async user => {
-  $("#loading").hidden = true;
-  $("#app").hidden = false;
+/* ============ SETTINGS PERSISTENCE ============ */
+function loadLocalSettings(){
+  try {
+    const s = JSON.parse(localStorage.getItem('cazoo_settings') || '{}');
+    Object.assign(state.settings, s);
+  } catch {}
+}
+function saveLocalSettings(){
+  localStorage.setItem('cazoo_settings', JSON.stringify(state.settings));
+}
+loadLocalSettings();
+
+/* ============ AUTH ============ */
+$('googleBtn').addEventListener('click', async () => {
+  const btn = $('googleBtn');
+  btn.disabled = true;
+  $('googleBtnText').textContent = 'Menghubungkan...';
+  $('loginErr').classList.remove('show');
+  try {
+    await signInWithPopup(auth, provider);
+  } catch (e) {
+    console.error(e);
+    let msg = 'Gagal login. Coba lagi.';
+    if (e.code === 'auth/popup-closed-by-user') msg = 'Login dibatalkan.';
+    else if (e.code === 'auth/network-request-failed') msg = 'Koneksi jaringan bermasalah.';
+    else if (e.code === 'auth/unauthorized-domain') msg = 'Domain belum diotorisasi di Firebase Console → Authentication → Settings → Authorized domains.';
+    else if (e.code === 'auth/popup-blocked') msg = 'Popup diblokir browser. Izinkan popup untuk situs ini.';
+    else if (e.code === 'auth/operation-not-allowed') msg = 'Google Sign-In belum diaktifkan di Firebase Console.';
+    else msg = `Error: ${e.code || e.message}`;
+    $('loginErr').textContent = msg;
+    $('loginErr').classList.add('show');
+  } finally {
+    btn.disabled = false;
+    $('googleBtnText').textContent = 'Masuk dengan Google';
+  }
+});
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    state.user = null; state.profile = null;
+    $('loading').classList.add('active');
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    show('login');
+    return;
+  }
   state.user = user;
-  if (!user) { renderLogin(); return; }
+  await loadProfile(user);
+});
 
-  // Ambil profil
+async function loadProfile(user){
   try {
     const snap = await get(ref(db, `users/${user.uid}/profile`));
-    state.profile = snap.exists() ? snap.val() : null;
-  } catch { state.profile = null; }
+    if (snap.exists() && snap.val().profileCompleted){
+      state.profile = snap.val();
+      enterDashboard();
+    } else {
+      prefillSetup(user);
+      show('setup');
+    }
+  } catch (e){
+    console.error('loadProfile', e);
+    // fallback offline-only
+    prefillSetup(user);
+    show('setup');
+    toast('Profil tidak dapat dimuat dari server. Menggunakan mode lokal.', 'err');
+  }
+}
 
-  // Cek role dari DB
+/* ============ PROFILE SETUP ============ */
+function prefillSetup(user){
+  $('inName').value = user.displayName || '';
+  $('avatarPreview').src = user.photoURL || 'https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg';
+  $('inBio').value = '';
+  $('bioCount').textContent = '0';
+  $('inUsername').value = '';
+}
+$('useGooglePhoto').addEventListener('click', () => {
+  if (state.user?.photoURL) $('avatarPreview').src = state.user.photoURL;
+  else toast('Akun Google tidak memiliki foto.', 'err');
+});
+$('inBio').addEventListener('input', (e) => $('bioCount').textContent = e.target.value.length);
+
+function validateUsername(u){
+  if (!u || u.length < 3 || u.length > 20) return 'Username harus 3–20 karakter.';
+  if (!/^[a-zA-Z0-9_]+$/.test(u)) return 'Hanya huruf, angka, dan underscore.';
+  const reserved = ['admin','cazoo','system','root','moderator','superadmin','support'];
+  if (reserved.includes(u.toLowerCase())) return 'Username ini dicadangkan sistem.';
+  return null;
+}
+
+$('saveProfile').addEventListener('click', async () => {
+  if (state.busy) return;
+  const uname = $('inUsername').value.trim();
+  const name = $('inName').value.trim();
+  const bio = $('inBio').value.trim();
+  const photo = $('avatarPreview').src;
+
+  let hasErr = false;
+  $('fUsername').classList.remove('invalid');
+  $('fName').classList.remove('invalid');
+
+  const uErr = validateUsername(uname);
+  if (uErr){ $('fUsername').classList.add('invalid'); $('eUsername').textContent = uErr; hasErr = true; }
+  if (!name || name.length < 2){ $('fName').classList.add('invalid'); $('eName').textContent = 'Nama minimal 2 karakter.'; hasErr = true; }
+  if (hasErr) return;
+
+  state.busy = true;
+  $('saveProfile').textContent = 'Menyimpan...';
+
   try {
-    const rSnap = await get(ref(db, `userRoles/${user.uid}/role`));
-    state.role = rSnap.exists() ? rSnap.val() : null;
-  } catch { state.role = null; }
+    const uid = state.user.uid;
+    const norm = uname.toLowerCase();
 
-  // Sudah punya role → langsung masuk
-  if (state.role) {
-    renderShell(state.view);
+    // Check username uniqueness
+    const uSnap = await get(ref(db, `usernames/${norm}`));
+    if (uSnap.exists() && uSnap.val().uid !== uid){
+      $('fUsername').classList.add('invalid');
+      $('eUsername').textContent = 'Username sudah dipakai.';
+      state.busy = false;
+      $('saveProfile').textContent = 'Simpan & Lanjutkan';
+      return;
+    }
+
+    const profile = {
+      username: uname,
+      usernameNorm: norm,
+      displayName: name,
+      bio: bio,
+      photoURL: photo,
+      createdAt: Date.now(),
+      profileCompleted: true,
+      rating: 1200,
+      rank: 'iron'
+    };
+
+    await set(ref(db, `users/${uid}/profile`), profile);
+    await set(ref(db, `usernames/${norm}`), { uid });
+
+    state.profile = profile;
+    toast('Profil tersimpan!', 'ok');
+    enterDashboard();
+  } catch (e){
+    console.error(e);
+    toast('Gagal menyimpan profil: ' + (e.message || 'unknown'), 'err');
+  } finally {
+    state.busy = false;
+    $('saveProfile').textContent = 'Simpan & Lanjutkan';
+  }
+});
+
+/* ============ RANKS ============ */
+const RANKS = [
+  { min: 0, max: 799, name: 'IRON', color: '#8a99ad' },
+  { min: 800, max: 999, name: 'SILVER', color: '#c0c8d4' },
+  { min: 1000, max: 1199, name: 'GOLD', color: '#d4af37' },
+  { min: 1200, max: 1399, name: 'PLATINUM', color: '#67e8f9' },
+  { min: 1400, max: 1599, name: 'DIAMOND', color: '#60a5fa' },
+  { min: 1600, max: 1799, name: 'MASTER', color: '#a78bfa' },
+  { min: 1800, max: 1999, name: 'GRANDMASTER', color: '#f472b6' },
+  { min: 2000, max: 99999, name: 'LEGEND', color: '#f5d76e' }
+];
+function getRank(rating){
+  return RANKS.find(r => rating >= r.min && rating <= r.max) || RANKS[0];
+}
+
+/* ============ DASHBOARD ============ */
+function enterDashboard(){
+  const p = state.profile;
+  if (!p){ show('login'); return; }
+  const rating = p.rating || 1200;
+  const rank = getRank(rating);
+
+  $('hdrAvatar').src = p.photoURL || 'https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg';
+  $('hdrUname').textContent = p.username;
+  $('heroAvatar').src = p.photoURL || 'https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg';
+  $('heroName').textContent = p.displayName;
+  $('heroUname').textContent = '@' + p.username;
+  $('heroRank').textContent = rank.name;
+  $('heroRating').textContent = rating;
+
+  // Load stats
+  try {
+    const st = JSON.parse(localStorage.getItem('cazoo_stats') || '{}');
+    $('statGames').textContent = st.games || 0;
+    $('statWins').textContent = st.wins || 0;
+    $('statLoss').textContent = st.loss || 0;
+  } catch {}
+
+  show('dash');
+}
+
+function saveGameResult(result, reason, moveCount){
+  try {
+    const st = JSON.parse(localStorage.getItem('cazoo_stats') || '{}');
+    st.games = (st.games || 0) + 1;
+    if (result === 'w') st.wins = (st.wins || 0) + 1;
+    else if (result === 'l') st.loss = (st.loss || 0) + 1;
+    localStorage.setItem('cazoo_stats', JSON.stringify(st));
+  } catch {}
+}
+
+/* ============ MODE SELECTION ============ */
+document.querySelectorAll('.mode-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const mode = card.dataset.mode;
+    if (mode === 'local') startLocal();
+    else if (mode === 'ai') openModal('aiModal');
+    else toast('Mode ini memerlukan backend online. Konfigurasi Cloud Functions & Rules terlebih dahulu.', 'err');
+  });
+});
+
+/* ============ AI ============ */
+$('aiCancel').addEventListener('click', () => closeModal('aiModal'));
+$('aiStart').addEventListener('click', () => {
+  state.aiLevel = parseInt($('aiLevel').value, 10);
+  state.aiColor = $('aiColor').value;
+  closeModal('aiModal');
+  startAI();
+});
+
+/* ============ CHESS BOARD RENDER ============ */
+const PIECE_UNICODE = {
+  wK:'♔', wQ:'♕', wR:'♖', wB:'♗', wN:'♘', wP:'♙',
+  bK:'♚', bQ:'♛', bR:'♜', bB:'♝', bN:'♞', bP:'♟'
+};
+
+function renderBoard(){
+  const board = $('board');
+  const chess = state.chess;
+  if (!chess) return;
+
+  board.innerHTML = '';
+  const turn = chess.turn();
+  const inCheck = chess.in_check();
+
+  // Find king square if in check
+  let checkSq = null;
+  if (inCheck){
+    const rows = chess.board();
+    for (let r=0; r<8; r++){
+      for (let c=0; c<8; c++){
+        const sq = rows[r][c];
+        if (sq && sq.type === 'k' && sq.color === turn){
+          checkSq = String.fromCharCode(97+c) + (8-r);
+          break;
+        }
+      }
+    }
+  }
+
+  const files = ['a','b','c','d','e','f','g','h'];
+  const ranks = [8,7,6,5,4,3,2,1];
+
+  for (let i=0; i<8; i++){
+    for (let j=0; j<8; j++){
+      const file = state.flipped ? files[7-j] : files[j];
+      const rank = state.flipped ? ranks[7-i] : ranks[i];
+      const sqName = file + rank;
+      const isLight = (files.indexOf(file) + rank) % 2 !== 0;
+
+      const sq = document.createElement('div');
+      sq.className = 'sq ' + (isLight ? 'light' : 'dark');
+      sq.dataset.square = sqName;
+
+      if (state.lastMove){
+        if (state.lastMove.from === sqName) sq.classList.add('last-from');
+        if (state.lastMove.to === sqName) sq.classList.add('last-to');
+      }
+      if (checkSq === sqName) sq.classList.add('check');
+      if (state.selected === sqName) sq.classList.add('sel');
+
+      if (state.settings.showLegal && state.legalMoves.some(m => m.to === sqName)){
+        sq.classList.add('legal');
+        const isCap = chess.get(sqName) || state.legalMoves.some(m => m.to === sqName && m.flags.includes('e'));
+        if (isCap) sq.classList.add('cap');
+      }
+
+      const piece = chess.get(sqName);
+      if (piece){
+        const el = document.createElement('div');
+        el.className = 'piece ' + piece.color;
+        el.textContent = PIECE_UNICODE[piece.color + piece.type.toUpperCase()];
+        sq.appendChild(el);
+      }
+
+      sq.addEventListener('click', () => onSquareClick(sqName));
+      board.appendChild(sq);
+    }
+  }
+}
+
+function onSquareClick(sqName){
+  if (!state.chess || state.busy) return;
+  if (state.chess.game_over()) return;
+  if (state.mode === 'ai' && state.chess.turn() === state.aiColor) return;
+
+  const chess = state.chess;
+  const piece = chess.get(sqName);
+
+  if (state.selected){
+    // try move
+    const move = state.legalMoves.find(m => m.to === sqName);
+    if (move){
+      // Promotion check
+      if (move.flags.includes('p') || (move.promotion === undefined && move.flags.includes('p'))){
+        // chess.js flags: 'p' = promotion, we need to ask
+      }
+      // Detect promotion: pawn moving to last rank
+      const fromPiece = chess.get(state.selected);
+      const toRank = sqName[1];
+      const isPromo = fromPiece && fromPiece.type === 'p' &&
+        ((fromPiece.color === 'w' && toRank === '8') || (fromPiece.color === 'b' && toRank === '1'));
+      if (isPromo){
+        askPromotion(state.selected, sqName);
+        return;
+      }
+      doMove({ from: state.selected, to: sqName });
+      return;
+    }
+    // Clicking another own piece re-selects
+    if (piece && piece.color === chess.turn()){
+      state.selected = sqName;
+      state.legalMoves = chess.moves({ square: sqName, verbose: true });
+      renderBoard();
+      return;
+    }
+    state.selected = null;
+    state.legalMoves = [];
+    renderBoard();
     return;
   }
 
-  // Belum punya role → minta kode akses
-  renderAccessCodeGate();
+  if (piece && piece.color === chess.turn()){
+    state.selected = sqName;
+    state.legalMoves = chess.moves({ square: sqName, verbose: true });
+    renderBoard();
+  }
+}
+
+function askPromotion(from, to){
+  const grid = $('promoGrid');
+  grid.innerHTML = '';
+  const color = state.chess.turn();
+  const pieces = ['q','r','b','n'];
+  pieces.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'promo-btn';
+    btn.textContent = PIECE_UNICODE[color + p.toUpperCase()];
+    btn.addEventListener('click', () => {
+      closeModal('promoModal');
+      doMove({ from, to, promotion: p });
+    });
+    grid.appendChild(btn);
+  });
+  openModal('promoModal');
+}
+
+function doMove(move){
+  const chess = state.chess;
+  let result;
+  try {
+    result = chess.move(move);
+  } catch (e){ return; }
+  if (!result) return;
+
+  state.selected = null;
+  state.legalMoves = [];
+  state.lastMove = { from: result.from, to: result.to };
+
+  switchTurnClock(result.color);
+  renderBoard();
+  updateClockUI();
+
+  if (chess.game_over()){
+    setTimeout(() => endGame(), 150);
+    return;
+  }
+
+  if (state.mode === 'ai' && chess.turn() === state.aiColor){
+    state.busy = true;
+    setTimeout(() => makeAIMove(), 350);
+  }
+}
+
+/* ============ CLOCK ============ */
+function startGameClock(){
+  stopGameClock();
+  state.clockTimer = setInterval(() => {
+    if (!state.chess || state.chess.game_over()){
+      stopGameClock();
+      return;
+    }
+    const turn = state.chess.turn();
+    state.clock[turn] = Math.max(0, state.clock[turn] - 0.1);
+    if (state.clock[turn] <= 0){
+      stopGameClock();
+      endGameByTimeout(turn);
+      return;
+    }
+    updateClockUI();
+  }, 100);
+}
+function stopGameClock(){
+  if (state.clockTimer){ clearInterval(state.clockTimer); state.clockTimer = null; }
+}
+function switchTurnClock(){ /* clock ticks on interval; UI updates turn indicator only */ }
+
+function updateClockUI(){
+  const chess = state.chess;
+  if (!chess) return;
+  const turn = chess.turn();
+  const flipped = state.flipped;
+
+  const whiteName = state.mode === 'ai'
+    ? (state.aiColor === 'w' ? 'AI' : (state.profile?.displayName || 'Kamu'))
+    : 'Putih';
+  const blackName = state.mode === 'ai'
+    ? (state.aiColor === 'b' ? 'AI' : (state.profile?.displayName || 'Kamu'))
+    : 'Hitam';
+
+  const topIsBlack = !flipped;
+  const botIsBlack = flipped;
+
+  // Top
+  $('topName').textContent = topIsBlack ? blackName : whiteName;
+  $('topSub').textContent = topIsBlack ? '♚ Hitam' : '♔ Putih';
+  $('topClock').textContent = fmtTime(topIsBlack ? state.clock.b : state.clock.w);
+  $('topClock').classList.toggle('active', (topIsBlack && turn === 'b') || (!topIsBlack && turn === 'w'));
+  $('topClock').classList.toggle('low', (topIsBlack ? state.clock.b : state.clock.w) <= 30);
+  $('topAvatar').src = 'https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg';
+
+  // Bottom
+  $('botName').textContent = botIsBlack ? blackName : whiteName;
+  $('botSub').textContent = botIsBlack ? '♚ Hitam' : '♔ Putih';
+  $('botClock').textContent = fmtTime(botIsBlack ? state.clock.b : state.clock.w);
+  $('botClock').classList.toggle('active', (botIsBlack && turn === 'b') || (!botIsBlack && turn === 'w'));
+  $('botClock').classList.toggle('low', (botIsBlack ? state.clock.b : state.clock.w) <= 30);
+  $('botAvatar').src = 'https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg';
+
+  // Header info
+  const turnName = turn === 'w' ? 'Putih' : 'Hitam';
+  $('gameClockInfo').textContent = `Giliran ${turnName}`;
+}
+
+/* ============ GAME FLOW ============ */
+function startLocal(){
+  state.mode = 'local';
+  state.chess = new Chess();
+  state.clock = { w: 600, b: 600 };
+  state.selected = null;
+  state.legalMoves = [];
+  state.lastMove = null;
+  state.flipped = false;
+  state.gameStart = Date.now();
+  $('gameTitle').textContent = 'LOKAL';
+  $('topName').textContent = 'Hitam';
+  $('botName').textContent = 'Putih';
+  show('game');
+  renderBoard();
+  updateClockUI();
+  startGameClock();
+}
+
+function startAI(){
+  state.mode = 'ai';
+  state.chess = new Chess();
+  state.clock = { w: 600, b: 600 };
+  state.selected = null;
+  state.legalMoves = [];
+  state.lastMove = null;
+  state.flipped = state.aiColor === 'w';
+  state.gameStart = Date.now();
+  $('gameTitle').textContent = 'LAWAN AI • LV ' + state.aiLevel;
+  show('game');
+  renderBoard();
+  updateClockUI();
+  startGameClock();
+
+  if (state.chess.turn() === state.aiColor){
+    state.busy = true;
+    setTimeout(() => makeAIMove(), 500);
+  }
+}
+
+/* ============ AI ENGINE (Minimax + Alpha-Beta) ============ */
+const PIECE_VAL = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
+
+function evaluateBoard(chess){
+  if (chess.in_checkmate()) return chess.turn() === 'w' ? -999999 : 999999;
+  if (chess.in_draw() || chess.in_stalemate()) return 0;
+  const board = chess.board();
+  let score = 0;
+  for (let r=0; r<8; r++){
+    for (let c=0; c<8; c++){
+      const sq = board[r][c];
+      if (!sq) continue;
+      const val = PIECE_VAL[sq.type];
+      // Small center bonus
+      const centerBonus = (r>=2 && r<=5 && c>=2 && c<=5) ? 8 : 0;
+      score += sq.color === 'w' ? (val + centerBonus) : -(val + centerBonus);
+    }
+  }
+  return score;
+}
+
+function minimax(chess, depth, alpha, beta, maximizing){
+  if (depth === 0 || chess.game_over()){
+    return { score: evaluateBoard(chess) };
+  }
+  const moves = chess.moves({ verbose: true });
+  if (!moves.length) return { score: evaluateBoard(chess) };
+
+  if (maximizing){
+    let best = { score: -Infinity };
+    for (const m of moves){
+      chess.move(m);
+      const r = minimax(chess, depth-1, alpha, beta, false);
+      chess.undo();
+      if (r.score > best.score) best = { score: r.score, move: m };
+      alpha = Math.max(alpha, r.score);
+      if (beta <= alpha) break;
+    }
+    return best;
+  } else {
+    let best = { score: Infinity };
+    for (const m of moves){
+      chess.move(m);
+      const r = minimax(chess, depth-1, alpha, beta, true);
+      chess.undo();
+      if (r.score < best.score) best = { score: r.score, move: m };
+      beta = Math.min(beta, r.score);
+      if (beta <= alpha) break;
+    }
+    return best;
+  }
+}
+
+function makeAIMove(){
+  try {
+    if (!state.chess || state.chess.game_over()){ state.busy = false; return; }
+    const depth = Math.max(1, Math.min(3, state.aiLevel));
+    const clone = new Chess(state.chess.fen());
+    const isMax = state.aiColor === 'w';
+    const result = minimax(clone, depth, -Infinity, Infinity, isMax);
+    if (result.move){
+      doMove({ from: result.move.from, to: result.move.to, promotion: result.move.promotion });
+    }
+  } catch (e){
+    console.error('AI error', e);
+  } finally {
+    state.busy = false;
+  }
+}
+
+/* ============ GAME END ============ */
+function endGame(){
+  stopGameClock();
+  const chess = state.chess;
+  let result, reason, big;
+
+  if (chess.in_checkmate()){
+    const loser = chess.turn();
+    result = loser === 'w' ? 'b_win' : 'w_win';
+    reason = 'Skakmat';
+  } else if (chess.in_stalemate()){
+    result = 'draw'; reason = 'Pat (Stalemate)';
+  } else if (chess.in_threefold_repetition()){
+    result = 'draw'; reason = 'Pengulangan posisi 3x';
+  } else if (chess.insufficient_material()){
+    result = 'draw'; reason = 'Materi tidak cukup';
+  } else if (chess.in_draw()){
+    result = 'draw'; reason = 'Remis (50 langkah)';
+  } else {
+    result = 'draw'; reason = 'Permainan berakhir';
+  }
+
+  // Determine view from perspective
+  let viewResult = 'draw';
+  if (state.mode === 'ai'){
+    const aiWon = (result === 'b_win' && state.aiColor === 'b') || (result === 'w_win' && state.aiColor === 'w');
+    const aiLost = (result === 'b_win' && state.aiColor === 'w') || (result === 'w_win' && state.aiColor === 'b');
+    if (aiWon) viewResult = 'l';
+    else if (aiLost) viewResult = 'w';
+    else viewResult = 'draw';
+  } else {
+    // local — no view perspective, show winner
+    if (result === 'w_win') viewResult = 'w';
+    else if (result === 'b_win') viewResult = 'l';
+  }
+
+  showResult(viewResult, reason);
+  saveGameResult(viewResult, reason, chess.history().length);
+}
+
+function endGameByTimeout(loserColor){
+  stopGameClock();
+  const winner = loserColor === 'w' ? 'b' : 'w';
+  let viewResult;
+  if (state.mode === 'ai'){
+    const aiWon = winner === state.aiColor;
+    viewResult = aiWon ? 'l' : 'w';
+  } else {
+    viewResult = winner === 'w' ? 'w' : 'l';
+  }
+  showResult(viewResult, `Waktu habis (${loserColor === 'w' ? 'Putih' : 'Hitam'})`);
+  saveGameResult(viewResult, 'timeout', state.chess.history().length);
+}
+
+function showResult(viewResult, reason){
+  const chess = state.chess;
+  const moves = chess.history().length;
+  const dur = Math.floor((Date.now() - state.gameStart) / 1000);
+
+  let bigText, cls = '';
+  if (viewResult === 'w'){ bigText = 'MENANG'; }
+  else if (viewResult === 'l'){ bigText = 'KALAH'; cls = 'lose'; }
+  else { bigText = 'SERI'; cls = 'draw'; }
+
+  $('resBig').textContent = bigText;
+  $('resBig').className = 'big ' + cls;
+  $('resReason').textContent = reason;
+  $('resMoves').textContent = moves;
+  $('resDur').textContent = fmtTime(dur);
+  openModal('resultModal');
+}
+
+/* ============ GAME CONTROLS ============ */
+$('backBtn').addEventListener('click', () => {
+  if (state.chess && !state.chess.game_over() && state.chess.history().length > 0){
+    $('cfTitle').textContent = 'Keluar dari permainan?';
+    $('cfMsg').textContent = 'Permainan yang sedang berlangsung akan dibatalkan.';
+    $('cfYes').onclick = () => { closeModal('confirmModal'); exitGame(); };
+    openModal('confirmModal');
+  } else {
+    exitGame();
+  }
+});
+function exitGame(){
+  stopGameClock();
+  state.chess = null;
+  state.mode = null;
+  state.busy = false;
+  show('dash');
+}
+
+$('flipBtn').addEventListener('click', () => {
+  state.flipped = !state.flipped;
+  renderBoard();
+  updateClockUI();
+});
+$('undoBtn').addEventListener('click', () => {
+  if (!state.chess) return;
+  if (state.mode === 'ai'){
+    // undo 2 moves (player + AI)
+    state.chess.undo();
+    state.chess.undo();
+  } else {
+    state.chess.undo();
+  }
+  state.selected = null;
+  state.legalMoves = [];
+  const hist = state.chess.history({ verbose: true });
+  state.lastMove = hist.length ? { from: hist[hist.length-1].from, to: hist[hist.length-1].to } : null;
+  renderBoard();
+  updateClockUI();
+});
+$('resignBtn').addEventListener('click', () => {
+  if (!state.chess || state.chess.game_over()) return;
+  $('cfTitle').textContent = 'Menyerah?';
+  $('cfMsg').textContent = 'Kamu akan dinyatakan kalah.';
+  $('cfYes').onclick = () => {
+    closeModal('confirmModal');
+    stopGameClock();
+    let viewResult;
+    if (state.mode === 'ai'){
+      viewResult = 'l';
+    } else {
+      // Local: current turn player resigns
+      viewResult = state.chess.turn() === 'w' ? 'l' : 'w';
+    }
+    showResult(viewResult, 'Menyerah');
+    saveGameResult(viewResult, 'resign', state.chess.history().length);
+  };
+  openModal('confirmModal');
+});
+$('newBtn').addEventListener('click', () => {
+  if (state.mode === 'local') startLocal();
+  else if (state.mode === 'ai') startAI();
 });
 
-/* ============ LOGIN SCREEN ============ */
-function renderLogin() {
-  $("#app").innerHTML = `<div class="center-wrap">
-    <img class="center-logo" src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
-    <h1 class="center-title">CAZOO Control Center</h1>
-    <p class="center-sub">Panel administrasi. Hanya untuk staf resmi CAZOO.</p>
-    <button class="btn btn-primary" id="signin" style="min-width:240px;padding:12px 20px;">
-      ${I.google}<span>Masuk dengan Google</span>
-    </button>
-    <p class="faint tiny" style="margin-top:20px;max-width:340px;">Setiap aktivitas di panel ini dicatat dalam audit log.</p>
-  </div>`;
-  $("#signin").onclick = async () => {
-    const b = $("#signin"); b.disabled = true; b.innerHTML = "Menghubungkan…";
-    try { await signInWithPopup(auth, provider); }
-    catch (err) {
-      toast("Login gagal: " + err.code, "error");
-      b.disabled = false; b.innerHTML = `${I.google}<span>Masuk dengan Google</span>`;
-    }
+$('resHome').addEventListener('click', () => { closeModal('resultModal'); exitGame(); });
+$('resAgain').addEventListener('click', () => {
+  closeModal('resultModal');
+  if (state.mode === 'local') startLocal();
+  else if (state.mode === 'ai') startAI();
+});
+
+/* ============ CONFIRM MODAL ============ */
+$('cfNo').addEventListener('click', () => closeModal('confirmModal'));
+
+/* ============ SETTINGS ============ */
+$('openSettings').addEventListener('click', () => {
+  const p = state.profile;
+  if (p){
+    $('setName').textContent = p.displayName;
+    $('setUname').textContent = '@' + p.username;
+    if (p.photoURL) $('setAvatar').style.backgroundImage = `url(${p.photoURL})`;
+  }
+  show('settingsScreen');
+});
+$('settingsBack').addEventListener('click', () => show('dash'));
+$('logoutRow').addEventListener('click', () => {
+  $('cfTitle').textContent = 'Logout?';
+  $('cfMsg').textContent = 'Kamu akan keluar dari akun Google ini.';
+  $('cfYes').onclick = async () => {
+    closeModal('confirmModal');
+    try { await signOut(auth); toast('Berhasil logout.', 'ok'); }
+    catch(e){ toast('Gagal logout.', 'err'); }
   };
-}
+  openModal('confirmModal');
+});
 
-/* ============ ACCESS CODE GATE ============ */
-function renderAccessCodeGate() {
-  $("#app").innerHTML = `<div class="center-wrap">
-    <img class="center-logo" src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
-    <span class="badge badge-warn">Akses Terbatas</span>
-    <h1 class="center-title" style="font-size:22px;margin-top:12px;">Kode Akses Admin</h1>
-    <p class="center-sub">Masukkan kode akses untuk melanjutkan ke Control Center.</p>
+// Switches
+document.querySelectorAll('.switch').forEach(sw => {
+  const key = sw.dataset.setting;
+  if (state.settings[key]) sw.classList.add('on');
+  else sw.classList.remove('on');
+  sw.addEventListener('click', () => {
+    state.settings[key] = !state.settings[key];
+    sw.classList.toggle('on', state.settings[key]);
+    saveLocalSettings();
+    if (state.chess) renderBoard();
+  });
+});
 
-    <div class="center-narrow">
-      <div class="field">
-        <label>Kode Akses</label>
-        <input class="input mono" id="bk" type="password" placeholder="••••••"
-               autocomplete="off" spellcheck="false" inputmode="numeric"
-               style="text-align:center;letter-spacing:.5em;font-size:22px;font-weight:700;padding:14px;">
-      </div>
-      <button class="btn btn-primary btn-block" id="go" style="margin-top:16px;padding:12px;">
-        ${I.key}<span>Masuk sebagai Admin</span>
-      </button>
-      <button class="btn btn-ghost btn-block" id="out" style="margin-top:8px;">
-        ${I.logout}<span>Keluar</span>
-      </button>
-      <p class="faint tiny mt-16" style="line-height:1.6;text-align:center;">
-        Hanya staf resmi CAZOO yang boleh mengakses panel ini. Setiap percobaan login dicatat.
-      </p>
-    </div>
-  </div>`;
-
-  const input = $("#bk");
-  const btn = $("#go");
-  input.focus();
-
-  async function attempt() {
-    const code = input.value.trim();
-    if (!code) { toast("Masukkan kode akses.", "error"); return; }
-
-    btn.disabled = true;
-    btn.innerHTML = `<span class="spin">${I.refresh}</span><span>Memverifikasi…</span>`;
-
-    if (code !== ADMIN_ACCESS_CODE) {
-      await audit("admin_login_failed", state.user.uid, { email: state.user.email });
-      toast("Kode akses salah.", "error");
-      input.value = "";
-      input.focus();
-      btn.disabled = false;
-      btn.innerHTML = `${I.key}<span>Masuk sebagai Admin</span>`;
-      return;
+/* ============ MODAL BACKDROP CLOSE ============ */
+document.querySelectorAll('.modal-back').forEach(m => {
+  m.addEventListener('click', (e) => {
+    if (e.target === m && m.id !== 'resultModal' && m.id !== 'promoModal'){
+      m.classList.remove('show');
     }
-
-    try {
-      await set(ref(db, `userRoles/${state.user.uid}`), {
-        role: "superadmin",
-        grantedBy: "access_code",
-        grantedAt: Date.now(),
-        grantedByName: "Access Code"
-      });
-      await audit("admin_login_success", state.user.uid, { email: state.user.email });
-      state.role = "superadmin";
-      toast("Selamat datang, Admin.", "ok");
-      setTimeout(() => renderShell("overview"), 400);
-    } catch (e) {
-      console.error(e);
-      toast("Gagal menyimpan role: " + e.message + " — cek Security Rules.", "error");
-      btn.disabled = false;
-      btn.innerHTML = `${I.key}<span>Masuk sebagai Admin</span>`;
-    }
-  }
-
-  btn.onclick = attempt;
-  input.addEventListener("keydown", e => { if (e.key === "Enter") attempt(); });
-  $("#out").onclick = async () => { await signOut(auth); };
-}
-
-/* ============ SHELL ============ */
-const NAV = [
-  { id:"overview", label:"Overview", icon:"dashboard", perm:"overview" },
-  { id:"users", label:"Users", icon:"users", perm:"users" },
-  { id:"rooms", label:"Rooms", icon:"room", perm:"rooms" },
-  { id:"games", label:"Games", icon:"game", perm:"games" },
-  { id:"reports", label:"Reports", icon:"report", perm:"reports" },
-  { id:"features", label:"Features", icon:"shield", perm:"features" },
-  { id:"announcements", label:"Announcements", icon:"bell", perm:"announcements" },
-  { id:"audit", label:"Audit Log", icon:"list", perm:"audit" },
-  { id:"settings", label:"Settings", icon:"settings", perm:"settings" },
-];
-
-function renderShell(active) {
-  const roleLabel = { superadmin:"Super Admin", admin:"Admin", moderator:"Moderator", spectator:"Spectator" }[state.role] || "—";
-  const name = state.profile?.displayName || state.user.displayName || state.user.email || "Admin";
-  const photo = state.profile?.photoURL || state.user.photoURL || "https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg";
-
-  const navHtml = NAV
-    .filter(n => n.perm === "*" || hasPerm(n.perm) || (state.role === "superadmin"))
-    .map(n => `<button class="nav-item ${n.id === active ? "active" : ""}" data-nav="${n.id}">${I[n.icon]}<span>${n.label}</span></button>`)
-    .join("");
-
-  $("#app").innerHTML = `
-    <div class="mobile-bar">
-      <img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
-      <div style="flex:1;font-weight:700;letter-spacing:-.02em;">Control Center</div>
-      <button class="btn btn-ghost btn-icon" id="mmenu">${I.menu}</button>
-    </div>
-    <div class="shell">
-      <aside class="sidebar">
-        <div class="brand">
-          <img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
-          <div class="brand-info">
-            <div class="brand-name">Control Center</div>
-            <div class="brand-sub">CAZOO</div>
-          </div>
-        </div>
-        <div class="nav-items">${navHtml}</div>
-        <div class="sidebar-footer">
-          <button class="user-chip" id="userchip" style="width:100%;">
-            <img src="${esc(photo)}" alt="">
-            <div class="user-chip-info">
-              <div class="user-chip-name">${esc(name)}</div>
-              <div class="user-chip-role">${esc(roleLabel)}</div>
-            </div>
-            <span class="faint">${I.chevron}</span>
-          </button>
-        </div>
-      </aside>
-      <div class="main">
-        <div class="main-inner" id="page"></div>
-      </div>
-    </div>
-    <div class="mobile-menu" id="mobile-menu" hidden>
-      <div class="flex-between mb-24">
-        <div class="flex" style="gap:10px;">
-          <img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="" style="width:28px;height:28px;border-radius:8px;">
-          <div>
-            <div style="font-weight:700;">Control Center</div>
-            <div class="faint tiny">${esc(name)} · ${esc(roleLabel)}</div>
-          </div>
-        </div>
-        <button class="btn btn-ghost btn-icon" id="mclose">${I.x}</button>
-      </div>
-      <div class="nav-items">${navHtml}</div>
-    </div>`;
-
-  $$("[data-nav]").forEach(b => b.addEventListener("click", () => {
-    const id = b.dataset.nav;
-    if (!hasPerm(id) && state.role !== "superadmin") {
-      toast("Anda tidak punya akses ke halaman ini.", "error");
-      return;
-    }
-    state.view = id;
-    $("#mobile-menu").hidden = true;
-    renderShell(id);
-  }));
-
-  $("#mmenu").onclick = () => { $("#mobile-menu").hidden = false; };
-  $("#mclose").onclick = () => { $("#mobile-menu").hidden = true; };
-
-  $("#userchip").onclick = () => openUserMenu();
-
-  state.cleanup?.(); state.cleanup = null;
-  const page = $("#page");
-  const fn = PAGES[active] || PAGES.overview;
-  state.cleanup = fn(page);
-}
-
-function openUserMenu() {
-  modal({
-    title: "Akun Anda",
-    body: `<div class="flex" style="gap:12px;margin-bottom:14px;">
-      <img class="avatar" src="${esc(state.profile?.photoURL || state.user.photoURL || "https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg")}" style="width:44px;height:44px;">
-      <div>
-        <div style="font-weight:600;">${esc(state.profile?.displayName || state.user.displayName || "—")}</div>
-        <div class="muted small">${esc(state.user.email || "")}</div>
-        <div class="faint tiny mono mt-4">${esc(state.user.uid.slice(0,16))}…</div>
-      </div>
-    </div>
-    <div class="row-item">
-      <div class="row-item-main">
-        <div class="row-item-title">Role</div>
-        <div class="row-item-sub">${esc({superadmin:"Super Admin",admin:"Admin",moderator:"Moderator",spectator:"Spectator"}[state.role] || "—")}</div>
-      </div>
-    </div>`,
-    actions: [
-      { label: "Keluar", danger: true, onClick: async () => { await signOut(auth); } },
-      { label: "Tutup", primary: true }
-    ]
   });
-}
+});
 
-/* ============================================================
-   PAGE: OVERVIEW
-   ============================================================ */
-function pageOverview(root) {
-  root.innerHTML = `
-    <div class="page-head">
-      <div class="page-title-group">
-        <h1>Overview</h1>
-        <div class="page-sub">Ringkasan status CAZOO saat ini</div>
-      </div>
-      <div class="page-actions">
-        <button class="btn btn-ghost" id="refresh">${I.refresh}<span>Refresh</span></button>
-      </div>
-    </div>
-    <div class="stat-grid" id="stats">
-      ${["Total Akun","Aktif 24 jam","Room Aktif","Pertandingan Live","Permintaan Pertemanan","Laporan Pending"]
-        .map(l => `<div class="stat"><div class="stat-label">${l}</div><div class="stat-value" data-stat>—</div></div>`).join("")}
-    </div>
-    <h2>Aktivitas Terbaru</h2>
-    <div class="card card-flush" id="recent">
-      <div class="empty">Memuat…</div>
-    </div>
-    <h2>Peringatan Sistem</h2>
-    <div id="alerts" class="row-list">
-      <div class="row-item">
-        <div class="row-item-main">
-          <div class="row-item-title">Cloud Functions</div>
-          <div class="row-item-sub">Rating di-update dari host (Host-Authoritative). Untuk anti-cheat sejati, deploy Cloud Functions.</div>
-        </div>
-        <span class="chip chip-warn">Catatan</span>
-      </div>
-    </div>`;
-
-  let pendingReports = 0, pendingRequests = 0, activeRooms = 0, liveGames = 0, totalUsers = 0, activeUsers = 0;
-
-  const offUsers = onValue(ref(db, "users"), snap => {
-    totalUsers = snap.exists() ? Object.keys(snap.val()).length : 0;
-    const cutoff = Date.now() - 24*3600*1000;
-    let act = 0;
-    snap.forEach(c => {
-      const p = c.val()?.profile;
-      if (p?.createdAt && p.createdAt > cutoff) act++;
+/* ============ KEYBOARD ============ */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape'){
+    document.querySelectorAll('.modal-back.show').forEach(m => {
+      if (m.id !== 'resultModal' && m.id !== 'promoModal') m.classList.remove('show');
     });
-    activeUsers = act;
-    updateStats();
-  });
-
-  const offRooms = onValue(ref(db, "rooms"), snap => {
-    const rooms = snap.val() || {};
-    activeRooms = Object.values(rooms).filter(r => r.status === "ready" || r.status === "waiting").length;
-    liveGames = Object.values(rooms).filter(r => r.status === "playing").length;
-    updateStats();
-    renderRecent();
-  });
-
-  const offReports = onValue(ref(db, "reports"), snap => {
-    const reps = snap.val() || {};
-    pendingReports = Object.values(reps).filter(r => r.status === "pending").length;
-    updateStats();
-  });
-
-  const offFriends = onValue(ref(db, "friendRequests"), snap => {
-    pendingRequests = snap.exists() ? Object.values(snap.val()).reduce((a,v) => a + Object.keys(v||{}).length, 0) : 0;
-    updateStats();
-  });
-
-  function updateStats() {
-    const values = [totalUsers, activeUsers, activeRooms, liveGames, pendingRequests, pendingReports];
-    $$("[data-stat]", root).forEach((el, i) => { el.textContent = values[i] ?? "—"; });
   }
+});
 
-  async function renderRecent() {
-    const el = $("#recent", root);
-    const snap = await get(ref(db, "rooms"));
-    if (!snap.exists()) { el.innerHTML = `<div class="empty">Belum ada aktivitas room.</div>`; return; }
-    const arr = Object.values(snap.val()).sort((a,b) => (b.createdAt||0) - (a.createdAt||0)).slice(0, 8);
-    if (!arr.length) { el.innerHTML = `<div class="empty">Belum ada aktivitas room.</div>`; return; }
-    el.innerHTML = arr.map(r => `
-      <div class="row-item" style="border-radius:0;border-left:0;border-right:0;border-top:0;margin:0;">
-        <div class="row-item-main">
-          <div class="row-item-title">${esc(r.host?.name||"—")} ${r.guest?`vs ${esc(r.guest.name)}`:"(menunggu lawan)"}</div>
-          <div class="row-item-sub">${esc(r.mode)} · ${r.tcMinutes} menit · ${r.status} · ${fmtTimeAgo(r.createdAt)}</div>
-        </div>
-        <span class="chip ${r.status === "playing" ? "chip-brand" : r.status === "ended" ? "" : "chip-info"}">${esc(r.status)}</span>
-      </div>`).join("");
+/* ============ BOOT ============ */
+setTimeout(() => {
+  // If auth hasn't resolved in 2s, show login anyway
+  if (!state.user && $('loading').classList.contains('active')){
+    show('login');
   }
+}, 2000);
 
-  $("#refresh", root).onclick = () => { renderRecent(); toast("Diperbarui", "ok"); };
-  renderRecent();
-
-  return () => { offUsers(); offRooms(); offReports(); offFriends(); };
-}
-
-/* ============================================================
-   PAGE: USERS
-   ============================================================ */
-function pageUsers(root) {
-  root.innerHTML = `
-    <div class="page-head">
-      <div class="page-title-group">
-        <h1>Users</h1>
-        <div class="page-sub">Kelola akun, role, dan status</div>
-      </div>
-      <div class="page-actions">
-        <button class="btn btn-ghost" id="refresh">${I.refresh}<span>Refresh</span></button>
-      </div>
-    </div>
-    <div class="toolbar">
-      <input class="input" id="q" placeholder="Cari username, nama, atau UID…" autocomplete="off">
-      <div class="field">
-        <label>Role</label>
-        <select class="input" id="frole">
-          <option value="">Semua</option>
-          <option value="superadmin">Super Admin</option>
-          <option value="admin">Admin</option>
-          <option value="moderator">Moderator</option>
-          <option value="spectator">Spectator</option>
-          <option value="player">Player</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Status</label>
-        <select class="input" id="fstatus">
-          <option value="">Semua</option>
-          <option value="active">Aktif</option>
-          <option value="banned">Banned</option>
-        </select>
-      </div>
-    </div>
-    <div class="card card-flush">
-      <div class="table-wrap">
-        <table class="table" id="tbody">
-          <thead><tr>
-            <th>Pengguna</th><th>Role</th><th>Rating</th><th>Status</th><th>Dibuat</th><th></th>
-          </tr></thead>
-          <tbody id="rows"><tr><td colspan="6"><div class="empty">Memuat…</div></td></tr></tbody>
-        </table>
-      </div>
-    </div>`;
-
-  let allUsers = [];
-  let allRoles = {};
-
-  const offUsers = onValue(ref(db, "users"), snap => {
-    allUsers = snap.exists() ? Object.entries(snap.val()).map(([uid, v]) => ({ uid, ...v })) : [];
-    render();
-  });
-  const offRoles = onValue(ref(db, "userRoles"), snap => {
-    allRoles = snap.val() || {};
-    render();
-  });
-
-  function render() {
-    const q = $("#q", root).value.trim().toLowerCase();
-    const fRole = $("#frole", root).value;
-    const fStatus = $("#fstatus", root).value;
-
-    let rows = allUsers.filter(u => {
-      const p = u.profile || {};
-      const role = allRoles[u.uid]?.role || "player";
-      if (fRole && role !== fRole) return false;
-      const banned = u.status?.banned === true;
-      if (fStatus === "banned" && !banned) return false;
-      if (fStatus === "active" && banned) return false;
-      if (q) {
-        const hay = [p.username, p.displayName, u.uid].filter(Boolean).join(" ").toLowerCase();
-        if (!hay.includes(q)) return false;
-      }
-      return true;
-    }).sort((a,b) => (b.profile?.createdAt||0) - (a.profile?.createdAt||0));
-
-    const tbody = $("#rows", root);
-    if (!rows.length) {
-      tbody.innerHTML = `<tr><td colspan="6"><div class="empty">Tidak ada pengguna yang cocok.</div></td></tr>`;
-      return;
-    }
-    tbody.innerHTML = rows.slice(0, 200).map(u => {
-      const p = u.profile || {};
-      const role = allRoles[u.uid]?.role || "player";
-      const banned = u.status?.banned === true;
-      const rating = u.ratings?.ranked?.rating ?? "—";
-      const created = p.createdAt ? fmtTime(p.createdAt) : "—";
-      const photo = p.photoURL || "https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg";
-      const roleChip = role === "player" ? "" : `<span class="chip chip-brand">${esc(role)}</span>`;
-      const bannedChip = banned ? `<span class="chip chip-danger">BANNED</span>` : "";
-      return `<tr data-uid="${esc(u.uid)}">
-        <td>
-          <div class="flex" style="gap:10px;">
-            <img class="avatar avatar-sm" src="${esc(photo)}" alt="">
-            <div style="min-width:0;">
-              <div style="font-weight:500;">${esc(p.displayName || "—")}</div>
-              <div class="faint tiny">@${esc(p.username || "—")}</div>
-            </div>
-          </div>
-        </td>
-        <td>${roleChip || '<span class="faint small">player</span>'}</td>
-        <td><strong>${rating}</strong></td>
-        <td>${bannedChip || '<span class="chip chip-brand">Aktif</span>'}</td>
-        <td class="faint small">${esc(created)}</td>
-        <td class="text-right">
-          <div class="table-actions">
-            <button class="btn btn-sm btn-ghost" data-view="${esc(u.uid)}" title="Detail">${I.edit}</button>
-          </div>
-        </td>
-      </tr>`;
-    }).join("");
-
-    $$("[data-view]", root).forEach(b => b.onclick = () => openUserDetail(b.dataset.view));
-  }
-
-  $("#q", root).oninput = render;
-  $("#frole", root).onchange = render;
-  $("#fstatus", root).onchange = render;
-  $("#refresh", root).onclick = () => render();
-
-  async function openUserDetail(uid) {
-    const u = allUsers.find(x => x.uid === uid);
-    if (!u) return;
-    const p = u.profile || {};
-    const role = allRoles[uid]?.role || "player";
-    const banned = u.status?.banned === true;
-
-    const body = `
-      <div class="flex" style="gap:12px;margin-bottom:16px;">
-        <img class="avatar" src="${esc(p.photoURL || "https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg")}" style="width:48px;height:48px;">
-        <div style="min-width:0;">
-          <div style="font-weight:600;">${esc(p.displayName || "—")}</div>
-          <div class="muted small">@${esc(p.username || "—")}</div>
-          <div class="faint tiny mono mt-4">${esc(uid)}</div>
-        </div>
-      </div>
-      <div class="row-item mb-16">
-        <div class="row-item-main">
-          <div class="row-item-title">Bio</div>
-          <div class="row-item-sub">${esc(p.bio || "—")}</div>
-        </div>
-      </div>
-      <div class="grid-2 mb-16">
-        <div class="row-item" style="margin:0;">
-          <div class="row-item-main">
-            <div class="row-item-title">Rating Ranked</div>
-            <div class="row-item-sub">${u.ratings?.ranked?.rating ?? "—"} (peak ${u.ratings?.ranked?.peak ?? "—"})</div>
-          </div>
-        </div>
-        <div class="row-item" style="margin:0;">
-          <div class="row-item-main">
-            <div class="row-item-title">W / L / D</div>
-            <div class="row-item-sub">${u.statistics?.ranked?.wins ?? 0} · ${u.statistics?.ranked?.losses ?? 0} · ${u.statistics?.ranked?.draws ?? 0}</div>
-          </div>
-        </div>
-      </div>
-      <div class="mb-16">
-        <label class="small muted">Role</label>
-        <select class="input mt-8" id="newrole">
-          <option value="player" ${role==="player"?"selected":""}>Player</option>
-          <option value="spectator" ${role==="spectator"?"selected":""}>Spectator</option>
-          <option value="moderator" ${role==="moderator"?"selected":""}>Moderator</option>
-          <option value="admin" ${role==="admin"?"selected":""}>Admin</option>
-          <option value="superadmin" ${role==="superadmin"?"selected":""}>Super Admin</option>
-        </select>
-        <div class="faint tiny mt-8">Hanya super admin dapat mengubah role. Perubahan dicatat di audit log.</div>
-      </div>
-      ${banned ? `<div class="row-item" style="border-color:color-mix(in srgb,var(--danger) 40%,var(--line));">
-        <div class="row-item-main">
-          <div class="row-item-title" style="color:var(--danger);">Akun Diblokir</div>
-          <div class="row-item-sub">Alasan: ${esc(u.status?.reason || "—")} · ${fmtTimeAgo(u.status?.bannedAt)}</div>
-        </div>
-      </div>` : ""}`;
-
-    const isSelf = uid === state.user.uid;
-    const canEditRole = state.role === "superadmin" && !isSelf;
-    const actions = [];
-    actions.push({
-      label: "Simpan Role",
-      primary: true,
-      onClick: async (b) => {
-        if (!canEditRole) {
-          toast("Hanya super admin yang dapat mengubah role, dan tidak pada akun sendiri.", "error");
-          return false;
-        }
-        const newRole = $("#newrole", b).value;
-        if (newRole === role) return;
-        try {
-          if (newRole === "player") {
-            await remove(ref(db, `userRoles/${uid}`));
-          } else {
-            await set(ref(db, `userRoles/${uid}`), {
-              role: newRole,
-              grantedBy: state.user.uid,
-              grantedByName: state.profile?.displayName || "Admin",
-              grantedAt: Date.now()
-            });
-          }
-          await audit("set_role", uid, { from: role, to: newRole, target: p.username || uid });
-          toast("Role diperbarui", "ok");
-        } catch(e) {
-          toast("Gagal: " + e.message, "error");
-          return false;
-        }
-      }
-    });
-    if (!isSelf) {
-      if (banned) {
-        actions.push({
-          label: "Unban",
-          onClick: async () => {
-            await remove(ref(db, `users/${uid}/status`));
-            await audit("unban_user", uid, { target: p.username || uid });
-            toast("Akun dipulihkan", "ok");
-          }
-        });
-      } else {
-        actions.push({
-          label: "Ban",
-          danger: true,
-          onClick: async (b) => {
-            const reason = prompt("Alasan ban:", "Melanggar aturan") || "Melanggar aturan";
-            await set(ref(db, `users/${uid}/status`), {
-              banned: true, reason,
-              bannedBy: state.user.uid,
-              bannedAt: Date.now()
-            });
-            await audit("ban_user", uid, { reason, target: p.username || uid });
-            toast("Akun diblokir", "ok");
-          }
-        });
-      }
-    }
-    actions.push({ label: "Tutup", primary: !canEditRole });
-
-    await modal({ title: "Detail Pengguna", body, actions });
-    render();
-  }
-
-  return () => { offUsers(); offRoles(); };
-}
-
-/* ============================================================
-   PAGE: ROOMS
-   ============================================================ */
-function pageRooms(root) {
-  root.innerHTML = `
-    <div class="page-head">
-      <div class="page-title-group">
-        <h1>Rooms</h1>
-        <div class="page-sub">Room aktif dan selesai</div>
-      </div>
-    </div>
-    <div class="toolbar">
-      <input class="input" id="q" placeholder="Cari kode room, nama pemain…">
-      <div class="field">
-        <label>Status</label>
-        <select class="input" id="fst">
-          <option value="">Semua</option>
-          <option value="waiting">Waiting</option>
-          <option value="ready">Ready</option>
-          <option value="playing">Playing</option>
-          <option value="ended">Ended</option>
-        </select>
-      </div>
-    </div>
-    <div class="row-list" id="list"><div class="empty">Memuat…</div></div>`;
-
-  let all = [];
-  const off = onValue(ref(db, "rooms"), snap => {
-    all = snap.exists() ? Object.entries(snap.val()).map(([id, v]) => ({ id, ...v })) : [];
-    render();
-  });
-
-  function render() {
-    const q = $("#q", root).value.trim().toLowerCase();
-    const fst = $("#fst", root).value;
-    let rooms = all.filter(r => {
-      if (fst && r.status !== fst) return false;
-      if (q) {
-        const hay = [r.id, r.host?.name, r.guest?.name].filter(Boolean).join(" ").toLowerCase();
-        if (!hay.includes(q)) return false;
-      }
-      return true;
-    }).sort((a,b) => (b.createdAt||0) - (a.createdAt||0)).slice(0, 100);
-
-    const el = $("#list", root);
-    if (!rooms.length) { el.innerHTML = `<div class="empty">Tidak ada room yang cocok.</div>`; return; }
-    el.innerHTML = rooms.map(r => {
-      const moveCount = (r.moves || []).length;
-      const chip = r.status === "playing" ? "chip-brand" : r.status === "ended" ? "" : "chip-info";
-      return `<div class="row-item">
-        <div class="row-item-main">
-          <div class="row-item-title">${esc(r.host?.name||"—")} ${r.guest ? `vs ${esc(r.guest.name)}` : "(menunggu)"}</div>
-          <div class="row-item-sub">
-            <span class="mono">${esc(r.id.slice(0,12))}</span> ·
-            ${esc(r.mode)} · ${r.tcMinutes} menit ·
-            ${moveCount} langkah ·
-            ${fmtTimeAgo(r.createdAt)}
-          </div>
-        </div>
-        <span class="chip ${chip}">${esc(r.status)}</span>
-      </div>`;
-    }).join("");
-  }
-
-  $("#q", root).oninput = render;
-  $("#fst", root).onchange = render;
-  return () => off();
-}
-
-/* ============================================================
-   PAGE: GAMES
-   ============================================================ */
-function pageGames(root) {
-  root.innerHTML = `
-    <div class="page-head">
-      <div class="page-title-group">
-        <h1>Games</h1>
-        <div class="page-sub">Perubahan rating terbaru seluruh pemain</div>
-      </div>
-    </div>
-    <div class="card card-flush">
-      <div class="table-wrap">
-        <table class="table">
-          <thead><tr><th>Waktu</th><th>Pemain</th><th>Δ Rating</th><th>Setelah</th></tr></thead>
-          <tbody id="rows"><tr><td colspan="4"><div class="empty">Memuat…</div></td></tr></tbody>
-        </table>
-      </div>
-    </div>`;
-
-  const off = onValue(ref(db, "ratingHistory"), async snap => {
-    const tbody = $("#rows", root);
-    if (!snap.exists()) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty">Belum ada riwayat rating.</div></td></tr>`; return; }
-    const entries = [];
-    snap.forEach(uSnap => {
-      const uid = uSnap.key;
-      uSnap.forEach(hSnap => {
-        const h = hSnap.val() || {};
-        entries.push({ uid, delta: h.delta, after: h.after, before: h.before, ts: h.ts });
-      });
-    });
-    entries.sort((a,b) => (b.ts||0) - (a.ts||0));
-    const recent = entries.slice(0, 100);
-    if (!recent.length) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty">Belum ada riwayat rating.</div></td></tr>`; return; }
-
-    const uids = [...new Set(recent.map(e => e.uid))];
-    const profiles = {};
-    for (const uid of uids) {
-      try {
-        const pSnap = await get(ref(db, `users/${uid}/profile`));
-        if (pSnap.exists()) profiles[uid] = pSnap.val();
-      } catch {}
-    }
-
-    tbody.innerHTML = recent.map(e => {
-      const p = profiles[e.uid];
-      const label = p ? `@${esc(p.username)}` : e.uid.slice(0,10);
-      const delta = e.delta ?? 0;
-      const color = delta > 0 ? "var(--brand)" : delta < 0 ? "var(--danger)" : "var(--text-dim)";
-      return `<tr>
-        <td class="faint small">${esc(fmtTime(e.ts))}</td>
-        <td>${label}</td>
-        <td style="color:${color};font-weight:600;">${delta >= 0 ? "+" : ""}${delta}</td>
-        <td><strong>${e.after ?? "—"}</strong></td>
-      </tr>`;
-    }).join("");
-  });
-
-  return () => off();
-}
-
-/* ============================================================
-   PAGE: REPORTS
-   ============================================================ */
-function pageReports(root) {
-  root.innerHTML = `
-    <div class="page-head">
-      <div class="page-title-group">
-        <h1>Reports</h1>
-        <div class="page-sub">Laporan pengguna dan moderasi</div>
-      </div>
-    </div>
-    <div class="row-list" id="list"><div class="empty">Memuat…</div></div>`;
-
-  const off = onValue(ref(db, "reports"), snap => {
-    const el = $("#list", root);
-    if (!snap.exists()) { el.innerHTML = `<div class="empty">Belum ada laporan.</div>`; return; }
-    const arr = Object.entries(snap.val()).map(([id, v]) => ({ id, ...v })).sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-    if (!arr.length) { el.innerHTML = `<div class="empty">Belum ada laporan.</div>`; return; }
-    el.innerHTML = arr.map(r => {
-      const chip = r.status === "pending" ? "chip-warn" : r.status === "resolved" ? "chip-brand" : "";
-      return `<div class="row-item">
-        <div class="row-item-main">
-          <div class="row-item-title">${esc(r.category || "Laporan")} — ${esc(r.targetName || r.targetUid || "—")}</div>
-          <div class="row-item-sub">${esc(r.reason || "")} · oleh @${esc(r.reporterName || r.reporterUid || "?")} · ${fmtTimeAgo(r.createdAt)}</div>
-        </div>
-        <span class="chip ${chip}">${esc(r.status || "pending")}</span>
-        <div class="row-item-actions">
-          <button class="btn btn-sm btn-primary" data-res="${esc(r.id)}">Proses</button>
-        </div>
-      </div>`;
-    }).join("");
-
-    $$("[data-res]", root).forEach(b => b.onclick = async () => {
-      const id = b.dataset.res;
-      const r = arr.find(x => x.id === id);
-      await modal({
-        title: "Proses Laporan",
-        body: `
-          <p>Kategori: <strong>${esc(r.category || "—")}</strong></p>
-          <p>Target: <strong>${esc(r.targetName || r.targetUid || "—")}</strong></p>
-          <p>Alasan: <em>${esc(r.reason || "—")}</em></p>`,
-        actions: [
-          { label: "Tolak Laporan", onClick: async () => {
-            await update(ref(db, `reports/${id}`), { status: "rejected", resolvedBy: state.user.uid, resolvedAt: Date.now() });
-            await audit("report_rejected", id, { target: r.targetUid });
-            toast("Laporan ditolak", "ok");
-          }},
-          { label: "Tandai Selesai", primary: true, onClick: async () => {
-            await update(ref(db, `reports/${id}`), { status: "resolved", resolvedBy: state.user.uid, resolvedAt: Date.now() });
-            await audit("report_resolved", id, { target: r.targetUid });
-            toast("Laporan selesai", "ok");
-          }}
-        ]
-      });
-    });
-  });
-
-  return () => off();
-}
-
-/* ============================================================
-   PAGE: FEATURES
-   ============================================================ */
-function pageFeatures(root) {
-  const FEATURES = [
-    { key: "ranked", label: "Mode Ranked", desc: "Matchmaking rating" },
-    { key: "classic", label: "Mode Classic", desc: "Online tanpa rating" },
-    { key: "friend", label: "Lawan Teman", desc: "Room privat + kode" },
-    { key: "local", label: "Mode Lokal", desc: "Satu perangkat" },
-    { key: "ai", label: "Lawan AI", desc: "Mesin minimax" },
-    { key: "tournament", label: "Turnamen", desc: "Turnamen dengan kode" },
-    { key: "friends", label: "Sistem Teman", desc: "Permintaan & daftar teman" },
-    { key: "chat", label: "Chat Pribadi", desc: "Belum diimplementasikan" },
-    { key: "puzzle", label: "Puzzle", desc: "Belum diimplementasikan" },
-    { key: "analysis", label: "Analisis", desc: "Belum diimplementasikan" },
-  ];
-
-  root.innerHTML = `
-    <div class="page-head">
-      <div class="page-title-group">
-        <h1>Features</h1>
-        <div class="page-sub">Aktifkan atau nonaktifkan fitur (client-side flag)</div>
-      </div>
-    </div>
-    <div class="card mb-24" style="border-color:color-mix(in srgb,var(--warn) 30%,var(--line));background:var(--warn-soft);">
-      <strong style="color:var(--warn);">Catatan penting</strong>
-      <p class="small" style="margin:6px 0 0;line-height:1.55;color:var(--text);">
-        Feature flags ini hanya dibaca oleh aplikasi CAZOO utama jika Anda menambahkan pengecekan <code class="mono">/config/features/{key}</code> di sana. Tanpa itu, flag di sini hanya tersimpan sebagai metadata.
-      </p>
-    </div>
-    <div class="row-list" id="list"><div class="empty">Memuat…</div></div>`;
-
-  const off = onValue(ref(db, "config/features"), snap => {
-    const flags = snap.val() || {};
-    const el = $("#list", root);
-    el.innerHTML = FEATURES.map(f => {
-      const enabled = flags[f.key] !== false;
-      return `<div class="row-item">
-        <div class="row-item-main">
-          <div class="row-item-title">${esc(f.label)}</div>
-          <div class="row-item-sub">${esc(f.desc)}</div>
-        </div>
-        <div class="toggle ${enabled ? "on" : ""}" data-key="${esc(f.key)}" role="switch" aria-checked="${enabled}"></div>
-      </div>`;
-    }).join("");
-    $$("[data-key]", el).forEach(t => t.onclick = async () => {
-      const key = t.dataset.key;
-      const cur = flags[key] !== false;
-      const next = !cur;
-      await update(ref(db, "config/features"), { [key]: next });
-      await audit("feature_toggle", key, { enabled: next });
-      toast(`${key} ${next ? "diaktifkan" : "dinonaktifkan"}`, "ok");
-    });
-  });
-
-  return () => off();
-}
-
-/* ============================================================
-   PAGE: ANNOUNCEMENTS
-   ============================================================ */
-function pageAnnouncements(root) {
-  root.innerHTML = `
-    <div class="page-head">
-      <div class="page-title-group">
-        <h1>Announcements</h1>
-        <div class="page-sub">Pesan global untuk semua pemain</div>
-      </div>
-      <div class="page-actions">
-        <button class="btn btn-primary" id="new">${I.bell}<span>Buat Pengumuman</span></button>
-      </div>
-    </div>
-    <div class="row-list" id="list"><div class="empty">Memuat…</div></div>`;
-
-  const off = onValue(ref(db, "announcements"), snap => {
-    const el = $("#list", root);
-    if (!snap.exists()) { el.innerHTML = `<div class="empty">Belum ada pengumuman.</div>`; return; }
-    const arr = Object.entries(snap.val()).map(([id, v]) => ({ id, ...v })).sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-    if (!arr.length) { el.innerHTML = `<div class="empty">Belum ada pengumuman.</div>`; return; }
-    el.innerHTML = arr.map(a => `
-      <div class="row-item">
-        <div class="row-item-main">
-          <div class="row-item-title">${esc(a.title || "(tanpa judul)")}</div>
-          <div class="row-item-sub">${esc(a.body || "")} · ${fmtTimeAgo(a.createdAt)} · oleh ${esc(a.createdByName || "—")}</div>
-        </div>
-        <div class="row-item-actions">
-          <button class="btn btn-sm btn-danger" data-del="${esc(a.id)}">${I.trash}</button>
-        </div>
-      </div>`).join("");
-    $$("[data-del]", el).forEach(b => b.onclick = async () => {
-      if (!await confirmAction("Hapus pengumuman?", "Tindakan ini tidak dapat dibatalkan.")) return;
-      await remove(ref(db, `announcements/${b.dataset.del}`));
-      await audit("announcement_delete", b.dataset.del);
-      toast("Pengumuman dihapus", "ok");
-    });
-  });
-
-  $("#new", root).onclick = async () => {
-    await modal({
-      title: "Buat Pengumuman",
-      body: `
-        <div class="field mb-16">
-          <label>Judul</label>
-          <input class="input" id="at" maxlength="80" placeholder="cth: Pemeliharaan server">
-        </div>
-        <div class="field mb-16">
-          <label>Isi</label>
-          <textarea class="input" id="ab" rows="4" maxlength="400" placeholder="Detail pengumuman…"></textarea>
-        </div>
-        <div class="field">
-          <label>Tingkat</label>
-          <select class="input" id="al">
-            <option value="info">Info</option>
-            <option value="warning">Peringatan</option>
-            <option value="critical">Penting</option>
-          </select>
-        </div>`,
-      actions: [
-        { label: "Batal" },
-        { label: "Publikasikan", primary: true, onClick: async (b) => {
-          const title = $("#at", b).value.trim();
-          const body = $("#ab", b).value.trim();
-          const level = $("#al", b).value;
-          if (!title || !body) { toast("Judul dan isi wajib", "error"); return false; }
-          await push(ref(db, "announcements"), {
-            title, body, level,
-            createdAt: Date.now(),
-            createdBy: state.user.uid,
-            createdByName: state.profile?.displayName || "Admin"
-          });
-          await audit("announcement_create", null, { title });
-          toast("Pengumuman dipublikasikan", "ok");
-        }}
-      ]
-    });
-  };
-
-  return () => off();
-}
-
-/* ============================================================
-   PAGE: AUDIT LOG
-   ============================================================ */
-function pageAudit(root) {
-  root.innerHTML = `
-    <div class="page-head">
-      <div class="page-title-group">
-        <h1>Audit Log</h1>
-        <div class="page-sub">Riwayat tindakan administrator</div>
-      </div>
-    </div>
-    <div class="toolbar">
-      <input class="input" id="q" placeholder="Cari aksi, aktor, target…">
-    </div>
-    <div class="card card-flush">
-      <div class="table-wrap">
-        <table class="table">
-          <thead><tr><th>Waktu</th><th>Aktor</th><th>Aksi</th><th>Target</th></tr></thead>
-          <tbody id="rows"><tr><td colspan="4"><div class="empty">Memuat…</div></td></tr></tbody>
-        </table>
-      </div>
-    </div>`;
-
-  let entries = [];
-  const off = onValue(query(ref(db, "auditLogs"), limitToLast(200)), snap => {
-    entries = snap.exists() ? Object.values(snap.val()) : [];
-    entries.sort((a,b) => (b.ts||0) - (a.ts||0));
-    render();
-  });
-
-  function render() {
-    const q = $("#q", root).value.trim().toLowerCase();
-    const tbody = $("#rows", root);
-    const filtered = q ? entries.filter(e => [e.action, e.actorName, e.target].filter(Boolean).join(" ").toLowerCase().includes(q)) : entries;
-    if (!filtered.length) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty">Tidak ada log.</div></td></tr>`; return; }
-    tbody.innerHTML = filtered.map(e => `
-      <tr>
-        <td class="faint small">${esc(fmtTime(e.ts))}</td>
-        <td>${esc(e.actorName || e.actorEmail || "—")}</td>
-        <td><span class="chip">${esc(e.action || "—")}</span></td>
-        <td class="mono small">${esc((e.target || "—").slice(0, 20))}</td>
-      </tr>`).join("");
-  }
-
-  $("#q", root).oninput = render;
-  return () => off();
-}
-
-/* ============================================================
-   PAGE: SETTINGS
-   ============================================================ */
-function pageSettings(root) {
-  root.innerHTML = `
-    <div class="page-head">
-      <div class="page-title-group">
-        <h1>Settings</h1>
-        <div class="page-sub">Konfigurasi sistem & info</div>
-      </div>
-    </div>
-    <h2>Mode Maintenance</h2>
-    <div class="row-item mb-16">
-      <div class="row-item-main">
-        <div class="row-item-title">Aktifkan Pemeliharaan</div>
-        <div class="row-item-sub">Saat aktif, aplikasi utama dapat menampilkan layar pemeliharaan.</div>
-      </div>
-      <div class="toggle" id="maintoggle" role="switch"></div>
-    </div>
-    <div class="card mb-24">
-      <div class="field mb-16">
-        <label>Pesan pemeliharaan</label>
-        <textarea class="input" id="maintmsg" rows="2" maxlength="200" placeholder="cth: Server sedang diperbarui, kembali dalam 15 menit."></textarea>
-      </div>
-      <button class="btn btn-primary" id="savemaint">Simpan Pesan</button>
-    </div>
-    <h2>Info</h2>
-    <div class="row-item mb-16"><div class="row-item-main"><div class="row-item-title">Nama</div><div class="row-item-sub">CAZOO Control Center</div></div></div>
-    <div class="row-item mb-16"><div class="row-item-main"><div class="row-item-title">Versi</div><div class="row-item-sub">1.0.0</div></div></div>
-    <div class="row-item"><div class="row-item-main"><div class="row-item-title">Role Anda</div><div class="row-item-sub">${esc(state.role || "—")}</div></div></div>`;
-
-  const off = onValue(ref(db, "system/maintenance"), snap => {
-    const v = snap.val() || {};
-    $("#maintoggle", root).classList.toggle("on", v.enabled === true);
-    $("#maintmsg", root).value = v.message || "";
-  });
-
-  $("#maintoggle", root).onclick = async () => {
-    const cur = $("#maintoggle", root).classList.contains("on");
-    await update(ref(db, "system/maintenance"), { enabled: !cur });
-    await audit("maintenance_toggle", null, { enabled: !cur });
-    toast(`Maintenance ${!cur ? "aktif" : "nonaktif"}`, "ok");
-  };
-
-  $("#savemaint", root).onclick = async () => {
-    const msg = $("#maintmsg", root).value.trim();
-    await update(ref(db, "system/maintenance"), { message: msg });
-    await audit("maintenance_message_update", null, { message: msg.slice(0, 40) });
-    toast("Pesan disimpan", "ok");
-  };
-
-  return () => off();
-}
-
-/* ============ PAGES MAP ============ */
-const PAGES = {
-  overview: pageOverview,
-  users: pageUsers,
-  rooms: pageRooms,
-  games: pageGames,
-  reports: pageReports,
-  features: pageFeatures,
-  announcements: pageAnnouncements,
-  audit: pageAudit,
-  settings: pageSettings,
-};
+window.toast = toast;
 </script>
 </body>
-</html>
+                                                                                                               </html>
