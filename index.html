@@ -1,1542 +1,1291 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#FFFFFF">
-
-<title>Grandmaster Grid - Catur Online</title>
-<meta name="description" content="Grandmaster Grid adalah platform catur online untuk bermain, belajar, dan mengembangkan strategi catur langsung melalui browser.">
-<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-<link rel="canonical" href="https://catur.biz.id/">
-
-<!-- Icons -->
-<link rel="icon" href="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" type="image/jpeg">
-<link rel="apple-touch-icon" href="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg">
-
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://catur.biz.id/">
-<meta property="og:title" content="Grandmaster Grid - Catur Online">
-<meta property="og:description" content="Main dan pelajari catur online melalui Grandmaster Grid.">
-<meta property="og:site_name" content="Grandmaster Grid">
-<meta property="og:locale" content="id_ID">
-<meta property="og:image" content="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg">
-
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Grandmaster Grid - Catur Online">
-<meta name="twitter:description" content="Platform permainan catur online Grandmaster Grid.">
-<meta name="twitter:image" content="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg">
-
-<!-- Preconnect -->
-<link rel="preconnect" href="https://i.ibb.co.com" crossorigin>
-
-<!-- Structured Data -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "@id": "https://catur.biz.id/#website",
-  "url": "https://catur.biz.id/",
-  "name": "Grandmaster Grid",
-  "description": "Platform permainan catur online.",
-  "inLanguage": "id-ID"
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "@id": "https://catur.biz.id/#organization",
-  "name": "Grandmaster Grid",
-  "url": "https://catur.biz.id/",
-  "logo": {
-    "@type": "ImageObject",
-    "url": "https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg"
-  }
-}
-</script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>LINKORA — Satu halaman untuk semua tautanmu</title>
+<meta name="description" content="LINKORA adalah platform link-in-bio profesional untuk kreator, bisnis, dan personal branding." />
+<meta name="theme-color" content="#0b0c10" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237C5CFF'/%3E%3Cstop offset='1' stop-color='%2322D3EE'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M20 32h24M32 20v24' stroke='%23fff' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
 
 <style>
-  :root{
-    --bg:#FFFFFF;
-    --bg-soft:#F7F8FC;
-    --bg-tint:#EEF1FA;
-    --card:#FFFFFF;
-    --border:rgba(15,23,42,.08);
-    --border-strong:rgba(15,23,42,.14);
-    --primary:#6D4DFF;
-    --primary-dark:#4C2FCC;
-    --accent:#0091D5;
-    --highlight:#8B5CF6;
-    --text:#0F172A;
-    --text-soft:#334155;
-    --muted:#64748B;
-    --radius:18px;
-    --radius-sm:12px;
-    --maxw:1200px;
-    --shadow-sm:0 1px 2px rgba(15,23,42,.05), 0 1px 3px rgba(15,23,42,.06);
-    --shadow-md:0 4px 16px -4px rgba(15,23,42,.08), 0 2px 6px -2px rgba(15,23,42,.05);
-    --shadow-lg:0 20px 50px -20px rgba(109,77,255,.25), 0 8px 24px -12px rgba(15,23,42,.08);
-    --shadow-xl:0 30px 70px -30px rgba(109,77,255,.35), 0 12px 32px -16px rgba(15,23,42,.10);
-  }
+:root{
+  --bg:#0b0c10; --bg-2:#0f1117; --surface:#151823; --surface-2:#1b1f2c;
+  --border:#252a3a; --text:#e8ecf3; --muted:#98a2b3;
+  --brand:#7C5CFF; --brand-2:#22D3EE; --brand-ink:#0b0c10;
+  --danger:#ef4444; --success:#22c55e; --warn:#f59e0b;
+  --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:26px;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Space Grotesk", var(--font);
+}
+:root.light{
+  --bg:#f7f8fb; --bg-2:#ffffff; --surface:#ffffff; --surface-2:#f1f3f9;
+  --border:#e4e7ee; --text:#0b0c10; --muted:#5b6473;
+  --shadow:0 10px 30px rgba(20,20,40,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
 
-  *,*::before,*::after{box-sizing:border-box}
-  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-  body{
-    margin:0;
-    font-family:'Inter','Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    line-height:1.65;
-    overflow-x:hidden;
-    min-height:100vh;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-  }
-  img{max-width:100%;display:block;height:auto}
-  a{color:inherit;text-decoration:none}
-  button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
-  :focus-visible{outline:2px solid var(--primary);outline-offset:3px;border-radius:6px}
+.container{max-width:1180px;margin:0 auto;padding:0 20px}
+.stack>*+*{margin-top:16px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.grow{flex:1}
 
-  /* ===== Container ===== */
-  .container{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 22px}
+.nav{position:sticky;top:0;z-index:50;backdrop-filter:saturate(140%) blur(12px);background:color-mix(in oklab, var(--bg) 82%, transparent);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:1180px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;font-size:18px}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-2))}
+.nav-links{display:flex;gap:22px;align-items:center}
+.nav-links a{color:var(--muted);font-size:14px;font-weight:500}
+.nav-links a:hover{color:var(--text)}
+@media(max-width:820px){.nav-links{display:none}}
 
-  /* ===== Background ===== */
-  .bg-layers{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
-  .bg-gradient{
-    position:absolute;inset:-20%;
-    background:
-      radial-gradient(50% 45% at 12% 8%, rgba(109,77,255,.14) 0%, transparent 60%),
-      radial-gradient(45% 40% at 88% 12%, rgba(0,145,213,.12) 0%, transparent 60%),
-      radial-gradient(40% 50% at 50% 100%, rgba(139,92,246,.10) 0%, transparent 65%),
-      linear-gradient(180deg,#FFFFFF 0%,#F9FAFF 55%,#FFFFFF 100%);
-    animation:glowShift 24s ease-in-out infinite alternate;
-  }
-  @keyframes glowShift{
-    0%{transform:translate3d(0,0,0) scale(1)}
-    100%{transform:translate3d(2%,-2%,0) scale(1.05)}
-  }
-  .bg-grid{
-    position:absolute;inset:0;
-    background-image:
-      linear-gradient(rgba(15,23,42,.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15,23,42,.045) 1px, transparent 1px);
-    background-size:56px 56px;
-    -webkit-mask-image:radial-gradient(ellipse at 50% 40%, #000 25%, transparent 75%);
-    mask-image:radial-gradient(ellipse at 50% 40%, #000 25%, transparent 75%);
-    animation:gridMove 80s linear infinite;
-  }
-  @keyframes gridMove{
-    0%{background-position:0 0,0 0}
-    100%{background-position:56px 56px,56px 56px}
-  }
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:var(--r-md);font-weight:600;font-size:14px;transition:.18s transform,.18s background,.18s border}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-ghost{border:1px solid var(--border);color:var(--text);background:var(--surface)}
+.btn-ghost:hover{background:var(--surface-2)}
+.btn-danger{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.4);color:#fca5a5}
+.btn-danger:hover{background:rgba(239,68,68,.18)}
+.btn-sm{padding:7px 12px;font-size:13px;border-radius:10px}
 
-  /* ===== Navbar ===== */
-  .nav{
-    position:fixed;top:0;left:0;right:0;z-index:100;
-    border-bottom:1px solid transparent;
-    transition:background .35s ease, backdrop-filter .35s ease, box-shadow .35s ease, border-color .35s ease;
-  }
-  .nav.scrolled{
-    background:rgba(255,255,255,.82);
-    backdrop-filter:saturate(180%) blur(16px);
-    -webkit-backdrop-filter:saturate(180%) blur(16px);
-    border-bottom-color:var(--border);
-    box-shadow:0 8px 30px -18px rgba(15,23,42,.20);
-  }
-  .nav-inner{
-    display:flex;align-items:center;justify-content:space-between;
-    gap:16px;padding:14px 0;
-  }
-  .brand{display:flex;align-items:center;gap:11px;min-width:0}
-  .brand img{
-    width:40px;height:40px;border-radius:12px;object-fit:cover;
-    box-shadow:0 0 0 1px var(--border), 0 6px 16px -6px rgba(109,77,255,.45);
-    transition:transform .4s ease, box-shadow .4s ease;
-  }
-  .brand:hover img{
-    transform:translateY(-2px) rotate(-3deg);
-    box-shadow:0 0 0 1px var(--border), 0 10px 24px -8px rgba(109,77,255,.6);
-  }
-  .brand-name{
-    font-weight:800;letter-spacing:-.3px;font-size:1.08rem;
-    background:linear-gradient(90deg,#0F172A 0%,#4C2FCC 55%,#0091D5 100%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    white-space:nowrap;
-  }
-  .nav-links{display:flex;align-items:center;gap:4px}
-  .nav-links a{
-    padding:9px 15px;border-radius:10px;font-size:.9rem;font-weight:500;color:var(--text-soft);
-    transition:color .25s ease, background .25s ease;
-  }
-  .nav-links a:hover,
-  .nav-links a:focus-visible{color:var(--primary-dark);background:rgba(109,77,255,.08);outline:none}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)}
+.card-2{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);padding:14px}
+.grid{display:grid;gap:18px}
+@media(min-width:760px){.grid.cols-3{grid-template-columns:repeat(3,1fr)}.grid.cols-2{grid-template-columns:repeat(2,1fr)}.grid.cols-4{grid-template-columns:repeat(4,1fr)}}
 
-  .nav-actions{display:flex;gap:10px;align-items:center}
+.hero{padding:80px 20px 60px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-20% -10% auto -10%;height:520px;background:radial-gradient(60% 60% at 20% 20%, color-mix(in oklab, var(--brand) 45%, transparent), transparent 70%),radial-gradient(60% 60% at 80% 30%, color-mix(in oklab, var(--brand-2) 35%, transparent), transparent 70%);filter:blur(60px);opacity:.5;z-index:-1}
+.hero h1{font-family:var(--font-display);font-size:clamp(32px,6vw,58px);line-height:1.05;margin:0 0 16px;letter-spacing:-.02em}
+.grad-text{background:linear-gradient(135deg,var(--brand),var(--brand-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lede{font-size:18px;color:var(--muted);max-width:640px;margin:0 auto 26px}
+.hero-inner{max-width:820px;margin:0 auto;text-align:center}
 
-  /* ===== Buttons ===== */
-  .btn{
-    display:inline-flex;align-items:center;justify-content:center;gap:8px;
-    padding:11px 20px;border-radius:12px;font-weight:600;font-size:.92rem;
-    transition:transform .3s ease, box-shadow .3s ease, background .3s ease, border-color .3s ease, color .3s ease;
-    position:relative;overflow:hidden;white-space:nowrap;
-  }
-  .btn-primary{
-    background:linear-gradient(135deg,#6D4DFF 0%,#8B5CF6 50%,#0091D5 130%);
-    color:#FFFFFF;font-weight:700;
-    box-shadow:0 10px 24px -10px rgba(109,77,255,.75), inset 0 0 0 1px rgba(255,255,255,.15);
-  }
-  .btn-primary:hover,
-  .btn-primary:focus-visible{
-    transform:translateY(-2px);
-    box-shadow:0 16px 34px -10px rgba(109,77,255,.85), inset 0 0 0 1px rgba(255,255,255,.25);
-    outline:none;
-  }
-  .btn-primary::before{
-    content:"";position:absolute;inset:0;
-    background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.5) 50%,transparent 70%);
-    transform:translateX(-120%);
-    transition:transform .8s ease;
-  }
-  .btn-primary:hover::before{transform:translateX(120%)}
-  .btn-primary svg{transition:transform .35s ease}
-  .btn-primary:hover svg{transform:translateX(3px)}
+.app-shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+@media(max-width:900px){.app-shell{grid-template-columns:1fr}}
+.sidebar{background:var(--bg-2);border-right:1px solid var(--border);padding:20px 14px;position:sticky;top:0;height:100vh;overflow-y:auto}
+@media(max-width:900px){.sidebar{position:fixed;inset:0 auto 0 0;width:250px;transform:translateX(-100%);transition:.25s;z-index:60}.sidebar.open{transform:none}}
+.sidebar h4{color:var(--muted);font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:16px 12px 8px}
+.side-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--muted);font-size:14px;font-weight:500}
+.side-item:hover{background:var(--surface);color:var(--text)}
+.side-item.active{background:linear-gradient(135deg, color-mix(in oklab, var(--brand) 30%, transparent), color-mix(in oklab, var(--brand-2) 20%, transparent));color:var(--text)}
+.side-icon{width:18px;height:18px;flex:none}
+.main{padding:26px 26px 80px;max-width:1100px}
+@media(max-width:600px){.main{padding:18px 14px 90px}}
+.page-title{font-family:var(--font-display);font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
+.page-sub{color:var(--muted);font-size:14px;margin:0 0 24px}
+.mobile-bar{display:none;position:sticky;top:0;z-index:40;background:var(--bg-2);border-bottom:1px solid var(--border);padding:12px 14px;align-items:center;gap:12px}
+@media(max-width:900px){.mobile-bar{display:flex}}
+.scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:55}
+.scrim.show{display:block}
 
-  .btn-ghost{
-    background:#FFFFFF;
-    color:var(--text);
-    border:1px solid var(--border-strong);
-    box-shadow:var(--shadow-sm);
-  }
-  .btn-ghost:hover,
-  .btn-ghost:focus-visible{
-    background:#FFFFFF;
-    border-color:rgba(109,77,255,.45);
-    color:var(--primary-dark);
-    transform:translateY(-2px);
-    box-shadow:0 12px 26px -14px rgba(109,77,255,.5);
-    outline:none;
-  }
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:13px;color:var(--muted);font-weight:500}
+.input,.textarea,.select{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:14px;transition:.15s border, .15s box-shadow;width:100%}
+.input:focus,.textarea:focus,.select:focus{outline:0;border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in oklab, var(--brand) 25%, transparent)}
+.textarea{min-height:90px;resize:vertical}
+.error{color:#fca5a5;font-size:12.5px;margin-top:4px}
+.hint{color:var(--muted);font-size:12px}
+.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:20px}
+.auth-card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:32px;box-shadow:var(--shadow)}
 
-  /* ===== Hamburger ===== */
-  .hamburger{
-    display:none;width:44px;height:44px;border-radius:12px;
-    background:#FFFFFF;border:1px solid var(--border-strong);
-    position:relative;align-items:center;justify-content:center;
-    box-shadow:var(--shadow-sm);
-  }
-  .hamburger span{
-    display:block;width:20px;height:2px;background:var(--text);border-radius:2px;
-    position:absolute;left:50%;transform:translateX(-50%);
-    transition:transform .3s ease, opacity .3s ease, top .3s ease;
-  }
-  .hamburger span:nth-child(1){top:15px}
-  .hamburger span:nth-child(2){top:21px}
-  .hamburger span:nth-child(3){top:27px}
-  .hamburger.open span:nth-child(1){top:21px;transform:translateX(-50%) rotate(45deg)}
-  .hamburger.open span:nth-child(2){opacity:0}
-  .hamburger.open span:nth-child(3){top:21px;transform:translateX(-50%) rotate(-45deg)}
+.link-row{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:12px;margin-bottom:10px}
+.link-row.dragging{opacity:.5}
+.drag-handle{cursor:grab;color:var(--muted);padding:6px;border-radius:6px}
+.drag-handle:hover{background:var(--surface-2);color:var(--text)}
+.toggle{position:relative;width:38px;height:22px;background:var(--border);border-radius:999px;transition:.2s;flex:none;cursor:pointer}
+.toggle.on{background:var(--brand)}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:.2s}
+.toggle.on::after{left:19px}
 
-  .mobile-menu{
-    display:none;
-    position:fixed;top:72px;left:12px;right:12px;z-index:99;
-    background:rgba(255,255,255,.98);
-    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-    border:1px solid var(--border);border-radius:18px;
-    padding:14px;box-shadow:0 30px 60px -20px rgba(15,23,42,.18);
-    transform-origin:top center;
-    transform:scale(.96) translateY(-8px);opacity:0;pointer-events:none;
-    transition:transform .3s ease, opacity .3s ease;
-  }
-  .mobile-menu.open{transform:scale(1) translateY(0);opacity:1;pointer-events:auto}
-  .mobile-menu a{
-    display:block;padding:12px 14px;border-radius:12px;color:var(--text-soft);
-    font-weight:500;transition:background .25s ease,color .25s ease;
-  }
-  .mobile-menu a:hover{background:rgba(109,77,255,.08);color:var(--primary-dark)}
-  .mobile-menu .btn{width:100%;margin-top:8px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:600;letter-spacing:.02em}
+.badge-info{background:color-mix(in oklab, var(--brand) 20%, transparent);color:#c4b5fd}
+.badge-success{background:rgba(34,197,94,.15);color:#86efac}
+.badge-warn{background:rgba(245,158,11,.15);color:#fcd34d}
+.badge-danger{background:rgba(239,68,68,.15);color:#fca5a5}
+.badge-muted{background:var(--surface-2);color:var(--muted)}
 
-  /* ===== Hero ===== */
-  .hero{padding:140px 0 90px;position:relative}
-  .hero-grid{
-    display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center;
-  }
-  .badge{
-    display:inline-flex;align-items:center;gap:8px;
-    padding:7px 14px;border-radius:999px;
-    background:#FFFFFF;
-    border:1px solid rgba(109,77,255,.20);
-    font-size:.75rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
-    color:var(--primary-dark);
-    box-shadow:0 4px 12px -6px rgba(109,77,255,.3);
-    animation:fadeUp .8s ease both;
-  }
-  .badge .dot{
-    width:7px;height:7px;border-radius:50%;background:var(--accent);
-    box-shadow:0 0 0 3px rgba(0,145,213,.20);
-    animation:pulse 1.8s ease-in-out infinite;
-  }
-  @keyframes pulse{
-    0%,100%{opacity:1;transform:scale(1)}
-    50%{opacity:.6;transform:scale(.85)}
-  }
-  .hero h1{
-    font-size:clamp(2.3rem,5.8vw,4.2rem);
-    font-weight:900;line-height:1.02;letter-spacing:-2px;
-    margin:24px 0 16px;
-    background:linear-gradient(135deg,#0F172A 0%,#4C2FCC 55%,#0091D5 100%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    animation:fadeUp .9s .1s ease both;
-  }
-  .hero .sub{
-    font-size:clamp(1.05rem,2vw,1.35rem);font-weight:600;
-    color:var(--text);margin:0 0 14px;
-    animation:fadeUp .9s .2s ease both;
-  }
-  .hero .desc{
-    color:var(--muted);font-size:1rem;max-width:56ch;margin:0 0 32px;
-    animation:fadeUp .9s .3s ease both;
-  }
-  .cta-row{
-    display:flex;flex-wrap:wrap;gap:14px;
-    animation:fadeUp .9s .4s ease both;
-  }
-  .cta-row .btn{padding:15px 26px;font-size:1rem}
+.toasts{position:fixed;bottom:22px;right:22px;display:flex;flex-direction:column;gap:10px;z-index:100;max-width:340px}
+.toast{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);animation:slidein .25s}
+.toast.success{border-left-color:var(--success)}
+.toast.error{border-left-color:var(--danger)}
+@keyframes slidein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
-  @keyframes fadeUp{
-    from{opacity:0;transform:translateY(22px)}
-    to{opacity:1;transform:translateY(0)}
-  }
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;z-index:200;padding:20px}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:26px;max-width:440px;width:100%;box-shadow:var(--shadow)}
 
-  /* Hero board */
-  .hero-visual{
-    position:relative;display:flex;align-items:center;justify-content:center;
-    animation:fadeUp 1.1s .3s ease both;
-  }
-  .board-wrap{
-    position:relative;width:100%;max-width:470px;aspect-ratio:1/1;
-    perspective:1300px;
-  }
-  .board-halo{
-    position:absolute;inset:-18%;border-radius:50%;
-    background:radial-gradient(circle,rgba(109,77,255,.28) 0%,transparent 65%);
-    filter:blur(40px);z-index:-1;
-    animation:halo 6s ease-in-out infinite alternate;
-  }
-  @keyframes halo{
-    0%{transform:scale(.95);opacity:.7}
-    100%{transform:scale(1.1);opacity:1}
-  }
-  .board{
-    position:absolute;inset:0;
-    display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);
-    border-radius:20px;overflow:hidden;
-    background:#F8FAFC;
-    box-shadow:
-      0 0 0 1px rgba(15,23,42,.06),
-      0 30px 60px -20px rgba(109,77,255,.35),
-      0 12px 24px -12px rgba(15,23,42,.15);
-    transform:rotateX(14deg) rotateZ(-8deg) translateY(-6px);
-    transform-style:preserve-3d;
-    animation:boardFloat 8s ease-in-out infinite;
-  }
-  @keyframes boardFloat{
-    0%,100%{transform:rotateX(14deg) rotateZ(-8deg) translateY(-6px)}
-    50%{transform:rotateX(10deg) rotateZ(-6deg) translateY(-16px)}
-  }
-  .board .sq{position:relative}
-  .board .sq.light{background:linear-gradient(135deg,#FFFFFF,#F1F5F9)}
-  .board .sq.dark{background:linear-gradient(135deg,#DCE3F5,#C7D0EA)}
-  .board .sq.glow{animation:sqGlow 3s ease-in-out infinite}
-  .board .sq.glow:nth-child(4n+1){animation-delay:.3s}
-  .board .sq.glow:nth-child(4n+3){animation-delay:1.2s}
-  @keyframes sqGlow{
-    0%,100%{box-shadow:inset 0 0 0 0 rgba(109,77,255,0)}
-    50%{box-shadow:inset 0 0 24px 0 rgba(109,77,255,.35)}
-  }
-  .board .piece{
-    position:absolute;inset:0;
-    display:flex;align-items:center;justify-content:center;
-    font-size:clamp(18px,4.6vw,36px);line-height:1;font-weight:700;
-  }
-  .board .piece.w{
-    color:#FFFFFF;
-    text-shadow:0 1px 0 #94A3B8, 0 2px 3px rgba(15,23,42,.35);
-  }
-  .board .piece.b{
-    color:#0F172A;
-    text-shadow:0 1px 0 rgba(255,255,255,.65), 0 2px 3px rgba(15,23,42,.25);
-  }
+.pf-wrap{min-height:100vh;display:flex;justify-content:center;padding:40px 16px}
+.pf-card{width:100%;max-width:520px}
+.pf-name{font-family:var(--font-display);font-size:24px;text-align:center;margin:0 0 6px}
+.pf-bio{text-align:center;opacity:.85;margin:0 0 26px;font-size:15px;line-height:1.5;white-space:pre-wrap}
+.pf-links{display:flex;flex-direction:column;gap:14px}
+.pf-link{display:flex;align-items:center;justify-content:center;text-align:center;padding:16px 18px;font-weight:600;transition:.18s transform,.18s filter;text-decoration:none}
+.pf-link:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.pf-footer{text-align:center;margin-top:36px;font-size:12px;opacity:.6}
 
-  /* ===== Section base ===== */
-  section{padding:96px 0;position:relative}
-  .section-head{text-align:center;max-width:720px;margin:0 auto 56px}
-  .eyebrow{
-    display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:2.4px;
-    text-transform:uppercase;color:var(--primary-dark);margin-bottom:14px;
-  }
-  .section-head h2{
-    font-size:clamp(1.8rem,3.6vw,2.7rem);
-    font-weight:800;letter-spacing:-.8px;line-height:1.15;margin:0 0 14px;
-    color:var(--text);
-  }
-  .section-head p{color:var(--muted);font-size:1rem;margin:0}
+.sk{background:linear-gradient(90deg,var(--surface) 25%, var(--surface-2) 37%, var(--surface) 63%);background-size:400% 100%;animation:shimmer 1.4s infinite;border-radius:8px;height:14px;margin:6px 0}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
 
-  /* ===== Features ===== */
-  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-  .feature{
-    background:#FFFFFF;
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    padding:30px 26px;
-    position:relative;overflow:hidden;
-    box-shadow:var(--shadow-sm);
-    transition:transform .4s ease, border-color .4s ease, box-shadow .4s ease;
-    opacity:0;transform:translateY(28px);
-  }
-  .feature.in{opacity:1;transform:translateY(0);transition:opacity .7s ease, transform .7s ease}
-  .feature::before{
-    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-    background:radial-gradient(400px circle at var(--x,50%) var(--y,0%), rgba(109,77,255,.09), transparent 45%);
-    opacity:0;transition:opacity .35s ease;
-  }
-  .feature:hover::before{opacity:1}
-  .feature:hover{
-    transform:translateY(-6px);
-    border-color:rgba(109,77,255,.30);
-    box-shadow:var(--shadow-lg);
-  }
-  .feature .icon{
-    width:54px;height:54px;border-radius:16px;
-    display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(135deg, rgba(109,77,255,.14), rgba(0,145,213,.10));
-    border:1px solid rgba(109,77,255,.18);
-    color:var(--primary-dark);margin-bottom:18px;
-    transition:transform .4s ease, box-shadow .4s ease, background .4s ease;
-  }
-  .feature:hover .icon{
-    transform:translateY(-3px) rotate(-4deg);
-    background:linear-gradient(135deg, rgba(109,77,255,.22), rgba(0,145,213,.16));
-    box-shadow:0 12px 22px -12px rgba(109,77,255,.6);
-  }
-  .feature h3{font-size:1.1rem;font-weight:700;margin:0 0 8px;letter-spacing:-.2px;color:var(--text)}
-  .feature p{color:var(--muted);font-size:.92rem;margin:0}
+.kpi{padding:18px;border-radius:var(--r-md);background:linear-gradient(180deg, var(--surface-2), var(--surface));border:1px solid var(--border)}
+.kpi .k{font-size:12px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+.kpi .v{font-family:var(--font-display);font-size:28px;margin-top:6px}
 
-  /* ===== Game Modes ===== */
-  .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-  .mode{
-    display:flex;align-items:center;gap:16px;
-    background:#FFFFFF;
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    padding:18px 20px;
-    box-shadow:var(--shadow-sm);
-    transition:transform .35s ease, border-color .35s ease, box-shadow .35s ease;
-    opacity:0;transform:translateY(24px);
-    cursor:pointer;
-    position:relative;
-  }
-  .mode.in{opacity:1;transform:translateY(0);transition:opacity .7s ease, transform .7s ease}
-  .mode:hover{
-    transform:translateY(-5px);
-    border-color:rgba(109,77,255,.30);
-    box-shadow:var(--shadow-lg);
-  }
-  .mode-icon{
-    width:52px;height:52px;border-radius:14px;flex:0 0 52px;
-    display:flex;align-items:center;justify-content:center;
-    color:#FFFFFF;
-    box-shadow:0 8px 18px -8px rgba(15,23,42,.25);
-    transition:transform .35s ease;
-  }
-  .mode:hover .mode-icon{transform:scale(1.06) rotate(-3deg)}
-  .mode-icon.ranked{background:linear-gradient(135deg,#F97316,#EA580C)}
-  .mode-icon.classic{background:linear-gradient(135deg,#3B82F6,#1D4ED8)}
-  .mode-icon.friend{background:linear-gradient(135deg,#14B8A6,#0D9488)}
-  .mode-icon.local{background:linear-gradient(135deg,#F59E0B,#D97706)}
-  .mode-icon.ai{background:linear-gradient(135deg,#8B5CF6,#6D28D9)}
-  .mode-icon.puzzle{background:linear-gradient(135deg,#A855F7,#7C3AED)}
-  .mode-icon.tictactoe{background:linear-gradient(135deg,#06B6D4,#0891B2)}
-  .mode-icon.trex{background:linear-gradient(135deg,#FB923C,#EA580C)}
-  .mode-info{flex:1;min-width:0}
-  .mode-info h3{
-    font-size:.98rem;font-weight:700;margin:0 0 3px;color:var(--text);
-    letter-spacing:-.2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-  }
-  .mode-info p{font-size:.82rem;color:var(--muted);margin:0;line-height:1.45}
-  .mode-arrow{
-    flex:0 0 auto;color:var(--muted);
-    transition:transform .35s ease, color .35s ease;
-  }
-  .mode:hover .mode-arrow{transform:translateX(4px);color:var(--primary-dark)}
+.preview-shell{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;min-height:560px;display:flex;justify-content:center}
+.preview-frame{width:100%;max-width:380px;border-radius:22px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.35);border:8px solid #0f1117;background:#fff;color:#111;height:640px;overflow-y:auto;position:relative}
 
-  .offline-tag{
-    display:inline-flex;align-items:center;gap:4px;
-    padding:2px 8px;border-radius:999px;
-    font-size:.62rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
-    background:linear-gradient(135deg, rgba(16,185,129,.14), rgba(5,150,105,.10));
-    border:1px solid rgba(16,185,129,.30);
-    color:#047857;
-  }
-  .offline-tag svg{width:10px;height:10px}
-
-  /* ===== Offline Section ===== */
-  .offline-wrap{
-    display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center;
-  }
-  .offline-copy .eyebrow{margin-bottom:12px}
-  .offline-copy h2{
-    font-size:clamp(1.8rem,3.6vw,2.5rem);font-weight:800;
-    letter-spacing:-.8px;line-height:1.15;margin:0 0 18px;color:var(--text);
-  }
-  .offline-copy p{color:var(--text-soft);font-size:1rem;margin:0 0 18px;max-width:56ch}
-  .offline-copy p strong{color:var(--text);font-weight:700}
-  .offline-list{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:12px}
-  .offline-list li{
-    display:flex;align-items:flex-start;gap:12px;
-    font-size:.94rem;color:var(--text-soft);
-  }
-  .offline-list .check{
-    flex:0 0 24px;width:24px;height:24px;border-radius:50%;
-    background:linear-gradient(135deg,#10B981,#059669);
-    color:#FFFFFF;display:flex;align-items:center;justify-content:center;
-    box-shadow:0 4px 10px -4px rgba(16,185,129,.6);
-    margin-top:2px;
-  }
-  .offline-list b{color:var(--text);font-weight:700}
-
-  .offline-visual{
-    position:relative;
-    display:grid;grid-template-columns:1fr 1fr;gap:16px;
-    padding:8px;
-  }
-  .offline-card{
-    background:#FFFFFF;
-    border:1px solid var(--border);
-    border-radius:16px;
-    padding:22px 18px;
-    box-shadow:var(--shadow-md);
-    text-align:center;
-    transition:transform .4s ease, box-shadow .4s ease, border-color .4s ease;
-  }
-  .offline-card:hover{
-    transform:translateY(-5px);
-    border-color:rgba(109,77,255,.25);
-    box-shadow:var(--shadow-lg);
-  }
-  .offline-card:nth-child(2){transform:translateY(14px)}
-  .offline-card:nth-child(2):hover{transform:translateY(9px)}
-  .offline-card:nth-child(3){transform:translateY(-6px)}
-  .offline-card:nth-child(3):hover{transform:translateY(-11px)}
-  .offline-card .mini-icon{
-    width:52px;height:52px;border-radius:14px;
-    margin:0 auto 12px;
-    display:flex;align-items:center;justify-content:center;
-    color:#FFFFFF;
-    box-shadow:0 10px 20px -8px rgba(15,23,42,.28);
-  }
-  .offline-card .mini-icon.ai{background:linear-gradient(135deg,#8B5CF6,#6D28D9)}
-  .offline-card .mini-icon.local{background:linear-gradient(135deg,#F59E0B,#D97706)}
-  .offline-card .mini-icon.tictactoe{background:linear-gradient(135deg,#06B6D4,#0891B2)}
-  .offline-card .mini-icon.trex{background:linear-gradient(135deg,#FB923C,#EA580C)}
-  .offline-card h4{
-    font-size:.92rem;font-weight:700;margin:0 0 4px;color:var(--text);
-    letter-spacing:-.2px;
-  }
-  .offline-card p{
-    font-size:.78rem;color:var(--muted);margin:0;line-height:1.45;
-  }
-
-  /* ===== Steps ===== */
-  .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:18px}
-  .step{
-    background:#FFFFFF;
-    border:1px solid var(--border);border-radius:var(--radius);
-    padding:28px 22px;
-    box-shadow:var(--shadow-sm);
-    transition:transform .4s ease, border-color .4s ease, box-shadow .4s ease;
-    opacity:0;transform:translateY(24px);
-  }
-  .step.in{opacity:1;transform:translateY(0);transition:opacity .7s ease, transform .7s ease}
-  .step:hover{
-    transform:translateY(-6px);
-    border-color:rgba(0,145,213,.35);
-    box-shadow:0 20px 40px -22px rgba(0,145,213,.55), 0 4px 16px -8px rgba(15,23,42,.08);
-  }
-  .step .num{
-    font-size:2.1rem;font-weight:900;letter-spacing:-1px;
-    background:linear-gradient(135deg,#6D4DFF,#0091D5);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    line-height:1;margin-bottom:14px;
-  }
-  .step h4{margin:0 0 8px;font-size:1rem;font-weight:700;color:var(--text)}
-  .step p{margin:0;color:var(--muted);font-size:.88rem}
-
-  .center-cta{text-align:center;margin-top:48px}
-
-  /* ===== About ===== */
-  .about-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:50px;align-items:start}
-  .about-copy p{color:var(--text-soft);margin:0 0 16px;font-size:.98rem}
-  .about-copy p strong{color:var(--text);font-weight:700}
-  .about-side{
-    background:#FFFFFF;border:1px solid var(--border);
-    border-radius:var(--radius);padding:28px;
-    box-shadow:var(--shadow-lg);
-  }
-  .about-side h3{margin:0 0 18px;font-size:1.05rem;display:flex;align-items:center;gap:10px;color:var(--text)}
-  .about-side h3 svg{color:var(--accent)}
-  .piece-list{list-style:none;padding:0;margin:0;display:grid;gap:10px}
-  .piece-list li{
-    display:flex;align-items:center;gap:12px;
-    padding:11px 13px;border-radius:12px;
-    background:var(--bg-soft);
-    border:1px solid rgba(15,23,42,.05);
-    transition:background .25s ease, border-color .25s ease, transform .25s ease;
-    font-size:.9rem;color:var(--text-soft);
-  }
-  .piece-list li:hover{
-    background:rgba(109,77,255,.06);
-    border-color:rgba(109,77,255,.25);
-    transform:translateX(4px);
-  }
-  .piece-list .pico{
-    width:34px;height:34px;border-radius:10px;flex:0 0 34px;
-    background:linear-gradient(135deg,#FFFFFF,#EEF1FA);
-    border:1px solid rgba(15,23,42,.06);
-    display:flex;align-items:center;justify-content:center;color:var(--primary);
-    box-shadow:0 2px 6px -2px rgba(15,23,42,.06);
-  }
-  .piece-list b{color:var(--text);margin-right:6px;font-weight:700}
-  .piece-list span{color:var(--muted);font-size:.83rem}
-
-  /* ===== FAQ ===== */
-  .faq{max-width:820px;margin:0 auto;display:grid;gap:12px}
-  details{
-    background:#FFFFFF;border:1px solid var(--border);
-    border-radius:14px;overflow:hidden;
-    box-shadow:var(--shadow-sm);
-    transition:border-color .3s ease, box-shadow .3s ease;
-  }
-  details[open]{border-color:rgba(109,77,255,.30);box-shadow:var(--shadow-md)}
-  details summary{
-    cursor:pointer;list-style:none;padding:18px 22px;
-    font-weight:600;font-size:1rem;color:var(--text);
-    display:flex;align-items:center;justify-content:space-between;gap:16px;
-  }
-  details summary::-webkit-details-marker{display:none}
-  details summary::after{
-    content:"";width:9px;height:9px;flex:0 0 9px;
-    border-right:2px solid var(--primary);border-bottom:2px solid var(--primary);
-    transform:rotate(45deg);transition:transform .3s ease;
-  }
-  details[open] summary::after{transform:rotate(-135deg)}
-  details p{padding:0 22px 20px;margin:0;color:var(--muted);font-size:.94rem}
-
-  /* ===== Final CTA ===== */
-  .final-cta{
-    text-align:center;
-    padding:84px 28px;
-    border-radius:26px;
-    background:
-      radial-gradient(120% 100% at 50% 0%, rgba(109,77,255,.16), transparent 60%),
-      linear-gradient(180deg,#FFFFFF,#F7F8FC);
-    border:1px solid var(--border);
-    box-shadow:var(--shadow-xl);
-    position:relative;overflow:hidden;
-  }
-  .final-cta::before{
-    content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
-    background:linear-gradient(120deg,transparent 30%,rgba(0,145,213,.22) 50%,transparent 70%);
-    transform:translateX(-100%);
-    animation:shine 6s ease-in-out infinite;
-  }
-  @keyframes shine{
-    0%,60%{transform:translateX(-100%)}
-    100%{transform:translateX(100%)}
-  }
-  .final-cta h2{
-    font-size:clamp(1.7rem,3.6vw,2.6rem);font-weight:800;
-    letter-spacing:-.8px;margin:0 0 14px;color:var(--text);
-  }
-  .final-cta p{color:var(--muted);max-width:52ch;margin:0 auto 30px}
-  .final-cta .btn{padding:16px 30px;font-size:1.05rem}
-
-  /* ===== Footer ===== */
-  footer{
-    border-top:1px solid var(--border);
-    padding:60px 0 30px;
-    background:linear-gradient(180deg,#FFFFFF,#F7F8FC);
-  }
-  .foot-grid{
-    display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;
-    margin-bottom:38px;
-  }
-  .foot-brand{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-  .foot-brand img{
-    width:38px;height:38px;border-radius:11px;
-    box-shadow:0 0 0 1px var(--border), 0 6px 14px -6px rgba(109,77,255,.35);
-  }
-  .foot-brand span{font-weight:800;font-size:1.05rem;color:var(--text)}
-  footer h4{
-    font-size:.82rem;letter-spacing:1.6px;text-transform:uppercase;
-    color:var(--primary-dark);margin:0 0 14px;font-weight:700;
-  }
-  footer ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
-  footer li a{color:var(--muted);font-size:.9rem;transition:color .25s ease, padding-left .25s ease}
-  footer li a:hover{color:var(--primary-dark);padding-left:4px}
-  footer p{color:var(--muted);font-size:.88rem;margin:0;max-width:34ch}
-  .foot-bottom{
-    border-top:1px solid var(--border);padding-top:22px;
-    display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;
-    color:var(--muted);font-size:.83rem;
-  }
-
-  /* ===== Reduced motion ===== */
-  @media (prefers-reduced-motion: reduce){
-    *,*::before,*::after{
-      animation-duration:.001ms !important;animation-iteration-count:1 !important;
-      transition-duration:.001ms !important;scroll-behavior:auto !important;
-    }
-    .bg-gradient,.bg-grid,.board,.board-halo,.final-cta::before{animation:none !important}
-    .feature,.step,.mode{opacity:1 !important;transform:none !important}
-  }
-
-  /* ===== Responsive ===== */
-  @media (max-width:1024px){
-    .hero{padding:125px 0 65px}
-    .hero-grid{grid-template-columns:1fr;gap:50px}
-    .hero-visual{order:-1}
-    .board-wrap{max-width:390px}
-    .features{grid-template-columns:repeat(2,1fr)}
-    .modes{grid-template-columns:repeat(2,1fr)}
-    .offline-wrap{grid-template-columns:1fr;gap:40px}
-    .steps{grid-template-columns:repeat(2,1fr)}
-    .about-grid{grid-template-columns:1fr;gap:34px}
-    .foot-grid{grid-template-columns:1fr 1fr}
-  }
-  @media (max-width:720px){
-    .nav-links{display:none}
-    .hamburger{display:flex}
-    section{padding:72px 0}
-    .hero{padding:112px 0 50px}
-    .hero h1{letter-spacing:-1px}
-    .cta-row .btn{width:100%;justify-content:center}
-    .features{grid-template-columns:1fr}
-    .modes{grid-template-columns:1fr}
-    .steps{grid-template-columns:1fr}
-    .foot-grid{grid-template-columns:1fr;gap:26px}
-    .container{padding:0 16px}
-    .board-wrap{max-width:330px}
-    .final-cta{padding:60px 20px}
-    .offline-card:nth-child(2),
-    .offline-card:nth-child(3){transform:none}
-    .offline-card:nth-child(2):hover,
-    .offline-card:nth-child(3):hover{transform:translateY(-5px)}
-  }
-  @media (max-width:380px){
-    .nav-inner{padding:10px 0}
-    .brand-name{font-size:.95rem}
-    .offline-visual{grid-template-columns:1fr}
-  }
+.section{padding:60px 0}
+.section h2{font-family:var(--font-display);font-size:32px;margin:0 0 8px;text-align:center;letter-spacing:-.01em}
+.section .sub{text-align:center;color:var(--muted);margin:0 auto 36px;max-width:620px}
+.feature{padding:22px;border-radius:var(--r-lg);background:var(--surface);border:1px solid var(--border);transition:.2s transform}
+.feature:hover{transform:translateY(-3px)}
+.feature h3{margin:0 0 8px;font-size:16px}
+.feature p{margin:0;color:var(--muted);font-size:14px;line-height:1.55}
+.footer{border-top:1px solid var(--border);padding:36px 0;color:var(--muted);font-size:14px}
+.footer-grid{display:grid;grid-template-columns:1fr;gap:24px}
+@media(min-width:700px){.footer-grid{grid-template-columns:2fr 1fr 1fr 1fr}}
+.footer h5{color:var(--text);margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.08em}
+.footer a{display:block;margin:6px 0;color:var(--muted)}
+.footer a:hover{color:var(--text)}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--border);margin-bottom:22px;overflow-x:auto}
+.tab{padding:11px 14px;color:var(--muted);font-weight:500;font-size:14px;border-bottom:2px solid transparent;white-space:nowrap}
+.tab.active{color:var(--text);border-bottom-color:var(--brand)}
+.empty{text-align:center;padding:48px 20px;color:var(--muted);border:1px dashed var(--border);border-radius:var(--r-md)}
 </style>
 </head>
-
 <body>
+  <div id="app" aria-live="polite"></div>
+  <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+  <div id="modal-root"></div>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" defer></script>
 
-<!-- Background Layers -->
-<div class="bg-layers" aria-hidden="true">
-  <div class="bg-gradient"></div>
-  <div class="bg-grid"></div>
-</div>
+  <script type="module">
+  /* ================================================================
+     LINKORA — single file app
+     ================================================================ */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
+    sendEmailVerification, sendPasswordResetEmail, onAuthStateChanged, deleteUser
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getDatabase, ref, get, set, update, remove, push, runTransaction
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-<!-- NAVBAR -->
-<header class="nav" id="navbar">
-  <div class="container">
-    <nav class="nav-inner" aria-label="Navigasi utama">
-      <a href="index.html" class="brand" aria-label="Grandmaster Grid - Beranda">
-        <img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="Logo Grandmaster Grid" width="40" height="40" loading="eager" fetchpriority="high">
-        <span class="brand-name">Grandmaster Grid</span>
-      </a>
-
-      <div class="nav-links">
-        <a href="#beranda">Beranda</a>
-        <a href="#fitur">Fitur</a>
-        <a href="#mode">Mode</a>
-        <a href="#offline">Offline</a>
-        <a href="#cara-bermain">Cara Bermain</a>
-        <a href="#tentang">Tentang</a>
-      </div>
-
-      <div class="nav-actions">
-        <a href="play.html" class="btn btn-primary" aria-label="Mulai bermain catur online">
-          <span>Mulai Bermain</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M5 12h14M13 5l7 7-7 7"/>
-          </svg>
-        </a>
-        <button class="hamburger" id="hamburger" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="mobile-menu">
-          <span></span><span></span><span></span>
-        </button>
-      </div>
-    </nav>
-  </div>
-</header>
-
-<!-- Mobile menu -->
-<div class="mobile-menu" id="mobile-menu" role="dialog" aria-label="Menu seluler">
-  <a href="#beranda">Beranda</a>
-  <a href="#fitur">Fitur</a>
-  <a href="#mode">Mode</a>
-  <a href="#offline">Offline</a>
-  <a href="#cara-bermain">Cara Bermain</a>
-  <a href="#tentang">Tentang</a>
-  <a href="#faq">FAQ</a>
-  <a href="play.html" class="btn btn-primary">
-    <span>Mulai Bermain</span>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M5 12h14M13 5l7 7-7 7"/>
-    </svg>
-  </a>
-</div>
-
-<main>
-
-  <!-- HERO -->
-  <section class="hero" id="beranda">
-    <div class="container">
-      <div class="hero-grid">
-        <div class="hero-copy">
-          <div class="badge">
-            <span class="dot" aria-hidden="true"></span>
-            ONLINE & OFFLINE CHESS PLATFORM
-          </div>
-
-          <h1>Grandmaster Grid</h1>
-
-          <p class="sub">Main Catur Online. Asah Strategi. Taklukkan Papan.</p>
-
-          <p class="desc">
-            Grandmaster Grid adalah platform permainan catur online untuk bermain,
-            berlatih, dan mengembangkan kemampuan strategi melalui pengalaman
-            bermain yang modern, cepat, dan nyaman di berbagai perangkat —
-            <strong>online maupun offline</strong>.
-          </p>
-
-          <div class="cta-row">
-            <a href="play.html" class="btn btn-primary" aria-label="Mulai bermain catur sekarang">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 3l14 9-14 9V3z"/>
-              </svg>
-              <span>Mulai Bermain</span>
-            </a>
-            <a href="#fitur" class="btn btn-ghost" aria-label="Lihat fitur Grandmaster Grid">
-              <span>Lihat Fitur</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 12h14M13 5l7 7-7 7"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        <div class="hero-visual" aria-hidden="true">
-          <div class="board-wrap">
-            <div class="board-halo"></div>
-            <div class="board" id="chessBoard"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FEATURES -->
-  <section id="fitur">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">Fitur Utama</span>
-        <h2>Fitur Grandmaster Grid</h2>
-        <p>Pengalaman bermain catur online yang dirancang untuk fokus, kenyamanan, dan pengembangan strategi.</p>
-      </div>
-
-      <div class="features">
-        <article class="feature" data-reveal>
-          <div class="icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>
-            </svg>
-          </div>
-          <h3>Papan Catur Interaktif</h3>
-          <p>Papan catur digital dengan tampilan modern yang memudahkan Anda membaca posisi, koordinat, dan langkah setiap bidak.</p>
-        </article>
-
-        <article class="feature" data-reveal>
-          <div class="icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2l9 5v10l-9 5-9-5V7z"/>
-              <path d="M12 22V12M3 7l9 5 9-5"/>
-            </svg>
-          </div>
-          <h3>Bermain di Browser</h3>
-          <p>Langsung bermain tanpa instalasi. Buka Grandmaster Grid di browser favorit Anda dan mulai pertandingan.</p>
-        </article>
-
-        <article class="feature" data-reveal>
-          <div class="icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-              <circle cx="12" cy="12" r="9" opacity=".35"/>
-            </svg>
-          </div>
-          <h3>Bisa Dimainkan Offline</h3>
-          <p>Beberapa mode seperti Lawan AI, Dua Pemain Lokal, Tic-Tac-Toe, dan T-Rex Runner dapat dimainkan tanpa koneksi internet.</p>
-        </article>
-
-        <article class="feature" data-reveal>
-          <div class="icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9"/>
-              <path d="M12 7v5l3 3"/>
-            </svg>
-          </div>
-          <h3>Responsif & Cepat</h3>
-          <p>Antarmuka yang ringan dan responsif, nyaman dimainkan di ponsel, tablet, maupun desktop tanpa hambatan.</p>
-        </article>
-
-        <article class="feature" data-reveal>
-          <div class="icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/>
-            </svg>
-          </div>
-          <h3>Berlatih Strategi</h3>
-          <p>Kembangkan pemahaman tentang pembukaan, taktik, permainan tengah, dan endgame melalui latihan yang konsisten.</p>
-        </article>
-
-        <article class="feature" data-reveal>
-          <div class="icon" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2l4 6h6l-5 4 2 7-7-4-7 4 2-7-5-4h6z"/>
-            </svg>
-          </div>
-          <h3>Pengalaman Modern</h3>
-          <p>Tampilan terang yang bersih dengan animasi halus, dirancang agar nyaman dimainkan dalam sesi panjang.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- GAME MODES -->
-  <section id="mode">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">Pilih Mode Permainan</span>
-        <h2>Mode Permainan</h2>
-        <p>Berbagai pilihan mode untuk bermain, berlatih, dan bersenang-senang sesuai gaya Anda — online maupun offline.</p>
-      </div>
-
-      <div class="modes">
-        <a href="play.html" class="mode" data-reveal>
-          <div class="mode-icon ranked" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9"/>
-              <circle cx="12" cy="12" r="5"/>
-              <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
-            </svg>
-          </div>
-          <div class="mode-info">
-            <h3>Ranked</h3>
-            <p>Pertandingan kompetitif. 1 menit + 5 detik per langkah.</p>
-          </div>
-          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M9 6l6 6-6 6"/>
-          </svg>
-        </a>
-
-        <a href="play.html" class="mode" data-reveal>
-          <div class="mode-icon classic" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/>
-            </svg>
-          </div>
-          <div class="mode-info">
-            <h3>Classic</h3>
-            <p>Bertanding tanpa peringkat. Rating & bintang tidak berubah.</p>
-          </div>
-          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M9 6l6 6-6 6"/>
-          </svg>
-        </a>
-
-        <a href="play.html" class="mode" data-reveal>
-          <div class="mode-icon friend" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="9" cy="8" r="3"/>
-              <circle cx="17" cy="9" r="2.5"/>
-              <path d="M3 20c0-3 3-5 6-5s6 2 6 5"/>
-              <path d="M15 20c0-2 1.5-3.5 3.5-3.5S22 18 22 20"/>
-            </svg>
-          </div>
-          <div class="mode-info">
-            <h3>Main dengan Teman</h3>
-            <p>Buat room privat dan bagikan kodenya.</p>
-          </div>
-          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M9 6l6 6-6 6"/>
-          </svg>
-        </a>
-
-        <a href="play.html" class="mode" data-reveal>
-          <div class="mode-icon ai" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="4" y="7" width="16" height="12" rx="2"/>
-              <circle cx="9" cy="13" r="1.2" fill="currentColor"/>
-              <circle cx="15" cy="13" r="1.2" fill="currentColor"/>
-              <path d="M12 4v3M9 19v2M15 19v2"/>
-            </svg>
-          </div>
-          <div class="mode-info">
-            <h3>Lawan AI <span class="offline-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>Offline</span></h3>
-            <p>Enam tingkat kesulitan, bisa dimainkan tanpa internet.</p>
-          </div>
-          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M9 6l6 6-6 6"/>
-          </svg>
-        </a>
-
-        <a href="play.html" class="mode" data-reveal>
-          <div class="mode-icon local" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="6" y="2" width="12" height="20" rx="2"/>
-              <path d="M11 18h2"/>
-            </svg>
-          </div>
-          <div class="mode-info">
-            <h3>Dua Pemain Lokal <span class="offline-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>Offline</span></h3>
-            <p>Main berdua di satu perangkat, bergantian tanpa internet.</p>
-          </div>
-          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M9 6l6 6-6 6"/>
-          </svg>
-        </a>
-
-        <a href="play.html" class="mode" data-reveal>
-          <div class="mode-icon puzzle" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10 3h4v3a2 2 0 104 0h3v4h-3a2 2 0 100 4h3v4h-4v-3a2 2 0 10-4 0v3H6v-3a2 2 0 10-4 0v-4h3a2 2 0 100-4H2V7h4a2 2 0 100-4H3V3h7z"/>
-            </svg>
-          </div>
-          <div class="mode-info">
-            <h3>Puzzle Taktik</h3>
-            <p>Latih taktik dengan posisi nyata.</p>
-          </div>
-          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M9 6l6 6-6 6"/>
-          </svg>
-        </a>
-
-        <a href="play.html" class="mode" data-reveal>
-          <div class="mode-icon tictactoe" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>
-            </svg>
-          </div>
-          <div class="mode-info">
-            <h3>Tic-Tac-Toe <span class="offline-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>Offline</span></h3>
-            <p>Lawan AI atau teman di satu perangkat, tanpa internet.</p>
-          </div>
-          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M9 6l6 6-6 6"/>
-          </svg>
-        </a>
-
-        <a href="play.html" class="mode" data-reveal>
-          <div class="mode-icon trex" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 20v-4a4 4 0 014-4h4l3-3h4l-2 3 3 1-2 3h-3v4"/>
-              <path d="M4 20h4"/>
-            </svg>
-          </div>
-          <div class="mode-info">
-            <h3>T-Rex Runner <span class="offline-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>Offline</span></h3>
-            <p>Lompat-lompat hindari rintangan, bisa dimainkan offline.</p>
-          </div>
-          <svg class="mode-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M9 6l6 6-6 6"/>
-          </svg>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- OFFLINE SECTION (NEW) -->
-  <section id="offline">
-    <div class="container">
-      <div class="offline-wrap">
-        <div class="offline-copy">
-          <span class="eyebrow">Tanpa Koneksi Internet</span>
-          <h2>Bermain Offline, Kapan Saja</h2>
-          <p>
-            Tidak punya koneksi internet? Tidak masalah. Grandmaster Grid menyediakan
-            beberapa mode yang bisa dimainkan <strong>sepenuhnya offline</strong> —
-            cocok saat di perjalanan, sinyal lemah, atau sedang menghemat kuota.
-          </p>
-
-          <ul class="offline-list">
-            <li>
-              <span class="check" aria-hidden="true">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
-              </span>
-              <span><b>Lawan AI</b> — berlatih catur melawan komputer dengan 6 tingkat kesulitan.</span>
-            </li>
-            <li>
-              <span class="check" aria-hidden="true">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
-              </span>
-              <span><b>Dua Pemain Lokal</b> — bermain berdua bersama teman di satu perangkat, bergantian.</span>
-            </li>
-            <li>
-              <span class="check" aria-hidden="true">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
-              </span>
-              <span><b>Tic-Tac-Toe</b> — permainan klasik melawan AI atau teman tanpa internet.</span>
-            </li>
-            <li>
-              <span class="check" aria-hidden="true">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
-              </span>
-              <span><b>T-Rex Runner</b> — game lari menghindari rintangan, seperti game offline klasik.</span>
-            </li>
-          </ul>
-        </div>
-
-        <div class="offline-visual" aria-hidden="true">
-          <div class="offline-card">
-            <div class="mini-icon ai">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="4" y="7" width="16" height="12" rx="2"/>
-                <circle cx="9" cy="13" r="1.2" fill="currentColor"/>
-                <circle cx="15" cy="13" r="1.2" fill="currentColor"/>
-                <path d="M12 4v3M9 19v2M15 19v2"/>
-              </svg>
-            </div>
-            <h4>Lawan AI</h4>
-            <p>6 tingkat kesulitan</p>
-          </div>
-
-          <div class="offline-card">
-            <div class="mini-icon local">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="6" y="2" width="12" height="20" rx="2"/>
-                <path d="M11 18h2"/>
-              </svg>
-            </div>
-            <h4>Dua Pemain Lokal</h4>
-            <p>Bergantian satu perangkat</p>
-          </div>
-
-          <div class="offline-card">
-            <div class="mini-icon tictactoe">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>
-              </svg>
-            </div>
-            <h4>Tic-Tac-Toe</h4>
-            <p>Lawan AI atau teman</p>
-          </div>
-
-          <div class="offline-card">
-            <div class="mini-icon trex">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 20v-4a4 4 0 014-4h4l3-3h4l-2 3 3 1-2 3h-3v4"/>
-                <path d="M4 20h4"/>
-              </svg>
-            </div>
-            <h4>T-Rex Runner</h4>
-            <p>Game lari klasik</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- HOW TO PLAY -->
-  <section id="cara-bermain">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">Langkah Cepat</span>
-        <h2>Cara Bermain</h2>
-        <p>Lima langkah sederhana untuk memulai pertandingan catur di Grandmaster Grid.</p>
-      </div>
-
-      <div class="steps">
-        <div class="step" data-reveal>
-          <div class="num">01</div>
-          <h4>Buka Grandmaster Grid</h4>
-          <p>Akses halaman utama Grandmaster Grid melalui browser Anda.</p>
-        </div>
-        <div class="step" data-reveal>
-          <div class="num">02</div>
-          <h4>Tekan Mulai Bermain</h4>
-          <p>Klik tombol "Mulai Bermain" untuk masuk ke halaman permainan.</p>
-        </div>
-        <div class="step" data-reveal>
-          <div class="num">03</div>
-          <h4>Pilih Mode Permainan</h4>
-          <p>Pilih mode favorit: Ranked, Classic, Lawan AI, atau lainnya.</p>
-        </div>
-        <div class="step" data-reveal>
-          <div class="num">04</div>
-          <h4>Mulai Pertandingan</h4>
-          <p>Putih melangkah lebih dahulu, kemudian giliran bergantian.</p>
-        </div>
-        <div class="step" data-reveal>
-          <div class="num">05</div>
-          <h4>Mainkan Bidak</h4>
-          <p>Gerakkan bidak sesuai aturan catur hingga skakmat atau hasil lainnya.</p>
-        </div>
-      </div>
-
-      <div class="center-cta">
-        <a href="play.html" class="btn btn-primary" aria-label="Mulai bermain catur di halaman permainan">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M5 3l14 9-14 9V3z"/>
-          </svg>
-          <span>Mulai Bermain</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ABOUT CHESS -->
-  <section id="tentang">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">Pengetahuan Dasar</span>
-        <h2>Tentang Permainan Catur</h2>
-        <p>Pemahaman dasar tentang papan, bidak, dan tujuan permainan catur.</p>
-      </div>
-
-      <div class="about-grid">
-        <div class="about-copy">
-          <p>
-            Catur adalah permainan strategi dua pemain yang dimainkan di atas
-            <strong>papan catur</strong> berukuran 8×8, sehingga terdapat
-            <strong>64 petak</strong> dengan warna terang dan gelap yang bergantian.
-            Setiap pemain mengendalikan 16 bidak: satu raja, satu ratu,
-            dua benteng, dua gajah, dua kuda, dan delapan pion.
-          </p>
-          <p>
-            Tujuan utama permainan catur adalah melakukan <strong>skakmat</strong> —
-            yaitu situasi ketika raja lawan sedang diskak dan tidak memiliki
-            langkah legal untuk menyelamatkan diri. Selain skakmat, permainan juga
-            bisa berakhir dengan <strong>remis (draw)</strong>, baik karena
-            kesepakatan, pat (stalemate), aturan 50 langkah, maupun pengulangan posisi.
-          </p>
-          <p>
-            Setiap bidak memiliki aturan gerak yang berbeda. <strong>Raja</strong>
-            melangkah satu petak ke segala arah. <strong>Ratu</strong> bergerak
-            bebas secara horizontal, vertikal, dan diagonal. <strong>Benteng</strong>
-            bergerak lurus, sementara <strong>gajah</strong> hanya bergerak diagonal.
-            <strong>Kuda</strong> melangkah dalam pola huruf "L" dan bisa melompati
-            bidak lain. <strong>Pion</strong> melangkah maju satu petak dan menangkap
-            secara diagonal, dengan opsi promosi jika mencapai baris terakhir.
-          </p>
-          <p>
-            Pemain bergantian melakukan langkah. Putih selalu melangkah lebih dahulu.
-            Konsep penting dalam catur mencakup <strong>giliran</strong>,
-            <strong>skak</strong> (raja diserang), <strong>skakmat</strong>,
-            serta aturan khusus seperti <strong>rokade</strong>,
-            <strong>en passant</strong>, dan <strong>promosi</strong>.
-          </p>
-          <p>
-            Untuk berkembang, pemain biasanya mempelajari <strong>pembukaan</strong>,
-            <strong>taktik</strong> (seperti fork, pin, skewer, dan discovered attack),
-            <strong>strategi permainan tengah</strong>, serta
-            <strong>teknik akhir permainan (endgame)</strong>. Latihan rutin
-            membantu meningkatkan pemahaman posisi dan kualitas permainan.
-          </p>
-        </div>
-
-        <aside class="about-side" aria-label="Ringkasan bidak catur">
-          <h3>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="9"/>
-              <path d="M12 7v5l3 2"/>
-            </svg>
-            Bidak Catur & Perannya
-          </h3>
-          <ul class="piece-list">
-            <li>
-              <span class="pico" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20h8M10 20l-1-6 2-2V8a1 1 0 011-1a1 1 0 011 1v4l2 2-1 6"/></svg>
-              </span>
-              <b>Raja</b><span>Satu petak, segala arah.</span>
-            </li>
-            <li>
-              <span class="pico" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20h14M8 20l-1-6h10l-1 6M7 14l-2-3h14l-2 3M12 11V6M9 6h6M10 4h4"/></svg>
-              </span>
-              <b>Ratu</b><span>Lurus dan diagonal, jarak bebas.</span>
-            </li>
-            <li>
-              <span class="pico" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20h12M8 20V9l4-4 4 4v11M6 12h12"/></svg>
-              </span>
-              <b>Benteng</b><span>Garis horizontal dan vertikal.</span>
-            </li>
-            <li>
-              <span class="pico" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10M8 20l1-8h6l1 8M9 12l1-4a2 2 0 014 0l1 4M12 6v-2"/></svg>
-              </span>
-              <b>Gajah</b><span>Diagonal sepanjang papan.</span>
-            </li>
-            <li>
-              <span class="pico" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20h8l-1-6 2-3-2-3H9l-2 3 2 3-1 6zM10 5l1 2M14 5l-1 2"/></svg>
-              </span>
-              <b>Kuda</b><span>Pola huruf "L", dapat melompat.</span>
-            </li>
-            <li>
-              <span class="pico" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20h6M10 20l-.5-3.5A4 4 0 0112 10a3 3 0 013 3v3"/></svg>
-              </span>
-              <b>Pion</b><span>Maju satu petak, tangkap diagonal.</span>
-            </li>
-          </ul>
-        </aside>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section id="faq">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">FAQ</span>
-        <h2>Pertanyaan yang Sering Diajukan</h2>
-        <p>Beberapa pertanyaan umum seputar Grandmaster Grid dan permainan catur.</p>
-      </div>
-
-      <div class="faq">
-        <details>
-          <summary>Apa itu Grandmaster Grid?</summary>
-          <p>Grandmaster Grid adalah platform permainan catur online yang dapat dimainkan langsung melalui browser. Anda bisa membuka papan catur digital, memindahkan bidak, dan memainkan permainan catur tanpa perlu instalasi.</p>
-        </details>
-
-        <details>
-          <summary>Bagaimana cara memulai permainan di Grandmaster Grid?</summary>
-          <p>Tekan tombol <strong>Mulai Bermain</strong> pada halaman ini. Anda akan diarahkan ke halaman permainan, yaitu <em>play.html</em>, tempat papan catur digital siap digunakan.</p>
-        </details>
-
-        <details>
-          <summary>Apakah Grandmaster Grid bisa dimainkan offline?</summary>
-          <p>Ya. Beberapa mode dapat dimainkan <strong>tanpa koneksi internet</strong>: <strong>Lawan AI</strong> (6 tingkat kesulitan), <strong>Dua Pemain Lokal</strong> (bergantian di satu perangkat), <strong>Tic-Tac-Toe</strong> (melawan AI atau teman), dan <strong>T-Rex Runner</strong> (game lari klasik). Sangat cocok dimainkan saat di perjalanan atau saat sinyal lemah.</p>
-        </details>
-
-        <details>
-          <summary>Mode permainan apa saja yang tersedia?</summary>
-          <p>Grandmaster Grid menyediakan berbagai mode: <strong>Ranked</strong> (1 menit + 5 detik per langkah), <strong>Classic</strong> (tanpa peringkat), <strong>Main dengan Teman</strong> (room privat), <strong>Lawan AI</strong>, <strong>Dua Pemain Lokal</strong>, <strong>Puzzle Taktik</strong>, <strong>Tic-Tac-Toe</strong>, dan <strong>T-Rex Runner</strong>. Mode Lawan AI, Dua Pemain Lokal, Tic-Tac-Toe, dan T-Rex Runner bisa dimainkan offline.</p>
-        </details>
-
-        <details>
-          <summary>Apa tujuan permainan catur?</summary>
-          <p>Tujuan utama catur adalah melakukan <strong>skakmat</strong> kepada raja lawan, yaitu kondisi ketika raja diskak dan tidak ada langkah legal untuk menyelamatkan diri. Permainan juga dapat berakhir remis karena pat, kesepakatan, atau aturan tertentu.</p>
-        </details>
-
-        <details>
-          <summary>Bagaimana cara bermain catur untuk pemula?</summary>
-          <p>Pemula sebaiknya memahami dulu gerak masing-masing bidak — raja, ratu, benteng, gajah, kuda, dan pion. Setelah itu, pelajari konsep giliran, skak, skakmat, serta aturan khusus seperti rokade dan promosi pion.</p>
-        </details>
-
-        <details>
-          <summary>Apa fungsi raja dalam catur?</summary>
-          <p>Raja adalah bidak paling penting. Raja bergerak satu petak ke segala arah. Jika raja tidak bisa diselamatkan dari skak, permainan berakhir dengan skakmat.</p>
-        </details>
-
-        <details>
-          <summary>Apa fungsi ratu dalam catur?</summary>
-          <p>Ratu adalah bidak dengan jangkauan gerak paling luas. Ratu dapat bergerak secara horizontal, vertikal, dan diagonal sejauh jalur yang ditempuh bebas dari bidak lain.</p>
-        </details>
-
-        <details>
-          <summary>Bagaimana cara melakukan rokade?</summary>
-          <p>Rokade adalah langkah khusus antara raja dan benteng. Raja bergerak dua petak menuju benteng, lalu benteng melompat ke sisi lain raja. Rokade hanya bisa dilakukan jika raja dan benteng belum pernah bergerak, tidak ada bidak di antara keduanya, raja tidak sedang diskak, dan raja tidak melewati petak yang diserang.</p>
-        </details>
-
-        <details>
-          <summary>Apakah Grandmaster Grid gratis?</summary>
-          <p>Grandmaster Grid dapat diakses langsung melalui browser. Anda cukup membuka halaman utama dan menekan tombol Mulai Bermain untuk masuk ke papan catur.</p>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- FINAL CTA -->
-  <section>
-    <div class="container">
-      <div class="final-cta">
-        <h2>Siap Taklukkan Papan?</h2>
-        <p>Buka papan catur digital Grandmaster Grid dan mulai pertandingan Anda sekarang — online maupun offline.</p>
-        <a href="play.html" class="btn btn-primary" aria-label="Mulai bermain catur sekarang">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M5 3l14 9-14 9V3z"/>
-          </svg>
-          <span>Mulai Bermain</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<!-- FOOTER -->
-<footer>
-  <div class="container">
-    <div class="foot-grid">
-      <div>
-        <div class="foot-brand">
-          <img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="Logo Grandmaster Grid" width="38" height="38" loading="lazy">
-          <span>Grandmaster Grid</span>
-        </div>
-        <p>Platform permainan catur online untuk bermain, belajar, dan mengasah strategi langsung melalui browser — online maupun offline.</p>
-      </div>
-
-      <div>
-        <h4>Navigasi</h4>
-        <ul>
-          <li><a href="#beranda">Beranda</a></li>
-          <li><a href="#fitur">Fitur</a></li>
-          <li><a href="#mode">Mode</a></li>
-          <li><a href="#offline">Offline</a></li>
-          <li><a href="#cara-bermain">Cara Bermain</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <h4>Mode Offline</h4>
-        <ul>
-          <li><a href="#offline">Lawan AI</a></li>
-          <li><a href="#offline">Dua Pemain Lokal</a></li>
-          <li><a href="#offline">Tic-Tac-Toe</a></li>
-          <li><a href="#offline">T-Rex Runner</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <h4>Mulai</h4>
-        <ul>
-          <li><a href="play.html">Mulai Bermain</a></li>
-          <li><a href="#tentang">Tentang</a></li>
-          <li><a href="#faq">FAQ</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="foot-bottom">
-      <span>&copy; <span id="year"></span> Grandmaster Grid. Semua hak dilindungi.</span>
-      <span>Dibuat untuk pecinta catur di Indonesia.</span>
-    </div>
-  </div>
-</footer>
-
-<script defer>
-  // Year
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  // Navbar scroll state
-  const nav = document.getElementById('navbar');
-  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 20);
-  window.addEventListener('scroll', onScroll, {passive:true});
-  onScroll();
-
-  // Mobile menu
-  const burger = document.getElementById('hamburger');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const toggleMenu = (open) => {
-    const isOpen = open !== undefined ? open : !mobileMenu.classList.contains('open');
-    mobileMenu.classList.toggle('open', isOpen);
-    burger.classList.toggle('open', isOpen);
-    burger.setAttribute('aria-expanded', String(isOpen));
-    burger.setAttribute('aria-label', isOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi');
+  /* -------------------- Firebase init -------------------- */
+  const firebaseConfig = {
+    apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
+    authDomain: "mygame-68b24.firebaseapp.com",
+    databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
+    projectId: "mygame-68b24",
+    storageBucket: "mygame-68b24.firebasestorage.app",
+    messagingSenderId: "1003182873390",
+    appId: "1:1003182873390:web:aabf3248f759cbc9d678bf",
+    measurementId: "G-4C0MYZ19YW"
   };
-  burger.addEventListener('click', () => toggleMenu());
-  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleMenu(false)));
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
+  const fbApp = initializeApp(firebaseConfig);
+  const auth = getAuth(fbApp);
+  const db = getDatabase(fbApp);
 
-  // Reveal on scroll
-  const revealEls = document.querySelectorAll('[data-reveal], .step');
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
-        if (entry.isIntersecting) {
-          entry.target.style.transitionDelay = (i * 50) + 'ms';
-          entry.target.classList.add('in');
-          io.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
-    revealEls.forEach(el => io.observe(el));
-  } else {
-    revealEls.forEach(el => el.classList.add('in'));
+  /* -------------------- Constants -------------------- */
+  const RESERVED = new Set([
+    "admin","api","login","register","dashboard","settings","help","about",
+    "privacy","terms","pricing","features","templates","u","assets","static",
+    "support","contact","blog","docs","null","undefined","root","system"
+  ]);
+  const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
+  const ALLOWED_SCHEMES = /^(https?:|mailto:|tel:)/i;
+
+  /* -------------------- State -------------------- */
+  const state = { user:null, userData:null, profile:null, page:null, route:"" };
+
+  /* -------------------- Utilities -------------------- */
+  const $  = (s, r=document) => r.querySelector(s);
+  const esc = (s="") => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const el = (html) => { const t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstElementChild; };
+  const todayKey = () => new Date().toISOString().slice(0,10);
+
+  function toast(msg, type="info", ttl=3600){
+    const t = el(`<div class="toast ${type}" role="alert"><div>${esc(msg)}</div></div>`);
+    $("#toasts").appendChild(t);
+    setTimeout(()=>{ t.style.opacity="0"; t.style.transition=".3s"; setTimeout(()=>t.remove(),320); }, ttl);
+  }
+  function modal({title, body, confirmText="Konfirmasi", danger=false, onConfirm}){
+    const bg = el(`<div class="modal-bg" role="dialog" aria-modal="true">
+      <div class="modal">
+        <h3 style="margin:0 0 8px">${esc(title)}</h3>
+        <div style="color:var(--muted);font-size:14px;line-height:1.55">${body}</div>
+        <div class="row" style="justify-content:flex-end;margin-top:22px">
+          <button class="btn btn-ghost" data-act="cancel">Batal</button>
+          <button class="btn ${danger?"btn-danger":"btn-primary"}" data-act="ok">${esc(confirmText)}</button>
+        </div>
+      </div></div>`);
+    $("#modal-root").appendChild(bg);
+    const close = () => bg.remove();
+    bg.querySelector('[data-act="cancel"]').onclick = close;
+    bg.querySelector('[data-act="ok"]').onclick = () => { onConfirm?.(); close(); };
+    bg.addEventListener("click", e => { if(e.target === bg) close(); });
+  }
+  function debounce(fn, ms=300){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+  function validUrl(u){
+    if(!u || typeof u !== "string") return false;
+    if(!ALLOWED_SCHEMES.test(u)) return false;
+    try { const x = new URL(u); return ["http:","https:","mailto:","tel:"].includes(x.protocol); }
+    catch{ return false; }
   }
 
-  // Feature spotlight follow
-  document.querySelectorAll('.feature').forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-      const r = card.getBoundingClientRect();
-      card.style.setProperty('--x', (e.clientX - r.left) + 'px');
-      card.style.setProperty('--y', (e.clientY - r.top) + 'px');
+  /* -------------------- Router -------------------- */
+  function go(p){ location.hash = "#" + p; }
+  function currentPath(){ return (location.hash || "#/").slice(1) || "/"; }
+  function mount(html){
+    const app = $("#app"); app.innerHTML = ""; app.appendChild(el(html));
+  }
+
+  function onRoute(){
+    const path = currentPath();
+    state.route = path;
+    const parts = path.split("/").filter(Boolean);
+
+    if(parts[0] === "u" && parts[1]) return renderPublicProfile(parts[1]);
+
+    switch(path){
+      case "/":                     return renderLanding();
+      case "/login":                return renderAuth("login");
+      case "/register":             return renderAuth("register");
+      case "/forgot":               return renderAuth("forgot");
+      case "/dashboard":            return guardDash(() => renderDashOverview());
+      case "/dashboard/links":      return guardDash(() => renderDashLinks());
+      case "/dashboard/appearance": return guardDash(() => renderDashAppearance());
+      case "/dashboard/analytics":  return guardDash(() => renderDashAnalytics());
+      case "/dashboard/qr":         return guardDash(() => renderDashQR());
+      case "/dashboard/settings":   return guardDash(() => renderDashSettings());
+      case "/admin":                return guardAdmin(() => renderAdmin());
+      default:                      return render404();
+    }
+  }
+
+  async function guardDash(fn){
+    if(!state.user){ go("/login"); return; }
+    if(!state.profile?.username) return renderClaimUsername();
+    await ensurePage();
+    fn();
+  }
+  async function guardAdmin(fn){
+    if(!state.user){ go("/login"); return; }
+    const role = state.userData?.role;
+    if(role !== "admin" && role !== "superadmin") return renderForbidden();
+    fn();
+  }
+
+  /* -------------------- Data -------------------- */
+  async function loadUserData(uid){
+    try{
+      const [uSnap, pSnap, pgSnap] = await Promise.all([
+        get(ref(db, `users/${uid}`)),
+        get(ref(db, `profiles/${uid}`)),
+        get(ref(db, `pages/${uid}`))
+      ]);
+      state.userData = uSnap.val() || null;
+      state.profile  = pSnap.val() || null;
+      state.page     = pgSnap.val() || null;
+    }catch(e){ console.warn(e); }
+  }
+  async function ensurePage(){
+    if(state.page) return state.page;
+    const uid = state.user.uid;
+    const blank = { theme: defaultTheme(), links:{}, published:false, createdAt:Date.now(), updatedAt:Date.now() };
+    await set(ref(db, `pages/${uid}`), blank);
+    state.page = blank;
+    return blank;
+  }
+  function defaultTheme(){
+    return {
+      bg: "linear-gradient(135deg,#0f172a,#1e293b)",
+      text: "#e8ecf3",
+      btnBg: "rgba(255,255,255,.10)",
+      btnText: "#ffffff",
+      btnBorder: "rgba(255,255,255,.18)",
+      btnRadius: 14,
+      btnHeight: 56,
+      gap: 14,
+      font: "Inter",
+      shadow: "0 10px 24px rgba(0,0,0,.25)"
+    };
+  }
+  async function claimUsername(rawName){
+    const name = String(rawName || "").trim().toLowerCase();
+    if(!USERNAME_RE.test(name)) throw new Error("Username hanya boleh huruf kecil, angka, dan _ (3–20 karakter).");
+    if(RESERVED.has(name)) throw new Error("Username tersebut tidak tersedia.");
+    const uid = state.user.uid;
+
+    const unameRef = ref(db, `usernames/${name}`);
+    const result = await runTransaction(unameRef, cur => {
+      if(cur && cur.uid !== uid) return;
+      return { uid };
     });
-  });
+    if(!result.committed) throw new Error("Username sudah digunakan.");
 
-  // Build chessboard
-  (function buildBoard(){
-    const board = document.getElementById('chessBoard');
-    if (!board) return;
+    const oldName = state.profile?.username;
+    if(oldName && oldName !== name){
+      try{ await remove(ref(db, `usernames/${oldName}`)); }catch{}
+    }
+    await update(ref(db), {
+      [`profiles/${uid}/username`]: name,
+      [`profiles/${uid}/displayName`]: state.profile?.displayName || name
+    });
+    state.profile = { ...(state.profile||{}), username: name, displayName: state.profile?.displayName || name };
+  }
 
-    const glowIdx = new Set([3,12,20,27,36,44,52,61,18,29,34,45]);
+  /* -------------------- Nav -------------------- */
+  function topNav(){
+    const authed = !!state.user;
+    return `
+    <header class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="#/">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>LINKORA</span>
+        </a>
+        <nav class="nav-links" aria-label="Navigasi utama">
+          <a href="#/">Beranda</a>
+          <a href="#/#features">Fitur</a>
+          <a href="#/#templates">Template</a>
+        </nav>
+        <div class="row">
+          ${authed
+            ? `<a class="btn btn-ghost btn-sm" href="#/dashboard">Dashboard</a>
+               <button class="btn btn-primary btn-sm" data-act="logout">Logout</button>`
+            : `<a class="btn btn-ghost btn-sm" href="#/login">Masuk</a>
+               <a class="btn btn-primary btn-sm" href="#/register">Mulai gratis</a>`}
+        </div>
+      </div>
+    </header>`;
+  }
+  function bindTopNav(root=document){
+    root.querySelector('[data-act="logout"]')?.addEventListener("click", async () => {
+      await signOut(auth); toast("Kamu telah keluar."); go("/");
+    });
+  }
 
-    for (let r = 0; r < 8; r++) {
-      for (let c = 0; c < 8; c++) {
-        const sq = document.createElement('div');
-        sq.className = 'sq ' + (((r + c) % 2 === 0) ? 'light' : 'dark');
-        if (glowIdx.has(r * 8 + c)) sq.classList.add('glow');
-        board.appendChild(sq);
+  /* -------------------- Landing -------------------- */
+  function renderLanding(){
+    mount(`
+      ${topNav()}
+      <section class="hero">
+        <div class="hero-inner">
+          <span class="badge badge-info" style="margin-bottom:18px">Platform link-in-bio generasi baru</span>
+          <h1>Satu halaman,<br><span class="grad-text">semua tautanmu.</span></h1>
+          <p class="lede">Bangun halaman profil profesional dalam hitungan menit. Kelola tautan, pantau statistik, dan tampil beda dengan kustomisasi penuh.</p>
+          <div class="row" style="justify-content:center">
+            <a class="btn btn-primary" href="#/register">Buat halaman gratis</a>
+            <a class="btn btn-ghost" href="#/u/demo">Lihat contoh halaman</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section container" id="features">
+        <h2>Fitur yang benar-benar bekerja</h2>
+        <p class="sub">Bukan sekadar janji — semuanya tersambung ke backend Firebase nyata.</p>
+        <div class="grid cols-3">
+          ${[
+            ["Satu halaman, banyak tautan","Semua tautan pentingmu dalam satu URL yang mudah dibagikan."],
+            ["Kustomisasi desain","Warna, font, radius, jarak, sampai gradien. Semua bisa diatur."],
+            ["Analitik nyata","Kunjungan dan klik tautan dicatat berdasarkan event yang benar-benar terjadi."],
+            ["QR Code","Buat QR khusus halamanmu, atur warna, unduh PNG."],
+            ["Username unik","Klaim username pilihanmu dengan transaksi atomik — bebas bentrok."],
+            ["Responsif & aksesibel","Nyaman dari HP sampai desktop, dengan struktur HTML semantik."]
+          ].map(([t,d])=>`<div class="feature"><h3>${t}</h3><p>${d}</p></div>`).join("")}
+        </div>
+      </section>
+
+      <section class="section container" id="templates">
+        <h2>Mulai dari template, sesuaikan sesukamu</h2>
+        <p class="sub">Semua template hanya mengubah tampilan visual — kontenmu tetap aman.</p>
+        <div class="grid cols-3">
+          ${["Minimal","Creator","Bisnis","Portfolio","Gaming","Editorial"].map(n=>`
+            <div class="card">
+              <div style="height:140px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand-2));margin-bottom:14px"></div>
+              <div class="spread"><strong>${n}</strong><span class="badge badge-muted">Tema</span></div>
+            </div>`).join("")}
+        </div>
+      </section>
+
+      <section class="section container" style="text-align:center">
+        <h2>Siap tampil beda?</h2>
+        <p class="sub">Gratis untuk memulai. Tanpa kartu kredit.</p>
+        <a class="btn btn-primary" href="#/register">Buat halamanmu sekarang</a>
+      </section>
+
+      <footer class="footer">
+        <div class="container footer-grid">
+          <div>
+            <div class="brand" style="margin-bottom:10px"><span class="brand-mark"></span><span>LINKORA</span></div>
+            <p style="margin:0;max-width:340px">Platform link-in-bio modern untuk kreator, bisnis, dan profesional.</p>
+          </div>
+          <div><h5>Produk</h5><a href="#/">Beranda</a><a href="#/#features">Fitur</a><a href="#/#templates">Template</a></div>
+          <div><h5>Bantuan</h5><a href="#/">Pusat Bantuan</a><a href="#/">Kontak</a><a href="#/">Dokumentasi</a></div>
+          <div><h5>Legal</h5><a href="#/">Kebijakan Privasi</a><a href="#/">Syarat Penggunaan</a></div>
+        </div>
+        <div class="container" style="margin-top:26px;padding-top:16px;border-top:1px solid var(--border);font-size:12.5px">
+          © ${new Date().getFullYear()} LINKORA. Dibangun di atas Firebase.
+        </div>
+      </footer>
+    `);
+    bindTopNav();
+  }
+
+  /* -------------------- Auth -------------------- */
+  function renderAuth(kind){
+    const titles = {
+      login:["Masuk ke akunmu","Kelola halamanmu"],
+      register:["Buat akun LINKORA","Gratis, tanpa kartu kredit"],
+      forgot:["Lupa password","Kami akan mengirim tautan reset"]
+    };
+    const [t, s] = titles[kind];
+    mount(`
+      <div class="auth-wrap">
+        <div class="auth-card">
+          <a class="brand" href="#/" style="margin-bottom:22px">
+            <span class="brand-mark"></span><span>LINKORA</span>
+          </a>
+          <h2 style="font-family:var(--font-display);margin:0 0 4px">${t}</h2>
+          <p style="color:var(--muted);margin:0 0 22px;font-size:14px">${s}</p>
+
+          ${kind === "forgot" ? `
+            <form id="f">
+              <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" required autocomplete="email" /></div>
+              <div id="err" class="error" hidden></div>
+              <button class="btn btn-primary" style="width:100%;justify-content:center" type="submit">Kirim tautan reset</button>
+            </form>` : `
+            <form id="f">
+              <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" required autocomplete="email" /></div>
+              <div class="field"><label for="pw">Password</label><input class="input" id="pw" type="password" required minlength="6" autocomplete="${kind==="register"?"new-password":"current-password"}" /></div>
+              <div id="err" class="error" hidden></div>
+              <button class="btn btn-primary" style="width:100%;justify-content:center" type="submit">${kind==="register"?"Buat akun":"Masuk"}</button>
+            </form>
+          `}
+
+          <div style="margin-top:20px;font-size:13.5px;color:var(--muted);text-align:center">
+            ${kind==="login" ? `Belum punya akun? <a href="#/register" style="color:var(--brand)">Daftar</a><br><a href="#/forgot" style="color:var(--muted)">Lupa password?</a>` : ""}
+            ${kind==="register" ? `Sudah punya akun? <a href="#/login" style="color:var(--brand)">Masuk</a>` : ""}
+            ${kind==="forgot" ? `<a href="#/login" style="color:var(--brand)">Kembali ke login</a>` : ""}
+          </div>
+        </div>
+      </div>
+    `);
+
+    const form = $("#f");
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const errEl = $("#err"); errEl.hidden = true;
+      const email = $("#email").value.trim();
+      const pw = $("#pw")?.value || "";
+      try{
+        if(kind === "forgot"){
+          await sendPasswordResetEmail(auth, email);
+          toast("Tautan reset telah dikirim. Cek kotak masuk emailmu.","success");
+          go("/login");
+        } else if(kind === "register"){
+          if(pw.length < 6) throw new Error("Password minimal 6 karakter.");
+          const cred = await createUserWithEmailAndPassword(auth, email, pw);
+          await set(ref(db, `users/${cred.user.uid}`), {
+            uid: cred.user.uid, email, role: "user", createdAt: Date.now()
+          });
+          try{ await sendEmailVerification(cred.user); }catch{}
+          toast("Akun berhasil dibuat. Cek email untuk verifikasi.","success",6000);
+          go("/dashboard");
+        } else {
+          await signInWithEmailAndPassword(auth, email, pw);
+          toast("Berhasil masuk.","success");
+          go("/dashboard");
+        }
+      }catch(err){
+        errEl.textContent = friendlyAuthError(err);
+        errEl.hidden = false;
       }
+    });
+  }
+  function friendlyAuthError(err){
+    const m = (err?.code || err?.message || "").toString();
+    const map = {
+      "auth/email-already-in-use": "Email sudah terdaftar.",
+      "auth/invalid-email": "Format email tidak valid.",
+      "auth/weak-password": "Password terlalu lemah (min 6 karakter).",
+      "auth/user-not-found": "Akun tidak ditemukan.",
+      "auth/wrong-password": "Password salah.",
+      "auth/invalid-credential": "Email atau password salah.",
+      "auth/too-many-requests": "Terlalu banyak percobaan. Coba lagi nanti."
+    };
+    for(const k in map) if(m.includes(k)) return map[k];
+    return err?.message || "Terjadi kesalahan. Coba lagi.";
+  }
+
+  /* -------------------- Claim Username -------------------- */
+  function renderClaimUsername(){
+    mount(`
+      ${topNav()}
+      <main class="container" style="max-width:560px;padding:60px 20px">
+        <div class="card">
+          <span class="badge badge-warn">Langkah 1 dari 2</span>
+          <h2 style="font-family:var(--font-display);margin:14px 0 6px">Pilih username unikmu</h2>
+          <p style="color:var(--muted);font-size:14px;margin:0 0 22px">
+            Ini akan menjadi alamat halaman publikmu: <code>…/#/u/<b id="prev">username</b></code>
+          </p>
+          <form id="f">
+            <div class="field">
+              <label for="u">Username</label>
+              <input class="input" id="u" placeholder="mis. radit" required minlength="3" maxlength="20" pattern="[a-z0-9_]+" />
+              <div class="hint">3–20 karakter. Huruf kecil, angka, dan garis bawah saja.</div>
+            </div>
+            <div id="err" class="error" hidden></div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center" type="submit">Klaim username</button>
+          </form>
+        </div>
+      </main>
+    `);
+    bindTopNav();
+    const u = $("#u");
+    u.addEventListener("input", () => { $("#prev").textContent = u.value.trim().toLowerCase() || "username"; });
+    $("#f").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const errEl = $("#err"); errEl.hidden = true;
+      try{
+        await claimUsername(u.value);
+        toast("Username berhasil diklaim!","success");
+        go("/dashboard");
+      }catch(err){ errEl.textContent = err.message; errEl.hidden = false; }
+    });
+  }
+
+  /* -------------------- Dashboard shell -------------------- */
+  function dashShell(activeKey, title, subtitle, bodyHtml){
+    const items = [
+      ["/dashboard","Overview","M3 12l9-9 9 9v9a2 2 0 0 1-2 2h-4v-6h-6v6H5a2 2 0 0 1-2-2z"],
+      ["/dashboard/links","Links","M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"],
+      ["/dashboard/appearance","Appearance","M12 3a9 9 0 1 0 0 18 3 3 0 0 0 0-6 3 3 0 0 1 0-6 3 3 0 0 0 3-3 9 9 0 0 0-3-3z"],
+      ["/dashboard/analytics","Analytics","M4 20V10M10 20V4M16 20v-6M22 20H2"],
+      ["/dashboard/qr","QR Code","M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3z"],
+      ["/dashboard/settings","Settings","M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"]
+    ];
+    const isAdmin = state.userData?.role === "admin" || state.userData?.role === "superadmin";
+    return `
+      <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+          <a class="brand" href="#/" style="margin:0 12px 22px"><span class="brand-mark"></span><span>LINKORA</span></a>
+          <h4>Dashboard</h4>
+          ${items.map(([href,label,path])=>`
+            <a class="side-item ${href===activeKey?"active":""}" href="#${href}">
+              <svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${path}"/></svg>
+              ${label}
+            </a>`).join("")}
+          <h4>Publik</h4>
+          <a class="side-item" href="#/u/${esc(state.profile?.username||"")}" target="_blank">
+            <svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg>
+            Lihat halaman
+          </a>
+          ${isAdmin ? `<a class="side-item" href="#/admin"><svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 6v6c0 5 3.8 9.4 9 10 5.2-.6 9-5 9-10V6z"/></svg>Admin</a>` : ""}
+          <h4>Akun</h4>
+          <button class="side-item" data-act="logout" style="width:100%;text-align:left">
+            <svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+            Logout
+          </button>
+        </aside>
+        <div class="scrim" id="scrim"></div>
+
+        <div>
+          <div class="mobile-bar">
+            <button class="btn btn-ghost btn-sm" id="menu-btn" aria-label="Buka menu">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+            </button>
+            <div class="brand"><span class="brand-mark"></span><span>LINKORA</span></div>
+          </div>
+          <main class="main">
+            <h1 class="page-title">${esc(title)}</h1>
+            <p class="page-sub">${esc(subtitle)}</p>
+            ${bodyHtml}
+          </main>
+        </div>
+      </div>
+    `;
+  }
+  function bindShell(){
+    const sb = $("#sidebar"), sc = $("#scrim"), btn = $("#menu-btn");
+    btn?.addEventListener("click", () => { sb.classList.add("open"); sc.classList.add("show"); });
+    sc?.addEventListener("click", () => { sb.classList.remove("open"); sc.classList.remove("show"); });
+    document.querySelectorAll('[data-act="logout"]').forEach(b => b.addEventListener("click", async () => {
+      await signOut(auth); toast("Kamu telah keluar."); go("/");
+    }));
+  }
+
+  /* -------------------- Overview -------------------- */
+  async function renderDashOverview(){
+    mount(dashShell("/dashboard", `Halo, ${state.profile?.displayName||state.profile?.username}`, "Ringkasan performa halamanmu.", `
+      <div class="grid cols-4" id="kpi-row">
+        ${["Total Kunjungan","Kunjungan Hari Ini","Total Klik","Link Aktif"].map(()=>`<div class="kpi"><div class="k sk" style="width:80px"></div><div class="v sk" style="width:60px;height:26px;margin-top:8px"></div></div>`).join("")}
+      </div>
+      <div class="card" style="margin-top:22px">
+        <div class="spread">
+          <div>
+            <h3 style="margin:0 0 4px">Status halaman</h3>
+            <p class="page-sub" style="margin:0">Halamanmu ${state.page?.published ? "sudah" : "belum"} dipublikasikan.</p>
+          </div>
+          <div class="row">
+            <span class="badge ${state.page?.published?"badge-success":"badge-warn"}">${state.page?.published?"Published":"Draft"}</span>
+            <button class="btn ${state.page?.published?"btn-ghost":"btn-primary"}" data-act="toggle-pub">${state.page?.published?"Jadikan draft":"Publikasikan"}</button>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:22px">
+        <h3 style="margin:0 0 12px">Aktivitas terbaru</h3>
+        <div id="activity"><div class="sk" style="height:40px;margin-bottom:8px"></div><div class="sk" style="height:40px"></div></div>
+      </div>
+    `));
+    bindShell();
+
+    const uid = state.user.uid;
+    const today = todayKey();
+    try{
+      const [totalsSnap, todaySnap] = await Promise.all([
+        get(ref(db, `analyticsAggregates/${uid}/totals`)),
+        get(ref(db, `analyticsAggregates/${uid}/daily/${today}`))
+      ]);
+      const t = totalsSnap.val() || {};
+      const d = todaySnap.val() || {};
+      const activeLinks = Object.values(state.page?.links || {}).filter(l => l.active !== false).length;
+      const kpis = [
+        ["Total Kunjungan", t.views || 0],
+        ["Kunjungan Hari Ini", d.views || 0],
+        ["Total Klik", t.clicks || 0],
+        ["Link Aktif", activeLinks]
+      ];
+      $("#kpi-row").innerHTML = kpis.map(([k,v])=>`<div class="kpi"><div class="k">${k}</div><div class="v">${v.toLocaleString("id-ID")}</div></div>`).join("");
+      $("#activity").innerHTML = (t.views || 0) === 0
+        ? `<div class="empty">Belum ada kunjungan tercatat. Setelah halaman dipublikasikan dan dibagikan, aktivitas akan muncul di sini.</div>`
+        : `<p style="color:var(--muted);margin:0">Klik <a href="#/dashboard/analytics" style="color:var(--brand)">Analytics</a> untuk melihat detail.</p>`;
+    }catch(e){
+      $("#kpi-row").innerHTML = `<div class="card" style="grid-column:1/-1">Gagal memuat data statistik: ${esc(e.message)}</div>`;
+      $("#activity").innerHTML = "";
     }
 
-    const piecesMap = [
-      { r:0, c:0, s:'♜', side:'b' }, { r:0, c:1, s:'♞', side:'b' },
-      { r:0, c:2, s:'♝', side:'b' }, { r:0, c:3, s:'♛', side:'b' },
-      { r:0, c:4, s:'♚', side:'b' }, { r:0, c:5, s:'♝', side:'b' },
-      { r:0, c:6, s:'♞', side:'b' }, { r:0, c:7, s:'♜', side:'b' },
-      { r:1, c:0, s:'♟', side:'b' }, { r:1, c:1, s:'♟', side:'b' },
-      { r:1, c:2, s:'♟', side:'b' }, { r:1, c:3, s:'♟', side:'b' },
-      { r:1, c:4, s:'♟', side:'b' }, { r:1, c:5, s:'♟', side:'b' },
-      { r:1, c:6, s:'♟', side:'b' }, { r:1, c:7, s:'♟', side:'b' },
-      { r:6, c:0, s:'♙', side:'w' }, { r:6, c:1, s:'♙', side:'w' },
-      { r:6, c:2, s:'♙', side:'w' }, { r:6, c:3, s:'♙', side:'w' },
-      { r:6, c:4, s:'♙', side:'w' }, { r:6, c:5, s:'♙', side:'w' },
-      { r:6, c:6, s:'♙', side:'w' }, { r:6, c:7, s:'♙', side:'w' },
-      { r:7, c:0, s:'♖', side:'w' }, { r:7, c:1, s:'♘', side:'w' },
-      { r:7, c:2, s:'♗', side:'w' }, { r:7, c:3, s:'♕', side:'w' },
-      { r:7, c:4, s:'♔', side:'w' }, { r:7, c:5, s:'♗', side:'w' },
-      { r:7, c:6, s:'♘', side:'w' }, { r:7, c:7, s:'♖', side:'w' }
-    ];
-
-    const cells = board.children;
-    piecesMap.forEach(p => {
-      const cell = cells[p.r * 8 + p.c];
-      if (!cell) return;
-      const el = document.createElement('div');
-      el.className = 'piece ' + p.side;
-      el.textContent = p.s;
-      cell.appendChild(el);
+    document.querySelector('[data-act="toggle-pub"]')?.addEventListener("click", async () => {
+      const newVal = !state.page?.published;
+      try{
+        await update(ref(db, `pages/${uid}`), { published: newVal, updatedAt: Date.now() });
+        state.page.published = newVal;
+        toast(newVal ? "Halaman dipublikasikan." : "Halaman dijadikan draft.", "success");
+        renderDashOverview();
+      }catch(e){ toast("Gagal menyimpan: " + e.message, "error"); }
     });
-  })();
-</script>
+  }
 
+  /* -------------------- Links -------------------- */
+  async function renderDashLinks(){
+    mount(dashShell("/dashboard/links", "Kelola Tautan", "Tambah, ubah urutan, aktifkan, atau hapus tautan.", `
+      <div class="spread" style="margin-bottom:16px">
+        <div class="row">
+          <button class="btn btn-primary" data-act="add">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            Tambah Tautan
+          </button>
+        </div>
+        <input class="input" id="search" placeholder="Cari tautan…" style="max-width:240px" />
+      </div>
+      <div id="list"></div>
+    `));
+    bindShell();
+    const uid = state.user.uid;
+    const render = (filter="") => {
+      const links = Object.entries(state.page?.links || {})
+        .map(([id,l]) => ({ id, ...l }))
+        .filter(l => !filter || (l.title||"").toLowerCase().includes(filter.toLowerCase()))
+        .sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
+      const list = $("#list");
+      if(!links.length){
+        list.innerHTML = `<div class="empty">Belum ada tautan. Klik <b>Tambah Tautan</b> untuk memulai.</div>`;
+        return;
+      }
+      list.innerHTML = links.map(l => `
+        <div class="link-row" draggable="true" data-id="${l.id}">
+          <div class="drag-handle" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:600">${esc(l.title||"(tanpa judul)")}</div>
+            <div style="color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:340px">${esc(l.url||"")}</div>
+          </div>
+          <div class="row">
+            <div class="toggle ${l.active!==false?"on":""}" role="switch" aria-checked="${l.active!==false}" tabindex="0" data-act="toggle" data-id="${l.id}"></div>
+            <button class="btn btn-ghost btn-sm" data-act="edit" data-id="${l.id}">Edit</button>
+            <button class="btn btn-danger btn-sm" data-act="del" data-id="${l.id}">Hapus</button>
+          </div>
+        </div>`).join("");
+
+      list.querySelectorAll('[data-act="edit"]').forEach(b => b.onclick = () => openLinkEditor(b.dataset.id));
+      list.querySelectorAll('[data-act="del"]').forEach(b => b.onclick = () => {
+        modal({ title:"Hapus tautan?", body:"Tindakan ini tidak dapat dibatalkan.", danger:true, confirmText:"Hapus", onConfirm: async () => {
+          try{ await remove(ref(db, `pages/${uid}/links/${b.dataset.id}`)); delete state.page.links[b.dataset.id]; toast("Tautan dihapus.","success"); render($("#search").value); }
+          catch(e){ toast("Gagal menghapus: " + e.message, "error"); }
+        }});
+      });
+      list.querySelectorAll('[data-act="toggle"]').forEach(t => {
+        const fn = async () => {
+          const id = t.dataset.id;
+          const cur = state.page.links[id].active !== false;
+          try{
+            await update(ref(db, `pages/${uid}/links/${id}`), { active: !cur, updatedAt: Date.now() });
+            state.page.links[id].active = !cur;
+            t.classList.toggle("on"); t.setAttribute("aria-checked", String(!cur));
+          }catch(e){ toast("Gagal: " + e.message, "error"); }
+        };
+        t.onclick = fn;
+        t.onkeydown = e => { if(e.key===" "||e.key==="Enter"){ e.preventDefault(); fn(); } };
+      });
+
+      let dragId = null;
+      list.querySelectorAll(".link-row").forEach(row => {
+        row.addEventListener("dragstart", e => { dragId = row.dataset.id; row.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; });
+        row.addEventListener("dragend", () => { row.classList.remove("dragging"); dragId = null; });
+        row.addEventListener("dragover", e => e.preventDefault());
+        row.addEventListener("drop", async e => {
+          e.preventDefault();
+          const targetId = row.dataset.id;
+          if(!dragId || dragId === targetId) return;
+          const entries = Object.entries(state.page.links).sort((a,b)=>(a[1].order??0)-(b[1].order??0));
+          const ids = entries.map(([id])=>id);
+          const fromIdx = ids.indexOf(dragId), toIdx = ids.indexOf(targetId);
+          ids.splice(toIdx, 0, ids.splice(fromIdx,1)[0]);
+          const updates = {}; ids.forEach((id,i)=>{ updates[`pages/${uid}/links/${id}/order`] = i; });
+          try{
+            await update(ref(db), updates);
+            ids.forEach((id,i)=>{ state.page.links[id].order = i; });
+            render($("#search").value);
+          }catch(err){ toast("Gagal menyimpan urutan: " + err.message, "error"); }
+        });
+      });
+    };
+    render();
+
+    $("#search").addEventListener("input", debounce(e => render(e.target.value), 150));
+    $('[data-act="add"]').onclick = () => openLinkEditor();
+  }
+
+  function openLinkEditor(id){
+    const uid = state.user.uid;
+    const existing = id ? state.page.links[id] : null;
+    const bg = el(`<div class="modal-bg" role="dialog" aria-modal="true"><div class="modal" style="max-width:520px">
+      <h3 style="margin:0 0 16px">${id?"Edit":"Tambah"} Tautan</h3>
+      <form id="lf">
+        <div class="field"><label for="lt">Judul</label><input class="input" id="lt" maxlength="120" required value="${esc(existing?.title||"")}" /></div>
+        <div class="field"><label for="lu">URL Tujuan</label><input class="input" id="lu" type="url" required placeholder="https://" value="${esc(existing?.url||"")}" /></div>
+        <div class="field"><label for="ld">Deskripsi (opsional)</label><input class="input" id="ld" maxlength="240" value="${esc(existing?.description||"")}" /></div>
+        <div id="err" class="error" hidden></div>
+        <div class="row" style="justify-content:flex-end;margin-top:18px">
+          <button class="btn btn-ghost" type="button" data-act="cancel">Batal</button>
+          <button class="btn btn-primary" type="submit">${id?"Simpan":"Tambah"}</button>
+        </div>
+      </form>
+    </div></div>`);
+    $("#modal-root").appendChild(bg);
+    const close = () => bg.remove();
+    bg.querySelector('[data-act="cancel"]').onclick = close;
+    bg.querySelector("#lf").addEventListener("submit", async e => {
+      e.preventDefault();
+      const err = bg.querySelector("#err"); err.hidden = true;
+      const url = bg.querySelector("#lu").value.trim();
+      if(!validUrl(url)){ err.textContent = "URL tidak valid. Hanya http://, https://, mailto:, dan tel: yang diizinkan."; err.hidden = false; return; }
+      const payload = {
+        title: bg.querySelector("#lt").value.trim(),
+        url,
+        description: bg.querySelector("#ld").value.trim(),
+        active: existing?.active !== false,
+        updatedAt: Date.now()
+      };
+      try{
+        if(id){
+          await update(ref(db, `pages/${uid}/links/${id}`), payload);
+          Object.assign(state.page.links[id], payload);
+        }else{
+          const order = Object.keys(state.page.links||{}).length;
+          payload.order = order; payload.createdAt = Date.now();
+          const r = push(ref(db, `pages/${uid}/links`));
+          await set(r, payload);
+          state.page.links = state.page.links || {};
+          state.page.links[r.key] = payload;
+        }
+        toast("Tautan disimpan.","success");
+        close();
+        renderDashLinks();
+      }catch(e){ err.textContent = e.message; err.hidden = false; }
+    });
+  }
+
+  /* -------------------- Appearance -------------------- */
+  async function renderDashAppearance(){
+    const uid = state.user.uid;
+    const theme = { ...defaultTheme(), ...(state.page?.theme || {}) };
+    mount(dashShell("/dashboard/appearance", "Tampilan", "Sesuaikan desain halaman publikmu. Pratinjau langsung.", `
+      <div class="grid" style="grid-template-columns:1fr;gap:24px" id="ap-grid">
+        <div class="card" id="editor-col">
+          <h3 style="margin:0 0 16px">Pengaturan tampilan</h3>
+          <div class="field"><label for="t-bg">Latar (CSS background)</label><input class="input" id="t-bg" value="${esc(theme.bg)}" /></div>
+          <div class="grid cols-2" style="gap:12px">
+            <div class="field"><label for="t-text">Warna teks</label><input class="input" type="text" id="t-text" value="${esc(theme.text)}" /></div>
+            <div class="field"><label for="t-font">Font</label>
+              <select class="select" id="t-font">
+                ${["Inter","Space Grotesk","Georgia","Courier New","system-ui"].map(f=>`<option ${theme.font===f?"selected":""}>${f}</option>`).join("")}
+              </select>
+            </div>
+          </div>
+          <div class="grid cols-2" style="gap:12px">
+            <div class="field"><label for="t-btnbg">Tombol — background</label><input class="input" id="t-btnbg" value="${esc(theme.btnBg)}" /></div>
+            <div class="field"><label for="t-btntext">Tombol — teks</label><input class="input" id="t-btntext" value="${esc(theme.btnText)}" /></div>
+          </div>
+          <div class="grid cols-2" style="gap:12px">
+            <div class="field"><label for="t-btnborder">Tombol — border</label><input class="input" id="t-btnborder" value="${esc(theme.btnBorder)}" /></div>
+            <div class="field"><label for="t-btnradius">Radius tombol (px)</label><input class="input" type="number" min="0" max="40" id="t-btnradius" value="${theme.btnRadius}" /></div>
+          </div>
+          <div class="grid cols-2" style="gap:12px">
+            <div class="field"><label for="t-btnheight">Tinggi tombol (px)</label><input class="input" type="number" min="40" max="90" id="t-btnheight" value="${theme.btnHeight}" /></div>
+            <div class="field"><label for="t-gap">Jarak antar tautan (px)</label><input class="input" type="number" min="6" max="30" id="t-gap" value="${theme.gap}" /></div>
+          </div>
+          <div class="field"><label for="t-shadow">Bayangan tombol</label><input class="input" id="t-shadow" value="${esc(theme.shadow)}" /></div>
+          <div class="row" style="justify-content:flex-end;margin-top:8px">
+            <button class="btn btn-ghost" data-act="reset">Reset</button>
+            <button class="btn btn-primary" data-act="save">Simpan</button>
+          </div>
+        </div>
+
+        <div class="preview-shell">
+          <div class="preview-frame" id="preview"></div>
+        </div>
+      </div>
+    `));
+    bindShell();
+
+    const f = id => document.getElementById(id);
+    const read = () => ({
+      bg: f("t-bg").value, text: f("t-text").value, font: f("t-font").value,
+      btnBg: f("t-btnbg").value, btnText: f("t-btntext").value, btnBorder: f("t-btnborder").value,
+      btnRadius: +f("t-btnradius").value||0, btnHeight: +f("t-btnheight").value||52,
+      gap: +f("t-gap").value||12, shadow: f("t-shadow").value
+    });
+
+    const preview = () => {
+      const t = read();
+      const links = Object.values(state.page?.links||{}).filter(l => l.active !== false).sort((a,b)=>(a.order??0)-(b.order??0));
+      $("#preview").style.background = t.bg;
+      $("#preview").style.color = t.text;
+      $("#preview").style.fontFamily = t.font;
+      $("#preview").innerHTML = `
+        <div style="padding:34px 22px">
+          <div style="width:84px;height:84px;border-radius:50%;background:rgba(255,255,255,.15);margin:0 auto 14px;display:grid;place-items:center;font-size:28px;font-weight:700;color:${t.text}">${esc((state.profile?.displayName||state.profile?.username||"U")[0].toUpperCase())}</div>
+          <div style="text-align:center;font-weight:700;font-size:18px;margin-bottom:6px">${esc(state.profile?.displayName||state.profile?.username||"Username")}</div>
+          <div style="text-align:center;opacity:.75;font-size:12px;margin-bottom:10px">@${esc(state.profile?.username||"username")}</div>
+          <div style="text-align:center;opacity:.85;font-size:13px;margin-bottom:22px">${esc(state.profile?.bio||"Tulis sesuatu tentang dirimu.")}</div>
+          ${links.length ? links.map(l => `
+            <a href="${esc(l.url)}" target="_blank" rel="noopener" style="
+              display:flex;align-items:center;justify-content:center;
+              margin-bottom:${t.gap}px;
+              height:${t.btnHeight}px;
+              border-radius:${t.btnRadius}px;
+              background:${t.btnBg};
+              color:${t.btnText};
+              border:1px solid ${t.btnBorder};
+              box-shadow:${t.shadow};
+              font-weight:600;font-size:14px;
+              text-decoration:none;
+            ">${esc(l.title||l.url)}</a>`).join("")
+            : `<div style="text-align:center;opacity:.6;font-size:12px">Belum ada tautan aktif.</div>`}
+          <div style="text-align:center;margin-top:24px;font-size:11px;opacity:.5">Powered by LINKORA</div>
+        </div>`;
+    };
+    preview();
+
+    ["t-bg","t-text","t-font","t-btnbg","t-btntext","t-btnborder","t-btnradius","t-btnheight","t-gap","t-shadow"].forEach(id => {
+      f(id).addEventListener("input", preview);
+    });
+
+    $('[data-act="reset"]').onclick = () => {
+      const d = defaultTheme();
+      Object.entries({
+        "t-bg":d.bg,"t-text":d.text,"t-font":d.font,"t-btnbg":d.btnBg,"t-btntext":d.btnText,
+        "t-btnborder":d.btnBorder,"t-btnradius":d.btnRadius,"t-btnheight":d.btnHeight,"t-gap":d.gap,"t-shadow":d.shadow
+      }).forEach(([k,v]) => f(k).value = v);
+      preview();
+    };
+    $('[data-act="save"]').onclick = async () => {
+      try{
+        const th = read();
+        await update(ref(db, `pages/${uid}`), { theme: th, updatedAt: Date.now() });
+        state.page.theme = th;
+        toast("Tampilan disimpan.","success");
+      }catch(e){ toast("Gagal menyimpan: " + e.message, "error"); }
+    };
+  }
+
+  /* -------------------- Analytics -------------------- */
+  async function renderDashAnalytics(){
+    mount(dashShell("/dashboard/analytics", "Analytics", "Statistik dicatat dari event nyata — kunjungan halaman dan klik tautan.", `
+      <div class="card">
+        <h3 style="margin:0 0 14px">7 hari terakhir</h3>
+        <div id="chart" style="min-height:180px"></div>
+      </div>
+      <div class="card" style="margin-top:22px">
+        <h3 style="margin:0 0 14px">Tautan terpopuler (30 hari)</h3>
+        <div id="top-links"><div class="sk" style="height:36px;margin-bottom:8px"></div><div class="sk" style="height:36px"></div></div>
+      </div>
+      <p class="hint" style="margin-top:16px">
+        Catatan: Statistik ini menghitung <b>event yang tercatat</b> saat halaman dimuat / tautan diklik.
+        Metrik "unique visitor" tidak ditampilkan karena kami tidak menyimpan identitas pengunjung (tidak ada IP mentah disimpan).
+      </p>
+    `));
+    bindShell();
+    const uid = state.user.uid;
+    try{
+      const snap = await get(ref(db, `analyticsAggregates/${uid}/daily`));
+      const data = snap.val() || {};
+      const days = [];
+      for(let i=6;i>=0;i--){
+        const d = new Date(); d.setDate(d.getDate()-i);
+        const key = d.toISOString().slice(0,10);
+        days.push({
+          key,
+          label: d.toLocaleDateString("id-ID",{weekday:"short"}),
+          views: data[key]?.views||0,
+          clicks: Object.values(data[key]?.clicks||{}).reduce((a,b)=>a+b,0)
+        });
+      }
+      const max = Math.max(1, ...days.map(d=>d.views));
+      $("#chart").innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;align-items:end;height:170px">
+          ${days.map(d => `
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end">
+              <div title="${d.views} kunjungan" style="width:100%;height:${Math.round(d.views/max*120)}px;min-height:4px;background:linear-gradient(180deg,var(--brand),var(--brand-2));border-radius:8px 8px 0 0"></div>
+              <div style="font-size:11px;color:var(--muted)">${d.label}</div>
+              <div style="font-size:11px">${d.views}</div>
+            </div>`).join("")}
+        </div>`;
+
+      const linkClicks = {};
+      for(let i=0;i<30;i++){
+        const d = new Date(); d.setDate(d.getDate()-i);
+        const key = d.toISOString().slice(0,10);
+        const clicks = data[key]?.clicks || {};
+        for(const [lid,c] of Object.entries(clicks)) linkClicks[lid] = (linkClicks[lid]||0) + (c||0);
+      }
+      const links = state.page?.links || {};
+      const ranked = Object.entries(linkClicks)
+        .map(([lid,c]) => ({ id:lid, title: links[lid]?.title||"(dihapus)", clicks:c }))
+        .sort((a,b)=>b.clicks-a.clicks)
+        .slice(0,8);
+      $("#top-links").innerHTML = ranked.length
+        ? ranked.map(r=>`<div class="spread" style="padding:10px 0;border-bottom:1px solid var(--border)"><span>${esc(r.title)}</span><b>${r.clicks}</b></div>`).join("")
+        : `<div class="empty">Belum ada klik tercatat.</div>`;
+    }catch(e){
+      $("#chart").innerHTML = `<div class="empty">Gagal memuat data: ${esc(e.message)}</div>`;
+      $("#top-links").innerHTML = "";
+    }
+  }
+
+  /* -------------------- QR -------------------- */
+  function renderDashQR(){
+    const url = `${location.origin}${location.pathname}#/u/${state.profile?.username||""}`;
+    mount(dashShell("/dashboard/qr", "QR Code", "Buat QR untuk halaman publikmu.", `
+      <div class="grid cols-2" style="gap:24px">
+        <div class="card">
+          <div class="field"><label for="q-fg">Warna QR</label><input class="input" type="color" id="q-fg" value="#0b0c10" /></div>
+          <div class="field"><label for="q-bg">Warna latar</label><input class="input" type="color" id="q-bg" value="#ffffff" /></div>
+          <div class="field"><label for="q-size">Ukuran (px)</label><input class="input" type="number" min="128" max="1024" step="32" id="q-size" value="320" /></div>
+          <div class="field"><label>URL halaman</label><input class="input" readonly value="${esc(url)}" /></div>
+          <div class="row">
+            <button class="btn btn-primary" data-act="gen">Generate</button>
+            <button class="btn btn-ghost" data-act="dl">Unduh PNG</button>
+            <button class="btn btn-ghost" data-act="copy">Salin URL</button>
+          </div>
+        </div>
+        <div class="card" style="display:grid;place-items:center">
+          <canvas id="qr" width="320" height="320"></canvas>
+        </div>
+      </div>
+    `));
+    bindShell();
+    const canvas = $("#qr");
+    const gen = () => {
+      if(!window.QRCode) return toast("Pustaka QR belum siap, coba lagi.", "error");
+      window.QRCode.toCanvas(canvas, url, {
+        width: +$("#q-size").value || 320,
+        margin: 2,
+        color: { dark: $("#q-fg").value, light: $("#q-bg").value }
+      }, err => { if(err) toast("Gagal membuat QR: " + err.message, "error"); });
+    };
+    // tunggu pustaka QR siap
+    const waitQR = setInterval(() => {
+      if(window.QRCode){ clearInterval(waitQR); gen(); }
+    }, 100);
+    setTimeout(() => clearInterval(waitQR), 5000);
+
+    $('[data-act="gen"]').onclick = gen;
+    $('[data-act="dl"]').onclick = () => {
+      const a = document.createElement("a");
+      a.href = canvas.toDataURL("image/png");
+      a.download = `linkora-${state.profile?.username||"qr"}.png`;
+      a.click();
+    };
+    $('[data-act="copy"]').onclick = async () => {
+      try{ await navigator.clipboard.writeText(url); toast("URL disalin.","success"); }
+      catch{ toast("Gagal menyalin.","error"); }
+    };
+  }
+
+  /* -------------------- Settings -------------------- */
+  function renderDashSettings(){
+    const p = state.profile || {};
+    const u = state.user;
+    mount(dashShell("/dashboard/settings", "Pengaturan", "Kelola profil, akun, dan privasi.", `
+      <div class="tabs">
+        <a class="tab active" href="#/dashboard/settings">Profil</a>
+      </div>
+      <div class="card">
+        <h3 style="margin:0 0 16px">Profil</h3>
+        <form id="pf">
+          <div class="grid cols-2" style="gap:12px">
+            <div class="field"><label for="p-name">Nama tampilan</label><input class="input" id="p-name" maxlength="80" value="${esc(p.displayName||"")}" /></div>
+            <div class="field"><label for="p-user">Username</label><input class="input" id="p-user" value="${esc(p.username||"")}" disabled /><div class="hint">Username saat ini tidak dapat diubah dari sini.</div></div>
+          </div>
+          <div class="field"><label for="p-bio">Bio</label><textarea class="textarea" id="p-bio" maxlength="200">${esc(p.bio||"")}</textarea></div>
+          <div id="pf-err" class="error" hidden></div>
+          <button class="btn btn-primary" type="submit">Simpan perubahan</button>
+        </form>
+      </div>
+
+      <div class="card" style="margin-top:22px">
+        <h3 style="margin:0 0 6px">Email</h3>
+        <p class="page-sub" style="margin:0 0 14px">
+          ${esc(u.email||"")}
+          ${u.emailVerified ? `<span class="badge badge-success" style="margin-left:8px">Terverifikasi</span>` : `<span class="badge badge-warn" style="margin-left:8px">Belum diverifikasi</span>`}
+        </p>
+        ${!u.emailVerified ? `<button class="btn btn-ghost" id="resend">Kirim ulang email verifikasi</button>` : ""}
+      </div>
+
+      <div class="card" style="margin-top:22px;border-color:rgba(239,68,68,.35)">
+        <h3 style="margin:0 0 6px;color:#fca5a5">Zona berbahaya</h3>
+        <p class="page-sub" style="margin:0 0 14px">Menghapus akun akan menghapus profil, halaman, dan tautanmu secara permanen.</p>
+        <button class="btn btn-danger" id="del-acc">Hapus akun saya</button>
+      </div>
+    `));
+    bindShell();
+
+    $("#pf").addEventListener("submit", async e => {
+      e.preventDefault();
+      const err = $("#pf-err"); err.hidden = true;
+      const payload = {
+        displayName: $("#p-name").value.trim(),
+        bio: $("#p-bio").value.trim()
+      };
+      try{
+        await update(ref(db, `profiles/${state.user.uid}`), payload);
+        state.profile = { ...state.profile, ...payload };
+        toast("Profil disimpan.","success");
+      }catch(ex){ err.textContent = ex.message; err.hidden = false; }
+    });
+
+    $("#resend")?.addEventListener("click", async () => {
+      try{ await sendEmailVerification(state.user); toast("Email verifikasi dikirim ulang.","success"); }
+      catch(e){ toast("Gagal: " + e.message, "error"); }
+    });
+
+    $("#del-acc").addEventListener("click", () => {
+      modal({
+        title:"Hapus akun permanen?",
+        body:"Seluruh data termasuk profil, tautan, dan statistik akan dihapus. Tindakan ini tidak dapat dibatalkan.",
+        danger:true, confirmText:"Ya, hapus permanen",
+        onConfirm: async () => {
+          try{
+            const uid = state.user.uid;
+            await Promise.allSettled([
+              remove(ref(db, `users/${uid}`)),
+              remove(ref(db, `profiles/${uid}`)),
+              remove(ref(db, `pages/${uid}`)),
+              remove(ref(db, `analyticsAggregates/${uid}`)),
+              state.profile?.username ? remove(ref(db, `usernames/${state.profile.username}`)) : Promise.resolve()
+            ]);
+            await deleteUser(state.user);
+            toast("Akun dihapus.","success");
+            go("/");
+          }catch(e){
+            toast("Gagal menghapus akun: " + e.message + " (mungkin perlu login ulang).", "error", 6000);
+          }
+        }
+      });
+    });
+  }
+
+  /* -------------------- Admin -------------------- */
+  function renderAdmin(){
+    mount(dashShell("/admin", "Admin", "Statistik agregat platform. Akses dikontrol oleh role pengguna.", `
+      <div class="grid cols-4">
+        <div class="kpi"><div class="k">Akun</div><div class="v" id="a-users">—</div></div>
+        <div class="kpi"><div class="k">Halaman terbit</div><div class="v" id="a-pages">—</div></div>
+        <div class="kpi"><div class="k">Tautan</div><div class="v" id="a-links">—</div></div>
+        <div class="kpi"><div class="k">Total kunjungan</div><div class="v" id="a-views">—</div></div>
+      </div>
+      <div class="card" style="margin-top:22px">
+        <p class="hint" style="margin:0">
+          Aksi moderasi (menghapus konten, mensuspensi akun, mengubah role) tidak diaktifkan pada klien.
+          Operasi sensitif wajib melalui backend tepercaya (Cloud Functions) dengan Firebase Admin SDK.
+          Ini mencegah peningkatan hak akses dari sisi klien.
+        </p>
+      </div>
+    `));
+    bindShell();
+    (async () => {
+      try{
+        const snap = await get(ref(db, "platformStats"));
+        const s = snap.val() || {};
+        $("#a-users").textContent = (s.users||0).toLocaleString("id-ID");
+        $("#a-pages").textContent = (s.publishedPages||0).toLocaleString("id-ID");
+        $("#a-links").textContent = (s.links||0).toLocaleString("id-ID");
+        $("#a-views").textContent = (s.totalViews||0).toLocaleString("id-ID");
+      }catch{}
+    })();
+  }
+
+  /* -------------------- Public profile -------------------- */
+  async function renderPublicProfile(usernameRaw){
+    const username = String(usernameRaw||"").toLowerCase();
+    mount(`
+      <div class="pf-wrap" style="background:#0b0c10;color:#fff">
+        <div class="pf-card" style="text-align:center;padding:60px 20px">
+          <div class="sk" style="width:96px;height:96px;border-radius:50%;margin:0 auto 14px"></div>
+          <div class="sk" style="height:22px;width:180px;margin:0 auto 12px"></div>
+          <div class="sk" style="height:14px;width:240px;margin:0 auto"></div>
+        </div>
+      </div>`);
+
+    try{
+      const uSnap = await get(ref(db, `usernames/${username}`));
+      if(!uSnap.exists()) return renderProfileError("Profil tidak ditemukan", "Username ini belum terdaftar.");
+      const uid = uSnap.val().uid;
+
+      const [pSnap, pageSnap] = await Promise.all([
+        get(ref(db, `profiles/${uid}`)),
+        get(ref(db, `pages/${uid}`))
+      ]);
+      if(!pSnap.exists() || !pageSnap.exists()) return renderProfileError("Profil tidak ditemukan", "Data profil belum lengkap.");
+      const profile = pSnap.val();
+      const page = pageSnap.val();
+      if(!page.published) return renderProfileError("Belum dipublikasikan", "Pemilik halaman belum mempublikasikan profil ini.");
+
+      const t = { ...defaultTheme(), ...(page.theme||{}) };
+      const links = Object.entries(page.links||{})
+        .map(([id,l])=>({ id, ...l }))
+        .filter(l => l.active !== false)
+        .sort((a,b)=>(a.order??0)-(b.order??0));
+
+      const root = $("#app");
+      root.innerHTML = `
+        <div class="pf-wrap" style="background:${esc(t.bg)};color:${esc(t.text)};font-family:${esc(t.font)}">
+          <div class="pf-card">
+            <div style="width:96px;height:96px;border-radius:50%;background:rgba(255,255,255,.15);margin:0 auto 14px;display:grid;place-items:center;font-size:34px;font-weight:700;border:3px solid rgba(255,255,255,.15)">
+              ${esc((profile.displayName||username)[0].toUpperCase())}
+            </div>
+            <h1 class="pf-name">${esc(profile.displayName||username)}</h1>
+            <div style="text-align:center;opacity:.7;font-size:13px;margin-bottom:8px">@${esc(username)}</div>
+            ${profile.bio ? `<p class="pf-bio">${esc(profile.bio)}</p>` : ""}
+            <div class="pf-links" style="margin-top:24px">
+              ${links.length
+                ? links.map(l => `
+                  <a class="pf-link" href="${esc(l.url)}" data-lid="${esc(l.id)}" rel="noopener" target="_blank"
+                     style="background:${esc(t.btnBg)};color:${esc(t.btnText)};border:1px solid ${esc(t.btnBorder)};border-radius:${t.btnRadius}px;min-height:${t.btnHeight}px;box-shadow:${esc(t.shadow)};gap:${t.gap}px">
+                    ${esc(l.title||l.url)}
+                  </a>`).join("")
+                : `<div style="text-align:center;opacity:.6;font-size:14px">Belum ada tautan.</div>`}
+            </div>
+            <div class="pf-footer">Powered by <a href="#/" style="color:inherit;font-weight:600">LINKORA</a></div>
+          </div>
+        </div>`;
+
+      // Track view
+      try{
+        const day = todayKey();
+        await Promise.all([
+          runTransaction(ref(db, `analyticsAggregates/${uid}/daily/${day}/views`), v => (v||0) + 1),
+          runTransaction(ref(db, `analyticsAggregates/${uid}/totals/views`),   v => (v||0) + 1)
+        ]);
+      }catch{}
+
+      // Track clicks
+      root.querySelectorAll("[data-lid]").forEach(a => a.addEventListener("click", async () => {
+        const day = todayKey();
+        const lid = a.dataset.lid;
+        try{
+          await Promise.all([
+            runTransaction(ref(db, `analyticsAggregates/${uid}/daily/${day}/clicks/${lid}`), v => (v||0)+1),
+            runTransaction(ref(db, `analyticsAggregates/${uid}/totals/clicks`), v => (v||0)+1)
+          ]);
+        }catch{}
+      }));
+    }catch(e){
+      renderProfileError("Terjadi kesalahan", e.message);
+    }
+  }
+  function renderProfileError(title, msg){
+    mount(`
+      <div class="pf-wrap">
+        <div class="pf-card" style="text-align:center;padding-top:80px">
+          <h1 style="font-family:var(--font-display);font-size:26px">${esc(title)}</h1>
+          <p style="color:var(--muted);margin:12px 0 24px">${esc(msg)}</p>
+          <a class="btn btn-primary" href="#/">Kembali ke LINKORA</a>
+        </div>
+      </div>`);
+  }
+
+  /* -------------------- Error pages -------------------- */
+  function render404(){
+    mount(`${topNav()}
+      <div class="container" style="text-align:center;padding:100px 20px">
+        <div style="font-family:var(--font-display);font-size:80px;font-weight:700" class="grad-text">404</div>
+        <h1 style="font-family:var(--font-display);margin:0 0 10px">Halaman tidak ditemukan</h1>
+        <p style="color:var(--muted);margin:0 0 24px">Tautan yang kamu buka tidak ada atau sudah dipindahkan.</p>
+        <a class="btn btn-primary" href="#/">Kembali ke beranda</a>
+      </div>`);
+    bindTopNav();
+  }
+  function renderForbidden(){
+    mount(`${topNav()}
+      <div class="container" style="text-align:center;padding:100px 20px">
+        <div style="font-family:var(--font-display);font-size:80px;font-weight:700" class="grad-text">403</div>
+        <h1 style="font-family:var(--font-display);margin:0 0 10px">Akses ditolak</h1>
+        <p style="color:var(--muted);margin:0 0 24px">Kamu tidak memiliki izin untuk membuka halaman ini.</p>
+        <a class="btn btn-primary" href="#/dashboard">Kembali ke dashboard</a>
+      </div>`);
+    bindTopNav();
+  }
+
+  /* -------------------- Theme init -------------------- */
+  (function initTheme(){
+    const prefers = matchMedia("(prefers-color-scheme: light)").matches;
+    if(prefers) document.documentElement.classList.add("light");
+  })();
+
+  /* -------------------- Boot -------------------- */
+  window.addEventListener("hashchange", onRoute);
+  onAuthStateChanged(auth, async (user) => {
+    state.user = user;
+    if(user){ await loadUserData(user.uid); }
+    else { state.userData = null; state.profile = null; state.page = null; }
+    onRoute();
+  });
+  </script>
 </body>
 </html>
