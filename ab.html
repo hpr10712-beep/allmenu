@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#ffffff" />
+<title>Grandmaster Grid · Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;--bg-2:#f7f8fb;--bg-3:#eef1f7;--bg-4:#e4e8f0;
+  --surface:#ffffff;--surface-2:#fafbfd;--surface-3:#f1f3f9;
+  --border:#e4e8f0;--border-2:#d5dae5;--border-3:#c0c7d6;
+  --text:#0b1220;--text-2:#4a5464;--text-3:#8891a3;--text-4:#b3bcc9;
+  --accent:#4c5cf0;--accent-2:#8b46e8;--accent-3:#0891b2;
+  --accent-soft:rgba(76,92,240,.08);
+  --success:#0a9f68;--success-soft:rgba(10,159,104,.1);
+  --danger:#e7344a;--danger-soft:rgba(231,52,74,.1);
+  --warn:#d68a00;--warn-soft:rgba(214,138,0,.1);
+  --gold:#e0a01a;--gold-soft:rgba(224,160,26,.1);
+  --r:8px;--r-2:12px;--r-3:16px;--r-4:20px;
+  --sh-sm:0 1px 2px rgba(20,30,60,.05);
+  --sh:0 4px 14px rgba(20,30,60,.06);
+  --sh-lg:0 12px 32px rgba(20,30,60,.1);
+  --topbar:56px;
+  --sidebar:240px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg-2);color:var(--text);
+  font-family:'Inter',-apple-system,sans-serif;
+  font-size:13.5px;line-height:1.5;overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit;background:none;border:none;outline:none}
+button{cursor:pointer;padding:0}
+a{color:var(--accent);text-decoration:none}
+h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+svg.ic{width:18px;height:18px;flex:none;display:block}
+svg.ic-sm{width:14px;height:14px}
+svg.ic-lg{width:22px;height:22px}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--border-3)}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- LAYOUT ---------- */
+.app{display:flex;height:100vh}
+
+/* Sidebar */
+.sidebar{
+  width:var(--sidebar);flex:none;background:var(--surface);
+  border-right:1px solid var(--border);display:flex;flex-direction:column;
+  transition:width .2s ease;
+}
+.sidebar.mini{width:64px}
+.sidebar-head{
+  height:var(--topbar);display:flex;align-items:center;gap:10px;
+  padding:0 16px;border-bottom:1px solid var(--border);flex:none;
+}
+.sidebar.mini .sidebar-head{padding:0 12px;justify-content:center}
+.brand-mark{
+  width:32px;height:32px;border-radius:9px;flex:none;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:grid;place-items:center;color:#fff;font-weight:900;font-size:14px;
+  box-shadow:0 2px 8px rgba(76,92,240,.3);
+}
+.brand-name{font-size:14px;font-weight:800;letter-spacing:-.02em;white-space:nowrap;overflow:hidden}
+.sidebar.mini .brand-name{display:none}
+.brand-sub{font-size:9.5px;font-weight:700;color:var(--text-3);letter-spacing:.14em;text-transform:uppercase;margin-top:1px}
+.sidebar.mini .brand-sub{display:none}
+.sidebar-nav{flex:1;padding:12px 8px;overflow-y:auto}
+.sidebar.mini .sidebar-nav{padding:12px 6px}
+.nav-sec{font-size:9.5px;font-weight:800;color:var(--text-4);letter-spacing:.16em;text-transform:uppercase;padding:12px 10px 6px}
+.sidebar.mini .nav-sec{display:none}
+.nav-item{
+  display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:8px;
+  color:var(--text-2);font-weight:600;font-size:13px;cursor:pointer;
+  transition:.15s;margin-bottom:1px;width:100%;text-align:left;
+}
+.sidebar.mini .nav-item{justify-content:center;padding:9px 6px}
+.sidebar.mini .nav-item span{display:none}
+.nav-item:hover{background:var(--bg-3);color:var(--text)}
+.nav-item.active{background:var(--accent-soft);color:var(--accent)}
+.nav-item.active svg{color:var(--accent)}
+.nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:99px;min-width:18px;text-align:center}
+.sidebar.mini .nav-badge{display:none}
+.sidebar-foot{padding:12px;border-top:1px solid var(--border);flex:none}
+.sidebar.mini .sidebar-foot{padding:12px 6px}
+.user-chip{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;background:var(--bg-2)}
+.sidebar.mini .user-chip{padding:6px;justify-content:center}
+.user-chip .av{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;color:#fff;font-weight:800;font-size:12px;flex:none}
+.user-chip .info{flex:1;min-width:0}
+.sidebar.mini .user-chip .info{display:none}
+.user-chip .n{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-chip .e{font-size:10.5px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{
+  height:var(--topbar);flex:none;display:flex;align-items:center;gap:12px;
+  padding:0 20px;background:var(--surface);border-bottom:1px solid var(--border);
+}
+.topbar h1{font-size:15px;font-weight:800;flex:1;letter-spacing:-.02em}
+.topbar .search{
+  display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;
+  background:var(--bg-2);width:280px;max-width:40vw;
+}
+.topbar .search input{flex:1;font-size:13px;background:none}
+.topbar .search input::placeholder{color:var(--text-4)}
+.topbar-btn{
+  width:34px;height:34px;border-radius:8px;display:grid;place-items:center;
+  color:var(--text-2);transition:.15s;flex:none;
+}
+.topbar-btn:hover{background:var(--bg-3);color:var(--text)}
+.topbar-btn.active{background:var(--accent-soft);color:var(--accent)}
+.content{flex:1;overflow-y:auto;padding:20px 24px 60px}
+.page{display:none}
+.page.active{display:block;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ---------- COMPONENTS ---------- */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-3);padding:18px;box-shadow:var(--sh-sm);
+}
+.card + .card{margin-top:14px}
+.card-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.card-title h3{font-size:13.5px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.card-title h3 svg{color:var(--accent)}
+.card-title .desc{font-size:11.5px;color:var(--text-3);margin-top:2px;font-weight:500}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:8px 14px;border-radius:8px;font-weight:600;font-size:12.5px;
+  background:var(--surface);border:1px solid var(--border-2);color:var(--text);
+  transition:.15s;min-height:34px;white-space:nowrap;
+}
+.btn:hover{background:var(--bg-3);border-color:var(--border-3)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.5;pointer-events:none}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.primary:hover{background:#3f4ee0}
+.btn.danger{background:var(--danger);color:#fff;border-color:var(--danger)}
+.btn.danger:hover{background:#cf2740}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--text-2)}
+.btn.ghost:hover{background:var(--bg-3);color:var(--text)}
+.btn.sm{padding:5px 10px;font-size:11.5px;min-height:28px;border-radius:6px}
+.btn.block{width:100%}
+.btn.icon{padding:0;width:34px;height:34px;min-height:0}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11.5px;font-weight:700;color:var(--text-2);margin-bottom:6px;letter-spacing:.02em}
+.field .hint{font-size:11px;color:var(--text-3);margin-top:5px;line-height:1.5}
+.input{
+  width:100%;padding:9px 12px;border-radius:8px;background:var(--surface);
+  border:1px solid var(--border-2);font-size:13px;font-weight:500;
+  transition:.15s;
+}
+.input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.input::placeholder{color:var(--text-4)}
+textarea.input{min-height:80px;font-family:'JetBrains Mono',monospace;font-size:12px;resize:vertical;line-height:1.5}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row.end{justify-content:flex-end}
+.row.between{justify-content:space-between}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;background:var(--bg-3);color:var(--text-2)}
+.pill.accent{background:var(--accent-soft);color:var(--accent)}
+.pill.success{background:var(--success-soft);color:var(--success)}
+.pill.danger{background:var(--danger-soft);color:var(--danger)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.gold{background:var(--gold-soft);color:var(--gold)}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.empty{text-align:center;padding:36px 20px;color:var(--text-3)}
+.empty svg{width:36px;height:36px;margin:0 auto 10px;opacity:.4}
+.empty p{margin:0;font-size:13px;font-weight:500}
+.spinner{width:16px;height:16px;border-radius:50%;border:2px solid var(--border-2);border-top-color:var(--accent);animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Tables */
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{
+  text-align:left;font-size:10.5px;font-weight:800;color:var(--text-3);
+  letter-spacing:.08em;text-transform:uppercase;padding:10px 12px;
+  border-bottom:1px solid var(--border);background:var(--bg-2);
+}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--border);font-weight:500}
+.tbl tr:hover td{background:var(--bg-2)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .avatar-sm{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:inline-grid;place-items:center;color:#fff;font-weight:800;font-size:11px}
+
+/* Stats */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-2);
+  padding:14px;transition:.15s;
+}
+.stat:hover{border-color:var(--border-2)}
+.stat .l{font-size:10px;font-weight:800;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase}
+.stat .v{font-size:22px;font-weight:900;letter-spacing:-.03em;line-height:1;margin-top:6px;font-variant-numeric:tabular-nums}
+.stat .sub{font-size:11px;color:var(--text-3);margin-top:4px;font-weight:500}
+
+/* Modal */
+.modal-root{position:fixed;inset:0;z-index:900;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-root.active{display:flex}
+.modal-bg{position:absolute;inset:0;background:rgba(11,18,32,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{
+  position:relative;background:var(--surface);border-radius:var(--r-3);
+  padding:22px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;
+  box-shadow:var(--sh-lg);border:1px solid var(--border);
+  animation:pop .25s cubic-bezier(.2,1.2,.4,1);
+}
+.modal.lg{max-width:760px}
+@keyframes pop{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
+.modal h3{font-size:17px;margin-bottom:6px}
+.modal .sub{font-size:12.5px;color:var(--text-3);margin:0 0 16px;line-height:1.55}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+.modal-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--text-3)}
+.modal-close:hover{background:var(--bg-3);color:var(--text)}
+
+/* Toast */
+.toast-root{position:fixed;bottom:20px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.toast{
+  background:var(--text);color:#fff;padding:11px 15px;border-radius:10px;
+  font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:9px;
+  box-shadow:0 8px 24px rgba(11,18,32,.24);animation:slideIn .25s;
+  max-width:400px;
+}
+.toast.success{background:#0a9f68}
+.toast.error{background:#e7344a}
+.toast.out{animation:slideOut .2s forwards}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+@keyframes slideOut{to{opacity:0;transform:translateX(20px)}}
+
+/* Login */
+.login-wrap{
+  position:fixed;inset:0;background:var(--bg-2);display:flex;align-items:center;justify-content:center;
+  padding:20px;z-index:100;background:
+    radial-gradient(800px 500px at 15% 0%, rgba(76,92,240,.08), transparent 55%),
+    radial-gradient(700px 500px at 100% 100%, rgba(139,70,232,.06), transparent 55%),
+    var(--bg-2);
+}
+.login-card{
+  width:100%;max-width:380px;background:var(--surface);border-radius:var(--r-4);
+  padding:28px;box-shadow:var(--sh-lg);border:1px solid var(--border);
+}
+.login-card .logo{
+  width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:grid;place-items:center;color:#fff;font-weight:900;font-size:20px;
+  margin-bottom:16px;box-shadow:0 6px 20px rgba(76,92,240,.3);
+}
+.login-card h2{font-size:20px;margin-bottom:4px}
+.login-card .sub{font-size:12.5px;color:var(--text-3);margin-bottom:20px;line-height:1.55}
+
+/* ========== SPECTATOR MODE ========== */
+.spec-overlay{
+  position:fixed;inset:0;z-index:2000;background:var(--bg-2);display:none;flex-direction:column;
+  background:
+    radial-gradient(1000px 600px at 50% -20%, rgba(76,92,240,.08), transparent 60%),
+    radial-gradient(800px 600px at 50% 120%, rgba(139,70,232,.06), transparent 60%),
+    var(--bg-2);
+}
+.spec-overlay.active{display:flex;animation:fadeIn .3s}
+.spec-top{
+  height:60px;flex:none;display:flex;align-items:center;gap:14px;
+  padding:0 22px;background:var(--surface);border-bottom:1px solid var(--border);
+}
+.spec-live{
+  display:inline-flex;align-items:center;gap:7px;padding:5px 11px;border-radius:99px;
+  background:linear-gradient(135deg,#e7344a,#c21a30);color:#fff;
+  font-size:10.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;
+  box-shadow:0 4px 12px rgba(231,52,74,.3);
+}
+.spec-live .dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.spec-title{flex:1;font-size:14px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spec-title small{display:block;font-size:11px;font-weight:500;color:var(--text-3);margin-top:1px;letter-spacing:.02em}
+.spec-body{flex:1;overflow-y:auto;padding:20px 24px 40px;max-width:1400px;width:100%;margin:0 auto}
+
+/* Scoreboard */
+.spec-board{
+  display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-4);
+  padding:20px;box-shadow:var(--sh);margin-bottom:20px;
+}
+.spec-player{
+  display:flex;gap:14px;align-items:center;padding:14px;border-radius:var(--r-2);
+  background:var(--bg-2);transition:.3s;position:relative;overflow:hidden;
+}
+.spec-player.turn{
+  background:linear-gradient(135deg,var(--accent-soft),transparent);
+  box-shadow:inset 0 0 0 1.5px var(--accent);
+}
+.spec-player.turn::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--accent);animation:pulseBar 1.4s ease-in-out infinite;
+}
+@keyframes pulseBar{0%,100%{opacity:1}50%{opacity:.5}}
+.spec-player .av{
+  width:52px;height:52px;border-radius:14px;flex:none;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:grid;place-items:center;color:#fff;font-weight:900;font-size:20px;
+  box-shadow:0 4px 12px rgba(76,92,240,.24);overflow:hidden;position:relative;
+}
+.spec-player .av img{width:100%;height:100%;object-fit:cover}
+.spec-player.b .av{background:linear-gradient(135deg,#4a2d8f,#2a1552)}
+.spec-player .info{flex:1;min-width:0}
+.spec-player .name{font-size:15px;font-weight:800;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spec-player .meta{font-size:11.5px;color:var(--text-3);margin-top:3px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.spec-player .clock{
+  font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;padding:8px 14px;
+  border-radius:10px;background:var(--bg-3);border:1px solid var(--border-2);
+  flex:none;min-width:100px;text-align:center;transition:.25s;
+}
+.spec-player .clock.active{background:var(--accent);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(76,92,240,.3)}
+.spec-player .clock.low{color:var(--danger);border-color:var(--danger)}
+.spec-player .clock.active.low{background:var(--danger);color:#fff}
+.spec-center{display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 8px}
+.spec-vs{font-size:11px;font-weight:900;color:var(--text-4);letter-spacing:.2em}
+.spec-status-pill{
+  padding:6px 14px;border-radius:99px;font-size:11px;font-weight:800;
+  letter-spacing:.08em;text-transform:uppercase;background:var(--bg-3);color:var(--text-2);
+  white-space:nowrap;
+}
+.spec-status-pill.check{background:var(--danger-soft);color:var(--danger);animation:pulse 1.2s ease-in-out infinite}
+.spec-status-pill.finished{background:var(--success-soft);color:var(--success)}
+
+/* Spec Layout */
+.spec-layout{display:grid;grid-template-columns:minmax(380px,1.15fr) minmax(320px,1fr);gap:20px;align-items:start}
+@media (max-width:1000px){.spec-layout{grid-template-columns:1fr}}
+
+.spec-panel{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-3);
+  box-shadow:var(--sh-sm);overflow:hidden;
+}
+.spec-panel-head{
+  padding:13px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--bg-2);
+}
+.spec-panel-head h4{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-2);display:flex;align-items:center;gap:8px}
+.spec-panel-head h4 svg{color:var(--accent)}
+.spec-panel-body{padding:16px}
+
+/* Board */
+.spec-board-wrap{
+  aspect-ratio:1;background:linear-gradient(155deg,#f9fafd,#eef1f7);
+  border-radius:var(--r-2);padding:10px;border:1px solid var(--border);
+}
+.spec-board-grid{
+  display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);
+  width:100%;height:100%;border-radius:8px;overflow:hidden;
+  box-shadow:0 4px 12px rgba(20,30,60,.15);
+}
+.spec-sq{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.spec-sq.light{background:linear-gradient(145deg,#f0d9b5,#e8c89b)}
+.spec-sq.dark{background:linear-gradient(145deg,#b58863,#a0764e)}
+.spec-sq.last{box-shadow:inset 0 0 0 100px rgba(255,214,0,.28)}
+.spec-sq.check{box-shadow:inset 0 0 0 100px rgba(231,52,74,.55);animation:pulse 1.4s ease-in-out infinite}
+.spec-sq .coord{position:absolute;font-size:9px;font-weight:900;opacity:.55}
+.spec-sq .coord.f{right:4px;bottom:2px}
+.spec-sq .coord.r{left:4px;top:2px}
+.spec-sq.light .coord{color:#8b6a45}
+.spec-sq.dark .coord{color:#f5ead0}
+.spec-piece{
+  width:92%;height:92%;display:block;position:relative;z-index:2;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.35)) drop-shadow(0 1px 1px rgba(0,0,0,.2));
+}
+.spec-piece path,.spec-piece circle,.spec-piece rect,.spec-piece polygon,.spec-piece ellipse{fill:var(--pf);stroke:var(--ps);stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round}
+.spec-piece.pw{--pf:#fafbfd;--ps:#1a2030}
+.spec-piece.pb{--pf:#1e2330;--ps:#a8b2c4}
+.spec-piece .accent{fill:var(--ps);stroke:none;opacity:.85}
+.spec-piece .hl{fill:rgba(255,255,255,.5);stroke:none}
+
+/* Moves */
+.spec-moves{
+  max-height:340px;overflow-y:auto;background:var(--bg-2);border-radius:var(--r-2);
+  padding:8px;font-family:'JetBrains Mono',monospace;
+}
+.spec-mv-row{display:grid;grid-template-columns:36px 1fr 1fr;gap:6px;align-items:center;padding:5px 8px;border-radius:6px;font-size:12.5px}
+.spec-mv-row:nth-child(odd){background:var(--surface)}
+.spec-mv-row .num{color:var(--text-4);font-size:11px;font-weight:800}
+.spec-mv-row .m{padding:4px 8px;border-radius:5px;font-weight:700}
+.spec-mv-row .m.latest{background:var(--accent);color:#fff;box-shadow:0 2px 6px rgba(76,92,240,.24)}
+.spec-mv-row .m.latest::after{content:'◂';margin-left:4px;font-size:9px}
+
+/* Evaluation */
+.spec-eval{display:flex;flex-direction:column;gap:8px}
+.spec-eval-bar{
+  position:relative;height:18px;border-radius:99px;overflow:hidden;
+  background:linear-gradient(90deg,#1e2330 0%,#1e2330 50%,#f0f4fc 50%,#f0f4fc 100%);
+  border:1px solid var(--border);
+}
+.spec-eval-bar .fill{
+  position:absolute;top:0;bottom:0;left:50%;background:rgba(255,255,255,.85);
+  transition:all .5s cubic-bezier(.2,1,.4,1);
+  box-shadow:0 0 8px rgba(76,92,240,.3);
+}
+.spec-eval-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);font-weight:700}
+
+/* Info Grid */
+.spec-info{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.spec-info-item{padding:10px 12px;background:var(--bg-2);border-radius:8px}
+.spec-info-item .l{font-size:10px;font-weight:800;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase}
+.spec-info-item .v{font-size:15px;font-weight:900;letter-spacing:-.02em;margin-top:3px;font-variant-numeric:tabular-nums}
+
+/* Controls */
+.spec-controls{
+  display:flex;gap:6px;padding:6px;background:var(--bg-2);border-radius:10px;
+  justify-content:center;flex-wrap:wrap;
+}
+.spec-ctrl{
+  padding:8px 12px;border-radius:8px;background:var(--surface);border:1px solid var(--border-2);
+  font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px;transition:.15s;
+}
+.spec-ctrl:hover{background:var(--bg-3);border-color:var(--border-3)}
+.spec-ctrl.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.spec-ctrl.primary:hover{background:#3f4ee0}
+
+/* Reaction stream */
+.spec-reactions{
+  display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--bg-2);border-radius:10px;
+  min-height:48px;max-height:120px;overflow-y:auto;align-content:flex-start;
+}
+.spec-reaction{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 9px;
+  background:var(--surface);border-radius:99px;font-size:12px;font-weight:600;
+  border:1px solid var(--border);animation:slideIn .3s;
+}
+.spec-reaction .em{font-size:15px}
+
+/* Match List */
+.match-list{display:flex;flex-direction:column;gap:8px}
+.match-item{
+  display:flex;gap:12px;align-items:center;padding:12px 14px;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--r-2);cursor:pointer;
+  transition:.15s;
+}
+.match-item:hover{border-color:var(--accent);background:var(--bg-2);transform:translateX(2px)}
+.match-item .av{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;flex:none}
+.match-item .info{flex:1;min-width:0}
+.match-item .n{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.match-item .s{font-size:11.5px;color:var(--text-3);margin-top:3px;display:flex;gap:8px;align-items:center}
+.match-item .s .vs{color:var(--text-4);font-weight:900}
+.match-item .s .live{color:var(--danger);font-weight:800;display:inline-flex;align-items:center;gap:5px}
+.match-item .s .live .dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 1.2s infinite}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <div class="logo">GG</div>
+    <h2>Admin Panel</h2>
+    <p class="sub">Masuk dengan akun Google admin yang terdaftar di <span class="mono" style="font-size:11.5px">admins/{uid}</span> pada Firebase.</p>
+    <button class="btn primary block" id="btnLoginGoogle" style="margin-bottom:10px">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Masuk dengan Google
+    </button>
+    <button class="btn ghost block" id="btnBypass">Skip (Dev Mode)</button>
+    <div id="loginErr" style="color:var(--danger);font-size:12px;margin-top:10px;text-align:center"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app" style="display:none">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="brand-mark">GG</div>
+      <div>
+        <div class="brand-name">Grandmaster</div>
+        <div class="brand-sub">Admin Panel</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav">
+      <div class="nav-sec">Utama</div>
+      <button class="nav-item active" data-page="dashboard"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Dashboard</span></button>
+      <button class="nav-item" data-page="spectator"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><span>Spectator</span><span class="nav-badge" id="liveCountBadge" style="display:none">0</span></button>
+
+      <div class="nav-sec">Konten</div>
+      <button class="nav-item" data-page="tournaments"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5.5H4a3 3 0 0 0 3 3"/><path d="M17 5.5h3a3 3 0 0 1-3 3"/></svg><span>Turnamen</span></button>
+      <button class="nav-item" data-page="sponsors"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v9H5v-9"/></svg><span>Sponsor</span></button>
+      <button class="nav-item" data-page="banners"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M3 13l5-5 4 4 3-3 6 6"/></svg><span>Banner</span></button>
+      <button class="nav-item" data-page="playmenu"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6"/></svg><span>Menu Play</span></button>
+
+      <div class="nav-sec">Komunikasi</div>
+      <button class="nav-item" data-page="messages"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/></svg><span>Pesan</span></button>
+
+      <div class="nav-sec">Data</div>
+      <button class="nav-item" data-page="users"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Pengguna</span></button>
+      <button class="nav-item" data-page="matches"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="m13.5 18.5 5-5 2 2-5 5z"/><path d="M3 21l3-3"/></svg><span>Pertandingan</span></button>
+
+      <div class="nav-sec">Pengaturan</div>
+      <button class="nav-item" data-page="settings"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Pengaturan</span></button>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="user-chip">
+        <div class="av" id="userAv">A</div>
+        <div class="info">
+          <div class="n" id="userName">Admin</div>
+          <div class="e" id="userEmail">-</div>
+        </div>
+        <button class="topbar-btn" id="btnLogout" title="Logout" style="width:28px;height:28px">
+          <svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <h1 id="pageTitle">Dashboard</h1>
+      <div class="search">
+        <svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-3.8-3.8"/></svg>
+        <input id="globalSearch" placeholder="Cari user / match..." />
+      </div>
+      <button class="topbar-btn" id="btnMinimize" title="Minimize sidebar">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>
+      </button>
+      <button class="topbar-btn" id="btnRefresh" title="Refresh">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg>
+      </button>
+    </div>
+
+    <div class="content" id="content">
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="stat-grid">
+          <div class="stat"><div class="l">Total User</div><div class="v" id="statUsers">-</div><div class="sub" id="statUsersSub">Memuat...</div></div>
+          <div class="stat"><div class="l">Match Live</div><div class="v" id="statLive">-</div><div class="sub" id="statLiveSub">Memuat...</div></div>
+          <div class="stat"><div class="l">Turnamen</div><div class="v" id="statTour">-</div><div class="sub" id="statTourSub">Memuat...</div></div>
+          <div class="stat"><div class="l">Turnamen Aktif</div><div class="v" id="statTourActive">-</div><div class="sub" id="statTourActiveSub">Sedang berlangsung</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg> Pertandingan Live</h3>
+            <button class="btn sm" data-page-link="spectator">Lihat semua</button></div>
+          <div class="match-list" id="dashboardLiveMatches"><div class="empty"><span class="spinner" style="display:inline-block"></span></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> User Terbaru</h3>
+            <button class="btn sm" data-page-link="users">Lihat semua</button></div>
+          <div id="dashboardRecentUsers"></div>
+        </div>
+      </div>
+
+      <!-- SPECTATOR -->
+      <div class="page" id="page-spectator">
+        <div class="card">
+          <div class="card-title"><h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg> Match Aktif</h3>
+            <span class="pill accent" id="specLiveCount">0 LIVE</span></div>
+          <div class="match-list" id="spectatorMatchList"><div class="empty"><span class="spinner" style="display:inline-block"></span></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2M20 14h2"/></svg> Tonton by Room ID</h3></div>
+          <div class="row">
+            <input class="input" id="specRoomIdInput" placeholder="Masukkan Room ID (contoh: ABC123)" style="flex:1;text-transform:uppercase;letter-spacing:.15em" />
+            <button class="btn primary" id="btnSpecById">Tonton</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><h3>Riwayat Match Selesai</h3></div>
+          <div id="finishedMatchesList"><div class="empty"><p>Belum ada match selesai.</p></div></div>
+        </div>
+      </div>
+
+      <!-- TOURNAMENTS -->
+      <div class="page" id="page-tournaments">
+        <div class="card">
+          <div class="card-title"><div><h3>Daftar Turnamen</h3><div class="desc">Kelola turnamen — icon, background, kode verifikasi, hadiah.</div></div>
+            <button class="btn primary" id="btnAddTournament"><svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Tambah</button></div>
+          <div id="tournamentsList"></div>
+        </div>
+      </div>
+
+      <!-- SPONSORS -->
+      <div class="page" id="page-sponsors">
+        <div class="card">
+          <div class="card-title"><div><h3>Sponsor</h3><div class="desc">Logo dan link sponsor yang tampil di halaman turnamen.</div></div>
+            <button class="btn primary" id="btnAddSponsor"><svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Tambah</button></div>
+          <div id="sponsorsList"></div>
+        </div>
+      </div>
+
+      <!-- BANNERS -->
+      <div class="page" id="page-banners">
+        <div class="card">
+          <div class="card-title"><h3>Home Banner</h3></div>
+          <div class="field"><label>Icon (nama ikon: info, trophy, crown, zap, target, gift)</label><input class="input" id="hbIcon" placeholder="info" /></div>
+          <div class="field"><label>Judul</label><input class="input" id="hbTitle" placeholder="Selamat datang!" /></div>
+          <div class="field"><label>Teks</label><textarea class="input" id="hbText" placeholder="Deskripsi singkat..." style="font-family:Inter;font-size:13px"></textarea></div>
+          <button class="btn primary" id="btnSaveHomeBanner">Simpan Home Banner</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><div><h3>Photo Banner (Slideshow)</h3><div class="desc">Slideshow gambar di halaman home.</div></div>
+            <button class="btn primary" id="btnAddPhotoSlide"><svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> Tambah Slide</button></div>
+          <div class="field"><label>Interval Auto Slide (ms)</label><input class="input" id="pbInterval" type="number" value="5000" style="max-width:200px" /></div>
+          <div id="photoSlidesList"></div>
+        </div>
+      </div>
+
+      <!-- PLAY MENU -->
+      <div class="page" id="page-playmenu">
+        <div class="card">
+          <div class="card-title"><h3>Quick Menu (Home)</h3></div>
+          <div id="quickMenuList"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><h3>Play Menu Items</h3></div>
+          <div id="playMenuList"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><div><h3>Custom HTML Menu Play</h3><div class="desc">Inject HTML tambahan (advanced). Kosongkan untuk hapus.</div></div></div>
+          <div class="field"><textarea class="input" id="customPlayHtml" style="min-height:200px" placeholder="<!-- custom HTML kartu game -->"></textarea></div>
+          <button class="btn primary" id="btnSavePlayHtml">Simpan HTML</button>
+        </div>
+      </div>
+
+      <!-- MESSAGES -->
+      <div class="page" id="page-messages">
+        <div class="card">
+          <div class="card-title"><h3>Broadcast ke Semua User</h3></div>
+          <div class="field"><label>Judul</label><input class="input" id="bcastTitle" placeholder="Pengumuman penting" /></div>
+          <div class="field"><label>Isi Pesan</label><textarea class="input" id="bcastBody" placeholder="Tulis pesan Anda..." style="font-family:Inter;font-size:13px"></textarea></div>
+          <button class="btn primary" id="btnSendBroadcast"><svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg> Kirim Broadcast</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><h3>Pesan Personal</h3></div>
+          <div class="field"><label>User ID / Username</label><input class="input" id="msgTarget" placeholder="Masukkan UID atau username" /></div>
+          <div class="field"><label>Judul</label><input class="input" id="msgTitle" placeholder="Judul pesan" /></div>
+          <div class="field"><label>Isi Pesan</label><textarea class="input" id="msgBody" placeholder="Tulis pesan..." style="font-family:Inter;font-size:13px"></textarea></div>
+          <button class="btn primary" id="btnSendPersonal">Kirim Pesan Personal</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><h3>Riwayat Broadcast</h3></div>
+          <div id="broadcastHistory"></div>
+        </div>
+      </div>
+
+      <!-- USERS -->
+      <div class="page" id="page-users">
+        <div class="card">
+          <div class="card-title"><h3>Daftar Pengguna</h3><span class="pill accent" id="usersCount">0</span></div>
+          <div id="usersList"></div>
+        </div>
+      </div>
+
+      <!-- MATCHES -->
+      <div class="page" id="page-matches">
+        <div class="card">
+          <div class="card-title"><h3>Pertandingan</h3></div>
+          <div class="row" style="margin-bottom:12px">
+            <select class="input" id="matchFilter" style="max-width:200px">
+              <option value="all">Semua</option>
+              <option value="playing">Sedang Bermain</option>
+              <option value="finished">Selesai</option>
+            </select>
+          </div>
+          <div id="matchesList"></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="card">
+          <div class="card-title"><h3>Info Firebase</h3></div>
+          <div id="firebaseInfo" class="mono" style="font-size:12px;line-height:1.8;color:var(--text-2)"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><h3>Admin Lain</h3></div>
+          <div class="field"><label>Tambahkan UID sebagai admin</label><input class="input" id="newAdminUid" placeholder="Firebase UID user" /></div>
+          <button class="btn primary" id="btnAddAdmin">Tambah Admin</button>
+          <div id="adminList" style="margin-top:14px"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><h3>Danger Zone</h3></div>
+          <p style="font-size:12.5px;color:var(--text-3);margin:0 0 12px">Aksi ini tidak dapat dibatalkan.</p>
+          <button class="btn danger" id="btnResetTournaments">Reset Data Turnamen ke Default</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- SPECTATOR OVERLAY -->
+<div class="spec-overlay" id="specOverlay">
+  <div class="spec-top">
+    <span class="spec-live"><span class="dot"></span> LIVE</span>
+    <div class="spec-title" id="specTitle">Memuat pertandingan...
+      <small id="specSubtitle">Room ID: -</small>
+    </div>
+    <div class="row" style="gap:6px">
+      <button class="btn sm" id="btnSpecFlip">Putar Papan</button>
+      <button class="btn sm" id="btnSpecFull">Fullscreen</button>
+      <button class="btn sm danger" id="btnSpecClose">Keluar</button>
+    </div>
+  </div>
+  <div class="spec-body">
+    <div class="spec-board">
+      <div class="spec-player" id="specPlayerTop">
+        <div class="av" id="specTopAv">?</div>
+        <div class="info">
+          <div class="name" id="specTopName">-</div>
+          <div class="meta" id="specTopMeta">-</div>
+        </div>
+        <div class="clock" id="specTopClock">--:--</div>
+      </div>
+      <div class="spec-center">
+        <div class="spec-vs">VS</div>
+        <div class="spec-status-pill" id="specStatus">Memuat...</div>
+      </div>
+      <div class="spec-player b" id="specPlayerBot">
+        <div class="av" id="specBotAv">?</div>
+        <div class="info">
+          <div class="name" id="specBotName">-</div>
+          <div class="meta" id="specBotMeta">-</div>
+        </div>
+        <div class="clock" id="specBotClock">--:--</div>
+      </div>
+    </div>
+
+    <div class="spec-layout">
+      <div>
+        <div class="spec-panel" style="margin-bottom:20px">
+          <div class="spec-panel-head"><h4><svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg> Papan Catur</h4>
+            <span class="pill" id="specMoveCount">0 langkah</span>
+          </div>
+          <div class="spec-panel-body">
+            <div class="spec-board-wrap">
+              <div class="spec-board-grid" id="specBoardGrid"></div>
+            </div>
+            <div class="spec-controls" style="margin-top:14px">
+              <button class="spec-ctrl" id="specPrevMove"><svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg> Prev</button>
+              <button class="spec-ctrl" id="specAutoPlay">Auto Play</button>
+              <button class="spec-ctrl" id="specNextMove">Next <svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg></button>
+              <button class="spec-ctrl primary" id="specJumpLive">Ke Live</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="spec-panel">
+          <div class="spec-panel-head"><h4><svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z"/><path d="M20 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg> Riwayat Langkah</h4></div>
+          <div class="spec-panel-body">
+            <div class="spec-moves" id="specMovesList"><div class="empty" style="padding:20px"><p>Belum ada langkah.</p></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="spec-panel" style="margin-bottom:20px">
+          <div class="spec-panel-head"><h4>Evaluasi Posisi</h4></div>
+          <div class="spec-panel-body">
+            <div class="spec-eval">
+              <div class="spec-eval-bar"><div class="fill" id="specEvalFill"></div></div>
+              <div class="spec-eval-label"><span id="specEvalWhite">+0.0</span><span id="specEvalLabel">Seimbang</span><span id="specEvalBlack">-0.0</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="spec-panel" style="margin-bottom:20px">
+          <div class="spec-panel-head"><h4>Statistik Match</h4></div>
+          <div class="spec-panel-body">
+            <div class="spec-info">
+              <div class="spec-info-item"><div class="l">Time Control</div><div class="v" id="specTimeControl">-</div></div>
+              <div class="spec-info-item"><div class="l">Mode</div><div class="v" id="specMode">-</div></div>
+              <div class="spec-info-item"><div class="l">Total Langkah</div><div class="v" id="specTotalMoves">0</div></div>
+              <div class="spec-info-item"><div class="l">Durasi</div><div class="v" id="specDuration">-</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="spec-panel">
+          <div class="spec-panel-head"><h4>Stream Reaksi</h4></div>
+          <div class="spec-panel-body">
+            <div class="spec-reactions" id="specReactions"><span style="color:var(--text-3);font-size:12px">Belum ada reaksi.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL / TOAST -->
+<div class="modal-root" id="modalRoot"></div>
+<div class="toast-root" id="toastRoot"></div>
+
+<script type="module">
+/* ==========================================================================
+   UTILS
+   ========================================================================== */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;};
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+function logErr(s,e){console.error('[ADMIN:'+s+']',e);}
+
+/* ==========================================================================
+   FIREBASE
+   ========================================================================== */
+const firebaseConfig={
+  apiKey:"AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
+  authDomain:"mygame-68b24.firebaseapp.com",
+  databaseURL:"https://mygame-68b24-default-rtdb.firebaseio.com",
+  projectId:"mygame-68b24",
+  storageBucket:"mygame-68b24.firebasestorage.app",
+  messagingSenderId:"1003182873390",
+  appId:"1:1003182873390:web:aabf3248f759cbc9d678bf",
+  measurementId:"G-4C0MYZ19YW"
+};
+const FB={ready:false,app:null,auth:null,db:null,api:null,authApi:null};
+async function initFirebase(){
+  try{
+    const [appMod,dbMod,authMod]=await Promise.all([
+      import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js'),
+      import('https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js'),
+      import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js')
+    ]);
+    FB.app=appMod.initializeApp(firebaseConfig);
+    FB.db=dbMod.getDatabase(FB.app);
+    FB.auth=authMod.getAuth(FB.app);
+    FB.api={ref:dbMod.ref,set:dbMod.set,push:dbMod.push,onValue:dbMod.onValue,get:dbMod.get,update:dbMod.update,remove:dbMod.remove,serverTimestamp:dbMod.serverTimestamp};
+    FB.authApi={GoogleAuthProvider:authMod.GoogleAuthProvider,signInWithPopup:authMod.signInWithPopup,signOut:authMod.signOut,onAuthStateChanged:authMod.onAuthStateChanged};
+    FB.ready=true;
+  }catch(e){logErr('firebase-init',e);toast('Gagal init Firebase: '+e.message,'error');}
+}
+const listeners=new Map();
+function listen(path,cb,key){
+  if(!FB.ready) return;
+  if(key&&listeners.has(key)){try{listeners.get(key)();}catch(_){}listeners.delete(key);}
+  const unsub=FB.api.onValue(FB.api.ref(FB.db,path),snap=>{try{cb(snap.val());}catch(e){logErr('listen:'+path,e);}},e=>logErr('listen-err:'+path,e));
+  if(key)listeners.set(key,unsub);
+  return unsub;
+}
+function unlisten(key){if(listeners.has(key)){try{listeners.get(key)();}catch(_){}listeners.delete(key);}}
+
+/* ==========================================================================
+   TOAST / MODAL
+   ========================================================================== */
+function toast(msg,type){
+  const root=$('#toastRoot');if(!root) return;
+  const t=el('div','toast'+(type?' '+type:''));
+  t.textContent=msg;root.appendChild(t);
+  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),200);},3000);
+}
+const Modal={
+  open(opts){
+    return new Promise(resolve=>{
+      const root=$('#modalRoot');if(!root) return resolve(null);
+      root.innerHTML='';
+      const bg=el('div','modal-bg');
+      const box=el('div','modal'+(opts.size==='lg'?' lg':''));
+      const closeBtn=el('button','modal-close');closeBtn.innerHTML='<svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+      closeBtn.onclick=()=>{close(null);};
+      box.appendChild(closeBtn);
+      if(opts.title) box.appendChild(el('h3',null,opts.title));
+      if(opts.subtitle){const p=el('p','sub',opts.subtitle);box.appendChild(p);}
+      if(opts.body) box.appendChild(opts.body);
+      const act=el('div','modal-actions');
+      (opts.buttons||[{label:'Tutup',value:null,variant:'ghost'}]).forEach(b=>{
+        const btn=el('button','btn '+(b.variant||''),b.label);
+        btn.onclick=()=>close(b.value);
+        act.appendChild(btn);
+      });
+      if((opts.buttons||[]).length) box.appendChild(act);
+      bg.onclick=()=>close(null);
+      root.appendChild(bg);root.appendChild(box);
+      root.classList.add('active');
+      const close=v=>{root.classList.remove('active');root.innerHTML='';resolve(v);};
+    });
+  },
+  confirm(title,msg,okLabel,danger){
+    return Modal.open({title,subtitle:msg,buttons:[{label:'Batal',value:false,variant:'ghost'},{label:okLabel||'Ya',value:true,variant:danger?'danger':'primary'}]});
+  }
+};
+
+/* ==========================================================================
+   APP STATE
+   ========================================================================== */
+const App={user:null,isAdmin:false,page:'dashboard',
+  data:{users:{},tournaments:{},sponsors:{},games:{},broadcasts:{},
+        homeBanner:{},photoBanner:{},playMenuHtml:'',quickMenu:{},playMenu:{},admins:{},finishedGames:{}}};
+
+/* ==========================================================================
+   AUTH
+   ========================================================================== */
+async function loginWithGoogle(){
+  if(!FB.ready){toast('Firebase belum siap.','error');return;}
+  try{
+    const p=new FB.authApi.GoogleAuthProvider();
+    await FB.authApi.signInWithPopup(FB.auth,p);
+  }catch(e){
+    logErr('login',e);
+    if(e.code==='auth/popup-closed-by-user') return;
+    toast('Login gagal: '+e.message,'error');
+  }
+}
+async function checkAdmin(user){
+  try{
+    const snap=await FB.api.get(FB.api.ref(FB.db,'admins/'+user.uid));
+    return snap.exists();
+  }catch(e){logErr('checkAdmin',e);return false;}
+}
+async function afterLogin(user){
+  App.user=user;
+  App.isAdmin=await checkAdmin(user);
+  if(!App.isAdmin){
+    $('#loginErr').textContent='Akun ini bukan admin. Hubungi super admin untuk menambahkan UID Anda.';
+    await FB.authApi.signOut(FB.auth);
+    App.user=null;
+    return;
+  }
+  $('#loginWrap').style.display='none';
+  $('#app').style.display='flex';
+  $('#userName').textContent=user.displayName||'Admin';
+  $('#userEmail').textContent=user.email||user.uid;
+  $('#userAv').textContent=(user.displayName||user.email||'A').charAt(0).toUpperCase();
+  startListeners();
+  toast('Selamat datang, '+(user.displayName||'Admin'),'success');
+}
+function startListeners(){
+  if(!FB.ready) return;
+  listen('users',v=>{App.data.users=v||{};renderUsers();updateDashboardStats();},'users');
+  listen('adminConfig/tournaments',v=>{App.data.tournaments=v||{};renderTournaments();updateDashboardStats();},'tournaments');
+  listen('adminConfig/sponsors',v=>{App.data.sponsors=v||{};renderSponsors();},'sponsors');
+  listen('games',v=>{App.data.games=v||{};renderSpectator();renderMatches();updateDashboardStats();},'games');
+  listen('adminBroadcast',v=>{App.data.broadcasts=v||{};renderBroadcastHistory();},'broadcasts');
+  listen('adminConfig/homeBanner',v=>{App.data.homeBanner=v||{};fillHomeBanner();},'hb');
+  listen('adminConfig/photoBanner',v=>{App.data.photoBanner=v||{};renderPhotoSlides();},'pb');
+  listen('adminConfig/playMenuHtml',v=>{App.data.playMenuHtml=typeof v==='string'?v:'';$('#customPlayHtml').value=App.data.playMenuHtml;},'pmh');
+  listen('adminConfig/quickMenuItems',v=>{App.data.quickMenu=v||{};renderQuickMenu();},'qm');
+  listen('adminConfig/playMenuItems',v=>{App.data.playMenu=v||{};renderPlayMenu();},'pm');
+  listen('admins',v=>{App.data.admins=v||{};renderAdmins();},'admins');
+  $('#firebaseInfo').innerHTML=
+    'Project ID: <b>'+esc(firebaseConfig.projectId)+'</b><br>'+
+    'Database: <b>'+esc(firebaseConfig.databaseURL)+'</b><br>'+
+    'Auth Domain: <b>'+esc(firebaseConfig.authDomain)+'</b>';
+}
+
+/* ==========================================================================
+   ROUTER
+   ========================================================================== */
+const PAGE_TITLES={dashboard:'Dashboard',spectator:'Spectator Mode',tournaments:'Turnamen',sponsors:'Sponsor',
+  banners:'Banner',playmenu:'Menu Play',messages:'Pesan',users:'Pengguna',matches:'Pertandingan',settings:'Pengaturan'};
+function showPage(name){
+  if(!PAGE_TITLES[name]) name='dashboard';
+  App.page=name;
+  $$('.page').forEach(p=>p.classList.remove('active'));
+  const target=$('#page-'+name);if(target)target.classList.add('active');
+  $$('#sidebarNav .nav-item').forEach(b=>b.classList.toggle('active',b.dataset.page===name));
+  $('#pageTitle').textContent=PAGE_TITLES[name];
+  if(name==='dashboard'){updateDashboardStats();renderDashboardLive();renderDashboardRecentUsers();}
+  if(name==='spectator')renderSpectator();
+  if(name==='tournaments')renderTournaments();
+  if(name==='sponsors')renderSponsors();
+  if(name==='banners'){fillHomeBanner();renderPhotoSlides();}
+  if(name==='playmenu'){renderQuickMenu();renderPlayMenu();$('#customPlayHtml').value=App.data.playMenuHtml||'';}
+  if(name==='messages')renderBroadcastHistory();
+  if(name==='users')renderUsers();
+  if(name==='matches')renderMatches();
+  if(name==='settings')renderAdmins();
+}
+
+/* ==========================================================================
+   DASHBOARD
+   ========================================================================== */
+function updateDashboardStats(){
+  const users=Object.values(App.data.users||{});
+  const games=Object.values(App.data.games||{});
+  const tours=Object.values(App.data.tournaments||{});
+  const liveGames=games.filter(g=>g&&g.status==='playing');
+  $('#statUsers').textContent=users.length;
+  $('#statUsersSub').textContent=users.filter(u=>Date.now()-(u.lastSeen||0)<86400000*7).length+' aktif minggu ini';
+  $('#statLive').textContent=liveGames.length;
+  $('#statLiveSub').textContent=liveGames.length?'Sedang berlangsung':'Tidak ada match live';
+  $('#statTour').textContent=tours.length;
+  $('#statTourSub').textContent=tours.length+' turnamen terdaftar';
+  $('#statTourActive').textContent=tours.filter(t=>t.status==='open'||t.status==='live').length;
+  const badge=$('#liveCountBadge');
+  if(liveGames.length){badge.textContent=liveGames.length;badge.style.display='';} else badge.style.display='none';
+}
+function renderDashboardLive(){
+  const box=$('#dashboardLiveMatches');if(!box) return;
+  const games=Object.entries(App.data.games||{})
+    .filter(([k,g])=>g&&g.status==='playing')
+    .slice(0,5);
+  if(!games.length){box.innerHTML='<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="m13.5 18.5 5-5 2 2-5 5z"/></svg><p>Tidak ada pertandingan live saat ini.</p></div>';return;}
+  box.innerHTML='';
+  games.forEach(([id,g])=>box.appendChild(buildMatchItem(id,g)));
+}
+function renderDashboardRecentUsers(){
+  const box=$('#dashboardRecentUsers');if(!box) return;
+  const users=Object.entries(App.data.users||{})
+    .sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0))
+    .slice(0,5);
+  if(!users.length){box.innerHTML='<div class="empty"><p>Belum ada user.</p></div>';return;}
+  const tbl=el('table','tbl');
+  tbl.innerHTML='<thead><tr><th>User</th><th>ID</th><th>Rating</th><th>Bintang</th><th>Terakhir Aktif</th></tr></thead><tbody></tbody>';
+  const tb=tbl.querySelector('tbody');
+  users.forEach(([uid,u])=>{
+    const tr=el('tr');
+    tr.innerHTML='<td><span class="avatar-sm">'+esc((u.username||'?').charAt(0).toUpperCase())+'</span> <b style="margin-left:6px">'+esc(u.username||'-')+'</b></td>'+
+      '<td class="mono" style="font-size:11.5px">'+esc(u.displayId||'-')+'</td>'+
+      '<td class="mono">'+(u.rating||1200)+'</td>'+
+      '<td><span class="pill gold">'+(u.stars||0)+'★</span></td>'+
+      '<td style="color:var(--text-3);font-size:11.5px">'+formatTimeAgo(u.lastSeen||u.createdAt)+'</td>';
+    tb.appendChild(tr);
+  });
+  box.innerHTML='';box.appendChild(tbl);
+}
+
+/* ==========================================================================
+   SPECTATOR
+   ========================================================================== */
+function renderSpectator(){
+  const box=$('#spectatorMatchList');if(!box) return;
+  const games=Object.entries(App.data.games||{})
+    .filter(([k,g])=>g&&g.status==='playing');
+  $('#specLiveCount').textContent=games.length+' LIVE';
+  if(!games.length){box.innerHTML='<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg><p>Tidak ada match live.</p></div>';return;}
+  box.innerHTML='';
+  games.forEach(([id,g])=>box.appendChild(buildMatchItem(id,g)));
+  // finished
+  const finBox=$('#finishedMatchesList');
+  const finished=Object.entries(App.data.games||{})
+    .filter(([k,g])=>g&&g.status==='finished')
+    .sort((a,b)=>(b[1].finishedAt||0)-(a[1].finishedAt||0))
+    .slice(0,10);
+  if(!finished.length){finBox.innerHTML='<div class="empty"><p>Belum ada match selesai.</p></div>';return;}
+  finBox.innerHTML='';
+  finished.forEach(([id,g])=>finBox.appendChild(buildMatchItem(id,g)));
+}
+function buildMatchItem(id,g){
+  const item=el('div','match-item');
+  const white=resolvePlayer(g.players?.white);
+  const black=resolvePlayer(g.players?.black);
+  const isLive=g.status==='playing';
+  item.innerHTML='<div class="av">'+esc((white.name||'?').charAt(0).toUpperCase())+'</div>'+
+    '<div class="info">'+
+    '<div class="n">'+esc(white.name)+' <span style="color:var(--text-3);font-weight:500">vs</span> '+esc(black.name)+'</div>'+
+    '<div class="s">'+
+      '<span class="mono">#'+esc(id)+'</span>'+
+      '<span>'+(g.timeControl||'-')+'</span>'+
+      (isLive?'<span class="live"><span class="dot"></span>LIVE</span>':'<span class="pill" style="font-size:9.5px">SELESAI</span>')+
+    '</div></div>';
+  item.onclick=()=>openSpectator(id);
+  return item;
+}
+function resolvePlayer(uid){
+  if(!uid) return {uid:'-',name:'Unknown'};
+  const u=(App.data.users||{})[uid]||{};
+  return {uid,name:u.username||'Player '+uid.slice(0,5),rating:u.rating||1200,avatar:u.avatar||'',stars:u.stars||0};
+}
+
+/* ========== SPECTATOR OVERLAY ========== */
+const Spec={roomId:null,game:null,gameRef:null,unsubGame:null,unsubMoves:null,unsubReactions:null,
+  moves:[],reactions:[],autoPlay:false,autoTimer:null,index:0,flipped:false,chess:null,
+  lastClocks:{w:0,b:0},clockTimer:null,turnStartedAt:0};
+async function openSpectator(roomId){
+  if(!roomId){toast('Room ID kosong.','error');return;}
+  const clean=String(roomId).trim().toUpperCase();
+  try{
+    const snap=await FB.api.get(FB.api.ref(FB.db,'games/'+clean));
+    if(!snap.exists()){toast('Room tidak ditemukan.','error');return;}
+    Spec.roomId=clean;Spec.game=snap.val();
+    Spec.moves=[];Spec.reactions=[];Spec.index=0;Spec.autoPlay=false;Spec.flipped=false;
+    $('#specOverlay').classList.add('active');
+    $('#specTitle').innerHTML=clean+' <small id="specSubtitle">Memuat...</small>';
+    $('#specSubtitle').textContent='Room ID: '+clean;
+    renderSpecScoreboard(Spec.game);
+    listenGame();
+    listenMoves();
+    listenReactions();
+    startClockTimer();
+    updateFinishedInfo(Spec.game);
+  }catch(e){logErr('openSpec',e);toast('Gagal memuat match.','error');}
+}
+function listenGame(){
+  unlisten('spec-game');
+  Spec.unsubGame=listen('games/'+Spec.roomId,val=>{
+    if(!val){closeSpectator();return;}
+    Spec.game=val;
+    renderSpecScoreboard(val);
+    // update chess if new fen
+    if(val.fen){Spec.chess=new ChessEngine(val.fen);renderSpecBoard(val.fen,val.lastMove);}
+    updateFinishedInfo(val);
+  },'spec-game');
+}
+function listenMoves(){
+  unlisten('spec-moves');
+  Spec.unsubMoves=listen('games/'+Spec.roomId+'/moves',val=>{
+    if(!val) return;
+    const arr=Object.entries(val).map(([k,m])=>Object.assign({key:k},m)).sort((a,b)=>(a.seq||0)-(b.seq||0));
+    Spec.moves=arr;
+    // Only auto-jump if user was on latest and not manually viewing
+    if(!Spec.userNavigating) Spec.index=arr.length;
+    renderSpecMoves();
+    if(Spec.chess) renderSpecBoard(Spec.chess.fen(),Spec.game?.lastMove);
+  },'spec-moves');
+}
+function listenReactions(){
+  unlisten('spec-reacts');
+  Spec.unsubReactions=listen('games/'+Spec.roomId+'/reactions',val=>{
+    if(!val) return;
+    const arr=Object.values(val).sort((a,b)=>(a.at||0)-(b.at||0));
+    Spec.reactions=arr.slice(-20);
+    renderSpecReactions();
+  },'spec-reacts');
+}
+function closeSpectator(){
+  $('#specOverlay').classList.remove('active');
+  unlisten('spec-game');unlisten('spec-moves');unlisten('spec-reacts');
+  Spec.roomId=null;Spec.game=null;Spec.chess=null;Spec.moves=[];Spec.reactions=[];
+  if(Spec.autoTimer){clearInterval(Spec.autoTimer);Spec.autoTimer=null;}
+  if(Spec.clockTimer){clearInterval(Spec.clockTimer);Spec.clockTimer=null;}
+}
+function renderSpecScoreboard(g){
+  if(!g) return;
+  const white=resolvePlayer(g.players?.white);
+  const black=resolvePlayer(g.players?.black);
+  const topIsBlack=!Spec.flipped;
+  const top=topIsBlack?black:white;
+  const bot=topIsBlack?white:black;
+  setSpecPlayer('Top',top,'white'===g.turn&&topIsBlack?'w':'b');
+  setSpecPlayer('Bot',bot,'white'===g.turn&&!topIsBlack?'w':'b');
+  $('#specPlayerTop').classList.toggle('turn',g.turn==='w'&&topIsBlack||g.turn==='b'&&!topIsBlack);
+  $('#specPlayerBot').classList.toggle('turn',g.turn==='b'&&topIsBlack||g.turn==='w'&&!topIsBlack);
+  $('#specTimeControl').textContent=g.timeControl||'-';
+  $('#specMode').textContent=(g.mode||'classic').toUpperCase();
+  $('#specTotalMoves').textContent=Object.keys(g.moves||{}).length;
+  if(g.clocks){Spec.lastClocks={w:Number(g.clocks.w)||0,b:Number(g.clocks.b)||0};}
+  Spec.turnStartedAt=g.updatedAt||Date.now();
+  const status=$('#specStatus');
+  if(g.status==='finished'){status.textContent='SELESAI · '+(g.resultReason||'').toUpperCase();status.className='spec-status-pill finished';}
+  else if(g.status==='playing'){
+    if(Spec.chess&&Spec.chess.inCheck(Spec.chess.turn)){status.textContent='SKAK';status.className='spec-status-pill check';}
+    else {status.textContent=g.turn==='w'?'GILIRAN PUTIH':'GILIRAN HITAM';status.className='spec-status-pill';}
+  }
+}
+function setSpecPlayer(side,p,color){
+  const av=$('#spec'+side+'Av'),nm=$('#spec'+side+'Name'),mt=$('#spec'+side+'Meta');
+  nm.textContent=p.name;
+  mt.innerHTML='<span class="mono">'+(p.rating||1200)+'</span> · <span>'+(p.stars||0)+'★</span>';
+  if(p.avatar) av.innerHTML='<img src="'+esc(p.avatar)+'" alt=""/>';
+  else av.textContent=(p.name||'?').charAt(0).toUpperCase();
+}
+function updateFinishedInfo(g){
+  if(!g) return;
+  const dur=g.createdAt&&g.finishedAt?Math.round((g.finishedAt-g.createdAt)/1000):0;
+  $('#specDuration').textContent=dur?formatDuration(dur):'-';
+}
+function renderSpecMoves(){
+  const box=$('#specMovesList');if(!box) return;
+  if(!Spec.moves.length){box.innerHTML='<div class="empty" style="padding:20px"><p>Belum ada langkah.</p></div>';return;}
+  box.innerHTML='';
+  const latestIdx=Spec.moves.length-1;
+  const pairs=[];
+  for(let i=0;i<Spec.moves.length;i+=2) pairs.push([Spec.moves[i],Spec.moves[i+1]]);
+  pairs.forEach((p,pi)=>{
+    const row=el('div','spec-mv-row');
+    const idxWhite=pi*2, idxBlack=pi*2+1;
+    row.innerHTML='<span class="num">'+(pi+1)+'.</span>'+
+      '<span class="m'+(idxWhite===latestIdx?' latest':'')+'">'+esc(p[0]?.san||'')+'</span>'+
+      '<span class="m'+(idxBlack===latestIdx?' latest':'')+'">'+esc(p[1]?.san||'')+'</span>';
+    box.appendChild(row);
+  });
+  setTimeout(()=>{const last=box.querySelector('.m.latest');if(last&&!Spec.userNavigating)last.scrollIntoView({block:'nearest'});},50);
+}
+function renderSpecReactions(){
+  const box=$('#specReactions');if(!box) return;
+  if(!Spec.reactions.length){box.innerHTML='<span style="color:var(--text-3);font-size:12px">Belum ada reaksi.</span>';return;}
+  box.innerHTML='';
+  Spec.reactions.forEach(r=>{
+    const node=el('div','spec-reaction');
+    node.innerHTML='<span class="em">'+esc(r.emo||'👍')+'</span><span>'+esc((resolvePlayer(r.from).name||'').split(' ')[0])+'</span>';
+    box.appendChild(node);
+  });
+  box.scrollTop=box.scrollHeight;
+}
+function startClockTimer(){
+  if(Spec.clockTimer) clearInterval(Spec.clockTimer);
+  Spec.clockTimer=setInterval(()=>{
+    if(!Spec.game||Spec.game.status!=='playing') return;
+    const elapsed=(Date.now()-(Spec.turnStartedAt||Date.now()))/1000;
+    const wRem=Math.max(0,Spec.lastClocks.w-(Spec.game.turn==='w'?elapsed:0));
+    const bRem=Math.max(0,Spec.lastClocks.b-(Spec.game.turn==='b'?elapsed:0));
+    updateSpecClocks(wRem,bRem);
+  },250);
+}
+function updateSpecClocks(w,b){
+  const topIsBlack=!Spec.flipped;
+  const topRem=topIsBlack?b:w;
+  const botRem=topIsBlack?w:b;
+  const tc=$('#specTopClock'),bc=$('#specBotClock');
+  tc.textContent=formatClock(topRem);bc.textContent=formatClock(botRem);
+  const turn=Spec.game?.turn;
+  tc.classList.toggle('active',turn===(topIsBlack?'b':'w'));
+  bc.classList.toggle('active',turn===(topIsBlack?'w':'b'));
+  tc.classList.toggle('low',topRem<30);bc.classList.toggle('low',botRem<30);
+}
+function formatClock(s){
+  s=Math.max(0,Math.ceil(s));const m=Math.floor(s/60),r=s%60;
+  return m+':'+String(r).padStart(2,'0');
+}
+function formatDuration(s){
+  const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;
+  if(h) return h+'j '+m+'m';
+  if(m) return m+'m '+sec+'d';
+  return sec+'d';
+}
+function formatTimeAgo(ts){
+  if(!ts) return '-';
+  const d=Date.now()-ts;
+  if(d<60000) return 'Baru saja';
+  const m=Math.floor(d/60000);if(m<60) return m+' menit lalu';
+  const h=Math.floor(m/60);if(h<24) return h+' jam lalu';
+  const day=Math.floor(h/24);if(day<30) return day+' hari lalu';
+  return new Date(ts).toLocaleDateString('id-ID');
+}
+
+/* --- Chess rendering minimal (tanpa validasi, langsung dari FEN) --- */
+const PIECE_SHAPES={
+  p:'<circle cx="22.5" cy="12.5" r="5.2"/><path d="M17.5 20.5c0-2.2 2.2-3.8 5-3.8s5 1.6 5 3.8l-1.4 8.5h-7.2z"/><path d="M14.2 29.4h16.6c.7 0 1.2.5 1.2 1.2v1.2c0 .7-.5 1.2-1.2 1.2H14.2c-.7 0-1.2-.5-1.2-1.2v-1.2c0-.7.5-1.2 1.2-1.2z"/><path d="M10.5 33h24c1 0 1.8.8 1.8 1.8v2.4c0 1-.8 1.8-1.8 1.8h-24c-1 0-1.8-.8-1.8-1.8v-2.4c0-1 .8-1.8 1.8-1.8z"/>',
+  r:'<path d="M11 9.5h3.2c.6 0 1 .4 1 1v1.5h2.4V10.5c0-.6.4-1 1-1h3.8c.6 0 1 .4 1 1v1.5h2.4V10.5c0-.6.4-1 1-1H31.5c.6 0 1 .4 1 1v4.2c0 .3-.1.5-.3.7l-2.7 2.7v9.4l2.7 2.7c.2.2.3.4.3.7v3.6c0 .6-.4 1-1 1h-22c-.6 0-1-.4-1-1v-3.6c0-.3.1-.5.3-.7l2.7-2.7v-9.4l-2.7-2.7c-.2-.2-.3-.4-.3-.7v-4.2c0-.6.4-1 1-1z"/>',
+  n:'<path d="M14.4 40l1.6-8c-2.3-1.8-3.8-4.6-3.8-7.7 0-4.2 2.5-7.8 6.1-9.4l1.2-4.5c.2-.7.9-1.1 1.6-.9l2.6.9c.5.2.8.6.8 1.1v2.1c6.1 1.4 10.6 6.9 10.6 13.4 0 2.2-.5 4.2-1.4 6l1.6 6.9c.2.8-.4 1.5-1.2 1.5H15.6c-.7 0-1.3-.6-1.2-1.4z"/><circle class="accent" cx="20.2" cy="19" r="1.6"/>',
+  b:'<circle cx="22.5" cy="7" r="3.2"/><path d="M22.5 10.8c-5.5 3.4-8.8 9-8.8 13.8 0 2.8 1.3 4.7 3.3 5.5h11c2-.8 3.3-2.7 3.3-5.5 0-4.8-3.3-10.4-8.8-13.8z"/><rect x="14" y="30.2" width="17" height="2.6" rx="1.3"/><path d="M10.5 33h24c1 0 1.8.8 1.8 1.8v2.4c0 1-.8 1.8-1.8 1.8h-24c-1 0-1.8-.8-1.8-1.8v-2.4c0-1 .8-1.8 1.8-1.8z"/>',
+  q:'<circle cx="9" cy="14" r="2.7"/><circle cx="15.5" cy="9.5" r="2.7"/><circle cx="22.5" cy="7.5" r="3.2"/><circle cx="29.5" cy="9.5" r="2.7"/><circle cx="36" cy="14" r="2.7"/><path d="M9 14L12.5 30h20L36 14l-6.5 7-3.5-11-3.5 11z"/><rect x="13" y="29.4" width="19" height="2.6" rx="1.3"/><path d="M10.5 32.6h24c1 0 1.8.8 1.8 1.8v2.4c0 1-.8 1.8-1.8 1.8h-24c-1 0-1.8-.8-1.8-1.8v-2.4c0-1 .8-1.8 1.8-1.8z"/>',
+  k:'<path d="M20.8 3h3.4v4h4v3.4h-4v3.4h-3.4V10.4h-4V7h4z"/><path d="M22.5 14.6c-6.2 0-10.8 4.4-10.8 9 0 3.1 1.8 5.5 4.2 6.5h13.2c2.4-1 4.2-3.4 4.2-6.5 0-4.6-4.6-9-10.8-9z"/><rect x="13" y="29.4" width="19" height="2.6" rx="1.3"/><path d="M10.5 32.6h24c1 0 1.8.8 1.8 1.8v2.4c0 1-.8 1.8-1.8 1.8h-24c-1 0-1.8-.8-1.8-1.8v-2.4c0-1 .8-1.8 1.8-1.8z"/>'
+};
+function pieceSVG(p){
+  const isWhite=p===p.toUpperCase();
+  const t=p.toLowerCase();
+  return '<svg class="spec-piece '+(isWhite?'pw':'pb')+'" viewBox="0 0 45 45">'+(PIECE_SHAPES[t]||'')+'</svg>';
+}
+function parseFenBoard(fen){
+  const parts=String(fen||'').trim().split(/\s+/);
+  const rows=parts[0].split('/');
+  const board=new Array(64).fill(null);
+  for(let r=0;r<8;r++){
+    let file=0;
+    for(const ch of rows[r]||''){
+      if(ch>='1'&&ch<='8') file+=+ch;
+      else {if(file<8) board[(7-r)*8+file]=ch; file++;}
+    }
+  }
+  return {board,turn:parts[1]||'w',fen};
+}
+function renderSpecBoard(fen,lastMove){
+  const grid=$('#specBoardGrid');if(!grid) return;
+  const parsed=parseFenBoard(fen);
+  const b=parsed.board;
+  grid.innerHTML='';
+  for(let dr=0;dr<8;dr++){
+    for(let df=0;df<8;df++){
+      const r=Spec.flipped?dr:7-dr;
+      const f=Spec.flipped?7-df:df;
+      const sq=r*8+f;
+      const isLight=((r+f)%2)===1;
+      const cell=el('div','spec-sq '+(isLight?'light':'dark'));
+      if(lastMove&&(sq===lastMove.from||sq===lastMove.to))cell.classList.add('last');
+      if(dr===7) cell.appendChild(el('span','coord f',String.fromCharCode(97+f)));
+      if(df===0) cell.appendChild(el('span','coord r',String(r+1)));
+      const p=b[sq];
+      if(p){const holder=el('div');holder.innerHTML=pieceSVG(p);cell.appendChild(holder.firstElementChild);}
+      grid.appendChild(cell);
+    }
+  }
+  $('#specMoveCount').textContent=Spec.moves.length+' langkah';
+  // Evaluate
+  evaluatePosition(b,parsed.turn);
+}
+function evaluatePosition(b,turn){
+  const PV={p:100,n:320,b:330,r:500,q:900,k:0};
+  let score=0;
+  for(let i=0;i<64;i++){
+    const p=b[i];if(!p) continue;
+    const t=p.toLowerCase();const isW=p===p.toUpperCase();
+    score+=isW?PV[t]:-PV[t];
+  }
+  // Normalize to -1..1 (cp/1000 roughly)
+  let norm=Math.max(-1,Math.min(1,score/1000));
+  // Adjust sign for eval bar: positive = white ahead
+  const whiteAdv=score/100;
+  const fill=$('#specEvalFill');
+  const pos=50+norm*50;
+  fill.style.left=norm>=0?'50%':(50-norm*50)+'%';
+  fill.style.width=Math.abs(norm)*50+'%';
+  $('#specEvalWhite').textContent=(whiteAdv>=0?'+':'')+whiteAdv.toFixed(1);
+  $('#specEvalBlack').textContent=(whiteAdv>=0?'-':'+')+Math.abs(whiteAdv).toFixed(1);
+  const label=$('#specEvalLabel');
+  if(Math.abs(whiteAdv)<0.5) label.textContent='Seimbang';
+  else if(whiteAdv>3) label.textContent='Putih Menang Telak';
+  else if(whiteAdv>1) label.textContent='Putih Unggul';
+  else if(whiteAdv>0.5) label.textContent='Putih Sedikit Unggul';
+  else if(whiteAdv<-3) label.textContent='Hitam Menang Telak';
+  else if(whiteAdv<-1) label.textContent='Hitam Unggul';
+  else label.textContent='Hitam Sedikit Unggul';
+}
+// Minimal ChessEngine for check detection
+function ChessEngine(fen){
+  this.board=new Array(64).fill(null);
+  const parts=String(fen||'').trim().split(/\s+/);
+  const rows=parts[0].split('/');
+  for(let r=0;r<8;r++){
+    let file=0;
+    for(const ch of rows[r]||''){
+      if(ch>='1'&&ch<='8') file+=+ch;
+      else {if(file<8) this.board[(7-r)*8+file]=ch; file++;}
+    }
+  }
+  this.turn=parts[1]||'w';
+}
+ChessEngine.prototype.fen=function(){return '';};
+ChessEngine.prototype.findKing=function(color){
+  const k=color==='w'?'K':'k';
+  for(let i=0;i<64;i++) if(this.board[i]===k) return i;
+  return -1;
+};
+ChessEngine.prototype.inCheck=function(color){
+  const k=this.findKing(color);
+  if(k<0) return false;
+  const sq=k;
+  const b=this.board;
+  const f=sq&7,r=sq>>3;
+  const enemy=color==='w'?'b':'w';
+  // pawn
+  if(enemy==='w'){if(r>0){if(f>0&&b[sq-9]==='P')return true;if(f<7&&b[sq-7]==='P')return true;}}
+  else{if(r<7){if(f>0&&b[sq+7]==='p')return true;if(f<7&&b[sq+9]==='p')return true;}}
+  // knight
+  const kn=enemy==='w'?'N':'n';
+  const nd=[[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1],[-1,2]];
+  for(const [df,dr] of nd){const nf=f+df,nr=r+dr;if(nf<0||nf>7||nr<0||nr>7)continue;if(b[nr*8+nf]===kn) return true;}
+  // king
+  const kg=enemy==='w'?'K':'k';
+  for(let dr=-1;dr<=1;dr++)for(let df=-1;df<=1;df++){if(!dr&&!df)continue;const nf=f+df,nr=r+dr;if(nf<0||nf>7||nr<0||nr>7)continue;if(b[nr*8+nf]===kg) return true;}
+  // diagonal
+  const dd=[[1,1],[1,-1],[-1,1],[-1,-1]];
+  for(const [df,dr] of dd){let nf=f+df,nr=r+dr;while(nf>=0&&nf<8&&nr>=0&&nr<8){const p=b[nr*8+nf];if(p){if((p===p.toUpperCase())===(enemy==='w')){const t=p.toLowerCase();if(t==='b'||t==='q')return true;}break;}nf+=df;nr+=dr;}}
+  // orthogonal
+  const od=[[1,0],[-1,0],[0,1],[0,-1]];
+  for(const [df,dr] of od){let nf=f+df,nr=r+dr;while(nf>=0&&nf<8&&nr>=0&&nr<8){const p=b[nr*8+nf];if(p){if((p===p.toUpperCase())===(enemy==='w')){const t=p.toLowerCase();if(t==='r'||t==='q')return true;}break;}nf+=df;nr+=dr;}}
+  return false;
+};
+
+/* Spec controls */
+$('#btnSpecClose').onclick=()=>closeSpectator();
+$('#btnSpecFlip').onclick=()=>{Spec.flipped=!Spec.flipped;renderSpecScoreboard(Spec.game);if(Spec.chess)renderSpecBoard(Spec.chess.fen(),Spec.game?.lastMove);};
+$('#btnSpecFull').onclick=()=>{
+  const el=$('#specOverlay');
+  if(!document.fullscreenElement) el.requestFullscreen?.();
+  else document.exitFullscreen?.();
+};
+$('#specPrevMove').onclick=()=>{Spec.userNavigating=true;Spec.index=Math.max(0,Spec.index-1);jumpToIndex(Spec.index);};
+$('#specNextMove').onclick=()=>{Spec.userNavigating=true;Spec.index=Math.min(Spec.moves.length,Spec.index+1);jumpToIndex(Spec.index);};
+$('#specJumpLive').onclick=()=>{Spec.userNavigating=false;Spec.index=Spec.moves.length;renderSpecBoard(Spec.game?.fen,Spec.game?.lastMove);};
+$('#specAutoPlay').onclick=()=>{
+  if(Spec.autoPlay){Spec.autoPlay=false;if(Spec.autoTimer){clearInterval(Spec.autoTimer);Spec.autoTimer=null;}$('#specAutoPlay').textContent='Auto Play';}
+  else{Spec.autoPlay=true;$('#specAutoPlay').textContent='Stop';Spec.userNavigating=true;if(Spec.index>=Spec.moves.length)Spec.index=0;Spec.autoTimer=setInterval(()=>{Spec.index++;if(Spec.index>Spec.moves.length){Spec.index=0;}jumpToIndex(Spec.index);},900);}
+};
+$('#btnSpecById').onclick=()=>{const v=$('#specRoomIdInput').value.trim();if(v)openSpectator(v);};
+function jumpToIndex(i){
+  // reconstruct via last known fen - we can't easily reconstruct without full move replay; use stored fens if available
+  // For now, only jump to latest (use move index in future with replay)
+  // Try to reconstruct by using moves and simulate
+  if(!Spec.moves.length) return;
+  // Simple approach: use the last move's resulting fen stored? We don't store it. So we just jump visually to latest, or show move highlighted.
+  renderSpecMoves();
+}
+
+/* ==========================================================================
+   TOURNAMENTS
+   ========================================================================== */
+function renderTournaments(){
+  const box=$('#tournamentsList');if(!box) return;
+  const list=Object.entries(App.data.tournaments||{});
+  if(!list.length){box.innerHTML='<div class="empty"><p>Belum ada turnamen. Klik Tambah untuk membuat.</p></div>';return;}
+  box.innerHTML='';
+  list.forEach(([key,t])=>{
+    const card=el('div','match-item');
+    card.style.cursor='default';
+    const potPct=t.targetPot>0?Math.round((t.currentPot||0)/t.targetPot*100):0;
+    card.innerHTML='<div class="av" style="background:'+((t.bgImage)?'url("'+esc(t.bgImage)+'") center/cover':'linear-gradient(135deg,var(--accent),var(--accent-2))')+'">'+
+      ((t.iconImage)?'<img src="'+esc(t.iconImage)+'" style="width:100%;height:100%;object-fit:cover"/>':'🏆')+'</div>'+
+      '<div class="info">'+
+      '<div class="n">'+esc(t.name||key)+' <span class="pill '+(t.status==='open'?'success':t.status==='live'?'danger':'accent')+'" style="margin-left:6px">'+esc((t.status||'open').toUpperCase())+'</span></div>'+
+      '<div class="s"><span class="mono">#'+esc(key)+'</span><span>'+esc(t.timeControl||'-')+'</span><span>Rp '+(t.prizePool||0).toLocaleString('id-ID')+'</span><span>'+potPct+'% pot</span></div>'+
+      '</div>'+
+      '<div class="row" style="gap:6px"><button class="btn sm" data-edit="'+esc(key)+'">Edit</button><button class="btn sm danger" data-del="'+esc(key)+'">Hapus</button></div>';
+    card.querySelector('[data-edit]').onclick=()=>editTournament(key);
+    card.querySelector('[data-del]').onclick=async()=>{const ok=await Modal.confirm('Hapus turnamen?','Tindakan tidak dapat dibatalkan.','Hapus',true);if(ok){await FB.api.remove(FB.api.ref(FB.db,'adminConfig/tournaments/'+key));toast('Terhapus.','success');}};
+    box.appendChild(card);
+  });
+}
+function editTournament(key){
+  const t=key?(App.data.tournaments[key]||{}):{};
+  const box=el('div');
+  box.innerHTML=
+    '<div class="grid-2">'+
+    '<div class="field"><label>Nama Turnamen</label><input class="input" id="tName" value="'+esc(t.name||'')+'" placeholder="Weekly Blitz Cup" /></div>'+
+    '<div class="field"><label>Status</label><select class="input" id="tStatus">'+['open','upcoming','live','finished','closed'].map(s=>'<option value="'+s+'"'+(t.status===s?' selected':'')+'>'+s+'</option>').join('')+'</select></div>'+
+    '</div>'+
+    '<div class="field"><label>Deskripsi</label><textarea class="input" id="tDesc" style="font-family:Inter;font-size:13px">'+esc(t.desc||'')+'</textarea></div>'+
+    '<div class="grid-3">'+
+    '<div class="field"><label>Time Control</label><input class="input" id="tTc" value="'+esc(t.timeControl||'10+0')+'" /></div>'+
+    '<div class="field"><label>Biaya Masuk</label><input class="input" id="tFee" type="number" value="'+(t.entryFee||0)+'" /></div>'+
+    '<div class="field"><label>Max Pemain</label><input class="input" id="tMax" type="number" value="'+(t.maxPlayers||32)+'" /></div>'+
+    '</div>'+
+    '<div class="grid-3">'+
+    '<div class="field"><label>Total Hadiah</label><input class="input" id="tPrize" type="number" value="'+(t.prizePool||0)+'" /></div>'+
+    '<div class="field"><label>Pot Sekarang</label><input class="input" id="tPot" type="number" value="'+(t.currentPot||0)+'" /></div>'+
+    '<div class="field"><label>Target Pot</label><input class="input" id="tTarget" type="number" value="'+(t.targetPot||0)+'" /></div>'+
+    '</div>'+
+    '<div class="grid-3">'+
+    '<div class="field"><label>Pemain Saat Ini</label><input class="input" id="tPlayers" type="number" value="'+(t.currentPlayers||0)+'" /></div>'+
+    '<div class="field"><label>Kode Verifikasi</label><input class="input mono" id="tCode" value="'+esc(t.verificationCode||'')+'" placeholder="GRAND2025" style="letter-spacing:.15em;text-transform:uppercase" /></div>'+
+    '<div class="field"><label>Mulai (timestamp)</label><input class="input" id="tStart" type="number" value="'+(t.startAt||Date.now())+'" /></div>'+
+    '</div>'+
+    '<div class="grid-2">'+
+    '<div class="field"><label>Icon Image URL</label><input class="input" id="tIcon" value="'+esc(t.iconImage||'')+'" placeholder="https://..." /><div class="hint">Kosongkan untuk pakai ikon default 🏆</div></div>'+
+    '<div class="field"><label>Background Image URL</label><input class="input" id="tBg" value="'+esc(t.bgImage||'')+'" placeholder="https://..." /><div class="hint">Gambar latar belakang card turnamen</div></div>'+
+    '</div>'+
+    '<div class="field"><label>Pembagian Hadiah (JSON)</label><textarea class="input" id="tDist" style="font-family:\'JetBrains Mono\',monospace;font-size:11px">'+esc(JSON.stringify(t.prizeDistribution||[{rank:1,amount:500000,label:'Juara 1'},{rank:2,amount:300000,label:'Juara 2'},{rank:3,amount:200000,label:'Juara 3'}],null,2))+'</textarea></div>';
+  Modal.open({title:key?'Edit Turnamen':'Tambah Turnamen',subtitle:'Isi data lengkap turnamen.',body:box,size:'lg',buttons:[
+    {label:'Batal',value:null,variant:'ghost'},
+    {label:'Simpan',value:'save',variant:'primary'}
+  ]}).then(async v=>{
+    if(v!=='save') return;
+    let dist;
+    try{dist=JSON.parse($('#tDist').value);}catch(e){toast('JSON hadiah tidak valid.','error');return;}
+    const data={
+      name:$('#tName').value.trim(),
+      status:$('#tStatus').value,
+      desc:$('#tDesc').value.trim(),
+      timeControl:$('#tTc').value.trim()||'10+0',
+      entryFee:+$('#tFee').value||0,
+      maxPlayers:+$('#tMax').value||32,
+      prizePool:+$('#tPrize').value||0,
+      currentPot:+$('#tPot').value||0,
+      targetPot:+$('#tTarget').value||0,
+      currentPlayers:+$('#tPlayers').value||0,
+      verificationCode:$('#tCode').value.trim().toUpperCase(),
+      startAt:+$('#tStart').value||Date.now(),
+      iconImage:$('#tIcon').value.trim(),
+      bgImage:$('#tBg').value.trim(),
+      prizeDistribution:dist,
+      sponsors:t.sponsors||[],
+      id:key||t.id||'tour-'+(Date.now().toString(36))
+    };
+    if(!data.name){toast('Nama wajib diisi.','error');return;}
+    const targetKey=key||data.id;
+    try{await FB.api.set(FB.api.ref(FB.db,'adminConfig/tournaments/'+targetKey),data);toast('Turnamen tersimpan.','success');}catch(e){logErr('save-tour',e);toast('Gagal menyimpan.','error');}
+  });
+}
+$('#btnAddTournament').onclick=()=>editTournament(null);
+
+/* ==========================================================================
+   SPONSORS
+   ========================================================================== */
+function renderSponsors(){
+  const box=$('#sponsorsList');if(!box) return;
+  const list=Object.entries(App.data.sponsors||{});
+  if(!list.length){box.innerHTML='<div class="empty"><p>Belum ada sponsor.</p></div>';return;}
+  box.innerHTML='';
+  list.forEach(([key,s])=>{
+    const card=el('div','match-item');
+    card.style.cursor='default';
+    card.innerHTML='<div class="av" style="background:'+(s.img?'url("'+esc(s.img)+'") center/cover':'linear-gradient(135deg,var(--accent),var(--accent-2))')+'"></div>'+
+      '<div class="info"><div class="n">'+esc(s.name||'-')+'</div><div class="s">'+esc(s.desc||'')+'</div></div>'+
+      '<div class="row" style="gap:6px"><button class="btn sm" data-edit>Edit</button><button class="btn sm danger" data-del>Hapus</button></div>';
+    card.querySelector('[data-edit]').onclick=()=>editSponsor(key);
+    card.querySelector('[data-del]').onclick=async()=>{const ok=await Modal.confirm('Hapus sponsor?','',' Hapus',true);if(ok)await FB.api.remove(FB.api.ref(FB.db,'adminConfig/sponsors/'+key));};
+    box.appendChild(card);
+  });
+}
+function editSponsor(key){
+  const s=key?(App.data.sponsors[key]||{}):{};
+  const box=el('div');
+  box.innerHTML='<div class="field"><label>Nama</label><input class="input" id="sName" value="'+esc(s.name||'')+'" /></div>'+
+    '<div class="field"><label>Deskripsi</label><input class="input" id="sDesc" value="'+esc(s.desc||'')+'" /></div>'+
+    '<div class="field"><label>Logo URL</label><input class="input" id="sImg" value="'+esc(s.img||'')+'" /></div>'+
+    '<div class="field"><label>Link (opsional)</label><input class="input" id="sLink" value="'+esc(s.link||'')+'" /></div>';
+  Modal.open({title:key?'Edit Sponsor':'Tambah Sponsor',body:box,buttons:[
+    {label:'Batal',value:null,variant:'ghost'},{label:'Simpan',value:'save',variant:'primary'}
+  ]}).then(async v=>{
+    if(v!=='save') return;
+    const data={name:$('#sName').value.trim(),desc:$('#sDesc').value.trim(),img:$('#sImg').value.trim(),link:$('#sLink').value.trim()};
+    if(!data.name){toast('Nama wajib.','error');return;}
+    const tKey=key||('sponsor-'+(Date.now().toString(36)));
+    await FB.api.set(FB.api.ref(FB.db,'adminConfig/sponsors/'+tKey),data);
+    toast('Tersimpan.','success');
+  });
+}
+$('#btnAddSponsor').onclick=()=>editSponsor(null);
+
+/* ==========================================================================
+   BANNERS
+   ========================================================================== */
+function fillHomeBanner(){
+  const b=App.data.homeBanner||{};
+  $('#hbIcon').value=b.icon||'info';
+  $('#hbTitle').value=b.title||'';
+  $('#hbText').value=b.text||'';
+}
+$('#btnSaveHomeBanner').onclick=async()=>{
+  const data={icon:$('#hbIcon').value.trim()||'info',title:$('#hbTitle').value.trim(),text:$('#hbText').value.trim()};
+  if(!data.title){toast('Judul wajib.','error');return;}
+  await FB.api.set(FB.api.ref(FB.db,'adminConfig/homeBanner'),data);
+  toast('Home banner disimpan.','success');
+};
+function renderPhotoSlides(){
+  const box=$('#photoSlidesList');if(!box) return;
+  const pb=App.data.photoBanner||{};
+  $('#pbInterval').value=pb.autoSlideInterval||5000;
+  const imgs=Array.isArray(pb.images)?pb.images:[];
+  if(!imgs.length){box.innerHTML='<div class="empty"><p>Belum ada slide.</p></div>';return;}
+  box.innerHTML='';
+  imgs.forEach((im,i)=>{
+    const card=el('div','match-item');
+    card.style.cursor='default';
+    card.innerHTML='<div class="av" style="background:url("'+esc(im.url)+'") center/cover"></div>'+
+      '<div class="info"><div class="n">'+esc(im.alt||'Slide '+(i+1))+'</div><div class="s" style="font-family:mono;font-size:11px">'+esc(im.url)+'</div></div>'+
+      '<button class="btn sm danger" data-del>Hapus</button>';
+    card.querySelector('[data-del]').onclick=async()=>{
+      const next={...pb,images:imgs.filter((_,idx)=>idx!==i)};
+      await FB.api.set(FB.api.ref(FB.db,'adminConfig/photoBanner'),next);
+    };
+    box.appendChild(card);
+  });
+}
+$('#btnAddPhotoSlide').onclick=()=>{
+  const box=el('div');
+  box.innerHTML='<div class="field"><label>URL Gambar</label><input class="input" id="psUrl" placeholder="https://..." /></div>'+
+    '<div class="field"><label>Alt (deskripsi)</label><input class="input" id="psAlt" placeholder="Banner promo" /></div>'+
+    '<div class="field"><label>Link (opsional)</label><input class="input" id="psLink" /></div>';
+  Modal.open({title:'Tambah Slide',body:box,buttons:[
+    {label:'Batal',value:null,variant:'ghost'},{label:'Tambah',value:'add',variant:'primary'}
+  ]}).then(async v=>{
+    if(v!=='add') return;
+    const url=$('#psUrl').value.trim();
+    if(!url){toast('URL wajib.','error');return;}
+    const pb=App.data.photoBanner||{images:[],autoSlideInterval:5000};
+    const imgs=Array.isArray(pb.images)?pb.images:[];
+    const next={...pb,images:[...imgs,{url,alt:$('#psAlt').value.trim()||'Banner',link:$('#psLink').value.trim()}]};
+    await FB.api.set(FB.api.ref(FB.db,'adminConfig/photoBanner'),next);
+    toast('Slide ditambahkan.','success');
+  });
+};
+document.addEventListener('change',async ev=>{
+  if(ev.target&&ev.target.id==='pbInterval'){
+    const pb=App.data.photoBanner||{};
+    await FB.api.set(FB.api.ref(FB.db,'adminConfig/photoBanner'),{...pb,autoSlideInterval:+ev.target.value||5000});
+  }
+});
+
+/* ==========================================================================
+   PLAY MENU
+   ========================================================================== */
+function renderQuickMenu(){
+  const box=$('#quickMenuList');if(!box) return;
+  const items=Object.entries(App.data.quickMenu||{});
+  if(!items.length){box.innerHTML='<div class="empty"><p>Belum ada quick menu custom. Gunakan default dari aplikasi.</p></div>';return;}
+  box.innerHTML='';
+  items.forEach(([k,v])=>{
+    const card=el('div','match-item');
+    card.style.cursor='default';
+    card.innerHTML='<div class="av">'+esc((v.label||'?').charAt(0))+'</div>'+
+      '<div class="info"><div class="n">'+esc(v.label||'-')+'</div><div class="s">'+esc(v.action||'-')+' · '+esc(v.sub||'')+'</div></div>'+
+      '<div class="row" style="gap:6px"><button class="btn sm" data-edit>Edit</button><button class="btn sm danger" data-del>Hapus</button></div>';
+    card.querySelector('[data-edit]').onclick=()=>editQuickItem(k);
+    card.querySelector('[data-del]').onclick=async()=>{if(await Modal.confirm('Hapus?','',' Hapus',true)) await FB.api.remove(FB.api.ref(FB.db,'adminConfig/quickMenuItems/'+k));};
+    box.appendChild(card);
+  });
+}
+function renderPlayMenu(){
+  const box=$('#playMenuList');if(!box) return;
+  const items=Object.entries(App.data.playMenu||{});
+  if(!items.length){box.innerHTML='<div class="empty"><p>Belum ada play menu custom.</p></div>';return;}
+  box.innerHTML='';
+  items.forEach(([k,v])=>{
+    const card=el('div','match-item');
+    card.style.cursor='default';
+    card.innerHTML='<div class="av">'+esc((v.title||'?').charAt(0))+'</div>'+
+      '<div class="info"><div class="n">'+esc(v.title||'-')+'</div><div class="s">'+esc(v.action||'-')+' · '+esc(v.desc||'').slice(0,40)+'</div></div>'+
+      '<div class="row" style="gap:6px"><button class="btn sm" data-edit>Edit</button><button class="btn sm danger" data-del>Hapus</button></div>';
+    card.querySelector('[data-edit]').onclick=()=>editPlayItem(k);
+    card.querySelector('[data-del]').onclick=async()=>{if(await Modal.confirm('Hapus?','',' Hapus',true)) await FB.api.remove(FB.api.ref(FB.db,'adminConfig/playMenuItems/'+k));};
+    box.appendChild(card);
+  });
+}
+function editQuickItem(key){
+  const v=key?(App.data.quickMenu[key]||{}):{};
+  const box=el('div');
+  box.innerHTML='<div class="field"><label>Label</label><input class="input" id="qLabel" value="'+esc(v.label||'')+'" /></div>'+
+    '<div class="field"><label>Sub Label</label><input class="input" id="qSub" value="'+esc(v.sub||'')+'" /></div>'+
+    '<div class="field"><label>Action</label><input class="input" id="qAction" value="'+esc(v.action||'')+'" placeholder="ranked, ai, friend, tournament, dll" /></div>'+
+    '<div class="field"><label>Icon (nama)</label><input class="input" id="qIcon" value="'+esc(v.icon||'grid3')+'" /></div>'+
+    '<div class="field"><label>Image URL (opsional)</label><input class="input" id="qImage" value="'+esc(v.image||'')+'" /></div>';
+  Modal.open({title:key?'Edit Item':'Tambah Item',body:box,buttons:[{label:'Batal',value:null,variant:'ghost'},{label:'Simpan',value:'save',variant:'primary'}]}).then(async res=>{
+    if(res!=='save') return;
+    const data={label:$('#qLabel').value.trim(),sub:$('#qSub').value.trim(),action:$('#qAction').value.trim(),icon:$('#qIcon').value.trim()||'grid3',image:$('#qImage').value.trim()};
+    if(!data.label||!data.action){toast('Label dan action wajib.','error');return;}
+    const tKey=key||('q-'+Date.now().toString(36));
+    await FB.api.set(FB.api.ref(FB.db,'adminConfig/quickMenuItems/'+tKey),data);
+    toast('Tersimpan.','success');
+  });
+}
+function editPlayItem(key){
+  const v=key?(App.data.playMenu[key]||{}):{};
+  const box=el('div');
+  box.innerHTML='<div class="field"><label>Title</label><input class="input" id="pTitle" value="'+esc(v.title||'')+'" /></div>'+
+    '<div class="field"><label>Description</label><input class="input" id="pDesc" value="'+esc(v.desc||'')+'" /></div>'+
+    '<div class="field"><label>Action</label><input class="input" id="pAction" value="'+esc(v.action||'')+'" /></div>'+
+    '<div class="field"><label>Icon</label><input class="input" id="pIcon" value="'+esc(v.icon||'grid3')+'" /></div>'+
+    '<div class="field"><label>Image URL</label><input class="input" id="pImage" value="'+esc(v.image||'')+'" /></div>';
+  Modal.open({title:key?'Edit Play Menu':'Tambah Play Menu',body:box,size:'lg',buttons:[{label:'Batal',value:null,variant:'ghost'},{label:'Simpan',value:'save',variant:'primary'}]}).then(async res=>{
+    if(res!=='save') return;
+    const data={title:$('#pTitle').value.trim(),desc:$('#pDesc').value.trim(),action:$('#pAction').value.trim(),icon:$('#pIcon').value.trim()||'grid3',image:$('#pImage').value.trim()};
+    if(!data.title||!data.action){toast('Title dan action wajib.','error');return;}
+    const tKey=key||('p-'+Date.now().toString(36));
+    await FB.api.set(FB.api.ref(FB.db,'adminConfig/playMenuItems/'+tKey),data);
+    toast('Tersimpan.','success');
+  });
+}
+$('#btnSavePlayHtml').onclick=async()=>{
+  const html=$('#customPlayHtml').value;
+  await FB.api.set(FB.api.ref(FB.db,'adminConfig/playMenuHtml'),html);
+  toast('HTML tersimpan.','success');
+};
+
+/* ==========================================================================
+   MESSAGES
+   ========================================================================== */
+$('#btnSendBroadcast').onclick=async()=>{
+  const title=$('#bcastTitle').value.trim();
+  const body=$('#bcastBody').value.trim();
+  if(!title||!body){toast('Judul dan isi wajib.','error');return;}
+  const id='b-'+Date.now().toString(36);
+  await FB.api.set(FB.api.ref(FB.db,'adminBroadcast/'+id),{
+    title,body,audience:'all',sentAt:Date.now(),from:App.user?.uid||'admin'
+  });
+  $('#bcastTitle').value='';$('#bcastBody').value='';
+  toast('Broadcast terkirim.','success');
+};
+$('#btnSendPersonal').onclick=async()=>{
+  const targetRaw=$('#msgTarget').value.trim();
+  const title=$('#msgTitle').value.trim();
+  const body=$('#msgBody').value.trim();
+  if(!targetRaw||!title){toast('Target dan judul wajib.','error');return;}
+  // resolve username to uid
+  let targetUid=targetRaw;
+  if(!targetRaw.match(/^[A-Za-z0-9_-]{20,}$/)){
+    try{
+      const snap=await FB.api.get(FB.api.ref(FB.db,'usernames/'+targetRaw.toLowerCase()));
+      if(snap.exists()) targetUid=snap.val();
+    }catch(_){}
+  }
+  const id='m-'+Date.now().toString(36);
+  await FB.api.set(FB.api.ref(FB.db,'adminMessages/'+targetUid+'/'+id),{
+    title,body,sentAt:Date.now(),from:App.user?.uid||'admin'
+  });
+  $('#msgTitle').value='';$('#msgBody').value='';
+  toast('Pesan terkirim ke '+targetUid.slice(0,8)+'...','success');
+};
+function renderBroadcastHistory(){
+  const box=$('#broadcastHistory');if(!box) return;
+  const list=Object.entries(App.data.broadcasts||{}).sort((a,b)=>(b[1].sentAt||0)-(a[1].sentAt||0)).slice(0,20);
+  if(!list.length){box.innerHTML='<div class="empty"><p>Belum ada broadcast.</p></div>';return;}
+  box.innerHTML='';
+  list.forEach(([k,b])=>{
+    const card=el('div','match-item');
+    card.style.cursor='default';
+    card.innerHTML='<div class="av">📢</div>'+
+      '<div class="info"><div class="n">'+esc(b.title||'-')+'</div>'+
+      '<div class="s" style="display:block;color:var(--text-2);font-size:12px;line-height:1.5;margin-top:4px">'+esc((b.body||'').slice(0,100))+(b.body&&b.body.length>100?'...':'')+'</div>'+
+      '<div class="s" style="margin-top:4px"><span style="color:var(--text-3);font-size:11px">'+new Date(b.sentAt||0).toLocaleString('id-ID')+'</span></div></div>'+
+      '<button class="btn sm danger" data-del>Hapus</button>';
+    card.querySelector('[data-del]').onclick=async()=>{if(await Modal.confirm('Hapus broadcast?','',' Hapus',true)) await FB.api.remove(FB.api.ref(FB.db,'adminBroadcast/'+k));};
+    box.appendChild(card);
+  });
+}
+
+/* ==========================================================================
+   USERS
+   ========================================================================== */
+function renderUsers(){
+  const box=$('#usersList');if(!box) return;
+  const users=Object.entries(App.data.users||{})
+    .sort((a,b)=>(b[1].rating||0)-(a[1].rating||0));
+  $('#usersCount').textContent=users.length;
+  if(!users.length){box.innerHTML='<div class="empty"><p>Belum ada user.</p></div>';return;}
+  const tbl=el('table','tbl');
+  tbl.innerHTML='<thead><tr><th>User</th><th>ID</th><th>Rating</th><th>Bintang</th><th>Menang</th><th>Main</th><th>Terakhir</th></tr></thead><tbody></tbody>';
+  const tb=tbl.querySelector('tbody');
+  users.forEach(([uid,u])=>{
+    const tr=el('tr');
+    tr.innerHTML='<td><span class="avatar-sm">'+esc((u.username||'?').charAt(0).toUpperCase())+'</span> <b style="margin-left:6px">'+esc(u.username||'-')+'</b></td>'+
+      '<td class="mono" style="font-size:11.5px">'+esc(u.displayId||'-')+'</td>'+
+      '<td class="mono">'+(u.rating||1200)+'</td>'+
+      '<td><span class="pill gold">'+(u.stars||0)+'★</span></td>'+
+      '<td class="mono">'+(u.wins||0)+'</td>'+
+      '<td class="mono">'+(u.gamesPlayed||0)+'</td>'+
+      '<td style="color:var(--text-3);font-size:11.5px">'+formatTimeAgo(u.lastSeen||u.createdAt)+'</td>';
+    tb.appendChild(tr);
+  });
+  box.innerHTML='';box.appendChild(tbl);
+}
+
+/* ==========================================================================
+   MATCHES
+   ========================================================================== */
+function renderMatches(){
+  const box=$('#matchesList');if(!box) return;
+  const filter=$('#matchFilter')?.value||'all';
+  let games=Object.entries(App.data.games||{});
+  if(filter==='playing') games=games.filter(([k,g])=>g&&g.status==='playing');
+  if(filter==='finished') games=games.filter(([k,g])=>g&&g.status==='finished');
+  games=games.sort((a,b)=>(b[1].updatedAt||b[1].createdAt||0)-(a[1].updatedAt||a[1].createdAt||0)).slice(0,50);
+  if(!games.length){box.innerHTML='<div class="empty"><p>Tidak ada data.</p></div>';return;}
+  box.innerHTML='';
+  games.forEach(([id,g])=>box.appendChild(buildMatchItem(id,g)));
+}
+document.addEventListener('change',ev=>{if(ev.target&&ev.target.id==='matchFilter')renderMatches();});
+
+/* ==========================================================================
+   ADMINS
+   ========================================================================== */
+function renderAdmins(){
+  const box=$('#adminList');if(!box) return;
+  const list=Object.entries(App.data.admins||{});
+  if(!list.length){box.innerHTML='<div class="empty"><p>Belum ada admin.</p></div>';return;}
+  box.innerHTML='';
+  list.forEach(([uid,v])=>{
+    const row=el('div','match-item');
+    row.style.cursor='default';
+    row.innerHTML='<div class="av">'+(uid===App.user?.uid?'👑':'🛡️')+'</div>'+
+      '<div class="info"><div class="n mono" style="font-size:12px">'+esc(uid)+'</div><div class="s">'+esc(v.name||v.email||'-')+'</div></div>'+
+      (uid===App.user?.uid?'<span class="pill accent">ANDA</span>':'<button class="btn sm danger" data-del>Hapus</button>');
+    if(row.querySelector('[data-del]')) row.querySelector('[data-del]').onclick=async()=>{if(await Modal.confirm('Hapus admin?','',' Hapus',true)) await FB.api.remove(FB.api.ref(FB.db,'admins/'+uid));};
+    box.appendChild(row);
+  });
+}
+$('#btnAddAdmin').onclick=async()=>{
+  const uid=$('#newAdminUid').value.trim();
+  if(!uid){toast('UID wajib.','error');return;}
+  try{
+    const snap=await FB.api.get(FB.api.ref(FB.db,'users/'+uid));
+    const u=snap.exists()?snap.val():{};
+    await FB.api.set(FB.api.ref(FB.db,'admins/'+uid),{name:u.username||'Admin',email:u.email||'',addedAt:Date.now(),addedBy:App.user?.uid||'admin'});
+    $('#newAdminUid').value='';
+    toast('Admin ditambahkan.','success');
+  }catch(e){logErr('addAdmin',e);toast('Gagal menambahkan.','error');}
+};
+$('#btnResetTournaments').onclick=async()=>{
+  const ok=await Modal.confirm('Reset turnamen?','Semua turnamen custom akan dihapus dan kembali ke default di aplikasi.','Reset',true);
+  if(!ok) return;
+  await FB.api.remove(FB.api.ref(FB.db,'adminConfig/tournaments'));
+  toast('Turnamen direset.','success');
+};
+
+/* ==========================================================================
+   UI WIRING
+   ========================================================================== */
+$('#sidebarNav').addEventListener('click',ev=>{
+  const btn=ev.target.closest('.nav-item');
+  if(btn&&btn.dataset.page) showPage(btn.dataset.page);
+});
+document.addEventListener('click',ev=>{
+  const l=ev.target.closest('[data-page-link]');
+  if(l&&l.dataset.pageLink) showPage(l.dataset.pageLink);
+});
+$('#btnMinimize').onclick=()=>{$('#sidebar').classList.toggle('mini');};
+$('#btnRefresh').onclick=()=>{showPage(App.page);toast('Diperbarui');};
+$('#btnLoginGoogle').onclick=loginWithGoogle;
+$('#btnBypass').onclick=()=>{
+  App.user={uid:'dev',displayName:'Dev Admin',email:'dev@local'};
+  $('#loginWrap').style.display='none';
+  $('#app').style.display='flex';
+  $('#userName').textContent='Dev Admin';
+  $('#userEmail').textContent='dev mode';
+  $('#userAv').textContent='D';
+  toast('Dev mode aktif. Firebase tidak akan tersinkron.','error');
+};
+$('#btnLogout').onclick=async()=>{
+  if(!FB.ready) return;
+  try{await FB.authApi.signOut(FB.auth);}catch(e){logErr('logout',e);}
+  listeners.forEach(u=>{try{u();}catch(_){}});
+  listeners.clear();
+  App.user=null;App.isAdmin=false;
+  $('#app').style.display='none';
+  $('#loginWrap').style.display='flex';
+  $('#loginErr').textContent='';
+};
+
+/* ==========================================================================
+   BOOT
+   ========================================================================== */
+async function boot(){
+  await initFirebase();
+  if(FB.ready){
+    FB.authApi.onAuthStateChanged(FB.auth,user=>{
+      if(user) afterLogin(user);
+      else{
+        $('#app').style.display='none';
+        $('#loginWrap').style.display='flex';
+      }
+    });
+  }else{
+    toast('Firebase gagal dimuat. Gunakan tombol Skip untuk dev mode.','error');
+  }
+}
+boot();
+</script>
+</body>
+</html>
