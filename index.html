@@ -5,193 +5,117 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no"/>
 <meta name="theme-color" content="#0B1220"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<title>Cazoo — Dompet Digital</title>
-<link rel="manifest" href='data:application/manifest+json,{"name":"Cazoo","short_name":"Cazoo","start_url":".","display":"standalone","background_color":"%230B1220","theme_color":"%230B1220","icons":[]}'/>
+<title>Cazoo Wallet</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231E3A8A'/%3E%3Ctext x='50%25' y='50%25' font-family='system-ui' font-weight='900' font-size='38' fill='white' text-anchor='middle' dominant-baseline='central'%3EC%3C/text%3E%3C/svg%3E"/>
 <style>
 :root{
-  --bg:#F6F7FB; --surface:#FFFFFF; --surface-2:#EEF1F7;
-  --text:#0A1428; --muted:#68758C; --line:#E5E9F2;
-  --brand:#1E3A8A; --brand-2:#2563EB; --brand-3:#3B82F6; --cyan:#06B6D4;
-  --ok:#059669; --warn:#D97706; --err:#DC2626;
-  --r-xs:8px; --r-sm:12px; --r:16px; --r-lg:22px; --r-xl:28px;
+  --bg:#F5F7FB;--surface:#FFF;--surface-2:#EEF1F7;
+  --text:#0A1428;--muted:#68758C;--line:#E5E9F2;
+  --brand:#1E3A8A;--brand-2:#2563EB;--brand-3:#3B82F6;--cyan:#06B6D4;
+  --ok:#059669;--warn:#D97706;--err:#DC2626;
+  --r:16px;--r-lg:22px;--r-xl:28px;
   --sh-1:0 1px 2px rgba(10,20,40,.04),0 1px 1px rgba(10,20,40,.03);
-  --sh-2:0 6px 20px rgba(10,20,40,.06),0 2px 6px rgba(10,20,40,.04);
-  --sh-3:0 20px 48px rgba(10,20,40,.16);
+  --sh-2:0 6px 20px rgba(10,20,40,.07),0 2px 6px rgba(10,20,40,.04);
+  --sh-3:0 20px 48px rgba(10,20,40,.18);
   --safe-t:env(safe-area-inset-top,0px);
   --safe-b:env(safe-area-inset-bottom,0px);
   --tab-h:70px;
 }
-[data-theme="dark"]{
-  --bg:#070B16; --surface:#0F1729; --surface-2:#192237;
-  --text:#EBEFF8; --muted:#8C9BB8; --line:#1F2A44;
-  --sh-1:0 1px 2px rgba(0,0,0,.4);
-  --sh-2:0 6px 20px rgba(0,0,0,.4);
-}
+[data-theme="dark"]{--bg:#070B16;--surface:#0F1729;--surface-2:#192237;--text:#EBEFF8;--muted:#8C9BB8;--line:#1F2A44}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;
-  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-body{min-height:100dvh;overflow-x:hidden;overscroll-behavior-y:none}
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{min-height:100dvh;overflow-x:hidden}
 button,input,select,textarea{font:inherit;color:inherit;background:none;border:0;outline:0}
-button{cursor:pointer;-webkit-appearance:none;appearance:none}
+button{cursor:pointer;-webkit-appearance:none}
 a{color:var(--brand-2);text-decoration:none}
 svg{display:block;flex:none}
 
-/* ---------- Splash ---------- */
-.splash{position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:24px;color:#fff;
-  background:radial-gradient(120% 80% at 50% 0%,#1E3A8A 0%,#0A1428 55%,#050A15 100%);
-  transition:opacity .5s ease,visibility .5s ease}
+.splash{position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;color:#fff;background:radial-gradient(120% 80% at 50% 0%,#1E3A8A 0%,#0A1428 60%);transition:opacity .5s,visibility .5s}
 .splash.hide{opacity:0;visibility:hidden;pointer-events:none}
-.splash__mark{width:84px;height:84px;border-radius:24px;display:grid;place-items:center;
-  background:linear-gradient(135deg,#3B82F6 0%,#06B6D4 100%);
-  box-shadow:0 24px 60px rgba(59,130,246,.45),inset 0 1px 0 rgba(255,255,255,.35);
-  font-weight:900;font-size:42px;letter-spacing:-1px;position:relative;overflow:hidden}
-.splash__mark::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.3) 50%,transparent 60%);
-  animation:shine 2s ease-in-out infinite}
-@keyframes shine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-.splash__name{font-weight:800;font-size:22px;letter-spacing:-.3px}
-.splash__tag{color:rgba(255,255,255,.55);font-size:13px;margin-top:-14px}
-.splash__bar{width:140px;height:3px;background:rgba(255,255,255,.14);border-radius:99px;overflow:hidden;position:relative;margin-top:8px}
-.splash__bar::after{content:"";position:absolute;inset:0;width:36%;border-radius:99px;
-  background:linear-gradient(90deg,transparent,#fff,transparent);
-  animation:slide 1.3s cubic-bezier(.4,0,.6,1) infinite}
+.splash__mark{width:84px;height:84px;border-radius:24px;display:grid;place-items:center;background:linear-gradient(135deg,#3B82F6,#06B6D4);box-shadow:0 24px 60px rgba(59,130,246,.45),inset 0 1px 0 rgba(255,255,255,.35);font-weight:900;font-size:42px;letter-spacing:-1px}
+.splash__name{font-weight:800;font-size:22px}
+.splash__bar{width:140px;height:3px;background:rgba(255,255,255,.14);border-radius:99px;overflow:hidden;position:relative}
+.splash__bar::after{content:"";position:absolute;inset:0;width:36%;border-radius:99px;background:linear-gradient(90deg,transparent,#fff,transparent);animation:slide 1.3s infinite}
 @keyframes slide{0%{transform:translateX(-120%)}100%{transform:translateX(400%)}}
 
-/* ---------- Auth ---------- */
-.auth{min-height:100dvh;display:flex;flex-direction:column;
-  padding:calc(60px + var(--safe-t)) 20px 40px;position:relative;overflow:hidden;
-  background:radial-gradient(130% 70% at 50% 0%,#1E3A8A 0%,#0A1428 60%)}
-.auth::after{content:"";position:absolute;inset:0;
-  background-image:radial-gradient(rgba(255,255,255,.055) 1px,transparent 1px);
-  background-size:22px 22px;pointer-events:none;mask-image:linear-gradient(180deg,#000 30%,transparent 80%)}
-.auth__inner{width:100%;max-width:400px;margin:0 auto;position:relative;z-index:1;color:#fff}
-.auth__mark{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;
-  background:linear-gradient(135deg,#3B82F6,#06B6D4);
-  box-shadow:0 20px 50px rgba(59,130,246,.45),inset 0 1px 0 rgba(255,255,255,.3);
-  font-weight:900;font-size:30px;margin-bottom:22px}
+.auth{min-height:100dvh;display:flex;flex-direction:column;padding:calc(60px + var(--safe-t)) 20px 40px;position:relative;overflow:hidden;background:radial-gradient(130% 70% at 50% 0%,#1E3A8A 0%,#0A1428 60%)}
+.auth::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.055) 1px,transparent 1px);background-size:22px 22px;pointer-events:none;mask-image:linear-gradient(180deg,#000 30%,transparent 80%)}
+.auth__in{width:100%;max-width:400px;margin:0 auto;position:relative;z-index:1;color:#fff}
+.auth__mark{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;background:linear-gradient(135deg,#3B82F6,#06B6D4);box-shadow:0 20px 50px rgba(59,130,246,.45);font-weight:900;font-size:30px;margin-bottom:22px}
 .auth__h{font-size:30px;font-weight:800;letter-spacing:-.6px;line-height:1.15;margin:0 0 10px}
-.auth__p{color:rgba(255,255,255,.68);font-size:15px;line-height:1.55;margin:0 0 34px;max-width:320px}
-.auth__features{display:grid;gap:14px;margin-bottom:36px}
-.auth__feat{display:flex;gap:12px;align-items:flex-start}
-.auth__feat-ic{width:36px;height:36px;border-radius:11px;flex:none;display:grid;place-items:center;
-  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:#93C5FD}
-.auth__feat-t{font-weight:700;font-size:14px;letter-spacing:-.1px}
-.auth__feat-d{font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.5;margin-top:1px}
-.gbtn{width:100%;padding:15px 18px;border-radius:16px;background:#fff;color:#1F1F1F;
-  display:flex;align-items:center;justify-content:center;gap:12px;
-  font-weight:600;font-size:15px;box-shadow:0 8px 24px rgba(0,0,0,.2);
-  transition:transform .12s,box-shadow .2s}
-.gbtn:active{transform:scale(.98);box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.auth__p{color:rgba(255,255,255,.68);font-size:15px;line-height:1.55;margin:0 0 30px;max-width:320px}
+.auth__f{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.auth__fi{width:36px;height:36px;border-radius:11px;flex:none;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:#93C5FD}
+.auth__ft{font-weight:700;font-size:14px}
+.auth__fd{font-size:12.5px;color:rgba(255,255,255,.6);margin-top:1px}
+.gbtn{width:100%;padding:15px 18px;border-radius:16px;background:#fff;color:#1F1F1F;display:flex;align-items:center;justify-content:center;gap:12px;font-weight:600;font-size:15px;box-shadow:0 8px 24px rgba(0,0,0,.2);transition:transform .12s}
+.gbtn:active{transform:scale(.98)}
 .gbtn:disabled{opacity:.7}
 .gbtn svg{width:20px;height:20px}
 .auth__terms{color:rgba(255,255,255,.5);font-size:12px;line-height:1.6;text-align:center;margin-top:22px}
-.auth__terms a{color:rgba(255,255,255,.8);text-decoration:underline;text-underline-offset:2px}
 
-/* ---------- Onboarding (PIN setup) ---------- */
-.onb{min-height:100dvh;display:flex;flex-direction:column;
-  padding:calc(40px + var(--safe-t)) 24px calc(24px + var(--safe-b));
-  background:var(--bg)}
+.onb{min-height:100dvh;display:flex;flex-direction:column;padding:calc(30px + var(--safe-t)) 24px calc(24px + var(--safe-b));background:var(--bg)}
 .onb__h{font-size:26px;font-weight:800;letter-spacing:-.5px;margin:20px 0 8px}
 .onb__p{color:var(--muted);font-size:14.5px;line-height:1.55;margin:0 0 auto}
+.pin-dots{display:flex;justify-content:center;gap:14px;margin:28px 0 10px}
+.pin-dot{width:14px;height:14px;border-radius:50%;background:var(--line);transition:all .15s}
+.pin-dot.filled{background:var(--brand-3);transform:scale(1.15)}
+.pin-dot.err{background:var(--err);animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:auto;padding-top:22px}
+.kp button{height:64px;border-radius:18px;background:var(--surface);border:1px solid var(--line);font-size:24px;font-weight:600;color:var(--text);transition:background .1s,transform .1s;display:grid;place-items:center}
+.kp button:active{background:var(--surface-2);transform:scale(.96)}
+.kp button[data-k="del"]{background:var(--surface-2);font-size:18px}
+.kp button[data-k="ok"]{background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;font-size:15px;font-weight:700}
+.kp button[data-k="ok"]:disabled{opacity:.4}
 
-/* ---------- Layout ---------- */
-.appbar{position:sticky;top:0;z-index:30;padding:calc(6px + var(--safe-t)) 16px 6px;
-  display:flex;align-items:center;justify-content:space-between;
-  background:color-mix(in srgb,var(--bg) 85%,transparent);
-  backdrop-filter:saturate(180%) blur(22px);-webkit-backdrop-filter:saturate(180%) blur(22px)}
-.appbar--plain{background:transparent;backdrop-filter:none;border:0}
-.brand{display:inline-flex;align-items:center;gap:9px;font-weight:800;letter-spacing:-.3px;font-size:16px}
-.brand__mark{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;
-  background:linear-gradient(135deg,#3B82F6,#1E3A8A);color:#fff;font-weight:900;font-size:15px;
-  box-shadow:0 4px 12px rgba(59,130,246,.32)}
-.ibtn{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
-  color:var(--text);background:var(--surface);border:1px solid var(--line);
-  transition:transform .12s,background .15s}
-.ibtn:active{transform:scale(.94);background:var(--surface-2)}
+.appbar{position:sticky;top:0;z-index:30;padding:calc(6px + var(--safe-t)) 16px 6px;display:flex;align-items:center;justify-content:space-between;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:saturate(180%) blur(22px);-webkit-backdrop-filter:saturate(180%) blur(22px)}
+.brand{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:16px}
+.brand__mark{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(135deg,#3B82F6,#1E3A8A);color:#fff;font-weight:900;font-size:15px;box-shadow:0 4px 12px rgba(59,130,246,.32)}
+.ibtn{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:var(--text);background:var(--surface);border:1px solid var(--line);transition:transform .12s}
+.ibtn:active{transform:scale(.94)}
 .ibtn--plain{background:transparent;border:0}
 .ibtn--dark{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.14);color:#fff}
-.ibtn--dark:active{background:rgba(255,255,255,.22)}
 .container{padding:12px 16px calc(var(--tab-h) + 40px + var(--safe-b));max-width:560px;margin:0 auto}
-.container--narrow{max-width:400px}
 .view{animation:viewIn .28s cubic-bezier(.22,1,.36,1)}
 @keyframes viewIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .nav-head{display:flex;align-items:center;gap:8px;margin:4px 0 16px}
 .nav-head__t{font-weight:800;font-size:18px;letter-spacing:-.3px;flex:1;text-align:center}
-.nav-head__spacer{width:38px;flex:none}
-
+.nav-head__sp{width:38px;flex:none}
 .sec-h{display:flex;align-items:center;justify-content:space-between;margin:22px 4px 10px}
-.sec-h h2{font-size:15px;font-weight:700;letter-spacing:-.2px;margin:0}
-.sec-h a,.sec-h button{font-size:13px;font-weight:600;color:var(--brand-2)}
+.sec-h h2{font-size:15px;font-weight:700;margin:0}
+.sec-h a{font-size:13px;font-weight:600;color:var(--brand-2)}
 
-/* ---------- Floating Tab Bar ---------- */
-.tabbar{position:fixed;left:50%;transform:translateX(-50%);
-  bottom:calc(12px + var(--safe-b));width:min(440px,calc(100% - 24px));
-  padding:8px;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;
-  background:rgba(10,20,40,.7);backdrop-filter:saturate(180%) blur(24px);
-  -webkit-backdrop-filter:saturate(180%) blur(24px);
-  border:1px solid rgba(255,255,255,.07);border-radius:24px;
-  box-shadow:0 20px 44px rgba(10,20,40,.32),0 2px 6px rgba(0,0,0,.12);z-index:60}
-[data-theme="dark"] .tabbar{background:rgba(15,23,41,.85);border-color:rgba(255,255,255,.06)}
-.tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-  padding:9px 2px;border-radius:18px;color:rgba(255,255,255,.5);
-  font-size:10.5px;font-weight:600;letter-spacing:.01em;position:relative;
-  transition:all .24s cubic-bezier(.22,1,.36,1)}
-.tab svg{width:22px;height:22px;transition:transform .24s}
+.tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + var(--safe-b));width:min(440px,calc(100% - 24px));padding:8px;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:rgba(10,20,40,.72);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:1px solid rgba(255,255,255,.07);border-radius:24px;box-shadow:0 20px 44px rgba(10,20,40,.32);z-index:60}
+.tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 2px;border-radius:18px;color:rgba(255,255,255,.5);font-size:10.5px;font-weight:600;position:relative;transition:all .24s cubic-bezier(.22,1,.36,1)}
+.tab svg{width:22px;height:22px}
 .tab.active{color:#fff;background:linear-gradient(180deg,rgba(59,130,246,.3),rgba(59,130,246,.16))}
-.tab.active svg{transform:translateY(-1px)}
-.tab__dot{position:absolute;top:6px;right:calc(50% - 15px);width:7px;height:7px;border-radius:50%;
-  background:#EF4444;box-shadow:0 0 0 2px rgba(10,20,40,.72)}
+.tab__dot{position:absolute;top:6px;right:calc(50% - 15px);width:7px;height:7px;border-radius:50%;background:#EF4444;box-shadow:0 0 0 2px rgba(10,20,40,.72)}
 
-/* ---------- Cards ---------- */
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
-  padding:18px;box-shadow:var(--sh-1)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;box-shadow:var(--sh-1)}
 .card+.card{margin-top:12px}
-.card--flush{padding:0;overflow:hidden}
-.card--tight{padding:14px}
 .card--flat{box-shadow:none;background:var(--surface-2);border-color:transparent}
-.card--warn{background:rgba(217,119,6,.08);border-color:rgba(217,119,6,.22);box-shadow:none}
-.card--danger{background:rgba(220,38,38,.06);border-color:rgba(220,38,38,.2);box-shadow:none}
+.card--flush{padding:0;overflow:hidden}
 
-/* ---------- Balance Card ---------- */
-.bal{position:relative;border-radius:var(--r-xl);padding:22px 22px 20px;overflow:hidden;color:#fff;
-  background:
-    radial-gradient(120% 100% at 100% 0%,rgba(6,182,212,.32),transparent 55%),
-    radial-gradient(100% 120% at 0% 100%,rgba(37,99,235,.4),transparent 55%),
-    linear-gradient(140deg,#0A1428 0%,#1E3A8A 100%);
-  box-shadow:0 22px 48px rgba(10,20,40,.28),inset 0 1px 0 rgba(255,255,255,.08)}
-.bal::before{content:"";position:absolute;inset:0;
-  background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);
-  background-size:16px 16px;pointer-events:none;opacity:.55;mask-image:linear-gradient(135deg,#000,transparent 70%)}
+.bal{position:relative;border-radius:var(--r-xl);padding:22px;overflow:hidden;color:#fff;background:radial-gradient(120% 100% at 100% 0%,rgba(6,182,212,.32),transparent 55%),radial-gradient(100% 120% at 0% 100%,rgba(37,99,235,.4),transparent 55%),linear-gradient(140deg,#0A1428 0%,#1E3A8A 100%);box-shadow:0 22px 48px rgba(10,20,40,.28),inset 0 1px 0 rgba(255,255,255,.08)}
+.bal::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:16px 16px;pointer-events:none;opacity:.55;mask-image:linear-gradient(135deg,#000,transparent 70%)}
 .bal__row{display:flex;justify-content:space-between;align-items:flex-start;position:relative;gap:12px}
 .bal__lab{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6)}
-.bal__val{font-size:34px;font-weight:800;letter-spacing:-1.2px;margin:8px 0 6px;
-  font-variant-numeric:tabular-nums;line-height:1.05;transition:filter .2s}
+.bal__val{font-size:34px;font-weight:800;letter-spacing:-1.2px;margin:8px 0 6px;font-variant-numeric:tabular-nums;line-height:1.05;transition:filter .2s}
 .bal__val.blur{filter:blur(10px);user-select:none}
-.bal__id{display:inline-flex;align-items:center;gap:6px;padding:5px 10px 5px 8px;
-  border-radius:99px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);
-  font-size:11.5px;color:rgba(255,255,255,.75);font-weight:600}
-.bal__id b{color:#fff;letter-spacing:.1em;font-variant-numeric:tabular-nums;font-weight:700}
-.bal__id button{color:inherit;opacity:.7;padding:2px;border-radius:6px;transition:opacity .15s}
-.bal__id button:active{opacity:1;background:rgba(255,255,255,.1)}
+.bal__id{display:inline-flex;align-items:center;gap:6px;padding:5px 10px 5px 8px;border-radius:99px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);font-size:11.5px;color:rgba(255,255,255,.75);font-weight:600}
+.bal__id b{color:#fff;letter-spacing:.1em;font-variant-numeric:tabular-nums}
+.bal__id button{color:inherit;opacity:.7;padding:2px;border-radius:6px}
 .bal__quick{display:flex;gap:8px;margin-top:20px;position:relative}
-.bal__quick button{flex:1;padding:11px 6px;border-radius:14px;
-  background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.08);color:#fff;
-  display:flex;flex-direction:column;align-items:center;gap:5px;
-  font-size:11px;font-weight:600;transition:background .15s,transform .12s}
+.bal__quick button{flex:1;padding:11px 6px;border-radius:14px;background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.08);color:#fff;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:600;transition:background .15s,transform .12s}
 .bal__quick button:active{transform:scale(.96);background:rgba(255,255,255,.18)}
-.bal__quick span{font-size:11px;letter-spacing:.01em}
 
-/* ---------- Quick Grid ---------- */
 .qgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
-.qbtn{display:flex;flex-direction:column;align-items:center;gap:7px;
-  padding:14px 6px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);
-  font-size:11.5px;font-weight:600;color:var(--text);box-shadow:var(--sh-1);
-  transition:transform .12s,background .15s}
-.qbtn:active{transform:scale(.96);background:var(--surface-2)}
-.qbtn__ico{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;
-  background:linear-gradient(135deg,#DBEAFE,#BFDBFE);color:#1E40AF}
+.qbtn{display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 6px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);font-size:11.5px;font-weight:600;color:var(--text);box-shadow:var(--sh-1);transition:transform .12s}
+.qbtn:active{transform:scale(.96)}
+.qbtn__ico{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#DBEAFE,#BFDBFE);color:#1E40AF}
 [data-theme="dark"] .qbtn__ico{background:linear-gradient(135deg,#1E3A8A,#172554);color:#93C5FD}
 .qbtn:nth-child(2) .qbtn__ico{background:linear-gradient(135deg,#D1FAE5,#A7F3D0);color:#047857}
 [data-theme="dark"] .qbtn:nth-child(2) .qbtn__ico{background:linear-gradient(135deg,#064E3B,#022C22);color:#6EE7B7}
@@ -200,192 +124,120 @@ svg{display:block;flex:none}
 .qbtn:nth-child(4) .qbtn__ico{background:linear-gradient(135deg,#EDE9FE,#DDD6FE);color:#5B21B6}
 [data-theme="dark"] .qbtn:nth-child(4) .qbtn__ico{background:linear-gradient(135deg,#4C1D95,#2E1065);color:#C4B5FD}
 
-/* ---------- List items ---------- */
 .list{display:flex;flex-direction:column;gap:6px}
-.item{display:flex;align-items:center;gap:12px;padding:13px;border-radius:var(--r);
-  background:var(--surface);border:1px solid var(--line);transition:background .15s,transform .1s;
-  cursor:pointer;text-align:left;width:100%}
+.item{display:flex;align-items:center;gap:12px;padding:13px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);transition:background .15s,transform .1s;cursor:pointer;text-align:left;width:100%}
 .item:active{background:var(--surface-2);transform:scale(.995)}
-.item--flush{border-radius:0;border-left:0;border-right:0;border-top:0;box-shadow:none}
-.item--flush:first-child{border-top:1px solid var(--line)}
-.item--no-interact{cursor:default}
-.item--no-interact:active{background:var(--surface);transform:none}
-.item__ico{width:42px;height:42px;flex:none;border-radius:13px;display:grid;place-items:center;
-  background:var(--surface-2);color:var(--muted)}
+.item--no:active{background:var(--surface);transform:none;cursor:default}
+.item__ico{width:42px;height:42px;flex:none;border-radius:13px;display:grid;place-items:center;background:var(--surface-2);color:var(--muted)}
 .item__ico.in{background:rgba(5,150,105,.12);color:var(--ok)}
 .item__ico.out{background:rgba(220,38,38,.1);color:var(--err)}
 .item__ico.pending{background:rgba(217,119,6,.14);color:var(--warn)}
 .item__ico.brand{background:linear-gradient(135deg,#DBEAFE,#BFDBFE);color:#1E40AF}
 [data-theme="dark"] .item__ico.brand{background:linear-gradient(135deg,#1E3A8A,#172554);color:#93C5FD}
 .item__body{flex:1;min-width:0}
-.item__t{font-weight:600;font-size:14px;letter-spacing:-.1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item__t{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .item__s{font-size:12px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .item__amt{font-weight:700;font-size:14px;font-variant-numeric:tabular-nums;text-align:right;flex:none}
 .item__amt.in{color:var(--ok)}
-.item__amt.out{color:var(--text)}
 .item__chev{color:var(--muted);flex:none;margin-left:-4px}
 
-/* ---------- Badge ---------- */
-.bdg{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:99px;
-  font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
-  background:var(--surface-2);color:var(--muted)}
+.bdg{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:99px;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--surface-2);color:var(--muted)}
 .bdg.ok{background:rgba(5,150,105,.13);color:#047857}
 .bdg.warn{background:rgba(217,119,6,.15);color:#B45309}
 .bdg.err{background:rgba(220,38,38,.12);color:#B91C1C}
 [data-theme="dark"] .bdg.ok{color:#6EE7B7}
 [data-theme="dark"] .bdg.warn{color:#FCD34D}
 [data-theme="dark"] .bdg.err{color:#FCA5A5}
-.bdg--flat{background:transparent;padding:0}
 
-/* ---------- Form ---------- */
 .field{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
-.field label{font-size:12.5px;font-weight:700;color:var(--muted);letter-spacing:.01em;margin-left:2px}
-.inp,.inp-select,.inp-textarea{padding:14px;border-radius:14px;background:var(--surface);
-  border:1.5px solid var(--line);color:var(--text);font-size:15px;width:100%;
-  transition:border-color .18s,box-shadow .18s;font-variant-numeric:tabular-nums}
-.inp:focus,.inp-select:focus,.inp-textarea:focus{border-color:var(--brand-3);box-shadow:0 0 0 3.5px rgba(59,130,246,.14)}
-.inp-select{appearance:none;-webkit-appearance:none;
-  background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2368758C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
-.inp-textarea{min-height:96px;resize:vertical;font-family:inherit}
-.inp-wicon{position:relative}
-.inp-wicon .inp{padding-left:44px}
-.inp-wicon__ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.field label{font-size:12.5px;font-weight:700;color:var(--muted);margin-left:2px}
+.inp{padding:14px;border-radius:14px;background:var(--surface);border:1.5px solid var(--line);color:var(--text);font-size:15px;width:100%;transition:border-color .18s,box-shadow .18s;font-variant-numeric:tabular-nums}
+.inp:focus{border-color:var(--brand-3);box-shadow:0 0 0 3.5px rgba(59,130,246,.14)}
+select.inp{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2368758C' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
+textarea.inp{min-height:96px;resize:vertical;font-family:inherit}
 .hint{font-size:12px;color:var(--muted);margin-left:2px;line-height:1.5}
 .err-line{font-size:12.5px;color:var(--err);display:flex;align-items:center;gap:6px;min-height:16px;margin:2px}
 
-/* ---------- Buttons ---------- */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:14px 18px;border-radius:14px;font-weight:700;font-size:14.5px;letter-spacing:-.1px;
-  transition:transform .12s,filter .15s,background .15s,box-shadow .15s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;border-radius:14px;font-weight:700;font-size:14.5px;transition:transform .12s,filter .15s}
 .btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.5;pointer-events:none}
-.btn-pri{background:linear-gradient(135deg,#1E3A8A,#0A1428);color:#fff;
-  box-shadow:0 8px 22px rgba(30,58,138,.28),inset 0 1px 0 rgba(255,255,255,.14)}
-.btn-blue{background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;
-  box-shadow:0 8px 22px rgba(59,130,246,.28)}
+.btn-pri{background:linear-gradient(135deg,#1E3A8A,#0A1428);color:#fff;box-shadow:0 8px 22px rgba(30,58,138,.28)}
+.btn-blue{background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;box-shadow:0 8px 22px rgba(59,130,246,.28)}
 .btn-ghost{background:var(--surface);border:1.5px solid var(--line);color:var(--text)}
-.btn-ghost:active{background:var(--surface-2)}
 .btn-danger{background:rgba(220,38,38,.09);color:#B91C1C;border:1.5px solid rgba(220,38,38,.2)}
 [data-theme="dark"] .btn-danger{color:#FCA5A5}
 .btn-block{width:100%}
 .btn-sm{padding:9px 14px;font-size:13px;border-radius:11px}
 .btn-xs{padding:7px 11px;font-size:12px;border-radius:9px}
 
-/* ---------- Pills / Tabs ---------- */
-.pills{display:flex;gap:6px;overflow-x:auto;padding:2px 0 2px;margin:0 -2px 14px;scrollbar-width:none}
+.pills{display:flex;gap:6px;overflow-x:auto;padding:2px 0;margin:0 -2px 14px;scrollbar-width:none}
 .pills::-webkit-scrollbar{display:none}
-.pill{flex:none;padding:9px 16px;border-radius:99px;background:var(--surface);
-  border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--muted);
-  transition:all .18s;white-space:nowrap}
+.pill{flex:none;padding:9px 16px;border-radius:99px;background:var(--surface);border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;transition:all .18s}
 .pill.active{background:var(--brand);color:#fff;border-color:var(--brand)}
 [data-theme="dark"] .pill.active{background:#2563EB;border-color:#2563EB}
 
-/* ---------- Keypad (numeric) ---------- */
-.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:auto;padding-top:22px}
-.kp button{height:64px;border-radius:18px;background:var(--surface);border:1px solid var(--line);
-  font-size:24px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--text);
-  transition:background .1s,transform .1s;display:grid;place-items:center}
-.kp button:active{background:var(--surface-2);transform:scale(.96)}
-.kp button[data-k="del"],.kp button[data-k="ok"]{background:var(--surface-2);font-size:18px}
-.kp button[data-k="ok"]{background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;font-size:15px;font-weight:700}
-.kp button[data-k="ok"]:disabled{opacity:.4}
-.pin-dots{display:flex;justify-content:center;gap:14px;margin:28px 0 10px}
-.pin-dot{width:14px;height:14px;border-radius:50%;background:var(--line);transition:all .15s cubic-bezier(.22,1,.36,1)}
-.pin-dot.filled{background:var(--brand-3);transform:scale(1.15)}
-.pin-dot.err{background:var(--err);animation:shake .4s}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
-
-/* ---------- Modal ---------- */
-.mbg{position:fixed;inset:0;background:rgba(10,20,40,.5);backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);z-index:200;display:flex;align-items:flex-end;justify-content:center;
-  animation:mbIn .22s ease;padding-top:var(--safe-t)}
+.mbg{position:fixed;inset:0;background:rgba(10,20,40,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:200;display:flex;align-items:flex-end;justify-content:center;animation:mbIn .22s ease;padding-top:var(--safe-t)}
 @keyframes mbIn{from{opacity:0}to{opacity:1}}
-.msheet{width:100%;max-width:520px;max-height:88dvh;overflow-y:auto;
-  background:var(--surface);border-radius:26px 26px 0 0;
-  padding:8px 20px calc(24px + var(--safe-b));
-  animation:msIn .32s cubic-bezier(.22,1,.36,1)}
+.msheet{width:100%;max-width:520px;max-height:88dvh;overflow-y:auto;background:var(--surface);border-radius:26px 26px 0 0;padding:8px 20px calc(24px + var(--safe-b));animation:msIn .32s cubic-bezier(.22,1,.36,1)}
 @keyframes msIn{from{transform:translateY(100%)}to{transform:none}}
-.msheet__handle{width:40px;height:4px;background:var(--line);border-radius:99px;margin:8px auto 16px}
+.msheet__h{width:40px;height:4px;background:var(--line);border-radius:99px;margin:8px auto 16px}
 .msheet h2{font-size:19px;font-weight:800;margin:0 0 16px;letter-spacing:-.3px}
 
-/* ---------- Toast ---------- */
-.twrap{position:fixed;left:50%;transform:translateX(-50%);top:calc(12px + var(--safe-t));
-  z-index:300;display:flex;flex-direction:column;gap:8px;width:min(400px,calc(100% - 24px));pointer-events:none}
-.toast{padding:13px 16px;border-radius:14px;background:rgba(10,20,40,.95);color:#fff;
-  font-size:13.5px;font-weight:600;box-shadow:var(--sh-3);display:flex;align-items:center;gap:10px;
-  animation:tIn .3s cubic-bezier(.22,1,.36,1);backdrop-filter:blur(20px)}
+.twrap{position:fixed;left:50%;transform:translateX(-50%);top:calc(12px + var(--safe-t));z-index:300;display:flex;flex-direction:column;gap:8px;width:min(400px,calc(100% - 24px));pointer-events:none}
+.toast{padding:13px 16px;border-radius:14px;background:rgba(10,20,40,.95);color:#fff;font-size:13.5px;font-weight:600;box-shadow:var(--sh-3);display:flex;align-items:center;gap:10px;animation:tIn .3s cubic-bezier(.22,1,.36,1)}
 .toast.ok{background:linear-gradient(135deg,#059669,#047857)}
 .toast.err{background:linear-gradient(135deg,#DC2626,#B91C1C)}
 @keyframes tIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
 .toast.out{animation:tOut .24s ease forwards}
 @keyframes tOut{to{opacity:0;transform:translateY(-8px)}}
 
-/* ---------- Skeleton ---------- */
-.sk{background:linear-gradient(90deg,var(--surface-2) 0%,color-mix(in srgb,var(--surface-2) 55%,var(--line)) 50%,var(--surface-2) 100%);
-  background-size:200% 100%;animation:sk 1.4s ease-in-out infinite;border-radius:8px}
+.sk{background:linear-gradient(90deg,var(--surface-2) 0%,color-mix(in srgb,var(--surface-2) 55%,var(--line)) 50%,var(--surface-2) 100%);background-size:200% 100%;animation:sk 1.4s ease-in-out infinite;border-radius:8px}
 @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .sk-line{height:12px}
 .sk-line.short{width:40%}
-.sk-line.mid{width:65%}
-.sk-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
-  padding:14px;display:flex;gap:12px;align-items:center}
-.sk-card+.sk-card{margin-top:6px}
+.sk-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;gap:12px;align-items:center;margin-bottom:6px}
 .sk-av{width:42px;height:42px;border-radius:13px;flex:none}
 .sk-body{flex:1;display:flex;flex-direction:column;gap:8px}
 
-/* ---------- State / Empty ---------- */
 .st{display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 20px;gap:14px}
-.st__ico{width:72px;height:72px;border-radius:24px;display:grid;place-items:center;
-  background:var(--surface-2);color:var(--muted);position:relative}
-.st__ico::after{content:"";position:absolute;inset:-8px;border-radius:30px;
-  background:radial-gradient(closest-side,rgba(59,130,246,.1),transparent);z-index:-1}
-.st__t{font-weight:700;font-size:16px;letter-spacing:-.2px}
+.st__ico{width:72px;height:72px;border-radius:24px;display:grid;place-items:center;background:var(--surface-2);color:var(--muted)}
+.st__t{font-weight:700;font-size:16px}
 .st__d{font-size:13.5px;color:var(--muted);max-width:280px;line-height:1.55}
-.st--ok .st__ico{background:rgba(5,150,105,.12);color:var(--ok)}
 
-/* ---------- Misc ---------- */
-.kv{display:flex;justify-content:space-between;gap:14px;padding:11px 0;
-  border-bottom:1px dashed var(--line);font-size:14px}
+.kv{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px dashed var(--line);font-size:14px}
 .kv:last-child{border-bottom:0}
 .kv>span:first-child{color:var(--muted);flex:none;font-size:13.5px}
 .kv>span:last-child{font-weight:600;text-align:right;word-break:break-word;font-variant-numeric:tabular-nums}
-.kv--big>span:last-child{font-size:17px;font-weight:800;letter-spacing:-.2px}
+.kv--big>span:last-child{font-size:17px;font-weight:800}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
-.chip{padding:10px 14px;border-radius:11px;background:var(--surface);border:1.5px solid var(--line);
-  font-size:13px;font-weight:600;color:var(--text);transition:all .15s}
+.chip{padding:10px 14px;border-radius:11px;background:var(--surface);border:1.5px solid var(--line);font-size:13px;font-weight:600;color:var(--text);transition:all .15s}
 .chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
 [data-theme="dark"] .chip[aria-pressed="true"]{background:#2563EB;border-color:#2563EB}
 .row{display:flex;align-items:center;gap:10px}
 .row-between{justify-content:space-between}
 .mt{margin-top:14px}.mt-s{margin-top:8px}.mt-l{margin-top:22px}
 .txt-c{text-align:center}
-video{width:100%;border-radius:16px;background:#000;aspect-ratio:1/1;object-fit:cover;display:block}
 .accordion{border-bottom:1px solid var(--line)}
-.accordion__h{display:flex;justify-content:space-between;align-items:center;padding:16px 0;
-  font-weight:600;font-size:14.5px;cursor:pointer;gap:12px}
+.accordion__h{display:flex;justify-content:space-between;align-items:center;padding:16px 0;font-weight:600;font-size:14.5px;cursor:pointer;gap:12px}
 .accordion__b{padding:0 0 16px;color:var(--muted);font-size:13.5px;line-height:1.65;display:none}
-.accordion.open .accordion__b{display:block;animation:accIn .2s ease}
+.accordion.open .accordion__b{display:block}
 .accordion.open .accordion__h svg{transform:rotate(180deg)}
 .accordion__h svg{transition:transform .2s}
-@keyframes accIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-.offline{position:fixed;left:50%;transform:translateX(-50%);top:calc(12px + var(--safe-t));
-  padding:9px 16px;border-radius:99px;background:rgba(217,119,6,.95);color:#fff;
-  font-size:12.5px;font-weight:600;z-index:290;display:none;align-items:center;gap:8px;
-  box-shadow:var(--sh-3)}
-.offline.show{display:flex}
+.banner{display:flex;gap:10px;align-items:flex-start;padding:12px;border-radius:14px;background:rgba(217,119,6,.1);border:1px solid rgba(217,119,6,.22);margin-bottom:12px}
+.banner__ic{color:#B45309;flex:none}
+.banner__t{font-weight:700;font-size:13px}
+.banner__d{font-size:12px;color:var(--muted);line-height:1.5;margin-top:2px}
 </style>
 </head>
 <body>
-<div id="app"></div>
+<div id="app"><div class="splash"><div class="splash__mark">C</div><div class="splash__name">Cazoo</div><div class="splash__bar"></div></div></div>
 <div id="modal-root"></div>
 <div id="toast-root" class="twrap"></div>
-<div id="offline" class="offline"></div>
 
 <script type="module">
 /* =========================================================
-   Cazoo v2 — Google-only authentication
+   Firebase bootstrap
 ========================================================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
@@ -395,27 +247,25 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import {
   getDatabase, ref, set, get, update, onValue, query, orderByChild,
-  limitToLast, equalTo, onDisconnect
+  limitToLast, equalTo, push
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-functions.js";
 
-/* ===== Firebase config ===== */
 const firebaseConfig = {
-  apiKey:"AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
-  authDomain:"mygame-68b24.firebaseapp.com",
-  databaseURL:"https://mygame-68b24-default-rtdb.firebaseio.com",
-  projectId:"mygame-68b24",
-  storageBucket:"mygame-68b24.firebasestorage.app",
-  messagingSenderId:"1003182873390",
-  appId:"1:1003182873390:web:aabf3248f759cbc9d678bf"
+  apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
+  authDomain: "mygame-68b24.firebaseapp.com",
+  databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
+  projectId: "mygame-68b24",
+  storageBucket: "mygame-68b24.firebasestorage.app",
+  messagingSenderId: "1003182873390",
+  appId: "1:1003182873390:web:aabf3248f759cbc9d678bf"
 };
-const app = initializeApp(firebaseConfig);
+
+const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getDatabase(app);
-const fns  = getFunctions(app, "asia-southeast2");
 
 /* =========================================================
-   SVG Icons (Lucide / Feather, stroke-based)
+   ICONS
 ========================================================= */
 const ICONS = {
   home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/>',
@@ -449,64 +299,42 @@ const ICONS = {
   info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
   help:'<circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/>',
   alert:'<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>',
-  wallet:'<path d="M20 12V8a2 2 0 0 0-2-2H4a2 2 0 0 0 0 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6"/><path d="M16 12h.01"/>',
   trendUp:'<path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/>',
-  trendDown:'<path d="m22 17-8.5-8.5-5 5L2 7"/><path d="M16 17h6v-6"/>',
   receipt:'<path d="M4 2h16v20l-3-2-2 2-3-2-3 2-2-2-3 2z"/><path d="M8 7h8M8 11h8M8 15h5"/>',
   google:'<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>',
   keypad:'<circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/>',
   bank:'<path d="M3 21h18M3 10h18L12 3 3 10zM5 10v11M19 10v11M9 14v7M15 14v7"/>',
-  upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',
-  download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
-  globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
-  message:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
-  send:'<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
   moon:'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
   sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
-  chart:'<path d="M3 3v18h18M7 14l4-4 4 4 4-8"/>',
   filter:'<path d="M22 3H2l8 9.46V19l4 2v-8.54z"/>',
-  ticket:'<path d="M15 5v2M15 11v2M15 17v2M5 5h14a2 2 0 0 1 2 2v3a2 2 0 1 0 0 4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 1 0 0-4V7a2 2 0 0 1 2-2z"/>'
+  wallet:'<path d="M20 12V8a2 2 0 0 0-2-2H4a2 2 0 0 0 0 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6"/><path d="M16 12h.01"/>'
 };
-function ic(n, s=22, w=1.9){
-  return `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${ICONS[n]||''}</svg>`;
-}
-function icFill(n, s=22){
-  return `<svg viewBox="0 0 24 24" width="${s}" height="${s}">${ICONS[n]||''}</svg>`;
-}
+const ic = (n,s=22,w=1.9) => `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${ICONS[n]||''}</svg>`;
+const icFill = (n,s=22) => `<svg viewBox="0 0 24 24" width="${s}" height="${s}">${ICONS[n]||''}</svg>`;
 
 /* =========================================================
-   Utilities
+   Utils
 ========================================================= */
-const $  = (s, r=document) => r.querySelector(s);
-const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const $  = (s,r=document) => r.querySelector(s);
+const $$ = (s,r=document) => [...r.querySelectorAll(s)];
 const rp = n => "Rp " + new Intl.NumberFormat("id-ID").format(Math.round(n||0));
 const fdate = ts => !ts ? "—" : new Date(ts).toLocaleString("id-ID",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
-const fdateLong = ts => !ts ? "—" : new Date(ts).toLocaleString("id-ID",{day:"2-digit",month:"long",year:"numeric",hour:"2-digit",minute:"2-digit"});
-const esc = s => String(s??"").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const uuid = () => crypto.randomUUID ? crypto.randomUUID() : `id-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+const fdateL = ts => !ts ? "—" : new Date(ts).toLocaleString("id-ID",{day:"2-digit",month:"long",year:"numeric",hour:"2-digit",minute:"2-digit"});
+const esc = s => String(s??"").replace(/[&<>"']/g,c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uuid = () => (crypto.randomUUID?crypto.randomUUID():`id-${Date.now()}-${Math.random().toString(36).slice(2)}`).replace(/-/g,"").slice(0,20);
 
 function errMsg(code, fallback="Terjadi kesalahan."){
   const m = {
     "auth/popup-closed-by-user":"Login dibatalkan.",
-    "auth/popup-blocked":"Popup diblokir. Coba lagi atau gunakan browser lain.",
+    "auth/popup-blocked":"Popup diblokir. Gunakan browser lain atau coba lagi.",
     "auth/cancelled-popup-request":"Login dibatalkan.",
     "auth/network-request-failed":"Tidak dapat terhubung ke server.",
-    "auth/user-disabled":"Akun dinonaktifkan.",
-    "auth/account-exists-with-different-credential":"Email terdaftar dengan metode login lain.",
     "auth/unauthorized-domain":"Domain belum diizinkan di Firebase Console.",
-    "auth/internal-error":"Terjadi kesalahan autentikasi.",
-    "auth/requires-recent-login":"Login ulang untuk melanjutkan.",
-    "auth/too-many-requests":"Terlalu banyak percobaan. Tunggu beberapa saat.",
-    "permission-denied":"Akses ditolak.",
-    "functions/not-found":"Layanan backend belum tersedia.",
-    "functions/unavailable":"Layanan tidak tersedia saat ini.",
-    "functions/internal":"Terjadi kesalahan pada server.",
-    "functions/unauthenticated":"Sesi berakhir. Login ulang.",
-    "functions/failed-precondition":"Permintaan tidak dapat diproses.",
-    "functions/invalid-argument":"Data tidak valid.",
-    "functions/permission-denied":"Anda tidak diizinkan.",
-    "functions/resource-exhausted":"Terlalu banyak percobaan. Coba nanti."
+    "auth/operation-not-allowed":"Google Sign-In belum diaktifkan di Firebase Console.",
+    "auth/user-disabled":"Akun dinonaktifkan.",
+    "auth/too-many-requests":"Terlalu banyak percobaan. Coba lagi nanti.",
+    "permission-denied":"Akses ditolak. Periksa Database Rules.",
+    "auth/requires-recent-login":"Login ulang untuk melanjutkan."
   };
   return m[code] || fallback;
 }
@@ -515,23 +343,18 @@ function toast(msg, type="info", ms=2600){
   const root = $("#toast-root");
   const el = document.createElement("div");
   el.className = "toast" + (type==="ok"?" ok":type==="err"?" err":"");
-  const icon = type==="ok"?"check":type==="err"?"alert":"info";
-  el.innerHTML = `${ic(icon,18,2.4)}<span>${esc(msg)}</span>`;
+  const iconName = type==="ok"?"check":type==="err"?"alert":"info";
+  el.innerHTML = `${ic(iconName,18,2.4)}<span>${esc(msg)}</span>`;
   root.appendChild(el);
   setTimeout(()=>{ el.classList.add("out"); setTimeout(()=>el.remove(),240); }, ms);
 }
 
 function modal(html){
   const root = $("#modal-root");
-  root.innerHTML = `<div class="mbg"><div class="msheet"><div class="msheet__handle"></div>${html}</div></div>`;
+  root.innerHTML = `<div class="mbg"><div class="msheet"><div class="msheet__h"></div>${html}</div></div>`;
   const bg = $(".mbg", root);
   bg.addEventListener("click", e => { if(e.target === bg) closeModal(); });
-  return {
-    close: closeModal,
-    $: s => $(s, root),
-    $$: s => $$(s, root),
-    root
-  };
+  return { close: closeModal, $: s => $(s, root), $$: s => $$(s, root) };
 }
 function closeModal(){ $("#modal-root").innerHTML = ""; }
 
@@ -565,25 +388,15 @@ function randomSalt(){
 ========================================================= */
 const state = {
   user:null, profile:null, wallet:null,
-  isAdmin:false, route:"home",
+  route:"home",
   hideBalance: localStorage.getItem("cazoo.hideBal") === "1",
   theme: localStorage.getItem("cazoo.theme") || "light",
   notifs: [], unread:0,
   unsubWallet:null, unsubNotif:null,
-  online: navigator.onLine,
   needsSetup:false
 };
 document.documentElement.dataset.theme = state.theme;
 
-window.addEventListener("online", ()=>{ state.online=true; hideOffline(); toast("Kembali online","ok",1500); });
-window.addEventListener("offline", ()=>{ state.online=false; showOffline(); });
-function showOffline(){ const el = $("#offline"); el.innerHTML = `${ic("alert",14,2.3)} Anda sedang offline`; el.classList.add("show"); }
-function hideOffline(){ $("#offline").classList.remove("show"); }
-if(!state.online) showOffline();
-
-/* =========================================================
-   Splash hide when ready
-========================================================= */
 function hideSplash(){
   const s = $(".splash");
   if(!s) return;
@@ -592,58 +405,42 @@ function hideSplash(){
 }
 
 /* =========================================================
-   Auth screen (Google only)
+   AUTH SCREEN
 ========================================================= */
 function renderAuth(){
   $("#app").innerHTML = `
     <div class="auth">
-      <div class="auth__inner">
+      <div class="auth__in">
         <div class="auth__mark">C</div>
         <h1 class="auth__h">Dompet digital<br>yang aman & simpel.</h1>
-        <p class="auth__p">Kelola saldo, transfer, dan pembayaran dengan satu akun Google. Tanpa ribet.</p>
+        <p class="auth__p">Kelola saldo, transfer, dan pembayaran dengan satu akun Google.</p>
 
-        <div class="auth__features">
-          <div class="auth__feat">
-            <div class="auth__feat-ic">${ic("shield",18,2)}</div>
-            <div>
-              <div class="auth__feat-t">Login aman via Google</div>
-              <div class="auth__feat-d">Kami tidak menyimpan kata sandi Anda.</div>
-            </div>
-          </div>
-          <div class="auth__feat">
-            <div class="auth__feat-ic">${ic("keypad",18,2)}</div>
-            <div>
-              <div class="auth__feat-t">PIN untuk setiap transaksi</div>
-              <div class="auth__feat-d">PIN 6-digit dilindungi enkripsi.</div>
-            </div>
-          </div>
-          <div class="auth__feat">
-            <div class="auth__feat-ic">${ic("trendUp",18,2)}</div>
-            <div>
-              <div class="auth__feat-t">Kelola keuangan realtime</div>
-              <div class="auth__feat-d">Pantau semua transaksi dalam satu tampilan.</div>
-            </div>
-          </div>
+        <div class="auth__f">
+          <div class="auth__fi">${ic("shield",18,2)}</div>
+          <div><div class="auth__ft">Login aman via Google</div>
+            <div class="auth__fd">Kami tidak menyimpan kata sandi Anda.</div></div>
+        </div>
+        <div class="auth__f">
+          <div class="auth__fi">${ic("keypad",18,2)}</div>
+          <div><div class="auth__ft">PIN untuk setiap transaksi</div>
+            <div class="auth__fd">PIN 6-digit dilindungi enkripsi.</div></div>
+        </div>
+        <div class="auth__f">
+          <div class="auth__fi">${ic("trendUp",18,2)}</div>
+          <div><div class="auth__ft">Kelola keuangan realtime</div>
+            <div class="auth__fd">Pantau semua transaksi dalam satu tampilan.</div></div>
         </div>
 
-        <button class="gbtn" id="gbtn">
-          <span class="gbtn__logo">${icFill("google",20)}</span>
-          <span id="gbtn-label">Masuk dengan Google</span>
+        <button class="gbtn" id="gbtn" style="margin-top:24px">
+          ${icFill("google",20)}
+          <span id="glabel">Masuk dengan Google</span>
         </button>
 
-        <p class="auth__terms">
-          Dengan melanjutkan, Anda menyetujui
-          <a href="#" id="tos">Syarat Penggunaan</a> dan
-          <a href="#" id="privacy">Kebijakan Privasi</a>.
-        </p>
+        <p class="auth__terms">Dengan melanjutkan, Anda menyetujui Syarat & Kebijakan Privasi Cazoo.</p>
       </div>
     </div>`;
 
-  $("#tos").onclick = e => { e.preventDefault(); showLegal("tos"); };
-  $("#privacy").onclick = e => { e.preventDefault(); showLegal("privacy"); };
-
-  const btn = $("#gbtn");
-  const lbl = $("#gbtn-label");
+  const btn = $("#gbtn"), lbl = $("#glabel");
   btn.onclick = async () => {
     if(btn.disabled) return;
     btn.disabled = true;
@@ -653,15 +450,10 @@ function renderAuth(){
     provider.setCustomParameters({ prompt: "select_account" });
     try {
       await signInWithPopup(auth, provider);
-      // onAuthStateChanged akan menangani
-    } catch (e) {
+    } catch(e){
       if(e.code === "auth/popup-blocked" || e.code === "auth/operation-not-supported-in-this-environment"){
-        try {
-          await signInWithRedirect(auth, provider);
-          return;
-        } catch(e2){
-          toast(errMsg(e2.code, e2.message), "err");
-        }
+        try { await signInWithRedirect(auth, provider); return; }
+        catch(e2){ toast(errMsg(e2.code, e2.message), "err"); }
       } else if(e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request"){
         toast(errMsg(e.code, e.message), "err");
       }
@@ -671,24 +463,19 @@ function renderAuth(){
   };
 }
 
-function showLegal(type){
-  const content = type === "tos"
-    ? { title:"Syarat Penggunaan", body:"Dokumen lengkap tersedia di situs resmi Cazoo. Hubungi dukungan untuk salinan." }
-    : { title:"Kebijakan Privasi", body:"Kami melindungi data Anda. Kami tidak menyimpan kata sandi, PIN dienkripsi, dan transaksi tercatat aman." };
-  modal(`
-    <h2>${content.title}</h2>
-    <p class="hint" style="font-size:14px;line-height:1.7;color:var(--text);margin:0 0 20px">${esc(content.body)}</p>
-    <button class="btn btn-pri btn-block" id="ok">Tutup</button>
-  `).$("#ok").onclick = closeModal;
-}
+getRedirectResult(auth).catch(e => {
+  if(e.code && e.code !== "auth/popup-closed-by-user"){
+    toast(errMsg(e.code, e.message), "err");
+  }
+});
 
 /* =========================================================
-   Auth state
+   AUTH STATE
 ========================================================= */
 onAuthStateChanged(auth, async user => {
   if(!user){
     state.user = null; state.profile = null; state.wallet = null;
-    state.isAdmin = false; state.needsSetup = false;
+    state.needsSetup = false;
     state.unsubWallet?.(); state.unsubNotif?.();
     renderAuth();
     hideSplash();
@@ -696,37 +483,24 @@ onAuthStateChanged(auth, async user => {
   }
   state.user = user;
   try {
-    const [tok, pSnap, wSnap] = await Promise.all([
-      user.getIdTokenResult(true),
+    const [pSnap, wSnap] = await Promise.all([
       get(ref(db, `users/${user.uid}`)),
       get(ref(db, `wallets/${user.uid}`))
     ]);
-    state.isAdmin = tok.claims?.admin === true;
     state.profile = pSnap.exists() ? pSnap.val() : null;
     state.wallet  = wSnap.exists() ? wSnap.val() : null;
 
     if(!state.profile || !state.profile.accountId){
-      // Perlu setup PIN dulu
       state.needsSetup = true;
       renderPinSetup();
       hideSplash();
       return;
     }
-    if(state.profile.accountStatus === "disabled"){
-      renderDisabled(); hideSplash(); return;
-    }
     await finalizeLogin();
-  } catch (e) {
+  } catch(e){
     console.error(e);
     renderFatal(errMsg(e.code, e.message));
     hideSplash();
-  }
-});
-
-/* Google redirect result handler */
-getRedirectResult(auth).catch(e => {
-  if(e.code && e.code !== "auth/popup-closed-by-user"){
-    toast(errMsg(e.code, e.message), "err");
   }
 });
 
@@ -737,75 +511,48 @@ async function finalizeLogin(){
   hideSplash();
 }
 
-function renderDisabled(){
-  $("#app").innerHTML = `
-    <div class="auth" style="padding-top:calc(80px + var(--safe-t))">
-      <div class="auth__inner" style="text-align:center">
-        <div style="display:flex;justify-content:center;color:#FCA5A5;margin-bottom:14px">${ic("alert",52,1.5)}</div>
-        <h1 class="auth__h" style="font-size:22px">Akun Dinonaktifkan</h1>
-        <p class="auth__p" style="max-width:none;margin:0 auto 24px">Hubungi dukungan Cazoo untuk informasi lebih lanjut.</p>
-        <button class="gbtn" id="lo" style="justify-content:center">
-          <span>Keluar</span>
-        </button>
-      </div>
-    </div>`;
-  $("#lo").onclick = () => signOut(auth);
-}
 function renderFatal(msg){
   $("#app").innerHTML = `
     <div class="auth" style="padding-top:calc(80px + var(--safe-t))">
-      <div class="auth__inner" style="text-align:center">
+      <div class="auth__in" style="text-align:center">
         <div style="display:flex;justify-content:center;color:#FCA5A5;margin-bottom:14px">${ic("alert",52,1.5)}</div>
         <h1 class="auth__h" style="font-size:22px">Gagal Memuat</h1>
         <p class="auth__p" style="max-width:none;margin:0 auto 24px">${esc(msg)}</p>
-        <button class="gbtn" id="rl" style="justify-content:center">
-          <span>Coba Lagi</span>
-        </button>
+        <button class="gbtn" id="rl" style="justify-content:center"><span>Coba Lagi</span></button>
       </div>
     </div>`;
   $("#rl").onclick = () => location.reload();
 }
 
 /* =========================================================
-   PIN Setup (onboarding setelah Google login pertama)
+   PIN SETUP ONBOARDING
 ========================================================= */
 function renderPinSetup(){
   const user = state.user;
-  let stage = "create"; // create | confirm
-  let pin1 = "";
-  let pin2 = "";
+  let stage = "create";
+  let pin1 = "", pin2 = "";
 
   const draw = () => {
     const val = stage === "create" ? pin1 : pin2;
     $("#app").innerHTML = `
       <div class="onb">
-        <div class="row" style="gap:10px;align-items:center;margin-bottom:4px">
-          <div style="width:52px;height:52px;border-radius:16px;
-            background:linear-gradient(135deg,#3B82F6,#1E3A8A);color:#fff;
-            display:grid;place-items:center;font-weight:900;font-size:22px;
-            box-shadow:0 12px 30px rgba(59,130,246,.32)">
-            ${esc((user.displayName || user.email || "U").charAt(0).toUpperCase())}
+        <div class="row" style="gap:10px;align-items:center">
+          <div style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#3B82F6,#1E3A8A);color:#fff;display:grid;place-items:center;font-weight:900;font-size:22px;box-shadow:0 12px 30px rgba(59,130,246,.32);overflow:hidden">
+            ${user.photoURL?`<img src="${esc(user.photoURL)}" style="width:100%;height:100%;object-fit:cover">`
+              :esc((user.displayName||user.email||"U").charAt(0).toUpperCase())}
           </div>
           <div style="flex:1;min-width:0">
-            <div style="font-weight:700;font-size:15px;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-              ${esc(user.displayName || "Pengguna Baru")}
-            </div>
-            <div class="hint" style="margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-              ${esc(user.email || "")}
-            </div>
+            <div style="font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(user.displayName||"Pengguna")}</div>
+            <div class="hint" style="margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(user.email||"")}</div>
           </div>
         </div>
 
-        <h1 class="onb__h">${stage === "create" ? "Buat PIN Transaksi" : "Konfirmasi PIN"}</h1>
-        <p class="onb__p">
-          ${stage === "create"
-            ? "PIN 6-digit melindungi setiap transaksi Anda. Jangan bagikan ke siapa pun, termasuk tim Cazoo."
-            : "Masukkan kembali PIN Anda untuk konfirmasi."}
-        </p>
+        <h1 class="onb__h">${stage==="create"?"Buat PIN Transaksi":"Konfirmasi PIN"}</h1>
+        <p class="onb__p">${stage==="create"
+          ?"PIN 6-digit melindungi setiap transaksi Anda. Jangan bagikan ke siapa pun."
+          :"Masukkan kembali PIN Anda untuk konfirmasi."}</p>
 
-        <div class="pin-dots" id="dots">
-          ${Array(6).fill('<div class="pin-dot"></div>').join("")}
-        </div>
+        <div class="pin-dots" id="dots">${Array(6).fill('<div class="pin-dot"></div>').join("")}</div>
         <div class="err-line txt-c" id="err" style="justify-content:center"></div>
 
         <div class="kp" id="kp">
@@ -817,13 +564,11 @@ function renderPinSetup(){
       </div>`;
 
     const dots = $$("#dots .pin-dot");
-    val.split("").forEach((_, i) => dots[i]?.classList.add("filled"));
+    val.split("").forEach((_,i) => dots[i]?.classList.add("filled"));
 
     $("#kp").onclick = e => {
       const btn = e.target.closest("button[data-k]");
-      if(!btn) return;
-      const k = btn.dataset.k;
-      handleKey(k);
+      if(btn) handleKey(btn.dataset.k);
     };
   };
 
@@ -833,7 +578,7 @@ function renderPinSetup(){
     const err = $("#err");
     err.textContent = "";
 
-    if(k === "del"){ v = v.slice(0,-1); }
+    if(k === "del") v = v.slice(0,-1);
     else if(k === "ok"){
       if(v.length !== 6){ err.textContent = "PIN harus 6 digit."; return; }
       if(isCreate){
@@ -843,19 +588,13 @@ function renderPinSetup(){
         }
         pin1 = v; stage = "confirm"; pin2 = ""; draw(); return;
       } else {
-        if(v !== pin1){ err.textContent = "PIN tidak cocok. Coba lagi."; shake(); pin2=""; draw(); return; }
-        // finish
-        finish(v);
-        return;
+        if(v !== pin1){ err.textContent = "PIN tidak cocok."; shake(); pin2 = ""; draw(); return; }
+        finish(v); return;
       }
     }
-    else if(/^\d$/.test(k)){
-      if(v.length >= 6) return;
-      v += k;
-    }
+    else if(/^\d$/.test(k) && v.length < 6) v += k;
 
     if(isCreate) pin1 = v; else pin2 = v;
-
     const dots = $$("#dots .pin-dot");
     dots.forEach((d,i) => d.classList.toggle("filled", i < v.length));
     const ok = $("#kp button[data-k='ok']");
@@ -871,23 +610,39 @@ function renderPinSetup(){
   async function finish(pin){
     const btn = $("#kp button[data-k='ok']");
     if(btn) btn.disabled = true;
+    const err = $("#err");
     try {
+      const accountId = await generateUniqueAccountId();
       const salt = randomSalt();
       const pinHash = await sha256Hex(salt + ":" + pin);
-      const call = httpsCallable(fns, "finalizeRegistration");
-      const res = await call({
-        displayName: state.user.displayName || (state.user.email||"Pengguna").split("@")[0],
-        pinHash, pinSalt: salt
-      });
-      toast("Selamat datang di Cazoo!", "ok");
-      // refresh profile
-      const pSnap = await get(ref(db, `users/${state.user.uid}`));
-      state.profile = pSnap.val();
+      const now = Date.now();
+      const updates = {};
+      updates[`users/${user.uid}`] = {
+        accountId,
+        displayName: user.displayName || (user.email||"Pengguna").split("@")[0],
+        email: user.email || "",
+        photoURL: user.photoURL || "",
+        accountStatus: "active",
+        pinHash, pinSalt: salt,
+        pinAttempts: { count: 0, until: 0 },
+        createdAt: now
+      };
+      updates[`wallets/${user.uid}`] = {
+        userId: user.uid, availableBalance: 0, pendingBalance: 0,
+        currency: "IDR", updatedAt: now
+      };
+      updates[`accountIds/${accountId}`] = user.uid;
+
+      await update(ref(db), updates);
+
+      state.profile = (await get(ref(db, `users/${user.uid}`))).val();
+      state.wallet  = (await get(ref(db, `wallets/${user.uid}`))).val();
       state.needsSetup = false;
+      toast("Selamat datang di Cazoo!", "ok");
       await finalizeLogin();
-    } catch (e) {
+    } catch(e){
       console.error(e);
-      $("#err").textContent = errMsg(e.code, e.message);
+      err.textContent = errMsg(e.code, e.message);
       pin1 = ""; pin2 = ""; stage = "create";
       setTimeout(draw, 500);
     }
@@ -896,8 +651,22 @@ function renderPinSetup(){
   draw();
 }
 
+/* Generate unique 8-10 digit accountId — cek tabrakan */
+async function generateUniqueAccountId(){
+  for(let i = 0; i < 10; i++){
+    const len = 8 + Math.floor(Math.random() * 3);
+    let id = "";
+    for(let k = 0; k < len; k++) id += Math.floor(Math.random() * 10);
+    if(id[0] === "0") id = "1" + id.slice(1);
+    const snap = await get(ref(db, `accountIds/${id}`));
+    if(!snap.exists()) return id;
+  }
+  // fallback: pakai timestamp
+  return String(Date.now()).slice(-10);
+}
+
 /* =========================================================
-   Realtime subscriptions
+   REALTIME SUBSCRIPTIONS
 ========================================================= */
 function subscribeWallet(uid){
   state.unsubWallet?.();
@@ -937,7 +706,7 @@ function paintTabDot(){
 }
 
 /* =========================================================
-   App shell
+   APP SHELL
 ========================================================= */
 function renderShell(){
   $("#app").innerHTML = `
@@ -957,7 +726,6 @@ function renderShell(){
     </nav>`;
 
   $("#btnHelp").onclick = () => navigate("help");
-
   if(!location.hash) location.hash = "#/home";
   state.route = currentRoute();
   renderRoute();
@@ -969,7 +737,7 @@ function setActiveTab(r){
 }
 
 /* =========================================================
-   Router
+   ROUTER
 ========================================================= */
 const ROUTES = {};
 function currentRoute(){ const h = location.hash.replace(/^#\/?/,""); return h || "home"; }
@@ -993,13 +761,13 @@ function renderRoute(){
 }
 
 /* =========================================================
-   Shared helpers
+   HELPERS
 ========================================================= */
 function skeletonList(n=4){
   let s = "";
   for(let i=0;i<n;i++){
     s += `<div class="sk-card"><div class="sk sk-av"></div>
-      <div class="sk-body"><div class="sk sk-line mid"></div><div class="sk sk-line short"></div></div>
+      <div class="sk-body"><div class="sk sk-line" style="width:65%"></div><div class="sk sk-line short"></div></div>
       <div class="sk sk-line" style="width:64px"></div></div>`;
   }
   return s;
@@ -1012,16 +780,11 @@ function emptyState(iconName, title, msg, action){
     ${action ? `<button class="btn btn-blue btn-sm" id="${action.id}">${esc(action.label)}</button>` : ""}
   </div>`;
 }
-function errState(msg, retryId){
-  return `<div class="st"><div class="st__ico" style="color:var(--err);background:rgba(220,38,38,.1)">${ic("alert",30,1.6)}</div>
-    <div class="st__t">Gagal Memuat</div><div class="st__d">${esc(msg)}</div>
-    ${retryId ? `<button class="btn btn-ghost btn-sm" id="${retryId}">Coba Lagi</button>` : ""}</div>`;
-}
 function navHead(title, backFn){
   return `<div class="nav-head">
-    <button class="ibtn ibtn--plain" id="navback" aria-label="Kembali">${ic("arrowL",20)}</button>
+    <button class="ibtn ibtn--plain" id="navback">${ic("arrowL",20)}</button>
     <div class="nav-head__t">${esc(title)}</div>
-    <div class="nav-head__spacer"></div>
+    <div class="nav-head__sp"></div>
   </div>`;
 }
 function bindNavHead(root, backFn){
@@ -1030,7 +793,7 @@ function bindNavHead(root, backFn){
 }
 
 /* =========================================================
-   PIN prompt (modal, keypad)
+   PIN PROMPT
 ========================================================= */
 function promptPin(purpose = "Masukkan PIN"){
   return new Promise(resolve => {
@@ -1046,13 +809,11 @@ function promptPin(purpose = "Masukkan PIN"){
         <button data-k="0">0</button>
         <button data-k="ok" disabled>OK</button>
       </div>
-      <button class="btn btn-ghost btn-block mt" id="cancel">Batal</button>
-    `);
+      <button class="btn btn-ghost btn-block mt" id="cancel">Batal</button>`);
 
     const dots = m.$$("#dots .pin-dot");
     const err = m.$("#err");
     const okBtn = m.$("#kp button[data-k='ok']");
-
     const paint = () => {
       dots.forEach((d,i) => d.classList.toggle("filled", i < value.length));
       okBtn.disabled = value.length !== 6;
@@ -1065,32 +826,47 @@ function promptPin(purpose = "Masukkan PIN"){
       if(k === "del") value = value.slice(0,-1);
       else if(k === "ok"){
         if(value.length !== 6) return;
-        const pin = value;
-        m.close();
-        resolve(pin);
-        return;
+        const pin = value; m.close(); resolve(pin); return;
       }
       else if(/^\d$/.test(k) && value.length < 6) value += k;
-      paint();
-      err.textContent = "";
+      paint(); err.textContent = "";
     };
     m.$("#cancel").onclick = () => { m.close(); resolve(null); };
   });
 }
 
-async function requirePin(purpose = "Konfirmasi Transaksi"){
-  const pin = await promptPin(purpose);
+async function requirePin(purpose){
+  const pin = await promptPin(purpose || "Konfirmasi Transaksi");
   if(!pin) throw new Error("__cancel__");
-  try {
-    await httpsCallable(fns, "verifyPin")({ pin });
-    return true;
-  } catch(e){
-    throw new Error(errMsg(e.code, e.message));
+  await verifyPin(pin);
+  return true;
+}
+
+async function verifyPin(pin){
+  if(!/^\d{6}$/.test(pin)) throw new Error("PIN tidak valid.");
+  const userRef = ref(db, `users/${state.user.uid}`);
+  const snap = await get(userRef);
+  if(!snap.exists()) throw new Error("Profil tidak ditemukan.");
+  const u = snap.val();
+  const now = Date.now();
+  const att = u.pinAttempts || { count:0, until:0 };
+  if(att.until && now < att.until){
+    const mins = Math.ceil((att.until - now) / 60000);
+    throw new Error(`PIN terkunci. Coba lagi dalam ${mins} menit.`);
   }
+  const hash = await sha256Hex((u.pinSalt||"") + ":" + pin);
+  if(hash !== u.pinHash){
+    const count = (att.count||0) + 1;
+    const until = count >= 5 ? now + 15*60*1000 : 0;
+    await update(userRef, { pinAttempts: { count: count >= 5 ? 0 : count, until } });
+    throw new Error("PIN salah.");
+  }
+  if(att.count || att.until) await update(userRef, { pinAttempts: { count:0, until:0 } });
+  return true;
 }
 
 /* =========================================================
-   Transaction item HTML + labels
+   TRANSACTION HELPERS
 ========================================================= */
 const TX_LABEL = {
   TOPUP:"Top Up", TRANSFER_IN:"Transfer Masuk", TRANSFER_OUT:"Transfer Keluar",
@@ -1102,16 +878,15 @@ const TX_ICON = {
   PAYMENT:"card", REFUND:"refresh", WITHDRAWAL:"arrowD",
   FEE:"receipt", ADJUSTMENT:"settings"
 };
-function txDir(t){
-  return ["TOPUP","TRANSFER_IN","REFUND","ADJUSTMENT"].includes(t) ? "in" : "out";
-}
-function txItemHTML(t, opts={}){
+const txDir = t => ["TOPUP","TRANSFER_IN","REFUND","ADJUSTMENT"].includes(t) ? "in" : "out";
+
+function txItemHTML(t){
   const dir = txDir(t.transactionType);
   const iconName = TX_ICON[t.transactionType] || "receipt";
   const statusCls = t.status === "success" ? "ok" : (t.status === "pending" || t.status === "processing") ? "warn" : "err";
   const sign = dir === "in" ? "+" : "−";
-  const amtCls = dir === "in" ? "in" : "out";
-  return `<button class="item ${opts.noInteract?'item--no-interact':''}" data-tx="${t.id}" type="button">
+  const amtCls = dir === "in" ? "in" : "";
+  return `<button class="item" data-tx="${esc(t.id)}" type="button">
     <div class="item__ico ${dir==='in'?'in':'out'}">${ic(iconName,18)}</div>
     <div class="item__body">
       <div class="item__t">${esc(t.description || TX_LABEL[t.transactionType] || "Transaksi")}</div>
@@ -1124,9 +899,6 @@ function txItemHTML(t, opts={}){
   </button>`;
 }
 
-/* =========================================================
-   TX detail modal
-========================================================= */
 async function showTxDetail(id){
   const m = modal(`<h2>Detail Transaksi</h2>
     <div style="padding:10px 0">
@@ -1140,30 +912,35 @@ async function showTxDetail(id){
     if(!snap.exists()){ toast("Transaksi tidak ditemukan","err"); return; }
     const t = snap.val();
     const statusCls = t.status === "success" ? "ok" : (t.status === "pending" || t.status === "processing") ? "warn" : "err";
+    const dir = txDir(t.transactionType);
     const m2 = modal(`
       <h2>Detail Transaksi</h2>
       <div class="card card--flat" style="text-align:center;padding:20px">
-        <div style="width:56px;height:56px;border-radius:18px;margin:0 auto 12px;
-          background:linear-gradient(135deg,#DBEAFE,#BFDBFE);color:#1E40AF;
-          display:grid;place-items:center">${ic(TX_ICON[t.transactionType]||"receipt",26)}</div>
+        <div style="width:56px;height:56px;border-radius:18px;margin:0 auto 12px;background:linear-gradient(135deg,#DBEAFE,#BFDBFE);color:#1E40AF;display:grid;place-items:center">${ic(TX_ICON[t.transactionType]||"receipt",26)}</div>
         <div style="font-size:24px;font-weight:800;letter-spacing:-.6px">${rp(t.amount||0)}</div>
         <span class="bdg ${statusCls}" style="margin-top:8px">${esc(t.status||"—")}</span>
       </div>
-      <div class="card card--tight mt">
+      <div class="card card--flat mt">
         <div class="kv"><span>Jenis</span><span>${esc(TX_LABEL[t.transactionType] || t.transactionType || "—")}</span></div>
+        <div class="kv"><span>Arah</span><span>${dir === "in" ? "Masuk" : "Keluar"}</span></div>
         <div class="kv"><span>Biaya</span><span>${rp(t.fee||0)}</span></div>
         <div class="kv"><span>Total</span><span>${rp((t.amount||0)+(t.fee||0))}</span></div>
         <div class="kv"><span>Referensi</span><span>${esc(t.referenceNumber||"—")}</span></div>
-        ${t.description ? `<div class="kv"><span>Deskripsi</span><span>${esc(t.description)}</span></div>` : ""}
-        <div class="kv"><span>Waktu</span><span>${esc(fdateLong(t.createdAt))}</span></div>
+        ${t.description?`<div class="kv"><span>Deskripsi</span><span>${esc(t.description)}</span></div>`:""}
+        <div class="kv"><span>Waktu</span><span>${esc(fdateL(t.createdAt))}</span></div>
       </div>
-      <button class="btn btn-pri btn-block mt-l" id="close">Tutup</button>
-    `);
+      <button class="btn btn-pri btn-block mt-l" id="close">Tutup</button>`);
     m2.$("#close").onclick = () => m2.close();
   } catch(e){
     m.close();
     toast(errMsg(e.code, e.message), "err");
   }
+}
+
+/* Push notification */
+async function pushNotification(uid, data){
+  try { await push(ref(db, `notifications/${uid}`), { ...data, read: false, createdAt: Date.now() }); }
+  catch(e){ console.warn("notif:", e.message); }
 }
 
 /* =========================================================
@@ -1181,12 +958,12 @@ ROUTES.home = (root) => {
       <div class="bal__row">
         <div style="min-width:0;flex:1">
           <div class="bal__lab">Saldo Tersedia</div>
-          <div class="bal__val ${hide?'blur':''}" id="balVal">${rp(bal)}</div>
+          <div class="bal__val ${hide?'blur':''}">${rp(bal)}</div>
           <div class="bal__id">
             ${ic("shield",12,2.2)}
             <span style="font-weight:600">ID</span>
             <b>${esc(accountId)}</b>
-            <button id="copyId" aria-label="Salin ID">${ic("copy",12,2)}</button>
+            <button id="copyId">${ic("copy",12,2)}</button>
           </div>
         </div>
         <button class="ibtn ibtn--dark" id="toggleBal" aria-label="Sembunyikan saldo">
@@ -1201,18 +978,10 @@ ROUTES.home = (root) => {
     </div>
 
     <div class="qgrid">
-      <button class="qbtn" data-go="transfer">
-        <span class="qbtn__ico">${ic("arrowUR",18)}</span>Kirim
-      </button>
-      <button class="qbtn" data-go="topup">
-        <span class="qbtn__ico">${ic("plus",18)}</span>Top Up
-      </button>
-      <button class="qbtn" data-go="pay">
-        <span class="qbtn__ico">${ic("scan",18)}</span>Bayar
-      </button>
-      <button class="qbtn" data-go="withdraw">
-        <span class="qbtn__ico">${ic("arrowD",18)}</span>Tarik
-      </button>
+      <button class="qbtn" data-go="transfer"><span class="qbtn__ico">${ic("arrowUR",18)}</span>Kirim</button>
+      <button class="qbtn" data-go="topup"><span class="qbtn__ico">${ic("plus",18)}</span>Top Up</button>
+      <button class="qbtn" data-go="pay"><span class="qbtn__ico">${ic("scan",18)}</span>Bayar</button>
+      <button class="qbtn" data-go="withdraw"><span class="qbtn__ico">${ic("arrowD",18)}</span>Tarik</button>
     </div>
 
     <div class="sec-h"><h2>Transaksi Terakhir</h2><a href="#/activity">Lihat semua</a></div>
@@ -1223,7 +992,11 @@ ROUTES.home = (root) => {
   `;
 
   $$("[data-go]", root).forEach(b => b.onclick = () => navigate(b.dataset.go));
-  $("#toggleBal", root).onclick = () => { state.hideBalance = !state.hideBalance; renderRoute(); };
+  $("#toggleBal", root).onclick = () => {
+    state.hideBalance = !state.hideBalance;
+    localStorage.setItem("cazoo.hideBal", state.hideBalance ? "1" : "0");
+    renderRoute();
+  };
   $("#copyId", root).onclick = async e => {
     e.stopPropagation();
     try { await navigator.clipboard.writeText(String(accountId)); toast("ID disalin", "ok"); }
@@ -1233,9 +1006,9 @@ ROUTES.home = (root) => {
   loadRecent(6).then(items => {
     const el = $("#recent"); if(!el) return;
     if(!items.length){
-      el.innerHTML = emptyState("receipt", "Belum ada transaksi",
+      el.innerHTML = emptyState("receipt","Belum ada transaksi",
         "Mulai dengan Top Up untuk mengisi saldo Anda.",
-        { id: "goTopup", label: "Top Up Sekarang" });
+        { id:"goTopup", label:"Top Up Sekarang" });
       $("#goTopup", el)?.addEventListener("click", () => navigate("topup"));
       return;
     }
@@ -1243,16 +1016,16 @@ ROUTES.home = (root) => {
     el.querySelectorAll("[data-tx]").forEach(x => x.onclick = () => showTxDetail(x.dataset.tx));
   });
 
-  // notif preview
   const nEl = $("#notifPrev");
   const nItems = state.notifs.slice(0,3);
   if(!nItems.length){
-    nEl.innerHTML = `<div class="card card--tight" style="text-align:center;padding:16px">
+    nEl.innerHTML = `<div class="card card--flat" style="text-align:center;padding:16px">
       <div class="hint" style="margin:0">Tidak ada notifikasi.</div></div>`;
   } else {
     nEl.innerHTML = `<div class="list">${nItems.map(n => `
-      <div class="item item--no-interact">
-        <div class="item__ico brand">${ic(n.type === "transfer_in" ? "arrowDL" :
+      <div class="item item--no">
+        <div class="item__ico brand">${ic(
+          n.type === "transfer_in" ? "arrowDL" :
           n.type === "transfer_out" ? "arrowUR" :
           n.type === "withdrawal" ? "arrowD" :
           n.type === "security" ? "shield" : "bell", 18)}</div>
@@ -1275,7 +1048,7 @@ async function loadRecent(limit=8){
 }
 
 /* =========================================================
-   ROUTE: TRANSFER
+   ROUTE: TRANSFER (atomic multi-path update)
 ========================================================= */
 ROUTES.transfer = (root) => {
   root.innerHTML = `
@@ -1283,12 +1056,8 @@ ROUTES.transfer = (root) => {
     <div class="card">
       <div class="field">
         <label>Cari Penerima</label>
-        <div class="inp-wicon">
-          <span class="inp-wicon__ic">${ic("search",18)}</span>
-          <input class="inp" id="q" placeholder="ID Akun (8–10 digit)" inputmode="numeric"
-            maxlength="10" autocomplete="off">
-        </div>
-        <div class="hint">Masukkan ID akun penerima. Minta penerima membagikan ID dari halaman profil.</div>
+        <input class="inp" id="q" placeholder="ID Akun (8–10 digit)" inputmode="numeric" maxlength="10">
+        <div class="hint">Minta ID penerima dari halaman Profil mereka.</div>
       </div>
       <button class="btn btn-blue btn-block" id="find">${ic("search",18)} Cari Penerima</button>
       <div id="recipient" class="mt"></div>
@@ -1297,8 +1066,7 @@ ROUTES.transfer = (root) => {
     <div class="card" id="formCard" style="display:none">
       <div class="field">
         <label>Nominal</label>
-        <input class="inp" id="amount" type="number" inputmode="numeric" min="1000"
-          step="1000" placeholder="0">
+        <input class="inp" id="amount" type="number" inputmode="numeric" min="1000" step="1000" placeholder="0">
       </div>
       <div class="chips" id="quickAmt">
         ${[10000,25000,50000,100000,250000].map(n =>
@@ -1310,16 +1078,12 @@ ROUTES.transfer = (root) => {
       </div>
       <div id="summary"></div>
       <div class="err-line" id="err"></div>
-      <button class="btn btn-pri btn-block" id="submit" disabled>
-        ${ic("shield",18)} Konfirmasi Transfer
-      </button>
-    </div>
-  `;
+      <button class="btn btn-pri btn-block" id="submit" disabled>${ic("shield",18)} Konfirmasi Transfer</button>
+    </div>`;
   bindNavHead(root);
 
   let recipient = null;
   $("#q", root).addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g,"").slice(0,10));
-
   $$("#quickAmt .chip", root).forEach(c => c.onclick = () => {
     $("#amount", root).value = c.dataset.v;
     $$("#quickAmt .chip", root).forEach(x => x.setAttribute("aria-pressed", x === c));
@@ -1330,44 +1094,27 @@ ROUTES.transfer = (root) => {
     const id = $("#q", root).value.trim();
     const box = $("#recipient", root);
     const formCard = $("#formCard", root);
-    formCard.style.display = "none";
-    recipient = null;
+    formCard.style.display = "none"; recipient = null;
 
-    if(!/^\d{8,10}$/.test(id)){
-      box.innerHTML = `<div class="err-line">${ic("alert",14,2.2)}<span>ID akun harus 8–10 digit angka.</span></div>`;
-      return;
-    }
-    if(id === state.profile?.accountId){
-      box.innerHTML = `<div class="err-line">${ic("alert",14,2.2)}<span>Tidak dapat transfer ke diri sendiri.</span></div>`;
-      return;
-    }
+    if(!/^\d{8,10}$/.test(id)){ box.innerHTML = `<div class="err-line">${ic("alert",14,2.2)}<span>ID akun harus 8–10 digit angka.</span></div>`; return; }
+    if(id === state.profile?.accountId){ box.innerHTML = `<div class="err-line">${ic("alert",14,2.2)}<span>Tidak dapat transfer ke diri sendiri.</span></div>`; return; }
     box.innerHTML = `<div class="sk sk-line" style="height:60px;border-radius:14px"></div>`;
     try {
       const idSnap = await get(ref(db, `accountIds/${id}`));
-      if(!idSnap.exists()){
-        box.innerHTML = `<div class="err-line">${ic("alert",14,2.2)}<span>Penerima tidak ditemukan.</span></div>`;
-        return;
-      }
-      const uid = idSnap.val();
-      const uSnap = await get(ref(db, `users/${uid}`));
-      if(!uSnap.exists()){
-        box.innerHTML = `<div class="err-line">${ic("alert",14,2.2)}<span>Data penerima tidak tersedia.</span></div>`;
-        return;
-      }
+      if(!idSnap.exists()){ box.innerHTML = `<div class="err-line">${ic("alert",14,2.2)}<span>Penerima tidak ditemukan.</span></div>`; return; }
+      const uid2 = idSnap.val();
+      const uSnap = await get(ref(db, `users/${uid2}`));
+      if(!uSnap.exists()){ box.innerHTML = `<div class="err-line">${ic("alert",14,2.2)}<span>Data penerima tidak tersedia.</span></div>`; return; }
       const u = uSnap.val();
-      if(u.accountStatus !== "active"){
-        box.innerHTML = `<div class="err-line">${ic("alert",14,2.2)}<span>Akun penerima tidak aktif.</span></div>`;
-        return;
-      }
-      recipient = { uid, ...u, accountId: id };
-      box.innerHTML = `<div class="item item--no-interact">
+      if(u.accountStatus !== "active"){ box.innerHTML = `<div class="err-line">${ic("alert",14,2.2)}<span>Akun penerima tidak aktif.</span></div>`; return; }
+      recipient = { uid: uid2, ...u, accountId: id };
+      box.innerHTML = `<div class="item item--no">
         <div class="item__ico brand">${ic("user",18)}</div>
         <div class="item__body">
           <div class="item__t">${esc(u.displayName||"Pengguna")}</div>
           <div class="item__s">ID ${esc(id)}</div>
         </div>
-        <span class="bdg ok">Aktif</span>
-      </div>`;
+        <span class="bdg ok">Aktif</span></div>`;
       formCard.style.display = "block";
       updateSummary();
     } catch(e){
@@ -1376,9 +1123,7 @@ ROUTES.transfer = (root) => {
   };
 
   function updateSummary(){
-    const box = $("#summary", root);
-    const err = $("#err", root);
-    const submit = $("#submit", root);
+    const box = $("#summary", root), err = $("#err", root), submit = $("#submit", root);
     if(!recipient){ box.innerHTML = ""; submit.disabled = true; return; }
     const v = Number($("#amount", root).value || 0);
     const ok = Number.isFinite(v) && v >= 1000 && v <= 10_000_000;
@@ -1387,7 +1132,6 @@ ROUTES.transfer = (root) => {
     err.innerHTML = "";
     if(v > 0 && !ok) err.innerHTML = `${ic("alert",14,2.2)}<span>Nominal antara ${rp(1000)} dan ${rp(10_000_000)}.</span>`;
     else if(v > 0 && !enough) err.innerHTML = `${ic("alert",14,2.2)}<span>Saldo tidak cukup.</span>`;
-
     box.innerHTML = `
       <div class="card card--flat mt">
         <div class="kv"><span>Pengirim</span><span>${esc(state.profile?.displayName||"Anda")}</span></div>
@@ -1405,35 +1149,72 @@ ROUTES.transfer = (root) => {
   $("#submit", root).onclick = async () => {
     if(!recipient) return;
     const v = Number($("#amount", root).value || 0);
-    const err = $("#err", root);
-    const btn = $("#submit", root);
+    const err = $("#err", root), btn = $("#submit", root);
     err.innerHTML = "";
-
     if(!(v >= 1000 && v <= 10_000_000)){ err.innerHTML = `${ic("alert",14,2.2)}<span>Nominal tidak valid.</span>`; return; }
     if(v > (state.wallet?.availableBalance||0)){ err.innerHTML = `${ic("alert",14,2.2)}<span>Saldo tidak cukup.</span>`; return; }
 
     const ok = await confirmDlg("Konfirmasi Transfer",
       `Kirim ${rp(v)} ke ${recipient.displayName} (ID ${recipient.accountId})?`, "Lanjut");
     if(!ok) return;
-
     try { await requirePin("PIN Transfer"); }
-    catch(e){
-      if(e.message === "__cancel__") return;
-      err.innerHTML = `${ic("alert",14,2.2)}<span>${esc(e.message)}</span>`;
-      return;
-    }
+    catch(e){ if(e.message === "__cancel__") return; err.innerHTML = `${ic("alert",14,2.2)}<span>${esc(e.message)}</span>`; return; }
 
     btn.disabled = true;
-    const prev = btn.innerHTML;
-    btn.innerHTML = `${ic("refresh",16)} Memproses…`;
+    const prev = btn.innerHTML; btn.innerHTML = `${ic("refresh",16)} Memproses…`;
+
     try {
-      const res = await httpsCallable(fns, "transfer")({
-        receiverUid: recipient.uid, amount: v,
-        note: $("#note", root).value.trim(), idempotencyKey: uuid()
-      });
+      // Re-fetch kedua wallet (server-side view)
+      const [sS, rS] = await Promise.all([
+        get(ref(db, `wallets/${state.user.uid}`)),
+        get(ref(db, `wallets/${recipient.uid}`))
+      ]);
+      if(!sS.exists() || !rS.exists()) throw new Error("Wallet tidak ditemukan.");
+      const sBal = sS.val().availableBalance || 0;
+      const rBal = rS.val().availableBalance || 0;
+      if(sBal < v) throw new Error("Saldo tidak cukup.");
+
+      const refNum = "TRX" + Math.random().toString(36).slice(2,10).toUpperCase();
+      const now = Date.now();
+      const outId = uuid(), inId = uuid();
+      const senderName = state.profile?.displayName || state.user.email;
+      const desc = ($("#note", root).value.trim() || "Transfer").slice(0,60);
+
+      // Multi-path atomic update (RTDB menjamin atomic di seluruh path)
+      const updates = {};
+      updates[`wallets/${state.user.uid}/availableBalance`] = sBal - v;
+      updates[`wallets/${state.user.uid}/updatedAt`] = now;
+      updates[`wallets/${recipient.uid}/availableBalance`] = rBal + v;
+      updates[`wallets/${recipient.uid}/updatedAt`] = now;
+
+      updates[`transactions/${outId}`] = {
+        userId: state.user.uid, senderId: state.user.uid, receiverId: recipient.uid,
+        transactionType: "TRANSFER_OUT", amount: v, fee: 0, status: "success",
+        createdAt: now, updatedAt: now, referenceNumber: refNum,
+        description: desc, idempotencyKey: uuid()
+      };
+      updates[`transactions/${inId}`] = {
+        userId: recipient.uid, senderId: state.user.uid, receiverId: recipient.uid,
+        transactionType: "TRANSFER_IN", amount: v, fee: 0, status: "success",
+        createdAt: now, updatedAt: now, referenceNumber: refNum,
+        description: desc, idempotencyKey: uuid()
+      };
+
+      const notifId1 = uuid(), notifId2 = uuid();
+      updates[`notifications/${state.user.uid}/${notifId1}`] = {
+        title:"Transfer berhasil", message:`${rp(v)} ke ${recipient.displayName}`,
+        type:"transfer_out", read:false, createdAt: now, link:"activity"
+      };
+      updates[`notifications/${recipient.uid}/${notifId2}`] = {
+        title:"Transfer masuk", message:`${rp(v)} dari ${senderName}`,
+        type:"transfer_in", read:false, createdAt: now, link:"activity"
+      };
+
+      await update(ref(db), updates);
+
       toast("Transfer berhasil", "ok");
-      if(res.data?.transactionId) setTimeout(() => showTxDetail(res.data.transactionId), 300);
-      setTimeout(() => navigate("home"), 500);
+      setTimeout(() => showTxDetail(outId), 300);
+      setTimeout(() => navigate("home"), 700);
     } catch(e){
       err.innerHTML = `${ic("alert",14,2.2)}<span>${esc(errMsg(e.code, e.message))}</span>`;
       btn.disabled = false; btn.innerHTML = prev;
@@ -1442,47 +1223,43 @@ ROUTES.transfer = (root) => {
 };
 
 /* =========================================================
-   ROUTE: TOP UP
+   ROUTE: TOP UP (simulasi — kredit langsung)
 ========================================================= */
 ROUTES.topup = (root) => {
   root.innerHTML = `
     ${navHead("Top Up")}
+    <div class="banner">
+      <span class="banner__ic">${ic("info",18,2.2)}</span>
+      <div>
+        <div class="banner__t">Mode Demo</div>
+        <div class="banner__d">Top Up langsung menambah saldo (tanpa payment gateway). Untuk produksi, integrasikan penyedia resmi.</div>
+      </div>
+    </div>
+
     <div class="card">
       <div class="field">
         <label>Nominal</label>
-        <input class="inp" id="amount" type="number" inputmode="numeric" min="10000"
-          step="1000" placeholder="0">
+        <input class="inp" id="amount" type="number" inputmode="numeric" min="10000" step="1000" placeholder="0">
       </div>
       <div class="chips" id="quick">
         ${[20000,50000,100000,250000,500000,1000000].map(n =>
           `<button type="button" class="chip" data-v="${n}">${rp(n)}</button>`).join("")}
       </div>
       <div class="field mt">
-        <label>Metode Pembayaran</label>
-        <select class="inp inp-select" id="method">
-          <option value="qris">QRIS</option>
-          <option value="va">Virtual Account</option>
-          <option value="ewallet">E-Wallet</option>
+        <label>Metode Pembayaran (simulasi)</label>
+        <select class="inp" id="method">
+          <option value="QRIS">QRIS</option>
+          <option value="VA">Virtual Account</option>
+          <option value="EWALLET">E-Wallet</option>
+          <option value="BANK">Transfer Bank</option>
         </select>
       </div>
-      <div class="hint">Biaya admin ditentukan penyedia pembayaran.</div>
       <div class="err-line" id="err"></div>
-      <button class="btn btn-pri btn-block mt" id="submit" disabled>
-        ${ic("plus",18)} Buat Permintaan
-      </button>
-      <div class="card card--warn card--tight mt">
-        <div class="row" style="gap:10px;align-items:flex-start">
-          <span style="color:#B45309;flex:none">${ic("info",18,2.2)}</span>
-          <div style="font-size:12.5px;line-height:1.55;color:var(--text)">
-            Saldo bertambah setelah server memverifikasi pembayaran melalui webhook penyedia.
-          </div>
-        </div>
-      </div>
+      <button class="btn btn-pri btn-block mt" id="submit" disabled>${ic("plus",18)} Top Up Sekarang</button>
     </div>
 
     <div class="sec-h"><h2>Riwayat Top Up</h2></div>
-    <div id="list">${skeletonList(2)}</div>
-  `;
+    <div id="list">${skeletonList(2)}</div>`;
   bindNavHead(root);
 
   $$("#quick .chip", root).forEach(c => c.onclick = () => {
@@ -1490,41 +1267,52 @@ ROUTES.topup = (root) => {
     $$("#quick .chip", root).forEach(x => x.setAttribute("aria-pressed", x === c));
     validate();
   });
-  function validate(){
+  const validate = () => {
     const v = Number($("#amount", root).value || 0);
     $("#submit", root).disabled = !(v >= 10000 && v <= 10_000_000);
     $("#err", root).textContent = "";
-  }
+  };
   $("#amount", root).addEventListener("input", validate);
 
   $("#submit", root).onclick = async () => {
     const v = Number($("#amount", root).value || 0);
     if(!(v >= 10000 && v <= 10_000_000)) return;
-    const btn = $("#submit", root);
-    btn.disabled = true;
+
+    const ok = await confirmDlg("Konfirmasi Top Up",
+      `Top Up ${rp(v)} via ${$("#method", root).value}? (Mode Demo — saldo langsung ditambahkan)`, "Lanjut");
+    if(!ok) return;
+    try { await requirePin("PIN Top Up"); }
+    catch(e){ if(e.message === "__cancel__") return; $("#err", root).innerHTML = `${ic("alert",14,2.2)}<span>${esc(e.message)}</span>`; return; }
+
+    const btn = $("#submit", root); btn.disabled = true;
     const prev = btn.innerHTML; btn.innerHTML = `${ic("refresh",16)} Memproses…`;
+
     try {
-      const res = await httpsCallable(fns, "createTopupRequest")({
-        amount: v, method: $("#method", root).value, idempotencyKey: uuid()
-      });
-      const d = res.data || {};
-      const m = modal(`
-        <h2>Instruksi Pembayaran</h2>
-        <div class="card card--flat">
-          <div class="kv"><span>Referensi</span><span>${esc(d.referenceNumber||"—")}</span></div>
-          <div class="kv"><span>Nominal</span><span>${rp(d.amount||v)}</span></div>
-          <div class="kv"><span>Metode</span><span>${esc((d.method||"").toUpperCase())}</span></div>
-          ${d.expiresAt?`<div class="kv"><span>Kedaluwarsa</span><span>${esc(fdateLong(d.expiresAt))}</span></div>`:""}
-        </div>
-        <div class="card card--warn card--tight mt">
-          <div class="row" style="gap:10px;align-items:flex-start">
-            <span style="color:#B45309;flex:none">${ic("info",18,2.2)}</span>
-            <div style="font-size:13px;line-height:1.6;color:var(--text)">${esc(d.instructions||"Menunggu integrasi penyedia.")}</div>
-          </div>
-        </div>
-        <button class="btn btn-pri btn-block mt-l" id="close">Mengerti</button>
-      `);
-      m.$("#close").onclick = () => m.close();
+      const curSnap = await get(ref(db, `wallets/${state.user.uid}`));
+      const cur = curSnap.val().availableBalance || 0;
+      const refNum = "TOP" + Math.random().toString(36).slice(2,10).toUpperCase();
+      const now = Date.now();
+      const txId = uuid();
+
+      const updates = {};
+      updates[`wallets/${state.user.uid}/availableBalance`] = cur + v;
+      updates[`wallets/${state.user.uid}/updatedAt`] = now;
+      updates[`transactions/${txId}`] = {
+        userId: state.user.uid, senderId: "TOPUP", receiverId: state.user.uid,
+        transactionType: "TOPUP", amount: v, fee: 0, status: "success",
+        createdAt: now, updatedAt: now, referenceNumber: refNum,
+        description: "Top Up via " + $("#method", root).value,
+        idempotencyKey: uuid()
+      };
+      updates[`notifications/${state.user.uid}/${uuid()}`] = {
+        title:"Top Up berhasil", message:`Saldo ditambahkan ${rp(v)}`,
+        type:"topup", read:false, createdAt: now, link:"activity"
+      };
+      await update(ref(db), updates);
+
+      toast("Top Up berhasil", "ok");
+      $("#amount", root).value = "";
+      validate();
       loadHistory();
     } catch(e){
       $("#err", root).innerHTML = `${ic("alert",14,2.2)}<span>${esc(errMsg(e.code, e.message))}</span>`;
@@ -1534,46 +1322,45 @@ ROUTES.topup = (root) => {
   async function loadHistory(){
     const el = $("#list", root);
     try {
-      const snap = await get(query(ref(db,"paymentRequests"),
-        orderByChild("userId"), equalTo(state.user.uid), limitToLast(15)));
+      const snap = await get(query(ref(db,"transactions"),
+        orderByChild("userId"), equalTo(state.user.uid), limitToLast(80)));
       const arr = []; snap.forEach(c => arr.push({ id:c.key, ...c.val() }));
-      arr.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-      if(!arr.length){
-        el.innerHTML = emptyState("plus", "Belum ada Top Up",
-          "Permintaan Top Up Anda akan muncul di sini.");
+      const tops = arr.filter(t => t.transactionType === "TOPUP")
+        .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,10);
+      if(!tops.length){
+        el.innerHTML = emptyState("plus","Belum ada Top Up","Riwayat Top Up Anda akan muncul di sini.");
         return;
       }
-      const cls = { paid:"ok", pending:"warn", expired:"err", failed:"err", cancelled:"err" };
-      el.innerHTML = `<div class="list">${arr.map(p => `
-        <div class="item item--no-interact">
-          <div class="item__ico ${p.status==='paid'?'in':'pending'}">${ic("plus",18)}</div>
-          <div class="item__body">
-            <div class="item__t">${rp(p.amount||0)}</div>
-            <div class="item__s">${esc((p.method||p.provider||"—").toUpperCase())} · ${esc(fdate(p.createdAt))}</div>
-          </div>
-          <span class="bdg ${cls[p.status]||""}">${esc(p.status||"—")}</span>
-        </div>`).join("")}</div>`;
+      el.innerHTML = `<div class="list">${tops.map(t => txItemHTML(t)).join("")}</div>`;
+      el.querySelectorAll("[data-tx]").forEach(x => x.onclick = () => showTxDetail(x.dataset.tx));
     } catch(e){
-      el.innerHTML = errState(errMsg(e.code, e.message), "retryTopup");
-      $("#retryTopup", el)?.addEventListener("click", loadHistory);
+      el.innerHTML = emptyState("alert","Gagal memuat", errMsg(e.code, e.message));
     }
   }
   loadHistory();
 };
 
 /* =========================================================
-   ROUTE: WITHDRAW
+   ROUTE: WITHDRAW (simulasi — debit langsung)
 ========================================================= */
 ROUTES.withdraw = (root) => {
   root.innerHTML = `
     ${navHead("Tarik Dana")}
+    <div class="banner">
+      <span class="banner__ic">${ic("info",18,2.2)}</span>
+      <div>
+        <div class="banner__t">Mode Demo</div>
+        <div class="banner__d">Penarikan diproses instan tanpa penyedia. Untuk produksi, integrasikan bank/payout API.</div>
+      </div>
+    </div>
+
     <div class="card">
       <div class="field">
         <label>Bank Tujuan</label>
-        <select class="inp inp-select" id="bank">
-          <option value="bca">BCA</option><option value="bni">BNI</option>
-          <option value="bri">BRI</option><option value="mandiri">Mandiri</option>
-          <option value="permata">Permata</option><option value="cimb">CIMB Niaga</option>
+        <select class="inp" id="bank">
+          <option value="BCA">BCA</option><option value="BNI">BNI</option>
+          <option value="BRI">BRI</option><option value="MANDIRI">Mandiri</option>
+          <option value="PERMATA">Permata</option><option value="CIMB">CIMB Niaga</option>
         </select>
       </div>
       <div class="field">
@@ -1581,7 +1368,7 @@ ROUTES.withdraw = (root) => {
         <input class="inp" id="acct" inputmode="numeric" maxlength="20" placeholder="1234567890">
       </div>
       <div class="field">
-        <label>Nama Pemilik Rekening</label>
+        <label>Nama Pemilik</label>
         <input class="inp" id="owner" maxlength="40" placeholder="Sesuai buku tabungan">
       </div>
       <div class="field">
@@ -1590,10 +1377,8 @@ ROUTES.withdraw = (root) => {
       </div>
       <div id="summary"></div>
       <div class="err-line" id="err"></div>
-      <button class="btn btn-pri btn-block" id="submit" disabled>
-        ${ic("shield",18)} Ajukan Penarikan
-      </button>
-      <div class="card card--warn card--tight mt">
+      <button class="btn btn-pri btn-block" id="submit" disabled>${ic("shield",18)} Ajukan Penarikan</button>
+      <div class="card card--flat mt">
         <div class="row" style="gap:10px;align-items:flex-start">
           <span style="color:#B45309;flex:none">${ic("shield",18,2.2)}</span>
           <div style="font-size:12.5px;line-height:1.55;color:var(--text)">
@@ -1604,12 +1389,11 @@ ROUTES.withdraw = (root) => {
     </div>
 
     <div class="sec-h"><h2>Riwayat Penarikan</h2></div>
-    <div id="list">${skeletonList(2)}</div>
-  `;
+    <div id="list">${skeletonList(2)}</div>`;
   bindNavHead(root);
   $("#acct", root).addEventListener("input", e => e.target.value = e.target.value.replace(/\D/g,"").slice(0,20));
 
-  function validate(){
+  const validate = () => {
     const v = Number($("#amount", root).value || 0);
     const bal = state.wallet?.availableBalance || 0;
     const ok = v >= 10000 && v <= 10_000_000 && v <= bal;
@@ -1626,7 +1410,7 @@ ROUTES.withdraw = (root) => {
       </div>
       <div class="hint mt-s">Saldo tersedia: ${rp(bal)}</div>` : "";
     $("#submit", root).disabled = !ok;
-  }
+  };
   ["#amount","#acct","#owner","#bank"].forEach(sel => {
     $(sel, root).addEventListener("input", validate);
     $(sel, root).addEventListener("change", validate);
@@ -1643,25 +1427,46 @@ ROUTES.withdraw = (root) => {
     if(v > (state.wallet?.availableBalance || 0)){ err.innerHTML = `${ic("alert",14,2.2)}<span>Saldo tidak cukup.</span>`; return; }
 
     const ok = await confirmDlg("Konfirmasi Penarikan",
-      `Tarik ${rp(v)} ke ${bank.toUpperCase()} a.n. ${owner}?`, "Lanjut");
+      `Tarik ${rp(v)} ke ${bank} a.n. ${owner}?`, "Lanjut");
     if(!ok) return;
     try { await requirePin("PIN Penarikan"); }
-    catch(e){
-      if(e.message === "__cancel__") return;
-      err.innerHTML = `${ic("alert",14,2.2)}<span>${esc(e.message)}</span>`;
-      return;
-    }
+    catch(e){ if(e.message === "__cancel__") return; err.innerHTML = `${ic("alert",14,2.2)}<span>${esc(e.message)}</span>`; return; }
 
     const btn = $("#submit", root); btn.disabled = true;
     const prev = btn.innerHTML; btn.innerHTML = `${ic("refresh",16)} Memproses…`;
+
     try {
-      await httpsCallable(fns, "requestWithdrawal")({
-        amount: v, bank, accountNumber: acct, accountName: owner, idempotencyKey: uuid()
-      });
-      toast("Permintaan penarikan dibuat", "ok");
+      const curSnap = await get(ref(db, `wallets/${state.user.uid}`));
+      const cur = curSnap.val().availableBalance || 0;
+      if(cur < v) throw new Error("Saldo tidak cukup.");
+      const refNum = "WD" + Math.random().toString(36).slice(2,10).toUpperCase();
+      const now = Date.now();
+      const txId = uuid(), wdId = uuid();
+
+      const updates = {};
+      updates[`wallets/${state.user.uid}/availableBalance`] = cur - v;
+      updates[`wallets/${state.user.uid}/updatedAt`] = now;
+      updates[`transactions/${txId}`] = {
+        userId: state.user.uid, senderId: state.user.uid, receiverId: "WITHDRAW",
+        transactionType: "WITHDRAWAL", amount: v, fee: 0, status: "success",
+        createdAt: now, updatedAt: now, referenceNumber: refNum,
+        description: `Penarikan ke ${bank} ••${acct.slice(-4)}`,
+        idempotencyKey: uuid()
+      };
+      updates[`withdrawals/${wdId}`] = {
+        withdrawalId: wdId, userId: state.user.uid, amount: v, fee: 0,
+        bank, accountNumber: acct, accountName: owner, status: "completed",
+        referenceNumber: refNum, createdAt: now, updatedAt: now
+      };
+      updates[`notifications/${state.user.uid}/${uuid()}`] = {
+        title:"Penarikan berhasil", message:`${rp(v)} dikirim ke ${bank} ••${acct.slice(-4)}`,
+        type:"withdrawal", read:false, createdAt: now, link:"activity"
+      };
+      await update(ref(db), updates);
+
+      toast("Penarikan berhasil", "ok");
       $("#amount", root).value = "";
-      validate();
-      loadHistory();
+      validate(); loadHistory();
     } catch(e){
       err.innerHTML = `${ic("alert",14,2.2)}<span>${esc(errMsg(e.code, e.message))}</span>`;
     } finally { btn.disabled = false; btn.innerHTML = prev; }
@@ -1675,24 +1480,20 @@ ROUTES.withdraw = (root) => {
       const arr = []; snap.forEach(c => arr.push({ id:c.key, ...c.val() }));
       arr.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
       if(!arr.length){
-        el.innerHTML = emptyState("arrowD", "Belum ada penarikan",
-          "Riwayat penarikan akan muncul di sini.");
+        el.innerHTML = emptyState("arrowD","Belum ada penarikan","Riwayat penarikan akan muncul di sini.");
         return;
       }
-      const cls = { paid:"ok", completed:"ok", processing:"warn", pending:"warn", failed:"err", rejected:"err" };
+      const cls = { completed:"ok", paid:"ok", processing:"warn", pending:"warn", failed:"err" };
       el.innerHTML = `<div class="list">${arr.map(w => `
-        <div class="item item--no-interact">
+        <div class="item item--no">
           <div class="item__ico pending">${ic("arrowD",18)}</div>
           <div class="item__body">
             <div class="item__t">${rp(w.amount||0)}</div>
-            <div class="item__s">${esc((w.bank||"").toUpperCase())} ••${esc((w.accountNumber||"").slice(-4))} · ${esc(fdate(w.createdAt))}</div>
+            <div class="item__s">${esc(w.bank||"")} ••${esc((w.accountNumber||"").slice(-4))} · ${fdate(w.createdAt)}</div>
           </div>
           <span class="bdg ${cls[w.status]||""}">${esc(w.status||"—")}</span>
         </div>`).join("")}</div>`;
-    } catch(e){
-      el.innerHTML = errState(errMsg(e.code, e.message), "retryWd");
-      $("#retryWd", el)?.addEventListener("click", loadHistory);
-    }
+    } catch(e){ el.innerHTML = emptyState("alert","Gagal memuat", errMsg(e.code, e.message)); }
   }
   loadHistory();
 };
@@ -1705,40 +1506,34 @@ ROUTES.pay = (root) => {
     <div style="font-weight:800;font-size:22px;letter-spacing:-.4px;margin:0 4px 16px">Bayar</div>
 
     <div class="qgrid">
-      <button class="qbtn" data-go="qris-scan">
-        <span class="qbtn__ico">${ic("camera",18)}</span>Scan QR
-      </button>
-      <button class="qbtn" data-go="qris-mine">
-        <span class="qbtn__ico">${ic("scan",18)}</span>QR Saya
-      </button>
-      <button class="qbtn" data-go="merchant">
-        <span class="qbtn__ico">${ic("card",18)}</span>Merchant
-      </button>
-      <button class="qbtn" data-go="help">
-        <span class="qbtn__ico">${ic("help",18)}</span>Bantuan
-      </button>
+      <button class="qbtn" data-go="qris-scan"><span class="qbtn__ico">${ic("camera",18)}</span>Scan QR</button>
+      <button class="qbtn" data-go="qris-mine"><span class="qbtn__ico">${ic("scan",18)}</span>QR Saya</button>
+      <button class="qbtn" data-go="merchant"><span class="qbtn__ico">${ic("card",18)}</span>Merchant</button>
+      <button class="qbtn" data-go="help"><span class="qbtn__ico">${ic("help",18)}</span>Bantuan</button>
+    </div>
+
+    <div class="banner mt">
+      <span class="banner__ic">${ic("info",18,2.2)}</span>
+      <div><div class="banner__t">Mode Demo</div>
+        <div class="banner__d">Pembayaran merchant di sini bersifat simulasi (langsung debit). Untuk produksi, butuh verifikasi server.</div></div>
     </div>
 
     <div class="sec-h"><h2>Bayar Merchant</h2></div>
     <div class="card">
       <div class="field">
-        <label>Kode / ID Merchant</label>
-        <input class="inp" id="code" placeholder="INV-XXXX" maxlength="32">
+        <label>Nama Merchant</label>
+        <input class="inp" id="code" placeholder="contoh: Kopi Kenangan" maxlength="40">
       </div>
       <div class="field">
         <label>Nominal</label>
         <input class="inp" id="amount" type="number" inputmode="numeric" min="1000" step="500" placeholder="0">
       </div>
       <div class="err-line" id="err"></div>
-      <button class="btn btn-pri btn-block" id="submit">
-        ${ic("card",18)} Bayar Sekarang
-      </button>
-      <div class="hint mt">Merchant diverifikasi server sebelum pembayaran diproses.</div>
+      <button class="btn btn-pri btn-block" id="submit">${ic("card",18)} Bayar Sekarang</button>
     </div>
 
     <div class="sec-h"><h2>Pembayaran Terakhir</h2></div>
-    <div id="list">${skeletonList(3)}</div>
-  `;
+    <div id="list">${skeletonList(3)}</div>`;
 
   $$("[data-go]", root).forEach(b => b.onclick = () => {
     const g = b.dataset.go;
@@ -1753,25 +1548,44 @@ ROUTES.pay = (root) => {
     const v = Number($("#amount", root).value || 0);
     const err = $("#err", root);
     err.innerHTML = "";
-    if(!code){ err.innerHTML = `${ic("alert",14,2.2)}<span>Masukkan kode merchant.</span>`; return; }
+    if(!code){ err.innerHTML = `${ic("alert",14,2.2)}<span>Masukkan nama merchant.</span>`; return; }
     if(!(v >= 1000 && v <= 10_000_000)){ err.innerHTML = `${ic("alert",14,2.2)}<span>Nominal tidak valid.</span>`; return; }
     if(v > (state.wallet?.availableBalance || 0)){ err.innerHTML = `${ic("alert",14,2.2)}<span>Saldo tidak cukup.</span>`; return; }
 
-    const ok = await confirmDlg("Konfirmasi Pembayaran", `Bayar ${rp(v)} ke merchant ${code}?`, "Lanjut");
+    const ok = await confirmDlg("Konfirmasi Pembayaran", `Bayar ${rp(v)} ke "${code}"?`, "Lanjut");
     if(!ok) return;
     try { await requirePin("PIN Pembayaran"); }
-    catch(e){
-      if(e.message === "__cancel__") return;
-      err.innerHTML = `${ic("alert",14,2.2)}<span>${esc(e.message)}</span>`;
-      return;
-    }
+    catch(e){ if(e.message === "__cancel__") return; err.innerHTML = `${ic("alert",14,2.2)}<span>${esc(e.message)}</span>`; return; }
 
     const btn = $("#submit", root); btn.disabled = true;
     const prev = btn.innerHTML; btn.innerHTML = `${ic("refresh",16)} Memproses…`;
+
     try {
-      const res = await httpsCallable(fns, "payMerchant")({ code, amount: v, idempotencyKey: uuid() });
+      const curSnap = await get(ref(db, `wallets/${state.user.uid}`));
+      const cur = curSnap.val().availableBalance || 0;
+      if(cur < v) throw new Error("Saldo tidak cukup.");
+      const refNum = "PAY" + Math.random().toString(36).slice(2,10).toUpperCase();
+      const now = Date.now();
+      const txId = uuid();
+
+      const updates = {};
+      updates[`wallets/${state.user.uid}/availableBalance`] = cur - v;
+      updates[`wallets/${state.user.uid}/updatedAt`] = now;
+      updates[`transactions/${txId}`] = {
+        userId: state.user.uid, senderId: state.user.uid, receiverId: code,
+        transactionType: "PAYMENT", amount: v, fee: 0, status: "success",
+        createdAt: now, updatedAt: now, referenceNumber: refNum,
+        description: "Pembayaran ke " + code, idempotencyKey: uuid()
+      };
+      updates[`notifications/${state.user.uid}/${uuid()}`] = {
+        title:"Pembayaran berhasil", message:`${rp(v)} ke ${code}`,
+        type:"payment", read:false, createdAt: now, link:"activity"
+      };
+      await update(ref(db), updates);
+
       toast("Pembayaran berhasil", "ok");
-      if(res.data?.transactionId) setTimeout(() => showTxDetail(res.data.transactionId), 300);
+      $("#code", root).value = ""; $("#amount", root).value = "";
+      setTimeout(() => showTxDetail(txId), 300);
       loadHistory();
     } catch(e){
       err.innerHTML = `${ic("alert",14,2.2)}<span>${esc(errMsg(e.code, e.message))}</span>`;
@@ -1782,21 +1596,17 @@ ROUTES.pay = (root) => {
     const el = $("#list", root);
     try {
       const snap = await get(query(ref(db,"transactions"),
-        orderByChild("userId"), equalTo(state.user.uid), limitToLast(50)));
+        orderByChild("userId"), equalTo(state.user.uid), limitToLast(80)));
       const arr = []; snap.forEach(c => arr.push({ id:c.key, ...c.val() }));
       const pays = arr.filter(t => t.transactionType === "PAYMENT")
         .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,10);
       if(!pays.length){
-        el.innerHTML = emptyState("card", "Belum ada pembayaran",
-          "Pembayaran ke merchant akan tercatat di sini.");
+        el.innerHTML = emptyState("card","Belum ada pembayaran","Pembayaran merchant akan tercatat di sini.");
         return;
       }
       el.innerHTML = `<div class="list">${pays.map(t => txItemHTML(t)).join("")}</div>`;
       el.querySelectorAll("[data-tx]").forEach(x => x.onclick = () => showTxDetail(x.dataset.tx));
-    } catch(e){
-      el.innerHTML = errState(errMsg(e.code, e.message), "retryPay");
-      $("#retryPay", el)?.addEventListener("click", loadHistory);
-    }
+    } catch(e){ el.innerHTML = emptyState("alert","Gagal memuat", errMsg(e.code, e.message)); }
   }
   loadHistory();
 };
@@ -1818,84 +1628,109 @@ ROUTES.qris = (root) => {
   const showScan = () => {
     panel.innerHTML = `
       <div class="card">
-        <div class="hint">Aplikasi meminta izin kamera hanya saat halaman ini dibuka.</div>
+        <div class="hint">Kamera diminta hanya saat halaman ini aktif.</div>
         <div style="margin-top:12px;position:relative">
           <video id="cam" playsinline muted autoplay></video>
-          <div id="camOverlay" style="position:absolute;inset:0;display:grid;place-items:center;border-radius:16px;background:rgba(10,20,40,.35);color:#fff;font-size:13px"></div>
+          <div id="camOv" style="position:absolute;inset:0;display:grid;place-items:center;border-radius:16px;background:rgba(10,20,40,.35);color:#fff;font-size:13px">Meminta izin kamera…</div>
         </div>
-        <div class="row mt">
-          <button class="btn btn-ghost btn-sm" id="stopCam">${ic("x",16,2.2)} Matikan Kamera</button>
+        <div class="row mt"><button class="btn btn-ghost btn-sm" id="stopCam">${ic("x",16,2.2)} Matikan Kamera</button></div>
+
+        <div class="card card--flat mt">
+          <div class="hint" style="margin:0">Karena kami tidak memiliki backend QRIS, masukkan nominal manual untuk simulasi.</div>
         </div>
+
         <div class="field mt">
-          <label>Atau tempel payload QRIS</label>
-          <input class="inp" id="payload" placeholder="0002010102…">
+          <label>Nama Merchant</label>
+          <input class="inp" id="mname" placeholder="contoh: Warung Bu Tini" maxlength="40">
+        </div>
+        <div class="field">
+          <label>Nominal</label>
+          <input class="inp" id="mamt" type="number" inputmode="numeric" min="1000" step="500" placeholder="0">
         </div>
         <div class="err-line" id="err"></div>
-        <button class="btn btn-pri btn-block" id="submit">${ic("shield",18)} Proses Pembayaran</button>
-        <div class="hint mt">Pembayaran diverifikasi server sebelum dana dipotong.</div>
+        <button class="btn btn-pri btn-block" id="submit">${ic("shield",18)} Bayar</button>
       </div>`;
 
     let stream = null;
     const video = $("#cam", panel);
-    const overlay = $("#camOverlay", panel);
-
+    const overlay = $("#camOv", panel);
     (async () => {
       try {
-        overlay.textContent = "Meminta izin kamera…";
         stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:{ideal:"environment"} }, audio:false });
         video.srcObject = stream;
         await video.play();
         overlay.style.display = "none";
-      } catch(e){
-        overlay.textContent = "Kamera tidak tersedia. Gunakan input manual.";
-      }
+      } catch(e){ overlay.textContent = "Kamera tidak tersedia."; }
     })();
-
     const cleanup = () => stream?.getTracks().forEach(t => t.stop());
-    $("#stopCam", panel).onclick = () => { cleanup(); video.srcObject = null; overlay.style.display="grid"; overlay.textContent = "Kamera dimatikan."; };
+    $("#stopCam", panel).onclick = () => { cleanup(); video.srcObject = null; overlay.style.display = "grid"; overlay.textContent = "Kamera dimatikan."; };
     window.addEventListener("hashchange", cleanup, { once:true });
 
     $("#submit", panel).onclick = async () => {
-      const payload = $("#payload", panel).value.trim();
+      const mname = $("#mname", panel).value.trim();
+      const v = Number($("#mamt", panel).value || 0);
       const err = $("#err", panel);
-      if(!payload){ err.innerHTML = `${ic("alert",14,2.2)}<span>Masukkan payload QRIS.</span>`; return; }
+      err.innerHTML = "";
+      if(!mname){ err.innerHTML = `${ic("alert",14,2.2)}<span>Masukkan nama merchant.</span>`; return; }
+      if(!(v >= 1000 && v <= 10_000_000)){ err.innerHTML = `${ic("alert",14,2.2)}<span>Nominal tidak valid.</span>`; return; }
+      if(v > (state.wallet?.availableBalance || 0)){ err.innerHTML = `${ic("alert",14,2.2)}<span>Saldo tidak cukup.</span>`; return; }
+
+      const ok = await confirmDlg("Konfirmasi QRIS", `Bayar ${rp(v)} ke "${mname}"?`, "Lanjut");
+      if(!ok) return;
+      try { await requirePin("PIN QRIS"); }
+      catch(e){ if(e.message === "__cancel__") return; err.innerHTML = `${ic("alert",14,2.2)}<span>${esc(e.message)}</span>`; return; }
+
       const btn = $("#submit", panel); btn.disabled = true;
-      const prev = btn.innerHTML; btn.innerHTML = `${ic("refresh",16)} Memproses…`;
       try {
-        const res = await httpsCallable(fns, "payQris")({ payload, idempotencyKey: uuid() });
+        const curSnap = await get(ref(db, `wallets/${state.user.uid}`));
+        const cur = curSnap.val().availableBalance || 0;
+        if(cur < v) throw new Error("Saldo tidak cukup.");
+        const refNum = "QRIS" + Math.random().toString(36).slice(2,10).toUpperCase();
+        const now = Date.now();
+        const txId = uuid();
+        const updates = {};
+        updates[`wallets/${state.user.uid}/availableBalance`] = cur - v;
+        updates[`wallets/${state.user.uid}/updatedAt`] = now;
+        updates[`transactions/${txId}`] = {
+          userId: state.user.uid, senderId: state.user.uid, receiverId: mname,
+          transactionType: "PAYMENT", amount: v, fee: 0, status: "success",
+          createdAt: now, updatedAt: now, referenceNumber: refNum,
+          description: "QRIS - " + mname, idempotencyKey: uuid()
+        };
+        updates[`notifications/${state.user.uid}/${uuid()}`] = {
+          title:"Pembayaran QRIS berhasil", message:`${rp(v)} ke ${mname}`,
+          type:"payment", read:false, createdAt: now, link:"activity"
+        };
+        await update(ref(db), updates);
         toast("Pembayaran QRIS berhasil", "ok");
-        if(res.data?.transactionId) setTimeout(() => showTxDetail(res.data.transactionId), 300);
+        setTimeout(() => showTxDetail(txId), 300);
       } catch(e){
         err.innerHTML = `${ic("alert",14,2.2)}<span>${esc(errMsg(e.code, e.message))}</span>`;
-      } finally { btn.disabled = false; btn.innerHTML = prev; }
+      } finally { btn.disabled = false; }
     };
   };
 
   const showMine = () => {
+    const accountId = state.profile?.accountId || "—";
+    const name = state.profile?.displayName || "Pengguna";
     panel.innerHTML = `
       <div class="card">
-        <div class="hint">Tampilkan kode QR untuk menerima pembayaran. Kode dibuat oleh server.</div>
-        <button class="btn btn-pri btn-block mt" id="gen">
-          ${ic("refresh",18)} Buat / Perbarui Kode
-        </button>
-        <div id="qrBox" class="mt"></div>
+        <div class="hint">Bagikan QR ini agar orang lain dapat mentransfer ke Anda menggunakan ID akun.</div>
+        <div class="card card--flat mt" style="text-align:center;padding:22px">
+          <div id="qr" style="background:#fff;padding:16px;border-radius:16px;display:inline-block"></div>
+          <div style="font-weight:700;font-size:15px;margin-top:14px">${esc(name)}</div>
+          <div class="hint" style="margin-top:2px">ID Akun</div>
+          <div style="font-weight:800;letter-spacing:.15em;font-size:22px;margin-top:2px">${esc(accountId)}</div>
+          <button class="btn btn-ghost btn-sm mt" id="copy">${ic("copy",14,2.2)} Salin ID</button>
+        </div>
       </div>`;
-    $("#gen", panel).onclick = async () => {
-      const btn = $("#gen", panel); btn.disabled = true;
-      const prev = btn.innerHTML; btn.innerHTML = `${ic("refresh",16)} Memuat…`;
-      try {
-        const res = await httpsCallable(fns, "createQrisCode")({ idempotencyKey: uuid() });
-        const d = res.data || {};
-        $("#qrBox", panel).innerHTML = `
-          <div class="card card--flat" style="text-align:center">
-            ${d.imageUrl ? `<img src="${esc(d.imageUrl)}" alt="QR" style="max-width:260px;margin:0 auto 14px;border-radius:12px;display:block">` : ""}
-            <div class="kv"><span>Referensi</span><span>${esc(d.reference||"—")}</span></div>
-            ${d.expiresAt?`<div class="kv"><span>Berlaku s/d</span><span>${esc(fdateLong(d.expiresAt))}</span></div>`:""}
-          </div>`;
-      } catch(e){
-        $("#qrBox", panel).innerHTML = errState(errMsg(e.code, e.message));
-      } finally { btn.disabled = false; btn.innerHTML = prev; }
+    const c = $("#copy", panel);
+    if(c) c.onclick = async () => {
+      try { await navigator.clipboard.writeText(accountId); toast("ID disalin","ok"); }
+      catch { toast("Gagal menyalin","err"); }
     };
+    // Minimal QR — pakai library inline kecil untuk encode ID
+    renderMiniQR($("#qr", panel), accountId);
   };
 
   $$(".pill", root).forEach(b => b.onclick = () => {
@@ -1905,45 +1740,47 @@ ROUTES.qris = (root) => {
   showScan();
 };
 
+/* Mini QR encoder — menampilkan ID sebagai QR via Google Charts (butuh internet) */
+function renderMiniQR(el, text){
+  if(!el) return;
+  const url = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=" + encodeURIComponent(text);
+  const img = document.createElement("img");
+  img.src = url; img.alt = "QR";
+  img.style.width = "220px"; img.style.height = "220px"; img.style.display = "block";
+  img.onerror = () => { el.innerHTML = `<div class="hint" style="max-width:200px">${esc(text)}</div>`; };
+  el.innerHTML = "";
+  el.appendChild(img);
+}
+
 /* =========================================================
    ROUTE: ACTIVITY
 ========================================================= */
 ROUTES.activity = (root) => {
   root.innerHTML = `
     <div style="font-weight:800;font-size:22px;letter-spacing:-.4px;margin:0 4px 16px">Aktivitas</div>
-
     <div class="card">
       <div class="g2">
-        <select class="inp inp-select" id="fType">
+        <select class="inp" id="fType">
           <option value="">Semua Jenis</option>
           <option value="TOPUP">Top Up</option>
           <option value="TRANSFER_IN">Transfer Masuk</option>
           <option value="TRANSFER_OUT">Transfer Keluar</option>
           <option value="PAYMENT">Pembayaran</option>
           <option value="WITHDRAWAL">Penarikan</option>
-          <option value="REFUND">Pengembalian</option>
-          <option value="FEE">Biaya</option>
         </select>
-        <select class="inp inp-select" id="fStatus">
+        <select class="inp" id="fStatus">
           <option value="">Semua Status</option>
           <option value="success">Berhasil</option>
           <option value="pending">Pending</option>
-          <option value="processing">Diproses</option>
           <option value="failed">Gagal</option>
-          <option value="expired">Kedaluwarsa</option>
         </select>
       </div>
       <div class="field mt">
-        <div class="inp-wicon">
-          <span class="inp-wicon__ic">${ic("search",18)}</span>
-          <input class="inp" id="fRef" placeholder="Cari referensi…" maxlength="40">
-        </div>
+        <input class="inp" id="fRef" placeholder="Cari referensi…" maxlength="40">
       </div>
       <button class="btn btn-blue btn-block" id="apply">${ic("filter",16,2.2)} Terapkan Filter</button>
     </div>
-
-    <div id="list" class="mt">${skeletonList(4)}</div>
-  `;
+    <div id="list" class="mt">${skeletonList(4)}</div>`;
 
   const render = async () => {
     const el = $("#list", root);
@@ -1953,27 +1790,22 @@ ROUTES.activity = (root) => {
         orderByChild("userId"), equalTo(state.user.uid), limitToLast(300)));
       let arr = []; snap.forEach(c => arr.push({ id:c.key, ...c.val() }));
       arr.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-
-      const t = $("#fType", root).value;
-      const s = $("#fStatus", root).value;
-      const r = $("#fRef", root).value.trim().toLowerCase();
+      const t = $("#fType", root).value, s = $("#fStatus", root).value,
+            r = $("#fRef", root).value.trim().toLowerCase();
       arr = arr.filter(x => {
         if(t && x.transactionType !== t) return false;
         if(s && x.status !== s) return false;
         if(r && !String(x.referenceNumber||"").toLowerCase().includes(r)) return false;
         return true;
       });
-
       if(!arr.length){
-        el.innerHTML = emptyState("search", "Tidak ditemukan",
-          "Coba ubah filter atau kata kunci pencarian.");
+        el.innerHTML = emptyState("search","Tidak ditemukan","Coba ubah filter atau kata kunci.");
         return;
       }
       el.innerHTML = `<div class="list">${arr.map(t => txItemHTML(t)).join("")}</div>`;
       el.querySelectorAll("[data-tx]").forEach(x => x.onclick = () => showTxDetail(x.dataset.tx));
     } catch(e){
-      el.innerHTML = errState(errMsg(e.code, e.message), "retryAct");
-      $("#retryAct", el)?.addEventListener("click", render);
+      el.innerHTML = emptyState("alert","Gagal memuat", errMsg(e.code, e.message));
     }
   };
   $("#apply", root).onclick = render;
@@ -1995,8 +1827,7 @@ ROUTES.notifications = (root) => {
   const paint = () => {
     const el = $("#list", root);
     if(!state.notifs.length){
-      el.innerHTML = emptyState("bell", "Tidak ada notifikasi",
-        "Notifikasi transaksi & keamanan akan muncul di sini.");
+      el.innerHTML = emptyState("bell","Tidak ada notifikasi","Notifikasi transaksi & keamanan akan muncul di sini.");
       return;
     }
     el.innerHTML = `<div class="list">${state.notifs.map(n => `
@@ -2005,16 +1836,16 @@ ROUTES.notifications = (root) => {
           n.type === "transfer_in" ? "arrowDL" :
           n.type === "transfer_out" ? "arrowUR" :
           n.type === "withdrawal" ? "arrowD" :
+          n.type === "topup" ? "plus" :
           n.type === "security" ? "shield" :
           n.type === "payment" ? "card" : "bell", 18)}</div>
         <div class="item__body">
           <div class="item__t">${esc(n.title||"Notifikasi")}</div>
           <div class="item__s">${esc(n.message||"")}</div>
-          <div class="item__s" style="font-size:11.5px;opacity:.7">${esc(fdate(n.createdAt))}</div>
+          <div class="item__s" style="font-size:11.5px;opacity:.7">${fdate(n.createdAt)}</div>
         </div>
-        <button class="ibtn ibtn--plain" data-del="${esc(n.id)}" aria-label="Hapus">${ic("trash",16)}</button>
+        <button class="ibtn ibtn--plain" data-del="${esc(n.id)}">${ic("trash",16)}</button>
       </div>`).join("")}</div>`;
-
     el.querySelectorAll("[data-nid]").forEach(x => {
       x.onclick = async e => {
         if(e.target.closest("[data-del]")) return;
@@ -2029,9 +1860,8 @@ ROUTES.notifications = (root) => {
     el.querySelectorAll("[data-del]").forEach(x => {
       x.onclick = async e => {
         e.stopPropagation();
-        const nid = x.dataset.del;
         try {
-          await set(ref(db, `notifications/${state.user.uid}/${nid}`), null);
+          await set(ref(db, `notifications/${state.user.uid}/${x.dataset.del}`), null);
           toast("Notifikasi dihapus", "ok", 1500);
         } catch(e){ toast(errMsg(e.code, e.message), "err"); }
       };
@@ -2039,8 +1869,8 @@ ROUTES.notifications = (root) => {
   };
   paint();
 
-  const markAll = $("#markAll", root);
-  if(markAll) markAll.onclick = async () => {
+  const mk = $("#markAll", root);
+  if(mk) mk.onclick = async () => {
     const updates = {};
     state.notifs.filter(n => !n.read).forEach(n => {
       updates[`notifications/${state.user.uid}/${n.id}/read`] = true;
@@ -2056,59 +1886,56 @@ ROUTES.notifications = (root) => {
 ========================================================= */
 ROUTES.profile = (root) => {
   const { profile, user } = state;
-  const verif = user.emailVerified;
   const photo = user.photoURL;
   const initial = (profile?.displayName || user.email || "U").charAt(0).toUpperCase();
 
   root.innerHTML = `
     <div style="font-weight:800;font-size:22px;letter-spacing:-.4px;margin:0 4px 16px">Profil</div>
-
     <div class="card" style="display:flex;gap:14px;align-items:center">
-      <div style="width:60px;height:60px;border-radius:18px;flex:none;overflow:hidden;
-        background:linear-gradient(135deg,#3B82F6,#1E3A8A);color:#fff;
-        display:grid;place-items:center;font-weight:800;font-size:24px;box-shadow:0 10px 24px rgba(59,130,246,.28)">
-        ${photo ? `<img src="${esc(photo)}" alt="" style="width:100%;height:100%;object-fit:cover">` : esc(initial)}
+      <div style="width:60px;height:60px;border-radius:18px;flex:none;overflow:hidden;background:linear-gradient(135deg,#3B82F6,#1E3A8A);color:#fff;display:grid;place-items:center;font-weight:800;font-size:24px;box-shadow:0 10px 24px rgba(59,130,246,.28)">
+        ${photo?`<img src="${esc(photo)}" style="width:100%;height:100%;object-fit:cover">`:esc(initial)}
       </div>
       <div style="flex:1;min-width:0">
-        <div style="font-weight:700;font-size:16px;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-          ${esc(profile?.displayName||"Pengguna")}
-        </div>
-        <div class="hint" style="margin:2px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-          ${esc(user.email||"")}
-        </div>
+        <div style="font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(profile?.displayName||"Pengguna")}</div>
+        <div class="hint" style="margin:2px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(user.email||"")}</div>
         <div class="row" style="gap:6px;flex-wrap:wrap">
           <span class="bdg">${ic("shield",11,2.4)} ID ${esc(profile?.accountId||"—")}</span>
-          ${verif ? `<span class="bdg ok">${ic("check",11,2.6)} Terverifikasi</span>`
-                 : `<span class="bdg warn">Belum verifikasi</span>`}
+          <span class="bdg ok">${ic("check",11,2.6)} Google</span>
         </div>
       </div>
     </div>
 
-    ${!verif ? `
-      <div class="card card--warn">
-        <div class="row" style="gap:12px;align-items:flex-start">
-          <span style="color:#B45309;flex:none">${ic("mail",20)}</span>
-          <div style="flex:1">
-            <div style="font-weight:700;font-size:13.5px;letter-spacing:-.1px">Verifikasi Email</div>
-            <div class="hint" style="margin:4px 0 10px">Lengkapi verifikasi untuk meningkatkan keamanan akun.</div>
-            <button class="btn btn-blue btn-xs" id="sendVerif">Kirim Link Verifikasi</button>
-          </div>
-        </div>
-      </div>` : ""}
-
-    <div class="sec-h"><h2>Keamanan Akun</h2></div>
+    <div class="sec-h"><h2>Keamanan</h2></div>
     <div class="card card--flush">
-      ${menuItem("user","Ubah Nama","Nama yang ditampilkan","edit-name")}
-      ${menuItem("keypad","Ubah PIN Transaksi","PIN 6-digit untuk transaksi","change-pin")}
-      ${menuItem("shield","Keamanan","Sesi & proteksi akun","security")}
+      <button class="item" data-act="edit-name" type="button">
+        <div class="item__ico">${ic("user",18)}</div>
+        <div class="item__body"><div class="item__t">Ubah Nama</div><div class="item__s">Nama yang ditampilkan</div></div>
+        ${ic("chevR",18)}
+      </button>
+      <button class="item" data-act="change-pin" type="button">
+        <div class="item__ico">${ic("keypad",18)}</div>
+        <div class="item__body"><div class="item__t">Ubah PIN</div><div class="item__s">PIN 6-digit untuk transaksi</div></div>
+        ${ic("chevR",18)}
+      </button>
+      <button class="item" data-act="security" type="button">
+        <div class="item__ico">${ic("shield",18)}</div>
+        <div class="item__body"><div class="item__t">Status Keamanan</div><div class="item__s">Login & proteksi akun</div></div>
+        ${ic("chevR",18)}
+      </button>
     </div>
 
     <div class="sec-h"><h2>Aplikasi</h2></div>
     <div class="card card--flush">
-      ${menuItem("settings","Pengaturan","Tema, bahasa, privasi","settings")}
-      ${menuItem("help","Pusat Bantuan","FAQ & dukungan","help")}
-      ${menuItem("ticket","Pengaduan Saya","Tiket bantuan Anda","tickets")}
-      ${state.isAdmin ? menuItem("shield","Panel Admin","Hanya untuk admin","admin") : ""}
+      <button class="item" data-act="settings" type="button">
+        <div class="item__ico">${ic("settings",18)}</div>
+        <div class="item__body"><div class="item__t">Pengaturan</div><div class="item__s">Tema, notifikasi, informasi</div></div>
+        ${ic("chevR",18)}
+      </button>
+      <button class="item" data-act="help" type="button">
+        <div class="item__ico">${ic("help",18)}</div>
+        <div class="item__body"><div class="item__t">Pusat Bantuan</div><div class="item__s">FAQ & dukungan</div></div>
+        ${ic("chevR",18)}
+      </button>
     </div>
 
     <div class="sec-h"><h2>Akun</h2></div>
@@ -2118,36 +1945,9 @@ ROUTES.profile = (root) => {
         <div class="item__body"><div class="item__t" style="color:#B91C1C">Keluar</div></div>
         ${ic("chevR",18)}
       </button>
-      <button class="item" id="deleteBtn" type="button">
-        <div class="item__ico out">${ic("trash",18)}</div>
-        <div class="item__body"><div class="item__t" style="color:#B91C1C">Hapus Akun</div>
-          <div class="item__s">Tindakan permanen</div></div>
-        ${ic("chevR",18)}
-      </button>
     </div>
 
-    <div class="txt-c mt-l" style="color:var(--muted);font-size:12px;padding-bottom:20px">
-      Cazoo v1.0.0 · Dibuat dengan aman
-    </div>
-  `;
-
-  function menuItem(iconName, title, sub, act){
-    return `<button class="item" data-act="${act}" type="button">
-      <div class="item__ico">${ic(iconName,18)}</div>
-      <div class="item__body">
-        <div class="item__t">${esc(title)}</div>
-        ${sub?`<div class="item__s">${esc(sub)}</div>`:""}
-      </div>
-      ${ic("chevR",18)}
-    </button>`;
-  }
-
-  $("#sendVerif", root)?.addEventListener("click", async () => {
-    try {
-      await httpsCallable(fns, "sendVerificationEmail")();
-      toast("Email verifikasi dikirim", "ok");
-    } catch(e){ toast(errMsg(e.code, e.message), "err"); }
-  });
+    <div class="txt-c mt-l" style="color:var(--muted);font-size:12px;padding-bottom:20px">Cazoo v1.0.0 · Firebase Edition</div>`;
 
   $$("[data-act]", root).forEach(el => el.onclick = () => {
     const a = el.dataset.act;
@@ -2156,21 +1956,16 @@ ROUTES.profile = (root) => {
     else if(a === "security") openSecurity();
     else if(a === "settings") navigate("settings");
     else if(a === "help") navigate("help");
-    else if(a === "tickets") navigate("tickets");
-    else if(a === "admin") navigate("admin");
   });
   $("#logoutBtn", root).onclick = async () => {
     if(await confirmDlg("Keluar", "Anda yakin ingin keluar dari akun?", "Keluar")) signOut(auth);
   };
-  $("#deleteBtn", root).onclick = deleteAccount;
 
   function editName(){
     const m = modal(`
       <h2>Ubah Nama</h2>
-      <div class="field">
-        <label>Nama</label>
-        <input class="inp" id="name" value="${esc(profile?.displayName||"")}" maxlength="40">
-      </div>
+      <div class="field"><label>Nama</label>
+        <input class="inp" id="name" value="${esc(profile?.displayName||"")}" maxlength="40"></div>
       <div class="err-line" id="err"></div>
       <div class="g2 mt">
         <button class="btn btn-ghost" id="cancel">Batal</button>
@@ -2204,21 +1999,15 @@ ROUTES.profile = (root) => {
       <button class="btn btn-ghost btn-block mt" id="cancel">Batal</button>`);
 
     let val = "";
-    const title = m.$("#title");
-    const dots = m.$$("#dots .pin-dot");
-    const err = m.$("#err");
-    const okBtn = m.$("#kp button[data-k='ok']");
-
+    const title = m.$("#title"), dots = m.$$("#dots .pin-dot"),
+          err = m.$("#err"), okBtn = m.$("#kp button[data-k='ok']");
     const paint = () => {
       dots.forEach((d,i) => d.classList.toggle("filled", i < val.length));
       okBtn.disabled = val.length !== 6;
     };
-
-    const setStep = (s) => {
+    const setStep = s => {
       step = s; val = ""; paint();
-      if(s === "old") title.textContent = "Masukkan PIN Lama";
-      else if(s === "new") title.textContent = "PIN Baru";
-      else title.textContent = "Konfirmasi PIN Baru";
+      title.textContent = s === "old" ? "Masukkan PIN Lama" : s === "new" ? "PIN Baru" : "Konfirmasi PIN Baru";
       err.textContent = "";
     };
 
@@ -2230,40 +2019,26 @@ ROUTES.profile = (root) => {
       else if(k === "ok"){
         if(val.length !== 6) return;
         if(step === "old"){
-          oldPin = val;
-          // verify old pin
-          try {
-            await httpsCallable(fns, "verifyPin")({ pin: oldPin });
-            setStep("new");
-          } catch(e){
-            err.innerHTML = `${ic("alert",13,2.3)}<span>${esc(errMsg(e.code, e.message))}</span>`;
-            val = "";
+          try { await verifyPin(val); oldPin = val; setStep("new"); }
+          catch(e){ err.innerHTML = `${ic("alert",13,2.3)}<span>${esc(e.message)}</span>`; val=""; paint();
             dots.forEach(d => d.classList.add("err"));
-            setTimeout(() => dots.forEach(d => d.classList.remove("err")), 400);
-            paint();
-          }
+            setTimeout(() => dots.forEach(d => d.classList.remove("err")), 400); }
           return;
         }
         if(step === "new"){
           if(/^(\d)\1{5}$/.test(val) || ["123456","654321"].includes(val)){
-            err.textContent = "PIN terlalu mudah.";
-            val = ""; paint(); return;
+            err.textContent = "PIN terlalu mudah."; val = ""; paint(); return;
           }
           newPin = val; setStep("confirm"); return;
         }
         if(step === "confirm"){
-          if(val !== newPin){
-            err.textContent = "PIN tidak cocok.";
-            val = ""; paint(); return;
-          }
+          if(val !== newPin){ err.textContent = "PIN tidak cocok."; val=""; paint(); return; }
           try {
             const salt = randomSalt();
             const hash = await sha256Hex(salt + ":" + newPin);
-            await httpsCallable(fns, "changePin")({ oldPin, newPinHash: hash, newPinSalt: salt });
+            await update(ref(db, `users/${user.uid}`), { pinHash: hash, pinSalt: salt });
             m.close(); toast("PIN diubah", "ok");
-          } catch(e){
-            err.innerHTML = `${ic("alert",13,2.3)}<span>${esc(errMsg(e.code, e.message))}</span>`;
-          }
+          } catch(e){ err.innerHTML = `${ic("alert",13,2.3)}<span>${esc(errMsg(e.code, e.message))}</span>`; }
           return;
         }
       }
@@ -2271,75 +2046,24 @@ ROUTES.profile = (root) => {
       paint();
     };
     m.$("#cancel").onclick = () => m.close();
-    setStep("old");
+    setOpt();
+    function setOpt(){ setStep("old"); }
   }
 
   function openSecurity(){
     modal(`
-      <h2>Keamanan Akun</h2>
+      <h2>Status Keamanan</h2>
       <div class="kv"><span>Login</span><span>Google</span></div>
-      <div class="kv"><span>Email</span><span>${verif ? "Terverifikasi" : "Belum"}</span></div>
+      <div class="kv"><span>Email</span><span>${esc(user.email||"—")}</span></div>
       <div class="kv"><span>PIN Transaksi</span><span>Aktif</span></div>
-      <div class="kv"><span>Sesi</span><span>1 perangkat</span></div>
-      <div class="card card--warn card--tight mt">
+      <div class="kv"><span>UID</span><span style="font-size:11px;word-break:break-all">${esc(user.uid)}</span></div>
+      <div class="card card--flat mt">
         <div style="font-size:12.5px;line-height:1.6;color:var(--text)">
-          Akun Anda dilindungi oleh Google Sign-In dan PIN transaksi.
+          Akun Anda dilindungi Google Sign-In dan PIN transaksi 6-digit.
           Semua aksi sensitif diverifikasi ulang.
         </div>
       </div>
-      <button class="btn btn-ghost btn-block mt-l" id="ok">Tutup</button>
-    `).$("#ok").onclick = closeModal;
-  }
-
-  function deleteAccount(){
-    modal(`
-      <h2>Hapus Akun</h2>
-      <p class="hint" style="font-size:13.5px;line-height:1.6;color:var(--text);margin:0 0 16px">
-        Tindakan ini permanen. Pastikan saldo Anda sudah ditarik. Riwayat transaksi tetap tersimpan sesuai kebijakan.
-      </p>
-      <div class="field">
-        <label>Ketik "HAPUS AKUN" untuk konfirmasi</label>
-        <input class="inp" id="confirm" placeholder="HAPUS AKUN">
-      </div>
-      <div class="err-line" id="err"></div>
-      <div class="g2 mt">
-        <button class="btn btn-ghost" id="cancel">Batal</button>
-        <button class="btn btn-danger" id="ok">Hapus</button>
-      </div>
-    `).root &&
-    (() => {
-      const mm = modal(`<h2>Hapus Akun</h2>
-        <p class="hint" style="font-size:13.5px;line-height:1.6;color:var(--text);margin:0 0 16px">
-          Tindakan ini permanen. Ketik <b>HAPUS AKUN</b> untuk konfirmasi.
-        </p>
-        <div class="field">
-          <label>Konfirmasi</label>
-          <input class="inp" id="confirm">
-        </div>
-        <div class="err-line" id="err"></div>
-        <div class="g2 mt">
-          <button class="btn btn-ghost" id="cancel">Batal</button>
-          <button class="btn btn-danger" id="ok">Hapus</button>
-        </div>`);
-      mm.$("#cancel").onclick = () => mm.close();
-      mm.$("#ok").onclick = async () => {
-        if(mm.$("#confirm").value.trim() !== "HAPUS AKUN"){
-          mm.$("#err").innerHTML = `${ic("alert",13,2.3)}<span>Ketik "HAPUS AKUN" untuk konfirmasi.</span>`;
-          return;
-        }
-        try {
-          await update(ref(db, `users/${user.uid}`), { accountStatus: "deleted" });
-          await deleteUser(user);
-          toast("Akun dihapus", "ok");
-        } catch(e){
-          if(e.code === "auth/requires-recent-login"){
-            mm.$("#err").innerHTML = `${ic("alert",13,2.3)}<span>Login ulang untuk melanjutkan.</span>`;
-          } else {
-            mm.$("#err").innerHTML = `${ic("alert",13,2.3)}<span>${esc(errMsg(e.code, e.message))}</span>`;
-          }
-        }
-      };
-    })();
+      <button class="btn btn-pri btn-block mt-l" id="ok">Tutup</button>`).$("#ok").onclick = closeModal;
   }
 };
 
@@ -2352,15 +2076,15 @@ ROUTES.settings = (root) => {
 
     <div class="sec-h" style="margin-top:0"><h2>Tampilan</h2></div>
     <div class="card card--flush">
-      <div class="item item--no-interact">
+      <div class="item item--no">
         <div class="item__ico">${ic("moon",18)}</div>
         <div class="item__body"><div class="item__t">Tema</div><div class="item__s">Terang atau gelap</div></div>
-        <select class="inp inp-select" id="theme" style="width:auto;padding:8px 32px 8px 12px;font-size:13px">
+        <select class="inp" id="theme" style="width:auto;padding:8px 32px 8px 12px;font-size:13px">
           <option value="light">Terang</option>
           <option value="dark">Gelap</option>
         </select>
       </div>
-      <div class="item item--no-interact">
+      <div class="item item--no">
         <div class="item__ico">${ic("eye",18)}</div>
         <div class="item__body"><div class="item__t">Sembunyikan Saldo</div>
           <div class="item__s">Saldo otomatis tersembunyi</div></div>
@@ -2370,29 +2094,9 @@ ROUTES.settings = (root) => {
       </div>
     </div>
 
-    <div class="sec-h"><h2>Notifikasi</h2></div>
-    <div class="card card--flush">
-      <div class="item item--no-interact">
-        <div class="item__ico">${ic("bell",18)}</div>
-        <div class="item__body"><div class="item__t">Notifikasi Transaksi</div>
-          <div class="item__s">Info transfer, top up, pembayaran</div></div>
-        <label style="display:grid;place-items:center">
-          <input type="checkbox" id="notifTx" style="width:22px;height:22px;accent-color:var(--brand-3)">
-        </label>
-      </div>
-      <div class="item item--no-interact">
-        <div class="item__ico">${ic("shield",18)}</div>
-        <div class="item__body"><div class="item__t">Notifikasi Keamanan</div>
-          <div class="item__s">Login, perubahan PIN</div></div>
-        <label style="display:grid;place-items:center">
-          <input type="checkbox" id="notifSec" style="width:22px;height:22px;accent-color:var(--brand-3)">
-        </label>
-      </div>
-    </div>
-
     <div class="sec-h"><h2>Informasi</h2></div>
     <div class="card card--flush">
-      <div class="item item--no-interact">
+      <div class="item item--no">
         <div class="item__ico">${ic("info",18)}</div>
         <div class="item__body"><div class="item__t">Versi Aplikasi</div></div>
         <span class="bdg">1.0.0</span>
@@ -2407,19 +2111,11 @@ ROUTES.settings = (root) => {
         <div class="item__body"><div class="item__t">Kebijakan Privasi</div></div>
         ${ic("chevR",18)}
       </button>
-      <button class="item" data-legal="licenses" type="button">
-        <div class="item__ico">${ic("info",18)}</div>
-        <div class="item__body"><div class="item__t">Lisensi</div></div>
-        ${ic("chevR",18)}
-      </button>
     </div>
 
-    <button class="btn btn-danger btn-block mt-l" id="logout">
-      ${ic("logout",18)} Keluar Akun
-    </button>
-  `;
-  bindNavHead(root, () => navigate("profile"));
+    <button class="btn btn-danger btn-block mt-l" id="logout">${ic("logout",18)} Keluar Akun</button>`;
 
+  bindNavHead(root, () => navigate("profile"));
   $("#theme", root).value = state.theme;
   $("#theme", root).onchange = e => {
     state.theme = e.target.value;
@@ -2431,85 +2127,54 @@ ROUTES.settings = (root) => {
     state.hideBalance = e.target.checked;
     localStorage.setItem("cazoo.hideBal", e.target.checked ? "1" : "0");
   };
-  $("#notifTx", root).checked = localStorage.getItem("cazoo.notifTx") !== "0";
-  $("#notifTx", root).onchange = e => localStorage.setItem("cazoo.notifTx", e.target.checked ? "1" : "0");
-  $("#notifSec", root).checked = localStorage.getItem("cazoo.notifSec") !== "0";
-  $("#notifSec", root).onchange = e => localStorage.setItem("cazoo.notifSec", e.target.checked ? "1" : "0");
-
   $$("[data-legal]", root).forEach(b => b.onclick = () => {
     const t = b.dataset.legal;
-    const content = {
+    const c = {
       tos:"Dokumen lengkap tersedia di situs resmi Cazoo. Hubungi dukungan untuk salinan.",
-      privacy:"Kami melindungi data Anda. Kata sandi tidak disimpan, PIN dienkripsi, dan transaksi tercatat aman.",
-      licenses:"Aplikasi ini menggunakan Firebase, Lucide Icons (ISC), dan pustaka open-source lainnya."
+      privacy:"Kami melindungi data Anda. Kata sandi tidak disimpan, PIN dienkripsi, dan transaksi tercatat aman."
     }[t];
-    const title = { tos:"Syarat Penggunaan", privacy:"Kebijakan Privasi", licenses:"Lisensi" }[t];
-    modal(`
-      <h2>${title}</h2>
-      <p class="hint" style="font-size:14px;line-height:1.7;color:var(--text);margin:0 0 20px">${esc(content)}</p>
-      <button class="btn btn-pri btn-block" id="ok">Tutup</button>
-    `).$("#ok").onclick = closeModal;
+    const title = { tos:"Syarat Penggunaan", privacy:"Kebijakan Privasi" }[t];
+    modal(`<h2>${title}</h2>
+      <p class="hint" style="font-size:14px;line-height:1.7;color:var(--text);margin:0 0 20px">${esc(c)}</p>
+      <button class="btn btn-pri btn-block" id="ok">Tutup</button>`).$("#ok").onclick = closeModal;
   });
-
   $("#logout", root).onclick = async () => {
     if(await confirmDlg("Keluar", "Anda yakin ingin keluar?", "Keluar")) signOut(auth);
   };
 };
 
 /* =========================================================
-   ROUTE: HELP / FAQ
+   ROUTE: HELP
 ========================================================= */
 const FAQ = [
-  { q:"Bagaimana cara melakukan Top Up?", a:"Buka menu Top Up dari beranda, pilih nominal dan metode pembayaran, lalu ikuti instruksi yang muncul." },
-  { q:"Berapa lama transfer antar pengguna?", a:"Transfer antar sesama pengguna Cazoo berlangsung secara instan dan langsung tercatat di riwayat." },
-  { q:"Apa itu ID Akun Cazoo?", a:"ID Akun adalah 8–10 digit angka unik yang digunakan untuk menerima transfer antar pengguna Cazoo." },
-  { q:"Bagaimana jika PIN saya terkunci?", a:"PIN akan terkunci sementara setelah 5 kali salah. Tunggu 15 menit untuk mencoba lagi." },
-  { q:"Bagaimana cara menghubungi dukungan?", a:"Gunakan formulir di bawah atau kirim pesan ke email dukungan Cazoo." },
-  { q:"Apakah data saya aman?", a:"Ya. Kami menggunakan Google Sign-In, PIN terenkripsi, dan verifikasi server untuk setiap transaksi." }
+  { q:"Bagaimana cara Top Up?", a:"Buka menu Top Up dari beranda, pilih nominal, lalu konfirmasi. Saldo akan langsung bertambah." },
+  { q:"Apa itu ID Akun Cazoo?", a:"ID Akun adalah 8–10 digit angka unik untuk menerima transfer antar pengguna Cazoo." },
+  { q:"Bagaimana jika PIN saya terkunci?", a:"PIN akan terkunci sementara setelah 5 kali salah. Tunggu 15 menit." },
+  { q:"Apakah data saya aman?", a:"Ya. Kami menggunakan Google Sign-In dan PIN terenkripsi untuk setiap transaksi." }
 ];
 
 ROUTES.help = (root) => {
   root.innerHTML = `
     ${navHead("Pusat Bantuan")}
-
     <div class="card" style="text-align:center;padding:22px">
-      <div style="width:64px;height:64px;border-radius:22px;margin:0 auto 14px;
-        background:linear-gradient(135deg,#DBEAFE,#BFDBFE);color:#1E40AF;
-        display:grid;place-items:center">${ic("help",30)}</div>
-      <div style="font-weight:800;font-size:17px;letter-spacing:-.3px">Ada yang bisa kami bantu?</div>
-      <div class="hint" style="margin-top:4px">Cari jawaban cepat atau kirim pengaduan.</div>
+      <div style="width:64px;height:64px;border-radius:22px;margin:0 auto 14px;background:linear-gradient(135deg,#DBEAFE,#BFDBFE);color:#1E40AF;display:grid;place-items:center">${ic("help",30)}</div>
+      <div style="font-weight:800;font-size:17px">Ada yang bisa kami bantu?</div>
+      <div class="hint" style="margin-top:4px">Cari jawaban cepat atau hubungi kami.</div>
     </div>
-
     <div class="sec-h"><h2>Pertanyaan Umum</h2></div>
-    <div class="card card--flush" id="faq" style="padding:0 18px">
+    <div class="card card--flush" style="padding:0 18px">
       ${FAQ.map((f,i) => `
         <div class="accordion" data-i="${i}">
-          <div class="accordion__h">
-            <span>${esc(f.q)}</span>
-            ${ic("chevD",18)}
-          </div>
+          <div class="accordion__h"><span>${esc(f.q)}</span>${ic("chevD",18)}</div>
           <div class="accordion__b">${esc(f.a)}</div>
         </div>`).join("")}
     </div>
-
-    <div class="sec-h"><h2>Hubungi Dukungan</h2></div>
+    <div class="sec-h"><h2>Kontak</h2></div>
     <div class="card">
-      <button class="item" id="newTicketBtn" type="button" style="border-radius:14px">
-        <div class="item__ico brand">${ic("message",18)}</div>
-        <div class="item__body">
-          <div class="item__t">Kirim Pengaduan</div>
-          <div class="item__s">Kami akan merespons dalam 1×24 jam</div>
-        </div>
-        ${ic("chevR",18)}
-      </button>
-      <div class="card card--flat mt">
-        <div class="kv"><span>Email dukungan</span><span>support@cazoo.app</span></div>
-        <div class="kv"><span>Jam operasional</span><span>09.00 – 21.00 WIB</span></div>
-      </div>
-    </div>
-  `;
+      <div class="kv"><span>Email</span><span>support@cazoo.app</span></div>
+      <div class="kv"><span>Jam operasional</span><span>09.00 – 21.00 WIB</span></div>
+    </div>`;
   bindNavHead(root, () => navigate("profile"));
-
   $$(".accordion", root).forEach(acc => {
     $(".accordion__h", acc).onclick = () => {
       const open = acc.classList.contains("open");
@@ -2517,201 +2182,17 @@ ROUTES.help = (root) => {
       if(!open) acc.classList.add("open");
     };
   });
-
-  $("#newTicketBtn", root).onclick = newTicket;
-};
-
-function newTicket(){
-  const m = modal(`
-    <h2>Kirim Pengaduan</h2>
-    <div class="field">
-      <label>Subjek</label>
-      <input class="inp" id="subject" maxlength="80" placeholder="Ringkas masalah Anda">
-    </div>
-    <div class="field">
-      <label>Kategori</label>
-      <select class="inp inp-select" id="cat">
-        <option value="transaksi">Masalah Transaksi</option>
-        <option value="akun">Masalah Akun</option>
-        <option value="keamanan">Keamanan</option>
-        <option value="lainnya">Lainnya</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Deskripsi</label>
-      <textarea class="inp inp-textarea" id="desc" maxlength="800"
-        placeholder="Jelaskan detail masalah Anda..."></textarea>
-    </div>
-    <div class="err-line" id="err"></div>
-    <div class="g2 mt">
-      <button class="btn btn-ghost" id="cancel">Batal</button>
-      <button class="btn btn-pri" id="ok">Kirim</button>
-    </div>`);
-  m.$("#cancel").onclick = () => m.close();
-  m.$("#ok").onclick = async () => {
-    const subj = m.$("#subject").value.trim();
-    const desc = m.$("#desc").value.trim();
-    const cat = m.$("#cat").value;
-    const err = m.$("#err");
-    err.innerHTML = "";
-    if(!subj){ err.innerHTML = `${ic("alert",13,2.3)}<span>Subjek wajib diisi.</span>`; return; }
-    if(desc.length < 10){ err.innerHTML = `${ic("alert",13,2.3)}<span>Deskripsi minimal 10 karakter.</span>`; return; }
-    m.$("#ok").disabled = true;
-    try {
-      const id = uuid().slice(0,8).toUpperCase();
-      const now = Date.now();
-      await set(ref(db, `supportTickets/${id}`), {
-        ticketId: id, userId: state.user.uid,
-        subject: subj, category: cat, message: desc,
-        status: "open", createdAt: now, updatedAt: now
-      });
-      m.close();
-      toast(`Tiket #${id} dikirim`, "ok");
-    } catch(e){
-      err.innerHTML = `${ic("alert",13,2.3)}<span>${esc(errMsg(e.code, e.message))}</span>`;
-      m.$("#ok").disabled = false;
-    }
-  };
-}
-
-/* =========================================================
-   ROUTE: TICKETS
-========================================================= */
-ROUTES.tickets = (root) => {
-  root.innerHTML = `
-    ${navHead("Pengaduan Saya")}
-    <div id="list">${skeletonList(3)}</div>
-    <button class="btn btn-pri btn-block mt-l" id="newBtn">
-      ${ic("plus",18)} Buat Pengaduan Baru
-    </button>`;
-  bindNavHead(root, () => navigate("help"));
-
-  async function load(){
-    const el = $("#list", root);
-    try {
-      const snap = await get(query(ref(db,"supportTickets"),
-        orderByChild("userId"), equalTo(state.user.uid), limitToLast(30)));
-      const arr = []; snap.forEach(c => arr.push({ id:c.key, ...c.val() }));
-      arr.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-      if(!arr.length){
-        el.innerHTML = emptyState("ticket", "Belum ada pengaduan",
-          "Pengaduan yang Anda kirim akan tercatat di sini.");
-        return;
-      }
-      const cls = { open:"warn", processing:"warn", resolved:"ok", closed:"err" };
-      el.innerHTML = `<div class="list">${arr.map(t => `
-        <div class="item item--no-interact">
-          <div class="item__ico ${t.status==='resolved'?'in':'pending'}">${ic("ticket",18)}</div>
-          <div class="item__body">
-            <div class="item__t">${esc(t.subject)}</div>
-            <div class="item__s">
-              <span class="bdg ${cls[t.status]||""}">${esc(t.status||"—")}</span>
-              <span>#${esc(t.id)}</span>
-            </div>
-          </div>
-        </div>`).join("")}</div>`;
-    } catch(e){
-      el.innerHTML = errState(errMsg(e.code, e.message), "retryTk");
-      $("#retryTk", el)?.addEventListener("click", load);
-    }
-  }
-  $("#newBtn", root).onclick = () => { newTicket(); setTimeout(load, 500); };
-  load();
-};
-
-/* =========================================================
-   ROUTE: ADMIN
-========================================================= */
-ROUTES.admin = async (root) => {
-  if(!state.isAdmin){
-    root.innerHTML = `${navHead("Panel Admin")}${emptyState("shield","Akses Ditolak","Anda bukan admin.")}`;
-    bindNavHead(root, () => navigate("profile"));
-    return;
-  }
-  root.innerHTML = `
-    ${navHead("Panel Admin")}
-    <div id="stats">${skeletonList(1)}</div>
-    <div class="sec-h"><h2>Permintaan Pending</h2></div>
-    <div id="pending">${skeletonList(2)}</div>
-    <div class="sec-h"><h2>Pengguna Terbaru</h2></div>
-    <div id="users">${skeletonList(3)}</div>`;
-  bindNavHead(root, () => navigate("profile"));
-
-  try {
-    const [uSnap, tSnap] = await Promise.all([
-      get(ref(db, "users")),
-      get(query(ref(db, "transactions"), limitToLast(500)))
-    ]);
-    let userCount = 0; uSnap.forEach(() => userCount++);
-    const tx = []; tSnap.forEach(c => tx.push(c.val()));
-    const succ = tx.filter(t => t.status === "success");
-    const total = succ.reduce((a,b) => a + (b.amount||0), 0);
-    const pend = tx.filter(t => t.status === "pending" || t.status === "processing");
-
-    $("#stats", root).innerHTML = `
-      <div class="card">
-        <div class="g2">
-          <div>
-            <div class="hint">Pengguna</div>
-            <div style="font-size:24px;font-weight:800;letter-spacing:-.5px">${userCount}</div>
-          </div>
-          <div>
-            <div class="hint">Transaksi</div>
-            <div style="font-size:24px;font-weight:800;letter-spacing:-.5px">${tx.length}</div>
-          </div>
-        </div>
-        <div class="kv mt"><span>Sukses</span><span>${succ.length}</span></div>
-        <div class="kv"><span>Pending</span><span>${pend.length}</span></div>
-        <div class="kv"><span>Gagal</span><span>${tx.filter(t=>t.status==="failed").length}</span></div>
-        <div class="kv"><span>Total Nilai Sukses</span><span>${rp(total)}</span></div>
-      </div>`;
-
-    $("#pending", root).innerHTML = pend.length
-      ? `<div class="list">${pend.slice(0,8).map(t => `
-          <button class="item" data-tx="${esc(t.transactionId||"")}" type="button">
-            <div class="item__ico pending">${ic("clock",18)}</div>
-            <div class="item__body">
-              <div class="item__t">${esc(TX_LABEL[t.transactionType]||t.transactionType||"—")}</div>
-              <div class="item__s">${esc(fdate(t.createdAt))}</div>
-            </div>
-            <div class="item__amt out">${rp(t.amount||0)}</div>
-          </button>`).join("")}</div>`
-      : emptyState("check", "Tidak ada pending", "Semua permintaan telah diproses.");
-
-    // recent users
-    const users = []; uSnap.forEach(c => users.push({ uid: c.key, ...c.val() }));
-    users.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-    $("#users", root).innerHTML = users.length
-      ? `<div class="list">${users.slice(0,8).map(u => `
-          <div class="item item--no-interact">
-            <div class="item__ico brand">${ic("user",18)}</div>
-            <div class="item__body">
-              <div class="item__t">${esc(u.displayName||"—")}</div>
-              <div class="item__s">ID ${esc(u.accountId||"—")} · ${esc(fdate(u.createdAt))}</div>
-            </div>
-            <span class="bdg ${u.accountStatus==='active'?'ok':'warn'}">${esc(u.accountStatus||"—")}</span>
-          </div>`).join("")}</div>`
-      : emptyState("user", "Belum ada pengguna", "Data pengguna akan muncul di sini.");
-
-    $$("[data-tx]", root).forEach(el => el.onclick = () => showTxDetail(el.dataset.tx));
-  } catch(e){
-    $("#stats", root).innerHTML = errState(errMsg(e.code, e.message), "retryAd");
-    $("#retryAd", root)?.addEventListener("click", () => renderRoute());
-  }
 };
 
 /* =========================================================
    Bootstrap
 ========================================================= */
-// Splash auto-hide fallback (kalau auth state lambat)
 setTimeout(() => hideSplash(), 2500);
 
-// PWA
 if("serviceWorker" in navigator){
   navigator.serviceWorker.register("service-worker.js").catch(()=>{});
 }
 
-// Idle auto-hide balance (10 menit)
 let lastAct = Date.now();
 ["click","touchstart","keydown","scroll"].forEach(ev =>
   window.addEventListener(ev, () => { lastAct = Date.now(); }, { passive:true }));
@@ -2722,7 +2203,6 @@ setInterval(() => {
   }
 }, 60_000);
 
-// Android back button: kalau modal terbuka, tutup modal; kalau bukan home, ke home
 window.addEventListener("popstate", () => {
   if($("#modal-root").innerHTML){
     closeModal();
