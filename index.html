@@ -1,1291 +1,1144 @@
 <!doctype html>
-<html lang="id">
+<html lang="id" data-theme="light">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>LINKORA — Satu halaman untuk semua tautanmu</title>
-<meta name="description" content="LINKORA adalah platform link-in-bio profesional untuk kreator, bisnis, dan personal branding." />
-<meta name="theme-color" content="#0b0c10" />
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237C5CFF'/%3E%3Cstop offset='1' stop-color='%2322D3EE'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M20 32h24M32 20v24' stroke='%23fff' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
-
+<meta name="theme-color" content="#0B1E3B" />
+<title>Cazoo — Digital Wallet</title>
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Cazoo%22%2C%22short_name%22%3A%22Cazoo%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230B1E3B%22%2C%22theme_color%22%3A%22%230B1E3B%22%2C%22icons%22%3A%5B%5D%7D" />
 <style>
 :root{
-  --bg:#0b0c10; --bg-2:#0f1117; --surface:#151823; --surface-2:#1b1f2c;
-  --border:#252a3a; --text:#e8ecf3; --muted:#98a2b3;
-  --brand:#7C5CFF; --brand-2:#22D3EE; --brand-ink:#0b0c10;
-  --danger:#ef4444; --success:#22c55e; --warn:#f59e0b;
-  --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:26px;
-  --shadow:0 10px 30px rgba(0,0,0,.35);
-  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Space Grotesk", var(--font);
+  --navy:#0B1E3B;--navy2:#132E56;--blue:#2A7DFF;--blue2:#5AA0FF;
+  --bg:#F5F7FB;--card:#FFF;--text:#0F172A;--muted:#64748B;--line:#E2E8F0;
+  --ok:#16A34A;--warn:#F59E0B;--err:#DC2626;
+  --radius:16px;--radius-sm:10px;--shadow:0 6px 24px rgba(15,23,42,.08);
+  --safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px);
 }
-:root.light{
-  --bg:#f7f8fb; --bg-2:#ffffff; --surface:#ffffff; --surface-2:#f1f3f9;
-  --border:#e4e7ee; --text:#0b0c10; --muted:#5b6473;
-  --shadow:0 10px 30px rgba(20,20,40,.08);
-}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased}
-img{max-width:100%;display:block}
-a{color:inherit;text-decoration:none}
+[data-theme="dark"]{--bg:#0A1222;--card:#111A2E;--text:#E6ECF5;--muted:#94A3B8;--line:#1E293B}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{min-height:100dvh}
 button,input,select,textarea{font:inherit;color:inherit}
-button{cursor:pointer;border:0;background:none}
-:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
+a{color:var(--blue);text-decoration:none}
+img{max-width:100%;display:block}
 
-.container{max-width:1180px;margin:0 auto;padding:0 20px}
-.stack>*+*{margin-top:16px}
-.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.spread{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.grow{flex:1}
+.splash{min-height:100dvh;display:grid;place-items:center;gap:24px;background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff}
+.logo{display:inline-flex;align-items:center;gap:10px;font-weight:800}
+.logo--xl{font-size:32px}
+.logo__mark{width:44px;height:44px;display:grid;place-items:center;background:linear-gradient(135deg,var(--blue),var(--blue2));border-radius:12px;color:#fff;font-weight:900;box-shadow:var(--shadow)}
+.logo--xl .logo__mark{width:60px;height:60px;font-size:28px;border-radius:16px}
 
-.nav{position:sticky;top:0;z-index:50;backdrop-filter:saturate(140%) blur(12px);background:color-mix(in oklab, var(--bg) 82%, transparent);border-bottom:1px solid var(--border)}
-.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:1180px;margin:0 auto}
-.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;font-size:18px}
-.brand-mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-2))}
-.nav-links{display:flex;gap:22px;align-items:center}
-.nav-links a{color:var(--muted);font-size:14px;font-weight:500}
-.nav-links a:hover{color:var(--text)}
-@media(max-width:820px){.nav-links{display:none}}
+.appbar{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);padding:calc(12px + var(--safe-top)) 16px 12px;display:flex;align-items:center;justify-content:space-between}
+.container{padding:16px;max-width:720px;margin:0 auto}
+.view{animation:fade .18s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:var(--r-md);font-weight:600;font-size:14px;transition:.18s transform,.18s background,.18s border}
-.btn:active{transform:translateY(1px)}
-.btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff}
-.btn-primary:hover{filter:brightness(1.08)}
-.btn-ghost{border:1px solid var(--border);color:var(--text);background:var(--surface)}
-.btn-ghost:hover{background:var(--surface-2)}
-.btn-danger{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.4);color:#fca5a5}
-.btn-danger:hover{background:rgba(239,68,68,.18)}
-.btn-sm{padding:7px 12px;font-size:13px;border-radius:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.card+.card{margin-top:12px}
+.balance-card{background:linear-gradient(140deg,var(--navy),var(--navy2));color:#fff;border-radius:var(--radius);padding:20px;position:relative;overflow:hidden}
+.balance-card::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;background:radial-gradient(closest-side,rgba(90,160,255,.35),transparent);border-radius:50%}
+.balance-card__label{opacity:.8;font-size:13px}
+.balance-card__value{font-size:32px;font-weight:800;margin:6px 0 12px;letter-spacing:-.5px}
+.balance-card__actions{display:flex;gap:8px;flex-wrap:wrap}
 
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)}
-.card-2{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);padding:14px}
-.grid{display:grid;gap:18px}
-@media(min-width:760px){.grid.cols-3{grid-template-columns:repeat(3,1fr)}.grid.cols-2{grid-template-columns:repeat(2,1fr)}.grid.cols-4{grid-template-columns:repeat(4,1fr)}}
+.btn{border:0;background:var(--blue);color:#fff;padding:12px 16px;border-radius:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .06s,filter .15s}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn--ghost{background:rgba(255,255,255,.14);color:#fff}
+.btn--outline{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn--danger{background:var(--err)}
+.btn--ok{background:var(--ok)}
+.btn--block{width:100%}
+.btn--sm{padding:8px 12px;font-size:13px}
 
-.hero{padding:80px 20px 60px;position:relative;overflow:hidden}
-.hero::before{content:"";position:absolute;inset:-20% -10% auto -10%;height:520px;background:radial-gradient(60% 60% at 20% 20%, color-mix(in oklab, var(--brand) 45%, transparent), transparent 70%),radial-gradient(60% 60% at 80% 30%, color-mix(in oklab, var(--brand-2) 35%, transparent), transparent 70%);filter:blur(60px);opacity:.5;z-index:-1}
-.hero h1{font-family:var(--font-display);font-size:clamp(32px,6vw,58px);line-height:1.05;margin:0 0 16px;letter-spacing:-.02em}
-.grad-text{background:linear-gradient(135deg,var(--brand),var(--brand-2));-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p.lede{font-size:18px;color:var(--muted);max-width:640px;margin:0 auto 26px}
-.hero-inner{max-width:820px;margin:0 auto;text-align:center}
+.quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+.qa{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 6px;text-align:center;font-size:12px;cursor:pointer;color:var(--text)}
+.qa i{display:block;font-size:20px;margin-bottom:6px;font-style:normal}
 
-.app-shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
-@media(max-width:900px){.app-shell{grid-template-columns:1fr}}
-.sidebar{background:var(--bg-2);border-right:1px solid var(--border);padding:20px 14px;position:sticky;top:0;height:100vh;overflow-y:auto}
-@media(max-width:900px){.sidebar{position:fixed;inset:0 auto 0 0;width:250px;transform:translateX(-100%);transition:.25s;z-index:60}.sidebar.open{transform:none}}
-.sidebar h4{color:var(--muted);font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:16px 12px 8px}
-.side-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--muted);font-size:14px;font-weight:500}
-.side-item:hover{background:var(--surface);color:var(--text)}
-.side-item.active{background:linear-gradient(135deg, color-mix(in oklab, var(--brand) 30%, transparent), color-mix(in oklab, var(--brand-2) 20%, transparent));color:var(--text)}
-.side-icon{width:18px;height:18px;flex:none}
-.main{padding:26px 26px 80px;max-width:1100px}
-@media(max-width:600px){.main{padding:18px 14px 90px}}
-.page-title{font-family:var(--font-display);font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
-.page-sub{color:var(--muted);font-size:14px;margin:0 0 24px}
-.mobile-bar{display:none;position:sticky;top:0;z-index:40;background:var(--bg-2);border-bottom:1px solid var(--border);padding:12px 14px;align-items:center;gap:12px}
-@media(max-width:900px){.mobile-bar{display:flex}}
-.scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:55}
-.scrim.show{display:block}
+.field{display:grid;gap:6px;margin-bottom:12px}
+.field label{font-size:13px;color:var(--muted);font-weight:600}
+.input,select,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);outline:0}
+.input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(42,125,255,.15)}
+.help{font-size:12px;color:var(--muted)}
+.error{font-size:12px;color:var(--err);min-height:16px}
 
-.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-.field label{font-size:13px;color:var(--muted);font-weight:500}
-.input,.textarea,.select{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:14px;transition:.15s border, .15s box-shadow;width:100%}
-.input:focus,.textarea:focus,.select:focus{outline:0;border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in oklab, var(--brand) 25%, transparent)}
-.textarea{min-height:90px;resize:vertical}
-.error{color:#fca5a5;font-size:12.5px;margin-top:4px}
-.hint{color:var(--muted);font-size:12px}
-.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:20px}
-.auth-card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:32px;box-shadow:var(--shadow)}
+.chip-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.chip{border:1px solid var(--line);padding:8px 12px;border-radius:999px;background:var(--card);cursor:pointer;font-size:13px}
+.chip[aria-pressed="true"]{border-color:var(--blue);background:rgba(42,125,255,.08);color:var(--blue);font-weight:700}
 
-.link-row{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:12px;margin-bottom:10px}
-.link-row.dragging{opacity:.5}
-.drag-handle{cursor:grab;color:var(--muted);padding:6px;border-radius:6px}
-.drag-handle:hover{background:var(--surface-2);color:var(--text)}
-.toggle{position:relative;width:38px;height:22px;background:var(--border);border-radius:999px;transition:.2s;flex:none;cursor:pointer}
-.toggle.on{background:var(--brand)}
-.toggle::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:.2s}
-.toggle.on::after{left:19px}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;padding:8px 6px calc(8px + var(--safe-bottom));background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);gap:2px;z-index:30}
+.bottom-nav a{display:grid;justify-items:center;gap:2px;font-size:11px;color:var(--muted);padding:6px 0;border-radius:10px}
+.bottom-nav a.active{color:var(--blue);font-weight:700}
+.bottom-nav a i{font-size:20px;font-style:normal}
+.page-with-nav{padding-bottom:96px}
 
-.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:600;letter-spacing:.02em}
-.badge-info{background:color-mix(in oklab, var(--brand) 20%, transparent);color:#c4b5fd}
-.badge-success{background:rgba(34,197,94,.15);color:#86efac}
-.badge-warn{background:rgba(245,158,11,.15);color:#fcd34d}
-.badge-danger{background:rgba(239,68,68,.15);color:#fca5a5}
-.badge-muted{background:var(--surface-2);color:var(--muted)}
+.list{display:grid;gap:10px}
+.list-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm)}
+.list-item__icon{width:40px;height:40px;display:grid;place-items:center;border-radius:10px;background:rgba(42,125,255,.1);color:var(--blue);font-size:18px;flex:none}
+.list-item__main{flex:1;min-width:0}
+.list-item__title{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-item__sub{font-size:12px;color:var(--muted)}
+.amount-in{color:var(--ok);font-weight:700}
+.amount-out{color:var(--err);font-weight:700}
 
-.toasts{position:fixed;bottom:22px;right:22px;display:flex;flex-direction:column;gap:10px;z-index:100;max-width:340px}
-.toast{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);animation:slidein .25s}
-.toast.success{border-left-color:var(--success)}
-.toast.error{border-left-color:var(--danger)}
-@keyframes slidein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:rgba(100,116,139,.12);color:var(--muted);font-weight:600;text-transform:uppercase}
+.badge--ok{background:rgba(22,163,74,.12);color:var(--ok)}
+.badge--warn{background:rgba(245,158,11,.15);color:#B45309}
+.badge--err{background:rgba(220,38,38,.12);color:var(--err)}
 
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;z-index:200;padding:20px}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:26px;max-width:440px;width:100%;box-shadow:var(--shadow)}
+.empty{text-align:center;padding:32px 16px;color:var(--muted)}
+.row{display:flex;gap:8px;align-items:center}
+.row--between{justify-content:space-between}
+.stack-sm>*+*{margin-top:8px}
+.mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}
 
-.pf-wrap{min-height:100vh;display:flex;justify-content:center;padding:40px 16px}
-.pf-card{width:100%;max-width:520px}
-.pf-name{font-family:var(--font-display);font-size:24px;text-align:center;margin:0 0 6px}
-.pf-bio{text-align:center;opacity:.85;margin:0 0 26px;font-size:15px;line-height:1.5;white-space:pre-wrap}
-.pf-links{display:flex;flex-direction:column;gap:14px}
-.pf-link{display:flex;align-items:center;justify-content:center;text-align:center;padding:16px 18px;font-weight:600;transition:.18s transform,.18s filter;text-decoration:none}
-.pf-link:hover{transform:translateY(-2px);filter:brightness(1.08)}
-.pf-footer{text-align:center;margin-top:36px;font-size:12px;opacity:.6}
+.modal-backdrop{position:fixed;inset:0;background:rgba(11,30,59,.55);display:grid;place-items:end center;z-index:100;animation:fade .18s ease}
+.modal{width:100%;max-width:520px;background:var(--card);border-radius:20px 20px 0 0;padding:20px;max-height:90dvh;overflow:auto}
+.modal h2{margin:0 0 12px}
 
-.sk{background:linear-gradient(90deg,var(--surface) 25%, var(--surface-2) 37%, var(--surface) 63%);background-size:400% 100%;animation:shimmer 1.4s infinite;border-radius:8px;height:14px;margin:6px 0}
-@keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.toast{position:fixed;left:50%;bottom:100px;transform:translate(-50%,20px);background:#0F172A;color:#fff;padding:10px 16px;border-radius:10px;opacity:0;transition:.25s;z-index:200;font-size:14px;max-width:90vw}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast--ok{background:var(--ok)}.toast--err{background:var(--err)}
 
-.kpi{padding:18px;border-radius:var(--r-md);background:linear-gradient(180deg, var(--surface-2), var(--surface));border:1px solid var(--border)}
-.kpi .k{font-size:12px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
-.kpi .v{font-family:var(--font-display);font-size:28px;margin-top:6px}
+.spinner{width:32px;height:32px;border:3px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+.spinner--dark{border-color:rgba(15,23,42,.15);border-top-color:var(--blue)}
+.center-spin{display:grid;place-items:center;padding:32px}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-.preview-shell{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;min-height:560px;display:flex;justify-content:center}
-.preview-frame{width:100%;max-width:380px;border-radius:22px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.35);border:8px solid #0f1117;background:#fff;color:#111;height:640px;overflow-y:auto;position:relative}
+.skeleton{background:linear-gradient(90deg,var(--line),#eef2f7,var(--line));background-size:200% 100%;animation:sk 1.2s infinite;border-radius:10px;height:14px}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-.section{padding:60px 0}
-.section h2{font-family:var(--font-display);font-size:32px;margin:0 0 8px;text-align:center;letter-spacing:-.01em}
-.section .sub{text-align:center;color:var(--muted);margin:0 auto 36px;max-width:620px}
-.feature{padding:22px;border-radius:var(--r-lg);background:var(--surface);border:1px solid var(--border);transition:.2s transform}
-.feature:hover{transform:translateY(-3px)}
-.feature h3{margin:0 0 8px;font-size:16px}
-.feature p{margin:0;color:var(--muted);font-size:14px;line-height:1.55}
-.footer{border-top:1px solid var(--border);padding:36px 0;color:var(--muted);font-size:14px}
-.footer-grid{display:grid;grid-template-columns:1fr;gap:24px}
-@media(min-width:700px){.footer-grid{grid-template-columns:2fr 1fr 1fr 1fr}}
-.footer h5{color:var(--text);margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.08em}
-.footer a{display:block;margin:6px 0;color:var(--muted)}
-.footer a:hover{color:var(--text)}
-.tabs{display:flex;gap:6px;border-bottom:1px solid var(--border);margin-bottom:22px;overflow-x:auto}
-.tab{padding:11px 14px;color:var(--muted);font-weight:500;font-size:14px;border-bottom:2px solid transparent;white-space:nowrap}
-.tab.active{color:var(--text);border-bottom-color:var(--brand)}
-.empty{text-align:center;padding:48px 20px;color:var(--muted);border:1px dashed var(--border);border-radius:var(--r-md)}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+.tab{padding:8px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);white-space:nowrap;cursor:pointer;font-size:13px}
+.tab.active{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:700}
+
+.kv{display:flex;justify-content:space-between;gap:12px;padding:6px 0;font-size:14px}
+.kv span:first-child{color:var(--muted)}
+.notif-dot{width:8px;height:8px;background:var(--err);border-radius:50%;display:inline-block}
+#toast-root{position:fixed;inset:0;pointer-events:none}
+.qr-box{display:grid;place-items:center;padding:20px;background:#fff;border-radius:12px}
+video{width:100%;border-radius:12px;background:#000}
 </style>
 </head>
 <body>
-  <div id="app" aria-live="polite"></div>
-  <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
-  <div id="modal-root"></div>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" defer></script>
+<div id="app"><div class="splash"><div class="logo logo--xl"><span class="logo__mark">C</span><span>Cazoo</span></div><div class="spinner"></div></div></div>
+<div id="modal-root"></div>
+<div id="toast-root"></div>
 
-  <script type="module">
-  /* ================================================================
-     LINKORA — single file app
-     ================================================================ */
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import {
-    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
-    sendEmailVerification, sendPasswordResetEmail, onAuthStateChanged, deleteUser
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import {
-    getDatabase, ref, get, set, update, remove, push, runTransaction
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+<script type="module">
+/* =========================================================
+   CAZOO — Single File App
+   Firebase modular SDK v10 (CDN)
+========================================================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import {
+  getAuth, onAuthStateChanged, createUserWithEmailAndPassword,
+  signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail,
+  signOut, updateProfile, updatePassword, EmailAuthProvider,
+  reauthenticateWithCredential, deleteUser
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import {
+  getDatabase, ref, set, get, update, onValue, push, serverTimestamp,
+  query, orderByChild, limitToLast, equalTo, runTransaction
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+import {
+  getFunctions, httpsCallable
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-functions.js";
 
-  /* -------------------- Firebase init -------------------- */
-  const firebaseConfig = {
-    apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
-    authDomain: "mygame-68b24.firebaseapp.com",
-    databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
-    projectId: "mygame-68b24",
-    storageBucket: "mygame-68b24.firebasestorage.app",
-    messagingSenderId: "1003182873390",
-    appId: "1:1003182873390:web:aabf3248f759cbc9d678bf",
-    measurementId: "G-4C0MYZ19YW"
+/* -------- Firebase Config (klien, bukan secret) -------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
+  authDomain: "mygame-68b24.firebaseapp.com",
+  databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
+  projectId: "mygame-68b24",
+  storageBucket: "mygame-68b24.firebasestorage.app",
+  messagingSenderId: "1003182873390",
+  appId: "1:1003182873390:web:aabf3248f759cbc9d678bf",
+  measurementId: "G-4C0MYZ19YW"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+const functions = getFunctions(app, "asia-southeast2");
+
+/* -------- State & Helpers -------- */
+const state = {
+  user:null, profile:null, wallet:null, isAdmin:false, route:"home",
+  balanceHidden:false, theme:localStorage.getItem("cazoo:theme")||"light"
+};
+document.documentElement.dataset.theme = state.theme;
+
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+
+const rupiah = (n=0)=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(n||0);
+const fmtDate = ts => ts ? new Date(ts).toLocaleString("id-ID",{dateStyle:"medium",timeStyle:"short"}) : "-";
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : "id-"+Date.now()+"-"+Math.random().toString(36).slice(2));
+const validateEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+const validateAmount = (v,{min=1000,max=50_000_000}={}) => {
+  const n = Number(v);
+  if(!Number.isFinite(n)) return {ok:false,msg:"Nominal tidak valid"};
+  if(n<min) return {ok:false,msg:`Minimal ${rupiah(min)}`};
+  if(n>max) return {ok:false,msg:`Maksimal ${rupiah(max)}`};
+  if(n%1!==0) return {ok:false,msg:"Nominal harus bilangan bulat"};
+  return {ok:true,value:n};
+};
+function authErr(code){
+  const m = {
+    "auth/invalid-email":"Format email tidak valid.",
+    "auth/user-disabled":"Akun ini dinonaktifkan.",
+    "auth/user-not-found":"Akun tidak ditemukan.",
+    "auth/wrong-password":"Kata sandi salah.",
+    "auth/invalid-credential":"Email atau kata sandi salah.",
+    "auth/email-already-in-use":"Email sudah terdaftar.",
+    "auth/weak-password":"Kata sandi minimal 6 karakter.",
+    "auth/too-many-requests":"Terlalu banyak percobaan. Coba lagi nanti.",
+    "auth/network-request-failed":"Koneksi bermasalah.",
+    "auth/requires-recent-login":"Login ulang untuk tindakan ini.",
+    "permission-denied":"Izin ditolak. Periksa aturan database.",
+    "functions/not-found":"Backend (Cloud Functions) belum di-deploy.",
+    "functions/unavailable":"Layanan backend tidak tersedia.",
+    "functions/internal":"Terjadi kesalahan di server.",
+    "functions/unauthenticated":"Sesi berakhir. Login ulang."
   };
-  const fbApp = initializeApp(firebaseConfig);
-  const auth = getAuth(fbApp);
-  const db = getDatabase(fbApp);
+  return m[code] || "Terjadi kesalahan. Coba lagi.";
+}
 
-  /* -------------------- Constants -------------------- */
-  const RESERVED = new Set([
-    "admin","api","login","register","dashboard","settings","help","about",
-    "privacy","terms","pricing","features","templates","u","assets","static",
-    "support","contact","blog","docs","null","undefined","root","system"
-  ]);
-  const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
-  const ALLOWED_SCHEMES = /^(https?:|mailto:|tel:)/i;
+function toast(msg,type="info",ms=2800){
+  const el = document.createElement("div");
+  el.className = "toast toast--"+type;
+  el.textContent = msg;
+  $("#toast-root").appendChild(el);
+  requestAnimationFrame(()=>el.classList.add("show"));
+  setTimeout(()=>{el.classList.remove("show");setTimeout(()=>el.remove(),250)},ms);
+}
+function modal(html,{onClose}={}){
+  const root = $("#modal-root");
+  root.innerHTML = `<div class="modal-backdrop"><div class="modal">${html}</div></div>`;
+  const close = ()=>{root.innerHTML="";onClose&&onClose();};
+  root.querySelector(".modal-backdrop").addEventListener("click",e=>{if(e.target.classList.contains("modal-backdrop"))close();});
+  return {close, root};
+}
 
-  /* -------------------- State -------------------- */
-  const state = { user:null, userData:null, profile:null, page:null, route:"" };
+/* -------- Router -------- */
+const ROUTES = {};
+function navigate(r){ location.hash = "#/"+r; }
+function currentRoute(){ const h = location.hash.replace(/^#\/?/,""); return h||"home"; }
+window.addEventListener("hashchange",()=>{ state.route = currentRoute(); if(state.user) renderRoute(state.route); });
 
-  /* -------------------- Utilities -------------------- */
-  const $  = (s, r=document) => r.querySelector(s);
-  const esc = (s="") => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const el = (html) => { const t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstElementChild; };
-  const todayKey = () => new Date().toISOString().slice(0,10);
-
-  function toast(msg, type="info", ttl=3600){
-    const t = el(`<div class="toast ${type}" role="alert"><div>${esc(msg)}</div></div>`);
-    $("#toasts").appendChild(t);
-    setTimeout(()=>{ t.style.opacity="0"; t.style.transition=".3s"; setTimeout(()=>t.remove(),320); }, ttl);
-  }
-  function modal({title, body, confirmText="Konfirmasi", danger=false, onConfirm}){
-    const bg = el(`<div class="modal-bg" role="dialog" aria-modal="true">
-      <div class="modal">
-        <h3 style="margin:0 0 8px">${esc(title)}</h3>
-        <div style="color:var(--muted);font-size:14px;line-height:1.55">${body}</div>
-        <div class="row" style="justify-content:flex-end;margin-top:22px">
-          <button class="btn btn-ghost" data-act="cancel">Batal</button>
-          <button class="btn ${danger?"btn-danger":"btn-primary"}" data-act="ok">${esc(confirmText)}</button>
+/* -------- Auth Flow -------- */
+function renderAuth(){
+  const appEl = $("#app");
+  appEl.innerHTML = `
+    <div class="splash" style="align-content:start;padding-top:10vh">
+      <div class="logo logo--xl"><span class="logo__mark">C</span><span>Cazoo</span></div>
+      <div class="card" style="width:min(420px,92vw);background:#fff;color:#0F172A">
+        <div class="tabs" style="margin-bottom:14px">
+          <button class="tab active" data-tab="login">Masuk</button>
+          <button class="tab" data-tab="register">Daftar</button>
+          <button class="tab" data-tab="reset">Lupa Sandi</button>
         </div>
-      </div></div>`);
-    $("#modal-root").appendChild(bg);
-    const close = () => bg.remove();
-    bg.querySelector('[data-act="cancel"]').onclick = close;
-    bg.querySelector('[data-act="ok"]').onclick = () => { onConfirm?.(); close(); };
-    bg.addEventListener("click", e => { if(e.target === bg) close(); });
-  }
-  function debounce(fn, ms=300){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
-  function validUrl(u){
-    if(!u || typeof u !== "string") return false;
-    if(!ALLOWED_SCHEMES.test(u)) return false;
-    try { const x = new URL(u); return ["http:","https:","mailto:","tel:"].includes(x.protocol); }
-    catch{ return false; }
-  }
-
-  /* -------------------- Router -------------------- */
-  function go(p){ location.hash = "#" + p; }
-  function currentPath(){ return (location.hash || "#/").slice(1) || "/"; }
-  function mount(html){
-    const app = $("#app"); app.innerHTML = ""; app.appendChild(el(html));
-  }
-
-  function onRoute(){
-    const path = currentPath();
-    state.route = path;
-    const parts = path.split("/").filter(Boolean);
-
-    if(parts[0] === "u" && parts[1]) return renderPublicProfile(parts[1]);
-
-    switch(path){
-      case "/":                     return renderLanding();
-      case "/login":                return renderAuth("login");
-      case "/register":             return renderAuth("register");
-      case "/forgot":               return renderAuth("forgot");
-      case "/dashboard":            return guardDash(() => renderDashOverview());
-      case "/dashboard/links":      return guardDash(() => renderDashLinks());
-      case "/dashboard/appearance": return guardDash(() => renderDashAppearance());
-      case "/dashboard/analytics":  return guardDash(() => renderDashAnalytics());
-      case "/dashboard/qr":         return guardDash(() => renderDashQR());
-      case "/dashboard/settings":   return guardDash(() => renderDashSettings());
-      case "/admin":                return guardAdmin(() => renderAdmin());
-      default:                      return render404();
-    }
-  }
-
-  async function guardDash(fn){
-    if(!state.user){ go("/login"); return; }
-    if(!state.profile?.username) return renderClaimUsername();
-    await ensurePage();
-    fn();
-  }
-  async function guardAdmin(fn){
-    if(!state.user){ go("/login"); return; }
-    const role = state.userData?.role;
-    if(role !== "admin" && role !== "superadmin") return renderForbidden();
-    fn();
-  }
-
-  /* -------------------- Data -------------------- */
-  async function loadUserData(uid){
-    try{
-      const [uSnap, pSnap, pgSnap] = await Promise.all([
-        get(ref(db, `users/${uid}`)),
-        get(ref(db, `profiles/${uid}`)),
-        get(ref(db, `pages/${uid}`))
-      ]);
-      state.userData = uSnap.val() || null;
-      state.profile  = pSnap.val() || null;
-      state.page     = pgSnap.val() || null;
-    }catch(e){ console.warn(e); }
-  }
-  async function ensurePage(){
-    if(state.page) return state.page;
-    const uid = state.user.uid;
-    const blank = { theme: defaultTheme(), links:{}, published:false, createdAt:Date.now(), updatedAt:Date.now() };
-    await set(ref(db, `pages/${uid}`), blank);
-    state.page = blank;
-    return blank;
-  }
-  function defaultTheme(){
-    return {
-      bg: "linear-gradient(135deg,#0f172a,#1e293b)",
-      text: "#e8ecf3",
-      btnBg: "rgba(255,255,255,.10)",
-      btnText: "#ffffff",
-      btnBorder: "rgba(255,255,255,.18)",
-      btnRadius: 14,
-      btnHeight: 56,
-      gap: 14,
-      font: "Inter",
-      shadow: "0 10px 24px rgba(0,0,0,.25)"
-    };
-  }
-  async function claimUsername(rawName){
-    const name = String(rawName || "").trim().toLowerCase();
-    if(!USERNAME_RE.test(name)) throw new Error("Username hanya boleh huruf kecil, angka, dan _ (3–20 karakter).");
-    if(RESERVED.has(name)) throw new Error("Username tersebut tidak tersedia.");
-    const uid = state.user.uid;
-
-    const unameRef = ref(db, `usernames/${name}`);
-    const result = await runTransaction(unameRef, cur => {
-      if(cur && cur.uid !== uid) return;
-      return { uid };
-    });
-    if(!result.committed) throw new Error("Username sudah digunakan.");
-
-    const oldName = state.profile?.username;
-    if(oldName && oldName !== name){
-      try{ await remove(ref(db, `usernames/${oldName}`)); }catch{}
-    }
-    await update(ref(db), {
-      [`profiles/${uid}/username`]: name,
-      [`profiles/${uid}/displayName`]: state.profile?.displayName || name
-    });
-    state.profile = { ...(state.profile||{}), username: name, displayName: state.profile?.displayName || name };
-  }
-
-  /* -------------------- Nav -------------------- */
-  function topNav(){
-    const authed = !!state.user;
-    return `
-    <header class="nav">
-      <div class="nav-inner">
-        <a class="brand" href="#/">
-          <span class="brand-mark" aria-hidden="true"></span>
-          <span>LINKORA</span>
-        </a>
-        <nav class="nav-links" aria-label="Navigasi utama">
-          <a href="#/">Beranda</a>
-          <a href="#/#features">Fitur</a>
-          <a href="#/#templates">Template</a>
-        </nav>
-        <div class="row">
-          ${authed
-            ? `<a class="btn btn-ghost btn-sm" href="#/dashboard">Dashboard</a>
-               <button class="btn btn-primary btn-sm" data-act="logout">Logout</button>`
-            : `<a class="btn btn-ghost btn-sm" href="#/login">Masuk</a>
-               <a class="btn btn-primary btn-sm" href="#/register">Mulai gratis</a>`}
-        </div>
+        <form id="auth-form" novalidate></form>
       </div>
-    </header>`;
-  }
-  function bindTopNav(root=document){
-    root.querySelector('[data-act="logout"]')?.addEventListener("click", async () => {
-      await signOut(auth); toast("Kamu telah keluar."); go("/");
-    });
-  }
-
-  /* -------------------- Landing -------------------- */
-  function renderLanding(){
-    mount(`
-      ${topNav()}
-      <section class="hero">
-        <div class="hero-inner">
-          <span class="badge badge-info" style="margin-bottom:18px">Platform link-in-bio generasi baru</span>
-          <h1>Satu halaman,<br><span class="grad-text">semua tautanmu.</span></h1>
-          <p class="lede">Bangun halaman profil profesional dalam hitungan menit. Kelola tautan, pantau statistik, dan tampil beda dengan kustomisasi penuh.</p>
-          <div class="row" style="justify-content:center">
-            <a class="btn btn-primary" href="#/register">Buat halaman gratis</a>
-            <a class="btn btn-ghost" href="#/u/demo">Lihat contoh halaman</a>
-          </div>
-        </div>
-      </section>
-
-      <section class="section container" id="features">
-        <h2>Fitur yang benar-benar bekerja</h2>
-        <p class="sub">Bukan sekadar janji — semuanya tersambung ke backend Firebase nyata.</p>
-        <div class="grid cols-3">
-          ${[
-            ["Satu halaman, banyak tautan","Semua tautan pentingmu dalam satu URL yang mudah dibagikan."],
-            ["Kustomisasi desain","Warna, font, radius, jarak, sampai gradien. Semua bisa diatur."],
-            ["Analitik nyata","Kunjungan dan klik tautan dicatat berdasarkan event yang benar-benar terjadi."],
-            ["QR Code","Buat QR khusus halamanmu, atur warna, unduh PNG."],
-            ["Username unik","Klaim username pilihanmu dengan transaksi atomik — bebas bentrok."],
-            ["Responsif & aksesibel","Nyaman dari HP sampai desktop, dengan struktur HTML semantik."]
-          ].map(([t,d])=>`<div class="feature"><h3>${t}</h3><p>${d}</p></div>`).join("")}
-        </div>
-      </section>
-
-      <section class="section container" id="templates">
-        <h2>Mulai dari template, sesuaikan sesukamu</h2>
-        <p class="sub">Semua template hanya mengubah tampilan visual — kontenmu tetap aman.</p>
-        <div class="grid cols-3">
-          ${["Minimal","Creator","Bisnis","Portfolio","Gaming","Editorial"].map(n=>`
-            <div class="card">
-              <div style="height:140px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand-2));margin-bottom:14px"></div>
-              <div class="spread"><strong>${n}</strong><span class="badge badge-muted">Tema</span></div>
-            </div>`).join("")}
-        </div>
-      </section>
-
-      <section class="section container" style="text-align:center">
-        <h2>Siap tampil beda?</h2>
-        <p class="sub">Gratis untuk memulai. Tanpa kartu kredit.</p>
-        <a class="btn btn-primary" href="#/register">Buat halamanmu sekarang</a>
-      </section>
-
-      <footer class="footer">
-        <div class="container footer-grid">
-          <div>
-            <div class="brand" style="margin-bottom:10px"><span class="brand-mark"></span><span>LINKORA</span></div>
-            <p style="margin:0;max-width:340px">Platform link-in-bio modern untuk kreator, bisnis, dan profesional.</p>
-          </div>
-          <div><h5>Produk</h5><a href="#/">Beranda</a><a href="#/#features">Fitur</a><a href="#/#templates">Template</a></div>
-          <div><h5>Bantuan</h5><a href="#/">Pusat Bantuan</a><a href="#/">Kontak</a><a href="#/">Dokumentasi</a></div>
-          <div><h5>Legal</h5><a href="#/">Kebijakan Privasi</a><a href="#/">Syarat Penggunaan</a></div>
-        </div>
-        <div class="container" style="margin-top:26px;padding-top:16px;border-top:1px solid var(--border);font-size:12.5px">
-          © ${new Date().getFullYear()} LINKORA. Dibangun di atas Firebase.
-        </div>
-      </footer>
-    `);
-    bindTopNav();
-  }
-
-  /* -------------------- Auth -------------------- */
-  function renderAuth(kind){
-    const titles = {
-      login:["Masuk ke akunmu","Kelola halamanmu"],
-      register:["Buat akun LINKORA","Gratis, tanpa kartu kredit"],
-      forgot:["Lupa password","Kami akan mengirim tautan reset"]
-    };
-    const [t, s] = titles[kind];
-    mount(`
-      <div class="auth-wrap">
-        <div class="auth-card">
-          <a class="brand" href="#/" style="margin-bottom:22px">
-            <span class="brand-mark"></span><span>LINKORA</span>
-          </a>
-          <h2 style="font-family:var(--font-display);margin:0 0 4px">${t}</h2>
-          <p style="color:var(--muted);margin:0 0 22px;font-size:14px">${s}</p>
-
-          ${kind === "forgot" ? `
-            <form id="f">
-              <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" required autocomplete="email" /></div>
-              <div id="err" class="error" hidden></div>
-              <button class="btn btn-primary" style="width:100%;justify-content:center" type="submit">Kirim tautan reset</button>
-            </form>` : `
-            <form id="f">
-              <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" required autocomplete="email" /></div>
-              <div class="field"><label for="pw">Password</label><input class="input" id="pw" type="password" required minlength="6" autocomplete="${kind==="register"?"new-password":"current-password"}" /></div>
-              <div id="err" class="error" hidden></div>
-              <button class="btn btn-primary" style="width:100%;justify-content:center" type="submit">${kind==="register"?"Buat akun":"Masuk"}</button>
-            </form>
-          `}
-
-          <div style="margin-top:20px;font-size:13.5px;color:var(--muted);text-align:center">
-            ${kind==="login" ? `Belum punya akun? <a href="#/register" style="color:var(--brand)">Daftar</a><br><a href="#/forgot" style="color:var(--muted)">Lupa password?</a>` : ""}
-            ${kind==="register" ? `Sudah punya akun? <a href="#/login" style="color:var(--brand)">Masuk</a>` : ""}
-            ${kind==="forgot" ? `<a href="#/login" style="color:var(--brand)">Kembali ke login</a>` : ""}
-          </div>
-        </div>
-      </div>
-    `);
-
-    const form = $("#f");
-    form?.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const errEl = $("#err"); errEl.hidden = true;
-      const email = $("#email").value.trim();
-      const pw = $("#pw")?.value || "";
-      try{
-        if(kind === "forgot"){
-          await sendPasswordResetEmail(auth, email);
-          toast("Tautan reset telah dikirim. Cek kotak masuk emailmu.","success");
-          go("/login");
-        } else if(kind === "register"){
-          if(pw.length < 6) throw new Error("Password minimal 6 karakter.");
-          const cred = await createUserWithEmailAndPassword(auth, email, pw);
-          await set(ref(db, `users/${cred.user.uid}`), {
-            uid: cred.user.uid, email, role: "user", createdAt: Date.now()
-          });
-          try{ await sendEmailVerification(cred.user); }catch{}
-          toast("Akun berhasil dibuat. Cek email untuk verifikasi.","success",6000);
-          go("/dashboard");
-        } else {
-          await signInWithEmailAndPassword(auth, email, pw);
-          toast("Berhasil masuk.","success");
-          go("/dashboard");
-        }
-      }catch(err){
-        errEl.textContent = friendlyAuthError(err);
-        errEl.hidden = false;
-      }
-    });
-  }
-  function friendlyAuthError(err){
-    const m = (err?.code || err?.message || "").toString();
-    const map = {
-      "auth/email-already-in-use": "Email sudah terdaftar.",
-      "auth/invalid-email": "Format email tidak valid.",
-      "auth/weak-password": "Password terlalu lemah (min 6 karakter).",
-      "auth/user-not-found": "Akun tidak ditemukan.",
-      "auth/wrong-password": "Password salah.",
-      "auth/invalid-credential": "Email atau password salah.",
-      "auth/too-many-requests": "Terlalu banyak percobaan. Coba lagi nanti."
-    };
-    for(const k in map) if(m.includes(k)) return map[k];
-    return err?.message || "Terjadi kesalahan. Coba lagi.";
-  }
-
-  /* -------------------- Claim Username -------------------- */
-  function renderClaimUsername(){
-    mount(`
-      ${topNav()}
-      <main class="container" style="max-width:560px;padding:60px 20px">
-        <div class="card">
-          <span class="badge badge-warn">Langkah 1 dari 2</span>
-          <h2 style="font-family:var(--font-display);margin:14px 0 6px">Pilih username unikmu</h2>
-          <p style="color:var(--muted);font-size:14px;margin:0 0 22px">
-            Ini akan menjadi alamat halaman publikmu: <code>…/#/u/<b id="prev">username</b></code>
-          </p>
-          <form id="f">
-            <div class="field">
-              <label for="u">Username</label>
-              <input class="input" id="u" placeholder="mis. radit" required minlength="3" maxlength="20" pattern="[a-z0-9_]+" />
-              <div class="hint">3–20 karakter. Huruf kecil, angka, dan garis bawah saja.</div>
-            </div>
-            <div id="err" class="error" hidden></div>
-            <button class="btn btn-primary" style="width:100%;justify-content:center" type="submit">Klaim username</button>
-          </form>
-        </div>
-      </main>
-    `);
-    bindTopNav();
-    const u = $("#u");
-    u.addEventListener("input", () => { $("#prev").textContent = u.value.trim().toLowerCase() || "username"; });
-    $("#f").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const errEl = $("#err"); errEl.hidden = true;
-      try{
-        await claimUsername(u.value);
-        toast("Username berhasil diklaim!","success");
-        go("/dashboard");
-      }catch(err){ errEl.textContent = err.message; errEl.hidden = false; }
-    });
-  }
-
-  /* -------------------- Dashboard shell -------------------- */
-  function dashShell(activeKey, title, subtitle, bodyHtml){
-    const items = [
-      ["/dashboard","Overview","M3 12l9-9 9 9v9a2 2 0 0 1-2 2h-4v-6h-6v6H5a2 2 0 0 1-2-2z"],
-      ["/dashboard/links","Links","M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"],
-      ["/dashboard/appearance","Appearance","M12 3a9 9 0 1 0 0 18 3 3 0 0 0 0-6 3 3 0 0 1 0-6 3 3 0 0 0 3-3 9 9 0 0 0-3-3z"],
-      ["/dashboard/analytics","Analytics","M4 20V10M10 20V4M16 20v-6M22 20H2"],
-      ["/dashboard/qr","QR Code","M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3z"],
-      ["/dashboard/settings","Settings","M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"]
-    ];
-    const isAdmin = state.userData?.role === "admin" || state.userData?.role === "superadmin";
-    return `
-      <div class="app-shell">
-        <aside class="sidebar" id="sidebar">
-          <a class="brand" href="#/" style="margin:0 12px 22px"><span class="brand-mark"></span><span>LINKORA</span></a>
-          <h4>Dashboard</h4>
-          ${items.map(([href,label,path])=>`
-            <a class="side-item ${href===activeKey?"active":""}" href="#${href}">
-              <svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${path}"/></svg>
-              ${label}
-            </a>`).join("")}
-          <h4>Publik</h4>
-          <a class="side-item" href="#/u/${esc(state.profile?.username||"")}" target="_blank">
-            <svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg>
-            Lihat halaman
-          </a>
-          ${isAdmin ? `<a class="side-item" href="#/admin"><svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 6v6c0 5 3.8 9.4 9 10 5.2-.6 9-5 9-10V6z"/></svg>Admin</a>` : ""}
-          <h4>Akun</h4>
-          <button class="side-item" data-act="logout" style="width:100%;text-align:left">
-            <svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-            Logout
-          </button>
-        </aside>
-        <div class="scrim" id="scrim"></div>
-
-        <div>
-          <div class="mobile-bar">
-            <button class="btn btn-ghost btn-sm" id="menu-btn" aria-label="Buka menu">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-            </button>
-            <div class="brand"><span class="brand-mark"></span><span>LINKORA</span></div>
-          </div>
-          <main class="main">
-            <h1 class="page-title">${esc(title)}</h1>
-            <p class="page-sub">${esc(subtitle)}</p>
-            ${bodyHtml}
-          </main>
-        </div>
-      </div>
-    `;
-  }
-  function bindShell(){
-    const sb = $("#sidebar"), sc = $("#scrim"), btn = $("#menu-btn");
-    btn?.addEventListener("click", () => { sb.classList.add("open"); sc.classList.add("show"); });
-    sc?.addEventListener("click", () => { sb.classList.remove("open"); sc.classList.remove("show"); });
-    document.querySelectorAll('[data-act="logout"]').forEach(b => b.addEventListener("click", async () => {
-      await signOut(auth); toast("Kamu telah keluar."); go("/");
-    }));
-  }
-
-  /* -------------------- Overview -------------------- */
-  async function renderDashOverview(){
-    mount(dashShell("/dashboard", `Halo, ${state.profile?.displayName||state.profile?.username}`, "Ringkasan performa halamanmu.", `
-      <div class="grid cols-4" id="kpi-row">
-        ${["Total Kunjungan","Kunjungan Hari Ini","Total Klik","Link Aktif"].map(()=>`<div class="kpi"><div class="k sk" style="width:80px"></div><div class="v sk" style="width:60px;height:26px;margin-top:8px"></div></div>`).join("")}
-      </div>
-      <div class="card" style="margin-top:22px">
-        <div class="spread">
-          <div>
-            <h3 style="margin:0 0 4px">Status halaman</h3>
-            <p class="page-sub" style="margin:0">Halamanmu ${state.page?.published ? "sudah" : "belum"} dipublikasikan.</p>
-          </div>
-          <div class="row">
-            <span class="badge ${state.page?.published?"badge-success":"badge-warn"}">${state.page?.published?"Published":"Draft"}</span>
-            <button class="btn ${state.page?.published?"btn-ghost":"btn-primary"}" data-act="toggle-pub">${state.page?.published?"Jadikan draft":"Publikasikan"}</button>
-          </div>
-        </div>
-      </div>
-      <div class="card" style="margin-top:22px">
-        <h3 style="margin:0 0 12px">Aktivitas terbaru</h3>
-        <div id="activity"><div class="sk" style="height:40px;margin-bottom:8px"></div><div class="sk" style="height:40px"></div></div>
-      </div>
-    `));
-    bindShell();
-
-    const uid = state.user.uid;
-    const today = todayKey();
-    try{
-      const [totalsSnap, todaySnap] = await Promise.all([
-        get(ref(db, `analyticsAggregates/${uid}/totals`)),
-        get(ref(db, `analyticsAggregates/${uid}/daily/${today}`))
-      ]);
-      const t = totalsSnap.val() || {};
-      const d = todaySnap.val() || {};
-      const activeLinks = Object.values(state.page?.links || {}).filter(l => l.active !== false).length;
-      const kpis = [
-        ["Total Kunjungan", t.views || 0],
-        ["Kunjungan Hari Ini", d.views || 0],
-        ["Total Klik", t.clicks || 0],
-        ["Link Aktif", activeLinks]
-      ];
-      $("#kpi-row").innerHTML = kpis.map(([k,v])=>`<div class="kpi"><div class="k">${k}</div><div class="v">${v.toLocaleString("id-ID")}</div></div>`).join("");
-      $("#activity").innerHTML = (t.views || 0) === 0
-        ? `<div class="empty">Belum ada kunjungan tercatat. Setelah halaman dipublikasikan dan dibagikan, aktivitas akan muncul di sini.</div>`
-        : `<p style="color:var(--muted);margin:0">Klik <a href="#/dashboard/analytics" style="color:var(--brand)">Analytics</a> untuk melihat detail.</p>`;
-    }catch(e){
-      $("#kpi-row").innerHTML = `<div class="card" style="grid-column:1/-1">Gagal memuat data statistik: ${esc(e.message)}</div>`;
-      $("#activity").innerHTML = "";
-    }
-
-    document.querySelector('[data-act="toggle-pub"]')?.addEventListener("click", async () => {
-      const newVal = !state.page?.published;
-      try{
-        await update(ref(db, `pages/${uid}`), { published: newVal, updatedAt: Date.now() });
-        state.page.published = newVal;
-        toast(newVal ? "Halaman dipublikasikan." : "Halaman dijadikan draft.", "success");
-        renderDashOverview();
-      }catch(e){ toast("Gagal menyimpan: " + e.message, "error"); }
-    });
-  }
-
-  /* -------------------- Links -------------------- */
-  async function renderDashLinks(){
-    mount(dashShell("/dashboard/links", "Kelola Tautan", "Tambah, ubah urutan, aktifkan, atau hapus tautan.", `
-      <div class="spread" style="margin-bottom:16px">
-        <div class="row">
-          <button class="btn btn-primary" data-act="add">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-            Tambah Tautan
-          </button>
-        </div>
-        <input class="input" id="search" placeholder="Cari tautan…" style="max-width:240px" />
-      </div>
-      <div id="list"></div>
-    `));
-    bindShell();
-    const uid = state.user.uid;
-    const render = (filter="") => {
-      const links = Object.entries(state.page?.links || {})
-        .map(([id,l]) => ({ id, ...l }))
-        .filter(l => !filter || (l.title||"").toLowerCase().includes(filter.toLowerCase()))
-        .sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
-      const list = $("#list");
-      if(!links.length){
-        list.innerHTML = `<div class="empty">Belum ada tautan. Klik <b>Tambah Tautan</b> untuk memulai.</div>`;
-        return;
-      }
-      list.innerHTML = links.map(l => `
-        <div class="link-row" draggable="true" data-id="${l.id}">
-          <div class="drag-handle" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
-          </div>
-          <div>
-            <div style="font-weight:600">${esc(l.title||"(tanpa judul)")}</div>
-            <div style="color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:340px">${esc(l.url||"")}</div>
-          </div>
-          <div class="row">
-            <div class="toggle ${l.active!==false?"on":""}" role="switch" aria-checked="${l.active!==false}" tabindex="0" data-act="toggle" data-id="${l.id}"></div>
-            <button class="btn btn-ghost btn-sm" data-act="edit" data-id="${l.id}">Edit</button>
-            <button class="btn btn-danger btn-sm" data-act="del" data-id="${l.id}">Hapus</button>
-          </div>
-        </div>`).join("");
-
-      list.querySelectorAll('[data-act="edit"]').forEach(b => b.onclick = () => openLinkEditor(b.dataset.id));
-      list.querySelectorAll('[data-act="del"]').forEach(b => b.onclick = () => {
-        modal({ title:"Hapus tautan?", body:"Tindakan ini tidak dapat dibatalkan.", danger:true, confirmText:"Hapus", onConfirm: async () => {
-          try{ await remove(ref(db, `pages/${uid}/links/${b.dataset.id}`)); delete state.page.links[b.dataset.id]; toast("Tautan dihapus.","success"); render($("#search").value); }
-          catch(e){ toast("Gagal menghapus: " + e.message, "error"); }
-        }});
-      });
-      list.querySelectorAll('[data-act="toggle"]').forEach(t => {
-        const fn = async () => {
-          const id = t.dataset.id;
-          const cur = state.page.links[id].active !== false;
-          try{
-            await update(ref(db, `pages/${uid}/links/${id}`), { active: !cur, updatedAt: Date.now() });
-            state.page.links[id].active = !cur;
-            t.classList.toggle("on"); t.setAttribute("aria-checked", String(!cur));
-          }catch(e){ toast("Gagal: " + e.message, "error"); }
-        };
-        t.onclick = fn;
-        t.onkeydown = e => { if(e.key===" "||e.key==="Enter"){ e.preventDefault(); fn(); } };
-      });
-
-      let dragId = null;
-      list.querySelectorAll(".link-row").forEach(row => {
-        row.addEventListener("dragstart", e => { dragId = row.dataset.id; row.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; });
-        row.addEventListener("dragend", () => { row.classList.remove("dragging"); dragId = null; });
-        row.addEventListener("dragover", e => e.preventDefault());
-        row.addEventListener("drop", async e => {
-          e.preventDefault();
-          const targetId = row.dataset.id;
-          if(!dragId || dragId === targetId) return;
-          const entries = Object.entries(state.page.links).sort((a,b)=>(a[1].order??0)-(b[1].order??0));
-          const ids = entries.map(([id])=>id);
-          const fromIdx = ids.indexOf(dragId), toIdx = ids.indexOf(targetId);
-          ids.splice(toIdx, 0, ids.splice(fromIdx,1)[0]);
-          const updates = {}; ids.forEach((id,i)=>{ updates[`pages/${uid}/links/${id}/order`] = i; });
-          try{
-            await update(ref(db), updates);
-            ids.forEach((id,i)=>{ state.page.links[id].order = i; });
-            render($("#search").value);
-          }catch(err){ toast("Gagal menyimpan urutan: " + err.message, "error"); }
-        });
-      });
-    };
-    render();
-
-    $("#search").addEventListener("input", debounce(e => render(e.target.value), 150));
-    $('[data-act="add"]').onclick = () => openLinkEditor();
-  }
-
-  function openLinkEditor(id){
-    const uid = state.user.uid;
-    const existing = id ? state.page.links[id] : null;
-    const bg = el(`<div class="modal-bg" role="dialog" aria-modal="true"><div class="modal" style="max-width:520px">
-      <h3 style="margin:0 0 16px">${id?"Edit":"Tambah"} Tautan</h3>
-      <form id="lf">
-        <div class="field"><label for="lt">Judul</label><input class="input" id="lt" maxlength="120" required value="${esc(existing?.title||"")}" /></div>
-        <div class="field"><label for="lu">URL Tujuan</label><input class="input" id="lu" type="url" required placeholder="https://" value="${esc(existing?.url||"")}" /></div>
-        <div class="field"><label for="ld">Deskripsi (opsional)</label><input class="input" id="ld" maxlength="240" value="${esc(existing?.description||"")}" /></div>
-        <div id="err" class="error" hidden></div>
-        <div class="row" style="justify-content:flex-end;margin-top:18px">
-          <button class="btn btn-ghost" type="button" data-act="cancel">Batal</button>
-          <button class="btn btn-primary" type="submit">${id?"Simpan":"Tambah"}</button>
-        </div>
-      </form>
-    </div></div>`);
-    $("#modal-root").appendChild(bg);
-    const close = () => bg.remove();
-    bg.querySelector('[data-act="cancel"]').onclick = close;
-    bg.querySelector("#lf").addEventListener("submit", async e => {
-      e.preventDefault();
-      const err = bg.querySelector("#err"); err.hidden = true;
-      const url = bg.querySelector("#lu").value.trim();
-      if(!validUrl(url)){ err.textContent = "URL tidak valid. Hanya http://, https://, mailto:, dan tel: yang diizinkan."; err.hidden = false; return; }
-      const payload = {
-        title: bg.querySelector("#lt").value.trim(),
-        url,
-        description: bg.querySelector("#ld").value.trim(),
-        active: existing?.active !== false,
-        updatedAt: Date.now()
-      };
-      try{
-        if(id){
-          await update(ref(db, `pages/${uid}/links/${id}`), payload);
-          Object.assign(state.page.links[id], payload);
-        }else{
-          const order = Object.keys(state.page.links||{}).length;
-          payload.order = order; payload.createdAt = Date.now();
-          const r = push(ref(db, `pages/${uid}/links`));
-          await set(r, payload);
-          state.page.links = state.page.links || {};
-          state.page.links[r.key] = payload;
-        }
-        toast("Tautan disimpan.","success");
-        close();
-        renderDashLinks();
-      }catch(e){ err.textContent = e.message; err.hidden = false; }
-    });
-  }
-
-  /* -------------------- Appearance -------------------- */
-  async function renderDashAppearance(){
-    const uid = state.user.uid;
-    const theme = { ...defaultTheme(), ...(state.page?.theme || {}) };
-    mount(dashShell("/dashboard/appearance", "Tampilan", "Sesuaikan desain halaman publikmu. Pratinjau langsung.", `
-      <div class="grid" style="grid-template-columns:1fr;gap:24px" id="ap-grid">
-        <div class="card" id="editor-col">
-          <h3 style="margin:0 0 16px">Pengaturan tampilan</h3>
-          <div class="field"><label for="t-bg">Latar (CSS background)</label><input class="input" id="t-bg" value="${esc(theme.bg)}" /></div>
-          <div class="grid cols-2" style="gap:12px">
-            <div class="field"><label for="t-text">Warna teks</label><input class="input" type="text" id="t-text" value="${esc(theme.text)}" /></div>
-            <div class="field"><label for="t-font">Font</label>
-              <select class="select" id="t-font">
-                ${["Inter","Space Grotesk","Georgia","Courier New","system-ui"].map(f=>`<option ${theme.font===f?"selected":""}>${f}</option>`).join("")}
-              </select>
-            </div>
-          </div>
-          <div class="grid cols-2" style="gap:12px">
-            <div class="field"><label for="t-btnbg">Tombol — background</label><input class="input" id="t-btnbg" value="${esc(theme.btnBg)}" /></div>
-            <div class="field"><label for="t-btntext">Tombol — teks</label><input class="input" id="t-btntext" value="${esc(theme.btnText)}" /></div>
-          </div>
-          <div class="grid cols-2" style="gap:12px">
-            <div class="field"><label for="t-btnborder">Tombol — border</label><input class="input" id="t-btnborder" value="${esc(theme.btnBorder)}" /></div>
-            <div class="field"><label for="t-btnradius">Radius tombol (px)</label><input class="input" type="number" min="0" max="40" id="t-btnradius" value="${theme.btnRadius}" /></div>
-          </div>
-          <div class="grid cols-2" style="gap:12px">
-            <div class="field"><label for="t-btnheight">Tinggi tombol (px)</label><input class="input" type="number" min="40" max="90" id="t-btnheight" value="${theme.btnHeight}" /></div>
-            <div class="field"><label for="t-gap">Jarak antar tautan (px)</label><input class="input" type="number" min="6" max="30" id="t-gap" value="${theme.gap}" /></div>
-          </div>
-          <div class="field"><label for="t-shadow">Bayangan tombol</label><input class="input" id="t-shadow" value="${esc(theme.shadow)}" /></div>
-          <div class="row" style="justify-content:flex-end;margin-top:8px">
-            <button class="btn btn-ghost" data-act="reset">Reset</button>
-            <button class="btn btn-primary" data-act="save">Simpan</button>
-          </div>
-        </div>
-
-        <div class="preview-shell">
-          <div class="preview-frame" id="preview"></div>
-        </div>
-      </div>
-    `));
-    bindShell();
-
-    const f = id => document.getElementById(id);
-    const read = () => ({
-      bg: f("t-bg").value, text: f("t-text").value, font: f("t-font").value,
-      btnBg: f("t-btnbg").value, btnText: f("t-btntext").value, btnBorder: f("t-btnborder").value,
-      btnRadius: +f("t-btnradius").value||0, btnHeight: +f("t-btnheight").value||52,
-      gap: +f("t-gap").value||12, shadow: f("t-shadow").value
-    });
-
-    const preview = () => {
-      const t = read();
-      const links = Object.values(state.page?.links||{}).filter(l => l.active !== false).sort((a,b)=>(a.order??0)-(b.order??0));
-      $("#preview").style.background = t.bg;
-      $("#preview").style.color = t.text;
-      $("#preview").style.fontFamily = t.font;
-      $("#preview").innerHTML = `
-        <div style="padding:34px 22px">
-          <div style="width:84px;height:84px;border-radius:50%;background:rgba(255,255,255,.15);margin:0 auto 14px;display:grid;place-items:center;font-size:28px;font-weight:700;color:${t.text}">${esc((state.profile?.displayName||state.profile?.username||"U")[0].toUpperCase())}</div>
-          <div style="text-align:center;font-weight:700;font-size:18px;margin-bottom:6px">${esc(state.profile?.displayName||state.profile?.username||"Username")}</div>
-          <div style="text-align:center;opacity:.75;font-size:12px;margin-bottom:10px">@${esc(state.profile?.username||"username")}</div>
-          <div style="text-align:center;opacity:.85;font-size:13px;margin-bottom:22px">${esc(state.profile?.bio||"Tulis sesuatu tentang dirimu.")}</div>
-          ${links.length ? links.map(l => `
-            <a href="${esc(l.url)}" target="_blank" rel="noopener" style="
-              display:flex;align-items:center;justify-content:center;
-              margin-bottom:${t.gap}px;
-              height:${t.btnHeight}px;
-              border-radius:${t.btnRadius}px;
-              background:${t.btnBg};
-              color:${t.btnText};
-              border:1px solid ${t.btnBorder};
-              box-shadow:${t.shadow};
-              font-weight:600;font-size:14px;
-              text-decoration:none;
-            ">${esc(l.title||l.url)}</a>`).join("")
-            : `<div style="text-align:center;opacity:.6;font-size:12px">Belum ada tautan aktif.</div>`}
-          <div style="text-align:center;margin-top:24px;font-size:11px;opacity:.5">Powered by LINKORA</div>
-        </div>`;
-    };
-    preview();
-
-    ["t-bg","t-text","t-font","t-btnbg","t-btntext","t-btnborder","t-btnradius","t-btnheight","t-gap","t-shadow"].forEach(id => {
-      f(id).addEventListener("input", preview);
-    });
-
-    $('[data-act="reset"]').onclick = () => {
-      const d = defaultTheme();
-      Object.entries({
-        "t-bg":d.bg,"t-text":d.text,"t-font":d.font,"t-btnbg":d.btnBg,"t-btntext":d.btnText,
-        "t-btnborder":d.btnBorder,"t-btnradius":d.btnRadius,"t-btnheight":d.btnHeight,"t-gap":d.gap,"t-shadow":d.shadow
-      }).forEach(([k,v]) => f(k).value = v);
-      preview();
-    };
-    $('[data-act="save"]').onclick = async () => {
-      try{
-        const th = read();
-        await update(ref(db, `pages/${uid}`), { theme: th, updatedAt: Date.now() });
-        state.page.theme = th;
-        toast("Tampilan disimpan.","success");
-      }catch(e){ toast("Gagal menyimpan: " + e.message, "error"); }
-    };
-  }
-
-  /* -------------------- Analytics -------------------- */
-  async function renderDashAnalytics(){
-    mount(dashShell("/dashboard/analytics", "Analytics", "Statistik dicatat dari event nyata — kunjungan halaman dan klik tautan.", `
-      <div class="card">
-        <h3 style="margin:0 0 14px">7 hari terakhir</h3>
-        <div id="chart" style="min-height:180px"></div>
-      </div>
-      <div class="card" style="margin-top:22px">
-        <h3 style="margin:0 0 14px">Tautan terpopuler (30 hari)</h3>
-        <div id="top-links"><div class="sk" style="height:36px;margin-bottom:8px"></div><div class="sk" style="height:36px"></div></div>
-      </div>
-      <p class="hint" style="margin-top:16px">
-        Catatan: Statistik ini menghitung <b>event yang tercatat</b> saat halaman dimuat / tautan diklik.
-        Metrik "unique visitor" tidak ditampilkan karena kami tidak menyimpan identitas pengunjung (tidak ada IP mentah disimpan).
-      </p>
-    `));
-    bindShell();
-    const uid = state.user.uid;
-    try{
-      const snap = await get(ref(db, `analyticsAggregates/${uid}/daily`));
-      const data = snap.val() || {};
-      const days = [];
-      for(let i=6;i>=0;i--){
-        const d = new Date(); d.setDate(d.getDate()-i);
-        const key = d.toISOString().slice(0,10);
-        days.push({
-          key,
-          label: d.toLocaleDateString("id-ID",{weekday:"short"}),
-          views: data[key]?.views||0,
-          clicks: Object.values(data[key]?.clicks||{}).reduce((a,b)=>a+b,0)
-        });
-      }
-      const max = Math.max(1, ...days.map(d=>d.views));
-      $("#chart").innerHTML = `
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;align-items:end;height:170px">
-          ${days.map(d => `
-            <div style="display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end">
-              <div title="${d.views} kunjungan" style="width:100%;height:${Math.round(d.views/max*120)}px;min-height:4px;background:linear-gradient(180deg,var(--brand),var(--brand-2));border-radius:8px 8px 0 0"></div>
-              <div style="font-size:11px;color:var(--muted)">${d.label}</div>
-              <div style="font-size:11px">${d.views}</div>
-            </div>`).join("")}
-        </div>`;
-
-      const linkClicks = {};
-      for(let i=0;i<30;i++){
-        const d = new Date(); d.setDate(d.getDate()-i);
-        const key = d.toISOString().slice(0,10);
-        const clicks = data[key]?.clicks || {};
-        for(const [lid,c] of Object.entries(clicks)) linkClicks[lid] = (linkClicks[lid]||0) + (c||0);
-      }
-      const links = state.page?.links || {};
-      const ranked = Object.entries(linkClicks)
-        .map(([lid,c]) => ({ id:lid, title: links[lid]?.title||"(dihapus)", clicks:c }))
-        .sort((a,b)=>b.clicks-a.clicks)
-        .slice(0,8);
-      $("#top-links").innerHTML = ranked.length
-        ? ranked.map(r=>`<div class="spread" style="padding:10px 0;border-bottom:1px solid var(--border)"><span>${esc(r.title)}</span><b>${r.clicks}</b></div>`).join("")
-        : `<div class="empty">Belum ada klik tercatat.</div>`;
-    }catch(e){
-      $("#chart").innerHTML = `<div class="empty">Gagal memuat data: ${esc(e.message)}</div>`;
-      $("#top-links").innerHTML = "";
-    }
-  }
-
-  /* -------------------- QR -------------------- */
-  function renderDashQR(){
-    const url = `${location.origin}${location.pathname}#/u/${state.profile?.username||""}`;
-    mount(dashShell("/dashboard/qr", "QR Code", "Buat QR untuk halaman publikmu.", `
-      <div class="grid cols-2" style="gap:24px">
-        <div class="card">
-          <div class="field"><label for="q-fg">Warna QR</label><input class="input" type="color" id="q-fg" value="#0b0c10" /></div>
-          <div class="field"><label for="q-bg">Warna latar</label><input class="input" type="color" id="q-bg" value="#ffffff" /></div>
-          <div class="field"><label for="q-size">Ukuran (px)</label><input class="input" type="number" min="128" max="1024" step="32" id="q-size" value="320" /></div>
-          <div class="field"><label>URL halaman</label><input class="input" readonly value="${esc(url)}" /></div>
-          <div class="row">
-            <button class="btn btn-primary" data-act="gen">Generate</button>
-            <button class="btn btn-ghost" data-act="dl">Unduh PNG</button>
-            <button class="btn btn-ghost" data-act="copy">Salin URL</button>
-          </div>
-        </div>
-        <div class="card" style="display:grid;place-items:center">
-          <canvas id="qr" width="320" height="320"></canvas>
-        </div>
-      </div>
-    `));
-    bindShell();
-    const canvas = $("#qr");
-    const gen = () => {
-      if(!window.QRCode) return toast("Pustaka QR belum siap, coba lagi.", "error");
-      window.QRCode.toCanvas(canvas, url, {
-        width: +$("#q-size").value || 320,
-        margin: 2,
-        color: { dark: $("#q-fg").value, light: $("#q-bg").value }
-      }, err => { if(err) toast("Gagal membuat QR: " + err.message, "error"); });
-    };
-    // tunggu pustaka QR siap
-    const waitQR = setInterval(() => {
-      if(window.QRCode){ clearInterval(waitQR); gen(); }
-    }, 100);
-    setTimeout(() => clearInterval(waitQR), 5000);
-
-    $('[data-act="gen"]').onclick = gen;
-    $('[data-act="dl"]').onclick = () => {
-      const a = document.createElement("a");
-      a.href = canvas.toDataURL("image/png");
-      a.download = `linkora-${state.profile?.username||"qr"}.png`;
-      a.click();
-    };
-    $('[data-act="copy"]').onclick = async () => {
-      try{ await navigator.clipboard.writeText(url); toast("URL disalin.","success"); }
-      catch{ toast("Gagal menyalin.","error"); }
-    };
-  }
-
-  /* -------------------- Settings -------------------- */
-  function renderDashSettings(){
-    const p = state.profile || {};
-    const u = state.user;
-    mount(dashShell("/dashboard/settings", "Pengaturan", "Kelola profil, akun, dan privasi.", `
-      <div class="tabs">
-        <a class="tab active" href="#/dashboard/settings">Profil</a>
-      </div>
-      <div class="card">
-        <h3 style="margin:0 0 16px">Profil</h3>
-        <form id="pf">
-          <div class="grid cols-2" style="gap:12px">
-            <div class="field"><label for="p-name">Nama tampilan</label><input class="input" id="p-name" maxlength="80" value="${esc(p.displayName||"")}" /></div>
-            <div class="field"><label for="p-user">Username</label><input class="input" id="p-user" value="${esc(p.username||"")}" disabled /><div class="hint">Username saat ini tidak dapat diubah dari sini.</div></div>
-          </div>
-          <div class="field"><label for="p-bio">Bio</label><textarea class="textarea" id="p-bio" maxlength="200">${esc(p.bio||"")}</textarea></div>
-          <div id="pf-err" class="error" hidden></div>
-          <button class="btn btn-primary" type="submit">Simpan perubahan</button>
-        </form>
-      </div>
-
-      <div class="card" style="margin-top:22px">
-        <h3 style="margin:0 0 6px">Email</h3>
-        <p class="page-sub" style="margin:0 0 14px">
-          ${esc(u.email||"")}
-          ${u.emailVerified ? `<span class="badge badge-success" style="margin-left:8px">Terverifikasi</span>` : `<span class="badge badge-warn" style="margin-left:8px">Belum diverifikasi</span>`}
-        </p>
-        ${!u.emailVerified ? `<button class="btn btn-ghost" id="resend">Kirim ulang email verifikasi</button>` : ""}
-      </div>
-
-      <div class="card" style="margin-top:22px;border-color:rgba(239,68,68,.35)">
-        <h3 style="margin:0 0 6px;color:#fca5a5">Zona berbahaya</h3>
-        <p class="page-sub" style="margin:0 0 14px">Menghapus akun akan menghapus profil, halaman, dan tautanmu secara permanen.</p>
-        <button class="btn btn-danger" id="del-acc">Hapus akun saya</button>
-      </div>
-    `));
-    bindShell();
-
-    $("#pf").addEventListener("submit", async e => {
-      e.preventDefault();
-      const err = $("#pf-err"); err.hidden = true;
-      const payload = {
-        displayName: $("#p-name").value.trim(),
-        bio: $("#p-bio").value.trim()
-      };
-      try{
-        await update(ref(db, `profiles/${state.user.uid}`), payload);
-        state.profile = { ...state.profile, ...payload };
-        toast("Profil disimpan.","success");
-      }catch(ex){ err.textContent = ex.message; err.hidden = false; }
-    });
-
-    $("#resend")?.addEventListener("click", async () => {
-      try{ await sendEmailVerification(state.user); toast("Email verifikasi dikirim ulang.","success"); }
-      catch(e){ toast("Gagal: " + e.message, "error"); }
-    });
-
-    $("#del-acc").addEventListener("click", () => {
-      modal({
-        title:"Hapus akun permanen?",
-        body:"Seluruh data termasuk profil, tautan, dan statistik akan dihapus. Tindakan ini tidak dapat dibatalkan.",
-        danger:true, confirmText:"Ya, hapus permanen",
-        onConfirm: async () => {
-          try{
-            const uid = state.user.uid;
-            await Promise.allSettled([
-              remove(ref(db, `users/${uid}`)),
-              remove(ref(db, `profiles/${uid}`)),
-              remove(ref(db, `pages/${uid}`)),
-              remove(ref(db, `analyticsAggregates/${uid}`)),
-              state.profile?.username ? remove(ref(db, `usernames/${state.profile.username}`)) : Promise.resolve()
-            ]);
-            await deleteUser(state.user);
-            toast("Akun dihapus.","success");
-            go("/");
-          }catch(e){
-            toast("Gagal menghapus akun: " + e.message + " (mungkin perlu login ulang).", "error", 6000);
-          }
-        }
-      });
-    });
-  }
-
-  /* -------------------- Admin -------------------- */
-  function renderAdmin(){
-    mount(dashShell("/admin", "Admin", "Statistik agregat platform. Akses dikontrol oleh role pengguna.", `
-      <div class="grid cols-4">
-        <div class="kpi"><div class="k">Akun</div><div class="v" id="a-users">—</div></div>
-        <div class="kpi"><div class="k">Halaman terbit</div><div class="v" id="a-pages">—</div></div>
-        <div class="kpi"><div class="k">Tautan</div><div class="v" id="a-links">—</div></div>
-        <div class="kpi"><div class="k">Total kunjungan</div><div class="v" id="a-views">—</div></div>
-      </div>
-      <div class="card" style="margin-top:22px">
-        <p class="hint" style="margin:0">
-          Aksi moderasi (menghapus konten, mensuspensi akun, mengubah role) tidak diaktifkan pada klien.
-          Operasi sensitif wajib melalui backend tepercaya (Cloud Functions) dengan Firebase Admin SDK.
-          Ini mencegah peningkatan hak akses dari sisi klien.
-        </p>
-      </div>
-    `));
-    bindShell();
-    (async () => {
-      try{
-        const snap = await get(ref(db, "platformStats"));
-        const s = snap.val() || {};
-        $("#a-users").textContent = (s.users||0).toLocaleString("id-ID");
-        $("#a-pages").textContent = (s.publishedPages||0).toLocaleString("id-ID");
-        $("#a-links").textContent = (s.links||0).toLocaleString("id-ID");
-        $("#a-views").textContent = (s.totalViews||0).toLocaleString("id-ID");
-      }catch{}
-    })();
-  }
-
-  /* -------------------- Public profile -------------------- */
-  async function renderPublicProfile(usernameRaw){
-    const username = String(usernameRaw||"").toLowerCase();
-    mount(`
-      <div class="pf-wrap" style="background:#0b0c10;color:#fff">
-        <div class="pf-card" style="text-align:center;padding:60px 20px">
-          <div class="sk" style="width:96px;height:96px;border-radius:50%;margin:0 auto 14px"></div>
-          <div class="sk" style="height:22px;width:180px;margin:0 auto 12px"></div>
-          <div class="sk" style="height:14px;width:240px;margin:0 auto"></div>
-        </div>
-      </div>`);
-
-    try{
-      const uSnap = await get(ref(db, `usernames/${username}`));
-      if(!uSnap.exists()) return renderProfileError("Profil tidak ditemukan", "Username ini belum terdaftar.");
-      const uid = uSnap.val().uid;
-
-      const [pSnap, pageSnap] = await Promise.all([
-        get(ref(db, `profiles/${uid}`)),
-        get(ref(db, `pages/${uid}`))
-      ]);
-      if(!pSnap.exists() || !pageSnap.exists()) return renderProfileError("Profil tidak ditemukan", "Data profil belum lengkap.");
-      const profile = pSnap.val();
-      const page = pageSnap.val();
-      if(!page.published) return renderProfileError("Belum dipublikasikan", "Pemilik halaman belum mempublikasikan profil ini.");
-
-      const t = { ...defaultTheme(), ...(page.theme||{}) };
-      const links = Object.entries(page.links||{})
-        .map(([id,l])=>({ id, ...l }))
-        .filter(l => l.active !== false)
-        .sort((a,b)=>(a.order??0)-(b.order??0));
-
-      const root = $("#app");
-      root.innerHTML = `
-        <div class="pf-wrap" style="background:${esc(t.bg)};color:${esc(t.text)};font-family:${esc(t.font)}">
-          <div class="pf-card">
-            <div style="width:96px;height:96px;border-radius:50%;background:rgba(255,255,255,.15);margin:0 auto 14px;display:grid;place-items:center;font-size:34px;font-weight:700;border:3px solid rgba(255,255,255,.15)">
-              ${esc((profile.displayName||username)[0].toUpperCase())}
-            </div>
-            <h1 class="pf-name">${esc(profile.displayName||username)}</h1>
-            <div style="text-align:center;opacity:.7;font-size:13px;margin-bottom:8px">@${esc(username)}</div>
-            ${profile.bio ? `<p class="pf-bio">${esc(profile.bio)}</p>` : ""}
-            <div class="pf-links" style="margin-top:24px">
-              ${links.length
-                ? links.map(l => `
-                  <a class="pf-link" href="${esc(l.url)}" data-lid="${esc(l.id)}" rel="noopener" target="_blank"
-                     style="background:${esc(t.btnBg)};color:${esc(t.btnText)};border:1px solid ${esc(t.btnBorder)};border-radius:${t.btnRadius}px;min-height:${t.btnHeight}px;box-shadow:${esc(t.shadow)};gap:${t.gap}px">
-                    ${esc(l.title||l.url)}
-                  </a>`).join("")
-                : `<div style="text-align:center;opacity:.6;font-size:14px">Belum ada tautan.</div>`}
-            </div>
-            <div class="pf-footer">Powered by <a href="#/" style="color:inherit;font-weight:600">LINKORA</a></div>
-          </div>
-        </div>`;
-
-      // Track view
-      try{
-        const day = todayKey();
-        await Promise.all([
-          runTransaction(ref(db, `analyticsAggregates/${uid}/daily/${day}/views`), v => (v||0) + 1),
-          runTransaction(ref(db, `analyticsAggregates/${uid}/totals/views`),   v => (v||0) + 1)
-        ]);
-      }catch{}
-
-      // Track clicks
-      root.querySelectorAll("[data-lid]").forEach(a => a.addEventListener("click", async () => {
-        const day = todayKey();
-        const lid = a.dataset.lid;
-        try{
-          await Promise.all([
-            runTransaction(ref(db, `analyticsAggregates/${uid}/daily/${day}/clicks/${lid}`), v => (v||0)+1),
-            runTransaction(ref(db, `analyticsAggregates/${uid}/totals/clicks`), v => (v||0)+1)
-          ]);
-        }catch{}
-      }));
-    }catch(e){
-      renderProfileError("Terjadi kesalahan", e.message);
-    }
-  }
-  function renderProfileError(title, msg){
-    mount(`
-      <div class="pf-wrap">
-        <div class="pf-card" style="text-align:center;padding-top:80px">
-          <h1 style="font-family:var(--font-display);font-size:26px">${esc(title)}</h1>
-          <p style="color:var(--muted);margin:12px 0 24px">${esc(msg)}</p>
-          <a class="btn btn-primary" href="#/">Kembali ke LINKORA</a>
-        </div>
-      </div>`);
-  }
-
-  /* -------------------- Error pages -------------------- */
-  function render404(){
-    mount(`${topNav()}
-      <div class="container" style="text-align:center;padding:100px 20px">
-        <div style="font-family:var(--font-display);font-size:80px;font-weight:700" class="grad-text">404</div>
-        <h1 style="font-family:var(--font-display);margin:0 0 10px">Halaman tidak ditemukan</h1>
-        <p style="color:var(--muted);margin:0 0 24px">Tautan yang kamu buka tidak ada atau sudah dipindahkan.</p>
-        <a class="btn btn-primary" href="#/">Kembali ke beranda</a>
-      </div>`);
-    bindTopNav();
-  }
-  function renderForbidden(){
-    mount(`${topNav()}
-      <div class="container" style="text-align:center;padding:100px 20px">
-        <div style="font-family:var(--font-display);font-size:80px;font-weight:700" class="grad-text">403</div>
-        <h1 style="font-family:var(--font-display);margin:0 0 10px">Akses ditolak</h1>
-        <p style="color:var(--muted);margin:0 0 24px">Kamu tidak memiliki izin untuk membuka halaman ini.</p>
-        <a class="btn btn-primary" href="#/dashboard">Kembali ke dashboard</a>
-      </div>`);
-    bindTopNav();
-  }
-
-  /* -------------------- Theme init -------------------- */
-  (function initTheme(){
-    const prefers = matchMedia("(prefers-color-scheme: light)").matches;
-    if(prefers) document.documentElement.classList.add("light");
-  })();
-
-  /* -------------------- Boot -------------------- */
-  window.addEventListener("hashchange", onRoute);
-  onAuthStateChanged(auth, async (user) => {
-    state.user = user;
-    if(user){ await loadUserData(user.uid); }
-    else { state.userData = null; state.profile = null; state.page = null; }
-    onRoute();
+      <p style="color:#cbd5e1;font-size:12px;margin:0">© ${new Date().getFullYear()} Cazoo</p>
+    </div>`;
+  let mode = "login";
+  const form = $("#auth-form");
+  const renderForm = ()=>{
+    if(mode==="login") form.innerHTML = `
+      <div class="field"><label>Email</label><input class="input" name="email" type="email" required autocomplete="email"></div>
+      <div class="field"><label>Kata Sandi</label><input class="input" name="password" type="password" required autocomplete="current-password"></div>
+      <p class="error" id="err"></p>
+      <button class="btn btn--block" type="submit" id="submit">Masuk</button>`;
+    else if(mode==="register") form.innerHTML = `
+      <div class="field"><label>Nama Tampilan</label><input class="input" name="displayName" maxlength="40" required></div>
+      <div class="field"><label>Email</label><input class="input" name="email" type="email" required></div>
+      <div class="field"><label>Kata Sandi (min. 6)</label><input class="input" name="password" type="password" required></div>
+      <div class="field"><label>Konfirmasi Kata Sandi</label><input class="input" name="password2" type="password" required></div>
+      <p class="error" id="err"></p>
+      <button class="btn btn--block" type="submit" id="submit">Daftar</button>`;
+    else form.innerHTML = `
+      <div class="field"><label>Email terdaftar</label><input class="input" name="email" type="email" required></div>
+      <p class="error" id="err"></p>
+      <button class="btn btn--block" type="submit" id="submit">Kirim Link Reset</button>`;
+  };
+  $$(".tab",appEl).forEach(b=>b.onclick=()=>{
+    mode = b.dataset.tab;
+    $$(".tab",appEl).forEach(x=>x.classList.toggle("active",x===b));
+    renderForm();
   });
-  </script>
+  form.addEventListener("submit", async e=>{
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    const err = $("#err",form); const sub = $("#submit",form);
+    err.textContent=""; sub.disabled=true; const old = sub.textContent; sub.textContent="Memproses...";
+    try{
+      if(mode==="register"){
+        if(!data.displayName.trim()) throw new Error("Nama wajib diisi.");
+        if(!validateEmail(data.email)) throw new Error("Email tidak valid.");
+        if(data.password.length<6) throw new Error("Kata sandi minimal 6 karakter.");
+        if(data.password!==data.password2) throw new Error("Konfirmasi kata sandi tidak cocok.");
+        const cred = await createUserWithEmailAndPassword(auth,data.email,data.password);
+        const uid = cred.user.uid;
+        await set(ref(db,`users/${uid}`),{
+          displayName:data.displayName.trim(), email:data.email,
+          accountStatus:"active", createdAt:serverTimestamp()
+        });
+        await set(ref(db,`wallets/${uid}`),{
+          userId:uid, availableBalance:0, pendingBalance:0, currency:"IDR",
+          updatedAt:serverTimestamp()
+        });
+        try{ await sendEmailVerification(cred.user); }catch{}
+        toast("Registrasi berhasil. Cek email verifikasi.","ok");
+      }else if(mode==="login"){
+        await signInWithEmailAndPassword(auth,data.email,data.password);
+      }else{
+        if(!validateEmail(data.email)) throw new Error("Email tidak valid.");
+        await sendPasswordResetEmail(auth,data.email);
+        toast("Link reset dikirim ke email Anda.","ok");
+      }
+    }catch(ex){
+      err.textContent = ex.code ? authErr(ex.code) : (ex.message||"Gagal");
+    }finally{ sub.disabled=false; sub.textContent=old; }
+  });
+  renderForm();
+}
+
+/* -------- Auth State -------- */
+onAuthStateChanged(auth, async user=>{
+  if(!user){ Object.assign(state,{user:null,profile:null,wallet:null,isAdmin:false}); renderAuth(); return; }
+  try{
+    const [p,w,tok] = await Promise.all([
+      get(ref(db,`users/${user.uid}`)),
+      get(ref(db,`wallets/${user.uid}`)),
+      user.getIdTokenResult(true)
+    ]);
+    state.user = user;
+    state.profile = p.exists()? p.val() : null;
+    state.wallet = w.exists()? w.val() : null;
+    state.isAdmin = tok.claims.admin === true;
+
+    // Jika profil belum ada (kasus register crash), buat ulang.
+    if(!state.profile){
+      await set(ref(db,`users/${user.uid}`),{
+        displayName:user.displayName||(user.email||"Pengguna").split("@")[0],
+        email:user.email||"", accountStatus:"active", createdAt:serverTimestamp()
+      });
+      state.profile = (await get(ref(db,`users/${user.uid}`))).val();
+    }
+    if(!state.wallet){
+      await set(ref(db,`wallets/${user.uid}`),{
+        userId:user.uid,availableBalance:0,pendingBalance:0,currency:"IDR",updatedAt:serverTimestamp()
+      });
+      state.wallet = (await get(ref(db,`wallets/${user.uid}`))).val();
+    }
+    if(state.profile.accountStatus === "disabled"){ renderDisabled(); return; }
+    subscribeWallet(user.uid);
+    subscribeNotifications(user.uid);
+    renderAppShell();
+  }catch(ex){
+    console.error(ex);
+    $("#app").innerHTML = `<div class="container"><div class="card"><h3>Gagal memuat data</h3><p class="help">${esc(authErr(ex.code)||ex.message)}</p><button class="btn btn--block mt-12" onclick="location.reload()">Coba Lagi</button></div></div>`;
+  }
+});
+
+function renderDisabled(){
+  $("#app").innerHTML = `<div class="container"><div class="card" style="text-align:center"><h2>Akun Dinonaktifkan</h2><p class="help">Hubungi layanan pelanggan Cazoo.</p><button class="btn btn--block mt-12" id="lo">Keluar</button></div></div>`;
+  $("#lo").onclick = ()=>signOut(auth);
+}
+
+/* -------- Realtime subscriptions -------- */
+let unsubWallet, unsubNotif;
+function subscribeWallet(uid){
+  unsubWallet && unsubWallet();
+  unsubWallet = onValue(ref(db,`wallets/${uid}`), snap=>{
+    if(snap.exists()){ state.wallet = snap.val(); if(state.route==="home") renderRoute("home"); }
+  });
+}
+const notifCache = { items:[], unread:0 };
+function subscribeNotifications(uid){
+  unsubNotif && unsubNotif();
+  unsubNotif = onValue(query(ref(db,`notifications/${uid}`), orderByChild("createdAt"), limitToLast(50)), snap=>{
+    const arr = [];
+    snap.forEach(c=>arr.push({id:c.key,...c.val()}));
+    arr.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    notifCache.items = arr;
+    notifCache.unread = arr.filter(n=>!n.read).length;
+    const nav = $(".bottom-nav a[data-route='notifications']");
+    if(nav) nav.querySelector(".dot")?.remove();
+    if(nav && notifCache.unread>0){
+      const dot = document.createElement("span"); dot.className="dot"; dot.style.cssText="width:8px;height:8px;background:var(--err);border-radius:50%;position:absolute;transform:translate(14px,-6px)";
+      nav.style.position="relative"; nav.appendChild(dot);
+    }
+  });
+}
+
+/* -------- App Shell -------- */
+function renderAppShell(){
+  const {profile} = state;
+  const name = profile?.displayName || state.user?.email || "Pengguna";
+  $("#app").innerHTML = `
+    <header class="appbar">
+      <div class="logo"><span class="logo__mark">C</span><span>Cazoo</span></div>
+      <div class="row">
+        <button class="btn btn--outline btn--sm" id="toggle-balance" aria-label="Sembunyikan saldo">👁</button>
+        <button class="btn btn--outline btn--sm" id="open-settings" aria-label="Pengaturan">⚙</button>
+      </div>
+    </header>
+    <main id="view" class="page-with-nav"></main>
+    <nav class="bottom-nav">
+      <a href="#/home" data-route="home"><i>🏠</i><span>Beranda</span></a>
+      <a href="#/activity" data-route="activity"><i>📄</i><span>Aktivitas</span></a>
+      <a href="#/pay" data-route="pay"><i>💳</i><span>Bayar</span></a>
+      <a href="#/notifications" data-route="notifications"><i>🔔</i><span>Notifikasi</span></a>
+      <a href="#/profile" data-route="profile"><i>👤</i><span>Profil</span></a>
+    </nav>`;
+  $("#toggle-balance").onclick = ()=>{ state.balanceHidden=!state.balanceHidden; renderRoute(state.route); };
+  $("#open-settings").onclick = ()=>navigate("settings");
+  const r = currentRoute(); state.route = r;
+  if(!location.hash) location.hash = "#/home";
+  renderRoute(state.route);
+  // Update nama di appbar tidak diperlukan; home sudah menampilkan.
+}
+
+function renderRoute(route){
+  const view = $("#view"); if(!view) return;
+  view.innerHTML = "";
+  (ROUTES[route] || ROUTES.home)(view);
+  $$(".bottom-nav a").forEach(a=>a.classList.toggle("active", a.dataset.route===route));
+  state.route = route;
+}
+
+/* =========================================================
+   ROUTES
+========================================================= */
+
+/* -------- HOME -------- */
+ROUTES.home = (root)=>{
+  const {profile,wallet,balanceHidden} = state;
+  const name = profile?.displayName || state.user?.email || "Pengguna";
+  const bal = balanceHidden ? "••••••" : rupiah(wallet?.availableBalance||0);
+  root.innerHTML = `
+    <div class="container">
+      <div class="balance-card">
+        <div class="balance-card__label">Halo, ${esc(name)}</div>
+        <div class="balance-card__value">${bal}</div>
+        <div class="balance-card__actions">
+          <button class="btn btn--ghost btn--sm" data-go="topup">Top Up</button>
+          <button class="btn btn--ghost btn--sm" data-go="transfer">Transfer</button>
+          <button class="btn btn--ghost btn--sm" data-go="qris">QRIS</button>
+          <button class="btn btn--ghost btn--sm" data-go="withdraw">Tarik</button>
+        </div>
+      </div>
+      <div class="quick-actions">
+        <button class="qa" data-go="topup"><i>➕</i>Top Up</button>
+        <button class="qa" data-go="transfer"><i>↗</i>Transfer</button>
+        <button class="qa" data-go="qris"><i>🔳</i>QRIS</button>
+        <button class="qa" data-go="withdraw"><i>↘</i>Tarik</button>
+      </div>
+
+      <div class="card mt-16">
+        <div class="row row--between"><strong>Transaksi Terakhir</strong><a href="#/activity" style="font-size:13px">Lihat semua</a></div>
+        <div id="recent" class="list mt-8"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+      </div>
+
+      <div class="card">
+        <div class="row row--between"><strong>Notifikasi</strong><a href="#/notifications" style="font-size:13px">Buka</a></div>
+        <div id="recent-notif" class="mt-8"><div class="skeleton"></div></div>
+      </div>
+    </div>`;
+  root.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>navigate(b.dataset.go));
+
+  loadRecentTransactions(10).then(items=>{
+    const el = $("#recent"); if(!el) return;
+    if(!items.length){ el.innerHTML = `<div class="empty">Belum ada transaksi. Mulai dengan Top Up.</div>`; return; }
+    el.innerHTML = items.map(txRow).join("");
+    el.querySelectorAll("[data-txid]").forEach(x=>x.onclick=()=>showTxDetail(x.dataset.txid));
+  });
+
+  // recent notif
+  const el2 = $("#recent-notif"); if(el2){
+    const items = notifCache.items.slice(0,3);
+    if(!items.length) el2.innerHTML = `<div class="empty" style="padding:12px">Belum ada notifikasi.</div>`;
+    else el2.innerHTML = items.map(n=>`
+      <div class="list-item"><div class="list-item__icon">🔔</div><div class="list-item__main">
+        <div class="list-item__title">${esc(n.title||"Notifikasi")}</div>
+        <div class="list-item__sub">${esc(n.message||"")}</div>
+      </div></div>`).join("");
+  }
+};
+
+async function loadRecentTransactions(limit=20){
+  const uid = state.user?.uid; if(!uid) return [];
+  const snap = await get(query(ref(db,`transactions`), orderByChild("userId"), equalTo(uid), limitToLast(limit)));
+  const arr=[]; snap.forEach(c=>arr.push({id:c.key,...c.val()}));
+  arr.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  return arr;
+}
+
+function txRow(t){
+  const isIn = ["TOPUP","TRANSFER_IN","REFUND","ADJUSTMENT"].includes(t.transactionType) && !String(t.transactionType).includes("OUT");
+  const dir = t.transactionType?.includes("OUT")||t.transactionType==="PAYMENT"||t.transactionType==="WITHDRAWAL"||t.transactionType==="FEE" ? "out" : "in";
+  const sign = dir==="in"?"+":"-";
+  const cls = dir==="in"?"amount-in":"amount-out";
+  const statMap = {success:"badge--ok",pending:"badge--warn",failed:"badge--err",processing:"badge--warn",expired:"badge--err",cancelled:"badge--err"};
+  const ic = {TOPUP:"➕",TRANSFER_IN:"↙",TRANSFER_OUT:"↗",PAYMENT:"💳",REFUND:"↩",WITHDRAWAL:"↘",FEE:"#",ADJUSTMENT:"⚙"}[t.transactionType]||"•";
+  return `<div class="list-item" data-txid="${t.id}" role="button" tabindex="0">
+    <div class="list-item__icon">${ic}</div>
+    <div class="list-item__main">
+      <div class="list-item__title">${esc(t.description||t.transactionType||"Transaksi")}</div>
+      <div class="list-item__sub">${fmtDate(t.createdAt)} · <span class="badge ${statMap[t.status]||""}">${esc(t.status||"-")}</span></div>
+    </div>
+    <div class="${cls}">${sign}${rupiah(t.amount||0).replace("Rp","Rp ")}</div>
+  </div>`;
+}
+
+async function showTxDetail(id){
+  const snap = await get(ref(db,`transactions/${id}`));
+  if(!snap.exists()){ toast("Transaksi tidak ditemukan","err"); return; }
+  const t = snap.val();
+  const rows = [
+    ["ID",id],["Jenis",t.transactionType],["Status",t.status],
+    ["Nominal",rupiah(t.amount||0)],["Biaya",rupiah(t.fee||0)],
+    ["Total",rupiah((t.amount||0)+(t.fee||0))],
+    ["Referensi",t.referenceNumber||"-"],
+    ["Deskripsi",t.description||"-"],
+    ["Waktu",fmtDate(t.createdAt)]
+  ];
+  modal(`
+    <h2>Detail Transaksi</h2>
+    ${rows.map(([k,v])=>`<div class="kv"><span>${esc(k)}</span><strong>${esc(v)}</strong></div>`).join("")}
+    <button class="btn btn--block mt-12" id="close">Tutup</button>
+  `).root.querySelector("#close").onclick = ()=>$("#modal-root").innerHTML="";
+}
+
+/* -------- TRANSFER -------- */
+ROUTES.transfer = (root)=>{
+  root.innerHTML = `
+    <div class="container">
+      <h2 style="margin-top:0">Transfer</h2>
+      <div class="card">
+        <div class="field"><label>Cari Penerima (email atau ID)</label>
+          <input class="input" id="q" placeholder="email@contoh.com atau UID" autocomplete="off">
+        </div>
+        <button class="btn btn--block" id="find">Cari Penerima</button>
+        <div id="recipient" class="mt-12"></div>
+      </div>
+      <div class="card" id="form" style="display:none">
+        <div class="field"><label>Nominal (Rp)</label><input class="input" id="amount" type="number" min="1000" step="1000" placeholder="10000"></div>
+        <div class="field"><label>Catatan (opsional)</label><input class="input" id="note" maxlength="60" placeholder="contoh: bayar makan"></div>
+        <div id="summary" class="mt-8"></div>
+        <p class="error" id="err"></p>
+        <button class="btn btn--block mt-12" id="submit">Kirim Transfer</button>
+      </div>
+    </div>`;
+  let recipient = null;
+
+  $("#find").onclick = async ()=>{
+    const q = $("#q").value.trim();
+    if(!q){ toast("Masukkan email atau UID","err"); return; }
+    const box = $("#recipient"); box.innerHTML = `<div class="center-spin"><div class="spinner spinner--dark"></div></div>`;
+    try{
+      let snap;
+      if(validateEmail(q)){ snap = await get(query(ref(db,"users"), orderByChild("email"), equalTo(q))); }
+      else { snap = await get(ref(db,`users/${q}`)); }
+      let found = null;
+      if(snap && snap.exists()){
+        if(validateEmail(q)){ snap.forEach(c=>{ if(!found) found = {uid:c.key, ...c.val()}; }); }
+        else found = {uid:q, ...snap.val()};
+      }
+      if(!found || found.uid===state.user.uid){ box.innerHTML=`<p class="error">Penerima tidak ditemukan atau bukan pengguna valid.</p>`; recipient=null; $("#form").style.display="none"; return; }
+      if(found.accountStatus && found.accountStatus!=="active"){ box.innerHTML=`<p class="error">Akun penerima tidak aktif.</p>`; recipient=null; $("#form").style.display="none"; return; }
+      recipient = found;
+      box.innerHTML = `<div class="list-item"><div class="list-item__icon">👤</div>
+        <div class="list-item__main"><div class="list-item__title">${esc(found.displayName||"-")}</div>
+        <div class="list-item__sub">${esc(found.email||found.uid)}</div></div>
+        <span class="badge badge--ok">Aktif</span></div>`;
+      $("#form").style.display="block";
+      updateSummary();
+    }catch(ex){
+      box.innerHTML = `<p class="error">${esc(authErr(ex.code)||ex.message)}</p>`;
+    }
+  };
+  $("#amount").oninput = updateSummary;
+  function updateSummary(){
+    const v = validateAmount($("#amount").value,{min:1000,max:10_000_000});
+    const fee = 0; // biaya transfer 0 (ubah di backend)
+    const s = $("#summary");
+    if(!recipient){ s.innerHTML=""; return; }
+    s.innerHTML = `
+      <div class="kv"><span>Pengirim</span><strong>${esc(state.profile?.displayName||state.user.email)}</strong></div>
+      <div class="kv"><span>Penerima</span><strong>${esc(recipient.displayName)}</strong></div>
+      <div class="kv"><span>Nominal</span><strong>${v.ok?rupiah(v.value):"-"}</strong></div>
+      <div class="kv"><span>Biaya</span><strong>${rupiah(fee)}</strong></div>
+      <div class="kv"><span>Total debit</span><strong>${v.ok?rupiah(v.value+fee):"-"}</strong></div>
+      <div class="help">Saldo Anda: ${rupiah(state.wallet?.availableBalance||0)}</div>`;
+  }
+  $("#submit").onclick = async ()=>{
+    if(!recipient){ toast("Cari penerima dulu","err"); return; }
+    const v = validateAmount($("#amount").value,{min:1000,max:10_000_000});
+    const err = $("#err"); err.textContent="";
+    if(!v.ok){ err.textContent = v.msg; return; }
+    if((state.wallet?.availableBalance||0) < v.value){ err.textContent = "Saldo tidak cukup."; return; }
+    const btn = $("#submit"); btn.disabled=true; btn.textContent="Memproses...";
+    try{
+      const call = httpsCallable(functions,"transfer");
+      const idem = uuid();
+      const res = await call({
+        receiverUid: recipient.uid,
+        amount: v.value,
+        note: $("#note").value.trim(),
+        idempotencyKey: idem
+      });
+      toast("Transfer berhasil.","ok");
+      $("#form").style.display="none"; $("#recipient").innerHTML="";
+      $("#q").value=""; $("#amount").value="";
+      if(res.data?.transactionId) showTxDetail(res.data.transactionId);
+    }catch(ex){
+      err.textContent = authErr(ex.code) || ex.message || "Gagal transfer";
+    }finally{ btn.disabled=false; btn.textContent="Kirim Transfer"; }
+  };
+};
+
+/* -------- TOP UP -------- */
+ROUTES.topup = (root)=>{
+  root.innerHTML = `
+    <div class="container">
+      <h2 style="margin-top:0">Top Up</h2>
+      <div class="card">
+        <div class="chip-row" id="quick">
+          ${[10000,25000,50000,100000,250000,500000].map(n=>`<button class="chip" data-v="${n}">${rupiah(n)}</button>`).join("")}
+        </div>
+        <div class="field"><label>Nominal</label><input class="input" id="amount" type="number" min="10000" step="1000" placeholder="10000"></div>
+        <div class="field"><label>Metode Pembayaran</label>
+          <select id="method">
+            <option value="qris">QRIS</option>
+            <option value="va">Virtual Account</option>
+            <option value="ewallet">E-Wallet</option>
+          </select>
+        </div>
+        <div class="help" id="feeInfo">Biaya admin: Rp 0 (dikonfirmasi server)</div>
+        <p class="error" id="err"></p>
+        <button class="btn btn--block mt-12" id="submit">Buat Permintaan Top Up</button>
+      </div>
+      <div class="card">
+        <strong>Riwayat Top Up</strong>
+        <div class="list mt-8" id="list"><div class="skeleton"></div></div>
+      </div>
+    </div>`;
+  $$("#quick .chip").forEach(c=>c.onclick=()=>{
+    $("#amount").value = c.dataset.v;
+    $$("#quick .chip").forEach(x=>x.setAttribute("aria-pressed", x===c));
+  });
+  $("#submit").onclick = async ()=>{
+    const v = validateAmount($("#amount").value,{min:10000,max:10_000_000});
+    const err = $("#err"); err.textContent="";
+    if(!v.ok){ err.textContent = v.msg; return; }
+    const btn = $("#submit"); btn.disabled=true; btn.textContent="Memproses...";
+    try{
+      const call = httpsCallable(functions,"createTopupRequest");
+      const res = await call({ amount:v.value, method:$("#method").value, idempotencyKey:uuid() });
+      const d = res.data || {};
+      if(d.instructions){
+        modal(`<h2>Instruksi Pembayaran</h2>
+          <div class="kv"><span>Referensi</span><strong>${esc(d.referenceNumber||"-")}</strong></div>
+          <div class="kv"><span>Nominal</span><strong>${rupiah(d.amount||v.value)}</strong></div>
+          <div class="kv"><span>Metode</span><strong>${esc(d.method||"-")}</strong></div>
+          <div class="help mt-8">${esc(d.instructions)}</div>
+          ${d.expiresAt?`<div class="help">Kedaluwarsa: ${fmtDate(d.expiresAt)}</div>`:""}
+          <button class="btn btn--block mt-12" id="close">Tutup</button>`)
+          .root.querySelector("#close").onclick = ()=>$("#modal-root").innerHTML="";
+      } else {
+        toast("Permintaan dibuat. Menunggu konfirmasi pembayaran.","ok");
+      }
+      loadTopupHistory();
+    }catch(ex){
+      err.textContent = authErr(ex.code) || ex.message || "Gagal";
+    }finally{ btn.disabled=false; btn.textContent="Buat Permintaan Top Up"; }
+  };
+  loadTopupHistory();
+
+  async function loadTopupHistory(){
+    const el = $("#list");
+    try{
+      const snap = await get(query(ref(db,"paymentRequests"), orderByChild("userId"), equalTo(state.user.uid), limitToLast(20)));
+      const arr=[]; snap.forEach(c=>arr.push({id:c.key,...c.val()}));
+      arr.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+      if(!arr.length){ el.innerHTML = `<div class="empty">Belum ada permintaan top up.</div>`; return; }
+      const statMap = {paid:"badge--ok",pending:"badge--warn",expired:"badge--err",failed:"badge--err",cancelled:"badge--err"};
+      el.innerHTML = arr.map(p=>`
+        <div class="list-item">
+          <div class="list-item__icon">➕</div>
+          <div class="list-item__main">
+            <div class="list-item__title">${rupiah(p.amount||0)}</div>
+            <div class="list-item__sub">${esc(p.provider||"-")} · ${esc(p.providerReference||p.id)} · ${fmtDate(p.createdAt)}</div>
+          </div>
+          <span class="badge ${statMap[p.status]||""}">${esc(p.status||"-")}</span>
+        </div>`).join("");
+    }catch(ex){
+      el.innerHTML = `<div class="empty">${esc(authErr(ex.code)||ex.message)}</div>`;
+    }
+  }
+};
+
+/* -------- QRIS (Scan + Display) -------- */
+ROUTES.qris = (root)=>{
+  root.innerHTML = `
+    <div class="container">
+      <h2 style="margin-top:0">QRIS</h2>
+      <div class="tabs" style="margin-bottom:10px">
+        <button class="tab active" data-t="scan">Scan QR</button>
+        <button class="tab" data-t="show">QR Saya</button>
+      </div>
+      <div id="panel"></div>
+    </div>`;
+  const panel = $("#panel");
+  const showScan = ()=>{
+    panel.innerHTML = `
+      <div class="card">
+        <p class="help">Izinkan kamera saat diminta. Jika perangkat tidak mendukung, Anda bisa memasukkan kode QRIS secara manual.</p>
+        <video id="cam" playsinline muted></video>
+        <div class="row mt-8"><button class="btn btn--outline btn--sm" id="stop">Berhenti</button></div>
+        <div class="field mt-12"><label>Atau tempel payload QRIS</label><input class="input" id="manual" placeholder="00020101...."></div>
+        <button class="btn btn--block" id="submit">Proses Kode</button>
+        <p class="error" id="err"></p>
+        <div class="help mt-8">Catatan: Validasi merchant & pembuatan pembayaran dilakukan oleh server (Cloud Function <code>parseQris</code> / <code>payQris</code>).</div>
+      </div>`;
+    let stream = null;
+    startCam();
+    async function startCam(){
+      try{
+        stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
+        const v = $("#cam"); v.srcObject = stream; await v.play();
+      }catch(ex){
+        $("#err").textContent = "Tidak dapat mengakses kamera. Masukkan kode manual.";
+      }
+    }
+    $("#stop").onclick = ()=>{ stream?.getTracks().forEach(t=>t.stop()); $("#cam").srcObject=null; };
+    $("#submit").onclick = async ()=>{
+      const payload = $("#manual").value.trim();
+      if(!payload){ $("#err").textContent="Masukkan payload QRIS."; return; }
+      try{
+        const call = httpsCallable(functions,"payQris");
+        const res = await call({ payload, idempotencyKey:uuid() });
+        toast("Pembayaran QRIS diproses.","ok");
+        if(res.data?.transactionId) showTxDetail(res.data.transactionId);
+      }catch(ex){
+        $("#err").textContent = authErr(ex.code) || ex.message;
+      }
+    };
+  };
+  const showMine = ()=>{
+    panel.innerHTML = `
+      <div class="card">
+        <p class="help">Tampilkan kode QR untuk menerima pembayaran. Kode dibuat oleh server.</p>
+        <button class="btn btn--block" id="gen">Buat / Perbarui Kode</button>
+        <div class="qr-box mt-12" id="qr" style="display:none"></div>
+        <div id="meta" class="mt-8"></div>
+      </div>`;
+    $("#gen").onclick = async ()=>{
+      try{
+        const call = httpsCallable(functions,"createQrisCode");
+        const res = await call({ idempotencyKey:uuid() });
+        const d = res.data || {};
+        const qrEl = $("#qr"); qrEl.style.display="grid";
+        qrEl.innerHTML = `<img alt="QR" src="${esc(d.imageUrl||"")}" />`;
+        $("#meta").innerHTML = `
+          <div class="kv"><span>Referensi</span><strong>${esc(d.reference||"-")}</strong></div>
+          ${d.expiresAt?`<div class="kv"><span>Berlaku s/d</span><strong>${fmtDate(d.expiresAt)}</strong></div>`:""}`;
+      }catch(ex){
+        toast(authErr(ex.code)||ex.message,"err");
+      }
+    };
+  };
+  $$(".tab",root).forEach(b=>b.onclick=()=>{
+    $$(".tab",root).forEach(x=>x.classList.toggle("active",x===b));
+    b.dataset.t==="scan"?showScan():showMine();
+  });
+  showScan();
+};
+
+/* -------- WITHDRAW -------- */
+ROUTES.withdraw = (root)=>{
+  root.innerHTML = `
+    <div class="container">
+      <h2 style="margin-top:0">Tarik Dana</h2>
+      <div class="card">
+        <div class="field"><label>Bank</label>
+          <select id="bank">
+            <option value="bca">BCA</option>
+            <option value="bni">BNI</option>
+            <option value="bri">BRI</option>
+            <option value="mandiri">Mandiri</option>
+          </select>
+        </div>
+        <div class="field"><label>Nomor Rekening</label><input class="input" id="acct" inputmode="numeric" placeholder="1234567890"></div>
+        <div class="field"><label>Nama Pemilik</label><input class="input" id="owner" placeholder="Sesuai rekening"></div>
+        <div class="field"><label>Nominal</label><input class="input" id="amount" type="number" min="10000" step="1000" placeholder="50000"></div>
+        <p class="error" id="err"></p>
+        <button class="btn btn--block" id="submit">Ajukan Penarikan</button>
+        <p class="help mt-8">Kami tidak pernah meminta PIN ATM, password perbankan, atau OTP Anda.</p>
+      </div>
+      <div class="card">
+        <strong>Riwayat Penarikan</strong>
+        <div class="list mt-8" id="list"><div class="skeleton"></div></div>
+      </div>
+    </div>`;
+  $("#submit").onclick = async ()=>{
+    const err = $("#err"); err.textContent="";
+    const v = validateAmount($("#amount").value,{min:10000,max:10_000_000});
+    const bank = $("#bank").value, acct = $("#acct").value.trim(), owner = $("#owner").value.trim();
+    if(!v.ok){ err.textContent = v.msg; return; }
+    if(!/^\d{6,20}$/.test(acct)){ err.textContent="Nomor rekening tidak valid."; return; }
+    if(!owner){ err.textContent="Nama pemilik wajib diisi."; return; }
+    if((state.wallet?.availableBalance||0) < v.value){ err.textContent="Saldo tidak cukup."; return; }
+    const btn = $("#submit"); btn.disabled=true; btn.textContent="Mengirim...";
+    try{
+      const call = httpsCallable(functions,"requestWithdrawal");
+      await call({ amount:v.value, bank, accountNumber:acct, accountName:owner, idempotencyKey:uuid() });
+      toast("Permintaan penarikan dibuat.","ok");
+      $("#amount").value="";
+      loadHistory();
+    }catch(ex){
+      err.textContent = authErr(ex.code) || ex.message;
+    }finally{ btn.disabled=false; btn.textContent="Ajukan Penarikan"; }
+  };
+  loadHistory();
+
+  async function loadHistory(){
+    const el = $("#list");
+    try{
+      const snap = await get(query(ref(db,"withdrawals"), orderByChild("userId"), equalTo(state.user.uid), limitToLast(20)));
+      const arr=[]; snap.forEach(c=>arr.push({id:c.key,...c.val()}));
+      arr.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+      if(!arr.length){ el.innerHTML = `<div class="empty">Belum ada penarikan.</div>`; return; }
+      const statMap = {paid:"badge--ok",completed:"badge--ok",processing:"badge--warn",pending:"badge--warn",failed:"badge--err",rejected:"badge--err"};
+      el.innerHTML = arr.map(w=>`
+        <div class="list-item"><div class="list-item__icon">↘</div>
+          <div class="list-item__main"><div class="list-item__title">${rupiah(w.amount||0)}</div>
+          <div class="list-item__sub">${esc(w.bank||"-")} ****${esc((w.accountNumber||"").slice(-4))} · ${fmtDate(w.createdAt)}</div></div>
+          <span class="badge ${statMap[w.status]||""}">${esc(w.status||"-")}</span>
+        </div>`).join("");
+    }catch(ex){ el.innerHTML = `<div class="empty">${esc(authErr(ex.code)||ex.message)}</div>`; }
+  }
+};
+
+/* -------- PAYMENT (Merchant / kode) -------- */
+ROUTES.pay = (root)=>{
+  root.innerHTML = `
+    <div class="container">
+      <h2 style="margin-top:0">Bayar</h2>
+      <div class="card">
+        <div class="field"><label>Kode Pembayaran / Invoice</label><input class="input" id="code" placeholder="INV-XXXX atau kode merchant"></div>
+        <div class="field"><label>Nominal</label><input class="input" id="amount" type="number" min="1000" step="500" placeholder="15000"></div>
+        <button class="btn btn--block" id="submit">Bayar</button>
+        <p class="error" id="err"></p>
+        <p class="help mt-8">Untuk merchant eksternal, verifikasi & pembayaran diproses di server.</p>
+      </div>
+    </div>`;
+  $("#submit").onclick = async ()=>{
+    const err = $("#err"); err.textContent="";
+    const code = $("#code").value.trim();
+    const v = validateAmount($("#amount").value,{min:1000,max:10_000_000});
+    if(!code){ err.textContent="Masukkan kode pembayaran."; return; }
+    if(!v.ok){ err.textContent = v.msg; return; }
+    const btn = $("#submit"); btn.disabled=true; btn.textContent="Memproses...";
+    try{
+      const call = httpsCallable(functions,"payMerchant");
+      const res = await call({ code, amount:v.value, idempotencyKey:uuid() });
+      toast("Pembayaran berhasil.","ok");
+      if(res.data?.transactionId) showTxDetail(res.data.transactionId);
+    }catch(ex){
+      err.textContent = authErr(ex.code)||ex.message;
+    }finally{ btn.disabled=false; btn.textContent="Bayar"; }
+  };
+};
+
+/* -------- HISTORY -------- */
+ROUTES.activity = async (root)=>{
+  root.innerHTML = `
+    <div class="container">
+      <h2 style="margin-top:0">Aktivitas</h2>
+      <div class="card">
+        <div class="row">
+          <select id="fType" class="input">
+            <option value="">Semua Jenis</option>
+            <option>TOPUP</option><option>TRANSFER_IN</option><option>TRANSFER_OUT</option>
+            <option>PAYMENT</option><option>WITHDRAWAL</option><option>REFUND</option>
+            <option>FEE</option><option>ADJUSTMENT</option>
+          </select>
+          <select id="fStatus" class="input">
+            <option value="">Semua Status</option>
+            <option>success</option><option>pending</option><option>processing</option>
+            <option>failed</option><option>expired</option><option>cancelled</option>
+          </select>
+        </div>
+        <div class="field mt-8"><label>Cari referensi</label><input class="input" id="fRef" placeholder="Reference number"></div>
+        <div class="field"><label>Dari</label><input class="input" id="fFrom" type="date"></div>
+        <div class="field"><label>Sampai</label><input class="input" id="fTo" type="date"></div>
+        <button class="btn btn--block" id="apply">Terapkan Filter</button>
+      </div>
+      <div class="list mt-12" id="list"><div class="skeleton"></div><div class="skeleton"></div></div>
+    </div>`;
+
+  async function fetchPage(){
+    const uid = state.user.uid;
+    const snap = await get(query(ref(db,"transactions"), orderByChild("userId"), equalTo(uid), limitToLast(200)));
+    const arr=[]; snap.forEach(c=>arr.push({id:c.key,...c.val()}));
+    arr.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    const t = $("#fType").value, s = $("#fStatus").value, r = $("#fRef").value.trim().toLowerCase();
+    const from = $("#fFrom").value ? new Date($("#fFrom").value).getTime() : 0;
+    const to = $("#fTo").value ? new Date($("#fTo").value).getTime()+86_399_999 : Infinity;
+    return arr.filter(x=>{
+      if(t && x.transactionType!==t) return false;
+      if(s && x.status!==s) return false;
+      if(r && !String(x.referenceNumber||"").toLowerCase().includes(r)) return false;
+      const c = x.createdAt||0;
+      if(c<from || c>to) return false;
+      return true;
+    });
+  }
+  const render = async ()=>{
+    const el = $("#list");
+    el.innerHTML = `<div class="skeleton"></div>`;
+    try{
+      const items = await fetchPage();
+      if(!items.length){ el.innerHTML = `<div class="empty">Tidak ada transaksi sesuai filter.</div>`; return; }
+      el.innerHTML = items.map(txRow).join("");
+      el.querySelectorAll("[data-txid]").forEach(x=>x.onclick=()=>showTxDetail(x.dataset.txid));
+    }catch(ex){ el.innerHTML = `<div class="empty">${esc(authErr(ex.code)||ex.message)}</div>`; }
+  };
+  $("#apply").onclick = render;
+  render();
+};
+
+/* -------- NOTIFICATIONS -------- */
+ROUTES.notifications = (root)=>{
+  const items = notifCache.items;
+  root.innerHTML = `
+    <div class="container">
+      <div class="row row--between"><h2 style="margin:0">Notifikasi</h2>
+        <button class="btn btn--outline btn--sm" id="markAll">Tandai semua dibaca</button>
+      </div>
+      <div class="list mt-12" id="list"></div>
+    </div>`;
+  const el = $("#list");
+  const render = ()=>{
+    if(!items.length){ el.innerHTML = `<div class="empty">Belum ada notifikasi.</div>`; return; }
+    el.innerHTML = items.map(n=>`
+      <div class="list-item" data-nid="${esc(n.id)}" role="button" tabindex="0">
+        <div class="list-item__icon">${n.read?"🔔":"🆕"}</div>
+        <div class="list-item__main">
+          <div class="list-item__title">${esc(n.title||"Notifikasi")}</div>
+          <div class="list-item__sub">${esc(n.message||"")}</div>
+          <div class="list-item__sub">${fmtDate(n.createdAt)}</div>
+        </div>
+        ${n.read?"":'<span class="badge badge--ok">Baru</span>'}
+      </div>`).join("");
+    el.querySelectorAll("[data-nid]").forEach(x=>x.onclick=async ()=>{
+      const nid = x.dataset.nid;
+      try{ await update(ref(db,`notifications/${state.user.uid}/${nid}`),{read:true}); }catch{}
+      const n = items.find(i=>i.id===nid);
+      if(n?.link) navigate(n.link);
+      render();
+    });
+  };
+  render();
+  $("#markAll").onclick = async ()=>{
+    try{
+      const updates = {}; items.forEach(n=>{ if(!n.read) updates[`notifications/${state.user.uid}/${n.id}/read`]=true; });
+      if(Object.keys(updates).length) await update(ref(db),updates);
+      toast("Semua ditandai dibaca.","ok");
+    }catch(ex){ toast(authErr(ex.code)||ex.message,"err"); }
+  };
+};
+
+/* -------- PROFILE -------- */
+ROUTES.profile = (root)=>{
+  const {profile,user} = state;
+  root.innerHTML = `
+    <div class="container">
+      <div class="card">
+        <div class="row">
+          <div class="list-item__icon" style="width:56px;height:56px;font-size:24px">👤</div>
+          <div class="list-item__main">
+            <div class="list-item__title">${esc(profile?.displayName||"-")}</div>
+            <div class="list-item__sub">${esc(user.email||"")}</div>
+            <div class="list-item__sub">UID: ${esc(user.uid)}</div>
+          </div>
+        </div>
+        ${user.emailVerified?`<span class="badge badge--ok mt-8">Email terverifikasi</span>`:`<div class="row mt-8"><span class="badge badge--warn">Email belum terverifikasi</span><button class="btn btn--sm btn--outline" id="verify">Kirim ulang verifikasi</button></div>`}
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">Ubah Profil</h3>
+        <div class="field"><label>Nama Tampilan</label><input class="input" id="name" value="${esc(profile?.displayName||"")}"></div>
+        <button class="btn btn--block" id="saveName">Simpan Nama</button>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">Ubah Kata Sandi</h3>
+        <div class="field"><label>Sandi Saat Ini</label><input class="input" id="old" type="password"></div>
+        <div class="field"><label>Sandi Baru</label><input class="input" id="new" type="password"></div>
+        <p class="error" id="err"></p>
+        <button class="btn btn--block" id="savePw">Ubah Sandi</button>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">Keamanan & Akun</h3>
+        <button class="btn btn--outline btn--block" id="goSettings">Pengaturan</button>
+        <button class="btn btn--outline btn--block mt-8" id="logout">Keluar</button>
+        <button class="btn btn--danger btn--block mt-8" id="deleteAcc">Hapus Akun</button>
+      </div>
+    </div>`;
+  $("#verify").onclick = async ()=>{ try{ await sendEmailVerification(user); toast("Email verifikasi dikirim.","ok"); }catch(ex){ toast(authErr(ex.code),"err"); } };
+  $("#saveName").onclick = async ()=>{
+    const name = $("#name").value.trim();
+    if(!name){ toast("Nama wajib diisi","err"); return; }
+    try{
+      await update(ref(db,`users/${user.uid}`),{displayName:name});
+      await updateProfile(user,{displayName:name});
+      state.profile.displayName = name;
+      toast("Nama diperbarui.","ok");
+    }catch(ex){ toast(authErr(ex.code)||ex.message,"err"); }
+  };
+  $("#savePw").onclick = async ()=>{
+    const err = $("#err"); err.textContent="";
+    const o = $("#old").value, n = $("#new").value;
+    if(!o||!n){ err.textContent="Isi kedua kolom."; return; }
+    if(n.length<6){ err.textContent="Sandi baru minimal 6 karakter."; return; }
+    try{
+      const cred = EmailAuthProvider.credential(user.email,o);
+      await reauthenticateWithCredential(user,cred);
+      await updatePassword(user,n);
+      toast("Kata sandi diubah.","ok"); $("#old").value="";$("#new").value="";
+    }catch(ex){ err.textContent = authErr(ex.code)||ex.message; }
+  };
+  $("#goSettings").onclick = ()=>navigate("settings");
+  $("#logout").onclick = ()=>signOut(auth);
+  $("#deleteAcc").onclick = ()=>{
+    modal(`<h2>Hapus Akun</h2>
+      <p class="help">Tindakan ini permanen. Data transaksi akan disimpan sesuai kebijakan.</p>
+      <div class="field"><label>Kata Sandi</label><input class="input" id="pw" type="password"></div>
+      <p class="error" id="err"></p>
+      <div class="row mt-8">
+        <button class="btn btn--outline btn--block" id="cancel">Batal</button>
+        <button class="btn btn--danger btn--block" id="ok">Hapus</button>
+      </div>`);
+    $("#cancel").onclick = ()=>$("#modal-root").innerHTML="";
+    $("#ok").onclick = async ()=>{
+      try{
+        const cred = EmailAuthProvider.credential(user.email,$("#pw").value);
+        await reauthenticateWithCredential(user,cred);
+        await update(ref(db,`users/${user.uid}`),{accountStatus:"deleted"});
+        await deleteUser(user);
+        toast("Akun dihapus.","ok");
+      }catch(ex){ $("#err").textContent = authErr(ex.code)||ex.message; }
+    };
+  };
+};
+
+/* -------- SETTINGS -------- */
+ROUTES.settings = (root)=>{
+  root.innerHTML = `
+    <div class="container">
+      <h2 style="margin-top:0">Pengaturan</h2>
+      <div class="card">
+        <div class="kv"><span>Tema</span>
+          <select id="theme" class="input" style="width:auto">
+            <option value="light">Terang</option>
+            <option value="dark">Gelap</option>
+          </select>
+        </div>
+        <div class="kv"><span>Notifikasi</span>
+          <select id="notif" class="input" style="width:auto">
+            <option value="1">Aktif</option><option value="0">Nonaktif</option>
+          </select>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Info</h3>
+        <div class="kv"><span>Versi</span><strong>1.0.0</strong></div>
+        <div class="kv"><span>UID</span><strong style="word-break:break-all">${esc(state.user.uid)}</strong></div>
+      </div>
+      <div class="card">
+        <a href="#" id="tos">Syarat Penggunaan</a>
+        <a href="#" id="privacy" style="display:block;margin-top:8px">Kebijakan Privasi</a>
+      </div>
+      ${state.isAdmin?`<div class="card"><h3 style="margin-top:0">Admin</h3><button class="btn btn--block" id="admin">Buka Panel Admin</button></div>`:""}
+      <button class="btn btn--danger btn--block mt-12" id="logout">Keluar</button>
+    </div>`;
+  $("#theme").value = state.theme;
+  $("#theme").onchange = e=>{
+    state.theme = e.target.value; document.documentElement.dataset.theme = state.theme;
+    localStorage.setItem("cazoo:theme", state.theme);
+  };
+  $("#notif").value = localStorage.getItem("cazoo:notif")||"1";
+  $("#notif").onchange = e=>localStorage.setItem("cazoo:notif",e.target.value);
+  $("#tos").onclick = (e)=>{e.preventDefault();modal(`<h2>Syarat Penggunaan</h2><p class="help">Dokumen lengkap disediakan oleh penyedia layanan. Ini placeholder.</p><button class="btn btn--block mt-12" onclick="document.getElementById('modal-root').innerHTML=''">Tutup</button>`);};
+  $("#privacy").onclick = (e)=>{e.preventDefault();modal(`<h2>Kebijakan Privasi</h2><p class="help">Dokumen lengkap disediakan oleh penyedia layanan. Ini placeholder.</p><button class="btn btn--block mt-12" onclick="document.getElementById('modal-root').innerHTML=''">Tutup</button>`);};
+  $("#logout").onclick = ()=>signOut(auth);
+  const a = $("#admin"); if(a) a.onclick = ()=>navigate("admin");
+};
+
+/* -------- ADMIN (read-only viewer) -------- */
+ROUTES.admin = async (root)=>{
+  if(!state.isAdmin){
+    root.innerHTML = `<div class="container"><div class="card"><h3>Akses ditolak</h3><p class="help">Anda bukan admin.</p></div></div>`;
+    return;
+  }
+  root.innerHTML = `
+    <div class="container">
+      <h2 style="margin-top:0">Admin</h2>
+      <div class="card"><div id="stat" class="center-spin"><div class="spinner spinner--dark"></div></div></div>
+      <div class="card"><h3 style="margin-top:0">Topup Pending</h3><div id="topup" class="list mt-8"><div class="skeleton"></div></div></div>
+      <div class="card"><h3 style="margin-top:0">Withdraw Pending</h3><div id="wd" class="list mt-8"><div class="skeleton"></div></div></div>
+    </div>`;
+  try{
+    const usersSnap = await get(ref(db,"users"));
+    const txSnap = await get(query(ref(db,"transactions"), limitToLast(500)));
+    const wdSnap = await get(query(ref(db,"withdrawals"), orderByChild("status"), equalTo("pending")));
+    const prSnap = await get(query(ref(db,"paymentRequests"), orderByChild("status"), equalTo("pending")));
+
+    const users = usersSnap.size || usersSnap.numChildren?.() || 0;
+    const txArr=[]; txSnap.forEach(c=>txArr.push(c.val()));
+    const total = txArr.filter(t=>t.status==="success").reduce((a,b)=>a+(b.amount||0),0);
+    $("#stat").outerHTML = `
+      <div class="mt-8">
+        <div class="kv"><span>Pengguna</span><strong>${users}</strong></div>
+        <div class="kv"><span>Transaksi</span><strong>${txArr.length}</strong></div>
+        <div class="kv"><span>Total sukses</span><strong>${rupiah(total)}</strong></div>
+        <div class="kv"><span>Sukses</span><strong>${txArr.filter(t=>t.status==="success").length}</strong></div>
+        <div class="kv"><span>Gagal</span><strong>${txArr.filter(t=>t.status==="failed").length}</strong></div>
+        <div class="kv"><span>Pending</span><strong>${txArr.filter(t=>t.status==="pending"||t.status==="processing").length}</strong></div>
+      </div>`;
+
+    const listFrom = (snap, kind) => {
+      const arr=[]; snap.forEach(c=>arr.push({id:c.key,...c.val()}));
+      if(!arr.length) return `<div class="empty">Tidak ada.</div>`;
+      return arr.map(x=>`
+        <div class="list-item"><div class="list-item__icon">${kind==="wd"?"↘":"➕"}</div>
+          <div class="list-item__main"><div class="list-item__title">${rupiah(x.amount||0)}</div>
+            <div class="list-item__sub">${esc(x.userId||"")} · ${fmtDate(x.createdAt)}</div></div>
+          <span class="badge badge--warn">${esc(x.status||"")}</span>
+        </div>`).join("");
+    };
+    $("#wd").innerHTML = listFrom(wdSnap,"wd");
+    $("#topup").innerHTML = listFrom(prSnap,"pr");
+  }catch(ex){
+    toast(authErr(ex.code)||ex.message,"err");
+  }
+};
+
+/* -------- PWA -------- */
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("service-worker.js").catch(()=>{});
+}
+
+/* -------- Startup -------- */
+// Hash default
+if(!location.hash) location.hash = "#/home";
+</script>
 </body>
 </html>
