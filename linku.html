@@ -1,1402 +1,1713 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id" data-theme="dark">
 <head>
-<meta charset="UTF-8" />
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#06080f" />
-<title>Admin Panel · Grandmaster Grid</title>
-<link rel="icon" type="image/png" href="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0a0e0d" />
+<title>CAZOO Control Center</title>
+<link rel="icon" href="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" />
 <style>
-:root{
-  --bg:#06080f;--bg-2:#0a0e1a;--surface:#111828;--surface-2:#182135;--surface-3:#212c46;--surface-4:#2a3757;
-  --border:rgba(255,255,255,.055);--border-2:rgba(255,255,255,.11);--border-3:rgba(255,255,255,.18);
-  --text:#f0f4fc;--text-dim:#8b96b3;--text-dim2:#5a6884;
-  --accent:#6d7bff;--accent-2:#a46cff;--accent-3:#22d3ee;
-  --accent-soft:rgba(109,123,255,.14);
-  --success:#10d98d;--success-soft:rgba(16,217,141,.14);
-  --danger:#ff5d6c;--danger-soft:rgba(255,93,108,.14);
-  --warn:#ffb020;--warn-soft:rgba(255,176,32,.14);
-  --radius:16px;--radius-lg:22px;
-  --shadow-sm:0 4px 12px rgba(0,0,0,.35);
-  --shadow:0 12px 32px rgba(0,0,0,.45);
-  --shadow-lg:0 24px 60px rgba(0,0,0,.55);
-  --glow-accent:0 12px 40px rgba(109,123,255,.35);
+:root {
+  --bg:#0a0e0d; --surface-1:#111614; --surface-2:#171e1b; --surface-3:#1f2925;
+  --text:#e9efed; --text-dim:#93a5a0; --text-faint:#5f7069;
+  --line:#1c2623; --line-strong:#2a3833;
+  --brand:#10b981; --brand-soft:rgba(16,185,129,.12); --brand-glow:rgba(16,185,129,.28);
+  --danger:#ef4444; --danger-soft:rgba(239,68,68,.12);
+  --warn:#f59e0b; --warn-soft:rgba(245,158,11,.12);
+  --info:#38bdf8; --info-soft:rgba(56,189,248,.12);
+  --r-sm:8px; --r-md:12px; --r-lg:16px;
+  --shadow-md:0 4px 16px rgba(0,0,0,.35);
+  --shadow-lg:0 12px 40px rgba(0,0,0,.5);
+  --ease:cubic-bezier(.32,.72,.24,1);
 }
-[data-theme="light"]{
-  --bg:#eef1f8;--bg-2:#e6eaf4;--surface:#fff;--surface-2:#f5f7fc;--surface-3:#eaf0fa;--surface-4:#dfe7f5;
-  --border:rgba(20,30,60,.07);--border-2:rgba(20,30,60,.12);--border-3:rgba(20,30,60,.2);
-  --text:#0a0f1e;--text-dim:#5f6c88;--text-dim2:#95a0ba;
-  --accent:#4c5cf0;--accent-2:#8b46e8;--accent-3:#0891b2;
-  --accent-soft:rgba(76,92,240,.1);
-  --success:#0a9f68;--danger:#e7344a;--warn:#d68a00;
-  --shadow-sm:0 4px 12px rgba(20,30,60,.08);
-  --shadow:0 12px 32px rgba(20,30,60,.11);
-  --shadow-lg:0 24px 60px rgba(20,30,60,.16);
-  --glow-accent:0 12px 40px rgba(76,92,240,.24);
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body { height:100%; margin:0; }
+body {
+  background:var(--bg); color:var(--text);
+  font:400 14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased; overscroll-behavior:none;
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%}
-body{
-  background:var(--bg);color:var(--text);
-  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  font-size:14px;line-height:1.5;overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-  padding-top:env(safe-area-inset-top);
-}
-[data-theme="dark"] body{
-  background:
-    radial-gradient(1400px 800px at 8% -8%, rgba(109,123,255,.16), transparent 55%),
-    radial-gradient(1200px 700px at 105% 4%, rgba(164,108,255,.14), transparent 55%),
-    var(--bg);
-  background-attachment:fixed;
-}
-button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit;background:none;border:none}
-button{cursor:pointer;padding:0}
-a{color:var(--accent);text-decoration:none}
-h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.022em;line-height:1.2}
-::-webkit-scrollbar{width:10px;height:10px}
-::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:6px;border:2px solid var(--bg)}
-::-webkit-scrollbar-track{background:transparent}
-.hidden{display:none !important}
+button { font:inherit; color:inherit; cursor:pointer; border:0; background:none; padding:0; }
+input,textarea,select { font:inherit; color:inherit; }
+img { max-width:100%; display:block; }
+[hidden] { display:none !important; }
+::-webkit-scrollbar { width:8px; height:8px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--line-strong); border-radius:4px; }
 
-#loader{
-  position:fixed;inset:0;z-index:2000;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
-  background:var(--bg);transition:opacity .5s,visibility .5s;
-}
-#loader.gone{opacity:0;visibility:hidden;pointer-events:none}
-.loader-mark{
-  width:84px;height:84px;border-radius:26px;display:grid;place-items:center;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  color:#fff;box-shadow:0 20px 50px rgba(109,123,255,.5);
-  animation:float 3s ease-in-out infinite;
-}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.loader-mark svg{width:44px;height:44px}
-.loader-title{font-size:20px;font-weight:900;letter-spacing:-.03em}
-.loader-status{font-size:12.5px;color:var(--text-dim);font-weight:600}
-.spinner{
-  width:22px;height:22px;border-radius:50%;
-  border:2.5px solid color-mix(in srgb,currentColor 22%,transparent);
-  border-top-color:currentColor;animation:spin .72s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
+h1 { font-size:22px; font-weight:600; letter-spacing:-.02em; margin:0; }
+h2 { font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim); margin:24px 0 10px; }
+h3 { font-size:15px; font-weight:600; margin:0; }
+.muted { color:var(--text-dim); }
+.faint { color:var(--text-faint); }
+.small { font-size:12px; }
+.tiny { font-size:11px; }
+.mono { font-family:ui-monospace,Menlo,monospace; }
+strong { font-weight:600; }
 
-#loginScreen{
-  position:fixed;inset:0;z-index:900;
-  display:flex;align-items:center;justify-content:center;padding:24px;
-  background:
-    radial-gradient(900px 700px at 15% 10%, rgba(109,123,255,.22), transparent 55%),
-    radial-gradient(800px 600px at 100% 90%, rgba(164,108,255,.2), transparent 55%),
-    var(--bg);
+/* ============ LOADING ============ */
+.loading-screen {
+  position:fixed; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:20px;
+  background:var(--bg); z-index:100;
 }
-.login-box{
-  width:100%;max-width:400px;
-  background:linear-gradient(180deg,var(--surface),var(--surface-2));
-  border-radius:26px;padding:32px 28px;text-align:center;
-  box-shadow:var(--shadow-lg),inset 0 1px 0 rgba(255,255,255,.06);
-  border:1px solid var(--border-2);
-  animation:pop .5s cubic-bezier(.2,1.2,.4,1);
-}
-@keyframes pop{from{opacity:0;transform:scale(.92) translateY(14px)}to{opacity:1;transform:none}}
-.login-logo{
-  width:72px;height:72px;border-radius:22px;margin:0 auto 16px;
-  display:grid;place-items:center;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  color:#fff;box-shadow:0 16px 40px rgba(109,123,255,.5);
-}
-.login-logo svg{width:36px;height:36px}
-.login-title{font-size:22px;margin-bottom:6px;letter-spacing:-.03em}
-.login-sub{font-size:13px;color:var(--text-dim);margin-bottom:22px}
+.loading-logo { width:80px; height:80px; border-radius:22px; box-shadow:var(--shadow-lg); animation:pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.04); } }
+.loading-bar { width:160px; height:3px; border-radius:999px; background:var(--surface-3); overflow:hidden; }
+.loading-bar span { display:block; height:100%; width:40%; background:linear-gradient(90deg,var(--brand),#34d399); animation:slide 1.4s cubic-bezier(.5,0,.2,1) infinite; }
+@keyframes slide { 0% { transform:translateX(-100%); } 100% { transform:translateX(320%); } }
+.loading-screen p { color:var(--text-faint); font-size:13px; margin:0; }
 
-.pin-input{
-  width:100%;padding:16px 18px;border-radius:14px;
-  background:var(--bg-2);border:1.5px solid var(--border-2);color:var(--text);
-  outline:none;transition:.2s;font-size:24px;font-weight:900;
-  font-family:'JetBrains Mono',ui-monospace,monospace;
-  letter-spacing:.5em;text-align:center;
+/* ============ CENTERED AUTH ============ */
+.center-wrap {
+  min-height:100dvh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; padding:32px 24px; gap:16px; text-align:center;
 }
-.pin-input:focus{
-  border-color:var(--accent);
-  box-shadow:0 0 0 4px var(--accent-soft);
-  background:var(--surface);
+.center-logo { width:80px; height:80px; border-radius:22px; box-shadow:var(--shadow-lg); margin-bottom:8px; }
+.center-title { font-size:28px; font-weight:800; letter-spacing:-.03em; margin:0; }
+.center-sub { color:var(--text-dim); font-size:14px; margin:4px 0 20px; max-width:400px; line-height:1.6; }
+.center-narrow { max-width:440px; width:100%; text-align:left; }
+.badge {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 10px; border-radius:999px;
+  font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
 }
-.pin-input::placeholder{color:var(--text-dim2);letter-spacing:.5em}
+.badge-admin { background:var(--brand-soft); color:var(--brand); border:1px solid color-mix(in srgb,var(--brand) 30%,transparent); }
+.badge-warn { background:var(--warn-soft); color:var(--warn); border:1px solid color-mix(in srgb,var(--warn) 30%,transparent); }
+.badge-danger { background:var(--danger-soft); color:var(--danger); border:1px solid color-mix(in srgb,var(--danger) 30%,transparent); }
 
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:9px;
-  padding:13px 20px;border-radius:13px;font-weight:700;font-size:13.5px;
-  background:linear-gradient(180deg,var(--surface-2),var(--surface-3));
-  color:var(--text);transition:.16s;min-height:48px;
-  border:1px solid var(--border-2);box-shadow:var(--shadow-sm);
-  letter-spacing:-.005em;white-space:nowrap;
+/* ============ LAYOUT ============ */
+.shell { display:flex; min-height:100dvh; }
+.sidebar {
+  width:240px; flex-shrink:0;
+  background:var(--surface-1); border-right:1px solid var(--line);
+  display:flex; flex-direction:column; padding:16px 10px;
+  position:sticky; top:0; height:100dvh;
 }
-.btn:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
-.btn:active{transform:scale(.98)}
-.btn:disabled{opacity:.42;pointer-events:none}
-.btn.primary{
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  color:#fff;border-color:transparent;
-  box-shadow:0 8px 24px rgba(109,123,255,.42),inset 0 1px 0 rgba(255,255,255,.22);
+.brand {
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px 20px;
 }
-.btn.danger{
-  background:linear-gradient(180deg,rgba(255,93,108,.16),rgba(255,93,108,.1));
-  color:var(--danger);border-color:rgba(255,93,108,.32);
+.brand img { width:28px; height:28px; border-radius:8px; }
+.brand-info { flex:1; min-width:0; }
+.brand-name { font-weight:700; font-size:15px; letter-spacing:-.02em; line-height:1.2; }
+.brand-sub { font-size:10px; color:var(--text-faint); letter-spacing:.06em; text-transform:uppercase; }
+.nav-items { display:flex; flex-direction:column; gap:2px; flex:1; overflow-y:auto; }
+.nav-item {
+  display:flex; align-items:center; gap:12px;
+  padding:9px 12px; border-radius:var(--r-md);
+  color:var(--text-dim); font-size:13.5px; font-weight:500;
+  transition:.12s var(--ease); text-align:left; width:100%;
 }
-.btn.ghost{background:transparent;border-color:var(--border-2);box-shadow:none;color:var(--text-dim)}
-.btn.ghost:hover{background:var(--surface-2);color:var(--text)}
-.btn.block{width:100%}
-.btn.sm{min-height:38px;padding:9px 14px;font-size:12.5px;border-radius:11px;gap:7px}
-.error-msg{
-  margin-top:14px;padding:12px 14px;border-radius:12px;
-  background:var(--danger-soft);color:var(--danger);
-  font-size:12.5px;font-weight:600;line-height:1.5;text-align:left;
-  border:1px solid rgba(255,93,108,.28);white-space:pre-wrap;
+.nav-item svg { width:16px; height:16px; flex-shrink:0; opacity:.85; }
+.nav-item:hover { background:var(--surface-2); color:var(--text); }
+.nav-item.active { background:var(--brand-soft); color:var(--brand); }
+.nav-item.active svg { opacity:1; }
+.nav-divider { height:1px; background:var(--line); margin:8px 4px; }
+.nav-group-label { padding:10px 12px 4px; font-size:10px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.08em; font-weight:600; }
+.sidebar-footer { padding:8px 10px 0; border-top:1px solid var(--line); margin-top:8px; }
+.user-chip {
+  display:flex; align-items:center; gap:10px; padding:8px 8px;
+  border-radius:var(--r-md); transition:.12s;
 }
-.error-msg.hidden{display:none}
+.user-chip:hover { background:var(--surface-2); }
+.user-chip img { width:28px; height:28px; border-radius:50%; }
+.user-chip-info { flex:1; min-width:0; text-align:left; }
+.user-chip-name { font-size:12.5px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.user-chip-role { font-size:10px; color:var(--brand); text-transform:uppercase; letter-spacing:.06em; font-weight:600; }
 
-#app{min-height:100vh;display:none;flex-direction:column}
-#app.active{display:flex}
-.topbar{
-  position:sticky;top:0;z-index:60;
-  display:flex;align-items:center;gap:12px;padding:12px 20px;
-  padding-top:calc(12px + env(safe-area-inset-top));
-  background:color-mix(in srgb,var(--bg) 78%,transparent);
-  backdrop-filter:blur(22px) saturate(1.6);-webkit-backdrop-filter:blur(22px) saturate(1.6);
-  border-bottom:1px solid var(--border);
+.main { flex:1; min-width:0; }
+.main-inner { max-width:1100px; margin:0 auto; padding:28px 32px 60px; }
+@media (max-width:860px) {
+  .sidebar { display:none; }
+  .main-inner { padding:16px 16px 32px; }
+  .mobile-bar { display:flex !important; }
 }
-.brand{display:flex;align-items:center;gap:11px;flex:1;min-width:0}
-.brand-mark{
-  width:36px;height:36px;border-radius:12px;flex:none;
-  display:grid;place-items:center;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  color:#fff;box-shadow:var(--glow-accent);
+.mobile-bar {
+  display:none; position:sticky; top:0; z-index:30;
+  background:color-mix(in srgb,var(--surface-1) 92%,transparent);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--line);
+  padding:12px 16px; align-items:center; gap:12px;
 }
-.brand-mark svg{width:22px;height:22px}
-.brand-text{line-height:1;min-width:0}
-.brand-text .t{font-size:14.5px;font-weight:800;letter-spacing:-.02em}
-.brand-text .s{font-size:10px;font-weight:800;color:var(--text-dim2);letter-spacing:.18em;text-transform:uppercase;margin-top:3px}
-.topbar-right{display:flex;align-items:center;gap:8px;flex:none}
-.icon-btn{
-  width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
-  color:var(--text-dim);transition:.18s;flex:none;position:relative;
+.mobile-bar img { width:26px; height:26px; border-radius:7px; }
+.mobile-menu {
+  position:fixed; inset:0; z-index:50;
+  background:var(--bg); overflow-y:auto; padding:20px;
 }
-.icon-btn:hover{background:var(--surface-2);color:var(--text)}
-.icon-btn svg{width:20px;height:20px}
+.mobile-menu .nav-item { font-size:15px; padding:14px 16px; }
 
-.container{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:24px 20px 120px}
+/* ============ PAGE HEAD ============ */
+.page-head {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px; margin-bottom:24px; flex-wrap:wrap;
+}
+.page-title-group { min-width:0; }
+.page-sub { color:var(--text-dim); font-size:13px; margin-top:2px; }
+.page-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 
-.tabs{
-  display:flex;gap:4px;background:var(--surface);padding:5px;
-  border-radius:16px;border:1px solid var(--border-2);
-  overflow-x:auto;scrollbar-width:none;margin-bottom:22px;
-  box-shadow:inset 0 1px 2px rgba(0,0,0,.24);
+/* ============ BUTTONS ============ */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:9px 14px; border-radius:10px;
+  font-size:13.5px; font-weight:500;
+  border:1px solid var(--line-strong); background:var(--surface-2); color:var(--text);
+  transition:.12s var(--ease); white-space:nowrap;
 }
-.tabs::-webkit-scrollbar{display:none}
-.tabs button{
-  flex:1;min-width:fit-content;padding:11px 16px;border-radius:12px;
-  font-size:12.5px;font-weight:800;color:var(--text-dim);white-space:nowrap;
-  transition:.22s cubic-bezier(.2,1,.4,1);letter-spacing:.005em;
-  display:flex;align-items:center;justify-content:center;gap:7px;
-}
-.tabs button svg{width:16px;height:16px}
-.tabs button.active{
-  background:linear-gradient(180deg,var(--surface-3),var(--surface-2));
-  color:var(--text);box-shadow:var(--shadow-sm),inset 0 1px 0 rgba(255,255,255,.06);
-}
+.btn:hover:not(:disabled) { background:var(--surface-3); border-color:var(--text-faint); }
+.btn:active:not(:disabled) { transform:scale(.97); }
+.btn:disabled { opacity:.4; cursor:not-allowed; }
+.btn svg { width:15px; height:15px; }
+.btn-primary { background:var(--brand); color:#031a10; border-color:transparent; font-weight:600; box-shadow:0 2px 12px var(--brand-glow); }
+.btn-primary:hover:not(:disabled) { background:#1ec48f; }
+.btn-danger { color:var(--danger); border-color:color-mix(in srgb,var(--danger) 35%,transparent); background:var(--danger-soft); }
+.btn-danger:hover:not(:disabled) { background:color-mix(in srgb,var(--danger) 18%,transparent); border-color:var(--danger); }
+.btn-ghost { background:transparent; border-color:transparent; color:var(--text-dim); }
+.btn-ghost:hover:not(:disabled) { background:var(--surface-2); color:var(--text); }
+.btn-sm { padding:6px 10px; font-size:12px; }
+.btn-icon { width:34px; height:34px; padding:0; }
+.btn-block { width:100%; }
 
-.panel{display:none;animation:fadeUp .4s cubic-bezier(.2,1,.4,1)}
-.panel.active{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* ============ INPUTS ============ */
+.field { display:flex; flex-direction:column; gap:6px; }
+.field > label { font-size:12px; font-weight:500; color:var(--text-dim); }
+.input {
+  width:100%; padding:10px 13px;
+  border-radius:10px; border:1px solid var(--line-strong);
+  background:var(--surface-2); color:var(--text);
+  outline:none; transition:.12s var(--ease);
+}
+.input:focus { border-color:var(--brand); background:var(--surface-1); }
+.input::placeholder { color:var(--text-faint); }
 
-.panel-head{
-  display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
-  margin-bottom:18px;flex-wrap:wrap;
+/* ============ CARDS ============ */
+.card {
+  background:var(--surface-1); border:1px solid var(--line);
+  border-radius:var(--r-lg); padding:18px;
 }
-.panel-head h2{font-size:20px;letter-spacing:-.03em;margin-bottom:4px}
-.panel-head p{font-size:12.5px;color:var(--text-dim);margin:0;line-height:1.55}
-.panel-head .btn{flex:none}
+.card-flush { padding:0; overflow:hidden; }
 
-.card{
-  position:relative;
-  background:linear-gradient(180deg,var(--surface),var(--surface-2));
-  border-radius:var(--radius-lg);padding:20px;
-  box-shadow:var(--shadow-sm),inset 0 1px 0 rgba(255,255,255,.035);
-  border:1px solid var(--border);
+/* ============ STATS ============ */
+.stat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; }
+.stat {
+  padding:16px; background:var(--surface-1);
+  border:1px solid var(--line); border-radius:var(--r-md);
 }
-.card + .card{margin-top:14px}
+.stat-label { font-size:10px; font-weight:600; color:var(--text-faint); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; }
+.stat-value { font-size:24px; font-weight:700; letter-spacing:-.03em; line-height:1; }
+.stat-sub { font-size:11px; color:var(--text-dim); margin-top:4px; }
+.stat.accent { background:linear-gradient(135deg,var(--brand-soft),transparent); border-color:color-mix(in srgb,var(--brand) 25%,transparent); }
 
-.field{margin-bottom:16px}
-.field:last-child{margin-bottom:0}
-.field label{
-  display:block;font-size:11.5px;font-weight:800;color:var(--text-dim);
-  margin-bottom:8px;letter-spacing:.09em;text-transform:uppercase;
+/* ============ TABLE ============ */
+.table-wrap { overflow-x:auto; }
+.table {
+  width:100%; border-collapse:collapse;
+  font-size:13.5px;
 }
-.field label .hint{
-  display:inline-block;margin-left:6px;font-weight:600;
-  color:var(--text-dim2);text-transform:none;letter-spacing:0;font-size:11px;
+.table th {
+  text-align:left; padding:10px 14px;
+  font-size:11px; font-weight:600; color:var(--text-faint);
+  text-transform:uppercase; letter-spacing:.06em;
+  border-bottom:1px solid var(--line);
+  white-space:nowrap;
 }
-.input,textarea.input,select.input{
-  width:100%;padding:12px 14px;border-radius:12px;
-  background:var(--bg-2);border:1.5px solid var(--border-2);color:var(--text);
-  outline:none;transition:.2s;font-size:14px;font-weight:500;font-family:inherit;
+.table td {
+  padding:12px 14px;
+  border-bottom:1px solid var(--line);
+  vertical-align:middle;
 }
-.input:focus{
-  border-color:var(--accent);
-  box-shadow:0 0 0 4px var(--accent-soft);
-  background:var(--surface);
-}
-.input::placeholder{color:var(--text-dim2)}
-textarea.input{min-height:110px;resize:vertical;line-height:1.55;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px}
-select.input{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238b96b3' stroke-width='2' stroke-linecap='round'><polyline points='6 9 12 15 18 9'/></svg>");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
+.table tr:last-child td { border-bottom:none; }
+.table tbody tr { transition:.1s; }
+.table tbody tr:hover { background:var(--surface-2); }
+.table-actions { display:flex; gap:6px; justify-content:flex-end; }
 
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-@media(max-width:640px){
-  .grid-2,.grid-3{grid-template-columns:1fr}
+/* ============ SEARCH/FILTER BAR ============ */
+.toolbar {
+  display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+  margin-bottom:16px; padding:12px 14px;
+  background:var(--surface-1); border:1px solid var(--line); border-radius:var(--r-md);
 }
+.toolbar .input { width:auto; min-width:200px; flex:1; }
+.toolbar .field { flex-direction:row; align-items:center; gap:8px; flex:0 0 auto; }
+.toolbar .field > label { white-space:nowrap; font-size:12px; }
+.toolbar select.input { width:auto; min-width:130px; }
 
-.item-list{display:flex;flex-direction:column;gap:12px}
-.item{
-  background:var(--surface);border:1px solid var(--border-2);
-  border-radius:var(--radius);padding:14px;
-  display:flex;gap:14px;align-items:flex-start;
-  transition:.22s cubic-bezier(.2,1,.4,1);
+/* ============ ROW LIST ============ */
+.row-list { display:flex; flex-direction:column; gap:8px; }
+.row-item {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px; background:var(--surface-1);
+  border:1px solid var(--line); border-radius:var(--r-md);
+  transition:.12s;
 }
-.item:hover{border-color:var(--border-3);background:var(--surface-2)}
-.item-drag{
-  cursor:grab;color:var(--text-dim2);padding:6px 4px;flex:none;
-  display:flex;flex-direction:column;gap:3px;user-select:none;
-  align-self:stretch;align-items:center;justify-content:center;
-}
-.item-drag svg{width:16px;height:16px}
-.item-preview{
-  width:64px;height:64px;border-radius:14px;flex:none;overflow:hidden;
-  background:var(--surface-3);display:grid;place-items:center;
-  position:relative;color:#fff;
-  box-shadow:0 4px 12px rgba(0,0,0,.24);
-}
-.item-preview img{width:100%;height:100%;object-fit:cover}
-.item-preview svg{width:30px;height:30px}
-.item-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
-.item-actions{display:flex;gap:6px;flex:none;flex-direction:column}
-.item-actions .icon-btn{width:34px;height:34px;border-radius:10px}
-.item-actions .icon-btn svg{width:16px;height:16px}
-.item-actions .icon-btn.danger{color:var(--danger)}
-.item-actions .icon-btn.danger:hover{background:var(--danger-soft)}
+.row-item:hover { background:var(--surface-2); }
+.row-item-main { flex:1; min-width:0; }
+.row-item-title { font-weight:500; font-size:13.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.row-item-sub { color:var(--text-dim); font-size:12px; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.row-item-actions { display:flex; gap:6px; flex-shrink:0; }
 
-.photo-slideshow-preview{
-  position:relative;aspect-ratio:16/7;border-radius:16px;overflow:hidden;
-  background:linear-gradient(135deg,var(--surface-2),var(--surface-3));
-  border:1px solid var(--border-2);margin-bottom:14px;
+/* ============ AVATAR ============ */
+.avatar {
+  width:36px; height:36px; border-radius:50%; object-fit:cover;
+  background:var(--surface-3); border:1.5px solid var(--line-strong); flex-shrink:0;
 }
-.photo-slideshow-preview .track{
-  display:flex;height:100%;transition:transform .5s cubic-bezier(.2,1,.4,1);
-}
-.photo-slideshow-preview .slide{flex:0 0 100%;height:100%;overflow:hidden}
-.photo-slideshow-preview img{width:100%;height:100%;object-fit:cover;display:block}
-.photo-slideshow-preview .dots{
-  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
-  display:flex;gap:6px;padding:5px 9px;border-radius:99px;
-  background:rgba(0,0,0,.4);backdrop-filter:blur(8px);
-}
-.photo-slideshow-preview .dots i{
-  width:7px;height:7px;border-radius:99px;background:rgba(255,255,255,.45);
-  transition:.28s;
-}
-.photo-slideshow-preview .dots i.active{background:#fff;width:20px}
+.avatar-sm { width:28px; height:28px; }
 
-#toastRoot{
-  position:fixed;left:50%;transform:translateX(-50%);z-index:1200;
-  bottom:calc(24px + env(safe-area-inset-bottom));
-  display:flex;flex-direction:column;gap:9px;align-items:center;
-  pointer-events:none;width:calc(100% - 28px);max-width:440px;
+/* ============ TOGGLE ============ */
+.toggle {
+  position:relative; width:42px; height:24px; border-radius:999px;
+  background:var(--surface-3); border:1px solid var(--line-strong);
+  transition:.2s var(--ease); cursor:pointer; flex-shrink:0;
 }
-.toast{
-  background:linear-gradient(180deg,var(--surface-2),var(--surface-3));
-  color:var(--text);padding:13px 17px;border-radius:15px;
-  font-size:13px;font-weight:700;
-  box-shadow:var(--shadow-lg),inset 0 1px 0 rgba(255,255,255,.08);
-  display:flex;align-items:center;gap:11px;max-width:100%;
-  border:1px solid var(--border-2);
-  animation:toastIn .36s cubic-bezier(.2,1.2,.4,1);
+.toggle::after {
+  content:""; position:absolute; top:2px; left:2px;
+  width:18px; height:18px; border-radius:50%; background:var(--text-faint);
+  transition:.2s var(--ease);
 }
-.toast.out{animation:toastOut .26s forwards}
-.toast.success{border-color:rgba(16,217,141,.4)}
-.toast.success svg{color:var(--success)}
-.toast.error{border-color:rgba(255,93,108,.4)}
-.toast.error svg{color:var(--danger)}
-.toast svg{width:16px;height:16px;flex:none}
-@keyframes toastIn{from{opacity:0;transform:translateY(20px) scale(.92)}to{opacity:1;transform:none}}
-@keyframes toastOut{to{opacity:0;transform:translateY(14px) scale(.92)}}
+.toggle.on { background:var(--brand); border-color:var(--brand); }
+.toggle.on::after { background:#fff; transform:translateX(18px); }
 
-.save-bar{
-  position:fixed;left:0;right:0;bottom:0;z-index:70;
-  padding:14px 20px calc(14px + env(safe-area-inset-bottom));
-  background:color-mix(in srgb,var(--bg) 82%,transparent);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-top:1px solid var(--border);
-  display:flex;gap:10px;justify-content:flex-end;align-items:center;
+/* ============ MODAL ============ */
+.modal-backdrop {
+  position:fixed; inset:0; z-index:150;
+  background:rgba(0,0,0,.65); backdrop-filter:blur(8px);
+  display:flex; align-items:center; justify-content:center;
+  padding:20px; animation:fade .15s var(--ease);
 }
-.save-bar .status{
-  flex:1;font-size:12px;color:var(--text-dim);font-weight:600;
-  display:flex;align-items:center;gap:8px;
+@keyframes fade { from { opacity:0; } to { opacity:1; } }
+.modal {
+  background:var(--surface-1); border:1px solid var(--line-strong);
+  border-radius:var(--r-lg); padding:22px;
+  max-width:480px; width:100%; max-height:85vh; overflow-y:auto;
+  box-shadow:var(--shadow-lg); animation:slideUp .2s var(--ease);
 }
-.save-bar .status.dirty{color:var(--warn)}
-.save-bar .status.saved{color:var(--success)}
-.save-bar .status.saving{color:var(--accent)}
-.save-bar .status.error{color:var(--danger)}
-.save-bar .dot{width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor}
+@keyframes slideUp { from { transform:translateY(12px); opacity:0; } to { transform:none; opacity:1; } }
+.modal h3 { font-size:17px; margin-bottom:8px; }
+.modal > p { color:var(--text-dim); font-size:13.5px; margin:0 0 20px; line-height:1.55; }
+.modal-actions { display:flex; gap:8px; margin-top:20px; }
+.modal-actions .btn { flex:1; }
 
-.empty-state{
-  text-align:center;padding:48px 20px;color:var(--text-dim2);
+/* ============ EMPTY ============ */
+.empty {
+  text-align:center; padding:60px 24px;
+  color:var(--text-faint); font-size:14px;
 }
-.empty-state svg{width:48px;height:48px;margin:0 auto 12px;opacity:.4}
-.empty-state p{margin:0;font-size:13px;font-weight:600}
+.empty svg { width:48px; height:48px; opacity:.3; margin:0 auto 12px; display:block; }
 
-.info-box{
-  padding:13px 15px;border-radius:12px;
-  background:var(--accent-soft);border:1px solid rgba(109,123,255,.22);
-  color:var(--text-dim);font-size:12px;line-height:1.6;
-  margin-bottom:16px;display:flex;gap:10px;
+/* ============ TOAST ============ */
+#toast-root {
+  position:fixed; top:16px; right:16px; left:16px;
+  display:flex; flex-direction:column; gap:8px;
+  z-index:200; pointer-events:none;
 }
-.info-box svg{width:16px;height:16px;color:var(--accent);flex:none;margin-top:2px}
-.warn-box{
-  padding:13px 15px;border-radius:12px;
-  background:var(--warn-soft);border:1px solid rgba(255,176,32,.28);
-  color:var(--text-dim);font-size:12px;line-height:1.6;
-  margin-bottom:16px;display:flex;gap:10px;
+@media (min-width:600px) { #toast-root { left:auto; max-width:380px; } }
+.toast {
+  padding:12px 14px; border-radius:var(--r-md);
+  background:var(--surface-2); border:1px solid var(--line-strong);
+  box-shadow:var(--shadow-lg); font-size:13px; font-weight:500;
+  opacity:0; transform:translateY(-8px);
+  transition:.2s var(--ease); pointer-events:auto;
 }
-.warn-box svg{width:16px;height:16px;color:var(--warn);flex:none;margin-top:2px}
-.warn-box b{color:var(--warn)}
+.toast.show { opacity:1; transform:none; }
+.toast.ok { border-left:3px solid var(--brand); }
+.toast.error { border-left:3px solid var(--danger); }
+.toast.info { border-left:3px solid var(--info); }
 
-.firebase-warning{
-  padding:14px 16px;border-radius:14px;
-  background:linear-gradient(135deg,rgba(255,93,108,.14),rgba(255,176,32,.1));
-  border:1.5px solid rgba(255,93,108,.4);
-  color:var(--text);font-size:12.5px;line-height:1.65;
-  margin-bottom:20px;display:flex;gap:12px;
+/* ============ BADGE SMALL ============ */
+.chip {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:3px 8px; border-radius:6px;
+  font-size:11px; font-weight:600; letter-spacing:.02em;
+  background:var(--surface-3); color:var(--text-dim);
 }
-.firebase-warning svg{width:20px;height:20px;color:var(--danger);flex:none;margin-top:2px}
-.firebase-warning .title{font-weight:800;font-size:13.5px;margin-bottom:6px;color:var(--danger)}
-.firebase-warning code{background:rgba(0,0,0,.3);padding:2px 7px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--accent-3)}
-.firebase-warning .fix{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.1);font-size:12px}
+.chip-brand { background:var(--brand-soft); color:var(--brand); }
+.chip-danger { background:var(--danger-soft); color:var(--danger); }
+.chip-warn { background:var(--warn-soft); color:var(--warn); }
+.chip-info { background:var(--info-soft); color:var(--info); }
 
-.badge{
-  display:inline-flex;align-items:center;gap:5px;
-  padding:4px 10px;border-radius:99px;
-  font-size:10px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;
-  background:var(--surface-3);color:var(--text-dim);border:1px solid var(--border-2);
-}
-.badge.accent{background:var(--accent-soft);color:var(--accent);border-color:rgba(109,123,255,.28)}
-.badge.success{background:var(--success-soft);color:var(--success);border-color:rgba(16,217,141,.28)}
-.badge.warn{background:var(--warn-soft);color:var(--warn);border-color:rgba(255,176,32,.28)}
-.badge.danger{background:var(--danger-soft);color:var(--danger);border-color:rgba(255,93,108,.28)}
+/* ============ UTILS ============ */
+.stack { display:flex; flex-direction:column; gap:12px; }
+.stack-sm { gap:8px; }
+.flex { display:flex; align-items:center; gap:10px; }
+.flex-between { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media (max-width:640px) { .grid-2 { grid-template-columns:1fr; } }
+.mt-8 { margin-top:8px; } .mt-16 { margin-top:16px; } .mt-24 { margin-top:24px; }
+.mb-0 { margin-bottom:0; } .mb-16 { margin-bottom:16px; } .mb-24 { margin-bottom:24px; }
+.text-right { text-align:right; }
+.spin { animation:spin 1s linear infinite; display:inline-block; }
+@keyframes spin { to { transform:rotate(360deg); } }
 
-.code-badge{
-  display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:7px;
-  background:linear-gradient(135deg,rgba(34,211,238,.18),rgba(109,123,255,.18));
-  border:1px solid rgba(34,211,238,.4);color:var(--accent-3);
-  font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
-}
+.dot { width:8px; height:8px; border-radius:50%; display:inline-block; background:var(--text-faint); }
+.dot.online { background:var(--brand); box-shadow:0 0 8px var(--brand-glow); }
+.dot.banned { background:var(--danger); }
 </style>
 </head>
 <body>
 
-<div id="loader">
-  <div class="loader-mark" id="loaderMark"></div>
-  <div style="text-align:center">
-    <div class="loader-title">Admin Panel</div>
-    <div class="loader-status" id="loaderStatus" style="margin-top:6px">Menyiapkan...</div>
-  </div>
+<div id="loading" class="loading-screen">
+  <img class="loading-logo" src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
+  <div class="loading-bar"><span></span></div>
+  <p>Memuat Control Center…</p>
 </div>
+<div id="app" hidden></div>
+<div id="toast-root" aria-live="polite"></div>
 
-<div id="loginScreen" class="hidden">
-  <div class="login-box">
-    <div class="login-logo" id="loginLogo"></div>
-    <h1 class="login-title">Admin Panel</h1>
-    <p class="login-sub">Masukkan PIN untuk melanjutkan</p>
-    <input type="password" class="pin-input" id="pinInput" placeholder="••••••" maxlength="12" inputmode="numeric" autocomplete="off" />
-    <button class="btn primary block" id="btnPinLogin" style="margin-top:16px">Masuk</button>
-    <div class="error-msg hidden" id="loginError"></div>
-  </div>
-</div>
-
-<div id="app">
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-mark" id="brandMark"></div>
-      <div class="brand-text">
-        <div class="t">Admin Panel</div>
-        <div class="s">Grandmaster Grid</div>
-      </div>
-    </div>
-    <div class="topbar-right">
-      <button class="icon-btn" id="btnTheme" aria-label="Tema"></button>
-      <button class="icon-btn" id="btnPreview" aria-label="Lihat aplikasi" title="Buka aplikasi">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      </button>
-      <button class="icon-btn" id="btnLogout" aria-label="Keluar" title="Keluar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
-      </button>
-    </div>
-  </header>
-
-  <div class="container">
-    <div id="fbWarning" class="firebase-warning hidden">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      <div style="flex:1;min-width:0">
-        <div class="title">⚠️ Firebase Rules menolak akses</div>
-        <div>Panel ini berjalan <b>tanpa Firebase Auth</b>, jadi butuh rules yang mengizinkan baca/tulis.</div>
-        <div class="fix">
-          Buka <b>Firebase Console → Realtime Database → Rules</b>, ganti dengan:<br>
-          <code style="display:block;margin-top:6px;white-space:pre;overflow:auto">{
-  "rules": {
-    "adminConfig": { ".read": true, ".write": true },
-    ".read": true,
-    ".write": "auth != null"
+<script type="importmap">
+{
+  "imports": {
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
+    "firebase/database": "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"
   }
-}</code>
-          Lalu klik <b>Publish</b> dan refresh halaman ini.
-        </div>
-      </div>
-    </div>
-
-    <div class="tabs" id="mainTabs">
-      <button data-tab="dashboard" class="active">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6"/></svg>
-        Dashboard
-      </button>
-      <button data-tab="homeBanner">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
-        Banner Teks
-      </button>
-      <button data-tab="photoBanner">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        Banner Foto
-      </button>
-      <button data-tab="quickMenu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>
-        Quick Menu Home
-      </button>
-      <button data-tab="playMenu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5v15l13-7.5z"/></svg>
-        Menu Play
-      </button>
-    </div>
-
-    <!-- ============ TAB: DASHBOARD ============ -->
-    <section class="panel active" id="panel-dashboard">
-      <div class="panel-head">
-        <div>
-          <h2>Selamat datang di Admin Panel</h2>
-          <p>Kelola semua konten yang tampil di aplikasi Grandmaster Grid.</p>
-        </div>
-      </div>
-
-      <div class="info-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
-        <div>Semua perubahan <b>langsung tersimpan ke Firebase</b> dan akan tampil di aplikasi saat pengguna membuka/refresh halaman.</div>
-      </div>
-
-      <div class="grid-3" style="margin-bottom:14px">
-        <div class="card">
-          <div style="font-size:11px;font-weight:800;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Menu Play</div>
-          <div style="font-size:32px;font-weight:900;letter-spacing:-.04em" id="statPlay">0</div>
-          <div style="font-size:11.5px;color:var(--text-dim2);margin-top:4px">game aktif</div>
-        </div>
-        <div class="card">
-          <div style="font-size:11px;font-weight:800;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Quick Menu</div>
-          <div style="font-size:32px;font-weight:900;letter-spacing:-.04em" id="statQuick">0</div>
-          <div style="font-size:11.5px;color:var(--text-dim2);margin-top:4px">shortcut home</div>
-        </div>
-        <div class="card">
-          <div style="font-size:11px;font-weight:800;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Foto Banner</div>
-          <div style="font-size:32px;font-weight:900;letter-spacing:-.04em" id="statPhoto">0</div>
-          <div style="font-size:11.5px;color:var(--text-dim2);margin-top:4px">slide aktif</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="field" style="margin-bottom:12px">
-          <label>Cara Pakai Singkat</label>
-          <div style="font-size:13px;color:var(--text-dim);line-height:1.75">
-            <b style="color:var(--text)">1.</b> Pilih tab di atas sesuai konten yang ingin diedit.<br>
-            <b style="color:var(--text)">2.</b> Isi form, unggah/ganti data, atau atur urutan item.<br>
-            <b style="color:var(--text)">3.</b> Klik <b style="color:var(--text)">Simpan</b> di bagian bawah untuk mem-publish.<br>
-            <b style="color:var(--text)">4.</b> Refresh aplikasi untuk melihat hasilnya.
-          </div>
-        </div>
-        <div class="field" style="margin-bottom:0">
-          <label>💡 Tambah Game Baru</label>
-          <div style="font-size:12.5px;color:var(--text-dim);line-height:1.65">
-            Buka tab <b style="color:var(--text)">Menu Play</b> → klik <b style="color:var(--text)">+ Tambah Game</b>. Pilih aksi <b style="color:var(--accent-3)">⭐ Kode Kustom</b> lalu paste HTML + JavaScript game Anda di textarea yang muncul. Tidak perlu edit file lain!
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ TAB: HOME BANNER ============ -->
-    <section class="panel" id="panel-homeBanner">
-      <div class="panel-head">
-        <div>
-          <h2>Banner Teks (Home)</h2>
-          <p>Banner informasi berikon yang muncul di atas kartu profil pengguna.</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="field">
-          <label>Judul <span class="hint">wajib</span></label>
-          <input class="input" id="hbTitle" placeholder="Contoh: Selamat Datang!" />
-        </div>
-        <div class="field">
-          <label>Teks / Deskripsi</label>
-          <textarea class="input" id="hbText" placeholder="Contoh: Login dengan Google untuk menyimpan progres." style="min-height:80px"></textarea>
-        </div>
-        <div class="field">
-          <label>Ikon</label>
-          <select class="input" id="hbIcon">
-            <option value="info">Info (default)</option>
-            <option value="bell">Lonceng</option>
-            <option value="zap">Petir</option>
-            <option value="trophy">Trofi</option>
-            <option value="crown">Mahkota</option>
-            <option value="star">Bintang</option>
-            <option value="shield">Perisai</option>
-            <option value="target">Target</option>
-            <option value="chess">Catur</option>
-            <option value="swords">Pedang</option>
-            <option value="flag">Bendera</option>
-            <option value="book">Buku</option>
-            <option value="message">Pesan</option>
-            <option value="search">Kaca Pembesar</option>
-          </select>
-        </div>
-        <div class="field" style="margin-bottom:0">
-          <label>Pratinjau</label>
-          <div id="hbPreview" style="padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,rgba(109,123,255,.14),rgba(164,108,255,.1)),linear-gradient(180deg,var(--surface-2),var(--surface-3));border:1px solid rgba(109,123,255,.3);display:flex;align-items:center;gap:12px">
-            <div id="hbPreviewIcon" style="width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;flex:none;box-shadow:0 6px 20px rgba(109,123,255,.45)"></div>
-            <div style="flex:1;min-width:0">
-              <div id="hbPreviewTitle" style="font-size:13.5px;font-weight:800"></div>
-              <div id="hbPreviewText" style="font-size:12px;color:var(--text-dim);margin-top:4px;line-height:1.5"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ TAB: PHOTO BANNER ============ -->
-    <section class="panel" id="panel-photoBanner">
-      <div class="panel-head">
-        <div>
-          <h2>Banner Foto (Slideshow)</h2>
-          <p>Slideshow foto yang muncul di menu Home, di atas Papan Peringkat.</p>
-        </div>
-        <button class="btn primary sm" id="btnAddPhoto">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-          Tambah Foto
-        </button>
-      </div>
-
-      <div class="info-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
-        <div>Jika <b>lebih dari 1 foto</b>, slideshow otomatis berjalan. Jika <b>hanya 1 foto</b>, tampil statis. Rekomendasi: <b>1200×525 px</b>.</div>
-      </div>
-
-      <div class="card" style="margin-bottom:14px">
-        <div class="field" style="margin-bottom:0">
-          <label>Interval Auto-Slide <span class="hint">milidetik, minimal 2000</span></label>
-          <input class="input" id="pbInterval" type="number" min="2000" step="500" value="5000" />
-        </div>
-      </div>
-
-      <div class="card" style="margin-bottom:14px">
-        <div class="field" style="margin-bottom:0">
-          <label>Pratinjau Slideshow</label>
-          <div class="photo-slideshow-preview" id="pbPreview">
-            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-dim2);font-size:12.5px;font-weight:600;text-align:center;padding:20px">
-              Belum ada foto.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="item-list" id="photoList"></div>
-    </section>
-
-    <!-- ============ TAB: QUICK MENU ============ -->
-    <section class="panel" id="panel-quickMenu">
-      <div class="panel-head">
-        <div>
-          <h2>Quick Menu Home</h2>
-          <p>Tombol shortcut yang muncul di grid bawah hero card di menu Home.</p>
-        </div>
-        <button class="btn primary sm" id="btnAddQuick">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-          Tambah Item
-        </button>
-      </div>
-
-      <div class="info-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
-        <div>Isi <b>URL Gambar</b> untuk tampilan gambar, atau kosongkan untuk pakai ikon SVG.</div>
-      </div>
-
-      <div class="item-list" id="quickList"></div>
-    </section>
-
-    <!-- ============ TAB: PLAY MENU ============ -->
-    <section class="panel" id="panel-playMenu">
-      <div class="panel-head">
-        <div>
-          <h2>Menu Play</h2>
-          <p>Daftar mode/game di halaman Play. Bisa tambah game apapun lewat kode kustom.</p>
-        </div>
-        <button class="btn primary sm" id="btnAddPlay">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-          Tambah Game
-        </button>
-      </div>
-
-      <div class="info-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
-        <div>
-          <b>⭐ Kode Kustom</b> = paste HTML + JavaScript game Anda langsung di sini, tanpa perlu edit file lain.
-          Game akan terbuka di layar penuh saat kartu diklik.
-        </div>
-      </div>
-
-      <div class="item-list" id="playList"></div>
-    </section>
-  </div>
-
-  <div class="save-bar">
-    <div class="status" id="saveStatus">
-      <span class="dot"></span>
-      <span id="saveStatusText">Siap</span>
-    </div>
-    <button class="btn ghost sm" id="btnReset">Reset</button>
-    <button class="btn primary" id="btnSave">
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-      Simpan
-    </button>
-  </div>
-</div>
-
-<div id="toastRoot"></div>
+}
+</script>
 
 <script type="module">
-/* ==========================================================================
-   KONFIGURASI
-   ========================================================================== */
-const ADMIN_PIN = '201199';
+import { initializeApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "firebase/auth";
+import {
+  getDatabase, ref, get, set, update, remove, push, onValue, off,
+  serverTimestamp, runTransaction, query, orderByChild, limitToLast
+} from "firebase/database";
 
-const firebaseConfig={
-  apiKey:"AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
-  authDomain:"mygame-68b24.firebaseapp.com",
-  databaseURL:"https://mygame-68b24-default-rtdb.firebaseio.com",
-  projectId:"mygame-68b24",
-  storageBucket:"mygame-68b24.firebasestorage.app",
-  messagingSenderId:"1003182873390",
-  appId:"1:1003182873390:web:aabf3248f759cbc9d678bf"
+/* ============ FIREBASE ============ */
+const firebaseConfig = {
+  apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
+  authDomain: "mygame-68b24.firebaseapp.com",
+  databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
+  projectId: "mygame-68b24",
+  storageBucket: "mygame-68b24.firebasestorage.app",
+  messagingSenderId: "1003182873390",
+  appId: "1:1003182873390:web:aabf3248f759cbc9d678bf"
 };
-const FB={ready:false,app:null,db:null,api:null};
-let unlocked=false;
-let hasReadError=false;
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({ prompt: "select_account" });
+setPersistence(auth, browserLocalPersistence).catch(() => {});
 
-/* ==========================================================================
-   ICONS
-   ========================================================================== */
-const ICONS={
-  drag:'<circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/>',
-  trash:'<path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6"/>',
-  plus:'<path d="M12 5v14M5 12h14"/>',
-  check:'<path d="m4.5 12 5 5L20 6.5"/>',
-  x:'<path d="M6 6l12 12M18 6 6 18"/>',
-  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
-  chevL:'<path d="m15 5-7 7 7 7"/>',
-  chevR:'<path d="m9 5 7 7-7 7"/>',
-  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
-  moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
-  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
-  lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
-  warn:'<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'
-};
-function icon(name,size){
-  const s=size||20;
-  return '<svg viewBox="0 0 24 24" width="'+s+'" height="'+s+'" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONS[name]||'')+'</svg>';
-}
-
-/* ==========================================================================
-   UTILITIES
-   ========================================================================== */
-const $=(s,r=document)=>r.querySelector(s);
-const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
-const el=(tag,cls,html)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(html!=null)n.innerHTML=html;return n;};
-const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-const logErr=(scope,e)=>console.error('[Admin:'+scope+']',e);
-
-function toast(msg,type){
-  const root=$('#toastRoot');if(!root)return;
-  const t=el('div','toast'+(type?' '+type:''));
-  t.innerHTML=(type==='success'?icon('check',16):type==='error'?icon('x',16):icon('info',16))+'<span>'+esc(msg)+'</span>';
-  root.appendChild(t);
-  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),260);},3000);
-}
-function setStatus(text,kind){
-  const box=$('#saveStatus');
-  const label=$('#saveStatusText');
-  if(!box||!label)return;
-  box.className='status'+(kind?' '+kind:'');
-  label.textContent=text;
-}
-function markDirty(){setStatus('Ada perubahan belum disimpan','dirty');}
-function markSaved(){setStatus('Tersimpan','saved');setTimeout(()=>setStatus('Siap',''),1800);}
-
-/* ==========================================================================
-   STATE
-   ========================================================================== */
-const State={
-  homeBanner:{icon:'info',title:'',text:''},
-  photoBanner:{images:[],autoSlideInterval:5000},
-  quickMenuItems:[],
-  playMenuItems:[]
+/* ============ ICONS ============ */
+const I = {
+  dashboard:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>`,
+  users:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  game:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
+  room:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>`,
+  report:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  shield:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  flag:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>`,
+  bell:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,
+  list:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
+  settings:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+  logout:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>`,
+  search:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+  ban:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>`,
+  edit:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+  trash:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>`,
+  refresh:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>`,
+  key:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3"/></svg>`,
+  chevron:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`,
+  menu:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
+  check:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+  x:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  google:`<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.4 1.1 7.3 2.8l5.7-5.7C33.6 7.1 29 5 24 5 13.5 5 5 13.5 5 24s8.5 19 19 19 19-8.5 19-19c0-1.3-.1-2.6-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15 19 12 24 12c2.8 0 5.4 1.1 7.3 2.8l5.7-5.7C33.6 7.1 29 5 24 5 16.3 5 9.7 9.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 43c5 0 9.6-1.9 13-5l-6-5.2c-1.9 1.4-4.3 2.2-7 2.2-5.2 0-9.6-3.4-11.2-8l-6.5 5C9.5 38.6 16.2 43 24 43z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.3 4.1-4.2 5.3l6 5.2C40.2 35.5 43 30.4 43 24c0-1.3-.1-2.6-.4-3.5z"/></svg>`
 };
 
-/* ==========================================================================
-   DEFAULT DATA
-   ========================================================================== */
-const DEFAULT_HOME_BANNER = {icon:'info',title:'Selamat Datang di Grandmaster Grid!',text:'Mainkan catur, taktik, dan game menarik lainnya. Login dengan Google untuk menyimpan progres Anda.'};
-const DEFAULT_PHOTO_BANNER = {images:[],autoSlideInterval:5000};
-const DEFAULT_QUICK_ITEMS = [
-  {id:'ranked', label:'Ranked', sub:'Kompetitif', image:'', icon:'target', action:'ranked'},
-  {id:'casual', label:'Classic', sub:'Santai', image:'', icon:'swords', action:'casual'},
-  {id:'friend', label:'Teman', sub:'Privat', image:'', icon:'users', action:'friend'},
-  {id:'ai', label:'vs AI', sub:'6 Level', image:'', icon:'cpu', action:'ai'},
-  {id:'local', label:'Lokal', sub:'2 Pemain', image:'', icon:'chess', action:'local'},
-  {id:'puzzle', label:'Puzzle', sub:'Taktik', image:'', icon:'zap', action:'puzzle'}
-];
-const DEFAULT_PLAY_ITEMS = [
-  {id:'ranked', title:'Ranked', desc:'Pertandingan kompetitif. 1 menit + 5 detik per langkah.', image:'', icon:'target', iconClass:'ranked', modeClass:'ranked', action:'ranked', url:'', code:''},
-  {id:'casual', title:'Classic', desc:'Bertanding tanpa peringkat. Rating & bintang tidak berubah.', image:'', icon:'swords', iconClass:'casual', modeClass:'casual', action:'casual', url:'', code:''},
-  {id:'friend', title:'Main dengan Teman', desc:'Buat room privat dan bagikan kodenya.', image:'', icon:'users', iconClass:'friend', modeClass:'friend', action:'friend', url:'', code:''},
-  {id:'ai', title:'Lawan AI', desc:'Enam tingkat kesulitan, berjalan offline.', image:'', icon:'cpu', iconClass:'ai', modeClass:'ai', action:'ai', url:'', code:''},
-  {id:'local', title:'Dua Pemain Lokal', desc:'Satu perangkat, bergantian.', image:'', icon:'chess', iconClass:'local', modeClass:'local', action:'local', url:'', code:''},
-  {id:'puzzle', title:'Puzzle Taktik', desc:'Latih taktik dengan posisi nyata.', image:'', icon:'zap', iconClass:'puzzle', modeClass:'puzzle', action:'puzzle', url:'', code:''},
-  {id:'tictactoe', title:'Tic-Tac-Toe', desc:'Lawan AI atau teman di satu perangkat.', image:'', icon:'grid3', iconClass:'tictactoe', modeClass:'tictactoe', action:'tictactoe', url:'', code:''},
-  {id:'trex', title:'T-Rex Runner', desc:'Lompat-lompat hindari rintangan seperti game offline.', image:'', icon:'dino', iconClass:'trex', modeClass:'trex', action:'trex', url:'', code:''}
-];
+/* ============ UTILS ============ */
+const $ = (s,el=document)=>el.querySelector(s);
+const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmtTime = ts => { if(!ts) return "—"; const d=new Date(ts); return d.toLocaleString("id-ID",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}); };
+const fmtTimeAgo = ts => { if(!ts) return "—"; const s=(Date.now()-ts)/1000; if(s<60) return "baru saja"; if(s<3600) return `${Math.floor(s/60)} mnt lalu`; if(s<86400) return `${Math.floor(s/3600)} jam lalu`; return `${Math.floor(s/86400)} hr lalu`; };
+const fmtDuration = ms => { if(!ms||ms<0) return "—"; const s=Math.floor(ms/1000); const m=Math.floor(s/60); const h=Math.floor(m/60); if(h>0) return `${h}j ${m%60}m`; return `${m}m ${s%60}s`; };
 
-const ACTION_OPTIONS=[
-  {value:'ranked',label:'Ranked Match'},
-  {value:'casual',label:'Classic Match'},
-  {value:'friend',label:'Main dengan Teman'},
-  {value:'ai',label:'Lawan AI'},
-  {value:'local',label:'Dua Pemain Lokal'},
-  {value:'puzzle',label:'Puzzle Taktik'},
-  {value:'tictactoe',label:'Tic-Tac-Toe'},
-  {value:'trex',label:'T-Rex Runner'},
-  {value:'code',label:'⭐ Kode Kustom (HTML/JS)'},
-  {value:'url',label:'Buka URL (eksternal)'},
-  {value:'fn',label:'Panggil Fungsi Global'}
-];
-const ICON_OPTIONS=[
-  'info','bell','zap','trophy','crown','star','shield','target','chess','swords','flag','book','message','search',
-  'cpu','users','user','play','play2','grid3','dino'
-];
-
-/* ==========================================================================
-   INIT FIREBASE
-   ========================================================================== */
-async function initFirebase(){
-  const [appMod,dbMod]=await Promise.all([
-    import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js'),
-    import('https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js')
-  ]);
-  FB.app=appMod.initializeApp(firebaseConfig);
-  FB.db=dbMod.getDatabase(FB.app);
-  FB.api={ref:dbMod.ref,set:dbMod.set,get:dbMod.get,update:dbMod.update,remove:dbMod.remove};
-  FB.ready=true;
+function toast(msg,kind="info"){
+  const r=$("#toast-root"); const el=document.createElement("div");
+  el.className="toast "+kind; el.textContent=msg; r.appendChild(el);
+  requestAnimationFrame(()=>el.classList.add("show"));
+  setTimeout(()=>{el.classList.remove("show");setTimeout(()=>el.remove(),300);},3400);
 }
 
-async function safeGet(path){
-  try{
-    const snap = await FB.api.get(FB.api.ref(FB.db,path));
-    return snap.exists() ? snap.val() : null;
-  }catch(e){
-    logErr('safeGet:'+path, e);
-    if(e && (e.code==='PERMISSION_DENIED' || String(e.message||'').includes('permission_denied') || String(e.message||'').includes('Permission denied'))){
-      hasReadError=true;
+function modal({title, body, actions=[{label:"Tutup",primary:false,onClick:()=>{}}]}) {
+  return new Promise(res=>{
+    const b=document.createElement("div"); b.className="modal-backdrop";
+    b.innerHTML=`<div class="modal" role="dialog">
+      <h3>${title}</h3>
+      <div class="modal-body">${body}</div>
+      <div class="modal-actions"></div>
+    </div>`;
+    const actionsEl = $(".modal-actions", b);
+    const close = v => { b.remove(); res(v); };
+    actions.forEach(a=>{
+      const btn = document.createElement("button");
+      btn.className = "btn " + (a.primary?"btn-primary":(a.danger?"btn-danger":"btn-ghost"));
+      btn.textContent = a.label;
+      btn.onclick = async () => {
+        if (a.onClick) {
+          btn.disabled = true;
+          try { const r = await a.onClick(b); if (r === false) { btn.disabled = false; return; } }
+          catch(e){ btn.disabled = false; return; }
+        }
+        close(true);
+      };
+      actionsEl.appendChild(btn);
+    });
+    document.body.appendChild(b);
+    b.addEventListener("click", e => { if(e.target===b) close(false); });
+  });
+}
+
+async function confirmAction(title, msg, confirmLabel="Konfirmasi") {
+  return new Promise(res=>{
+    const b=document.createElement("div"); b.className="modal-backdrop";
+    b.innerHTML=`<div class="modal" role="dialog">
+      <h3>${esc(title)}</h3><p>${esc(msg)}</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" data-no>Batal</button>
+        <button class="btn btn-primary" data-yes>${esc(confirmLabel)}</button>
+      </div>
+    </div>`;
+    document.body.appendChild(b);
+    const done=v=>{b.remove();res(v);};
+    $("[data-no]",b).onclick=()=>done(false);
+    $("[data-yes]",b).onclick=()=>done(true);
+    b.addEventListener("click",e=>{if(e.target===b)done(false);});
+  });
+}
+
+/* ============ AUDIT LOG ============ */
+async function audit(action, target, details={}) {
+  const u = auth.currentUser;
+  if (!u) return;
+  try {
+    await push(ref(db, "auditLogs"), {
+      ts: Date.now(),
+      actorUid: u.uid,
+      actorName: state.profile?.displayName || u.displayName || u.email || "—",
+      actorEmail: u.email || "",
+      action,
+      target: target || null,
+      details: details || {},
+    });
+  } catch(e) { console.warn("audit failed:", e); }
+}
+
+/* ============ STATE ============ */
+const state = {
+  user: null,
+  profile: null,
+  role: null,       // "superadmin" | "admin" | "moderator" | "spectator" | null
+  view: "overview",
+  cleanup: null,
+};
+
+const PERMISSIONS = {
+  superadmin: ["*"],
+  admin: ["overview","users","rooms","games","reports","features","announcements","audit","settings"],
+  moderator: ["overview","users.read","reports","audit.read"],
+  spectator: ["overview","games"],
+};
+
+function hasPerm(perm) {
+  const role = state.role;
+  if (!role) return false;
+  if (role === "superadmin") return true;
+  const perms = PERMISSIONS[role] || [];
+  return perms.includes(perm) || perms.includes(perm.split(".")[0]);
+}
+
+/* ============ INIT / AUTH GATE ============ */
+onAuthStateChanged(auth, async user => {
+  $("#loading").hidden = true;
+  $("#app").hidden = false;
+  state.user = user;
+  if (!user) { renderLogin(); return; }
+
+  // Ambil profil (untuk display)
+  try {
+    const snap = await get(ref(db, `users/${user.uid}/profile`));
+    state.profile = snap.exists() ? snap.val() : null;
+  } catch { state.profile = null; }
+
+  // Cek role
+  try {
+    const rSnap = await get(ref(db, `userRoles/${user.uid}/role`));
+    state.role = rSnap.exists() ? rSnap.val() : null;
+  } catch { state.role = null; }
+
+  if (state.role) {
+    renderShell(state.view);
+    return;
+  }
+
+  // Tidak punya role → cek bootstrap
+  try {
+    const bootSnap = await get(ref(db, "system/bootstrapKey"));
+    if (bootSnap.exists() && bootSnap.val()) {
+      renderBootstrap();
+    } else {
+      renderAccessDenied();
     }
-    return null;
+  } catch(e) {
+    renderAccessDenied("Tidak dapat memverifikasi. Coba lagi nanti.");
   }
-}
+});
 
-/* ==========================================================================
-   LOAD CONFIGS
-   ========================================================================== */
-async function loadConfigs(){
-  // Home Banner
-  const hbVal = await safeGet('adminConfig/homeBanner');
-  State.homeBanner = (hbVal && typeof hbVal==='object')
-    ? Object.assign({},DEFAULT_HOME_BANNER,hbVal)
-    : Object.assign({},DEFAULT_HOME_BANNER);
-
-  // Photo Banner
-  const pbVal = await safeGet('adminConfig/photoBanner');
-  if(pbVal && typeof pbVal==='object'){
-    let imgs=[];
-    if(Array.isArray(pbVal.images)) imgs=pbVal.images;
-    else if(pbVal.images && typeof pbVal.images==='object') imgs=Object.values(pbVal.images);
-    State.photoBanner.images = imgs
-      .filter(x=>x && typeof x==='object' && typeof x.url==='string')
-      .map(x=>({url:String(x.url),link:typeof x.link==='string'?x.link:'',alt:typeof x.alt==='string'?x.alt:''}));
-    State.photoBanner.autoSlideInterval = Number(pbVal.autoSlideInterval)||5000;
-  }else{
-    State.photoBanner = JSON.parse(JSON.stringify(DEFAULT_PHOTO_BANNER));
-  }
-
-  // Quick items
-  const qVal = await safeGet('adminConfig/quickMenuItems');
-  let qArr = qVal ? (Array.isArray(qVal)?qVal:(typeof qVal==='object'?Object.values(qVal):null)) : null;
-  if(qArr && qArr.length){
-    State.quickMenuItems = qArr
-      .filter(x=>x && typeof x==='object' && typeof x.label==='string')
-      .map(x=>({
-        id:typeof x.id==='string'?x.id:('quick-'+Math.random().toString(36).slice(2,8)),
-        label:String(x.label),
-        sub:typeof x.sub==='string'?x.sub:'',
-        image:typeof x.image==='string'?x.image:'',
-        icon:typeof x.icon==='string'?x.icon:'grid3',
-        action:typeof x.action==='string'?x.action:'custom',
-        url:typeof x.url==='string'?x.url:''
-      }));
-  }else{
-    State.quickMenuItems = DEFAULT_QUICK_ITEMS.map(x=>Object.assign({},x));
-  }
-
-  // Play items — termasuk field 'code' baru
-  const pVal = await safeGet('adminConfig/playMenuItems');
-  let pArr = pVal ? (Array.isArray(pVal)?pVal:(typeof pVal==='object'?Object.values(pVal):null)) : null;
-  if(pArr && pArr.length){
-    State.playMenuItems = pArr
-      .filter(x=>x && typeof x==='object' && typeof x.title==='string')
-      .map(x=>({
-        id:typeof x.id==='string'?x.id:('play-'+Math.random().toString(36).slice(2,8)),
-        title:String(x.title),
-        desc:typeof x.desc==='string'?x.desc:'',
-        image:typeof x.image==='string'?x.image:'',
-        icon:typeof x.icon==='string'?x.icon:'grid3',
-        iconClass:typeof x.iconClass==='string'?x.iconClass:'custom',
-        modeClass:typeof x.modeClass==='string'?x.modeClass:'custom',
-        action:typeof x.action==='string'?x.action:'custom',
-        url:typeof x.url==='string'?x.url:'',
-        code:typeof x.code==='string'?x.code:''
-      }));
-  }else{
-    State.playMenuItems = DEFAULT_PLAY_ITEMS.map(x=>Object.assign({},x));
-  }
-}
-
-/* ==========================================================================
-   RENDER — HOME BANNER
-   ========================================================================== */
-function renderHomeBannerForm(){
-  $('#hbTitle').value=State.homeBanner.title||'';
-  $('#hbText').value=State.homeBanner.text||'';
-  $('#hbIcon').value=State.homeBanner.icon||'info';
-  updateHomeBannerPreview();
-}
-function updateHomeBannerPreview(){
-  const iconName=$('#hbIcon').value;
-  const title=$('#hbTitle').value||'(Judul kosong)';
-  const text=$('#hbText').value||'(Deskripsi kosong)';
-  const iconBox=$('#hbPreviewIcon');
-  const iconDef=ICONS[iconName]||ICONS.info;
-  iconBox.innerHTML='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+iconDef+'</svg>';
-  $('#hbPreviewTitle').textContent=title;
-  $('#hbPreviewText').textContent=text;
-}
-
-/* ==========================================================================
-   RENDER — PHOTO BANNER
-   ========================================================================== */
-function renderPhotoBannerForm(){
-  $('#pbInterval').value=State.photoBanner.autoSlideInterval||5000;
-  renderPhotoList();
-  updatePhotoPreview();
-}
-function renderPhotoList(){
-  const box=$('#photoList');if(!box)return;
-  box.innerHTML='';
-  if(!State.photoBanner.images.length){
-    box.innerHTML='<div class="empty-state">'+icon('plus',48)+'<p>Belum ada foto banner.</p></div>';
-    return;
-  }
-  State.photoBanner.images.forEach((img,i)=>{
-    const item=el('div','item');
-    item.innerHTML=
-      '<div class="item-drag">'+icon('drag',16)+'</div>'+
-      '<div class="item-preview">'+(img.url?'<img src="'+esc(img.url)+'" alt="">':'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>')+'</div>'+
-      '<div class="item-body">'+
-        '<div class="field" style="margin-bottom:10px"><label>URL Gambar</label><input class="input" data-field="url" value="'+esc(img.url)+'" placeholder="https://example.com/banner.jpg"></div>'+
-        '<div class="grid-2">'+
-          '<div class="field" style="margin-bottom:0"><label>Link <span class="hint">opsional</span></label><input class="input" data-field="link" value="'+esc(img.link)+'" placeholder="https://..."></div>'+
-          '<div class="field" style="margin-bottom:0"><label>Alt <span class="hint">opsional</span></label><input class="input" data-field="alt" value="'+esc(img.alt)+'" placeholder="Deskripsi"></div>'+
-        '</div>'+
-      '</div>'+
-      '<div class="item-actions">'+
-        '<button class="icon-btn danger" data-act="remove" title="Hapus">'+icon('trash',16)+'</button>'+
-      '</div>';
-    item.querySelector('[data-act="remove"]').addEventListener('click',()=>{
-      if(!confirm('Hapus foto ini?'))return;
-      State.photoBanner.images.splice(i,1);
-      renderPhotoList();updatePhotoPreview();markDirty();
-    });
-    item.querySelectorAll('[data-field]').forEach(input=>{
-      input.addEventListener('input',()=>{
-        const f=input.dataset.field;
-        State.photoBanner.images[i][f]=input.value;
-        if(f==='url'){
-          const prev=item.querySelector('.item-preview');
-          prev.innerHTML=input.value?'<img src="'+esc(input.value)+'" alt="">':'';
-        }
-        updatePhotoPreview();markDirty();
-      });
-    });
-    box.appendChild(item);
-  });
-}
-function updatePhotoPreview(){
-  const prev=$('#pbPreview');if(!prev)return;
-  if(prev._timer){ clearInterval(prev._timer); prev._timer=null; }
-  const imgs=State.photoBanner.images.filter(x=>x.url);
-  if(!imgs.length){
-    prev.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-dim2);font-size:12.5px;font-weight:600;text-align:center;padding:20px">Belum ada foto.</div>';
-    return;
-  }
-  prev.innerHTML=
-    '<div class="track" id="pbPreviewTrack" style="display:flex;height:100%">'+
-      imgs.map(x=>'<div class="slide" style="flex:0 0 100%;height:100%;overflow:hidden"><img src="'+esc(x.url)+'" style="width:100%;height:100%;object-fit:cover;display:block"></div>').join('')+
-    '</div>'+
-    (imgs.length>1?'<div class="dots">'+imgs.map((_,i)=>'<i class="'+(i===0?'active':'')+'"></i>').join('')+'</div>':'');
-  if(imgs.length>1){
-    let idx=0;
-    prev._timer=setInterval(()=>{
-      const track=$('#pbPreviewTrack');
-      if(!track) return;
-      idx=(idx+1)%imgs.length;
-      track.style.transform='translateX('+(-idx*100)+'%)';
-      prev.querySelectorAll('.dots i').forEach((d,i)=>d.classList.toggle('active',i===idx));
-    },1800);
-  }
-}
-
-/* ==========================================================================
-   RENDER — QUICK MENU
-   ========================================================================== */
-function renderQuickList(){
-  const box=$('#quickList');if(!box)return;
-  box.innerHTML='';
-  if(!State.quickMenuItems.length){
-    box.innerHTML='<div class="empty-state">'+icon('plus',48)+'<p>Belum ada item. Klik "Tambah Item" untuk mulai.</p></div>';
-    return;
-  }
-  State.quickMenuItems.forEach((it,i)=>{
-    const item=el('div','item');
-    item.innerHTML=
-      '<div class="item-drag">'+icon('drag',16)+'</div>'+
-      '<div class="item-preview">'+(it.image?'<img src="'+esc(it.image)+'" alt="">':(it.icon?icon(it.icon,30):icon('grid3',30)))+'</div>'+
-      '<div class="item-body">'+
-        '<div class="grid-2">'+
-          '<div class="field" style="margin-bottom:0"><label>Label</label><input class="input" data-field="label" value="'+esc(it.label)+'" placeholder="Ranked"></div>'+
-          '<div class="field" style="margin-bottom:0"><label>Sub-label</label><input class="input" data-field="sub" value="'+esc(it.sub)+'" placeholder="Kompetitif"></div>'+
-        '</div>'+
-        '<div class="field" style="margin-bottom:0"><label>URL Gambar <span class="hint">kosongkan untuk pakai ikon</span></label><input class="input" data-field="image" value="'+esc(it.image)+'" placeholder="https://example.com/icon.png"></div>'+
-        '<div class="grid-2">'+
-          '<div class="field" style="margin-bottom:0"><label>Ikon <span class="hint">fallback</span></label>'+
-            '<select class="input" data-field="icon">'+ICON_OPTIONS.map(n=>'<option value="'+n+'"'+(n===it.icon?' selected':'')+'>'+n+'</option>').join('')+'</select>'+
-          '</div>'+
-          '<div class="field" style="margin-bottom:0"><label>Aksi</label>'+
-            '<select class="input" data-field="action">'+ACTION_OPTIONS.map(a=>'<option value="'+a.value+'"'+(a.value===it.action?' selected':'')+'>'+a.label+'</option>').join('')+'</select>'+
-          '</div>'+
-        '</div>'+
-        (it.action==='url'||it.action==='fn'?'<div class="field" style="margin-bottom:0"><label>'+(it.action==='url'?'URL Target':'Nama Fungsi Global')+'</label><input class="input" data-field="url" value="'+esc(it.url)+'" placeholder="'+(it.action==='url'?'https://...':'myCustomFunction')+'"></div>':'')+
-      '</div>'+
-      '<div class="item-actions">'+
-        '<button class="icon-btn" data-act="up" title="Naik">'+icon('chevL',16)+'</button>'+
-        '<button class="icon-btn" data-act="down" title="Turun">'+icon('chevR',16)+'</button>'+
-        '<button class="icon-btn danger" data-act="remove" title="Hapus">'+icon('trash',16)+'</button>'+
-      '</div>';
-    item.querySelector('[data-act="remove"]').addEventListener('click',()=>{
-      if(!confirm('Hapus "'+it.label+'"?'))return;
-      State.quickMenuItems.splice(i,1);renderQuickList();updateStats();markDirty();
-    });
-    item.querySelector('[data-act="up"]').addEventListener('click',()=>{
-      if(i<=0)return;
-      [State.quickMenuItems[i-1],State.quickMenuItems[i]]=[State.quickMenuItems[i],State.quickMenuItems[i-1]];
-      renderQuickList();markDirty();
-    });
-    item.querySelector('[data-act="down"]').addEventListener('click',()=>{
-      if(i>=State.quickMenuItems.length-1)return;
-      [State.quickMenuItems[i+1],State.quickMenuItems[i]]=[State.quickMenuItems[i],State.quickMenuItems[i+1]];
-      renderQuickList();markDirty();
-    });
-    item.querySelectorAll('[data-field]').forEach(input=>{
-      input.addEventListener('input',()=>{
-        const f=input.dataset.field;
-        State.quickMenuItems[i][f]=input.value;
-        if(f==='image'||f==='icon'){
-          const prev=item.querySelector('.item-preview');
-          const it2=State.quickMenuItems[i];
-          prev.innerHTML=it2.image?'<img src="'+esc(it2.image)+'" alt="">':(it2.icon?icon(it2.icon,30):icon('grid3',30));
-        }
-        if(f==='action'){ renderQuickList(); }
-        markDirty();
-      });
-    });
-    box.appendChild(item);
-  });
-}
-
-/* ==========================================================================
-   RENDER — PLAY MENU (dengan Kode Kustom)
-   ========================================================================== */
-function renderPlayList(){
-  const box=$('#playList');if(!box)return;
-  box.innerHTML='';
-  if(!State.playMenuItems.length){
-    box.innerHTML='<div class="empty-state">'+icon('plus',48)+'<p>Belum ada game. Klik "Tambah Game" untuk mulai.</p></div>';
-    return;
-  }
-  State.playMenuItems.forEach((it,i)=>{
-    const item=el('div','item');
-    const isCode = it.action==='code';
-    item.innerHTML=
-      '<div class="item-drag">'+icon('drag',16)+'</div>'+
-      '<div class="item-preview">'+(it.image?'<img src="'+esc(it.image)+'" alt="">':(it.icon?icon(it.icon,30):icon('play',30)))+'</div>'+
-      '<div class="item-body">'+
-        (isCode?'<div style="display:flex;justify-content:flex-start"><span class="code-badge">'+icon('check',10)+' Kode Kustom Aktif</span></div>':'')+
-        '<div class="grid-2">'+
-          '<div class="field" style="margin-bottom:0"><label>Judul</label><input class="input" data-field="title" value="'+esc(it.title)+'" placeholder="Nama Game"></div>'+
-          '<div class="field" style="margin-bottom:0"><label>Deskripsi</label><input class="input" data-field="desc" value="'+esc(it.desc)+'" placeholder="Deskripsi singkat"></div>'+
-        '</div>'+
-        '<div class="field" style="margin-bottom:0"><label>URL Gambar <span class="hint">kosongkan untuk pakai ikon</span></label><input class="input" data-field="image" value="'+esc(it.image)+'" placeholder="https://example.com/game.jpg"></div>'+
-        '<div class="grid-3">'+
-          '<div class="field" style="margin-bottom:0"><label>Ikon</label>'+
-            '<select class="input" data-field="icon">'+ICON_OPTIONS.map(n=>'<option value="'+n+'"'+(n===it.icon?' selected':'')+'>'+n+'</option>').join('')+'</select>'+
-          '</div>'+
-          '<div class="field" style="margin-bottom:0"><label>Warna Kartu</label>'+
-            '<select class="input" data-field="modeClass">'+
-              ['ranked','casual','friend','ai','local','puzzle','tictactoe','trex','custom'].map(c=>'<option value="'+c+'"'+(c===it.modeClass?' selected':'')+'>'+c+'</option>').join('')+
-            '</select>'+
-          '</div>'+
-          '<div class="field" style="margin-bottom:0"><label>Aksi</label>'+
-            '<select class="input" data-field="action">'+ACTION_OPTIONS.map(a=>'<option value="'+a.value+'"'+(a.value===it.action?' selected':'')+'>'+a.label+'</option>').join('')+'</select>'+
-          '</div>'+
-        '</div>'+
-        (it.action==='url'||it.action==='fn'?'<div class="field" style="margin-bottom:0"><label>'+(it.action==='url'?'URL Target':'Nama Fungsi Global')+'</label><input class="input" data-field="url" value="'+esc(it.url)+'" placeholder="'+(it.action==='url'?'https://...':'myCustomGame')+'"></div>':'')+
-        (isCode?'<div class="field" style="margin-bottom:0"><label>Kode Game <span class="hint">HTML + JavaScript</span></label><textarea class="input" data-field="code" style="min-height:280px;font-family:\'JetBrains Mono\',ui-monospace,monospace;font-size:12px;line-height:1.55" placeholder="Contoh:&#10;&#10;&lt;h1&gt;🎯 Tebak Angka&lt;/h1&gt;&#10;&lt;p&gt;Tebak angka 1-100&lt;/p&gt;&#10;&lt;input type=&quot;number&quot; id=&quot;g&quot;&gt;&#10;&lt;button onclick=&quot;cek()&quot;&gt;Tebak&lt;/button&gt;&#10;&#10;&lt;script&gt;&#10;  let secret = Math.floor(Math.random()*100)+1;&#10;  function cek(){...}&#10;&lt;/script&gt;">'+esc(it.code||'')+'</textarea><div style="font-size:11px;color:var(--text-dim2);margin-top:6px;line-height:1.55">💡 <b style="color:var(--accent-3)">Paste HTML + CSS + JavaScript lengkap.</b> Game akan terbuka full-screen saat kartu diklik. Bisa pakai &lt;style&gt;, &lt;script&gt;, canvas, button, dll. Semua tag didukung.</div></div>':'')+
-      '</div>'+
-      '<div class="item-actions">'+
-        '<button class="icon-btn" data-act="up" title="Naik">'+icon('chevL',16)+'</button>'+
-        '<button class="icon-btn" data-act="down" title="Turun">'+icon('chevR',16)+'</button>'+
-        '<button class="icon-btn danger" data-act="remove" title="Hapus">'+icon('trash',16)+'</button>'+
-      '</div>';
-    item.querySelector('[data-act="remove"]').addEventListener('click',()=>{
-      if(!confirm('Hapus "'+it.title+'"?'))return;
-      State.playMenuItems.splice(i,1);renderPlayList();updateStats();markDirty();
-    });
-    item.querySelector('[data-act="up"]').addEventListener('click',()=>{
-      if(i<=0)return;
-      [State.playMenuItems[i-1],State.playMenuItems[i]]=[State.playMenuItems[i],State.playMenuItems[i-1]];
-      renderPlayList();markDirty();
-    });
-    item.querySelector('[data-act="down"]').addEventListener('click',()=>{
-      if(i>=State.playMenuItems.length-1)return;
-      [State.playMenuItems[i+1],State.playMenuItems[i]]=[State.playMenuItems[i],State.playMenuItems[i+1]];
-      renderPlayList();markDirty();
-    });
-    item.querySelectorAll('[data-field]').forEach(input=>{
-      input.addEventListener('input',()=>{
-        const f=input.dataset.field;
-        State.playMenuItems[i][f]=input.value;
-        if(f==='image'||f==='icon'){
-          const prev=item.querySelector('.item-preview');
-          const it2=State.playMenuItems[i];
-          prev.innerHTML=it2.image?'<img src="'+esc(it2.image)+'" alt="">':(it2.icon?icon(it2.icon,30):icon('play',30));
-        }
-        if(f==='action'){ renderPlayList(); }
-        markDirty();
-      });
-    });
-    box.appendChild(item);
-  });
-}
-
-/* ==========================================================================
-   STATS
-   ========================================================================== */
-function updateStats(){
-  const a=$('#statPlay'); if(a) a.textContent=String(State.playMenuItems.length);
-  const b=$('#statQuick'); if(b) b.textContent=String(State.quickMenuItems.length);
-  const c=$('#statPhoto'); if(c) c.textContent=String(State.photoBanner.images.length);
-}
-
-/* ==========================================================================
-   SAVE / RESET
-   ========================================================================== */
-async function saveAll(){
-  if(!FB.ready){toast('Firebase belum siap','error');return;}
-  const btn=$('#btnSave');
-  if(btn.disabled) return;
-  btn.disabled=true;
-  setStatus('Menyimpan...','saving');
-  try{
-    const updates={
-      'adminConfig/homeBanner':State.homeBanner,
-      'adminConfig/photoBanner':{
-        images:State.photoBanner.images.filter(x=>x && x.url),
-        autoSlideInterval:Number(State.photoBanner.autoSlideInterval)||5000
-      },
-      'adminConfig/quickMenuItems':State.quickMenuItems,
-      'adminConfig/playMenuItems':State.playMenuItems
-    };
-    await FB.api.update(FB.api.ref(FB.db),updates);
-    hasReadError=false;
-    const warn=$('#fbWarning'); if(warn) warn.classList.add('hidden');
-    markSaved();
-    toast('Semua perubahan tersimpan!','success');
-  }catch(e){
-    logErr('save',e);
-    const msg = String(e && (e.message||e.code) || 'unknown');
-    if(msg.includes('permission') || msg.includes('PERMISSION')){
-      setStatus('Gagal: Rules menolak akses','error');
-      const warn=$('#fbWarning'); if(warn) warn.classList.remove('hidden');
-      toast('Rules Firebase menolak akses. Cek panduan di atas.','error');
-    }else{
-      setStatus('Gagal menyimpan','error');
-      toast('Gagal menyimpan: '+msg,'error');
+/* ============ LOGIN SCREEN ============ */
+function renderLogin() {
+  $("#app").innerHTML = `<div class="center-wrap">
+    <img class="center-logo" src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
+    <h1 class="center-title">CAZOO Control Center</h1>
+    <p class="center-sub">Panel administrasi. Hanya untuk staf resmi CAZOO.</p>
+    <button class="btn btn-primary" id="signin" style="min-width:240px;padding:12px 20px;">
+      ${I.google}<span>Masuk dengan Google</span>
+    </button>
+    <p class="faint tiny" style="margin-top:20px;max-width:340px;">Setiap aktivitas di panel ini dicatat dalam audit log.</p>
+  </div>`;
+  $("#signin").onclick = async () => {
+    const b = $("#signin"); b.disabled = true; b.innerHTML = "Menghubungkan…";
+    try { await signInWithPopup(auth, provider); }
+    catch (err) {
+      toast("Login gagal: " + err.code, "error");
+      b.disabled = false; b.innerHTML = `${I.google}<span>Masuk dengan Google</span>`;
     }
-  }finally{
-    btn.disabled=false;
-  }
+  };
 }
 
-async function resetAll(){
-  if(!confirm('Reset semua konfigurasi ke default? Perubahan yang belum disimpan akan hilang.'))return;
-  State.homeBanner=Object.assign({},DEFAULT_HOME_BANNER);
-  State.photoBanner=JSON.parse(JSON.stringify(DEFAULT_PHOTO_BANNER));
-  State.quickMenuItems=DEFAULT_QUICK_ITEMS.map(x=>Object.assign({},x));
-  State.playMenuItems=DEFAULT_PLAY_ITEMS.map(x=>Object.assign({},x));
-  renderAll();
-  setStatus('Direset ke default (belum disimpan)','dirty');
-}
+/* ============ BOOTSTRAP ============ */
+function renderBootstrap() {
+  $("#app").innerHTML = `<div class="center-wrap">
+    <img class="center-logo" src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
+    <span class="badge badge-warn">Setup Pertama Kali</span>
+    <h1 class="center-title" style="font-size:22px;margin-top:12px;">Bootstrap Super Admin</h1>
+    <p class="center-sub">Belum ada admin di sistem ini. Masukkan <strong>bootstrap key</strong> yang Anda buat di Firebase Console untuk menjadikan akun ini super admin.</p>
+    <div class="center-narrow">
+      <div class="field">
+        <label>Bootstrap Key</label>
+        <input class="input mono" id="bk" type="password" placeholder="Kunci rahasia dari /system/bootstrapKey" autocomplete="off" spellcheck="false">
+      </div>
+      <button class="btn btn-primary btn-block" id="go" style="margin-top:16px;">${I.key}<span>Aktivasi Super Admin</span></button>
+      <p class="faint tiny mt-16" style="line-height:1.6;">
+        Setelah aktivasi, kunci ini akan <strong>dihapus otomatis</strong> dari database. Tidak akan ada cara lain untuk mendaftar sebagai admin selain di-promote oleh super admin lewat panel Users.
+      </p>
+    </div>
+  </div>`;
 
-function renderAll(){
-  renderHomeBannerForm();
-  renderPhotoBannerForm();
-  renderQuickList();
-  renderPlayList();
-  updateStats();
-}
-
-/* ==========================================================================
-   EVENT WIRING
-   ========================================================================== */
-function wireEvents(){
-  const themeBtn=$('#btnTheme');
-  const savedTheme=localStorage.getItem('adminTheme')||'dark';
-  document.documentElement.setAttribute('data-theme',savedTheme);
-  themeBtn.innerHTML=icon(savedTheme==='dark'?'sun':'moon');
-  themeBtn.addEventListener('click',()=>{
-    const cur=document.documentElement.getAttribute('data-theme')||'dark';
-    const next=cur==='dark'?'light':'dark';
-    document.documentElement.setAttribute('data-theme',next);
-    localStorage.setItem('adminTheme',next);
-    themeBtn.innerHTML=icon(next==='dark'?'sun':'moon');
-  });
-
-  $('#btnPreview').addEventListener('click',()=>{
-    window.open('index.html','_blank','noopener');
-  });
-
-  $('#btnLogout').addEventListener('click',()=>{
-    if(!confirm('Keluar dari panel admin?'))return;
-    sessionStorage.removeItem('adminUnlocked');
-    unlocked=false;
-    showLoginScreen();
-  });
-
-  $$('#mainTabs button').forEach(b=>{
-    b.addEventListener('click',()=>{
-      const tab=b.dataset.tab;
-      $$('#mainTabs button').forEach(x=>x.classList.toggle('active',x===b));
-      $$('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+tab));
-    });
-  });
-
-  $('#hbTitle').addEventListener('input',()=>{State.homeBanner.title=$('#hbTitle').value;updateHomeBannerPreview();markDirty();});
-  $('#hbText').addEventListener('input',()=>{State.homeBanner.text=$('#hbText').value;updateHomeBannerPreview();markDirty();});
-  $('#hbIcon').addEventListener('change',()=>{State.homeBanner.icon=$('#hbIcon').value;updateHomeBannerPreview();markDirty();});
-
-  $('#pbInterval').addEventListener('input',()=>{
-    State.photoBanner.autoSlideInterval=Number($('#pbInterval').value)||5000;
-    markDirty();
-  });
-
-  $('#btnAddPhoto').addEventListener('click',()=>{
-    State.photoBanner.images.push({url:'',link:'',alt:''});
-    renderPhotoList();updatePhotoPreview();markDirty();
-  });
-
-  $('#btnAddQuick').addEventListener('click',()=>{
-    State.quickMenuItems.push({
-      id:'quick-'+Math.random().toString(36).slice(2,8),
-      label:'Item Baru',sub:'',image:'',icon:'grid3',action:'puzzle',url:''
-    });
-    renderQuickList();updateStats();markDirty();
-  });
-
-  $('#btnAddPlay').addEventListener('click',()=>{
-    State.playMenuItems.push({
-      id:'play-'+Math.random().toString(36).slice(2,8),
-      title:'Game Baru',desc:'Deskripsi game.',image:'',icon:'grid3',
-      iconClass:'custom',modeClass:'custom',action:'code',url:'',code:''
-    });
-    renderPlayList();updateStats();markDirty();
-  });
-
-  $('#btnSave').addEventListener('click',saveAll);
-  $('#btnReset').addEventListener('click',resetAll);
-}
-
-/* ==========================================================================
-   LOGIN / APP VIEW
-   ========================================================================== */
-function showLoginError(msg){
-  const b=$('#loginError');
-  if(!b) return;
-  b.textContent=msg;
-  b.classList.remove('hidden');
-}
-function showLoginScreen(){
-  $('#loginScreen').classList.remove('hidden');
-  $('#app').classList.remove('active');
-  $('#loader').classList.add('gone');
-  const pi=$('#pinInput'); if(pi) pi.value='';
-}
-function showApp(){
-  $('#loginScreen').classList.add('hidden');
-  $('#app').classList.add('active');
-  $('#loader').classList.add('gone');
-  const warn=$('#fbWarning');
-  if(warn){
-    if(hasReadError) warn.classList.remove('hidden');
-    else warn.classList.add('hidden');
-  }
-}
-
-async function tryUnlock(){
-  const pinEl=$('#pinInput');
-  const pin=pinEl?pinEl.value.trim():'';
-  const err=$('#loginError');
-  if(err) err.classList.add('hidden');
-  if(!pin){ showLoginError('Masukkan PIN terlebih dahulu.'); return; }
-  if(pin !== ADMIN_PIN){
-    showLoginError('PIN salah. Coba lagi.');
-    if(pinEl){ pinEl.value=''; pinEl.focus(); }
-    return;
-  }
-  unlocked=true;
-  sessionStorage.setItem('adminUnlocked','1');
-  await enterAdmin();
-}
-
-async function enterAdmin(){
-  try{
-    const loader=$('#loader');
-    const loaderStatus=$('#loaderStatus');
-    if(loader) loader.classList.remove('gone');
-    if(loaderStatus) loaderStatus.textContent='Menghubungkan ke database...';
-
-    if(!FB.ready){
-      try{
-        await initFirebase();
-      }catch(e){
-        logErr('initFirebase-fail', e);
-        if(loader) loader.classList.add('gone');
-        showLoginScreen();
-        showLoginError('Gagal terhubung ke Firebase.\n\nPenyebab umum:\n• Tidak ada koneksi internet\n• CDN Firebase diblokir\n\nDetail: '+(e.message||e));
+  $("#go").onclick = async () => {
+    const key = $("#bk").value.trim();
+    if (!key) { toast("Masukkan bootstrap key", "error"); return; }
+    const btn = $("#go"); btn.disabled = true; btn.innerHTML = "Memverifikasi…";
+    try {
+      // Atomic: pastikan key masih sama, dan langsung hapus
+      const result = await runTransaction(ref(db, "system/bootstrapKey"), cur => {
+        if (cur === key) return null; // cocok → hapus
+        return; // tidak cocok → abort
+      });
+      if (!result.committed) {
+        toast("Bootstrap key salah atau sudah dipakai.", "error");
+        btn.disabled = false; btn.innerHTML = `${I.key}<span>Aktivasi Super Admin</span>`;
         return;
       }
+      // Set role super admin
+      await set(ref(db, `userRoles/${state.user.uid}`), {
+        role: "superadmin",
+        grantedBy: "bootstrap",
+        grantedAt: Date.now(),
+        grantedByName: "Bootstrap"
+      });
+      await update(ref(db, "system"), { adminBootstrappedAt: Date.now(), adminBootstrappedBy: state.user.uid });
+      await audit("bootstrap_superadmin", state.user.uid, { email: state.user.email });
+      state.role = "superadmin";
+      toast("Super admin aktif.", "ok");
+      setTimeout(() => renderShell("overview"), 500);
+    } catch(e) {
+      console.error(e);
+      toast("Gagal: " + e.message, "error");
+      btn.disabled = false; btn.innerHTML = `${I.key}<span>Aktivasi Super Admin</span>`;
     }
-
-    if(loaderStatus) loaderStatus.textContent='Memuat konfigurasi...';
-
-    await loadConfigs();
-
-    renderAll();
-    showApp();
-    setStatus('Siap','');
-
-    if(hasReadError){
-      toast('Rules Firebase menolak akses. Data default dipakai.','error');
-    }
-  }catch(e){
-    logErr('enterAdmin',e);
-    const loader=$('#loader'); if(loader) loader.classList.add('gone');
-    showLoginScreen();
-    showLoginError('Terjadi kesalahan tak terduga:\n'+(e.message||e)+'\n\nCek Console (F12) untuk detail.');
-  }
+  };
 }
 
-/* ==========================================================================
-   BOOT
-   ========================================================================== */
-async function boot(){
-  const lm=$('#loaderMark'); if(lm) lm.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 0-2.9 3.8L8 12h8l-1.1-5.2A3 3 0 0 0 12 3z"/><rect x="8" y="12.5" width="8" height="2" rx="1"/><rect x="6" y="15" width="12" height="4" rx="1.4"/></svg>';
-  const ll=$('#loginLogo'); if(ll) ll.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
-  const bm=$('#brandMark'); if(bm) bm.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a3 3 0 0 0-2.9 3.8L8 12h8l-1.1-5.2A3 3 0 0 0 12 3z"/><rect x="8" y="12.5" width="8" height="2" rx="1"/><rect x="6" y="15" width="12" height="4" rx="1.4"/></svg>';
-
-  wireEvents();
-
-  const btn=$('#btnPinLogin');
-  const pinEl=$('#pinInput');
-  if(btn) btn.addEventListener('click',tryUnlock);
-  if(pinEl){
-    pinEl.addEventListener('keydown',(e)=>{
-      if(e.key==='Enter') tryUnlock();
-    });
-    pinEl.addEventListener('input',()=>{
-      const err=$('#loginError');
-      if(err) err.classList.add('hidden');
-    });
-  }
-
-  if(sessionStorage.getItem('adminUnlocked')==='1'){
-    unlocked=true;
-    await enterAdmin();
-    return;
-  }
-
-  const loader=$('#loader'); if(loader) loader.classList.add('gone');
-  showLoginScreen();
-  if(pinEl) setTimeout(()=>pinEl.focus(), 200);
+/* ============ ACCESS DENIED ============ */
+function renderAccessDenied(reason) {
+  $("#app").innerHTML = `<div class="center-wrap">
+    <img class="center-logo" src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
+    <span class="badge badge-danger">Akses Ditolak</span>
+    <h1 class="center-title" style="font-size:22px;margin-top:12px;">Bukan Admin</h1>
+    <p class="center-sub">${esc(reason || "Akun ini tidak memiliki hak akses ke Control Center.")}</p>
+    <div class="flex" style="gap:8px;">
+      <button class="btn btn-ghost" id="out">${I.logout}<span>Keluar</span></button>
+    </div>
+    <p class="faint tiny mt-16" style="max-width:340px;">Jika Anda yakin ini kesalahan, hubungi super admin untuk meminta role di panel Users.</p>
+  </div>`;
+  $("#out").onclick = async () => { await signOut(auth); };
 }
 
-boot().catch(e=>{
-  logErr('boot',e);
-  const loader=$('#loader'); if(loader) loader.classList.add('gone');
-  document.body.innerHTML='<div style="padding:40px;text-align:center;font-family:Inter,sans-serif;color:#f0f4fc;background:#06080f;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center">'+
-    '<h2 style="font-size:22px;margin-bottom:10px">Gagal memuat</h2>'+
-    '<p style="color:#8b96b3;margin:0 0 10px">Refresh halaman untuk mencoba lagi.</p>'+
-    '<p style="color:#5a6884;font-size:12px;margin:0;max-width:500px">'+(e.message||e)+'</p></div>';
-});
+/* ============ SHELL ============ */
+const NAV = [
+  { id:"overview", label:"Overview", icon:"dashboard", perm:"overview" },
+  { id:"users", label:"Users", icon:"users", perm:"users" },
+  { id:"rooms", label:"Rooms", icon:"room", perm:"rooms" },
+  { id:"games", label:"Games", icon:"game", perm:"games" },
+  { id:"reports", label:"Reports", icon:"report", perm:"reports" },
+  { id:"features", label:"Features", icon:"shield", perm:"features" },
+  { id:"announcements", label:"Announcements", icon:"bell", perm:"announcements" },
+  { id:"audit", label:"Audit Log", icon:"list", perm:"audit" },
+  { id:"settings", label:"Settings", icon:"settings", perm:"settings" },
+];
+
+function renderShell(active) {
+  const roleLabel = { superadmin:"Super Admin", admin:"Admin", moderator:"Moderator", spectator:"Spectator" }[state.role] || "—";
+  const name = state.profile?.displayName || state.user.displayName || state.user.email || "Admin";
+  const photo = state.profile?.photoURL || state.user.photoURL || "https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg";
+
+  const navHtml = NAV
+    .filter(n => n.perm === "*" || hasPerm(n.perm) || (state.role === "superadmin"))
+    .map(n => `<button class="nav-item ${n.id === active ? "active" : ""}" data-nav="${n.id}">${I[n.icon]}<span>${n.label}</span></button>`)
+    .join("");
+
+  $("#app").innerHTML = `
+    <div class="mobile-bar">
+      <img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
+      <div style="flex:1;font-weight:700;letter-spacing:-.02em;">Control Center</div>
+      <button class="btn btn-ghost btn-icon" id="mmenu">${I.menu}</button>
+    </div>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="">
+          <div class="brand-info">
+            <div class="brand-name">Control Center</div>
+            <div class="brand-sub">CAZOO</div>
+          </div>
+        </div>
+        <div class="nav-items">${navHtml}</div>
+        <div class="sidebar-footer">
+          <button class="user-chip" id="userchip" style="width:100%;">
+            <img src="${esc(photo)}" alt="">
+            <div class="user-chip-info">
+              <div class="user-chip-name">${esc(name)}</div>
+              <div class="user-chip-role">${esc(roleLabel)}</div>
+            </div>
+            <span class="faint">${I.chevron}</span>
+          </button>
+        </div>
+      </aside>
+      <div class="main">
+        <div class="main-inner" id="page"></div>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobile-menu" hidden>
+      <div class="flex-between mb-24">
+        <div class="flex" style="gap:10px;">
+          <img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" alt="" style="width:28px;height:28px;border-radius:8px;">
+          <div>
+            <div style="font-weight:700;">Control Center</div>
+            <div class="faint tiny">${esc(name)} · ${esc(roleLabel)}</div>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-icon" id="mclose">${I.x}</button>
+      </div>
+      <div class="nav-items">${navHtml}</div>
+    </div>`;
+
+  $$("[data-nav]").forEach(b => b.addEventListener("click", () => {
+    const id = b.dataset.nav;
+    if (!hasPerm(id) && state.role !== "superadmin") {
+      toast("Anda tidak punya akses ke halaman ini.", "error");
+      return;
+    }
+    state.view = id;
+    $("#mobile-menu").hidden = true;
+    renderShell(id);
+  }));
+
+  $("#mmenu").onclick = () => { $("#mobile-menu").hidden = false; };
+  $("#mclose").onclick = () => { $("#mobile-menu").hidden = true; };
+
+  $("#userchip").onclick = () => openUserMenu();
+
+  // Render page
+  state.cleanup?.(); state.cleanup = null;
+  const page = $("#page");
+  const fn = PAGES[active] || PAGES.overview;
+  state.cleanup = fn(page);
+}
+
+function openUserMenu() {
+  modal({
+    title: "Akun Anda",
+    body: `<div class="flex" style="gap:12px;margin-bottom:14px;">
+      <img class="avatar" src="${esc(state.profile?.photoURL || state.user.photoURL || "https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg")}" style="width:44px;height:44px;">
+      <div>
+        <div style="font-weight:600;">${esc(state.profile?.displayName || state.user.displayName || "—")}</div>
+        <div class="muted small">${esc(state.user.email || "")}</div>
+        <div class="faint tiny mono mt-4">${esc(state.user.uid.slice(0,16))}…</div>
+      </div>
+    </div>
+    <div class="row-item">
+      <div class="row-item-main">
+        <div class="row-item-title">Role</div>
+        <div class="row-item-sub">${esc({superadmin:"Super Admin",admin:"Admin",moderator:"Moderator",spectator:"Spectator"}[state.role] || "—")}</div>
+      </div>
+    </div>`,
+    actions: [
+      { label: "Keluar", danger: true, onClick: async () => { await signOut(auth); } },
+      { label: "Tutup", primary: true }
+    ]
+  });
+}
+
+/* ============================================================
+   PAGE: OVERVIEW
+   ============================================================ */
+function pageOverview(root) {
+  root.innerHTML = `
+    <div class="page-head">
+      <div class="page-title-group">
+        <h1>Overview</h1>
+        <div class="page-sub">Ringkasan status CAZOO saat ini</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-ghost" id="refresh">${I.refresh}<span>Refresh</span></button>
+      </div>
+    </div>
+    <div class="stat-grid" id="stats">
+      ${["Total Akun","Aktif 24 jam","Room Aktif","Pertandingan Live","Permintaan Pertemanan","Laporan Pending"]
+        .map(l => `<div class="stat"><div class="stat-label">${l}</div><div class="stat-value" data-stat>—</div></div>`).join("")}
+    </div>
+    <h2>Aktivitas Terbaru</h2>
+    <div class="card card-flush" id="recent">
+      <div class="empty">Memuat…</div>
+    </div>
+    <h2>Peringatan Sistem</h2>
+    <div id="alerts" class="row-list">
+      <div class="row-item">
+        <div class="row-item-main">
+          <div class="row-item-title">Cloud Functions</div>
+          <div class="row-item-sub">Rating di-update dari host (Host-Authoritative). Untuk anti-cheat sejati, deploy Cloud Functions.</div>
+        </div>
+        <span class="chip chip-warn">Catatan</span>
+      </div>
+    </div>`;
+
+  let pendingReports = 0, pendingRequests = 0, activeRooms = 0, liveGames = 0, totalUsers = 0, activeUsers = 0;
+
+  const offUsers = onValue(ref(db, "users"), snap => {
+    totalUsers = snap.exists() ? Object.keys(snap.val()).length : 0;
+    const cutoff = Date.now() - 24*3600*1000;
+    let act = 0;
+    snap.forEach(c => {
+      const p = c.val()?.profile;
+      if (p?.createdAt && p.createdAt > cutoff) act++;
+    });
+    activeUsers = act;
+    updateStats();
+  });
+
+  const offRooms = onValue(ref(db, "rooms"), snap => {
+    const rooms = snap.val() || {};
+    activeRooms = Object.values(rooms).filter(r => r.status === "ready" || r.status === "waiting").length;
+    liveGames = Object.values(rooms).filter(r => r.status === "playing").length;
+    updateStats();
+    renderRecent();
+  });
+
+  const offReports = onValue(ref(db, "reports"), snap => {
+    const reps = snap.val() || {};
+    pendingReports = Object.values(reps).filter(r => r.status === "pending").length;
+    updateStats();
+  });
+
+  const offFriends = onValue(ref(db, "friendRequests"), snap => {
+    pendingRequests = snap.exists() ? Object.values(snap.val()).reduce((a,v) => a + Object.keys(v||{}).length, 0) : 0;
+    updateStats();
+  });
+
+  function updateStats() {
+    const values = [totalUsers, activeUsers, activeRooms, liveGames, pendingRequests, pendingReports];
+    $$("[data-stat]", root).forEach((el, i) => { el.textContent = values[i] ?? "—"; });
+  }
+
+  async function renderRecent() {
+    const el = $("#recent", root);
+    const snap = await get(ref(db, "rooms"));
+    if (!snap.exists()) { el.innerHTML = `<div class="empty">Belum ada aktivitas room.</div>`; return; }
+    const arr = Object.values(snap.val()).sort((a,b) => (b.createdAt||0) - (a.createdAt||0)).slice(0, 8);
+    if (!arr.length) { el.innerHTML = `<div class="empty">Belum ada aktivitas room.</div>`; return; }
+    el.innerHTML = arr.map(r => `
+      <div class="row-item" style="border-radius:0;border-left:0;border-right:0;border-top:0;margin:0;">
+        <div class="row-item-main">
+          <div class="row-item-title">${esc(r.host?.name||"—")} ${r.guest?`vs ${esc(r.guest.name)}`:"(menunggu lawan)"}</div>
+          <div class="row-item-sub">${esc(r.mode)} · ${r.tcMinutes} menit · ${r.status} · ${fmtTimeAgo(r.createdAt)}</div>
+        </div>
+        <span class="chip ${r.status === "playing" ? "chip-brand" : r.status === "ended" ? "" : "chip-info"}">${esc(r.status)}</span>
+      </div>`).join("");
+  }
+
+  $("#refresh", root).onclick = () => { renderRecent(); toast("Diperbarui", "ok"); };
+  renderRecent();
+
+  return () => { offUsers(); offRooms(); offReports(); offFriends(); };
+}
+
+/* ============================================================
+   PAGE: USERS
+   ============================================================ */
+function pageUsers(root) {
+  root.innerHTML = `
+    <div class="page-head">
+      <div class="page-title-group">
+        <h1>Users</h1>
+        <div class="page-sub">Kelola akun, role, dan status</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-ghost" id="refresh">${I.refresh}<span>Refresh</span></button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <input class="input" id="q" placeholder="Cari username, nama, atau UID…" autocomplete="off">
+      <div class="field">
+        <label>Role</label>
+        <select class="input" id="frole">
+          <option value="">Semua</option>
+          <option value="superadmin">Super Admin</option>
+          <option value="admin">Admin</option>
+          <option value="moderator">Moderator</option>
+          <option value="spectator">Spectator</option>
+          <option value="player">Player</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Status</label>
+        <select class="input" id="fstatus">
+          <option value="">Semua</option>
+          <option value="active">Aktif</option>
+          <option value="banned">Banned</option>
+        </select>
+      </div>
+    </div>
+    <div class="card card-flush">
+      <div class="table-wrap">
+        <table class="table" id="tbody">
+          <thead><tr>
+            <th>Pengguna</th><th>Role</th><th>Rating</th><th>Status</th><th>Dibuat</th><th></th>
+          </tr></thead>
+          <tbody id="rows"><tr><td colspan="6"><div class="empty">Memuat…</div></td></tr></tbody>
+        </table>
+      </div>
+    </div>`;
+
+  let allUsers = [];
+  let allRoles = {};
+
+  const offUsers = onValue(ref(db, "users"), snap => {
+    allUsers = snap.exists() ? Object.entries(snap.val()).map(([uid, v]) => ({ uid, ...v })) : [];
+    render();
+  });
+  const offRoles = onValue(ref(db, "userRoles"), snap => {
+    allRoles = snap.val() || {};
+    render();
+  });
+
+  function render() {
+    const q = $("#q", root).value.trim().toLowerCase();
+    const fRole = $("#frole", root).value;
+    const fStatus = $("#fstatus", root).value;
+
+    let rows = allUsers.filter(u => {
+      const p = u.profile || {};
+      const role = allRoles[u.uid]?.role || "player";
+      if (fRole && role !== fRole) return false;
+      const banned = u.status?.banned === true;
+      if (fStatus === "banned" && !banned) return false;
+      if (fStatus === "active" && banned) return false;
+      if (q) {
+        const hay = [p.username, p.displayName, u.uid].filter(Boolean).join(" ").toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    }).sort((a,b) => (b.profile?.createdAt||0) - (a.profile?.createdAt||0));
+
+    const tbody = $("#rows", root);
+    if (!rows.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty">Tidak ada pengguna yang cocok.</div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = rows.slice(0, 200).map(u => {
+      const p = u.profile || {};
+      const role = allRoles[u.uid]?.role || "player";
+      const banned = u.status?.banned === true;
+      const rating = u.ratings?.ranked?.rating ?? "—";
+      const created = p.createdAt ? fmtTime(p.createdAt) : "—";
+      const photo = p.photoURL || "https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg";
+      const roleChip = role === "player" ? "" : `<span class="chip chip-brand">${esc(role)}</span>`;
+      const bannedChip = banned ? `<span class="chip chip-danger">BANNED</span>` : "";
+      return `<tr data-uid="${esc(u.uid)}">
+        <td>
+          <div class="flex" style="gap:10px;">
+            <img class="avatar avatar-sm" src="${esc(photo)}" alt="">
+            <div style="min-width:0;">
+              <div style="font-weight:500;">${esc(p.displayName || "—")}</div>
+              <div class="faint tiny">@${esc(p.username || "—")}</div>
+            </div>
+          </div>
+        </td>
+        <td>${roleChip || '<span class="faint small">player</span>'}</td>
+        <td><strong>${rating}</strong></td>
+        <td>${bannedChip || '<span class="chip chip-brand">Aktif</span>'}</td>
+        <td class="faint small">${esc(created)}</td>
+        <td class="text-right">
+          <div class="table-actions">
+            <button class="btn btn-sm btn-ghost" data-view="${esc(u.uid)}" title="Detail">${I.edit}</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join("");
+
+    $$("[data-view]", root).forEach(b => b.onclick = () => openUserDetail(b.dataset.view));
+  }
+
+  $("#q", root).oninput = render;
+  $("#frole", root).onchange = render;
+  $("#fstatus", root).onchange = render;
+  $("#refresh", root).onclick = () => render();
+
+  async function openUserDetail(uid) {
+    const u = allUsers.find(x => x.uid === uid);
+    if (!u) return;
+    const p = u.profile || {};
+    const role = allRoles[uid]?.role || "player";
+    const banned = u.status?.banned === true;
+
+    const body = `
+      <div class="flex" style="gap:12px;margin-bottom:16px;">
+        <img class="avatar" src="${esc(p.photoURL || "https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg")}" style="width:48px;height:48px;">
+        <div style="min-width:0;">
+          <div style="font-weight:600;">${esc(p.displayName || "—")}</div>
+          <div class="muted small">@${esc(p.username || "—")}</div>
+          <div class="faint tiny mono mt-4">${esc(uid)}</div>
+        </div>
+      </div>
+      <div class="row-item mb-16">
+        <div class="row-item-main">
+          <div class="row-item-title">Bio</div>
+          <div class="row-item-sub">${esc(p.bio || "—")}</div>
+        </div>
+      </div>
+      <div class="grid-2 mb-16">
+        <div class="row-item" style="margin:0;">
+          <div class="row-item-main">
+            <div class="row-item-title">Rating Ranked</div>
+            <div class="row-item-sub">${u.ratings?.ranked?.rating ?? "—"} (peak ${u.ratings?.ranked?.peak ?? "—"})</div>
+          </div>
+        </div>
+        <div class="row-item" style="margin:0;">
+          <div class="row-item-main">
+            <div class="row-item-title">W / L / D</div>
+            <div class="row-item-sub">${u.statistics?.ranked?.wins ?? 0} · ${u.statistics?.ranked?.losses ?? 0} · ${u.statistics?.ranked?.draws ?? 0}</div>
+          </div>
+        </div>
+      </div>
+      <div class="mb-16">
+        <label class="small muted">Role</label>
+        <select class="input mt-8" id="newrole">
+          <option value="player" ${role==="player"?"selected":""}>Player</option>
+          <option value="spectator" ${role==="spectator"?"selected":""}>Spectator</option>
+          <option value="moderator" ${role==="moderator"?"selected":""}>Moderator</option>
+          <option value="admin" ${role==="admin"?"selected":""}>Admin</option>
+          <option value="superadmin" ${role==="superadmin"?"selected":""}>Super Admin</option>
+        </select>
+        <div class="faint tiny mt-8">Hanya super admin dapat mengubah role. Perubahan dicatat di audit log.</div>
+      </div>
+      ${banned ? `<div class="row-item" style="border-color:color-mix(in srgb,var(--danger) 40%,var(--line));">
+        <div class="row-item-main">
+          <div class="row-item-title" style="color:var(--danger);">Akun Diblokir</div>
+          <div class="row-item-sub">Alasan: ${esc(u.status?.reason || "—")} · ${fmtTimeAgo(u.status?.bannedAt)}</div>
+        </div>
+      </div>` : ""}`;
+
+    const isSelf = uid === state.user.uid;
+    const canEditRole = state.role === "superadmin" && !isSelf;
+    const actions = [];
+    actions.push({
+      label: "Simpan Role",
+      primary: true,
+      onClick: async (b) => {
+        if (!canEditRole) {
+          toast("Hanya super admin yang dapat mengubah role, dan tidak pada akun sendiri.", "error");
+          return false;
+        }
+        const newRole = $("#newrole", b).value;
+        if (newRole === role) return;
+        try {
+          if (newRole === "player") {
+            await remove(ref(db, `userRoles/${uid}`));
+          } else {
+            await set(ref(db, `userRoles/${uid}`), {
+              role: newRole,
+              grantedBy: state.user.uid,
+              grantedByName: state.profile?.displayName || "Admin",
+              grantedAt: Date.now()
+            });
+          }
+          await audit("set_role", uid, { from: role, to: newRole, target: p.username || uid });
+          toast("Role diperbarui", "ok");
+        } catch(e) {
+          toast("Gagal: " + e.message, "error");
+          return false;
+        }
+      }
+    });
+    if (!isSelf) {
+      if (banned) {
+        actions.push({
+          label: "Unban",
+          onClick: async () => {
+            await remove(ref(db, `users/${uid}/status`));
+            await audit("unban_user", uid, { target: p.username || uid });
+            toast("Akun dipulihkan", "ok");
+          }
+        });
+      } else {
+        actions.push({
+          label: "Ban",
+          danger: true,
+          onClick: async (b) => {
+            const reason = prompt("Alasan ban:", "Melanggar aturan") || "Melanggar aturan";
+            await set(ref(db, `users/${uid}/status`), {
+              banned: true, reason,
+              bannedBy: state.user.uid,
+              bannedAt: Date.now()
+            });
+            await audit("ban_user", uid, { reason, target: p.username || uid });
+            toast("Akun diblokir", "ok");
+          }
+        });
+      }
+    }
+    actions.push({ label: "Tutup", primary: !canEditRole });
+
+    await modal({ title: "Detail Pengguna", body, actions });
+    render();
+  }
+
+  return () => { offUsers(); offRoles(); };
+}
+
+/* ============================================================
+   PAGE: ROOMS
+   ============================================================ */
+function pageRooms(root) {
+  root.innerHTML = `
+    <div class="page-head">
+      <div class="page-title-group">
+        <h1>Rooms</h1>
+        <div class="page-sub">Room aktif dan selesai</div>
+      </div>
+    </div>
+    <div class="toolbar">
+      <input class="input" id="q" placeholder="Cari kode room, nama pemain…">
+      <div class="field">
+        <label>Status</label>
+        <select class="input" id="fst">
+          <option value="">Semua</option>
+          <option value="waiting">Waiting</option>
+          <option value="ready">Ready</option>
+          <option value="playing">Playing</option>
+          <option value="ended">Ended</option>
+        </select>
+      </div>
+    </div>
+    <div class="row-list" id="list"><div class="empty">Memuat…</div></div>`;
+
+  let all = [];
+  const off = onValue(ref(db, "rooms"), snap => {
+    all = snap.exists() ? Object.entries(snap.val()).map(([id, v]) => ({ id, ...v })) : [];
+    render();
+  });
+
+  function render() {
+    const q = $("#q", root).value.trim().toLowerCase();
+    const fst = $("#fst", root).value;
+    let rooms = all.filter(r => {
+      if (fst && r.status !== fst) return false;
+      if (q) {
+        const hay = [r.id, r.host?.name, r.guest?.name].filter(Boolean).join(" ").toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    }).sort((a,b) => (b.createdAt||0) - (a.createdAt||0)).slice(0, 100);
+
+    const el = $("#list", root);
+    if (!rooms.length) { el.innerHTML = `<div class="empty">Tidak ada room yang cocok.</div>`; return; }
+    el.innerHTML = rooms.map(r => {
+      const moveCount = (r.moves || []).length;
+      const chip = r.status === "playing" ? "chip-brand" : r.status === "ended" ? "" : "chip-info";
+      return `<div class="row-item">
+        <div class="row-item-main">
+          <div class="row-item-title">${esc(r.host?.name||"—")} ${r.guest ? `vs ${esc(r.guest.name)}` : "(menunggu)"}</div>
+          <div class="row-item-sub">
+            <span class="mono">${esc(r.id.slice(0,12))}</span> ·
+            ${esc(r.mode)} · ${r.tcMinutes} menit ·
+            ${moveCount} langkah ·
+            ${fmtTimeAgo(r.createdAt)}
+          </div>
+        </div>
+        <span class="chip ${chip}">${esc(r.status)}</span>
+      </div>`;
+    }).join("");
+  }
+
+  $("#q", root).oninput = render;
+  $("#fst", root).onchange = render;
+  return () => off();
+}
+
+/* ============================================================
+   PAGE: GAMES (rating history)
+   ============================================================ */
+function pageGames(root) {
+  root.innerHTML = `
+    <div class="page-head">
+      <div class="page-title-group">
+        <h1>Games</h1>
+        <div class="page-sub">Perubahan rating terbaru seluruh pemain</div>
+      </div>
+    </div>
+    <div class="card card-flush">
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Waktu</th><th>UID</th><th>Δ Rating</th><th>Setelah</th></tr></thead>
+          <tbody id="rows"><tr><td colspan="4"><div class="empty">Memuat…</div></td></tr></tbody>
+        </table>
+      </div>
+    </div>`;
+
+  const off = onValue(ref(db, "ratingHistory"), async snap => {
+    const tbody = $("#rows", root);
+    if (!snap.exists()) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty">Belum ada riwayat rating.</div></td></tr>`; return; }
+    const entries = [];
+    snap.forEach(uSnap => {
+      const uid = uSnap.key;
+      uSnap.forEach(hSnap => {
+        const h = hSnap.val() || {};
+        entries.push({ uid, delta: h.delta, after: h.after, before: h.before, ts: h.ts });
+      });
+    });
+    entries.sort((a,b) => (b.ts||0) - (a.ts||0));
+    const recent = entries.slice(0, 100);
+    if (!recent.length) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty">Belum ada riwayat rating.</div></td></tr>`; return; }
+
+    // Ambil username untuk label
+    const uids = [...new Set(recent.map(e => e.uid))];
+    const profiles = {};
+    for (const uid of uids) {
+      try {
+        const pSnap = await get(ref(db, `users/${uid}/profile`));
+        if (pSnap.exists()) profiles[uid] = pSnap.val();
+      } catch {}
+    }
+
+    tbody.innerHTML = recent.map(e => {
+      const p = profiles[e.uid];
+      const label = p ? `@${esc(p.username)}` : e.uid.slice(0,10);
+      const delta = e.delta ?? 0;
+      const color = delta > 0 ? "var(--brand)" : delta < 0 ? "var(--danger)" : "var(--text-dim)";
+      return `<tr>
+        <td class="faint small">${esc(fmtTime(e.ts))}</td>
+        <td>${label}</td>
+        <td style="color:${color};font-weight:600;">${delta >= 0 ? "+" : ""}${delta}</td>
+        <td><strong>${e.after ?? "—"}</strong></td>
+      </tr>`;
+    }).join("");
+  });
+
+  return () => off();
+}
+
+/* ============================================================
+   PAGE: REPORTS
+   ============================================================ */
+function pageReports(root) {
+  root.innerHTML = `
+    <div class="page-head">
+      <div class="page-title-group">
+        <h1>Reports</h1>
+        <div class="page-sub">Laporan pengguna dan moderasi</div>
+      </div>
+    </div>
+    <div class="row-list" id="list"><div class="empty">Memuat…</div></div>`;
+
+  const off = onValue(ref(db, "reports"), snap => {
+    const el = $("#list", root);
+    if (!snap.exists()) { el.innerHTML = `<div class="empty">Belum ada laporan.</div>`; return; }
+    const arr = Object.entries(snap.val()).map(([id, v]) => ({ id, ...v })).sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+    if (!arr.length) { el.innerHTML = `<div class="empty">Belum ada laporan.</div>`; return; }
+    el.innerHTML = arr.map(r => {
+      const chip = r.status === "pending" ? "chip-warn" : r.status === "resolved" ? "chip-brand" : "";
+      return `<div class="row-item">
+        <div class="row-item-main">
+          <div class="row-item-title">${esc(r.category || "Laporan")} — ${esc(r.targetName || r.targetUid || "—")}</div>
+          <div class="row-item-sub">${esc(r.reason || "")} · oleh @${esc(r.reporterName || r.reporterUid || "?")} · ${fmtTimeAgo(r.createdAt)}</div>
+        </div>
+        <span class="chip ${chip}">${esc(r.status || "pending")}</span>
+        <div class="row-item-actions">
+          <button class="btn btn-sm btn-primary" data-res="${esc(r.id)}">Proses</button>
+        </div>
+      </div>`;
+    }).join("");
+
+    $$("[data-res]", root).forEach(b => b.onclick = async () => {
+      const id = b.dataset.res;
+      const r = arr.find(x => x.id === id);
+      const choice = await modal({
+        title: "Proses Laporan",
+        body: `
+          <p>Kategori: <strong>${esc(r.category || "—")}</strong></p>
+          <p>Target: <strong>${esc(r.targetName || r.targetUid || "—")}</strong></p>
+          <p>Alasan: <em>${esc(r.reason || "—")}</em></p>
+          <p class="mt-16">Pilih tindakan:</p>`,
+        actions: [
+          { label: "Tolak Laporan", onClick: async () => {
+            await update(ref(db, `reports/${id}`), { status: "rejected", resolvedBy: state.user.uid, resolvedAt: Date.now() });
+            await audit("report_rejected", id, { target: r.targetUid });
+            toast("Laporan ditolak", "ok");
+          }},
+          { label: "Tandai Selesai", primary: true, onClick: async () => {
+            await update(ref(db, `reports/${id}`), { status: "resolved", resolvedBy: state.user.uid, resolvedAt: Date.now() });
+            await audit("report_resolved", id, { target: r.targetUid });
+            toast("Laporan selesai", "ok");
+          }}
+        ]
+      });
+    });
+  });
+
+  return () => off();
+}
+
+/* ============================================================
+   PAGE: FEATURES
+   ============================================================ */
+function pageFeatures(root) {
+  const FEATURES = [
+    { key: "ranked", label: "Mode Ranked", desc: "Matchmaking rating" },
+    { key: "classic", label: "Mode Classic", desc: "Online tanpa rating" },
+    { key: "friend", label: "Lawan Teman", desc: "Room privat + kode" },
+    { key: "local", label: "Mode Lokal", desc: "Satu perangkat" },
+    { key: "ai", label: "Lawan AI", desc: "Mesin minimax" },
+    { key: "tournament", label: "Turnamen", desc: "Turnamen dengan kode" },
+    { key: "friends", label: "Sistem Teman", desc: "Permintaan & daftar teman" },
+    { key: "chat", label: "Chat Pribadi", desc: "Belum diimplementasikan" },
+    { key: "puzzle", label: "Puzzle", desc: "Belum diimplementasikan" },
+    { key: "analysis", label: "Analisis", desc: "Belum diimplementasikan" },
+  ];
+
+  root.innerHTML = `
+    <div class="page-head">
+      <div class="page-title-group">
+        <h1>Features</h1>
+        <div class="page-sub">Aktifkan atau nonaktifkan fitur (client-side flag)</div>
+      </div>
+    </div>
+    <div class="card mb-24" style="border-color:color-mix(in srgb,var(--warn) 30%,var(--line));background:var(--warn-soft);">
+      <div class="flex" style="gap:10px;align-items:flex-start;">
+        <div style="flex:1;">
+          <strong style="color:var(--warn);">Catatan penting</strong>
+          <p class="small" style="margin:6px 0 0;line-height:1.55;color:var(--text);">
+            Feature flags ini hanya dibaca oleh aplikasi CAZOO utama jika Anda menambahkan pengecekan <code class="mono">/config/features/{key}</code> di sana. Tanpa itu, flag di sini hanya tersimpan sebagai metadata. Keamanan inti (auth, rules) <strong>tidak</strong> boleh dinonaktifkan lewat menu ini.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="row-list" id="list"><div class="empty">Memuat…</div></div>`;
+
+  const off = onValue(ref(db, "config/features"), snap => {
+    const flags = snap.val() || {};
+    const el = $("#list", root);
+    el.innerHTML = FEATURES.map(f => {
+      const enabled = flags[f.key] !== false;
+      return `<div class="row-item">
+        <div class="row-item-main">
+          <div class="row-item-title">${esc(f.label)}</div>
+          <div class="row-item-sub">${esc(f.desc)}</div>
+        </div>
+        <div class="toggle ${enabled ? "on" : ""}" data-key="${esc(f.key)}" role="switch" aria-checked="${enabled}"></div>
+      </div>`;
+    }).join("");
+    $$("[data-key]", el).forEach(t => t.onclick = async () => {
+      const key = t.dataset.key;
+      const cur = flags[key] !== false;
+      const next = !cur;
+      await update(ref(db, "config/features"), { [key]: next });
+      await audit("feature_toggle", key, { enabled: next });
+      toast(`${key} ${next ? "diaktifkan" : "dinonaktifkan"}`, "ok");
+    });
+  });
+
+  return () => off();
+}
+
+/* ============================================================
+   PAGE: ANNOUNCEMENTS
+   ============================================================ */
+function pageAnnouncements(root) {
+  root.innerHTML = `
+    <div class="page-head">
+      <div class="page-title-group">
+        <h1>Announcements</h1>
+        <div class="page-sub">Pesan global untuk semua pemain</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary" id="new">${I.bell}<span>Buat Pengumuman</span></button>
+      </div>
+    </div>
+    <div class="row-list" id="list"><div class="empty">Memuat…</div></div>`;
+
+  const off = onValue(ref(db, "announcements"), snap => {
+    const el = $("#list", root);
+    if (!snap.exists()) { el.innerHTML = `<div class="empty">Belum ada pengumuman.</div>`; return; }
+    const arr = Object.entries(snap.val()).map(([id, v]) => ({ id, ...v })).sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+    if (!arr.length) { el.innerHTML = `<div class="empty">Belum ada pengumuman.</div>`; return; }
+    el.innerHTML = arr.map(a => `
+      <div class="row-item">
+        <div class="row-item-main">
+          <div class="row-item-title">${esc(a.title || "(tanpa judul)")}</div>
+          <div class="row-item-sub">${esc(a.body || "")} · ${fmtTimeAgo(a.createdAt)} · oleh ${esc(a.createdByName || "—")}</div>
+        </div>
+        <div class="row-item-actions">
+          <button class="btn btn-sm btn-danger" data-del="${esc(a.id)}">${I.trash}</button>
+        </div>
+      </div>`).join("");
+    $$("[data-del]", el).forEach(b => b.onclick = async () => {
+      if (!await confirmAction("Hapus pengumuman?", "Tindakan ini tidak dapat dibatalkan.")) return;
+      await remove(ref(db, `announcements/${b.dataset.del}`));
+      await audit("announcement_delete", b.dataset.del);
+      toast("Pengumuman dihapus", "ok");
+    });
+  });
+
+  $("#new", root).onclick = async () => {
+    await modal({
+      title: "Buat Pengumuman",
+      body: `
+        <div class="field mb-16">
+          <label>Judul</label>
+          <input class="input" id="at" maxlength="80" placeholder="cth: Pemeliharaan server">
+        </div>
+        <div class="field mb-16">
+          <label>Isi</label>
+          <textarea class="input" id="ab" rows="4" maxlength="400" placeholder="Detail pengumuman…"></textarea>
+        </div>
+        <div class="field">
+          <label>Tingkat</label>
+          <select class="input" id="al">
+            <option value="info">Info</option>
+            <option value="warning">Peringatan</option>
+            <option value="critical">Penting</option>
+          </select>
+        </div>`,
+      actions: [
+        { label: "Batal" },
+        { label: "Publikasikan", primary: true, onClick: async (b) => {
+          const title = $("#at", b).value.trim();
+          const body = $("#ab", b).value.trim();
+          const level = $("#al", b).value;
+          if (!title || !body) { toast("Judul dan isi wajib", "error"); return false; }
+          await push(ref(db, "announcements"), {
+            title, body, level,
+            createdAt: Date.now(),
+            createdBy: state.user.uid,
+            createdByName: state.profile?.displayName || "Admin"
+          });
+          await audit("announcement_create", null, { title });
+          toast("Pengumuman dipublikasikan", "ok");
+        }}
+      ]
+    });
+  };
+
+  return () => off();
+}
+
+/* ============================================================
+   PAGE: AUDIT LOG
+   ============================================================ */
+function pageAudit(root) {
+  root.innerHTML = `
+    <div class="page-head">
+      <div class="page-title-group">
+        <h1>Audit Log</h1>
+        <div class="page-sub">Riwayat tindakan administrator</div>
+      </div>
+    </div>
+    <div class="toolbar">
+      <input class="input" id="q" placeholder="Cari aksi, aktor, target…">
+    </div>
+    <div class="card card-flush">
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Waktu</th><th>Aktor</th><th>Aksi</th><th>Target</th></tr></thead>
+          <tbody id="rows"><tr><td colspan="4"><div class="empty">Memuat…</div></td></tr></tbody>
+        </table>
+      </div>
+    </div>`;
+
+  let entries = [];
+  const off = onValue(query(ref(db, "auditLogs"), limitToLast(200)), snap => {
+    entries = snap.exists() ? Object.values(snap.val()) : [];
+    entries.sort((a,b) => (b.ts||0) - (a.ts||0));
+    render();
+  });
+
+  function render() {
+    const q = $("#q", root).value.trim().toLowerCase();
+    const tbody = $("#rows", root);
+    const filtered = q ? entries.filter(e => [e.action, e.actorName, e.target].filter(Boolean).join(" ").toLowerCase().includes(q)) : entries;
+    if (!filtered.length) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty">Tidak ada log.</div></td></tr>`; return; }
+    tbody.innerHTML = filtered.map(e => `
+      <tr>
+        <td class="faint small">${esc(fmtTime(e.ts))}</td>
+        <td>${esc(e.actorName || e.actorEmail || "—")}</td>
+        <td><span class="chip">${esc(e.action || "—")}</span></td>
+        <td class="mono small">${esc((e.target || "—").slice(0, 20))}</td>
+      </tr>`).join("");
+  }
+
+  $("#q", root).oninput = render;
+  return () => off();
+}
+
+/* ============================================================
+   PAGE: SETTINGS
+   ============================================================ */
+function pageSettings(root) {
+  root.innerHTML = `
+    <div class="page-head">
+      <div class="page-title-group">
+        <h1>Settings</h1>
+        <div class="page-sub">Konfigurasi sistem & info</div>
+      </div>
+    </div>
+    <h2>Sistem</h2>
+    <div class="row-item mb-16">
+      <div class="row-item-main">
+        <div class="row-item-title">Bootstrap Status</div>
+        <div class="row-item-sub" id="bootstatus">Memuat…</div>
+      </div>
+    </div>
+    <div class="row-item mb-16">
+      <div class="row-item-main">
+        <div class="row-item-title">Mode Maintenance</div>
+        <div class="row-item-sub">Saat aktif, aplikasi utama akan menampilkan layar pemeliharaan (jika client mendukung).</div>
+      </div>
+      <div class="toggle" id="maintoggle" role="switch"></div>
+    </div>
+    <h2>Pemeliharaan</h2>
+    <div class="card mb-16">
+      <div class="field mb-16">
+        <label>Pesan pemeliharaan</label>
+        <textarea class="input" id="maintmsg" rows="2" maxlength="200" placeholder="cth: Server sedang diperbarui, kembali dalam 15 menit."></textarea>
+      </div>
+      <button class="btn btn-primary" id="savemaint">Simpan</button>
+    </div>
+    <h2>Info</h2>
+    <div class="row-item mb-16"><div class="row-item-main"><div class="row-item-title">Nama</div><div class="row-item-sub">CAZOO Control Center</div></div></div>
+    <div class="row-item mb-16"><div class="row-item-main"><div class="row-item-title">Versi</div><div class="row-item-sub">1.0.0</div></div></div>
+    <div class="row-item"><div class="row-item-main"><div class="row-item-title">Role Anda</div><div class="row-item-sub">${esc(state.role || "—")}</div></div></div>`;
+
+  get(ref(db, "system")).then(s => {
+    const v = s.val() || {};
+    $("#bootstatus", root).textContent = v.adminBootstrappedAt ? `Aktif sejak ${fmtTime(v.adminBootstrappedAt)}` : "Belum di-bootstrap";
+  });
+
+  const off = onValue(ref(db, "system/maintenance"), snap => {
+    const v = snap.val() || {};
+    $("#maintoggle", root).classList.toggle("on", v.enabled === true);
+    $("#maintmsg", root).value = v.message || "";
+  });
+
+  $("#maintoggle", root).onclick = async () => {
+    const cur = $("#maintoggle", root).classList.contains("on");
+    await update(ref(db, "system/maintenance"), { enabled: !cur });
+    await audit("maintenance_toggle", null, { enabled: !cur });
+    toast(`Maintenance ${!cur ? "aktif" : "nonaktif"}`, "ok");
+  };
+
+  $("#savemaint", root).onclick = async () => {
+    const msg = $("#maintmsg", root).value.trim();
+    await update(ref(db, "system/maintenance"), { message: msg });
+    await audit("maintenance_message_update", null, { message: msg.slice(0, 40) });
+    toast("Pesan disimpan", "ok");
+  };
+
+  return () => off();
+}
+
+/* ============ PAGES MAP ============ */
+const PAGES = {
+  overview: pageOverview,
+  users: pageUsers,
+  rooms: pageRooms,
+  games: pageGames,
+  reports: pageReports,
+  features: pageFeatures,
+  announcements: pageAnnouncements,
+  audit: pageAudit,
+  settings: pageSettings,
+};
 </script>
+
+<!--
+============================================================
+  CARA PAKAI (WAJIB BACA)
+============================================================
+
+1. BOOTSTRAP SUPER ADMIN PERTAMA (hanya sekali)
+
+   a. Buka Firebase Console → Realtime Database → Data
+   b. Buat node:
+        /system/bootstrapKey  →  "cazoo-admin-2026-x7k9"   (atau kata sandi pilihan Anda)
+   c. Buka file admin ini di browser (harus HTTPS / localhost)
+   d. Klik "Masuk dengan Google"
+   e. Masukkan bootstrap key yang sama
+   f. Akun Anda sekarang SUPER ADMIN
+   g. Bootstrap key otomatis terhapus dari DB
+   h. Tidak ada cara lain masuk admin setelah ini
+
+   Keamanan: hanya orang yang punya akses Firebase Console
+   yang bisa membuat super admin pertama. Tidak ada backdoor
+   di kode.
+
+2. MENAMBAH ADMIN LAIN
+
+   - Login sebagai super admin
+   - Buka Users → cari user → klik ikon edit
+   - Ubah role: spectator / moderator / admin / superadmin
+   - Perubahan tercatat di Audit Log
+
+3. REALTIME DATABASE RULES (WAJIB — ganti default test mode)
+
+   Firebase Console → Realtime Database → Rules → tempel:
+
+{
+  "rules": {
+    "system": {
+      "bootstrapKey": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      },
+      "maintenance": {
+        ".read": "auth != null",
+        ".write": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin'"
+      },
+      "adminBootstrappedAt": { ".read": "auth != null", ".write": "auth != null" },
+      "adminBootstrappedBy": { ".read": "auth != null", ".write": "auth != null" }
+    },
+
+    "userRoles": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin'"
+      }
+    },
+
+    "auditLogs": {
+      ".read": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin' || root.child('userRoles').child(auth.uid).child('role').val() === 'moderator'",
+      ".write": "auth != null",
+      "$id": {
+        ".read": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin'",
+        ".write": false
+      }
+    },
+
+    "users": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && (auth.uid === $uid || root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin')",
+        "status": {
+          ".write": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin' || root.child('userRoles').child(auth.uid).child('role').val() === 'moderator'"
+        }
+      }
+    },
+
+    "reports": {
+      ".read": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin' || root.child('userRoles').child(auth.uid).child('role').val() === 'moderator'",
+      ".write": "auth != null"
+    },
+
+    "announcements": {
+      ".read": "auth != null",
+      ".write": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin'"
+    },
+
+    "config": {
+      "features": {
+        ".read": "auth != null",
+        ".write": "root.child('userRoles').child(auth.uid).child('role').val() === 'superadmin' || root.child('userRoles').child(auth.uid).child('role').val() === 'admin'"
+      }
+    },
+
+    "rooms": { ".read": "auth != null", ".write": "auth != null" },
+    "matchmaking": { ".read": "auth != null", ".write": "auth != null" },
+    "usernames": {
+      "$name": {
+        ".read": "auth != null",
+        ".write": "auth != null && (!data.exists() || data.child('uid').val() === auth.uid)"
+      }
+    },
+    "presence": { "$uid": { ".read": "auth != null", ".write": "auth != null && auth.uid === $uid" } },
+    "friendRequests": { "$uid": { ".read": "auth != null", ".write": "auth != null" } },
+    "friends": { "$uid": { ".read": "auth != null", ".write": "auth != null" } },
+    "ratingHistory": { "$uid": { ".read": "auth != null", ".write": "auth != null" } },
+    "tournaments": { ".read": "auth != null", ".write": "auth != null" }
+  }
+}
+
+CATATAN: `.write` di `/userRoles/$uid` HANYA untuk superadmin. Ini
+mencegah admin/moderator promote diri sendiri ke role lebih tinggi.
+
+4. FITUR YANG BERJALAN DI PANEL INI
+
+   ✓ Auth Google + role gate (tanpa backdoor)
+   ✓ Bootstrap super admin satu kali via DB key
+   ✓ Overview dengan statistik real dari Firebase
+   ✓ Users: list, filter, cari, detail, ban/unban, set role
+   ✓ Rooms: monitor room aktif, filter status
+   ✓ Games: riwayat perubahan rating
+   ✓ Reports: list & proses (resolve/reject)
+   ✓ Features: toggle flag
+   ✓ Announcements: buat & hapus
+   ✓ Audit Log: setiap aksi tercatat otomatis
+   ✓ Settings: maintenance mode
+
+5. ROLE
+
+   - superadmin: semua akses termasuk ubah role
+   - admin: semua kecuali ubah role
+   - moderator: user read + reports + audit read
+   - spectator: overview + games read-only
+
+6. BATASAN YANG JUJUR
+
+   - Panel ini bergantung pada Firebase Security Rules yang benar.
+     Tanpa rules di atas, user bisa promosi diri sendiri.
+   - Fitur "Cloud Functions", "Tournament management", "Live spectator"
+     BELUM ada di panel ini. Itu butuh backend terpisah.
+   - "Reports" hanya menampilkan data yang ditulis oleh aplikasi utama.
+     Aplikasi utama belum punya tombol "laporkan pemain" — Anda perlu
+     menambahkannya di CAZOO utama agar report bisa masuk ke sini.
+
+7. UJI CEPAT SETELAH DEPLOY
+
+   a. Login sebagai non-admin → harus melihat "Akses Ditolak"
+   b. Buka DevTools → coba tulis ke /userRoles/{uid} langsung → harus
+      ditolak oleh Security Rules
+   c. Sebagai admin biasa → coba ubah role user → harus ditolak
+   d. Sebagai superadmin → ubah role → harus berhasil & tercatat di
+      Audit Log
+-->
 </body>
-</html>
+  </html>
