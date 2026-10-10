@@ -1,962 +1,1291 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
-<title>CAZOO — 3D Racing Multiplayer</title>
-<link rel="icon" href="https://i.ibb.co.com/67V2PpkF/file-00000000e8948207be00a221094a9d3c.png"/>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>LINKORA — Satu halaman untuk semua tautanmu</title>
+<meta name="description" content="LINKORA adalah platform link-in-bio profesional untuk kreator, bisnis, dan personal branding." />
+<meta name="theme-color" content="#0b0c10" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237C5CFF'/%3E%3Cstop offset='1' stop-color='%2322D3EE'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M20 32h24M32 20v24' stroke='%23fff' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+
 <style>
-:root{--bg:#05070d;--bg2:#0a0e1a;--panel:rgba(14,20,34,.82);--bd:rgba(90,180,255,.18);--bd2:rgba(90,180,255,.42);--tx:#e6f0ff;--mu:#7c8aa6;--cy:#22e6ff;--vi:#8a5cff;--pk:#ff3ea5;--ok:#3ddc97;--er:#ff4d6d;--gr:linear-gradient(135deg,#22e6ff,#8a5cff)}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
-html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:'Segoe UI',system-ui,sans-serif;color:var(--tx);font-size:14px}
-canvas{display:block}
-button,input,select{font-family:inherit;font-size:inherit;color:inherit;outline:none}
-button{cursor:pointer;border:none;background:none}
-::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:rgba(90,180,255,.25);border-radius:6px}
-
-/* Rotate */
-#rotate{position:fixed;inset:0;z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:radial-gradient(circle,#0b1226,#05070d);text-align:center;padding:20px}
-#rotate .ph{width:60px;height:100px;border:3px solid var(--cy);border-radius:14px;position:relative;animation:tt 1.8s ease-in-out infinite;box-shadow:0 0 30px rgba(34,230,255,.5)}
-#rotate .ph::after{content:"";position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:20px;height:3px;background:var(--cy);border-radius:2px}
-@keyframes tt{0%,100%{transform:rotate(0)}50%{transform:rotate(-90deg)}}
-#rotate h2{letter-spacing:2px;font-size:18px}
-#rotate p{color:var(--mu);font-size:12px;letter-spacing:1px}
-@media (orientation:portrait) and (max-width:900px){#rotate.show{display:flex!important}#menu,#panel,#race,#studio,#auth{display:none!important}}
-
-/* Auth */
-#auth{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,#0d1638,#05070d);padding:20px;overflow:auto}
-.acard{width:100%;max-width:400px;background:var(--panel);backdrop-filter:blur(20px);border:1px solid var(--bd2);border-radius:16px;padding:26px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
-.alog{display:flex;align-items:center;gap:12px;margin-bottom:4px}
-.alog img{width:46px;height:46px;border-radius:12px;box-shadow:0 0 24px rgba(34,230,255,.4)}
-.alog h1{font-size:26px;font-weight:900;letter-spacing:4px;background:var(--gr);-webkit-background-clip:text;background-clip:text;color:transparent}
-.asub{color:var(--mu);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px}
-.fld{margin-bottom:10px}
-.fld label{display:block;font-size:10px;letter-spacing:1.5px;color:var(--mu);text-transform:uppercase;margin-bottom:5px}
-.fld input{width:100%;padding:10px 12px;background:rgba(0,0,0,.4);border:1px solid var(--bd);border-radius:10px;font-size:13px}
-.fld input:focus{border-color:var(--cy);box-shadow:0 0 0 3px rgba(34,230,255,.1)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 16px;border-radius:10px;font-weight:700;letter-spacing:.8px;font-size:12px;text-transform:uppercase;transition:.12s;border:1px solid transparent}
-.btn:active{transform:scale(.97)}
-.btn svg{width:16px;height:16px}
-.bp{background:var(--gr);color:#04121c;box-shadow:0 8px 24px rgba(34,230,255,.3)}
-.bg{background:rgba(255,255,255,.05);border-color:var(--bd)}
-.bg:hover{background:rgba(255,255,255,.1)}
-.bd{background:rgba(255,77,109,.15);border-color:rgba(255,77,109,.4);color:#ff8fa3}
-.bw{width:100%}
-.aerr{margin-top:8px;color:#ff8fa3;font-size:11.5px;min-height:14px}
-.asw{margin-top:12px;text-align:center;font-size:12px;color:var(--mu)}
-.asw button{color:var(--cy);font-weight:600;padding:2px 4px}
-
-/* Menu */
-#menu{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% 90%,#0e1a3a,#05070d);padding:16px;overflow:auto}
-.mtop{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
-.mbrand{display:flex;align-items:center;gap:10px}
-.mbrand img{width:36px;height:36px;border-radius:10px;box-shadow:0 0 20px rgba(34,230,255,.4)}
-.mbrand h1{font-size:20px;font-weight:900;letter-spacing:3px;background:var(--gr);-webkit-background-clip:text;background-clip:text;color:transparent}
-.muser{display:flex;align-items:center;gap:8px;padding:6px 10px 6px 6px;background:var(--panel);border:1px solid var(--bd);border-radius:99px;font-size:12px}
-.muser .av{width:28px;height:28px;border-radius:50%;background:var(--gr);display:flex;align-items:center;justify-content:center;font-weight:800;color:#04121c;font-size:12px}
-.muser .rt{color:var(--cy);font-size:10px}
-.mhero{text-align:center;margin:12px 0}
-.mhero h1{font-size:clamp(30px,7vw,56px);font-weight:900;letter-spacing:6px;background:var(--gr);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1}
-.mhero p{color:var(--mu);letter-spacing:3px;font-size:10px;text-transform:uppercase;margin-top:4px}
-.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;max-width:900px;width:100%;margin:8px auto}
-.mc{background:var(--panel);border:1px solid var(--bd);border-radius:12px;padding:14px;text-align:left;transition:.15s;display:flex;flex-direction:column;gap:8px;min-height:96px;backdrop-filter:blur(8px)}
-.mc:hover{transform:translateY(-2px);border-color:var(--bd2)}
-.mc .ic{width:28px;height:28px;color:var(--cy)}
-.mc .ic svg{width:100%;height:100%}
-.mc .tt{font-weight:800;letter-spacing:1.5px;font-size:12px;text-transform:uppercase}
-.mc .ds{color:var(--mu);font-size:11px;line-height:1.4}
-.mc.big{grid-column:span 2;background:linear-gradient(135deg,rgba(34,230,255,.15),rgba(138,92,255,.15));border-color:rgba(138,92,255,.4);min-height:110px;justify-content:center;align-items:center;text-align:center}
-.mc.big .tt{font-size:18px;letter-spacing:4px;background:var(--gr);-webkit-background-clip:text;background-clip:text;color:transparent}
-
-/* Panel (dynamic) */
-#panel{position:fixed;inset:0;z-index:25;display:none;flex-direction:column;background:radial-gradient(ellipse at top,#0a1124,#05070d)}
-#panel.on{display:flex}
-.ph{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--bd);background:rgba(6,10,20,.7);backdrop-filter:blur(12px);flex-shrink:0}
-.pb{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;border:1px solid var(--bd)}
-.pb:hover{background:rgba(255,255,255,.1)}
-.pb svg{width:16px;height:16px}
-.pt{font-size:14px;font-weight:800;letter-spacing:2px;text-transform:uppercase}
-.pt small{display:block;font-weight:500;font-size:10px;letter-spacing:1.4px;color:var(--mu);margin-top:2px}
-.pbody{flex:1;overflow:auto;padding:14px}
-.cd{background:var(--panel);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:10px;backdrop-filter:blur(8px)}
-.cd h3{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--cy);margin-bottom:10px}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.st{background:rgba(0,0,0,.3);border:1px solid var(--bd);border-radius:10px;padding:12px}
-.st .l{font-size:10px;letter-spacing:1.4px;color:var(--mu);text-transform:uppercase}
-.st .v{font-size:20px;font-weight:800;margin-top:4px}
-.st .v.c{color:var(--cy)}.st .v.v{color:var(--vi)}.st .v.k{color:var(--ok)}
-.emp{padding:30px;text-align:center;color:var(--mu);font-size:12px}
-.emp svg{width:40px;height:40px;color:var(--bd2);margin-bottom:8px}
-.tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{text-align:left;padding:8px;color:var(--mu);font-size:10px;letter-spacing:1.2px;text-transform:uppercase;border-bottom:1px solid var(--bd)}
-.tbl td{padding:8px;border-bottom:1px solid rgba(90,180,255,.06)}
-.tbl tr:hover td{background:rgba(255,255,255,.02)}
-.chip{display:inline-flex;padding:3px 8px;border-radius:99px;background:rgba(255,255,255,.05);border:1px solid var(--bd);font-size:10px;letter-spacing:.5px;color:var(--mu)}
-.chip.ok{background:rgba(61,220,151,.1);border-color:rgba(61,220,151,.35);color:var(--ok)}
-.chip.er{background:rgba(255,77,109,.1);border-color:rgba(255,77,109,.35);color:#ff8fa3}
-.chip.cy{background:rgba(34,230,255,.1);border-color:rgba(34,230,255,.35);color:var(--cy)}
-.mt8{margin-top:8px}.mt16{margin-top:16px}
-.loading{display:flex;align-items:center;gap:8px;color:var(--mu);font-size:12px;padding:8px 0}
-.spin{width:14px;height:14px;border:2px solid rgba(34,230,255,.2);border-top-color:var(--cy);border-radius:50%;animation:sp .8s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
-
-/* Race */
-#race{position:fixed;inset:0;z-index:30;display:none}
-#race.on{display:block}
-#raceCanvas{width:100%;height:100%;display:block}
-.hb{position:absolute;background:rgba(6,10,20,.72);backdrop-filter:blur(12px);border:1px solid var(--bd2);border-radius:12px;padding:8px 14px;z-index:31}
-#hLap{top:14px;left:14px}
-#hTime{top:14px;right:14px;text-align:right}
-#hSpeed{bottom:14px;left:14px}
-.hb .l{font-size:9px;letter-spacing:2px;color:var(--mu);text-transform:uppercase}
-.hb .v{font-size:18px;font-weight:900;margin-top:2px;font-variant-numeric:tabular-nums}
-#hSpeed .v{font-size:34px;color:var(--cy);text-shadow:0 0 20px rgba(34,230,255,.5)}
-#hNitro{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:min(240px,46vw);height:9px;border-radius:99px;background:rgba(0,0,0,.6);border:1px solid var(--bd2);overflow:hidden;z-index:31}
-#hNitro .f{height:100%;width:100%;background:var(--gr);transition:width .1s linear}
-#hMsg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(36px,9vw,80px);font-weight:900;letter-spacing:6px;color:var(--cy);text-shadow:0 0 50px rgba(34,230,255,.8);opacity:0;transition:opacity .2s;z-index:32;pointer-events:none;text-transform:uppercase}
-#hMsg.on{opacity:1}
-.ctl{position:absolute;bottom:14px;z-index:33;width:64px;height:64px;border-radius:50%;background:rgba(6,10,20,.72);backdrop-filter:blur(12px);border:2px solid rgba(34,230,255,.5);display:flex;align-items:center;justify-content:center;color:var(--cy);box-shadow:0 4px 20px rgba(0,0,0,.6)}
-.ctl:active{transform:scale(.92);background:rgba(34,230,255,.25)}
-.ctl svg{width:26px;height:26px}
-#cL{left:14px}#cR{left:88px}
-#cG{right:14px;width:74px;height:74px;background:rgba(34,230,255,.15);border-color:#22e6ff}
-#cN{right:98px;border-color:var(--vi);color:var(--vi)}
-#cX{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:33;padding:7px 14px;border-radius:99px;background:rgba(6,10,20,.72);backdrop-filter:blur(12px);border:1px solid var(--bd);font-size:10px;letter-spacing:2px;font-weight:700;text-transform:uppercase}
-
-/* Result */
-#res{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(5,7,13,.88);backdrop-filter:blur(20px);padding:16px}
-#res.on{display:flex}
-#res .c{background:rgba(14,20,34,.95);border:1px solid var(--bd2);border-radius:18px;padding:26px;text-align:center;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.7),0 0 60px rgba(34,230,255,.15)}
-#res .t{font-size:28px;font-weight:900;letter-spacing:4px;background:var(--gr);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:6px}
-#res .s{color:var(--mu);font-size:10px;letter-spacing:2px;text-transform:uppercase}
-#res .tm{font-size:38px;font-weight:900;font-variant-numeric:tabular-nums;margin:14px 0}
-#res .btns{display:flex;flex-direction:column;gap:8px}
-
-/* Studio */
-#studio{position:fixed;inset:0;z-index:28;display:none;grid-template-columns:56px 1fr 240px;grid-template-rows:52px 1fr 140px;background:#05070d;gap:1px}
-#studio.on{display:grid}
-#studio>div{background:var(--bg2);overflow:hidden}
-.sTop{grid-column:1/-1;display:flex;align-items:center;gap:8px;padding:0 10px;border-bottom:1px solid var(--bd)}
-.sTools{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0}
-.sTB{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--mu);border:1px solid transparent}
-.sTB:hover{background:rgba(255,255,255,.05);color:var(--tx)}
-.sTB.on{background:rgba(34,230,255,.12);color:var(--cy);border-color:rgba(34,230,255,.4)}
-.sTB svg{width:18px;height:18px}
-.sVP{position:relative}
-.sVP canvas{width:100%;height:100%;display:block}
-.sProp{padding:10px;overflow-y:auto;border-left:1px solid var(--bd)}
-.sProp h4{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--cy);margin:10px 0 6px}
-.sProp h4:first-child{margin-top:0}
-.sProp input[type=range]{width:100%;accent-color:var(--cy)}
-.sProp input[type=color]{width:100%;height:34px;border:1px solid var(--bd);border-radius:8px;background:transparent;padding:2px}
-.sBot{grid-column:1/-1;display:flex;align-items:center;gap:8px;padding:8px 10px;border-top:1px solid var(--bd);overflow-x:auto}
-.lyr{display:flex;align-items:center;gap:6px;padding:5px 8px;background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:8px;font-size:11px;white-space:nowrap}
-.lyr.on{border-color:var(--cy);background:rgba(34,230,255,.08)}
-.lyr .t{width:28px;height:28px;border-radius:5px;background:linear-gradient(45deg,#111,#333);border:1px solid var(--bd)}
-.lyr button{color:var(--mu);padding:2px}
-.lyr button:hover{color:var(--er)}
-
-/* Toast */
-#toasts{position:fixed;top:14px;right:14px;z-index:2000;display:flex;flex-direction:column;gap:6px;pointer-events:none}
-.tst{background:rgba(10,16,30,.96);border:1px solid var(--bd2);border-left:3px solid var(--cy);padding:10px 14px;border-radius:9px;min-width:200px;max-width:320px;font-size:12px;box-shadow:0 10px 30px rgba(0,0,0,.5);animation:si .2s ease}
-.tst.ok{border-left-color:var(--ok)}.tst.er{border-left-color:var(--er)}
-@keyframes si{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
-
-@media (max-width:900px){
-  #studio{grid-template-columns:46px 1fr;grid-template-rows:48px 1fr auto 120px}
-  .sProp{grid-column:1/-1;border-left:none;border-top:1px solid var(--bd);max-height:180px}
-  .sBot{grid-row:4}
-  .sVP{grid-column:2;grid-row:2}
-  .mc.big{grid-column:span 2}
+:root{
+  --bg:#0b0c10; --bg-2:#0f1117; --surface:#151823; --surface-2:#1b1f2c;
+  --border:#252a3a; --text:#e8ecf3; --muted:#98a2b3;
+  --brand:#7C5CFF; --brand-2:#22D3EE; --brand-ink:#0b0c10;
+  --danger:#ef4444; --success:#22c55e; --warn:#f59e0b;
+  --r-sm:8px; --r-md:12px; --r-lg:18px; --r-xl:26px;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Space Grotesk", var(--font);
 }
+:root.light{
+  --bg:#f7f8fb; --bg-2:#ffffff; --surface:#ffffff; --surface-2:#f1f3f9;
+  --border:#e4e7ee; --text:#0b0c10; --muted:#5b6473;
+  --shadow:0 10px 30px rgba(20,20,40,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
+
+.container{max-width:1180px;margin:0 auto;padding:0 20px}
+.stack>*+*{margin-top:16px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.grow{flex:1}
+
+.nav{position:sticky;top:0;z-index:50;backdrop-filter:saturate(140%) blur(12px);background:color-mix(in oklab, var(--bg) 82%, transparent);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:1180px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;font-size:18px}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-2))}
+.nav-links{display:flex;gap:22px;align-items:center}
+.nav-links a{color:var(--muted);font-size:14px;font-weight:500}
+.nav-links a:hover{color:var(--text)}
+@media(max-width:820px){.nav-links{display:none}}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:var(--r-md);font-weight:600;font-size:14px;transition:.18s transform,.18s background,.18s border}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-ghost{border:1px solid var(--border);color:var(--text);background:var(--surface)}
+.btn-ghost:hover{background:var(--surface-2)}
+.btn-danger{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.4);color:#fca5a5}
+.btn-danger:hover{background:rgba(239,68,68,.18)}
+.btn-sm{padding:7px 12px;font-size:13px;border-radius:10px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)}
+.card-2{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);padding:14px}
+.grid{display:grid;gap:18px}
+@media(min-width:760px){.grid.cols-3{grid-template-columns:repeat(3,1fr)}.grid.cols-2{grid-template-columns:repeat(2,1fr)}.grid.cols-4{grid-template-columns:repeat(4,1fr)}}
+
+.hero{padding:80px 20px 60px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-20% -10% auto -10%;height:520px;background:radial-gradient(60% 60% at 20% 20%, color-mix(in oklab, var(--brand) 45%, transparent), transparent 70%),radial-gradient(60% 60% at 80% 30%, color-mix(in oklab, var(--brand-2) 35%, transparent), transparent 70%);filter:blur(60px);opacity:.5;z-index:-1}
+.hero h1{font-family:var(--font-display);font-size:clamp(32px,6vw,58px);line-height:1.05;margin:0 0 16px;letter-spacing:-.02em}
+.grad-text{background:linear-gradient(135deg,var(--brand),var(--brand-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lede{font-size:18px;color:var(--muted);max-width:640px;margin:0 auto 26px}
+.hero-inner{max-width:820px;margin:0 auto;text-align:center}
+
+.app-shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+@media(max-width:900px){.app-shell{grid-template-columns:1fr}}
+.sidebar{background:var(--bg-2);border-right:1px solid var(--border);padding:20px 14px;position:sticky;top:0;height:100vh;overflow-y:auto}
+@media(max-width:900px){.sidebar{position:fixed;inset:0 auto 0 0;width:250px;transform:translateX(-100%);transition:.25s;z-index:60}.sidebar.open{transform:none}}
+.sidebar h4{color:var(--muted);font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:16px 12px 8px}
+.side-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--muted);font-size:14px;font-weight:500}
+.side-item:hover{background:var(--surface);color:var(--text)}
+.side-item.active{background:linear-gradient(135deg, color-mix(in oklab, var(--brand) 30%, transparent), color-mix(in oklab, var(--brand-2) 20%, transparent));color:var(--text)}
+.side-icon{width:18px;height:18px;flex:none}
+.main{padding:26px 26px 80px;max-width:1100px}
+@media(max-width:600px){.main{padding:18px 14px 90px}}
+.page-title{font-family:var(--font-display);font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
+.page-sub{color:var(--muted);font-size:14px;margin:0 0 24px}
+.mobile-bar{display:none;position:sticky;top:0;z-index:40;background:var(--bg-2);border-bottom:1px solid var(--border);padding:12px 14px;align-items:center;gap:12px}
+@media(max-width:900px){.mobile-bar{display:flex}}
+.scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:55}
+.scrim.show{display:block}
+
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:13px;color:var(--muted);font-weight:500}
+.input,.textarea,.select{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:14px;transition:.15s border, .15s box-shadow;width:100%}
+.input:focus,.textarea:focus,.select:focus{outline:0;border-color:var(--brand);box-shadow:0 0 0 3px color-mix(in oklab, var(--brand) 25%, transparent)}
+.textarea{min-height:90px;resize:vertical}
+.error{color:#fca5a5;font-size:12.5px;margin-top:4px}
+.hint{color:var(--muted);font-size:12px}
+.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:20px}
+.auth-card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:32px;box-shadow:var(--shadow)}
+
+.link-row{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:12px;margin-bottom:10px}
+.link-row.dragging{opacity:.5}
+.drag-handle{cursor:grab;color:var(--muted);padding:6px;border-radius:6px}
+.drag-handle:hover{background:var(--surface-2);color:var(--text)}
+.toggle{position:relative;width:38px;height:22px;background:var(--border);border-radius:999px;transition:.2s;flex:none;cursor:pointer}
+.toggle.on{background:var(--brand)}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:.2s}
+.toggle.on::after{left:19px}
+
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:600;letter-spacing:.02em}
+.badge-info{background:color-mix(in oklab, var(--brand) 20%, transparent);color:#c4b5fd}
+.badge-success{background:rgba(34,197,94,.15);color:#86efac}
+.badge-warn{background:rgba(245,158,11,.15);color:#fcd34d}
+.badge-danger{background:rgba(239,68,68,.15);color:#fca5a5}
+.badge-muted{background:var(--surface-2);color:var(--muted)}
+
+.toasts{position:fixed;bottom:22px;right:22px;display:flex;flex-direction:column;gap:10px;z-index:100;max-width:340px}
+.toast{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);animation:slidein .25s}
+.toast.success{border-left-color:var(--success)}
+.toast.error{border-left-color:var(--danger)}
+@keyframes slidein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;z-index:200;padding:20px}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:26px;max-width:440px;width:100%;box-shadow:var(--shadow)}
+
+.pf-wrap{min-height:100vh;display:flex;justify-content:center;padding:40px 16px}
+.pf-card{width:100%;max-width:520px}
+.pf-name{font-family:var(--font-display);font-size:24px;text-align:center;margin:0 0 6px}
+.pf-bio{text-align:center;opacity:.85;margin:0 0 26px;font-size:15px;line-height:1.5;white-space:pre-wrap}
+.pf-links{display:flex;flex-direction:column;gap:14px}
+.pf-link{display:flex;align-items:center;justify-content:center;text-align:center;padding:16px 18px;font-weight:600;transition:.18s transform,.18s filter;text-decoration:none}
+.pf-link:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.pf-footer{text-align:center;margin-top:36px;font-size:12px;opacity:.6}
+
+.sk{background:linear-gradient(90deg,var(--surface) 25%, var(--surface-2) 37%, var(--surface) 63%);background-size:400% 100%;animation:shimmer 1.4s infinite;border-radius:8px;height:14px;margin:6px 0}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+.kpi{padding:18px;border-radius:var(--r-md);background:linear-gradient(180deg, var(--surface-2), var(--surface));border:1px solid var(--border)}
+.kpi .k{font-size:12px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+.kpi .v{font-family:var(--font-display);font-size:28px;margin-top:6px}
+
+.preview-shell{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;min-height:560px;display:flex;justify-content:center}
+.preview-frame{width:100%;max-width:380px;border-radius:22px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.35);border:8px solid #0f1117;background:#fff;color:#111;height:640px;overflow-y:auto;position:relative}
+
+.section{padding:60px 0}
+.section h2{font-family:var(--font-display);font-size:32px;margin:0 0 8px;text-align:center;letter-spacing:-.01em}
+.section .sub{text-align:center;color:var(--muted);margin:0 auto 36px;max-width:620px}
+.feature{padding:22px;border-radius:var(--r-lg);background:var(--surface);border:1px solid var(--border);transition:.2s transform}
+.feature:hover{transform:translateY(-3px)}
+.feature h3{margin:0 0 8px;font-size:16px}
+.feature p{margin:0;color:var(--muted);font-size:14px;line-height:1.55}
+.footer{border-top:1px solid var(--border);padding:36px 0;color:var(--muted);font-size:14px}
+.footer-grid{display:grid;grid-template-columns:1fr;gap:24px}
+@media(min-width:700px){.footer-grid{grid-template-columns:2fr 1fr 1fr 1fr}}
+.footer h5{color:var(--text);margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.08em}
+.footer a{display:block;margin:6px 0;color:var(--muted)}
+.footer a:hover{color:var(--text)}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--border);margin-bottom:22px;overflow-x:auto}
+.tab{padding:11px 14px;color:var(--muted);font-weight:500;font-size:14px;border-bottom:2px solid transparent;white-space:nowrap}
+.tab.active{color:var(--text);border-bottom-color:var(--brand)}
+.empty{text-align:center;padding:48px 20px;color:var(--muted);border:1px dashed var(--border);border-radius:var(--r-md)}
 </style>
 </head>
 <body>
+  <div id="app" aria-live="polite"></div>
+  <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+  <div id="modal-root"></div>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" defer></script>
 
-<div id="rotate"><div class="ph"></div><h2>MIRINGKAN HP</h2><p>Putar perangkat ke mode lanskap</p></div>
+  <script type="module">
+  /* ================================================================
+     LINKORA — single file app
+     ================================================================ */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
+    sendEmailVerification, sendPasswordResetEmail, onAuthStateChanged, deleteUser
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getDatabase, ref, get, set, update, remove, push, runTransaction
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-<!-- AUTH -->
-<div id="auth">
-  <div class="acard">
-    <div class="alog"><img src="https://i.ibb.co.com/67V2PpkF/file-00000000e8948207be00a221094a9d3c.png" alt=""/><h1>CAZOO</h1></div>
-    <div class="asub" id="aSub">Sign in to race online</div>
-    <div class="fld"><label>Email</label><input id="aEmail" type="email" placeholder="you@example.com"/></div>
-    <div class="fld"><label>Password</label><input id="aPass" type="password" placeholder="••••••••"/></div>
-    <div class="fld" id="aNameFld" style="display:none"><label>Username</label><input id="aName" maxlength="18" placeholder="racer_name"/></div>
-    <button class="btn bp bw" id="aSubmit">Sign In</button>
-    <div class="aerr" id="aErr"></div>
-    <div class="asw"><span id="aSwLab">No account?</span> <button id="aSw">Create</button> · <button id="aReset">Reset</button></div>
-  </div>
-</div>
-
-<!-- MENU -->
-<div id="menu" style="display:none">
-  <div class="mtop">
-    <div class="mbrand"><img src="https://i.ibb.co.com/67V2PpkF/file-00000000e8948207be00a221094a9d3c.png" alt=""/><h1>CAZOO</h1></div>
-    <div class="muser" id="mUser">
-      <div class="av" id="mAv">?</div>
-      <div><div id="mName" style="font-weight:700;font-size:11px">Racer</div><div class="rt" id="mRating">Rating —</div></div>
-      <button class="pb" id="bLogout" title="Logout" style="margin-left:6px">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-      </button>
-    </div>
-  </div>
-  <div class="mhero">
-    <h1>CAZOO</h1>
-    <p>Race Together · Climb the Ranks · Become a Legend</p>
-  </div>
-  <div class="mgrid" id="mGrid"></div>
-</div>
-
-<!-- PANEL (dynamic) -->
-<div id="panel">
-  <div class="ph">
-    <button class="pb" id="pBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
-    <div class="pt" id="pTitle">Menu<small id="pSub">—</small></div>
-  </div>
-  <div class="pbody" id="pBody"></div>
-</div>
-
-<!-- RACE -->
-<div id="race">
-  <canvas id="raceCanvas"></canvas>
-  <div class="hb" id="hLap"><div class="l">LAP</div><div class="v" id="lapV">1 / 3</div></div>
-  <div class="hb" id="hTime"><div class="l">TIME</div><div class="v" id="timeV">00:00.00</div></div>
-  <div class="hb" id="hSpeed"><div class="l">KM/H</div><div class="v" id="speedV">0</div></div>
-  <div id="hNitro"><div class="f" id="nitroF"></div></div>
-  <div id="hMsg"></div>
-  <button class="ctl" id="cL"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
-  <button class="ctl" id="cR"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg></button>
-  <button class="ctl" id="cN"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></button>
-  <button class="ctl" id="cG"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
-  <button id="cX">KELUAR</button>
-</div>
-
-<!-- RESULT -->
-<div id="res">
-  <div class="c">
-    <div class="t" id="resT">FINISH</div>
-    <div class="s">TOTAL TIME</div>
-    <div class="tm" id="resTime">00:00.00</div>
-    <div class="btns">
-      <button class="btn bp bw" id="bAgain">ULANGI</button>
-      <button class="btn bg bw" id="bHome">KE MENU</button>
-    </div>
-  </div>
-</div>
-
-<!-- STUDIO -->
-<div id="studio">
-  <div class="sTop">
-    <button class="pb" id="stBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
-    <div style="flex:1;min-width:0">
-      <div style="font-weight:800;letter-spacing:1.4px;font-size:11px;text-transform:uppercase">CAZOO 3D SKIN STUDIO</div>
-      <div style="font-size:10px;color:var(--mu)" id="stStatus">Ready · 1024×1024 · 1 layer</div>
-    </div>
-    <button class="btn bg" id="stUndo" title="Undo">Undo</button>
-    <button class="btn bg" id="stRedo" title="Redo">Redo</button>
-    <button class="btn bp" id="stSave">Save</button>
-    <button class="btn bg" id="stExport">Export PNG</button>
-  </div>
-  <div class="sTools">
-    <button class="sTB on" data-tool="brush" title="Brush"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 3a4 4 0 0 1 4 4v1l-9 9-4 1 1-4 9-9z"/></svg></button>
-    <button class="sTB" data-tool="eraser" title="Eraser"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 21 5-5M21 3 3 21M18 6l-8 8"/></svg></button>
-    <button class="sTB" data-tool="fill" title="Fill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m19 11-8-8-8 8 8 8 8-8zM5 19h14"/></svg></button>
-    <button class="sTB" data-tool="picker" title="Picker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m14 5 5 5-9 9H5v-5l9-9z"/></svg></button>
-    <button class="sTB" data-tool="camera" title="Orbit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/></svg></button>
-  </div>
-  <div class="sVP" id="stVP"></div>
-  <div class="sProp">
-    <h4>Brush</h4>
-    <div class="fld"><label>Color</label><input type="color" id="stColor" value="#22e6ff"/></div>
-    <div class="fld"><label>Size <span id="stSizeV" style="color:var(--mu)">24</span></label><input type="range" id="stSize" min="1" max="200" value="24"/></div>
-    <div class="fld"><label>Opacity <span id="stOpV" style="color:var(--mu)">1.00</span></label><input type="range" id="stOp" min="1" max="100" value="100"/></div>
-    <div class="fld"><label>Hardness <span id="stHardV" style="color:var(--mu)">0.6</span></label><input type="range" id="stHard" min="0" max="100" value="60"/></div>
-    <h4>Symmetry</h4>
-    <label style="display:flex;gap:6px;align-items:center;font-size:12px"><input type="checkbox" id="stSymX"/> Mirror X</label>
-    <h4>Quick Colors</h4>
-    <div class="row" id="stPalette" style="gap:5px"></div>
-  </div>
-  <div class="sBot">
-    <button class="btn bg" id="stAddLayer">+ Layer</button>
-    <div id="stLayers" style="display:flex;gap:6px"></div>
-  </div>
-</div>
-
-<div id="toasts"></div>
-
-<script type="importmap">
-{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
-</script>
-<script type="module">
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, set, get, update, onValue, push, serverTimestamp, query, orderByChild, limitToLast, remove, onDisconnect, off } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-/* ========== FIREBASE ========== */
-const cfg={apiKey:"AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",authDomain:"mygame-68b24.firebaseapp.com",databaseURL:"https://mygame-68b24-default-rtdb.firebaseio.com",projectId:"mygame-68b24",storageBucket:"mygame-68b24.firebasestorage.app",messagingSenderId:"1003182873390",appId:"1:1003182873390:web:aabf3248f759cbc9d678bf"};
-const fb=initializeApp(cfg), auth=getAuth(fb), db=getDatabase(fb);
-
-/* ========== UI ========== */
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const screens={auth:$('#auth'),menu:$('#menu'),panel:$('#panel'),race:$('#race'),studio:$('#studio')};
-let cur='auth';
-function show(n){Object.values(screens).forEach(s=>s.classList.remove('on'));Object.entries(screens).forEach(([k,s])=>{if(k===n)s.classList.add('on');});if(n!=='auth')screens.auth.style.display='none';else screens.auth.style.display='flex';if(n!=='menu')screens.menu.style.display='none';else screens.menu.style.display='flex';if(n!=='race')screens.race.classList.remove('on');else screens.race.classList.add('on');if(n!=='studio')screens.studio.classList.remove('on');else screens.studio.classList.add('on');if(n!=='panel')screens.panel.classList.remove('on');else screens.panel.classList.add('on');cur=n;}
-function toast(m,k=''){const e=document.createElement('div');e.className='tst '+k;e.textContent=m;$('#toasts').appendChild(e);setTimeout(()=>{e.style.opacity='0';e.style.transition='opacity .3s';setTimeout(()=>e.remove(),320);},3000);}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function hueFromUid(uid){let h=0;for(const c of uid)h=(h*31+c.charCodeAt(0))>>>0;return (h%360)/360;}
-function hslToHex(h,s,l){const f=n=>{const k=(n+h*12)%12,a=s*Math.min(l,1-l);return l-a*Math.max(-1,Math.min(k-3,9-k,1));};return '#'+[f(0),f(8),f(4)].map(x=>Math.round(x*255).toString(16).padStart(2,'0')).join('');}
-function colorForUid(uid){return hslToHex(hueFromUid(uid),0.8,0.55);}
-
-/* ========== ROTATE ========== */
-function chkRot(){const p=innerHeight>innerWidth;const m=/Android|iPhone|iPad/i.test(navigator.userAgent)||innerWidth<900;$('#rotate').classList.toggle('show',p&&m);}
-addEventListener('resize',chkRot);addEventListener('orientationchange',chkRot);chkRot();
-
-/* ========== AUTH ========== */
-let me=null,meData=null,isAdmin=false;
-let authMode='in';
-$('#aSw').onclick=()=>{authMode=authMode==='in'?'up':'in';$('#aNameFld').style.display=authMode==='in'?'none':'block';$('#aSubmit').textContent=authMode==='in'?'Sign In':'Create Account';$('#aSub').textContent=authMode==='in'?'Sign in to race online':'Join CAZOO';$('#aSwLab').textContent=authMode==='in'?'No account?':'Have an account?';$('#aSw').textContent=authMode==='in'?'Create':'Sign in';};
-$('#aReset').onclick=async()=>{const e=$('#aEmail').value.trim();if(!e)return $('#aErr').textContent='Enter email first';try{await sendPasswordResetEmail(auth,e);$('#aErr').textContent='Reset email sent.';}catch(x){$('#aErr').textContent=x.message;}};
-$('#aSubmit').onclick=async()=>{
-  const em=$('#aEmail').value.trim(),pw=$('#aPass').value,nm=$('#aName').value.trim();$('#aErr').textContent='';
-  if(!em||!pw)return $('#aErr').textContent='Email and password required';
-  try{
-    if(authMode==='up'){
-      if(nm.length<3||!/^[a-zA-Z0-9_]+$/.test(nm))return $('#aErr').textContent='Username: 3+ chars, letters/numbers/_ only';
-      const c=await createUserWithEmailAndPassword(auth,em,pw);
-      await set(ref(db,`users/${c.user.uid}`),{uid:c.user.uid,username:nm,rating:1000,wins:0,losses:0,createdAt:serverTimestamp(),status:'active'});
-      // Bootstrap: first user becomes owner if admins is empty
-      const adSnap=await get(ref(db,'admins'));
-      if(!adSnap.exists()){await set(ref(db,`admins/${c.user.uid}`),{role:'owner',createdAt:serverTimestamp()});toast('You are the OWNER','ok');}
-    } else await signInWithEmailAndPassword(auth,em,pw);
-  }catch(x){$('#aErr').textContent=x.message;}
-};
-$('#bLogout').onclick=()=>signOut(auth);
-
-onAuthStateChanged(auth,async u=>{
-  if(!u){me=null;meData=null;isAdmin=false;show('auth');return;}
-  me=u;
-  const s=await get(ref(db,`users/${u.uid}`));
-  meData=s.val()||{username:u.email,rating:1000,wins:0,losses:0};
-  const ad=await get(ref(db,`admins/${u.uid}`));isAdmin=ad.exists();
-  // online presence
-  await update(ref(db,`users/${u.uid}`),{online:true,lastSeen:serverTimestamp()});
-  onDisconnect(ref(db,`users/${u.uid}/online`)).set(false);
-  buildMenu();
-  show('menu');
-});
-
-/* ========== MENU ========== */
-function buildMenu(){
-  $('#mName').textContent=meData.username||'Racer';
-  $('#mAv').textContent=(meData.username||'U')[0].toUpperCase();
-  $('#mRating').textContent='Rating '+(meData.rating??'—');
-  const tiles=[
-    {id:'start', big:true, icon:'<path d="M8 5v14l11-7z"/>', fill:true, t:'MULAI BALAPAN', d:'Race solo practice · 3 laps'},
-    {id:'multiplayer', icon:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M14 20c0-2.5 1.7-4.5 4-4.5"/>', t:'Multiplayer', d:'Create/join real room'},
-    {id:'ranked', icon:'<path d="M12 2 4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z"/>', t:'Ranked', d:'Compete for rating'},
-    {id:'tournaments', icon:'<path d="M6 3h12v4a6 6 0 0 1-12 0V3zM4 5H2v2a4 4 0 0 0 4 4M20 5h2v2a4 4 0 0 1-4 4M9 17h6M12 13v4M8 21h8"/>', t:'Tournaments', d:'Join by code'},
-    {id:'events', icon:'<path d="M8 2v3M16 2v3M3 8h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/>', t:'Events', d:'Limited-time events'},
-    {id:'leaderboard', icon:'<path d="M4 20V10M12 20V4M20 20v-7"/>', t:'Leaderboard', d:'Global rankings'},
-    {id:'garage', icon:'<path d="M3 13 5 7h14l2 6v6h-3v-2H6v2H3v-6z"/><circle cx="7.5" cy="13.5" r="1.5"/><circle cx="16.5" cy="13.5" r="1.5"/>', t:'Garage', d:'Your cars'},
-    {id:'studio', icon:'<path d="m12 2 3.5 6L22 9l-5 5 1.5 7L12 18l-6.5 3L7 14 2 9l6.5-1z"/>', t:'Skin Studio', d:'Paint your car 3D'},
-    {id:'profile', icon:'<circle cx="12" cy="8" r="4"/><path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8"/>', t:'Profile', d:'Stats & settings'},
-  ];
-  if(isAdmin)tiles.push({id:'admin', icon:'<path d="M12 2 4 6v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V6l-8-4z"/><path d="M9 12l2 2 4-4"/>', t:'Control Center', d:'Admin panel'});
-  $('#mGrid').innerHTML=tiles.map(t=>`<button class="mc${t.big?' big':''}" data-go="${t.id}">
-    <div class="ic"><svg viewBox="0 0 24 24" fill="${t.fill?'currentColor':'none'}" stroke="currentColor" stroke-width="1.8">${t.icon}</svg></div>
-    <div class="tt">${t.t}</div><div class="ds">${t.d}</div></button>`).join('');
-  $$('[data-go]').forEach(b=>b.onclick=()=>handleMenu(b.dataset.go));
-}
-
-function handleMenu(id){
-  if(id==='start'){startRace('solo');return;}
-  if(id==='studio'){openStudio();return;}
-  const panels={
-    multiplayer:panelMultiplayer,ranked:panelRanked,tournaments:panelTournaments,
-    events:panelEvents,leaderboard:panelLeaderboard,garage:panelGarage,
-    profile:panelProfile,admin:panelAdmin
+  /* -------------------- Firebase init -------------------- */
+  const firebaseConfig = {
+    apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
+    authDomain: "mygame-68b24.firebaseapp.com",
+    databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
+    projectId: "mygame-68b24",
+    storageBucket: "mygame-68b24.firebasestorage.app",
+    messagingSenderId: "1003182873390",
+    appId: "1:1003182873390:web:aabf3248f759cbc9d678bf",
+    measurementId: "G-4C0MYZ19YW"
   };
-  if(panels[id])panels[id]();
-}
+  const fbApp = initializeApp(firebaseConfig);
+  const auth = getAuth(fbApp);
+  const db = getDatabase(fbApp);
 
-$('#pBack').onclick=()=>show('menu');
+  /* -------------------- Constants -------------------- */
+  const RESERVED = new Set([
+    "admin","api","login","register","dashboard","settings","help","about",
+    "privacy","terms","pricing","features","templates","u","assets","static",
+    "support","contact","blog","docs","null","undefined","root","system"
+  ]);
+  const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
+  const ALLOWED_SCHEMES = /^(https?:|mailto:|tel:)/i;
 
-/* ========== PANEL RENDER ========== */
-function openPanel(title,sub){$('#pTitle').firstChild.nodeValue=title;$('#pSub').textContent=sub||'';$('#pBody').innerHTML='';show('panel');}
+  /* -------------------- State -------------------- */
+  const state = { user:null, userData:null, profile:null, page:null, route:"" };
 
-/* ========== MULTIPLAYER ========== */
-let roomUnsub=null,currentRoom=null,remoteCars=new Map();
-function panelMultiplayer(){
-  openPanel('Multiplayer','Real-time lobbies via Firebase');
-  $('#pBody').innerHTML=`
-    <div class="cd">
-      <h3>Quick Match</h3>
-      <p style="color:var(--mu);font-size:12px;margin-bottom:10px">Find an open lobby or create a new one.</p>
-      <button class="btn bp bw" id="mQuick">FIND / CREATE ROOM</button>
-    </div>
-    <div class="cd">
-      <h3>Create Room</h3>
-      <div class="g2">
-        <select id="mTrack" style="padding:10px;background:rgba(0,0,0,.35);border:1px solid var(--bd);border-radius:10px">
-          <option value="neon">Neon City Loop</option>
-          <option value="oval">Speed Oval</option>
-        </select>
-        <select id="mMode" style="padding:10px;background:rgba(0,0,0,.35);border:1px solid var(--bd);border-radius:10px">
-          <option value="casual">Casual</option>
-          <option value="ranked">Ranked</option>
-        </select>
-      </div>
-      <button class="btn bg bw mt8" id="mCreate">CREATE ROOM</button>
-    </div>
-    <div class="cd">
-      <h3>Active Lobbies</h3>
-      <div id="mList"><div class="loading"><div class="spin"></div>Loading…</div></div>
-    </div>
-  `;
-  $('#mQuick').onclick=quickMatch;
-  $('#mCreate').onclick=createRoom;
-  // live lobby list
-  if(roomUnsub)roomUnsub();
-  roomUnsub=onValue(ref(db,'lobbies'),snap=>{
-    const val=snap.val()||{};
-    const list=Object.entries(val).filter(([_,L])=>L.status==='open');
-    const el=$('#mList');if(!el)return;
-    if(!list.length){el.innerHTML='<div class="emp">No open lobbies. Create one!</div>';return;}
-    el.innerHTML=list.map(([id,L])=>`<div class="st" style="margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
-      <div><div style="font-weight:700;font-size:13px">${esc(L.track)} · ${esc(L.mode)}</div>
-      <div style="font-size:10px;color:var(--mu);margin-top:2px">${Object.keys(L.players||{}).length}/4 players · host ${esc((L.hostName||'?'))}</div></div>
-      <button class="btn bp" data-join="${id}">JOIN</button></div>`).join('');
-    el.querySelectorAll('[data-join]').forEach(b=>b.onclick=()=>joinRoom(b.dataset.join));
-  });
-}
-async function quickMatch(){
-  const snap=await get(ref(db,'lobbies'));
-  const val=snap.val()||{};
-  const open=Object.entries(val).find(([_,L])=>L.status==='open'&&Object.keys(L.players||{}).length<4);
-  if(open)joinRoom(open[0]);
-  else createRoom();
-}
-async function createRoom(){
-  const track=$('#mTrack').value,mode=$('#mMode').value;
-  const rid='r_'+Math.random().toString(36).slice(2,8);
-  await set(ref(db,`lobbies/${rid}`),{
-    host:me.uid,hostName:meData.username,track,mode,status:'open',createdAt:serverTimestamp(),
-    players:{[me.uid]:{name:meData.username,ready:false,x:0,z:0,rot:0,lap:0,at:Date.now()}}
-  });
-  onDisconnect(ref(db,`lobbies/${rid}/players/${me.uid}`)).remove();
-  joinRoom(rid);
-}
-async function joinRoom(rid){
-  const s=await get(ref(db,`lobbies/${rid}`));
-  if(!s.exists())return toast('Room not found','er');
-  const L=s.val();
-  if(L.status!=='open')return toast('Room is locked','er');
-  await set(ref(db,`lobbies/${rid}/players/${me.uid}`),{name:meData.username,ready:false,x:0,z:0,rot:0,lap:0,at:Date.now()});
-  currentRoom=rid;
-  openRoom(rid);
-}
-function openRoom(rid){
-  openPanel('Room '+rid,'Waiting for players');
-  $('#pBody').innerHTML=`
-    <div class="cd"><h3>Players</h3><div id="rmPlayers">Loading…</div></div>
-    <div class="cd">
-      <h3>Room Options</h3>
-      <div class="row"><button class="btn bp" id="rmReady">READY</button>
-      <button class="btn bg" id="rmStart">START RACE</button>
-      <button class="btn bd" id="rmLeave">LEAVE</button></div>
-    </div>
-    <div class="cd" style="font-size:12px;color:var(--mu)">Cars sync in real-time via Firebase. When all ready, host can start.</div>
-  `;
-  let myReady=false;
-  $('#rmReady').onclick=async()=>{myReady=!myReady;await update(ref(db,`lobbies/${rid}/players/${me.uid}`),{ready:myReady});$('#rmReady').textContent=myReady?'NOT READY':'READY';};
-  $('#rmLeave').onclick=async()=>{await remove(ref(db,`lobbies/${rid}/players/${me.uid}`));currentRoom=null;show('menu');};
-  $('#rmStart').onclick=()=>{startRace(L=>{},rid);};
-  const u=onValue(ref(db,`lobbies/${rid}/players`),snap=>{
-    const val=snap.val()||{};
-    const el=$('#rmPlayers');if(!el)return;
-    el.innerHTML=Object.entries(val).map(([uid,p])=>`<div class="st" style="margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
-      <div><b>${esc(p.name)}</b>${uid===me.uid?' <span class="chip cy">You</span>':''}</div>
-      <span class="chip ${p.ready?'ok':'er'}">${p.ready?'READY':'WAITING'}</span></div>`).join('');
-  });
-  $('#pBack').onclick=async()=>{await remove(ref(db,`lobbies/${rid}/players/${me.uid}`));currentRoom=null;if(roomUnsub)roomUnsub();show('menu');};
-}
+  /* -------------------- Utilities -------------------- */
+  const $  = (s, r=document) => r.querySelector(s);
+  const esc = (s="") => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const el = (html) => { const t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstElementChild; };
+  const todayKey = () => new Date().toISOString().slice(0,10);
 
-/* ========== RANKED ========== */
-async function panelRanked(){
-  openPanel('Ranked','Season 1');
-  const sn=await get(ref(db,`users/${me.uid}`));
-  const u=sn.val()||{};
-  const r=u.rating||1000,w=u.wins||0,l=u.losses||0;
-  const divs=[{n:'Rookie',min:0,max:999},{n:'Bronze',min:1000,max:1199},{n:'Silver',min:1200,max:1399},{n:'Gold',min:1400,max:1599},{n:'Platinum',min:1600,max:1799},{n:'Diamond',min:1800,max:1999},{n:'Elite',min:2000,max:2199},{n:'Legend',min:2200,max:9999}];
-  const d=divs.find(x=>r>=x.min&&r<=x.max)||divs[0];
-  const pct=Math.max(0,Math.min(1,(r-d.min)/(d.max-d.min+1)));
-  $('#pBody').innerHTML=`
-    <div class="g3">
-      <div class="st"><div class="l">Rating</div><div class="v c">${r}</div></div>
-      <div class="st"><div class="l">Division</div><div class="v v">${d.n}</div></div>
-      <div class="st"><div class="l">W / L</div><div class="v">${w}/${l}</div></div>
-    </div>
-    <div class="cd mt8"><h3>Progress to next division</h3>
-      <div style="height:10px;border-radius:99px;background:rgba(0,0,0,.4);border:1px solid var(--bd);overflow:hidden">
-        <div style="height:100%;width:${pct*100}%;background:var(--gr)"></div></div>
-      <div style="font-size:11px;color:var(--mu);margin-top:6px">${r} / ${d.max+1} → ${divs[Math.min(divs.indexOf(d)+1,divs.length-1)].n}</div>
-    </div>
-    <button class="btn bp bw" id="rkQueue">FIND RANKED MATCH</button>
-    <div class="cd mt16"><h3>Note</h3><div style="font-size:12px;color:var(--mu)">Rating updates after a race. Win = +8~+25 based on gap.</div></div>
-  `;
-  $('#rkQueue').onclick=async()=>{
-    // Find or create ranked room
-    const snap=await get(ref(db,'lobbies'));
-    const val=snap.val()||{};
-    const found=Object.entries(val).find(([_,L])=>L.status==='open'&&L.mode==='ranked'&&Object.keys(L.players||{}).length<4);
-    if(found)joinRoom(found[0]);
-    else{
-      const rid='r_'+Math.random().toString(36).slice(2,8);
-      await set(ref(db,`lobbies/${rid}`),{host:me.uid,hostName:meData.username,track:'neon',mode:'ranked',status:'open',createdAt:serverTimestamp(),players:{[me.uid]:{name:meData.username,ready:false,x:0,z:0,rot:0,lap:0,at:Date.now()}}});
-      joinRoom(rid);
+  function toast(msg, type="info", ttl=3600){
+    const t = el(`<div class="toast ${type}" role="alert"><div>${esc(msg)}</div></div>`);
+    $("#toasts").appendChild(t);
+    setTimeout(()=>{ t.style.opacity="0"; t.style.transition=".3s"; setTimeout(()=>t.remove(),320); }, ttl);
+  }
+  function modal({title, body, confirmText="Konfirmasi", danger=false, onConfirm}){
+    const bg = el(`<div class="modal-bg" role="dialog" aria-modal="true">
+      <div class="modal">
+        <h3 style="margin:0 0 8px">${esc(title)}</h3>
+        <div style="color:var(--muted);font-size:14px;line-height:1.55">${body}</div>
+        <div class="row" style="justify-content:flex-end;margin-top:22px">
+          <button class="btn btn-ghost" data-act="cancel">Batal</button>
+          <button class="btn ${danger?"btn-danger":"btn-primary"}" data-act="ok">${esc(confirmText)}</button>
+        </div>
+      </div></div>`);
+    $("#modal-root").appendChild(bg);
+    const close = () => bg.remove();
+    bg.querySelector('[data-act="cancel"]').onclick = close;
+    bg.querySelector('[data-act="ok"]').onclick = () => { onConfirm?.(); close(); };
+    bg.addEventListener("click", e => { if(e.target === bg) close(); });
+  }
+  function debounce(fn, ms=300){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+  function validUrl(u){
+    if(!u || typeof u !== "string") return false;
+    if(!ALLOWED_SCHEMES.test(u)) return false;
+    try { const x = new URL(u); return ["http:","https:","mailto:","tel:"].includes(x.protocol); }
+    catch{ return false; }
+  }
+
+  /* -------------------- Router -------------------- */
+  function go(p){ location.hash = "#" + p; }
+  function currentPath(){ return (location.hash || "#/").slice(1) || "/"; }
+  function mount(html){
+    const app = $("#app"); app.innerHTML = ""; app.appendChild(el(html));
+  }
+
+  function onRoute(){
+    const path = currentPath();
+    state.route = path;
+    const parts = path.split("/").filter(Boolean);
+
+    if(parts[0] === "u" && parts[1]) return renderPublicProfile(parts[1]);
+
+    switch(path){
+      case "/":                     return renderLanding();
+      case "/login":                return renderAuth("login");
+      case "/register":             return renderAuth("register");
+      case "/forgot":               return renderAuth("forgot");
+      case "/dashboard":            return guardDash(() => renderDashOverview());
+      case "/dashboard/links":      return guardDash(() => renderDashLinks());
+      case "/dashboard/appearance": return guardDash(() => renderDashAppearance());
+      case "/dashboard/analytics":  return guardDash(() => renderDashAnalytics());
+      case "/dashboard/qr":         return guardDash(() => renderDashQR());
+      case "/dashboard/settings":   return guardDash(() => renderDashSettings());
+      case "/admin":                return guardAdmin(() => renderAdmin());
+      default:                      return render404();
     }
-  };
-}
-
-/* ========== TOURNAMENTS ========== */
-async function panelTournaments(){
-  openPanel('Tournaments','Join with code or browse');
-  $('#pBody').innerHTML=`
-    <div class="cd">
-      <h3>Join with Code</h3>
-      <div class="row">
-        <input id="tCode" placeholder="CAZ-XXXX-XXXX" style="flex:1;padding:10px;background:rgba(0,0,0,.35);border:1px solid var(--bd);border-radius:10px;text-transform:uppercase;letter-spacing:2px;font-weight:700"/>
-        <button class="btn bp" id="tJoin">JOIN</button>
-      </div>
-    </div>
-    <div class="cd">
-      <h3>Active Tournaments</h3>
-      <div id="tList"><div class="loading"><div class="spin"></div>Loading…</div></div>
-    </div>
-  `;
-  $('#tJoin').onclick=async()=>{
-    const code=$('#tCode').value.trim().toUpperCase();
-    if(!code)return;
-    const snap=await get(ref(db,'tournaments'));
-    const val=snap.val()||{};
-    const found=Object.entries(val).find(([_,T])=>T.code===code);
-    if(!found)return toast('Invalid code','er');
-    const [tid,T]=found;
-    if(T.status!=='open')return toast('Registration closed','er');
-    const parts=T.participants||{};
-    if(Object.keys(parts).length>=(T.maxPlayers||8))return toast('Tournament is full','er');
-    await update(ref(db,`tournaments/${tid}/participants`),{[me.uid]:meData.username});
-    toast('Registered!','ok');
-    panelTournaments();
-  };
-  onValue(ref(db,'tournaments'),snap=>{
-    const val=snap.val()||{};
-    const el=$('#tList');if(!el)return;
-    const list=Object.entries(val);
-    if(!list.length){el.innerHTML='<div class="emp">No tournaments yet.</div>';return;}
-    el.innerHTML=list.map(([id,T])=>{
-      const n=Object.keys(T.participants||{}).length;
-      const inIt=T.participants&&T.participants[me.uid];
-      return `<div class="st" style="margin-bottom:6px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><b>${esc(T.name)}</b><div style="font-size:10px;color:var(--mu);margin-top:2px">${esc(T.format||'single_elim')} · ${n}/${T.maxPlayers||8} players</div></div>
-          <span class="chip ${inIt?'ok':T.status==='open'?'cy':'er'}">${inIt?'REGISTERED':T.status}</span>
-        </div>
-        ${T.code&&!inIt?`<div style="font-size:11px;color:var(--mu);margin-top:6px">Code: <b style="color:var(--cy)">${esc(T.code)}</b></div>`:''}
-      </div>`;
-    }).join('');
-  });
-}
-
-/* ========== EVENTS ========== */
-async function panelEvents(){
-  openPanel('Events','Limited-time challenges');
-  onValue(ref(db,'events'),snap=>{
-    const val=snap.val()||{};
-    const list=Object.entries(val);
-    const el=$('#pBody');if(!el)return;
-    if(!list.length){el.innerHTML='<div class="emp">No events configured yet.</div>';return;}
-    el.innerHTML=list.map(([id,E])=>`<div class="cd">
-      <div style="display:flex;justify-content:space-between"><h3>${esc(E.name)}</h3><span class="chip ${E.status==='active'?'ok':'er'}">${esc(E.status||'—')}</span></div>
-      <div style="font-size:12px;color:var(--mu);margin-bottom:8px">${esc(E.desc||'')}</div>
-      ${E.track?`<span class="chip">${esc(E.track)}</span>`:''}
-      ${E.mode?`<span class="chip">${esc(E.mode)}</span>`:''}
-    </div>`).join('');
-  });
-}
-
-/* ========== LEADERBOARD ========== */
-async function panelLeaderboard(){
-  openPanel('Leaderboard','Global rankings · Season 1');
-  const snap=await get(query(ref(db,'users'),orderByChild('rating'),limitToLast(50)));
-  const val=snap.val()||{};
-  const rows=Object.entries(val).filter(([_,u])=>u&&u.rating!=null).sort((a,b)=>(b[1].rating||0)-(a[1].rating||0));
-  if(!rows.length){$('#pBody').innerHTML='<div class="emp">No ranked players yet.</div>';return;}
-  $('#pBody').innerHTML=`<div class="cd"><table class="tbl"><thead><tr><th>#</th><th>Player</th><th>Rating</th><th>W/L</th></tr></thead><tbody>
-    ${rows.map(([uid,u],i)=>`<tr><td>${i+1}</td><td>${esc(u.username||uid.slice(0,6))}${uid===me.uid?' <span class="chip cy">You</span>':''}</td><td style="color:var(--cy);font-weight:700">${u.rating}</td><td>${u.wins||0}/${u.losses||0}</td></tr>`).join('')}
-  </tbody></table></div>`;
-}
-
-/* ========== GARAGE ========== */
-async function panelGarage(){
-  openPanel('Garage','Your cars');
-  $('#pBody').innerHTML=`
-    <div class="cd">
-      <h3>CAZOO GT-01</h3>
-      <div style="display:flex;gap:14px;align-items:center">
-        <div style="width:90px;height:60px;background:linear-gradient(135deg,var(--cy),var(--vi));border-radius:10px;display:flex;align-items:center;justify-content:center">
-          <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="#04121c" stroke-width="1.8"><path d="M3 13 5 7h14l2 6v6h-3v-2H6v2H3v-6z"/><circle cx="7.5" cy="13.5" r="1.5"/><circle cx="16.5" cy="13.5" r="1.5"/></svg>
-        </div>
-        <div style="flex:1">
-          <div style="font-weight:700">Cazoo GT-01</div>
-          <div style="font-size:11px;color:var(--mu);margin-top:4px">Sport · Default physics</div>
-          <span class="chip ok" style="margin-top:6px">OWNED</span>
-        </div>
-      </div>
-      <div class="row mt16">
-        <button class="btn bp" id="gCustom">CUSTOMIZE SKIN</button>
-        <button class="btn bg" id="gRace">RACE</button>
-      </div>
-    </div>
-  `;
-  $('#gCustom').onclick=openStudio;
-  $('#gRace').onclick=()=>startRace('solo');
-}
-
-/* ========== PROFILE ========== */
-async function panelProfile(){
-  openPanel('Profile',me.email);
-  const u=meData||{};
-  $('#pBody').innerHTML=`
-    <div class="cd"><h3>Account</h3>
-      <div class="g2">
-        <div class="st"><div class="l">Username</div><div class="v" style="font-size:15px">${esc(u.username||'—')}</div></div>
-        <div class="st"><div class="l">Rating</div><div class="v c">${u.rating||1000}</div></div>
-        <div class="st"><div class="l">Wins</div><div class="v k">${u.wins||0}</div></div>
-        <div class="st"><div class="l">Losses</div><div class="v">${u.losses||0}</div></div>
-      </div>
-    </div>
-    <div class="cd"><h3>UID</h3><div style="font-family:monospace;font-size:11px;word-break:break-all;color:var(--mu)">${me.uid}</div></div>
-    ${isAdmin?`<div class="cd"><span class="chip ok">Admin: ${isAdmin?'yes':'no'}</span></div>`:''}
-  `;
-}
-
-/* ========== ADMIN ========== */
-async function panelAdmin(){
-  if(!isAdmin)return toast('Access denied','er');
-  openPanel('Control Center','Admin');
-  const [lob,trn,evt,usr]=await Promise.all([get(ref(db,'lobbies')),get(ref(db,'tournaments')),get(ref(db,'events')),get(ref(db,'users'))]);
-  const L=Object.keys(lob.val()||{}).length,T=Object.keys(trn.val()||{}).length,E=Object.keys(evt.val()||{}).length,U=Object.keys(usr.val()||{}).length;
-  $('#pBody').innerHTML=`
-    <div class="cd"><h3>Live Stats</h3>
-      <div class="g3">
-        <div class="st"><div class="l">Lobbies</div><div class="v c">${L}</div></div>
-        <div class="st"><div class="l">Tournaments</div><div class="v v">${T}</div></div>
-        <div class="st"><div class="l">Events</div><div class="v k">${E}</div></div>
-        <div class="st"><div class="l">Total Users</div><div class="v">${U}</div></div>
-      </div>
-    </div>
-    <div class="cd"><h3>Create Tournament</h3>
-      <div class="fld"><input id="aTName" placeholder="Tournament name" style="width:100%;padding:10px;background:rgba(0,0,0,.35);border:1px solid var(--bd);border-radius:10px"/></div>
-      <div class="g2 mt8">
-        <select id="aTFormat" style="padding:10px;background:rgba(0,0,0,.35);border:1px solid var(--bd);border-radius:10px">
-          <option value="single_elim">Single Elimination</option>
-          <option value="double_elim">Double Elimination</option>
-          <option value="round_robin">Round Robin</option>
-        </select>
-        <input id="aTMax" type="number" value="8" min="2" max="64" style="padding:10px;background:rgba(0,0,0,.35);border:1px solid var(--bd);border-radius:10px"/>
-      </div>
-      <button class="btn bp bw mt8" id="aTCreate">CREATE TOURNAMENT</button>
-    </div>
-    <div class="cd"><h3>Create Event</h3>
-      <div class="fld"><input id="aEName" placeholder="Event name" style="width:100%;padding:10px;background:rgba(0,0,0,.35);border:1px solid var(--bd);border-radius:10px"/></div>
-      <div class="fld"><input id="aEDesc" placeholder="Description" style="width:100%;padding:10px;background:rgba(0,0,0,.35);border:1px solid var(--bd);border-radius:10px"/></div>
-      <button class="btn bp bw mt8" id="aECreate">CREATE EVENT</button>
-    </div>
-    <div class="cd"><h3>All Users</h3>
-      <div style="max-height:220px;overflow:auto">
-        <table class="tbl"><thead><tr><th>User</th><th>Rating</th><th>W/L</th></tr></thead><tbody>
-          ${Object.entries(usr.val()||{}).map(([uid,u])=>`<tr><td>${esc(u.username||uid.slice(0,8))}</td><td>${u.rating||1000}</td><td>${u.wins||0}/${u.losses||0}</td></tr>`).join('')}
-        </tbody></table>
-      </div>
-    </div>
-  `;
-  $('#aTCreate').onclick=async()=>{
-    const n=$('#aTName').value.trim();if(!n)return toast('Name required','er');
-    const code='CAZ-'+Math.random().toString(36).slice(2,6).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
-    const tid='t_'+Math.random().toString(36).slice(2,8);
-    await set(ref(db,`tournaments/${tid}`),{name:n,code,format:$('#aTFormat').value,maxPlayers:parseInt($('#aTMax').value)||8,status:'open',createdBy:me.uid,createdAt:serverTimestamp(),participants:{}});
-    toast('Tournament created. Code: '+code,'ok');
-  };
-  $('#aECreate').onclick=async()=>{
-    const n=$('#aEName').value.trim();if(!n)return toast('Name required','er');
-    const eid='e_'+Math.random().toString(36).slice(2,8);
-    await set(ref(db,`events/${eid}`),{name:n,desc:$('#aEDesc').value||'',status:'active',createdBy:me.uid,createdAt:serverTimestamp()});
-    toast('Event created','ok');
-  };
-}
-
-/* ========== RACE (three.js) ========== */
-const R={init:false};
-function startRace(mode='solo',roomId=null){
-  show('race');
-  if(!R.init)buildRace();
-  R.mode=mode;R.roomId=roomId;
-  R.active=false;R.speed=0;R.nitro=1;R.boost=0;R.lap=1;R.nextCP=0;R.finished=false;R.keys={};R.startTime=0;
-  const p0=R.checkpoints[0];R.car.position.copy(p0);R.car.position.y=0;
-  R.car.lookAt(R.checkpoints[1].x,R.car.position.y,R.checkpoints[1].z);
-  R.remoteCars.forEach(c=>R.scene.remove(c.mesh));R.remoteCars.clear();
-  $('#res').classList.remove('on');
-  let c=3;showMsg(String(c));
-  const iv=setInterval(()=>{c--;if(c>0)showMsg(String(c));else if(c===0){showMsg('GO!',700);R.active=true;R.startTime=performance.now();clearInterval(iv);}},800);
-}
-function buildRace(){
-  const canvas=$('#raceCanvas');
-  const rend=new THREE.WebGLRenderer({canvas,antialias:true});
-  rend.setPixelRatio(Math.min(devicePixelRatio,2));
-  rend.toneMapping=THREE.ACESFilmicToneMapping;rend.toneMappingExposure=1.15;
-  const scene=new THREE.Scene();scene.background=new THREE.Color(0x05070d);scene.fog=new THREE.Fog(0x05070d,70,240);
-  const cam=new THREE.PerspectiveCamera(65,1,0.1,600);
-  scene.add(new THREE.HemisphereLight(0x4466aa,0x05070d,0.85));
-  const sun=new THREE.DirectionalLight(0xffffff,1.3);sun.position.set(30,60,20);scene.add(sun);
-  scene.add(new THREE.PointLight(0x22e6ff,1.6,120).translateY(15));
-  // ground
-  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(800,800),new THREE.MeshStandardMaterial({color:0x0a0f1a,roughness:0.95})).rotateX(-Math.PI/2));
-  // track
-  const W=70,H=46;
-  const bpts=[];for(let i=0;i<16;i++){const a=(i/16)*Math.PI*2;bpts.push(new THREE.Vector3(Math.cos(a)*W/2,0,Math.sin(a)*H/2));}
-  const curve=new THREE.CatmullRomCurve3(bpts,true);const trackPts=curve.getPoints(400);
-  const left=[],right=[];
-  for(let i=0;i<trackPts.length;i++){const p=trackPts[i],n=trackPts[(i+1)%trackPts.length];const d=new THREE.Vector3().subVectors(n,p).normalize();const sd=new THREE.Vector3(-d.z,0,d.x).multiplyScalar(5);left.push(p.clone().add(sd).setY(0.02));right.push(p.clone().sub(sd).setY(0.02));}
-  const v=[],idx=[];for(let i=0;i<left.length;i++)v.push(left[i].x,left[i].y,left[i].z,right[i].x,right[i].y,right[i].z);
-  for(let i=0;i<left.length-1;i++){const a=i*2,b=i*2+1,c=(i+1)*2,d=(i+1)*2+1;idx.push(a,b,c,b,d,c);}
-  const rg=new THREE.BufferGeometry();rg.setAttribute('position',new THREE.Float32BufferAttribute(v,3));rg.setIndex(idx);rg.computeVertexNormals();
-  scene.add(new THREE.Mesh(rg,new THREE.MeshStandardMaterial({color:0x14181f,roughness:0.75})));
-  // rails
-  for(let i=0;i<left.length;i+=5){
-    const r1=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.5,1.5),new THREE.MeshBasicMaterial({color:0x22e6ff}));r1.position.copy(left[i]).setY(0.25);r1.lookAt(left[(i+5)%left.length].x,0.25,left[(i+5)%left.length].z);scene.add(r1);
-    const r2=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.5,1.5),new THREE.MeshBasicMaterial({color:0x8a5cff}));r2.position.copy(right[i]).setY(0.25);r2.lookAt(right[(i+5)%right.length].x,0.25,right[(i+5)%right.length].z);scene.add(r2);
   }
-  // city
-  for(let i=0;i<50;i++){const h=8+Math.random()*30;const g=new THREE.BoxGeometry(2+Math.random()*4,h,2+Math.random()*4);const hue=0.5+Math.random()*0.25;const m=new THREE.MeshStandardMaterial({color:new THREE.Color().setHSL(hue,1,0.15),emissive:new THREE.Color().setHSL(hue,1,0.35),emissiveIntensity:0.4});const b=new THREE.Mesh(g,m);const a=Math.random()*Math.PI*2,r=140+Math.random()*60;b.position.set(Math.cos(a)*r,h/2,Math.sin(a)*r);scene.add(b);}
-  // checkpoints
-  const cps=[];for(let i=0;i<8;i++)cps.push(trackPts[Math.floor(trackPts.length*i/8)].clone());
-  // car
-  const car=makeCarMesh(colorForUid(me.uid));
-  scene.add(car);
-  R.scene=scene;R.cam=cam;R.rend=rend;R.car=car;R.trackPts=trackPts;R.checkpoints=cps;R.init=true;
-  // events
-  addEventListener('keydown',e=>{if(cur==='race')R.keys[e.key.toLowerCase()]=true;});
-  addEventListener('keyup',e=>{if(cur==='race')R.keys[e.key.toLowerCase()]=false;});
-  const hold=(el,k)=>{el.addEventListener('pointerdown',e=>{e.preventDefault();R.keys[k]=true;});el.addEventListener('pointerup',e=>{e.preventDefault();R.keys[k]=false;});el.addEventListener('pointercancel',()=>R.keys[k]=false);el.addEventListener('pointerleave',()=>R.keys[k]=false);};
-  hold($('#cL'),'left');hold($('#cR'),'right');hold($('#cG'),'gas');hold($('#cN'),'nitro');
-  $('#cX').onclick=()=>exitRace();
-  // resize
-  addEventListener('resize',()=>{if(!R.init)return;const w=innerWidth,h=innerHeight;rend.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();});
-  rend.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();
-  requestAnimationFrame(raceLoop);
-}
-function makeCarMesh(color){
-  const g=new THREE.Group();
-  const body=new THREE.Mesh(new THREE.BoxGeometry(2,0.55,4.2),new THREE.MeshStandardMaterial({color,metalness:0.9,roughness:0.2}));
-  body.position.y=0.5;g.add(body);
-  const cab=new THREE.Mesh(new THREE.BoxGeometry(1.6,0.55,2),new THREE.MeshStandardMaterial({color:0x061018,metalness:0.7,roughness:0.1,transparent:true,opacity:0.9}));
-  cab.position.set(0,0.95,-0.1);g.add(cab);
-  const wg=new THREE.CylinderGeometry(0.45,0.45,0.34,20);const wm=new THREE.MeshStandardMaterial({color:0x0a0a0a,roughness:0.9});
-  [[-1.08,0.45,1.35],[1.08,0.45,1.35],[-1.08,0.45,-1.35],[1.08,0.45,-1.35]].forEach(([x,y,z])=>{const w=new THREE.Mesh(wg,wm);w.rotation.z=Math.PI/2;w.position.set(x,y,z);g.add(w);});
-  return g;
-}
-let lastT=performance.now();
-function raceLoop(now){
-  requestAnimationFrame(raceLoop);
-  const dt=Math.min(0.05,(now-lastT)/1000);lastT=now;
-  if(!R.init||cur!=='race')return;
-  updateRaceCar(dt);
-  updateRaceCam(dt);
-  R.rend.render(R.scene,R.cam);
-}
-function updateRaceCar(dt){
-  if(!R.active||R.finished){R.speed*=0.92;const f=new THREE.Vector3(0,0,1).applyQuaternion(R.car.quaternion);R.car.position.addScaledVector(f,R.speed*dt);return;}
-  R.elapsed=(performance.now()-R.startTime)/1000;
-  let s=0;if(R.keys.a||R.keys.arrowleft||R.keys.left)s+=1;if(R.keys.d||R.keys.arrowright||R.keys.right)s-=1;
-  let t=0;if(R.keys.w||R.keys.arrowup||R.keys.up||R.keys.gas)t+=1;if(R.keys.s||R.keys.arrowdown||R.keys.down)t-=1;
-  if(t>0)R.speed+=30*dt;else if(t<0)R.speed-=45*dt;else R.speed-=R.speed*0.9*dt;
-  const wn=R.keys.shift||R.keys.nitro;
-  if(wn&&R.nitro>0.05&&R.speed>5){R.boost=Math.min(1,R.boost+dt*2.5);R.nitro=Math.max(0,R.nitro-dt*0.35);}
-  else{R.boost=Math.max(0,R.boost-dt*1.2);R.nitro=Math.min(1,R.nitro+dt*0.08);}
-  const maxN=60+R.boost*30;R.speed=Math.max(-10,Math.min(maxN,R.speed));
-  const sp=1.8*(1-Math.min(0.5,R.speed/60*0.5));
-  R.car.rotation.y+=s*sp*dt*(0.3+Math.min(1,Math.abs(R.speed)/20))*(R.speed>=0?1:-1);
-  const f=new THREE.Vector3(0,0,1).applyQuaternion(R.car.quaternion);
-  R.car.position.addScaledVector(f,R.speed*dt);R.car.position.y=0;
-  // lap check
-  if(R.active){const cp=R.checkpoints[R.nextCP];const dx=R.car.position.x-cp.x,dz=R.car.position.z-cp.z;if(dx*dx+dz*dz<81){R.nextCP=(R.nextCP+1)%R.checkpoints.length;if(R.nextCP===0){R.lap++;if(R.lap>3){R.finished=true;R.active=false;finishRace();}else showMsg('LAP '+R.lap,900);}}}
-  // soft walls
-  let bestD=1e9,bi=0;for(let i=0;i<R.trackPts.length;i++){const p=R.trackPts[i];const d=(p.x-R.car.position.x)**2+(p.z-R.car.position.z)**2;if(d<bestD){bestD=d;bi=i;}}
-  const near=R.trackPts[bi];const dToCenter=Math.sqrt(bestD);
-  if(dToCenter>45){const dir=new THREE.Vector3(R.car.position.x-near.x,0,R.car.position.z-near.z).normalize();const push=dToCenter-45;R.car.position.x-=dir.x*push;R.car.position.z-=dir.z*push;R.speed*=0.94;}
-  // HUD
-  $('#speedV').textContent=Math.round(R.speed*3.6);
-  $('#lapV').textContent=Math.min(R.lap,3)+' / 3';
-  $('#timeV').textContent=fmtT(R.elapsed||0);
-  $('#nitroF').style.width=(R.nitro*100)+'%';
-  // sync multiplayer
-  if(R.roomId&&now%100<20)syncRoom();
-}
-function updateRaceCam(dt){
-  const f=new THREE.Vector3(0,0,1).applyQuaternion(R.car.quaternion);
-  const target=R.car.position.clone().add(new THREE.Vector3(0,1.4,0));
-  const desired=R.car.position.clone().add(f.clone().multiplyScalar(-8-R.speed*0.05)).add(new THREE.Vector3(0,4,0));
-  R.cam.position.lerp(desired,1-Math.pow(0.001,dt));
-  R.cam.lookAt(target);
-}
-function showMsg(t,d=800){const e=$('#hMsg');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),d);}
-function fmtT(t){const m=Math.floor(t/60),s=Math.floor(t%60),ms=Math.floor((t*100)%100);return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(2,'0')}`;}
-async function syncRoom(){
-  if(!R.roomId||!me)return;
-  try{await update(ref(db,`lobbies/${R.roomId}/players/${me.uid}`),{x:R.car.position.x,z:R.car.position.z,rot:R.car.rotation.y,lap:R.lap,at:Date.now()});}catch(e){}
-  // listen to others
-  if(!R._roomListener){R._roomListener=onValue(ref(db,`lobbies/${R.roomId}/players`),snap=>{
-    const val=snap.val()||{};
-    Object.entries(val).forEach(([uid,p])=>{
-      if(uid===me.uid)return;
-      let rc=R.remoteCars.get(uid);
-      if(!rc){const m=makeCarMesh(colorForUid(uid));R.scene.add(m);rc={mesh:m};R.remoteCars.set(uid,rc);}
-      if(p.x!=null){rc.mesh.position.set(p.x,0,p.z);rc.mesh.rotation.y=p.rot||0;}
+
+  async function guardDash(fn){
+    if(!state.user){ go("/login"); return; }
+    if(!state.profile?.username) return renderClaimUsername();
+    await ensurePage();
+    fn();
+  }
+  async function guardAdmin(fn){
+    if(!state.user){ go("/login"); return; }
+    const role = state.userData?.role;
+    if(role !== "admin" && role !== "superadmin") return renderForbidden();
+    fn();
+  }
+
+  /* -------------------- Data -------------------- */
+  async function loadUserData(uid){
+    try{
+      const [uSnap, pSnap, pgSnap] = await Promise.all([
+        get(ref(db, `users/${uid}`)),
+        get(ref(db, `profiles/${uid}`)),
+        get(ref(db, `pages/${uid}`))
+      ]);
+      state.userData = uSnap.val() || null;
+      state.profile  = pSnap.val() || null;
+      state.page     = pgSnap.val() || null;
+    }catch(e){ console.warn(e); }
+  }
+  async function ensurePage(){
+    if(state.page) return state.page;
+    const uid = state.user.uid;
+    const blank = { theme: defaultTheme(), links:{}, published:false, createdAt:Date.now(), updatedAt:Date.now() };
+    await set(ref(db, `pages/${uid}`), blank);
+    state.page = blank;
+    return blank;
+  }
+  function defaultTheme(){
+    return {
+      bg: "linear-gradient(135deg,#0f172a,#1e293b)",
+      text: "#e8ecf3",
+      btnBg: "rgba(255,255,255,.10)",
+      btnText: "#ffffff",
+      btnBorder: "rgba(255,255,255,.18)",
+      btnRadius: 14,
+      btnHeight: 56,
+      gap: 14,
+      font: "Inter",
+      shadow: "0 10px 24px rgba(0,0,0,.25)"
+    };
+  }
+  async function claimUsername(rawName){
+    const name = String(rawName || "").trim().toLowerCase();
+    if(!USERNAME_RE.test(name)) throw new Error("Username hanya boleh huruf kecil, angka, dan _ (3–20 karakter).");
+    if(RESERVED.has(name)) throw new Error("Username tersebut tidak tersedia.");
+    const uid = state.user.uid;
+
+    const unameRef = ref(db, `usernames/${name}`);
+    const result = await runTransaction(unameRef, cur => {
+      if(cur && cur.uid !== uid) return;
+      return { uid };
     });
-    R.remoteCars.forEach((rc,uid)=>{if(!val[uid]){R.scene.remove(rc.mesh);R.remoteCars.delete(uid);}});
-  });}
-}
-async function finishRace(){
-  const total=R.elapsed;
-  $('#resTime').textContent=fmtT(total);
-  $('#resT').textContent='FINISH';
-  $('#res').classList.add('on');
-  // Update stats
-  if(me){
-    // Win = finish first (in solo: always win)
-    const win=true;
-    const dR=win?12:-8;
-    const newR=Math.max(0,(meData.rating||1000)+dR);
-    await update(ref(db,`users/${me.uid}`),{rating:newR,wins:(meData.wins||0)+(win?1:0),losses:(meData.losses||0)+(win?0:1)});
-    meData.rating=newR;meData.wins=(meData.wins||0)+(win?1:0);meData.losses=(meData.losses||0)+(win?0:1);
-    buildMenu();
-  }
-  if(R.roomId){try{await update(ref(db,`lobbies/${R.roomId}`),{status:'playing'});}catch(e){}}
-}
-$('#bAgain').onclick=()=>{if(R.roomId)startRace(R.mode,R.roomId);else startRace('solo');};
-$('#bHome').onclick=()=>exitRace();
-function exitRace(){
-  R.active=false;R.finished=true;
-  if(R._roomListener){off(ref(db,`lobbies/${R.roomId}/players`),'value',R._roomListener);R._roomListener=null;}
-  if(currentRoom){remove(ref(db,`lobbies/${currentRoom}/players/${me.uid}`));currentRoom=null;}
-  R.remoteCars.forEach(rc=>{R.scene.remove(rc.mesh);});R.remoteCars.clear();
-  $('#res').classList.remove('on');
-  show('menu');
-}
+    if(!result.committed) throw new Error("Username sudah digunakan.");
 
-/* ========== SKIN STUDIO ========== */
-const ST={init:false,layers:[{id:1,name:'Base',active:true}],hist:[],hi:-1};
-function openStudio(){show('studio');if(!ST.init)buildStudio();ST.rend.setSize($('#stVP').clientWidth,$('#stVP').clientHeight);requestAnimationFrame(()=>{const w=$('#stVP').clientWidth,h=$('#stVP').clientHeight;if(w&&h){ST.rend.setSize(w,h);ST.cam.aspect=w/h;ST.cam.updateProjectionMatrix();}});updateStudioStatus();}
-$('#stBack').onclick=()=>show('menu');
-function buildStudio(){
-  const vp=$('#stVP');
-  const scene=new THREE.Scene();scene.background=new THREE.Color(0x0a0e1a);
-  const cam=new THREE.PerspectiveCamera(50,1,0.1,200);cam.position.set(5,3,7);
-  const rend=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
-  rend.setPixelRatio(Math.min(devicePixelRatio,2));rend.toneMapping=THREE.ACESFilmicToneMapping;
-  vp.appendChild(rend.domElement);
-  const controls=new OrbitControls(cam,rend.domElement);controls.enableDamping=true;controls.dampingFactor=0.08;controls.minDistance=4;controls.maxDistance=20;controls.target.set(0,0.6,0);
-  scene.add(new THREE.HemisphereLight(0x334466,0x000000,0.8));
-  const k=new THREE.DirectionalLight(0xffffff,1.3);k.position.set(5,8,6);scene.add(k);
-  const p1=new THREE.PointLight(0x22e6ff,1.5,30);p1.position.set(-6,4,-4);scene.add(p1);
-  const p2=new THREE.PointLight(0x8a5cff,1.5,30);p2.position.set(6,3,-6);scene.add(p2);
-  scene.add(new THREE.GridHelper(40,40,0x1a3352,0x0d1830).translateY(0));
-  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.MeshStandardMaterial({color:0x0b1120,roughness:0.9})).rotateX(-Math.PI/2).translateY(-0.001));
-  // paintable car
-  const g=new THREE.Group();
-  const bodyMat=new THREE.MeshStandardMaterial({color:0xffffff,metalness:0.6,roughness:0.35});
-  const body=new THREE.Mesh(new THREE.BoxGeometry(2,0.55,4.2),bodyMat);body.position.y=0.45;g.add(body);
-  const cab=new THREE.Mesh(new THREE.BoxGeometry(1.6,0.5,2),new THREE.MeshStandardMaterial({color:0x081018,metalness:0.6,roughness:0.1,transparent:true,opacity:0.85}));cab.position.set(0,0.9,-0.15);g.add(cab);
-  const wg=new THREE.CylinderGeometry(0.42,0.42,0.32,20);const wm=new THREE.MeshStandardMaterial({color:0x111111,roughness:0.9});
-  [[-1.05,0.42,1.35],[1.05,0.42,1.35],[-1.05,0.42,-1.35],[1.05,0.42,-1.35]].forEach(([x,y,z])=>{const w=new THREE.Mesh(wg,wm);w.rotation.z=Math.PI/2;w.position.set(x,y,z);g.add(w);});
-  scene.add(g);
-  // canvas texture
-  const base=document.createElement('canvas');base.width=base.height=1024;
-  const ctx=base.getContext('2d');ctx.fillStyle='#22e6ff';ctx.fillRect(0,0,1024,1024);
-  ctx.fillStyle='#0a0e1a';ctx.fillRect(0,460,1024,100);
-  const tex=new THREE.CanvasTexture(base);tex.anisotropy=4;tex.colorSpace=THREE.SRGBColorSpace;
-  bodyMat.map=tex;bodyMat.needsUpdate=true;
-  ST.scene=scene;ST.cam=cam;ST.rend=rend;ST.controls=controls;ST.body=body;ST.base=base;ST.ctx=ctx;ST.tex=tex;
-  ST.tool='brush';
-  // events
-  const ray=new THREE.Raycaster();const ptr=new THREE.Vector2();
-  let painting=false;
-  function getUV(ev){const r=rend.domElement.getBoundingClientRect();ptr.x=((ev.clientX-r.left)/r.width)*2-1;ptr.y=-((ev.clientY-r.top)/r.height)*2+1;ray.setFromCamera(ptr,cam);const h=ray.intersectObject(body,false);if(!h.length||!h[0].uv)return null;return h[0].uv;}
-  function paint(uv,erase){
-    if(!uv)return;
-    const S=1024,sz=+$('#stSize').value,op=+$('#stOp').value/100,hd=+$('#stHard').value/100;
-    const x=uv.x*S,y=(1-uv.y)*S,r=sz/2;
-    const gg=ctx.createRadialGradient(x,y,0,x,y,r);
-    ctx.globalCompositeOperation=erase?'destination-out':'source-over';
-    if(erase){gg.addColorStop(0,'rgba(0,0,0,1)');gg.addColorStop(hd,`rgba(0,0,0,${op})`);gg.addColorStop(1,'rgba(0,0,0,0)');}
-    else{const c=new THREE.Color($('#stColor').value);const rgb=`${Math.round(c.r*255)},${Math.round(c.g*255)},${Math.round(c.b*255)}`;gg.addColorStop(0,`rgba(${rgb},${op})`);gg.addColorStop(hd,`rgba(${rgb},${op})`);gg.addColorStop(1,`rgba(${rgb},0)`);}
-    ctx.fillStyle=gg;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.globalCompositeOperation='source-over';
-    if($('#stSymX').checked&&!erase){const mx=(1-uv.x)*S;const g2=ctx.createRadialGradient(mx,y,0,mx,y,r);const c=new THREE.Color($('#stColor').value);const rgb=`${Math.round(c.r*255)},${Math.round(c.g*255)},${Math.round(c.b*255)}`;g2.addColorStop(0,`rgba(${rgb},${op})`);g2.addColorStop(hd,`rgba(${rgb},${op})`);g2.addColorStop(1,`rgba(${rgb},0)`);ctx.fillStyle=g2;ctx.beginPath();ctx.arc(mx,y,r,0,Math.PI*2);ctx.fill();}
-    tex.needsUpdate=true;
+    const oldName = state.profile?.username;
+    if(oldName && oldName !== name){
+      try{ await remove(ref(db, `usernames/${oldName}`)); }catch{}
+    }
+    await update(ref(db), {
+      [`profiles/${uid}/username`]: name,
+      [`profiles/${uid}/displayName`]: state.profile?.displayName || name
+    });
+    state.profile = { ...(state.profile||{}), username: name, displayName: state.profile?.displayName || name };
   }
-  rend.domElement.addEventListener('pointerdown',ev=>{
-    if(ST.tool==='camera')return;
-    const uv=getUV(ev);if(!uv)return;
-    if(ST.tool==='picker'){const S=1024;const d=ctx.getImageData(Math.min(S-1,uv.x*S),Math.min(S-1,(1-uv.y)*S),1,1).data;$('#stColor').value='#'+[d[0],d[1],d[2]].map(v=>v.toString(16).padStart(2,'0')).join('');return;}
-    if(ST.tool==='fill'){ctx.fillStyle=$('#stColor').value;ctx.globalAlpha=+$('#stOp').value/100;ctx.fillRect(0,0,1024,1024);ctx.globalAlpha=1;tex.needsUpdate=true;snap();return;}
-    painting=true;paint(uv,ST.tool==='eraser');
+
+  /* -------------------- Nav -------------------- */
+  function topNav(){
+    const authed = !!state.user;
+    return `
+    <header class="nav">
+      <div class="nav-inner">
+        <a class="brand" href="#/">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>LINKORA</span>
+        </a>
+        <nav class="nav-links" aria-label="Navigasi utama">
+          <a href="#/">Beranda</a>
+          <a href="#/#features">Fitur</a>
+          <a href="#/#templates">Template</a>
+        </nav>
+        <div class="row">
+          ${authed
+            ? `<a class="btn btn-ghost btn-sm" href="#/dashboard">Dashboard</a>
+               <button class="btn btn-primary btn-sm" data-act="logout">Logout</button>`
+            : `<a class="btn btn-ghost btn-sm" href="#/login">Masuk</a>
+               <a class="btn btn-primary btn-sm" href="#/register">Mulai gratis</a>`}
+        </div>
+      </div>
+    </header>`;
+  }
+  function bindTopNav(root=document){
+    root.querySelector('[data-act="logout"]')?.addEventListener("click", async () => {
+      await signOut(auth); toast("Kamu telah keluar."); go("/");
+    });
+  }
+
+  /* -------------------- Landing -------------------- */
+  function renderLanding(){
+    mount(`
+      ${topNav()}
+      <section class="hero">
+        <div class="hero-inner">
+          <span class="badge badge-info" style="margin-bottom:18px">Platform link-in-bio generasi baru</span>
+          <h1>Satu halaman,<br><span class="grad-text">semua tautanmu.</span></h1>
+          <p class="lede">Bangun halaman profil profesional dalam hitungan menit. Kelola tautan, pantau statistik, dan tampil beda dengan kustomisasi penuh.</p>
+          <div class="row" style="justify-content:center">
+            <a class="btn btn-primary" href="#/register">Buat halaman gratis</a>
+            <a class="btn btn-ghost" href="#/u/demo">Lihat contoh halaman</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section container" id="features">
+        <h2>Fitur yang benar-benar bekerja</h2>
+        <p class="sub">Bukan sekadar janji — semuanya tersambung ke backend Firebase nyata.</p>
+        <div class="grid cols-3">
+          ${[
+            ["Satu halaman, banyak tautan","Semua tautan pentingmu dalam satu URL yang mudah dibagikan."],
+            ["Kustomisasi desain","Warna, font, radius, jarak, sampai gradien. Semua bisa diatur."],
+            ["Analitik nyata","Kunjungan dan klik tautan dicatat berdasarkan event yang benar-benar terjadi."],
+            ["QR Code","Buat QR khusus halamanmu, atur warna, unduh PNG."],
+            ["Username unik","Klaim username pilihanmu dengan transaksi atomik — bebas bentrok."],
+            ["Responsif & aksesibel","Nyaman dari HP sampai desktop, dengan struktur HTML semantik."]
+          ].map(([t,d])=>`<div class="feature"><h3>${t}</h3><p>${d}</p></div>`).join("")}
+        </div>
+      </section>
+
+      <section class="section container" id="templates">
+        <h2>Mulai dari template, sesuaikan sesukamu</h2>
+        <p class="sub">Semua template hanya mengubah tampilan visual — kontenmu tetap aman.</p>
+        <div class="grid cols-3">
+          ${["Minimal","Creator","Bisnis","Portfolio","Gaming","Editorial"].map(n=>`
+            <div class="card">
+              <div style="height:140px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand-2));margin-bottom:14px"></div>
+              <div class="spread"><strong>${n}</strong><span class="badge badge-muted">Tema</span></div>
+            </div>`).join("")}
+        </div>
+      </section>
+
+      <section class="section container" style="text-align:center">
+        <h2>Siap tampil beda?</h2>
+        <p class="sub">Gratis untuk memulai. Tanpa kartu kredit.</p>
+        <a class="btn btn-primary" href="#/register">Buat halamanmu sekarang</a>
+      </section>
+
+      <footer class="footer">
+        <div class="container footer-grid">
+          <div>
+            <div class="brand" style="margin-bottom:10px"><span class="brand-mark"></span><span>LINKORA</span></div>
+            <p style="margin:0;max-width:340px">Platform link-in-bio modern untuk kreator, bisnis, dan profesional.</p>
+          </div>
+          <div><h5>Produk</h5><a href="#/">Beranda</a><a href="#/#features">Fitur</a><a href="#/#templates">Template</a></div>
+          <div><h5>Bantuan</h5><a href="#/">Pusat Bantuan</a><a href="#/">Kontak</a><a href="#/">Dokumentasi</a></div>
+          <div><h5>Legal</h5><a href="#/">Kebijakan Privasi</a><a href="#/">Syarat Penggunaan</a></div>
+        </div>
+        <div class="container" style="margin-top:26px;padding-top:16px;border-top:1px solid var(--border);font-size:12.5px">
+          © ${new Date().getFullYear()} LINKORA. Dibangun di atas Firebase.
+        </div>
+      </footer>
+    `);
+    bindTopNav();
+  }
+
+  /* -------------------- Auth -------------------- */
+  function renderAuth(kind){
+    const titles = {
+      login:["Masuk ke akunmu","Kelola halamanmu"],
+      register:["Buat akun LINKORA","Gratis, tanpa kartu kredit"],
+      forgot:["Lupa password","Kami akan mengirim tautan reset"]
+    };
+    const [t, s] = titles[kind];
+    mount(`
+      <div class="auth-wrap">
+        <div class="auth-card">
+          <a class="brand" href="#/" style="margin-bottom:22px">
+            <span class="brand-mark"></span><span>LINKORA</span>
+          </a>
+          <h2 style="font-family:var(--font-display);margin:0 0 4px">${t}</h2>
+          <p style="color:var(--muted);margin:0 0 22px;font-size:14px">${s}</p>
+
+          ${kind === "forgot" ? `
+            <form id="f">
+              <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" required autocomplete="email" /></div>
+              <div id="err" class="error" hidden></div>
+              <button class="btn btn-primary" style="width:100%;justify-content:center" type="submit">Kirim tautan reset</button>
+            </form>` : `
+            <form id="f">
+              <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" required autocomplete="email" /></div>
+              <div class="field"><label for="pw">Password</label><input class="input" id="pw" type="password" required minlength="6" autocomplete="${kind==="register"?"new-password":"current-password"}" /></div>
+              <div id="err" class="error" hidden></div>
+              <button class="btn btn-primary" style="width:100%;justify-content:center" type="submit">${kind==="register"?"Buat akun":"Masuk"}</button>
+            </form>
+          `}
+
+          <div style="margin-top:20px;font-size:13.5px;color:var(--muted);text-align:center">
+            ${kind==="login" ? `Belum punya akun? <a href="#/register" style="color:var(--brand)">Daftar</a><br><a href="#/forgot" style="color:var(--muted)">Lupa password?</a>` : ""}
+            ${kind==="register" ? `Sudah punya akun? <a href="#/login" style="color:var(--brand)">Masuk</a>` : ""}
+            ${kind==="forgot" ? `<a href="#/login" style="color:var(--brand)">Kembali ke login</a>` : ""}
+          </div>
+        </div>
+      </div>
+    `);
+
+    const form = $("#f");
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const errEl = $("#err"); errEl.hidden = true;
+      const email = $("#email").value.trim();
+      const pw = $("#pw")?.value || "";
+      try{
+        if(kind === "forgot"){
+          await sendPasswordResetEmail(auth, email);
+          toast("Tautan reset telah dikirim. Cek kotak masuk emailmu.","success");
+          go("/login");
+        } else if(kind === "register"){
+          if(pw.length < 6) throw new Error("Password minimal 6 karakter.");
+          const cred = await createUserWithEmailAndPassword(auth, email, pw);
+          await set(ref(db, `users/${cred.user.uid}`), {
+            uid: cred.user.uid, email, role: "user", createdAt: Date.now()
+          });
+          try{ await sendEmailVerification(cred.user); }catch{}
+          toast("Akun berhasil dibuat. Cek email untuk verifikasi.","success",6000);
+          go("/dashboard");
+        } else {
+          await signInWithEmailAndPassword(auth, email, pw);
+          toast("Berhasil masuk.","success");
+          go("/dashboard");
+        }
+      }catch(err){
+        errEl.textContent = friendlyAuthError(err);
+        errEl.hidden = false;
+      }
+    });
+  }
+  function friendlyAuthError(err){
+    const m = (err?.code || err?.message || "").toString();
+    const map = {
+      "auth/email-already-in-use": "Email sudah terdaftar.",
+      "auth/invalid-email": "Format email tidak valid.",
+      "auth/weak-password": "Password terlalu lemah (min 6 karakter).",
+      "auth/user-not-found": "Akun tidak ditemukan.",
+      "auth/wrong-password": "Password salah.",
+      "auth/invalid-credential": "Email atau password salah.",
+      "auth/too-many-requests": "Terlalu banyak percobaan. Coba lagi nanti."
+    };
+    for(const k in map) if(m.includes(k)) return map[k];
+    return err?.message || "Terjadi kesalahan. Coba lagi.";
+  }
+
+  /* -------------------- Claim Username -------------------- */
+  function renderClaimUsername(){
+    mount(`
+      ${topNav()}
+      <main class="container" style="max-width:560px;padding:60px 20px">
+        <div class="card">
+          <span class="badge badge-warn">Langkah 1 dari 2</span>
+          <h2 style="font-family:var(--font-display);margin:14px 0 6px">Pilih username unikmu</h2>
+          <p style="color:var(--muted);font-size:14px;margin:0 0 22px">
+            Ini akan menjadi alamat halaman publikmu: <code>…/#/u/<b id="prev">username</b></code>
+          </p>
+          <form id="f">
+            <div class="field">
+              <label for="u">Username</label>
+              <input class="input" id="u" placeholder="mis. radit" required minlength="3" maxlength="20" pattern="[a-z0-9_]+" />
+              <div class="hint">3–20 karakter. Huruf kecil, angka, dan garis bawah saja.</div>
+            </div>
+            <div id="err" class="error" hidden></div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center" type="submit">Klaim username</button>
+          </form>
+        </div>
+      </main>
+    `);
+    bindTopNav();
+    const u = $("#u");
+    u.addEventListener("input", () => { $("#prev").textContent = u.value.trim().toLowerCase() || "username"; });
+    $("#f").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const errEl = $("#err"); errEl.hidden = true;
+      try{
+        await claimUsername(u.value);
+        toast("Username berhasil diklaim!","success");
+        go("/dashboard");
+      }catch(err){ errEl.textContent = err.message; errEl.hidden = false; }
+    });
+  }
+
+  /* -------------------- Dashboard shell -------------------- */
+  function dashShell(activeKey, title, subtitle, bodyHtml){
+    const items = [
+      ["/dashboard","Overview","M3 12l9-9 9 9v9a2 2 0 0 1-2 2h-4v-6h-6v6H5a2 2 0 0 1-2-2z"],
+      ["/dashboard/links","Links","M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"],
+      ["/dashboard/appearance","Appearance","M12 3a9 9 0 1 0 0 18 3 3 0 0 0 0-6 3 3 0 0 1 0-6 3 3 0 0 0 3-3 9 9 0 0 0-3-3z"],
+      ["/dashboard/analytics","Analytics","M4 20V10M10 20V4M16 20v-6M22 20H2"],
+      ["/dashboard/qr","QR Code","M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3z"],
+      ["/dashboard/settings","Settings","M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"]
+    ];
+    const isAdmin = state.userData?.role === "admin" || state.userData?.role === "superadmin";
+    return `
+      <div class="app-shell">
+        <aside class="sidebar" id="sidebar">
+          <a class="brand" href="#/" style="margin:0 12px 22px"><span class="brand-mark"></span><span>LINKORA</span></a>
+          <h4>Dashboard</h4>
+          ${items.map(([href,label,path])=>`
+            <a class="side-item ${href===activeKey?"active":""}" href="#${href}">
+              <svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${path}"/></svg>
+              ${label}
+            </a>`).join("")}
+          <h4>Publik</h4>
+          <a class="side-item" href="#/u/${esc(state.profile?.username||"")}" target="_blank">
+            <svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg>
+            Lihat halaman
+          </a>
+          ${isAdmin ? `<a class="side-item" href="#/admin"><svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 6v6c0 5 3.8 9.4 9 10 5.2-.6 9-5 9-10V6z"/></svg>Admin</a>` : ""}
+          <h4>Akun</h4>
+          <button class="side-item" data-act="logout" style="width:100%;text-align:left">
+            <svg class="side-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+            Logout
+          </button>
+        </aside>
+        <div class="scrim" id="scrim"></div>
+
+        <div>
+          <div class="mobile-bar">
+            <button class="btn btn-ghost btn-sm" id="menu-btn" aria-label="Buka menu">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+            </button>
+            <div class="brand"><span class="brand-mark"></span><span>LINKORA</span></div>
+          </div>
+          <main class="main">
+            <h1 class="page-title">${esc(title)}</h1>
+            <p class="page-sub">${esc(subtitle)}</p>
+            ${bodyHtml}
+          </main>
+        </div>
+      </div>
+    `;
+  }
+  function bindShell(){
+    const sb = $("#sidebar"), sc = $("#scrim"), btn = $("#menu-btn");
+    btn?.addEventListener("click", () => { sb.classList.add("open"); sc.classList.add("show"); });
+    sc?.addEventListener("click", () => { sb.classList.remove("open"); sc.classList.remove("show"); });
+    document.querySelectorAll('[data-act="logout"]').forEach(b => b.addEventListener("click", async () => {
+      await signOut(auth); toast("Kamu telah keluar."); go("/");
+    }));
+  }
+
+  /* -------------------- Overview -------------------- */
+  async function renderDashOverview(){
+    mount(dashShell("/dashboard", `Halo, ${state.profile?.displayName||state.profile?.username}`, "Ringkasan performa halamanmu.", `
+      <div class="grid cols-4" id="kpi-row">
+        ${["Total Kunjungan","Kunjungan Hari Ini","Total Klik","Link Aktif"].map(()=>`<div class="kpi"><div class="k sk" style="width:80px"></div><div class="v sk" style="width:60px;height:26px;margin-top:8px"></div></div>`).join("")}
+      </div>
+      <div class="card" style="margin-top:22px">
+        <div class="spread">
+          <div>
+            <h3 style="margin:0 0 4px">Status halaman</h3>
+            <p class="page-sub" style="margin:0">Halamanmu ${state.page?.published ? "sudah" : "belum"} dipublikasikan.</p>
+          </div>
+          <div class="row">
+            <span class="badge ${state.page?.published?"badge-success":"badge-warn"}">${state.page?.published?"Published":"Draft"}</span>
+            <button class="btn ${state.page?.published?"btn-ghost":"btn-primary"}" data-act="toggle-pub">${state.page?.published?"Jadikan draft":"Publikasikan"}</button>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:22px">
+        <h3 style="margin:0 0 12px">Aktivitas terbaru</h3>
+        <div id="activity"><div class="sk" style="height:40px;margin-bottom:8px"></div><div class="sk" style="height:40px"></div></div>
+      </div>
+    `));
+    bindShell();
+
+    const uid = state.user.uid;
+    const today = todayKey();
+    try{
+      const [totalsSnap, todaySnap] = await Promise.all([
+        get(ref(db, `analyticsAggregates/${uid}/totals`)),
+        get(ref(db, `analyticsAggregates/${uid}/daily/${today}`))
+      ]);
+      const t = totalsSnap.val() || {};
+      const d = todaySnap.val() || {};
+      const activeLinks = Object.values(state.page?.links || {}).filter(l => l.active !== false).length;
+      const kpis = [
+        ["Total Kunjungan", t.views || 0],
+        ["Kunjungan Hari Ini", d.views || 0],
+        ["Total Klik", t.clicks || 0],
+        ["Link Aktif", activeLinks]
+      ];
+      $("#kpi-row").innerHTML = kpis.map(([k,v])=>`<div class="kpi"><div class="k">${k}</div><div class="v">${v.toLocaleString("id-ID")}</div></div>`).join("");
+      $("#activity").innerHTML = (t.views || 0) === 0
+        ? `<div class="empty">Belum ada kunjungan tercatat. Setelah halaman dipublikasikan dan dibagikan, aktivitas akan muncul di sini.</div>`
+        : `<p style="color:var(--muted);margin:0">Klik <a href="#/dashboard/analytics" style="color:var(--brand)">Analytics</a> untuk melihat detail.</p>`;
+    }catch(e){
+      $("#kpi-row").innerHTML = `<div class="card" style="grid-column:1/-1">Gagal memuat data statistik: ${esc(e.message)}</div>`;
+      $("#activity").innerHTML = "";
+    }
+
+    document.querySelector('[data-act="toggle-pub"]')?.addEventListener("click", async () => {
+      const newVal = !state.page?.published;
+      try{
+        await update(ref(db, `pages/${uid}`), { published: newVal, updatedAt: Date.now() });
+        state.page.published = newVal;
+        toast(newVal ? "Halaman dipublikasikan." : "Halaman dijadikan draft.", "success");
+        renderDashOverview();
+      }catch(e){ toast("Gagal menyimpan: " + e.message, "error"); }
+    });
+  }
+
+  /* -------------------- Links -------------------- */
+  async function renderDashLinks(){
+    mount(dashShell("/dashboard/links", "Kelola Tautan", "Tambah, ubah urutan, aktifkan, atau hapus tautan.", `
+      <div class="spread" style="margin-bottom:16px">
+        <div class="row">
+          <button class="btn btn-primary" data-act="add">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            Tambah Tautan
+          </button>
+        </div>
+        <input class="input" id="search" placeholder="Cari tautan…" style="max-width:240px" />
+      </div>
+      <div id="list"></div>
+    `));
+    bindShell();
+    const uid = state.user.uid;
+    const render = (filter="") => {
+      const links = Object.entries(state.page?.links || {})
+        .map(([id,l]) => ({ id, ...l }))
+        .filter(l => !filter || (l.title||"").toLowerCase().includes(filter.toLowerCase()))
+        .sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
+      const list = $("#list");
+      if(!links.length){
+        list.innerHTML = `<div class="empty">Belum ada tautan. Klik <b>Tambah Tautan</b> untuk memulai.</div>`;
+        return;
+      }
+      list.innerHTML = links.map(l => `
+        <div class="link-row" draggable="true" data-id="${l.id}">
+          <div class="drag-handle" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:600">${esc(l.title||"(tanpa judul)")}</div>
+            <div style="color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:340px">${esc(l.url||"")}</div>
+          </div>
+          <div class="row">
+            <div class="toggle ${l.active!==false?"on":""}" role="switch" aria-checked="${l.active!==false}" tabindex="0" data-act="toggle" data-id="${l.id}"></div>
+            <button class="btn btn-ghost btn-sm" data-act="edit" data-id="${l.id}">Edit</button>
+            <button class="btn btn-danger btn-sm" data-act="del" data-id="${l.id}">Hapus</button>
+          </div>
+        </div>`).join("");
+
+      list.querySelectorAll('[data-act="edit"]').forEach(b => b.onclick = () => openLinkEditor(b.dataset.id));
+      list.querySelectorAll('[data-act="del"]').forEach(b => b.onclick = () => {
+        modal({ title:"Hapus tautan?", body:"Tindakan ini tidak dapat dibatalkan.", danger:true, confirmText:"Hapus", onConfirm: async () => {
+          try{ await remove(ref(db, `pages/${uid}/links/${b.dataset.id}`)); delete state.page.links[b.dataset.id]; toast("Tautan dihapus.","success"); render($("#search").value); }
+          catch(e){ toast("Gagal menghapus: " + e.message, "error"); }
+        }});
+      });
+      list.querySelectorAll('[data-act="toggle"]').forEach(t => {
+        const fn = async () => {
+          const id = t.dataset.id;
+          const cur = state.page.links[id].active !== false;
+          try{
+            await update(ref(db, `pages/${uid}/links/${id}`), { active: !cur, updatedAt: Date.now() });
+            state.page.links[id].active = !cur;
+            t.classList.toggle("on"); t.setAttribute("aria-checked", String(!cur));
+          }catch(e){ toast("Gagal: " + e.message, "error"); }
+        };
+        t.onclick = fn;
+        t.onkeydown = e => { if(e.key===" "||e.key==="Enter"){ e.preventDefault(); fn(); } };
+      });
+
+      let dragId = null;
+      list.querySelectorAll(".link-row").forEach(row => {
+        row.addEventListener("dragstart", e => { dragId = row.dataset.id; row.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; });
+        row.addEventListener("dragend", () => { row.classList.remove("dragging"); dragId = null; });
+        row.addEventListener("dragover", e => e.preventDefault());
+        row.addEventListener("drop", async e => {
+          e.preventDefault();
+          const targetId = row.dataset.id;
+          if(!dragId || dragId === targetId) return;
+          const entries = Object.entries(state.page.links).sort((a,b)=>(a[1].order??0)-(b[1].order??0));
+          const ids = entries.map(([id])=>id);
+          const fromIdx = ids.indexOf(dragId), toIdx = ids.indexOf(targetId);
+          ids.splice(toIdx, 0, ids.splice(fromIdx,1)[0]);
+          const updates = {}; ids.forEach((id,i)=>{ updates[`pages/${uid}/links/${id}/order`] = i; });
+          try{
+            await update(ref(db), updates);
+            ids.forEach((id,i)=>{ state.page.links[id].order = i; });
+            render($("#search").value);
+          }catch(err){ toast("Gagal menyimpan urutan: " + err.message, "error"); }
+        });
+      });
+    };
+    render();
+
+    $("#search").addEventListener("input", debounce(e => render(e.target.value), 150));
+    $('[data-act="add"]').onclick = () => openLinkEditor();
+  }
+
+  function openLinkEditor(id){
+    const uid = state.user.uid;
+    const existing = id ? state.page.links[id] : null;
+    const bg = el(`<div class="modal-bg" role="dialog" aria-modal="true"><div class="modal" style="max-width:520px">
+      <h3 style="margin:0 0 16px">${id?"Edit":"Tambah"} Tautan</h3>
+      <form id="lf">
+        <div class="field"><label for="lt">Judul</label><input class="input" id="lt" maxlength="120" required value="${esc(existing?.title||"")}" /></div>
+        <div class="field"><label for="lu">URL Tujuan</label><input class="input" id="lu" type="url" required placeholder="https://" value="${esc(existing?.url||"")}" /></div>
+        <div class="field"><label for="ld">Deskripsi (opsional)</label><input class="input" id="ld" maxlength="240" value="${esc(existing?.description||"")}" /></div>
+        <div id="err" class="error" hidden></div>
+        <div class="row" style="justify-content:flex-end;margin-top:18px">
+          <button class="btn btn-ghost" type="button" data-act="cancel">Batal</button>
+          <button class="btn btn-primary" type="submit">${id?"Simpan":"Tambah"}</button>
+        </div>
+      </form>
+    </div></div>`);
+    $("#modal-root").appendChild(bg);
+    const close = () => bg.remove();
+    bg.querySelector('[data-act="cancel"]').onclick = close;
+    bg.querySelector("#lf").addEventListener("submit", async e => {
+      e.preventDefault();
+      const err = bg.querySelector("#err"); err.hidden = true;
+      const url = bg.querySelector("#lu").value.trim();
+      if(!validUrl(url)){ err.textContent = "URL tidak valid. Hanya http://, https://, mailto:, dan tel: yang diizinkan."; err.hidden = false; return; }
+      const payload = {
+        title: bg.querySelector("#lt").value.trim(),
+        url,
+        description: bg.querySelector("#ld").value.trim(),
+        active: existing?.active !== false,
+        updatedAt: Date.now()
+      };
+      try{
+        if(id){
+          await update(ref(db, `pages/${uid}/links/${id}`), payload);
+          Object.assign(state.page.links[id], payload);
+        }else{
+          const order = Object.keys(state.page.links||{}).length;
+          payload.order = order; payload.createdAt = Date.now();
+          const r = push(ref(db, `pages/${uid}/links`));
+          await set(r, payload);
+          state.page.links = state.page.links || {};
+          state.page.links[r.key] = payload;
+        }
+        toast("Tautan disimpan.","success");
+        close();
+        renderDashLinks();
+      }catch(e){ err.textContent = e.message; err.hidden = false; }
+    });
+  }
+
+  /* -------------------- Appearance -------------------- */
+  async function renderDashAppearance(){
+    const uid = state.user.uid;
+    const theme = { ...defaultTheme(), ...(state.page?.theme || {}) };
+    mount(dashShell("/dashboard/appearance", "Tampilan", "Sesuaikan desain halaman publikmu. Pratinjau langsung.", `
+      <div class="grid" style="grid-template-columns:1fr;gap:24px" id="ap-grid">
+        <div class="card" id="editor-col">
+          <h3 style="margin:0 0 16px">Pengaturan tampilan</h3>
+          <div class="field"><label for="t-bg">Latar (CSS background)</label><input class="input" id="t-bg" value="${esc(theme.bg)}" /></div>
+          <div class="grid cols-2" style="gap:12px">
+            <div class="field"><label for="t-text">Warna teks</label><input class="input" type="text" id="t-text" value="${esc(theme.text)}" /></div>
+            <div class="field"><label for="t-font">Font</label>
+              <select class="select" id="t-font">
+                ${["Inter","Space Grotesk","Georgia","Courier New","system-ui"].map(f=>`<option ${theme.font===f?"selected":""}>${f}</option>`).join("")}
+              </select>
+            </div>
+          </div>
+          <div class="grid cols-2" style="gap:12px">
+            <div class="field"><label for="t-btnbg">Tombol — background</label><input class="input" id="t-btnbg" value="${esc(theme.btnBg)}" /></div>
+            <div class="field"><label for="t-btntext">Tombol — teks</label><input class="input" id="t-btntext" value="${esc(theme.btnText)}" /></div>
+          </div>
+          <div class="grid cols-2" style="gap:12px">
+            <div class="field"><label for="t-btnborder">Tombol — border</label><input class="input" id="t-btnborder" value="${esc(theme.btnBorder)}" /></div>
+            <div class="field"><label for="t-btnradius">Radius tombol (px)</label><input class="input" type="number" min="0" max="40" id="t-btnradius" value="${theme.btnRadius}" /></div>
+          </div>
+          <div class="grid cols-2" style="gap:12px">
+            <div class="field"><label for="t-btnheight">Tinggi tombol (px)</label><input class="input" type="number" min="40" max="90" id="t-btnheight" value="${theme.btnHeight}" /></div>
+            <div class="field"><label for="t-gap">Jarak antar tautan (px)</label><input class="input" type="number" min="6" max="30" id="t-gap" value="${theme.gap}" /></div>
+          </div>
+          <div class="field"><label for="t-shadow">Bayangan tombol</label><input class="input" id="t-shadow" value="${esc(theme.shadow)}" /></div>
+          <div class="row" style="justify-content:flex-end;margin-top:8px">
+            <button class="btn btn-ghost" data-act="reset">Reset</button>
+            <button class="btn btn-primary" data-act="save">Simpan</button>
+          </div>
+        </div>
+
+        <div class="preview-shell">
+          <div class="preview-frame" id="preview"></div>
+        </div>
+      </div>
+    `));
+    bindShell();
+
+    const f = id => document.getElementById(id);
+    const read = () => ({
+      bg: f("t-bg").value, text: f("t-text").value, font: f("t-font").value,
+      btnBg: f("t-btnbg").value, btnText: f("t-btntext").value, btnBorder: f("t-btnborder").value,
+      btnRadius: +f("t-btnradius").value||0, btnHeight: +f("t-btnheight").value||52,
+      gap: +f("t-gap").value||12, shadow: f("t-shadow").value
+    });
+
+    const preview = () => {
+      const t = read();
+      const links = Object.values(state.page?.links||{}).filter(l => l.active !== false).sort((a,b)=>(a.order??0)-(b.order??0));
+      $("#preview").style.background = t.bg;
+      $("#preview").style.color = t.text;
+      $("#preview").style.fontFamily = t.font;
+      $("#preview").innerHTML = `
+        <div style="padding:34px 22px">
+          <div style="width:84px;height:84px;border-radius:50%;background:rgba(255,255,255,.15);margin:0 auto 14px;display:grid;place-items:center;font-size:28px;font-weight:700;color:${t.text}">${esc((state.profile?.displayName||state.profile?.username||"U")[0].toUpperCase())}</div>
+          <div style="text-align:center;font-weight:700;font-size:18px;margin-bottom:6px">${esc(state.profile?.displayName||state.profile?.username||"Username")}</div>
+          <div style="text-align:center;opacity:.75;font-size:12px;margin-bottom:10px">@${esc(state.profile?.username||"username")}</div>
+          <div style="text-align:center;opacity:.85;font-size:13px;margin-bottom:22px">${esc(state.profile?.bio||"Tulis sesuatu tentang dirimu.")}</div>
+          ${links.length ? links.map(l => `
+            <a href="${esc(l.url)}" target="_blank" rel="noopener" style="
+              display:flex;align-items:center;justify-content:center;
+              margin-bottom:${t.gap}px;
+              height:${t.btnHeight}px;
+              border-radius:${t.btnRadius}px;
+              background:${t.btnBg};
+              color:${t.btnText};
+              border:1px solid ${t.btnBorder};
+              box-shadow:${t.shadow};
+              font-weight:600;font-size:14px;
+              text-decoration:none;
+            ">${esc(l.title||l.url)}</a>`).join("")
+            : `<div style="text-align:center;opacity:.6;font-size:12px">Belum ada tautan aktif.</div>`}
+          <div style="text-align:center;margin-top:24px;font-size:11px;opacity:.5">Powered by LINKORA</div>
+        </div>`;
+    };
+    preview();
+
+    ["t-bg","t-text","t-font","t-btnbg","t-btntext","t-btnborder","t-btnradius","t-btnheight","t-gap","t-shadow"].forEach(id => {
+      f(id).addEventListener("input", preview);
+    });
+
+    $('[data-act="reset"]').onclick = () => {
+      const d = defaultTheme();
+      Object.entries({
+        "t-bg":d.bg,"t-text":d.text,"t-font":d.font,"t-btnbg":d.btnBg,"t-btntext":d.btnText,
+        "t-btnborder":d.btnBorder,"t-btnradius":d.btnRadius,"t-btnheight":d.btnHeight,"t-gap":d.gap,"t-shadow":d.shadow
+      }).forEach(([k,v]) => f(k).value = v);
+      preview();
+    };
+    $('[data-act="save"]').onclick = async () => {
+      try{
+        const th = read();
+        await update(ref(db, `pages/${uid}`), { theme: th, updatedAt: Date.now() });
+        state.page.theme = th;
+        toast("Tampilan disimpan.","success");
+      }catch(e){ toast("Gagal menyimpan: " + e.message, "error"); }
+    };
+  }
+
+  /* -------------------- Analytics -------------------- */
+  async function renderDashAnalytics(){
+    mount(dashShell("/dashboard/analytics", "Analytics", "Statistik dicatat dari event nyata — kunjungan halaman dan klik tautan.", `
+      <div class="card">
+        <h3 style="margin:0 0 14px">7 hari terakhir</h3>
+        <div id="chart" style="min-height:180px"></div>
+      </div>
+      <div class="card" style="margin-top:22px">
+        <h3 style="margin:0 0 14px">Tautan terpopuler (30 hari)</h3>
+        <div id="top-links"><div class="sk" style="height:36px;margin-bottom:8px"></div><div class="sk" style="height:36px"></div></div>
+      </div>
+      <p class="hint" style="margin-top:16px">
+        Catatan: Statistik ini menghitung <b>event yang tercatat</b> saat halaman dimuat / tautan diklik.
+        Metrik "unique visitor" tidak ditampilkan karena kami tidak menyimpan identitas pengunjung (tidak ada IP mentah disimpan).
+      </p>
+    `));
+    bindShell();
+    const uid = state.user.uid;
+    try{
+      const snap = await get(ref(db, `analyticsAggregates/${uid}/daily`));
+      const data = snap.val() || {};
+      const days = [];
+      for(let i=6;i>=0;i--){
+        const d = new Date(); d.setDate(d.getDate()-i);
+        const key = d.toISOString().slice(0,10);
+        days.push({
+          key,
+          label: d.toLocaleDateString("id-ID",{weekday:"short"}),
+          views: data[key]?.views||0,
+          clicks: Object.values(data[key]?.clicks||{}).reduce((a,b)=>a+b,0)
+        });
+      }
+      const max = Math.max(1, ...days.map(d=>d.views));
+      $("#chart").innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;align-items:end;height:170px">
+          ${days.map(d => `
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end">
+              <div title="${d.views} kunjungan" style="width:100%;height:${Math.round(d.views/max*120)}px;min-height:4px;background:linear-gradient(180deg,var(--brand),var(--brand-2));border-radius:8px 8px 0 0"></div>
+              <div style="font-size:11px;color:var(--muted)">${d.label}</div>
+              <div style="font-size:11px">${d.views}</div>
+            </div>`).join("")}
+        </div>`;
+
+      const linkClicks = {};
+      for(let i=0;i<30;i++){
+        const d = new Date(); d.setDate(d.getDate()-i);
+        const key = d.toISOString().slice(0,10);
+        const clicks = data[key]?.clicks || {};
+        for(const [lid,c] of Object.entries(clicks)) linkClicks[lid] = (linkClicks[lid]||0) + (c||0);
+      }
+      const links = state.page?.links || {};
+      const ranked = Object.entries(linkClicks)
+        .map(([lid,c]) => ({ id:lid, title: links[lid]?.title||"(dihapus)", clicks:c }))
+        .sort((a,b)=>b.clicks-a.clicks)
+        .slice(0,8);
+      $("#top-links").innerHTML = ranked.length
+        ? ranked.map(r=>`<div class="spread" style="padding:10px 0;border-bottom:1px solid var(--border)"><span>${esc(r.title)}</span><b>${r.clicks}</b></div>`).join("")
+        : `<div class="empty">Belum ada klik tercatat.</div>`;
+    }catch(e){
+      $("#chart").innerHTML = `<div class="empty">Gagal memuat data: ${esc(e.message)}</div>`;
+      $("#top-links").innerHTML = "";
+    }
+  }
+
+  /* -------------------- QR -------------------- */
+  function renderDashQR(){
+    const url = `${location.origin}${location.pathname}#/u/${state.profile?.username||""}`;
+    mount(dashShell("/dashboard/qr", "QR Code", "Buat QR untuk halaman publikmu.", `
+      <div class="grid cols-2" style="gap:24px">
+        <div class="card">
+          <div class="field"><label for="q-fg">Warna QR</label><input class="input" type="color" id="q-fg" value="#0b0c10" /></div>
+          <div class="field"><label for="q-bg">Warna latar</label><input class="input" type="color" id="q-bg" value="#ffffff" /></div>
+          <div class="field"><label for="q-size">Ukuran (px)</label><input class="input" type="number" min="128" max="1024" step="32" id="q-size" value="320" /></div>
+          <div class="field"><label>URL halaman</label><input class="input" readonly value="${esc(url)}" /></div>
+          <div class="row">
+            <button class="btn btn-primary" data-act="gen">Generate</button>
+            <button class="btn btn-ghost" data-act="dl">Unduh PNG</button>
+            <button class="btn btn-ghost" data-act="copy">Salin URL</button>
+          </div>
+        </div>
+        <div class="card" style="display:grid;place-items:center">
+          <canvas id="qr" width="320" height="320"></canvas>
+        </div>
+      </div>
+    `));
+    bindShell();
+    const canvas = $("#qr");
+    const gen = () => {
+      if(!window.QRCode) return toast("Pustaka QR belum siap, coba lagi.", "error");
+      window.QRCode.toCanvas(canvas, url, {
+        width: +$("#q-size").value || 320,
+        margin: 2,
+        color: { dark: $("#q-fg").value, light: $("#q-bg").value }
+      }, err => { if(err) toast("Gagal membuat QR: " + err.message, "error"); });
+    };
+    // tunggu pustaka QR siap
+    const waitQR = setInterval(() => {
+      if(window.QRCode){ clearInterval(waitQR); gen(); }
+    }, 100);
+    setTimeout(() => clearInterval(waitQR), 5000);
+
+    $('[data-act="gen"]').onclick = gen;
+    $('[data-act="dl"]').onclick = () => {
+      const a = document.createElement("a");
+      a.href = canvas.toDataURL("image/png");
+      a.download = `linkora-${state.profile?.username||"qr"}.png`;
+      a.click();
+    };
+    $('[data-act="copy"]').onclick = async () => {
+      try{ await navigator.clipboard.writeText(url); toast("URL disalin.","success"); }
+      catch{ toast("Gagal menyalin.","error"); }
+    };
+  }
+
+  /* -------------------- Settings -------------------- */
+  function renderDashSettings(){
+    const p = state.profile || {};
+    const u = state.user;
+    mount(dashShell("/dashboard/settings", "Pengaturan", "Kelola profil, akun, dan privasi.", `
+      <div class="tabs">
+        <a class="tab active" href="#/dashboard/settings">Profil</a>
+      </div>
+      <div class="card">
+        <h3 style="margin:0 0 16px">Profil</h3>
+        <form id="pf">
+          <div class="grid cols-2" style="gap:12px">
+            <div class="field"><label for="p-name">Nama tampilan</label><input class="input" id="p-name" maxlength="80" value="${esc(p.displayName||"")}" /></div>
+            <div class="field"><label for="p-user">Username</label><input class="input" id="p-user" value="${esc(p.username||"")}" disabled /><div class="hint">Username saat ini tidak dapat diubah dari sini.</div></div>
+          </div>
+          <div class="field"><label for="p-bio">Bio</label><textarea class="textarea" id="p-bio" maxlength="200">${esc(p.bio||"")}</textarea></div>
+          <div id="pf-err" class="error" hidden></div>
+          <button class="btn btn-primary" type="submit">Simpan perubahan</button>
+        </form>
+      </div>
+
+      <div class="card" style="margin-top:22px">
+        <h3 style="margin:0 0 6px">Email</h3>
+        <p class="page-sub" style="margin:0 0 14px">
+          ${esc(u.email||"")}
+          ${u.emailVerified ? `<span class="badge badge-success" style="margin-left:8px">Terverifikasi</span>` : `<span class="badge badge-warn" style="margin-left:8px">Belum diverifikasi</span>`}
+        </p>
+        ${!u.emailVerified ? `<button class="btn btn-ghost" id="resend">Kirim ulang email verifikasi</button>` : ""}
+      </div>
+
+      <div class="card" style="margin-top:22px;border-color:rgba(239,68,68,.35)">
+        <h3 style="margin:0 0 6px;color:#fca5a5">Zona berbahaya</h3>
+        <p class="page-sub" style="margin:0 0 14px">Menghapus akun akan menghapus profil, halaman, dan tautanmu secara permanen.</p>
+        <button class="btn btn-danger" id="del-acc">Hapus akun saya</button>
+      </div>
+    `));
+    bindShell();
+
+    $("#pf").addEventListener("submit", async e => {
+      e.preventDefault();
+      const err = $("#pf-err"); err.hidden = true;
+      const payload = {
+        displayName: $("#p-name").value.trim(),
+        bio: $("#p-bio").value.trim()
+      };
+      try{
+        await update(ref(db, `profiles/${state.user.uid}`), payload);
+        state.profile = { ...state.profile, ...payload };
+        toast("Profil disimpan.","success");
+      }catch(ex){ err.textContent = ex.message; err.hidden = false; }
+    });
+
+    $("#resend")?.addEventListener("click", async () => {
+      try{ await sendEmailVerification(state.user); toast("Email verifikasi dikirim ulang.","success"); }
+      catch(e){ toast("Gagal: " + e.message, "error"); }
+    });
+
+    $("#del-acc").addEventListener("click", () => {
+      modal({
+        title:"Hapus akun permanen?",
+        body:"Seluruh data termasuk profil, tautan, dan statistik akan dihapus. Tindakan ini tidak dapat dibatalkan.",
+        danger:true, confirmText:"Ya, hapus permanen",
+        onConfirm: async () => {
+          try{
+            const uid = state.user.uid;
+            await Promise.allSettled([
+              remove(ref(db, `users/${uid}`)),
+              remove(ref(db, `profiles/${uid}`)),
+              remove(ref(db, `pages/${uid}`)),
+              remove(ref(db, `analyticsAggregates/${uid}`)),
+              state.profile?.username ? remove(ref(db, `usernames/${state.profile.username}`)) : Promise.resolve()
+            ]);
+            await deleteUser(state.user);
+            toast("Akun dihapus.","success");
+            go("/");
+          }catch(e){
+            toast("Gagal menghapus akun: " + e.message + " (mungkin perlu login ulang).", "error", 6000);
+          }
+        }
+      });
+    });
+  }
+
+  /* -------------------- Admin -------------------- */
+  function renderAdmin(){
+    mount(dashShell("/admin", "Admin", "Statistik agregat platform. Akses dikontrol oleh role pengguna.", `
+      <div class="grid cols-4">
+        <div class="kpi"><div class="k">Akun</div><div class="v" id="a-users">—</div></div>
+        <div class="kpi"><div class="k">Halaman terbit</div><div class="v" id="a-pages">—</div></div>
+        <div class="kpi"><div class="k">Tautan</div><div class="v" id="a-links">—</div></div>
+        <div class="kpi"><div class="k">Total kunjungan</div><div class="v" id="a-views">—</div></div>
+      </div>
+      <div class="card" style="margin-top:22px">
+        <p class="hint" style="margin:0">
+          Aksi moderasi (menghapus konten, mensuspensi akun, mengubah role) tidak diaktifkan pada klien.
+          Operasi sensitif wajib melalui backend tepercaya (Cloud Functions) dengan Firebase Admin SDK.
+          Ini mencegah peningkatan hak akses dari sisi klien.
+        </p>
+      </div>
+    `));
+    bindShell();
+    (async () => {
+      try{
+        const snap = await get(ref(db, "platformStats"));
+        const s = snap.val() || {};
+        $("#a-users").textContent = (s.users||0).toLocaleString("id-ID");
+        $("#a-pages").textContent = (s.publishedPages||0).toLocaleString("id-ID");
+        $("#a-links").textContent = (s.links||0).toLocaleString("id-ID");
+        $("#a-views").textContent = (s.totalViews||0).toLocaleString("id-ID");
+      }catch{}
+    })();
+  }
+
+  /* -------------------- Public profile -------------------- */
+  async function renderPublicProfile(usernameRaw){
+    const username = String(usernameRaw||"").toLowerCase();
+    mount(`
+      <div class="pf-wrap" style="background:#0b0c10;color:#fff">
+        <div class="pf-card" style="text-align:center;padding:60px 20px">
+          <div class="sk" style="width:96px;height:96px;border-radius:50%;margin:0 auto 14px"></div>
+          <div class="sk" style="height:22px;width:180px;margin:0 auto 12px"></div>
+          <div class="sk" style="height:14px;width:240px;margin:0 auto"></div>
+        </div>
+      </div>`);
+
+    try{
+      const uSnap = await get(ref(db, `usernames/${username}`));
+      if(!uSnap.exists()) return renderProfileError("Profil tidak ditemukan", "Username ini belum terdaftar.");
+      const uid = uSnap.val().uid;
+
+      const [pSnap, pageSnap] = await Promise.all([
+        get(ref(db, `profiles/${uid}`)),
+        get(ref(db, `pages/${uid}`))
+      ]);
+      if(!pSnap.exists() || !pageSnap.exists()) return renderProfileError("Profil tidak ditemukan", "Data profil belum lengkap.");
+      const profile = pSnap.val();
+      const page = pageSnap.val();
+      if(!page.published) return renderProfileError("Belum dipublikasikan", "Pemilik halaman belum mempublikasikan profil ini.");
+
+      const t = { ...defaultTheme(), ...(page.theme||{}) };
+      const links = Object.entries(page.links||{})
+        .map(([id,l])=>({ id, ...l }))
+        .filter(l => l.active !== false)
+        .sort((a,b)=>(a.order??0)-(b.order??0));
+
+      const root = $("#app");
+      root.innerHTML = `
+        <div class="pf-wrap" style="background:${esc(t.bg)};color:${esc(t.text)};font-family:${esc(t.font)}">
+          <div class="pf-card">
+            <div style="width:96px;height:96px;border-radius:50%;background:rgba(255,255,255,.15);margin:0 auto 14px;display:grid;place-items:center;font-size:34px;font-weight:700;border:3px solid rgba(255,255,255,.15)">
+              ${esc((profile.displayName||username)[0].toUpperCase())}
+            </div>
+            <h1 class="pf-name">${esc(profile.displayName||username)}</h1>
+            <div style="text-align:center;opacity:.7;font-size:13px;margin-bottom:8px">@${esc(username)}</div>
+            ${profile.bio ? `<p class="pf-bio">${esc(profile.bio)}</p>` : ""}
+            <div class="pf-links" style="margin-top:24px">
+              ${links.length
+                ? links.map(l => `
+                  <a class="pf-link" href="${esc(l.url)}" data-lid="${esc(l.id)}" rel="noopener" target="_blank"
+                     style="background:${esc(t.btnBg)};color:${esc(t.btnText)};border:1px solid ${esc(t.btnBorder)};border-radius:${t.btnRadius}px;min-height:${t.btnHeight}px;box-shadow:${esc(t.shadow)};gap:${t.gap}px">
+                    ${esc(l.title||l.url)}
+                  </a>`).join("")
+                : `<div style="text-align:center;opacity:.6;font-size:14px">Belum ada tautan.</div>`}
+            </div>
+            <div class="pf-footer">Powered by <a href="#/" style="color:inherit;font-weight:600">LINKORA</a></div>
+          </div>
+        </div>`;
+
+      // Track view
+      try{
+        const day = todayKey();
+        await Promise.all([
+          runTransaction(ref(db, `analyticsAggregates/${uid}/daily/${day}/views`), v => (v||0) + 1),
+          runTransaction(ref(db, `analyticsAggregates/${uid}/totals/views`),   v => (v||0) + 1)
+        ]);
+      }catch{}
+
+      // Track clicks
+      root.querySelectorAll("[data-lid]").forEach(a => a.addEventListener("click", async () => {
+        const day = todayKey();
+        const lid = a.dataset.lid;
+        try{
+          await Promise.all([
+            runTransaction(ref(db, `analyticsAggregates/${uid}/daily/${day}/clicks/${lid}`), v => (v||0)+1),
+            runTransaction(ref(db, `analyticsAggregates/${uid}/totals/clicks`), v => (v||0)+1)
+          ]);
+        }catch{}
+      }));
+    }catch(e){
+      renderProfileError("Terjadi kesalahan", e.message);
+    }
+  }
+  function renderProfileError(title, msg){
+    mount(`
+      <div class="pf-wrap">
+        <div class="pf-card" style="text-align:center;padding-top:80px">
+          <h1 style="font-family:var(--font-display);font-size:26px">${esc(title)}</h1>
+          <p style="color:var(--muted);margin:12px 0 24px">${esc(msg)}</p>
+          <a class="btn btn-primary" href="#/">Kembali ke LINKORA</a>
+        </div>
+      </div>`);
+  }
+
+  /* -------------------- Error pages -------------------- */
+  function render404(){
+    mount(`${topNav()}
+      <div class="container" style="text-align:center;padding:100px 20px">
+        <div style="font-family:var(--font-display);font-size:80px;font-weight:700" class="grad-text">404</div>
+        <h1 style="font-family:var(--font-display);margin:0 0 10px">Halaman tidak ditemukan</h1>
+        <p style="color:var(--muted);margin:0 0 24px">Tautan yang kamu buka tidak ada atau sudah dipindahkan.</p>
+        <a class="btn btn-primary" href="#/">Kembali ke beranda</a>
+      </div>`);
+    bindTopNav();
+  }
+  function renderForbidden(){
+    mount(`${topNav()}
+      <div class="container" style="text-align:center;padding:100px 20px">
+        <div style="font-family:var(--font-display);font-size:80px;font-weight:700" class="grad-text">403</div>
+        <h1 style="font-family:var(--font-display);margin:0 0 10px">Akses ditolak</h1>
+        <p style="color:var(--muted);margin:0 0 24px">Kamu tidak memiliki izin untuk membuka halaman ini.</p>
+        <a class="btn btn-primary" href="#/dashboard">Kembali ke dashboard</a>
+      </div>`);
+    bindTopNav();
+  }
+
+  /* -------------------- Theme init -------------------- */
+  (function initTheme(){
+    const prefers = matchMedia("(prefers-color-scheme: light)").matches;
+    if(prefers) document.documentElement.classList.add("light");
+  })();
+
+  /* -------------------- Boot -------------------- */
+  window.addEventListener("hashchange", onRoute);
+  onAuthStateChanged(auth, async (user) => {
+    state.user = user;
+    if(user){ await loadUserData(user.uid); }
+    else { state.userData = null; state.profile = null; state.page = null; }
+    onRoute();
   });
-  rend.domElement.addEventListener('pointermove',ev=>{if(!painting)return;const uv=getUV(ev);if(uv)paint(uv,ST.tool==='eraser');});
-  addEventListener('pointerup',()=>{if(painting){painting=false;snap();}});
-  // ui
-  $$('.sTB').forEach(b=>b.onclick=()=>{$$('.sTB').forEach(x=>x.classList.remove('on'));b.classList.add('on');ST.tool=b.dataset.tool;controls.enabled=(ST.tool==='camera');});
-  $('#stSize').oninput=e=>$('#stSizeV').textContent=e.target.value;
-  $('#stOp').oninput=e=>$('#stOpV').textContent=(+e.target.value/100).toFixed(2);
-  $('#stHard').oninput=e=>$('#stHardV').textContent=(+e.target.value/100).toFixed(2);
-  $('#stUndo').onclick=()=>{if(ST.hi<=0)return;ST.hi--;ctx.putImageData(ST.hist[ST.hi].data,0,0);tex.needsUpdate=true;updateStudioStatus();};
-  $('#stRedo').onclick=()=>{if(ST.hi>=ST.hist.length-1)return;ST.hi++;ctx.putImageData(ST.hist[ST.hi].data,0,0);tex.needsUpdate=true;updateStudioStatus();};
-  $('#stSave').onclick=async()=>{
-    if(!me)return toast('Sign in required','er');
-    const pid='d_'+Date.now();
-    await set(ref(db,`users/${me.uid}/designs/${pid}`),{name:'Design',createdAt:serverTimestamp(),width:1024,height:1024});
-    toast('Design saved','ok');
-  };
-  $('#stExport').onclick=()=>{const a=document.createElement('a');a.href=base.toDataURL('image/png');a.download='cazoo_'+Date.now()+'.png';a.click();toast('Exported','ok');};
-  $('#stAddLayer').onclick=()=>{const n=prompt('Layer name:','Layer '+(ST.layers.length+1));if(!n)return;ST.layers.forEach(l=>l.active=false);ST.layers.push({id:Date.now(),name:n,active:true});updateStudioStatus();};
-  const pal=['#ffffff','#000000','#22e6ff','#8a5cff','#ff3ea5','#3ddc97','#ffb454','#ff4d6d'];
-  $('#stPalette').innerHTML=pal.map(c=>`<button style="width:24px;height:24px;border-radius:6px;border:1px solid var(--bd);background:${c}" data-c="${c}"></button>`).join('');
-  $$('#stPalette button').forEach(b=>b.onclick=()=>$('#stColor').value=b.dataset.c);
-  // snap initial
-  ST.hist=[{data:ctx.getImageData(0,0,1024,1024)}];ST.hi=0;
-  ST.init=true;
-  function snap(){const d=ctx.getImageData(0,0,1024,1024);ST.hist=ST.hist.slice(0,ST.hi+1);ST.hist.push({data:d});ST.hi=ST.hist.length-1;updateStudioStatus();}
-  ST.snap=snap;
-  // loop
-  function loop(){requestAnimationFrame(loop);if(cur!=='studio')return;controls.update();rend.render(scene,cam);}
-  loop();
-  // resize
-  new ResizeObserver(()=>{const w=vp.clientWidth,h=vp.clientHeight;if(!w||!h)return;cam.aspect=w/h;cam.updateProjectionMatrix();rend.setSize(w,h);}).observe(vp);
-}
-function updateStudioStatus(){
-  $('#stStatus').textContent=`${ST.hi===ST.hist.length-1?'Saved state':'Undo available'} · 1024×1024 · ${ST.layers.length} layer${ST.layers.length>1?'s':''}`;
-  $('#stLayers').innerHTML=ST.layers.map(l=>`<div class="lyr${l.active?' on':''}" data-id="${l.id}"><div class="t"></div><span>${esc(l.name)}</span><button data-del="${l.id}">×</button></div>`).join('');
-  $$('#stLayers [data-id]').forEach(el=>el.onclick=e=>{if(e.target.dataset.del)return;ST.layers.forEach(l=>l.active=false);ST.layers.find(l=>l.id==el.dataset.id).active=true;updateStudioStatus();});
-  $$('#stLayers [data-del]').forEach(b=>b.onclick=()=>{if(ST.layers.length<=1)return toast('At least one layer','er');ST.layers=ST.layers.filter(l=>l.id!=b.dataset.del);updateStudioStatus();});
-}
-
-console.log('%cCAZOO','font-weight:900;font-size:20px;color:#22e6ff;text-shadow:0 0 20px #22e6ff');
-console.log('Firebase:',cfg.projectId);
-</script>
+  </script>
 </body>
- </html>
+</html>
