@@ -4171,14 +4171,36 @@ async function boot(){
   if(offlineBtn)offlineBtn.addEventListener('click',()=>{Sound.button();App.offlineMode=true;App.user=null;App.profile=defaultProfile('guest','Tamu');splashStatus('Memuat mode offline...');setTimeout(()=>{hideSplash();enterApp();},380);});
   const unlockAudio=()=>{Sound.unlock();document.removeEventListener('pointerdown',unlockAudio);document.removeEventListener('keydown',unlockAudio);};
   document.addEventListener('pointerdown',unlockAudio);document.addEventListener('keydown',unlockAudio);
+
   splashStatus('Menghubungkan ke server...');
-  await initFirebase();
+
+  // === TIMEOUT GUARD: max 8 detik ===
+  let bootHandled=false;
+  const bootTimeout=setTimeout(()=>{
+    if(bootHandled) return;
+    bootHandled=true;
+    logErr('boot-timeout','Firebase tidak merespons dalam 8 detik');
+    hideSplash();
+    showAuthScreen();
+    toast('Koneksi lambat. Coba refresh halaman.','error');
+  },8000);
+
+  try{
+    await initFirebase();
+  }catch(e){
+    logErr('firebase-init-fail',e);
+  }
   try{await resolveGoogleRedirect();}catch(_){}
+
   const minSplash=delay(900);
   if(FB.ready&&FB.authApi){
     splashStatus('Memeriksa sesi...');
     let firstCallback=true;
     FB.authApi.onAuthStateChanged(FB.auth,async user=>{
+      if(bootHandled) return;
+      bootHandled=true;
+      clearTimeout(bootTimeout);
+      // ... sisa onAuthStateChanged (tidak berubah) ...
       if(user){
         App.user=user;App.offlineMode=false;
         const cached=loadProfileCache(user.uid);
@@ -4211,8 +4233,14 @@ async function boot(){
       }
     });
   }else{
-    await minSplash;hideSplash();showAuthScreen();toast(errMsg('OFFLINE')+' Mode offline tersedia.','error');
+    if(!bootHandled){
+      bootHandled=true;
+      clearTimeout(bootTimeout);
+      await minSplash;hideSplash();showAuthScreen();toast(errMsg('OFFLINE')+' Mode offline tersedia.','error');
+    }
   }
+  // ... sisa kode (setInterval, event listeners) tetap sama ...
+}
   setInterval(()=>{if(FB.ready&&App.user&&App.presenceRef){FB.api.update(App.presenceRef,{lastSeen:FB.api.serverTimestamp(),online:settings.onlineStatus}).catch(()=>{});}},60000);
   window.addEventListener('beforeunload',()=>{
     stopClock();stopAi();stopSeasonCountdown();stopPhotoBannerAutoSlide();clearAllListeners();
