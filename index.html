@@ -365,7 +365,7 @@ svg.ic-xl{width:40px;height:40px}
 .play-card:hover{transform:translateY(-5px);box-shadow:0 20px 46px rgba(20,30,60,.16),inset 0 1px 0 rgba(255,255,255,.7);border-color:var(--border-3)}
 .play-card:active{transform:translateY(-2px) scale(.99)}
 
-/* LEADERBOARD + PODIUM (FIX: smaller, no overlap) */
+/* LEADERBOARD + PODIUM */
 .search-bar{display:flex;gap:9px}
 .search-bar .input{flex:1;min-width:0}
 .lb-podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:8px;margin-bottom:56px;align-items:end;padding-top:22px}
@@ -416,7 +416,7 @@ svg.ic-xl{width:40px;height:40px}
 .lb-me-sticky .lb-pos{background:rgba(255,255,255,.22);color:#fff;font-weight:900}
 .lb-me-sticky .lb-rating{background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.28)}
 
-/* SEASON CARD (FIX: proper CSS) */
+/* SEASON CARD */
 .season-card{position:relative;overflow:hidden;border-radius:18px;padding:16px;margin-top:14px;background:linear-gradient(135deg,rgba(76,92,240,.12),rgba(139,70,232,.1)),linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid rgba(76,92,240,.28);box-shadow:var(--shadow-sm),inset 0 1px 0 rgba(255,255,255,.6);display:flex;flex-direction:column;gap:12px}
 [data-theme="dark"] .season-card{background:linear-gradient(135deg,rgba(109,123,255,.16),rgba(164,108,255,.14)),linear-gradient(180deg,var(--surface),var(--surface-2));border-color:rgba(109,123,255,.3);box-shadow:var(--shadow-sm),inset 0 1px 0 rgba(255,255,255,.06)}
 .season-card::before{content:'';position:absolute;top:-60%;right:-30%;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(76,92,240,.15),transparent 65%);pointer-events:none}
@@ -1354,7 +1354,6 @@ let rewardConfig = JSON.parse(JSON.stringify(DEFAULT_REWARD_CONFIG));
 
 /* Shop items (admin-overridable) */
 const DEFAULT_SHOP_ITEMS = [
-  // Name effects
   {id:'name_blue', cat:'name', name:'Name Color Blue', desc:'Nama berwarna biru elegan', price:200, rarity:'common', img:'', active:true, createdAt:Date.now()-86400000*30, popular:5, effect:{type:'color',value:'#4c5cf0'}},
   {id:'name_purple', cat:'name', name:'Name Color Purple', desc:'Nama berwarna ungu mewah', price:250, rarity:'common', img:'', active:true, createdAt:Date.now()-86400000*28, popular:6, effect:{type:'color',value:'#8b46e8'}},
   {id:'name_gold', cat:'name', name:'Name Color Gold', desc:'Nama emas berkilau', price:500, rarity:'rare', img:'', active:true, createdAt:Date.now()-86400000*25, popular:14, effect:{type:'color',value:'#e0a01a'}},
@@ -1364,7 +1363,6 @@ const DEFAULT_SHOP_ITEMS = [
   {id:'name_animated', cat:'name', name:'Animated Name', desc:'Nama dengan animasi bergerak', price:2500, rarity:'mythic', img:'', active:true, createdAt:Date.now()-86400000*5, popular:45, effect:{type:'animated'}},
   {id:'name_legendary', cat:'name', name:'Legendary Name Effect', desc:'Efek nama paling epik', price:5000, rarity:'mythic', img:'', active:true, createdAt:Date.now()-86400000*2, popular:52, effect:{type:'legendary'}},
 
-  // Avatar backgrounds
   {id:'bg_aurora', cat:'background', name:'Aurora', desc:'Background aurora utara', price:400, rarity:'rare', img:'', active:true, createdAt:Date.now()-86400000*30, popular:18, effect:{type:'bg', style:'linear-gradient(135deg,#22d3ee,#a46cff,#10d98d)'}},
   {id:'bg_galaxy', cat:'background', name:'Galaxy', desc:'Galaksi penuh bintang', price:600, rarity:'rare', img:'', active:true, createdAt:Date.now()-86400000*28, popular:24, effect:{type:'bg', style:'linear-gradient(135deg,#1a1a3e,#4c2d8f,#8b46e8)'}},
   {id:'bg_neon_blue', cat:'background', name:'Neon Blue', desc:'Biru neon menyala', price:350, rarity:'common', img:'', active:true, createdAt:Date.now()-86400000*25, popular:12, effect:{type:'bg', style:'linear-gradient(135deg,#22d3ee,#4c5cf0)'}},
@@ -1376,7 +1374,6 @@ const DEFAULT_SHOP_ITEMS = [
   {id:'bg_diamond', cat:'background', name:'Diamond', desc:'Berlian berkilau', price:2000, rarity:'mythic', img:'', active:true, createdAt:Date.now()-86400000*8, popular:48, effect:{type:'bg', style:'linear-gradient(135deg,#69b4ff,#e6f3ff,#1858a0)'}},
   {id:'bg_legendary', cat:'background', name:'Legendary Animated Background', desc:'Background mitos beranimasi', price:5000, rarity:'mythic', img:'', active:true, createdAt:Date.now()-86400000*3, popular:56, effect:{type:'bg', style:'linear-gradient(135deg,#d8347e,#a46cff,#22d3ee)'}},
 
-  // Avatar effects (auras)
   {id:'aura_neon', cat:'effect', name:'Neon Glow', desc:'Cahaya neon sekitar avatar', price:500, rarity:'rare', img:'', active:true, createdAt:Date.now()-86400000*20, popular:20, effect:{type:'aura',color:'#22d3ee'}},
   {id:'aura_fire', cat:'effect', name:'Fire Aura', desc:'Api menyala mengelilingi avatar', price:900, rarity:'epic', img:'', active:true, createdAt:Date.now()-86400000*15, popular:29, effect:{type:'aura',color:'#ff6b6b'}},
   {id:'aura_ice', cat:'effect', name:'Ice Aura', desc:'Aura es dingin', price:900, rarity:'epic', img:'', active:true, createdAt:Date.now()-86400000*15, popular:26, effect:{type:'aura',color:'#69b4ff'}},
@@ -1386,7 +1383,6 @@ const DEFAULT_SHOP_ITEMS = [
   {id:'aura_diamond', cat:'effect', name:'Diamond Aura', desc:'Aura berlian', price:3000, rarity:'mythic', img:'', active:true, createdAt:Date.now()-86400000*4, popular:50, effect:{type:'aura',color:'#69b4ff'}},
   {id:'aura_mythic', cat:'effect', name:'Mythic Aura', desc:'Aura paling langka', price:6000, rarity:'mythic', img:'', active:true, createdAt:Date.now()-86400000*1, popular:58, effect:{type:'aura',color:'#d8347e'}},
 
-  // Avatar frames
   {id:'frame_basic', cat:'frame', name:'Basic Frame', desc:'Bingkai sederhana', price:100, rarity:'common', img:'', active:true, createdAt:Date.now()-86400000*40, popular:8, effect:{type:'frame',color:'#8891a3',width:2}},
   {id:'frame_silver', cat:'frame', name:'Silver Frame', desc:'Bingkai perak', price:400, rarity:'rare', img:'', active:true, createdAt:Date.now()-86400000*35, popular:15, effect:{type:'frame',color:'#c5cdda',width:2}},
   {id:'frame_gold', cat:'frame', name:'Gold Frame', desc:'Bingkai emas', price:800, rarity:'epic', img:'', active:true, createdAt:Date.now()-86400000*30, popular:27, effect:{type:'frame',color:'#e0a01a',width:3}},
@@ -1395,7 +1391,6 @@ const DEFAULT_SHOP_ITEMS = [
   {id:'frame_mythic', cat:'frame', name:'Mythic Frame', desc:'Bingkai mitos', price:3500, rarity:'mythic', img:'', active:true, createdAt:Date.now()-86400000*8, popular:47, effect:{type:'frame',color:'#d8347e',width:3}},
   {id:'frame_legendary', cat:'frame', name:'Animated Legendary Frame', desc:'Bingkai beranimasi', price:6000, rarity:'limited', img:'', active:true, createdAt:Date.now()-86400000*3, popular:59, effect:{type:'frame',color:'#ffca3c',width:3,animated:true}},
 
-  // Profile effects (banners, badges, titles)
   {id:'banner_aurora', cat:'banner', name:'Aurora Profile Banner', desc:'Banner profil aurora', price:800, rarity:'epic', img:'', active:true, createdAt:Date.now()-86400000*20, popular:25, effect:{type:'banner',style:'linear-gradient(135deg,#22d3ee,#a46cff,#10d98d)'}},
   {id:'banner_galaxy', cat:'banner', name:'Galaxy Profile Banner', desc:'Banner galaksi', price:1000, rarity:'epic', img:'', active:true, createdAt:Date.now()-86400000*15, popular:30, effect:{type:'banner',style:'linear-gradient(135deg,#1a1a3e,#4c2d8f,#8b46e8)'}},
   {id:'title_grandmaster', cat:'title', name:'Grandmaster Title', desc:'Gelar Grandmaster', price:2000, rarity:'legendary', img:'', active:true, createdAt:Date.now()-86400000*10, popular:37, effect:{type:'title',value:'Grandmaster'}},
@@ -1450,7 +1445,7 @@ const App={
   puzzleState:{index:0,streak:0,rating:1200,solved:false,attempts:0},
   offlineMode:false,
   shopItems:{},topupPackages:{},rewardConfig:null,shopEvents:{},
-  lastResult:null // {result, reason, opponent, opponentUid, ratingChange, starChange, gemReward, isRanked, mode, timeControl, moves}
+  lastResult:null
 };
 
 /* ================================================================
@@ -1473,24 +1468,14 @@ function starSVG(size){const s=Number(size)||12;return '<svg class="star-gold" v
 function gemSVG(size){const s=Number(size)||14;return '<svg class="star-gold" viewBox="0 0 24 24" aria-hidden="true" style="width:'+s+'px;height:'+s+'px;flex:none;color:var(--gem)"><path d="M6 3h12l4 6-10 12L2 9z" fill="url(#gemGrad)" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><defs><linearGradient id="gemGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5ee0ff"/><stop offset="1" stop-color="#4c5cf0"/></linearGradient></defs></svg>';}
 function tierBadgeHtml(stars,extra){const info=starInfo(stars);const sub=info.subLabel?(' <span class="subtier">'+info.subLabel+'</span>'):'';return '<span class="rank-badge rb-'+info.tier.key+(extra?' '+extra:'')+'">'+escapeHtml(info.tier.name)+sub+'&nbsp;'+starSVG(11)+'&nbsp;'+info.stars+'</span>';}
 
-/* Cosmetic helpers */
 function equippedCosmetics(profile){
   const p=profile||App.profile||{};
   const cos = p.cosmetics && typeof p.cosmetics==='object' ? p.cosmetics : {};
-  return {
-    name: cos.name || null,
-    background: cos.background || null,
-    effect: cos.effect || null,
-    frame: cos.frame || null,
-    banner: cos.banner || null,
-    title: cos.title || null,
-    badge: cos.badge || null
-  };
+  return {name: cos.name || null, background: cos.background || null, effect: cos.effect || null, frame: cos.frame || null, banner: cos.banner || null, title: cos.title || null, badge: cos.badge || null};
 }
 function getShopItemById(id){
   if(!id) return null;
   const list = Object.values(App.shopItems||{}).length ? App.shopItems : {};
-  // check custom items first, fallback to defaults
   if(list[id]) return list[id];
   const def = DEFAULT_SHOP_ITEMS.find(x=>x.id===id);
   return def || null;
@@ -1512,18 +1497,9 @@ function nameStyleHtml(profile){
 function avatarStyleHtml(profile){
   const cos=equippedCosmetics(profile);
   let styles=[];
-  if(cos.background){
-    const item=getShopItemById(cos.background);
-    if(item&&item.effect&&item.effect.style) styles.push('background:'+item.effect.style);
-  }
-  if(cos.effect){
-    const item=getShopItemById(cos.effect);
-    if(item&&item.effect&&item.effect.color) styles.push('box-shadow:0 0 0 2px '+item.effect.color+'55, 0 0 20px '+item.effect.color+'88, inset 0 1px 0 rgba(255,255,255,.25)');
-  }
-  if(cos.frame){
-    const item=getShopItemById(cos.frame);
-    if(item&&item.effect&&item.effect.color) styles.push('outline:'+((item.effect.width||2)*1.5)+'px solid '+item.effect.color,'outline-offset:2px');
-  }
+  if(cos.background){const item=getShopItemById(cos.background);if(item&&item.effect&&item.effect.style) styles.push('background:'+item.effect.style);}
+  if(cos.effect){const item=getShopItemById(cos.effect);if(item&&item.effect&&item.effect.color) styles.push('box-shadow:0 0 0 2px '+item.effect.color+'55, 0 0 20px '+item.effect.color+'88, inset 0 1px 0 rgba(255,255,255,.25)');}
+  if(cos.frame){const item=getShopItemById(cos.frame);if(item&&item.effect&&item.effect.color) styles.push('outline:'+((item.effect.width||2)*1.5)+'px solid '+item.effect.color,'outline-offset:2px');}
   return styles.length?styles.join(';'):'';
 }
 function avatarHtml(profile){
@@ -1797,11 +1773,10 @@ async function uploadAvatar(){
 }
 
 /* ================================================================
-   NICKNAME CHANGE (FIXED)
+   NICKNAME CHANGE
    ================================================================ */
 async function openChangeNicknameDialog(){
   if(!FB.ready||!App.user){toast('Masuk untuk mengubah nickname.','error');return;}
-  // Reload fresh profile first
   let p=App.profile;
   try{const fresh=await loadProfile(App.user.uid);if(fresh){p=fresh;App.profile=fresh;}}catch(e){logErr('nick-reload',e);}
   if(!p){toast('Profil belum siap. Coba lagi.','error');return;}
@@ -1833,28 +1808,17 @@ async function openChangeNicknameDialog(){
     if(newName.length<3||newName.length>16||!/^[A-Za-z0-9_]+$/.test(newName)){if(errBox)errBox.textContent='Nickname 3-16 karakter (huruf, angka, underscore).';return;}
     if(newName.toLowerCase()===(p.username||'').toLowerCase()){if(errBox)errBox.textContent='Nickname sama dengan yang sekarang.';return;}
     if(tokens<=0){if(errBox)errBox.textContent='Anda tidak punya token. Selesaikan misi untuk mendapatkannya.';return;}
-    // Check availability
     let taken=false;
     try{const snap=await FB.api.get(FB.api.ref(FB.db,'usernames/'+newName.toLowerCase()));if(snap.exists())taken=true;}catch(e){logErr('nick-check',e);}
     if(taken){if(errBox)errBox.textContent='Nickname sudah dipakai. Coba yang lain.';return;}
     try{
       const oldLower=(p.username||'').toLowerCase();
-      // 1. Update user profile
-      await FB.api.update(FB.api.ref(FB.db,'users/'+App.user.uid),{
-        username:newName,
-        usernameLower:newName.toLowerCase(),
-        nicknameTokens:tokens-1,
-        nicknameChangesUsed:used+1
-      });
-      // 2. Remove old username index
+      await FB.api.update(FB.api.ref(FB.db,'users/'+App.user.uid),{username:newName,usernameLower:newName.toLowerCase(),nicknameTokens:tokens-1,nicknameChangesUsed:used+1});
       if(oldLower && oldLower!==newName.toLowerCase()){
         try{await FB.api.remove(FB.api.ref(FB.db,'usernames/'+oldLower));}catch(e){logErr('nick-remove-old',e);}
       }
-      // 3. Set new username index
       await FB.api.set(FB.api.ref(FB.db,'usernames/'+newName.toLowerCase()),App.user.uid);
-      // 4. Update leaderboard entry
       try{await FB.api.update(FB.api.ref(FB.db,'leaderboard/'+App.user.uid),{username:newName});}catch(e){logErr('nick-lb',e);}
-      // 5. Local state
       if(App.profile){
         App.profile.username=newName;
         App.profile.usernameLower=newName.toLowerCase();
@@ -1863,7 +1827,6 @@ async function openChangeNicknameDialog(){
         saveProfileCache(App.user.uid,App.profile);
       }
       toast('Nickname berhasil diubah! Sisa token: '+(tokens-1),'success');
-      // Force refresh
       renderProfile();
       if(App.view==='home')renderHome();
     }catch(e){logErr('nick-save',e);if(errBox)errBox.textContent=errMsg('DATABASE_ERROR')+' - '+((e&&e.message)||'');}
@@ -1879,10 +1842,7 @@ function loadProfileCache(uid){try{const raw=localStorage.getItem(PROFILE_CACHE_
 function clearProfileCache(){try{localStorage.removeItem(PROFILE_CACHE_KEY);}catch(_){}}
 
 /* ================================================================
-   PERMATA SYSTEM (with client-side guard rails)
-   NOTE: For real security, use Firebase Cloud Functions. These
-   client-side checks prevent accidental double-spend but cannot
-   fully prevent a determined attacker.
+   PERMATA SYSTEM
    ================================================================ */
 async function awardPermata(source, amount, meta){
   if(!FB.ready||!App.user)return false;
@@ -1900,12 +1860,8 @@ async function awardPermata(source, amount, meta){
     });
     if(!result.committed) return false;
     if(App.profile) App.profile.permata=newBalance;
-    // Log transaction
     try{
-      await FB.api.set(FB.api.ref(FB.db,'users/'+uid+'/transactions/'+txId),{
-        id:txId, type:source, amount:amount, balance:newBalance,
-        at:Date.now(), status:'completed', meta:meta||{}
-      });
+      await FB.api.set(FB.api.ref(FB.db,'users/'+uid+'/transactions/'+txId),{id:txId, type:source, amount:amount, balance:newBalance, at:Date.now(), status:'completed', meta:meta||{}});
     }catch(e){logErr('tx-log',e);}
     return true;
   }catch(e){logErr('award-permata',e);return false;}
@@ -1919,19 +1875,15 @@ async function spendPermata(itemId, price){
     let newBalance=0;let insufficient=false;
     const result=await FB.api.runTransaction(userRef, current=>{
       const cur=Number(current)||0;
-      if(cur<price){insufficient=true;return;/* abort */}
+      if(cur<price){insufficient=true;return;}
       const next=cur-price;
       newBalance=next;
       return next;
     });
     if(insufficient||!result.committed)return{ok:false,msg:'Permata tidak cukup'};
     if(App.profile)App.profile.permata=newBalance;
-    // Log transaction
     try{
-      await FB.api.set(FB.api.ref(FB.db,'users/'+uid+'/transactions/'+txId),{
-        id:txId, type:'purchase', amount:-price, balance:newBalance,
-        at:Date.now(), status:'completed', meta:{itemId}
-      });
+      await FB.api.set(FB.api.ref(FB.db,'users/'+uid+'/transactions/'+txId),{id:txId, type:'purchase', amount:-price, balance:newBalance, at:Date.now(), status:'completed', meta:{itemId}});
     }catch(e){logErr('tx-log',e);}
     return{ok:true,balance:newBalance};
   }catch(e){logErr('spend-permata',e);return{ok:false,msg:'Gagal'};}
@@ -1944,9 +1896,7 @@ async function addToInventory(itemId, source){
   if(!FB.ready||!App.user)return;
   const uid=App.user.uid;
   try{
-    await FB.api.set(FB.api.ref(FB.db,'users/'+uid+'/inventory/'+itemId),{
-      id:itemId, obtainedAt:Date.now(), source:source||'purchase'
-    });
+    await FB.api.set(FB.api.ref(FB.db,'users/'+uid+'/inventory/'+itemId),{id:itemId, obtainedAt:Date.now(), source:source||'purchase'});
     if(App.profile){
       if(!App.profile.inventory)App.profile.inventory={};
       App.profile.inventory[itemId]={id:itemId,obtainedAt:Date.now(),source:source||'purchase'};
@@ -2027,13 +1977,12 @@ function dailyRewardAvailable(){
 }
 
 /* ================================================================
-   RANKED REWARD (idempotent by gameId)
+   RANKED REWARD
    ================================================================ */
 async function giveRankedReward(gameId, outcome){
   if(!FB.ready||!App.user)return 0;
   const cfg=rewardConfig.ranked||DEFAULT_REWARD_CONFIG.ranked;
   if(cfg.rankedRewardsEnabled===false) return 0;
-  // Check if already claimed
   try{
     const snap=await FB.api.get(FB.api.ref(FB.db,'users/'+App.user.uid+'/rewardedGames/'+gameId));
     if(snap.exists())return 0;
@@ -2082,7 +2031,6 @@ function renderShopTabs(){
 }
 function renderShopGrid(){
   const box=$('#shopGrid');if(!box)return;
-  // Merge default + custom items (custom overrides default by id)
   const custom=App.shopItems||{};
   const allIds=new Set([...DEFAULT_SHOP_ITEMS.map(x=>x.id), ...Object.keys(custom)]);
   let items=[];
@@ -2092,11 +2040,9 @@ function renderShopGrid(){
     let item=customItem ? Object.assign({},base,customItem) : base;
     if(item) items.push(item);
   });
-  // Filter
   if(App.shopTab!=='all') items=items.filter(x=>x.cat===App.shopTab);
   if(App.shopSearch){const q=App.shopSearch.toLowerCase();items=items.filter(x=>(x.name||'').toLowerCase().includes(q)||(x.desc||'').toLowerCase().includes(q));}
   items=items.filter(x=>x.active!==false);
-  // Sort
   if(App.shopSort==='cheap')items.sort((a,b)=>(a.price||0)-(b.price||0));
   else if(App.shopSort==='expensive')items.sort((a,b)=>(b.price||0)-(a.price||0));
   else if(App.shopSort==='new')items.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
@@ -2258,7 +2204,6 @@ function renderInventory(){
    ================================================================ */
 function renderTopup(){
   const box=$('#topupGrid');if(!box)return;
-  // Merge custom + defaults
   const custom=App.topupPackages||{};
   const allIds=new Set([...DEFAULT_TOPUP_PACKAGES.map(x=>x.id), ...Object.keys(custom)]);
   let pkgs=[];
@@ -2316,7 +2261,6 @@ async function requestTopup(pk){
         price:pk.price||0, status:'pending',
         createdAt:Date.now()
       });
-      // log transaction as pending
       await FB.api.set(FB.api.ref(FB.db,'users/'+App.user.uid+'/transactions/'+orderId),{
         id:orderId, type:'topup', amount:0, balance:App.profile?App.profile.permata:0,
         at:Date.now(), status:'pending', meta:{permata:pk.permata,bonus:pk.bonus,price:pk.price}
@@ -2364,7 +2308,6 @@ function renderGemHistory(){
       '<div class="hi '+cls+'">'+icon(iconName,'ic-sm')+'</div>'+
       '<div class="info"><div class="t">'+escapeHtml(label)+'</div><div class="s">'+new Date(t.at||0).toLocaleString('id-ID')+(t.status&&t.status!=='completed'?' · '+t.status.toUpperCase():'')+'</div></div>'+
       '<div class="amt '+cls+'">'+(amt>0?'+':amt<0?'':'')+fmtNum(amt)+' 💎</div>';
-    box.appendChild(list.length?row:row);
     box.appendChild(row);
   });
 }
@@ -2382,7 +2325,7 @@ class Chess{
   isAttacked(sq,by){const b=this.board,f=sq&7,r=sq>>3;if(by==='w'){if(r>0){if(f>0&&b[sq-9]==='P')return true;if(f<7&&b[sq-7]==='P')return true;}}else{if(r<7){if(f>0&&b[sq+7]==='p')return true;if(f<7&&b[sq+9]==='p')return true;}}const kn=by==='w'?'N':'n';const nd=[[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1],[-1,2]];for(let i=0;i<8;i++){const nf=f+nd[i][0],nr=r+nd[i][1];if(nf<0||nf>7||nr<0||nr>7)continue;if(b[nr*8+nf]===kn)return true;}const kg=by==='w'?'K':'k';for(let dr=-1;dr<=1;dr++)for(let df=-1;df<=1;df++){if(!dr&&!df)continue;const nf=f+df,nr=r+dr;if(nf<0||nf>7||nr<0||nr>7)continue;if(b[nr*8+nf]===kg)return true;}const dd=[[1,1],[1,-1],[-1,1],[-1,-1]];for(let i=0;i<4;i++){let nf=f+dd[i][0],nr=r+dd[i][1];while(nf>=0&&nf<8&&nr>=0&&nr<8){const p=b[nr*8+nf];if(p){if(Chess.colorOf(p)===by){const t=p.toLowerCase();if(t==='b'||t==='q')return true;}break;}nf+=dd[i][0];nr+=dd[i][1];}}const od=[[1,0],[-1,0],[0,1],[0,-1]];for(let i=0;i<4;i++){let nf=f+od[i][0],nr=r+od[i][1];while(nf>=0&&nf<8&&nr>=0&&nr<8){const p=b[nr*8+nf];if(p){if(Chess.colorOf(p)===by){const t=p.toLowerCase();if(t==='r'||t==='q')return true;}break;}nf+=od[i][0];nr+=od[i][1];}}return false;}
   findKing(color){const k=color==='w'?'K':'k';for(let i=0;i<64;i++)if(this.board[i]===k)return i;return -1;}
   inCheck(color){const k=this.findKing(color);if(k<0)return false;return this.isAttacked(k,color==='w'?'b':'w');}
-  generateMoves(){const us=this.turn,them=us==='w'?'b':'w',b=this.board,moves=[];for(let i=0;i<64;i++){const p=b[i];if(!p||Chess.colorOf(p)!==us)continue;const t=p.toLowerCase(),f=i&7,r=i>>3;if(t==='p'){const dir=us==='w'?8:-8,startR=us==='w'?1:6,promoR=us==='w'?7:0;const one=i+dir;if(one>=0&&one<64&&!b[one]){if((one>>3)===promoR){['q','r','b','n'].forEach(pp=>moves.push({from:i,to:one,piece:p,captured:null,flags:33,promotion:pp}));}else{moves.push({from:i,to:one,piece:p,captured:null,flags:0,promotion:null});const two=i+dir*2;if(r===startR&&!b[two])moves.push({from:i,to:two,piece:p,captured:null,flags:2,promotion:null});}}for(let k=-1;k<=1;k+=2){const nf=f+k;if(nf<0||nf>7)continue;const to=one+k;if(to<0||to>63)continue;const tp=b[to];if(tp&&Chess.colorOf(tp)===them){if((to>>3)===promoR){['q','r','b','n'].forEach(pp=>moves.push({from:i,to:one,piece:p,captured:tp,flags:33,promotion:pp}));}else moves.push({from:i,to,piece:p,captured:tp,flags:1,promotion:null});}else if(!tp&&to===this.ep){moves.push({from:i,to,piece:p,captured:them==='w'?'P':'p',flags:4,promotion:null});}}continue;}if(t==='n'){const nd=[[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1],[-1,2]];for(let k=0;k<8;k++){const nf=f+nd[k][0],nr=r+nd[k][1];if(nf<0||nf>7||nr<0||nr>7)continue;const to=nr*8+nf,tp=b[to];if(!tp)moves.push({from:i,to,piece:p,captured:null,flags:0,promotion:null});else if(Chess.colorOf(tp)===them)moves.push({from:i,to,piece:p,captured:tp,flags:1,promotion:null});}continue;}if(t==='b'||t==='r'||t==='q'){const dirs=t==='b'?[[1,1],[1,-1],[-1,1],[-1,-1]]:t==='r'?[[1,0],[-1,0],[0,1],[0,-1]]:[[1,1],[1,-1],[-1,1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];for(let k=0;k<dirs.length;k++){let nf=f+dirs[k][0],nr=r+dirs[k][1];while(nf>=0&&nf<8&&nr>=0&&nr<8){const to=nr*8+nf,tp=b[to];if(!tp)moves.push({from:i,to,piece:p,captured:null,flags:0,promotion:null});else{if(Chess.colorOf(tp)===them)moves.push({from:i,to,piece:p,captured:tp,flags:1,promotion:null});break;}nf+=dirs[k][0];nr+=dirs[k][1];}}continue;}if(t==='k'){for(let dr=-1;dr<=1;dr++)for(let df=-1;df<=1;df++){if(!dr&&!df)continue;const nf=f+df,nr=r+dr;if(nf<0||nf>7||nr<0||nr>7)continue;const to=nr*8+nf,tp=b[to];if(!tp)moves.push({from:i,to,piece:p,captured:null,flags:0,promotion:null});else if(Chess.colorOf(tp)===them)moves.push({from:i,to,piece:p,captured:tp,flags:1,promotion:null});}if(us==='w'&&i===4){if(this.castling.K&&!b[5]&&!b[6]&&b[7]==='R'&&!this.isAttacked(4,'b')&&!this.isAttacked(5,'b')&&!this.isAttacked(6,'b'))moves.push({from:4,to:6,piece:p,captured:null,flags:8,promotion:null});if(this.castling.Q&&!b[3]&&!b[2]&&!b[1]&&b[0]==='R'&&!this.isAttacked(4,'b')&&!this.isAttacked(3,'b')&&!this.isAttacked(2,'b'))moves.push({from:4,to:2,piece:p,captured:null,flags:16,promotion:null});}if(us==='b'&&i===60){if(this.castling.k&&!b[61]&&!b[62]&&b[63]==='r'&&!this.isAttacked(60,'w')&&!this.isAttacked(61,'w')&&!this.isAttacked(62,'w'))moves.push({from:60,to:62,piece:p,captured:null,flags:8,promotion:null});if(this.castling.q&&!b[59]&&!b[58]&&!b[57]&&b[56]==='r'&&!this.isAttacked(60,'w')&&!this.isAttacked(59,'w')&&!this.isAttacked(58,'w'))moves.push({from:60,to:58,piece:p,captured:null,flags:16,promotion:null});}}}return moves;}
+  generateMoves(){const us=this.turn,them=us==='w'?'b':'w',b=this.board,moves=[];for(let i=0;i<64;i++){const p=b[i];if(!p||Chess.colorOf(p)!==us)continue;const t=p.toLowerCase(),f=i&7,r=i>>3;if(t==='p'){const dir=us==='w'?8:-8,startR=us==='w'?1:6,promoR=us==='w'?7:0;const one=i+dir;if(one>=0&&one<64&&!b[one]){if((one>>3)===promoR){['q','r','b','n'].forEach(pp=>moves.push({from:i,to:one,piece:p,captured:null,flags:33,promotion:pp}));}else{moves.push({from:i,to:one,piece:p,captured:null,flags:0,promotion:null});const two=i+dir*2;if(r===startR&&!b[two])moves.push({from:i,to:two,piece:p,captured:null,flags:2,promotion:null});}}for(let k=-1;k<=1;k+=2){const nf=f+k;if(nf<0||nf>7)continue;const to=one+k;if(to<0||to>63)continue;const tp=b[to];if(tp&&Chess.colorOf(tp)===them){if((to>>3)===promoR){['q','r','b','n'].forEach(pp=>moves.push({from:i,to:one+k,piece:p,captured:tp,flags:33,promotion:pp}));}else moves.push({from:i,to,piece:p,captured:tp,flags:1,promotion:null});}else if(!tp&&to===this.ep){moves.push({from:i,to,piece:p,captured:them==='w'?'P':'p',flags:4,promotion:null});}}continue;}if(t==='n'){const nd=[[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1],[-1,2]];for(let k=0;k<8;k++){const nf=f+nd[k][0],nr=r+nd[k][1];if(nf<0||nf>7||nr<0||nr>7)continue;const to=nr*8+nf,tp=b[to];if(!tp)moves.push({from:i,to,piece:p,captured:null,flags:0,promotion:null});else if(Chess.colorOf(tp)===them)moves.push({from:i,to,piece:p,captured:tp,flags:1,promotion:null});}continue;}if(t==='b'||t==='r'||t==='q'){const dirs=t==='b'?[[1,1],[1,-1],[-1,1],[-1,-1]]:t==='r'?[[1,0],[-1,0],[0,1],[0,-1]]:[[1,1],[1,-1],[-1,1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];for(let k=0;k<dirs.length;k++){let nf=f+dirs[k][0],nr=r+dirs[k][1];while(nf>=0&&nf<8&&nr>=0&&nr<8){const to=nr*8+nf,tp=b[to];if(!tp)moves.push({from:i,to,piece:p,captured:null,flags:0,promotion:null});else{if(Chess.colorOf(tp)===them)moves.push({from:i,to,piece:p,captured:tp,flags:1,promotion:null});break;}nf+=dirs[k][0];nr+=dirs[k][1];}}continue;}if(t==='k'){for(let dr=-1;dr<=1;dr++)for(let df=-1;df<=1;df++){if(!dr&&!df)continue;const nf=f+df,nr=r+dr;if(nf<0||nf>7||nr<0||nr>7)continue;const to=nr*8+nf,tp=b[to];if(!tp)moves.push({from:i,to,piece:p,captured:null,flags:0,promotion:null});else if(Chess.colorOf(tp)===them)moves.push({from:i,to,piece:p,captured:tp,flags:1,promotion:null});}if(us==='w'&&i===4){if(this.castling.K&&!b[5]&&!b[6]&&b[7]==='R'&&!this.isAttacked(4,'b')&&!this.isAttacked(5,'b')&&!this.isAttacked(6,'b'))moves.push({from:4,to:6,piece:p,captured:null,flags:8,promotion:null});if(this.castling.Q&&!b[3]&&!b[2]&&!b[1]&&b[0]==='R'&&!this.isAttacked(4,'b')&&!this.isAttacked(3,'b')&&!this.isAttacked(2,'b'))moves.push({from:4,to:2,piece:p,captured:null,flags:16,promotion:null});}if(us==='b'&&i===60){if(this.castling.k&&!b[61]&&!b[62]&&b[63]==='r'&&!this.isAttacked(60,'w')&&!this.isAttacked(61,'w')&&!this.isAttacked(62,'w'))moves.push({from:60,to:62,piece:p,captured:null,flags:8,promotion:null});if(this.castling.q&&!b[59]&&!b[58]&&!b[57]&&b[56]==='r'&&!this.isAttacked(60,'w')&&!this.isAttacked(59,'w')&&!this.isAttacked(58,'w'))moves.push({from:60,to:58,piece:p,captured:null,flags:16,promotion:null});}}}return moves;}
   moves(){const pseudo=this.generateMoves(),us=this.turn,out=[];for(const m of pseudo){this.makeMove(m);if(!this.inCheck(us))out.push(m);this.undoMove();}return out;}
   movesFrom(sq){return this.moves().filter(m=>m.from===sq);}
   makeMove(m){const b=this.board,us=this.turn,piece=b[m.from];const undo={m,castling:{...this.castling},ep:this.ep,halfmove:this.halfmove,fullmove:this.fullmove,captured:null,capturedSq:-1};b[m.from]=null;if(m.flags&4){const capSq=m.to+(us==='w'?-8:8);undo.capturedSq=capSq;undo.captured=b[capSq];b[capSq]=null;}else if(m.captured)undo.captured=m.captured;b[m.to]=m.promotion?(us==='w'?m.promotion.toUpperCase():m.promotion):piece;if(m.flags&8){if(us==='w'){b[5]=b[7];b[7]=null;}else{b[61]=b[63];b[63]=null;}}if(m.flags&16){if(us==='w'){b[3]=b[0];b[0]=null;}else{b[59]=b[56];b[56]=null;}}const c=this.castling;if(piece==='K'){c.K=false;c.Q=false;}if(piece==='k'){c.k=false;c.q=false;}if(m.from===7||m.to===7)c.K=false;if(m.from===0||m.to===0)c.Q=false;if(m.from===63||m.to===63)c.k=false;if(m.from===56||m.to===56)c.q=false;this.ep=(m.flags&2)?(m.from+(us==='w'?8:-8)):-1;if(piece.toLowerCase()==='p'||undo.captured)this.halfmove=0;else this.halfmove++;if(us==='b')this.fullmove++;this.turn=us==='w'?'b':'w';this.stack.push(undo);}
@@ -2480,7 +2423,6 @@ const ICONS={
 function icon(name,cls){return '<svg class="ic '+(cls||'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONS[name]||'')+'</svg>';}
 const GOOGLE_SVG='<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
 
-/* PIECE SVG */
 const PIECE_SHAPES={
   p:'<circle cx="22.5" cy="12.5" r="5.2"/><path d="M17.5 20.5c0-2.2 2.2-3.8 5-3.8s5 1.6 5 3.8l-1.4 8.5h-7.2z"/><path d="M14.2 29.4h16.6c.7 0 1.2.5 1.2 1.2v1.2c0 .7-.5 1.2-1.2 1.2H14.2c-.7 0-1.2-.5-1.2-1.2v-1.2c0-.7.5-1.2 1.2-1.2z"/><path d="M10.5 33h24c1 0 1.8.8 1.8 1.8v2.4c0 1-.8 1.8-1.8 1.8h-24c-1 0-1.8-.8-1.8-1.8v-2.4c0-1 .8-1.8 1.8-1.8z"/>',
   r:'<path d="M11 9.5h3.2c.6 0 1 .4 1 1v1.5h2.4V10.5c0-.6.4-1 1-1h3.8c.6 0 1 .4 1 1v1.5h2.4V10.5c0-.6.4-1 1-1H31.5c.6 0 1 .4 1 1v4.2c0 .3-.1.5-.3.7l-2.7 2.7v9.4l2.7 2.7c.2.2.3.4.3.7v3.6c0 .6-.4 1-1 1h-22c-.6 0-1-.4-1-1v-3.6c0-.3.1-.5.3-.7l2.7-2.7v-9.4l-2.7-2.7c-.2-.2-.3-.4-.3-.7v-4.2c0-.6.4-1 1-1z"/>',
@@ -2503,7 +2445,6 @@ function saveSettings(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(sett
 function applySettings(){document.documentElement.setAttribute('data-theme',settings.theme==='dark'?'dark':'light');const bt=BOARD_THEMES[settings.boardTheme]||BOARD_THEMES.wood;document.documentElement.style.setProperty('--board-l',bt.l);document.documentElement.style.setProperty('--board-d',bt.d);const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute('content',settings.theme==='dark'?'#06080f':'#eef1f8');}
 function setSetting(k,v){settings[k]=v;saveSettings();applySettings();}
 
-/* SOUND */
 const Sound=(()=>{
   let ctx=null,unlocked=false;
   function ensure(){if(!ctx){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;ctx=new AC();}catch(e){return null;}}return ctx;}
@@ -2512,7 +2453,6 @@ const Sound=(()=>{
   return{unlock,move(){tone(420,0.07,'triangle',0.14);},capture(){tone(300,0.09,'square',0.11);setTimeout(()=>tone(200,0.08,'square',0.09),45);},check(){tone(720,0.1,'sawtooth',0.1);setTimeout(()=>tone(900,0.12,'sawtooth',0.09),90);},end(){tone(520,0.14,'sine',0.13);setTimeout(()=>tone(660,0.14,'sine',0.12),130);setTimeout(()=>tone(784,0.24,'sine',0.12),260);},notify(){tone(880,0.09,'sine',0.11);},button(){tone(600,0.04,'sine',0.07);},tick(){tone(880,0.03,'square',0.05);},gem(){tone(1200,0.08,'triangle',0.1);setTimeout(()=>tone(1600,0.12,'triangle',0.09),70);}};
 })();
 
-/* TOAST / MODAL */
 function toast(message,type){
   const root=$('#toastRoot');if(!root)return;
   const t=el('div','toast'+(type?' '+type:''));
@@ -2562,7 +2502,6 @@ const Modal=(()=>{
   return{open,close,confirm};
 })();
 
-/* PHOTO BANNER */
 const photoBannerState={index:0,timerId:null};
 function stopPhotoBannerAutoSlide(){if(photoBannerState.timerId){clearInterval(photoBannerState.timerId);photoBannerState.timerId=null;}}
 function photoBannerImages(){return (photoBannerConfig.images||[]).filter(x=>x&&typeof x.url==='string'&&x.url.length>0);}
@@ -2653,13 +2592,9 @@ function endGame(info){
   else if(info.result==='black')outcome=Game.playerColor==='b'?'win':(Game.mode==='local'?'black':'loss');
   updateGameUI();
   const reasonText={checkmate:'Skakmat',stalemate:'Stalemate',insufficient:'Materi tidak cukup',fifty:'Aturan 50 langkah',repetition:'Pengulangan tiga kali',resign:'Menyerah',timeout:'Waktu habis',draw_agreement:'Kesepakatan',abandoned:'Ditinggalkan'}[info.reason]||'Selesai';
-  // Save result info for full page
   Game.lastResult={result:info.result,reason:info.reason,winner:info.winner||null,reasonText,opponent:Game.opponentName,opponentUid:Game.opponentUid,opponentProfile:Game.opponentProfile,ratingChange:null,starChange:0,gemReward:0,isRanked:Game.isRanked,mode:Game.mode,timeControl:Game.lastTc,moves:Game.sans.length,at:Date.now()};
-  // Handle online
   if(Game.mode==='online'&&Game.roomId&&!Game.resultWritten){Game.resultWritten=true;writeOnlineResult(info);}
-  // Show full result page after slight delay
   setTimeout(async()=>{
-    // Give ranked reward if eligible
     if(Game.mode==='online'&&Game.isRanked&&Game.roomId){
       const myOutcome = (info.result==='draw')?'draw':((info.result==='white'&&Game.playerColor==='w')||(info.result==='black'&&Game.playerColor==='b'))?'win':'loss';
       try{
@@ -2746,7 +2681,6 @@ async function attemptMove(from,to){
 }
 function setupBoardEvents(){const wrap=$('#boardWrap');if(!wrap)return;wrap.addEventListener('pointerup',ev=>{if(Game.finished)return;const sq=boardSquareFromPoint(ev.clientX,ev.clientY);if(sq<0)return;ev.preventDefault();const now=Date.now();if(sq===lastTapSq&&now-lastTapTime<320)return;lastTapTime=now;lastTapSq=sq;handleSquareTap(sq);});}
 
-/* AI */
 const AI_LEVELS={beginner:{label:'Beginner',depth:1,time:200,rand:120},easy:{label:'Easy',depth:2,time:400,rand:60},medium:{label:'Medium',depth:3,time:900,rand:20},hard:{label:'Hard',depth:4,time:1600,rand:8},expert:{label:'Expert',depth:5,time:2600,rand:0},grandmaster:{label:'Grandmaster',depth:6,time:3600,rand:0}};
 function scheduleAiMove(){
   if(Game.aiThinking||Game.finished)return;
@@ -2764,7 +2698,6 @@ function scheduleAiMove(){
   },30);
 }
 
-/* GAME SCREEN */
 function openGameScreen(){const gs=$('#gameScreen');if(gs)gs.classList.add('active');}
 function closeGameScreen(){const gs=$('#gameScreen');if(gs)gs.classList.remove('active');const mp=$('#movesPanel');if(mp)mp.classList.remove('active');}
 function buildGameTools(){
@@ -3107,7 +3040,6 @@ function showMatchResultPage(result){
   screen.classList.add('active');
   const rematch=$('#btnRematch');if(rematch)rematch.addEventListener('click',()=>{Sound.button();closeResultPage();openLocalDialog();});
   const backHome=$('#btnBackHome');if(backHome)backHome.addEventListener('click',()=>{Sound.button();closeResultPage();showView('home');});
-  // Auto cleanup game state
   stopClock();stopAi();stopReplay();
   setTimeout(()=>{try{FB.api.remove(FB.api.ref(FB.db,'matchAssignments/'+(App.user&&App.user.uid))).catch(()=>{});}catch(_){}},2000);
 }
@@ -3709,7 +3641,6 @@ async function renderHomeLeaderboard(){
   }catch(e){box.innerHTML='<div class="empty">'+icon('info','ic-lg')+'<p>'+errMsg('DATABASE_ERROR')+'</p></div>';}
 }
 
-/* PLAY MENU */
 function renderPlayMenu(){
   const box=$('#playModes');if(!box)return;
   box.innerHTML='';
@@ -3800,7 +3731,6 @@ function openLocalDialog(){
   Modal.open({title:'Dua Pemain Lokal',body:box,buttons:[{label:'Batal',value:null,variant:'ghost'},{label:'Mulai',value:'go',variant:'primary'}]}).then(v=>{if(v!=='go')return;const tc=$('#localTc')?$('#localTc').value:'10+0';Game.lastTc=tc;startLocalGame(tc);});
 }
 
-/* TOURNAMENT (kept, accessible via Play menu) */
 function renderTournamentView(){
   const head=$('#tournamentHead');const list=$('#tournamentList');const sponsorGrid=$('#sponsorGrid');
   if(head){
@@ -3880,7 +3810,11 @@ function startTournamentVerification(t){
   setTimeout(()=>{const inputs=$$('#verInputs input');inputs.forEach((inp,i)=>{inp.addEventListener('input',()=>{inp.value=inp.value.toUpperCase();if(inp.value&&i<inputs.length-1)inputs[i+1].focus();});});if(inputs[0])inputs[0].focus();},100);
 }
 
-/* FRIENDS VIEW */
+let tournaments=[];
+let sponsors=[];
+let userTournamentForm=null;
+let userTournamentRegistration=null;
+
 function renderFriendsView(){
   const reqBox=$('#friendRequests');const listBox=$('#friendList');
   if(!FB.ready||!App.user){if(reqBox)reqBox.innerHTML='<div class="empty">'+icon('users','ic-lg')+'<p>Masuk untuk fitur sosial.</p></div>';if(listBox)listBox.innerHTML='';return;}
@@ -3919,7 +3853,6 @@ function renderFriendsView(){
   },'challenges:'+uid);
 }
 
-/* NOTIFICATIONS */
 function setupNotifications(){const btn=$('#btnNotif');if(btn)btn.addEventListener('click',()=>{Sound.button();if(!FB.ready||!App.user){toast('Masuk untuk notifikasi.');return;}showNotifications();});}
 function setNotifDotVisible(v){const d=$('#notifDot');if(!d)return;if(v)d.classList.remove('hidden');else d.classList.add('hidden');}
 function seenAdminMsgsKey(uid){return 'cazoo_seen_admin_msgs_'+(uid||'anon');}
@@ -3968,9 +3901,6 @@ async function showNotifications(){
   if(items.length){const h=el('div');h.style.cssText='font-size:10.5px;font-weight:900;color:var(--text-dim);letter-spacing:.14em;text-transform:uppercase;margin:16px 0 8px';h.textContent='Aktivitas';box.appendChild(h);items.forEach(it=>{const row=el('div','list-item');row.innerHTML='<div style="width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent-soft),transparent);color:var(--accent);flex:none">'+icon(it.icon)+'</div><div class="li-main"><div class="t">'+it.title+'</div><div class="s">'+escapeHtml(it.desc)+'</div></div>';box.appendChild(row);});}
 }
 
-/* ================================================================
-   TIC-TAC-TOE (kept)
-   ================================================================ */
 const TTT={board:Array(9).fill(''),turn:'X',mode:'ai',aiLevel:'medium',aiMark:'O',playerMark:'X',finished:false,winner:null,winLine:null,thinking:false,scores:{X:0,O:0,D:0},startingMark:'X'};
 const TTT_LINES=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
 function tttCheckWinner(b){for(const L of TTT_LINES){const [a,c,d]=L;if(b[a]&&b[a]===b[c]&&b[a]===b[d])return{winner:b[a],line:L};}if(b.every(v=>v))return{winner:'D',line:null};return null;}
@@ -3993,9 +3923,6 @@ function tttStart(mode,level,playerMark){TTT.mode=mode;TTT.aiLevel=level||'mediu
 function tttClose(){const sc=$('#tttScreen');if(sc)sc.classList.remove('active');}
 function wireTttEvents(){const back=$('#btnTttBack');if(back){back.innerHTML=icon('chevL');back.addEventListener('click',()=>{Sound.button();tttClose();});}const restart=$('#btnTttRestart');if(restart){restart.innerHTML=icon('refresh');restart.addEventListener('click',()=>{Sound.button();tttReset(TTT.startingMark);});}}
 
-/* ================================================================
-   T-REX (kept compact)
-   ================================================================ */
 const Trex={canvas:null,ctx:null,rafId:null,state:'idle',W:0,H:0,groundY:0,dino:{x:60,y:0,vy:0,w:44,h:44,onGround:true,ducking:false},obstacles:[],clouds:[],score:0,best:0,speed:5.5,spawnTimer:900,cloudTimer:2000,lastT:0,legFrame:0,groundOffset:0};
 function trexResize(){const cv=Trex.canvas;if(!cv)return;const parent=cv.parentElement;const rect=parent?parent.getBoundingClientRect():cv.getBoundingClientRect();const dpr=Math.min(2,window.devicePixelRatio||1);const w=Math.max(200,Math.floor(rect.width));const h=Math.max(180,Math.floor(rect.height));cv.width=w*dpr;cv.height=h*dpr;cv.style.width=w+'px';cv.style.height=h+'px';const ctx=Trex.ctx;if(ctx)ctx.setTransform(dpr,0,0,dpr,0,0);Trex.W=w;Trex.H=h;Trex.groundY=h-64;Trex.dino.x=Math.max(40,Math.floor(w*0.13));}
 function trexInit(){Trex.canvas=$('#trexCanvas');if(!Trex.canvas)return;Trex.ctx=Trex.canvas.getContext('2d');try{const b=localStorage.getItem('gmg_trex_best');if(b)Trex.best=Number(b)||0;}catch(_){}trexResize();window.addEventListener('resize',trexResize);}
@@ -4026,21 +3953,16 @@ function wireTrexEvents(){
   document.addEventListener('keyup',ev=>{const sc=$('#trexScreen');if(!sc||!sc.classList.contains('active'))return;if(ev.code==='ArrowDown'||ev.code==='KeyS')trexDuck(false);});
 }
 
-/* ================================================================
-   SHELL / ENTER APP
-   ================================================================ */
 function enterApp(){
   hideAuthScreen();if(!$('#view-home'))buildMainShell();
   showView('home');setupPresence();
   if(FB.ready&&App.user){
     const syncLB=()=>{if(!App.profile)return;FB.api.set(FB.api.ref(FB.db,'leaderboard/'+App.user.uid),{username:App.profile.username||'Pemain',avatar:typeof App.profile.avatar==='string'?App.profile.avatar:'',stars:Math.max(0,Number(App.profile.stars)||0),rating:Number(App.profile.rating)||1200,games:Number(App.profile.gamesPlayed)||0,displayId:App.profile.displayId||''}).catch(e=>logErr('lb-sync',e));};
     syncLB();
-    // Listen to user profile
     dbOnValue('users/'+App.user.uid,async data=>{
       if(!data)return;
       App.profile=Object.assign(defaultProfile(App.user.uid,data.username),data,{uid:App.user.uid});
       if(!App.profile.displayId || !/^\d{8,12}$/.test(App.profile.displayId)){try{App.profile=await ensureDisplayId(App.user.uid,App.profile);}catch(_){}}
-      // Rebuild inventory object
       if(!App.profile.inventory||typeof App.profile.inventory!=='object')App.profile.inventory={};
       if(!App.profile.cosmetics||typeof App.profile.cosmetics!=='object')App.profile.cosmetics={};
       saveProfileCache(App.user.uid,App.profile);syncLB();
@@ -4059,7 +3981,6 @@ function enterApp(){
         }
       });
     },'me:'+App.user.uid);
-    // Listen to transactions for history
     dbOnValue('users/'+App.user.uid+'/transactions',list=>{
       if(App.profile){App.profile.transactions=list||{};}
       if(App.view==='history')renderGemHistory();
@@ -4128,9 +4049,6 @@ function closeGame(){
   updatePresenceStatus('online');
 }
 
-/* ================================================================
-   ADMIN CONFIG LISTENERS
-   ================================================================ */
 function setupAdminConfigListeners(){
   if(!FB.ready)return;
   dbOnValue('adminConfig/tournaments',val=>{if(!val||typeof val!=='object')return;try{const list=Object.values(val).filter(t=>t&&typeof t==='object'&&t.id).map(t=>Object.assign({status:'open',entryFee:0,prizePool:0,currentPot:0,targetPot:0,maxPlayers:32,currentPlayers:0,timeControl:'10+0',startAt:Date.now()+86400000,prizeDistribution:[],sponsors:[],verificationCode:'',iconImage:'',bgImage:''},t));if(list.length){tournaments=list;if(App.view==='tournament')renderTournamentView();}}catch(e){}},'admin:tournaments');
@@ -4140,7 +4058,6 @@ function setupAdminConfigListeners(){
   dbOnValue('adminConfig/playMenuHtml',val=>{if(typeof val==='string'){adminPlayMenuHtml=val;if(App.view==='play')renderPlayMenu();}},'admin:playmenuhtml');
   dbOnValue('adminConfig/quickMenuItems',val=>{if(val&&typeof val==='object'){try{const list=Object.values(val).filter(q=>q&&typeof q==='object'&&q.action);if(list.length){quickMenuItems=list;if(App.view==='home')renderQuickMenu();}}catch(e){}}},'admin:quickmenu');
   dbOnValue('adminConfig/playMenuItems',val=>{if(val&&typeof val==='object'){try{const list=Object.values(val).filter(q=>q&&typeof q==='object'&&q.action);if(list.length){playMenuItems=list;if(App.view==='play')renderPlayMenu();}}catch(e){}}},'admin:playitems');
-  // SHOP
   dbOnValue('adminConfig/shopItems',val=>{if(val&&typeof val==='object'){App.shopItems=val||{};if(App.view==='shop')renderShopGrid();}},'admin:shopitems');
   dbOnValue('adminConfig/topupPackages',val=>{if(val&&typeof val==='object'){App.topupPackages=val||{};if(App.view==='topup')renderTopup();}},'admin:topuppkgs');
   dbOnValue('adminConfig/rewardConfig',val=>{if(val&&typeof val==='object'){rewardConfig=Object.assign({},DEFAULT_REWARD_CONFIG,val);}},'admin:rewardcfg');
@@ -4171,36 +4088,27 @@ async function boot(){
   if(offlineBtn)offlineBtn.addEventListener('click',()=>{Sound.button();App.offlineMode=true;App.user=null;App.profile=defaultProfile('guest','Tamu');splashStatus('Memuat mode offline...');setTimeout(()=>{hideSplash();enterApp();},380);});
   const unlockAudio=()=>{Sound.unlock();document.removeEventListener('pointerdown',unlockAudio);document.removeEventListener('keydown',unlockAudio);};
   document.addEventListener('pointerdown',unlockAudio);document.addEventListener('keydown',unlockAudio);
-
   splashStatus('Menghubungkan ke server...');
-
-  // === TIMEOUT GUARD: max 8 detik ===
-  let bootHandled=false;
-  const bootTimeout=setTimeout(()=>{
-    if(bootHandled) return;
-    bootHandled=true;
-    logErr('boot-timeout','Firebase tidak merespons dalam 8 detik');
-    hideSplash();
-    showAuthScreen();
-    toast('Koneksi lambat. Coba refresh halaman.','error');
-  },8000);
-
-  try{
-    await initFirebase();
-  }catch(e){
-    logErr('firebase-init-fail',e);
-  }
-  try{await resolveGoogleRedirect();}catch(_){}
-
+  // ==== FAILSAFE: cegah stuck di splash ====
+  setTimeout(()=>{
+    const s=$('#splash');
+    if(!s||s.classList.contains('gone'))return;
+    console.warn('[CZ:failsafe] Boot timeout - memaksa UI muncul');
+    try{hideSplash();}catch(_){}
+    const authScreen=$('#authScreen');
+    const appEl=$('#app');
+    const onb=$('#onboarding');
+    const anyVisible=(authScreen&&!authScreen.classList.contains('hidden'))||(appEl&&!appEl.classList.contains('hidden'))||(onb&&onb.classList.contains('active'));
+    if(!anyVisible){try{showAuthScreen();}catch(_){}}
+  },10000);
+  // ==== END FAILSAFE ====
+  await initFirebase();
+  try{await Promise.race([resolveGoogleRedirect(),delay(4000)]);}catch(_){}
   const minSplash=delay(900);
   if(FB.ready&&FB.authApi){
     splashStatus('Memeriksa sesi...');
     let firstCallback=true;
     FB.authApi.onAuthStateChanged(FB.auth,async user=>{
-      if(bootHandled) return;
-      bootHandled=true;
-      clearTimeout(bootTimeout);
-      // ... sisa onAuthStateChanged (tidak berubah) ...
       if(user){
         App.user=user;App.offlineMode=false;
         const cached=loadProfileCache(user.uid);
@@ -4233,14 +4141,8 @@ async function boot(){
       }
     });
   }else{
-    if(!bootHandled){
-      bootHandled=true;
-      clearTimeout(bootTimeout);
-      await minSplash;hideSplash();showAuthScreen();toast(errMsg('OFFLINE')+' Mode offline tersedia.','error');
-    }
+    await minSplash;hideSplash();showAuthScreen();toast(errMsg('OFFLINE')+' Mode offline tersedia.','error');
   }
-  // ... sisa kode (setInterval, event listeners) tetap sama ...
-}
   setInterval(()=>{if(FB.ready&&App.user&&App.presenceRef){FB.api.update(App.presenceRef,{lastSeen:FB.api.serverTimestamp(),online:settings.onlineStatus}).catch(()=>{});}},60000);
   window.addEventListener('beforeunload',()=>{
     stopClock();stopAi();stopSeasonCountdown();stopPhotoBannerAutoSlide();clearAllListeners();
@@ -4281,7 +4183,6 @@ async function createUserProfile(uid,username,email,avatarDataUrl){
     await FB.api.set(FB.api.ref(FB.db,'displayIds/'+displayId),uid);
     await FB.api.set(FB.api.ref(FB.db,'userPrivate/'+uid),{settings:{theme:settings.theme,boardTheme:settings.boardTheme},preferences:{}});
     try{await FB.api.set(FB.api.ref(FB.db,'leaderboard/'+uid),{username,avatar:avatarDataUrl||'',stars:0,rating:1200,games:0,displayId});}catch(_){}
-    // Log welcome transaction
     try{await FB.api.set(FB.api.ref(FB.db,'users/'+uid+'/transactions/welcome-'+now),{id:'welcome-'+now,type:'newuser',amount:Number(gift.permata)||100,balance:Number(gift.permata)||100,at:now,status:'completed',meta:{}});}catch(_){}
   }catch(e){logErr('create-profile',e);throw e;}
 }
