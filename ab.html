@@ -1,661 +1,259 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="light">
+<html lang="id" data-theme="dark">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Cazoo — Chess Arena</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin Panel — Cazoo</title>
 <link rel="icon" href="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#eef1f8;--bg-2:#e6eaf4;--surface:#ffffff;--surface-2:#f5f7fc;--surface-3:#eaf0fa;
-  --border:rgba(20,30,60,.08);--border-2:rgba(20,30,60,.14);
-  --text:#0a0f1e;--text-dim:#5f6c88;--text-dim2:#95a0ba;
-  --accent:#4c5cf0;--accent-2:#8b46e8;--accent-soft:rgba(76,92,240,.1);
-  --success:#0a9f68;--success-soft:rgba(10,159,104,.14);
-  --danger:#e7344a;--danger-soft:rgba(231,52,74,.14);
-  --gold:#e0a01a;
-  --shadow-sm:0 4px 12px rgba(20,30,60,.08);
-  --shadow:0 12px 32px rgba(20,30,60,.12);
-  --shadow-lg:0 24px 60px rgba(20,30,60,.18);
-}
-[data-theme="dark"]{
   --bg:#06080f;--bg-2:#0a0e1a;--surface:#111828;--surface-2:#182135;--surface-3:#212c46;
   --border:rgba(255,255,255,.06);--border-2:rgba(255,255,255,.12);
   --text:#f0f4fc;--text-dim:#8b96b3;--text-dim2:#5a6884;
   --accent:#6d7bff;--accent-2:#a46cff;--accent-soft:rgba(109,123,255,.14);
   --success:#10d98d;--success-soft:rgba(16,217,141,.14);
   --danger:#ff5d6c;--danger-soft:rgba(255,93,108,.14);
+  --warn:#ffb020;--warn-soft:rgba(255,176,32,.14);
   --gold:#ffca3c;
-  --shadow-sm:0 4px 12px rgba(0,0,0,.35);
   --shadow:0 12px 32px rgba(0,0,0,.45);
-  --shadow-lg:0 24px 60px rgba(0,0,0,.55);
+  --shadow-lg:0 24px 60px rgba(0,0,0,.6);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;height:100%}
 body{
-  background:var(--bg);color:var(--text);
-  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:radial-gradient(1400px 800px at 8% -8%,rgba(109,123,255,.16),transparent 55%),
+    radial-gradient(1200px 700px at 105% 4%,rgba(164,108,255,.14),transparent 55%),
+    radial-gradient(900px 500px at 50% 120%,rgba(34,211,238,.08),transparent 55%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--text);font-family:'Inter',-apple-system,sans-serif;
   font-size:14px;line-height:1.5;overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
-  padding-top:env(safe-area-inset-top);
 }
-[data-theme="light"] body{background:radial-gradient(1400px 800px at 8% -8%,rgba(76,92,240,.08),transparent 55%),radial-gradient(1200px 700px at 105% 4%,rgba(139,70,232,.07),transparent 55%),var(--bg);background-attachment:fixed}
-[data-theme="dark"] body{background:radial-gradient(1400px 800px at 8% -8%,rgba(109,123,255,.16),transparent 55%),radial-gradient(1200px 700px at 105% 4%,rgba(164,108,255,.14),transparent 55%),var(--bg);background-attachment:fixed}
-button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit;background:none;border:none}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit;background:none;border:none;outline:none}
 button{cursor:pointer;padding:0}
-a{color:var(--accent);text-decoration:none}
-h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.022em;line-height:1.2}
-::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:6px}
-svg.ic{width:22px;height:22px;flex:none;display:block}
-svg.ic-sm{width:16px;height:16px}
-svg.ic-lg{width:28px;height:28px}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:6px;border:2px solid var(--bg)}
+svg.ic{width:20px;height:20px;flex:none;display:block}
 .hidden{display:none!important}
 
-/* SPLASH */
-#splash{position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:var(--bg);padding:24px;transition:opacity .5s,visibility .5s}
-#splash.gone{opacity:0;visibility:hidden;pointer-events:none}
-.sp-mark{width:100px;height:100px;border-radius:28px;overflow:hidden;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 12px 40px rgba(76,92,240,.32),inset 0 2px 0 rgba(255,255,255,.3);animation:spIn .8s cubic-bezier(.2,1.2,.4,1)}
-.sp-mark img{width:100%;height:100%;object-fit:cover;display:block}
-@keyframes spIn{from{opacity:0;transform:scale(.6) rotateY(-60deg)}to{opacity:1;transform:none}}
-.sp-title{font-size:32px;font-weight:900;letter-spacing:-.045em;background:linear-gradient(135deg,#0a0f1e,#4c5cf0 60%,#8b46e8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-[data-theme="dark"] .sp-title{background:linear-gradient(135deg,#fff,#b7c1e0);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.sp-sub{font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--text-dim2);margin-top:6px}
-.sp-bar{width:min(260px,80vw);height:5px;border-radius:99px;background:var(--surface-3);overflow:hidden;position:relative;margin-top:20px}
-.sp-bar i{position:absolute;top:0;left:-40%;height:100%;width:40%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-2));animation:spBar 1.8s cubic-bezier(.4,0,.2,1) infinite}
-@keyframes spBar{0%{left:-40%;width:40%}50%{left:30%;width:50%}100%{left:100%;width:40%}}
-.sp-status{font-size:12.5px;color:var(--text-dim);font-weight:600;text-align:center;min-height:18px}
+/* ============ SPLASH/LOGIN ============ */
+#login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;z-index:100}
+.login-box{width:100%;max-width:400px;background:linear-gradient(180deg,var(--surface),var(--surface-2));border-radius:24px;padding:32px 24px;box-shadow:var(--shadow-lg);border:1px solid var(--border-2);text-align:center}
+.login-logo{width:88px;height:88px;border-radius:26px;overflow:hidden;margin:0 auto 20px;background:linear-gradient(135deg,#4c5cf0,#8b46e8);box-shadow:0 20px 50px rgba(76,92,240,.35)}
+.login-logo img{width:100%;height:100%;object-fit:cover;display:block}
+.login-title{font-size:26px;font-weight:900;letter-spacing:-.035em;margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--text-dim);margin-bottom:24px;line-height:1.55}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:12px;font-weight:700;font-size:14px;background:var(--surface-2);color:var(--text);transition:.15s;min-height:48px;border:1px solid var(--border-2);width:100%}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:linear-gradient(135deg,#4c5cf0,#8b46e8);color:#fff;border-color:transparent;box-shadow:0 8px 24px rgba(76,92,240,.35)}
+.btn.danger{background:var(--danger-soft);color:var(--danger);border-color:rgba(255,93,108,.3)}
+.btn.ghost{background:transparent;color:var(--text-dim)}
+.btn.google{background:#fff;color:#1a1a2e;border:none;font-weight:700}
+.btn.google svg{width:20px;height:20px}
+.login-info{font-size:11.5px;color:var(--text-dim2);margin-top:16px;line-height:1.6;padding:12px;background:var(--surface-3);border-radius:12px}
 
-/* AUTH */
-#authScreen{position:fixed;inset:0;z-index:900;display:none;overflow-y:auto;background:radial-gradient(900px 700px at 15% 10%,rgba(76,92,240,.12),transparent 55%),radial-gradient(800px 600px at 100% 90%,rgba(139,70,232,.1),transparent 55%),var(--bg)}
-#authScreen.on{display:flex;flex-direction:column}
-.auth-inner{width:100%;max-width:440px;margin:auto;padding:40px 24px;display:flex;flex-direction:column;gap:20px}
-.auth-logo{width:80px;height:80px;border-radius:24px;overflow:hidden;background:linear-gradient(135deg,var(--accent),var(--accent-2));margin:0 auto 8px;box-shadow:0 20px 50px rgba(76,92,240,.35)}
-.auth-logo img{width:100%;height:100%;object-fit:cover;display:block}
-.auth-title{font-size:28px;font-weight:900;letter-spacing:-.04em;text-align:center;background:linear-gradient(135deg,#0a0f1e,#4c5cf0);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-[data-theme="dark"] .auth-title{background:linear-gradient(135deg,#fff,#b7c1e0);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.auth-sub{font-size:13px;color:var(--text-dim);text-align:center;font-weight:600}
-.auth-card{background:var(--surface);border-radius:22px;padding:22px;box-shadow:var(--shadow-lg)}
-.auth-foot{font-size:11.5px;color:var(--text-dim);text-align:center;line-height:1.6;padding:14px;background:var(--accent-soft);border:1px solid rgba(76,92,240,.2);border-radius:14px}
-
-/* APP SHELL */
+/* ============ LAYOUT ============ */
 #app{display:none;min-height:100vh;flex-direction:column}
 #app.on{display:flex}
-.topbar{position:fixed;top:0;left:0;right:0;height:60px;padding-top:env(safe-area-inset-top);display:flex;align-items:center;gap:8px;padding-inline:14px;z-index:60;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-bottom:1px solid var(--border)}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800}
-.brand .mark{width:34px;height:34px;border-radius:11px;overflow:hidden;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 4px 14px rgba(76,92,240,.28)}
-.brand .mark img{width:100%;height:100%;object-fit:cover;display:block}
-.brand .txt .t{font-size:15px;font-weight:800;letter-spacing:-.03em;line-height:1}
-.brand .txt .s{font-size:9px;font-weight:800;color:var(--text-dim2);letter-spacing:.22em;text-transform:uppercase;margin-top:3px}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:3px}
-.icon-btn{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--text-dim);transition:.18s;flex:none}
-.icon-btn:hover{background:var(--surface-2);color:var(--text)}
-.icon-btn:active{transform:scale(.93)}
-#btnAdmin{background:linear-gradient(135deg,rgba(224,160,26,.14),rgba(216,52,126,.08));border:1px solid rgba(224,160,26,.35);color:var(--gold)}
-#btnAdmin:hover{background:linear-gradient(135deg,rgba(224,160,26,.22),rgba(216,52,126,.14));border-color:var(--gold);color:var(--gold);box-shadow:0 6px 20px rgba(224,160,26,.24)}
-#views{flex:1;padding-top:calc(60px + env(safe-area-inset-top));padding-bottom:calc(90px + env(safe-area-inset-bottom))}
-.view{display:none;padding:18px 14px;max-width:820px;margin:0 auto;animation:viewIn .35s cubic-bezier(.2,1,.4,1)}
-.view.on{display:block}
-@keyframes viewIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.topbar{position:sticky;top:0;z-index:50;padding:14px 20px;display:flex;align-items:center;gap:12px;background:rgba(6,8,15,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.topbar-logo{width:38px;height:38px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#4c5cf0,#8b46e8);flex:none}
+.topbar-logo img{width:100%;height:100%;object-fit:cover;display:block}
+.topbar-title{flex:1;font-size:16px;font-weight:900;letter-spacing:-.02em}
+.topbar-title small{display:block;font-size:10.5px;color:var(--text-dim2);font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-top:2px}
+.user-chip{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:99px;background:var(--surface-2);border:1px solid var(--border-2);font-size:12px;font-weight:700;cursor:pointer;transition:.15s}
+.user-chip:hover{background:var(--surface-3)}
+.user-chip .avatar{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#4c5cf0,#8b46e8);display:grid;place-items:center;font-size:11px;color:#fff;font-weight:800;overflow:hidden;flex:none}
+.user-chip .avatar img{width:100%;height:100%;object-fit:cover}
 
-/* BOTTOM NAV */
-.bottomnav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 10px);z-index:60;width:min(420px,calc(100% - 24px));height:64px;padding:6px 8px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;border-radius:22px;background:color-mix(in srgb,var(--surface) 85%,transparent);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--border-2);box-shadow:0 12px 40px rgba(20,30,60,.14)}
-.bottomnav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--text-dim);font-size:9.5px;font-weight:700;transition:.2s;border-radius:14px}
-.bottomnav button:active{transform:scale(.92)}
-.bottomnav button.active{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 6px 16px rgba(76,92,240,.35)}
-.bottomnav button svg{width:22px;height:22px}
+.layout{flex:1;display:grid;grid-template-columns:240px 1fr;max-width:1400px;width:100%;margin:0 auto;padding:20px}
+.sidebar{display:flex;flex-direction:column;gap:4px;padding-right:20px;border-right:1px solid var(--border)}
+.nav-btn{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;font-weight:700;font-size:13.5px;color:var(--text-dim);transition:.15s;text-align:left;width:100%}
+.nav-btn:hover{background:var(--surface-2);color:var(--text)}
+.nav-btn.active{background:linear-gradient(135deg,#4c5cf0,#8b46e8);color:#fff;box-shadow:0 6px 16px rgba(76,92,240,.32)}
+.nav-btn svg{width:18px;height:18px}
+.main{padding-left:24px;min-width:0}
+.page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.page-head h1{font-size:24px;font-weight:900;letter-spacing:-.03em}
+.page-head p{font-size:12.5px;color:var(--text-dim);margin:4px 0 0}
 
-/* CARD */
-.card{background:linear-gradient(180deg,var(--surface),var(--surface-2));border-radius:20px;padding:16px;box-shadow:var(--shadow-sm);border:1px solid var(--border);margin-bottom:12px}
-.card.flat{padding:0;overflow:hidden}
-.sec-title{display:flex;align-items:center;justify-content:space-between;margin:22px 4px 10px}
-.sec-title h3{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim);display:flex;align-items:center;gap:8px}
-.sec-title h3::before{content:'';width:3px;height:14px;border-radius:99px;background:linear-gradient(180deg,var(--accent),var(--accent-2))}
-.sec-title button{font-size:12px;font-weight:700;color:var(--accent);padding:6px 10px;border-radius:10px}
-.sec-title button:hover{background:var(--accent-soft)}
+/* ============ CARDS ============ */
+.card{background:linear-gradient(180deg,var(--surface),var(--surface-2));border-radius:18px;padding:20px;border:1px solid var(--border);box-shadow:0 4px 14px rgba(0,0,0,.2);margin-bottom:16px}
+.card-title{font-size:11px;font-weight:900;color:var(--text-dim);letter-spacing:.16em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.card-title::before{content:'';width:3px;height:14px;border-radius:99px;background:linear-gradient(180deg,#6d7bff,#a46cff)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.stat-card{background:linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--border);border-radius:16px;padding:16px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:100px;height:100px;background:radial-gradient(circle,rgba(109,123,255,.15),transparent 70%);pointer-events:none}
+.stat-card .l{font-size:10px;font-weight:900;color:var(--text-dim2);letter-spacing:.14em;text-transform:uppercase}
+.stat-card .v{font-size:26px;font-weight:900;margin-top:6px;letter-spacing:-.035em;font-variant-numeric:tabular-nums;position:relative}
+.stat-card .ic{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#fff}
 
-/* BUTTON */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:12px;font-weight:700;font-size:13.5px;background:var(--surface-2);color:var(--text);transition:.15s;min-height:46px;border:1px solid var(--border-2);box-shadow:0 1px 2px rgba(20,30,60,.06)}
-.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
-.btn:active{transform:scale(.98)}
-.btn:disabled{opacity:.5;pointer-events:none}
-.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent;box-shadow:0 8px 20px rgba(76,92,240,.3)}
-.btn.primary:hover{box-shadow:0 12px 28px rgba(76,92,240,.42);filter:brightness(1.05)}
-.btn.danger{background:var(--danger-soft);color:var(--danger);border-color:rgba(231,52,74,.3)}
-.btn.ghost{background:transparent;border-color:var(--border-2);color:var(--text-dim);box-shadow:none}
-.btn.ghost:hover{background:var(--surface-2);color:var(--text)}
-.btn.block{width:100%}
-.btn.sm{padding:8px 12px;min-height:36px;font-size:12px;border-radius:10px;gap:6px}
-.btn.lg{padding:14px 24px;min-height:52px;font-size:15px;border-radius:14px}
-.btn.google{background:#fff;color:#1a1a2e;border:none;box-shadow:var(--shadow-sm);font-weight:700}
-.btn.google svg{width:20px;height:20px}
+/* ============ FORM ============ */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--text-dim);margin-bottom:8px}
+.input{width:100%;padding:12px 14px;border-radius:12px;background:var(--bg-2);border:1.5px solid var(--border-2);color:var(--text);transition:.15s;font-size:14px;font-weight:500;min-height:46px}
+.input:focus{border-color:#6d7bff;box-shadow:0 0 0 3px rgba(109,123,255,.15);background:var(--surface)}
+textarea.input{resize:vertical;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.5}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn.sm{padding:8px 14px;min-height:38px;font-size:12.5px;border-radius:10px;width:auto}
+.btn.lg{min-height:52px;font-size:15px;border-radius:14px}
 
-/* FORM */
-.field{margin-bottom:12px}
-.field label{display:block;font-size:12px;font-weight:700;color:var(--text-dim);margin-bottom:6px}
-.input{width:100%;padding:12px 14px;border-radius:12px;background:var(--bg-2);border:1.5px solid var(--border-2);color:var(--text);outline:none;transition:.15s;min-height:48px;font-size:14px;font-weight:500}
-.input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);background:var(--surface)}
-textarea.input{resize:vertical;font-family:inherit}
-.err{font-size:12px;color:var(--danger);margin-top:6px;min-height:16px;font-weight:600}
-.empty{text-align:center;padding:32px 16px;color:var(--text-dim2)}
-.empty svg{width:40px;height:40px;margin:0 auto 12px;opacity:.35}
-.empty p{margin:0;font-size:13px;font-weight:600}
-.spinner{display:inline-block;width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(76,92,240,.2);border-top-color:var(--accent);animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:var(--surface-3);color:var(--text-dim);border:1px solid var(--border-2)}
-.pill.accent{background:var(--accent-soft);color:var(--accent);border-color:rgba(76,92,240,.28)}
-.pill.success{background:var(--success-soft);color:var(--success);border-color:rgba(10,159,104,.28)}
-.pill.danger{background:var(--danger-soft);color:var(--danger);border-color:rgba(231,52,74,.28)}
-.pill.gold{background:rgba(224,160,26,.14);color:var(--gold);border-color:rgba(224,160,26,.3)}
+/* ============ LIST ============ */
+.list{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--surface);border:1px solid var(--border);transition:.15s}
+.row:hover{background:var(--surface-2);border-color:var(--border-2)}
+.row .avatar{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#4c5cf0,#8b46e8);display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;flex:none;overflow:hidden}
+.row .avatar img{width:100%;height:100%;object-fit:cover}
+.row .body{flex:1;min-width:0}
+.row .ttl{font-size:13.5px;font-weight:800;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .sub{font-size:11.5px;color:var(--text-dim);margin-top:3px;font-weight:600}
+.row .actions{display:flex;gap:6px;flex-shrink:0}
 
-/* HOME */
-.home-banner{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;margin-bottom:12px;background:linear-gradient(135deg,rgba(76,92,240,.1),rgba(139,70,232,.06));border:1px solid rgba(76,92,240,.22)}
-.home-banner .hb-icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;flex:none}
-.home-banner .hb-body{flex:1;min-width:0}
-.home-banner .hb-t{font-size:13.5px;font-weight:800}
-.home-banner .hb-x{font-size:12px;color:var(--text-dim);margin-top:3px;line-height:1.5}
-.home-banner .hb-close{width:28px;height:28px;border-radius:8px;color:var(--text-dim2);flex:none;display:grid;place-items:center}
-.hero{background:linear-gradient(145deg,var(--surface),var(--surface-2));border-radius:20px;padding:18px;border:1px solid var(--border);box-shadow:var(--shadow-sm)}
-.hero-inner{display:flex;gap:14px;align-items:flex-start}
-.avatar{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font-weight:800;font-size:22px;color:#fff;flex:none;overflow:hidden;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 6px 18px rgba(76,92,240,.28)}
-.avatar img{width:100%;height:100%;object-fit:cover;display:block}
-.avatar.xl{width:88px;height:88px;border-radius:26px;font-size:34px}
-.hero-info{flex:1;min-width:0}
-.hero-name{font-size:19px;font-weight:900;letter-spacing:-.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hero-meta{display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap;font-size:11.5px;color:var(--text-dim);font-weight:600}
-.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
-.hero-stats>div{font-size:10px;font-weight:800;color:var(--text-dim2);letter-spacing:.1em;text-transform:uppercase}
-.hero-stats b{display:block;font-size:20px;font-weight:900;color:var(--text);letter-spacing:-.03em;margin-top:2px}
-.progress{height:7px;border-radius:99px;background:var(--surface-3);overflow:hidden;margin-top:10px}
-.progress i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .6s}
+/* ============ BADGE ============ */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+.badge.green{background:var(--success-soft);color:var(--success);border:1px solid rgba(16,217,141,.3)}
+.badge.red{background:var(--danger-soft);color:var(--danger);border:1px solid rgba(255,93,108,.3)}
+.badge.gold{background:rgba(255,202,60,.14);color:var(--gold);border:1px solid rgba(255,202,60,.3)}
+.badge.blue{background:var(--accent-soft);color:var(--accent);border:1px solid rgba(109,123,255,.3)}
+.badge.warn{background:var(--warn-soft);color:var(--warn);border:1px solid rgba(255,176,32,.3)}
 
-/* QUICK MENU */
-.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
-.quick{background:linear-gradient(165deg,var(--surface),var(--surface-2));border-radius:16px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;border:1px solid var(--border);box-shadow:0 4px 12px rgba(20,30,60,.06);transition:.2s;min-height:104px}
-.quick:hover{transform:translateY(-3px);box-shadow:var(--shadow-sm)}
-.quick:active{transform:translateY(-1px) scale(.99)}
-.quick .qi{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;box-shadow:0 6px 16px rgba(76,92,240,.28)}
-.quick .qi svg{width:26px;height:26px}
-.quick .qlabel{font-size:11.5px;font-weight:800;text-align:center;line-height:1.2;color:var(--text)}
-.quick .qsub{font-size:9.5px;font-weight:700;color:var(--text-dim2)}
-
-/* LIST ITEM */
-.list-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;transition:.15s}
-.list-item+.list-item{border-top:1px solid var(--border)}
-.list-item:hover{background:var(--accent-soft)}
-.li-main{flex:1;min-width:0}
-.li-main .t{font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.li-main .s{font-size:11.5px;color:var(--text-dim);margin-top:3px;font-weight:600}
-
-/* PLAY */
-.play-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.play-card{position:relative;background:linear-gradient(155deg,var(--surface),var(--surface-2));border-radius:20px;aspect-ratio:1/1;padding:14px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:6px;border:1px solid var(--border);box-shadow:0 4px 14px rgba(20,30,60,.08);transition:.25s;cursor:pointer;text-align:left}
-.play-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--border-2)}
-.play-card:active{transform:translateY(-1px) scale(.99)}
-.play-card .pc-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 8px 20px rgba(76,92,240,.28);margin-bottom:auto}
-.play-card .pc-icon svg{width:28px;height:28px}
-.play-card .pc-title{font-size:14.5px;font-weight:900;letter-spacing:-.02em}
-.play-card .pc-sub{font-size:11px;color:var(--text-dim);font-weight:600;line-height:1.35}
-.pc-ranked{background:linear-gradient(135deg,#ff6b6b,#ffb020)!important}
-.pc-casual{background:linear-gradient(135deg,#22d3ee,#6d7bff)!important}
-.pc-friend{background:linear-gradient(135deg,#10d98d,#22d3ee)!important}
-.pc-ai{background:linear-gradient(135deg,#a46cff,#6d7bff)!important}
-.pc-local{background:linear-gradient(135deg,#ffb020,#ff6b6b)!important}
-.pc-puzzle{background:linear-gradient(135deg,#6d7bff,#a46cff)!important}
-.pc-tictactoe{background:linear-gradient(135deg,#22d3ee,#6d7bff)!important}
-.pc-trex{background:linear-gradient(135deg,#ffb020,#ff6b6b)!important}
-.pc-tournament{background:linear-gradient(135deg,#ffca3c,#ff6b9d)!important}
-.pc-shop{background:linear-gradient(135deg,#ffca3c,#e0a01a)!important}
-
-/* PROFILE */
-.profile-cover{background:linear-gradient(145deg,var(--surface),var(--surface-2));border-radius:22px;padding:20px;border:1px solid var(--border);box-shadow:var(--shadow-sm)}
-.profile-head{display:flex;gap:16px;align-items:center}
-.profile-body{flex:1;min-width:0}
-.profile-name{font-size:21px;font-weight:900;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.profile-id{font-size:11px;color:var(--text-dim2);margin-top:6px;font-family:ui-monospace,monospace}
-.profile-rating{text-align:right;flex:none}
-.profile-rating .rnum{font-size:28px;font-weight:900;letter-spacing:-.035em;line-height:1}
-.profile-rating .rlabel{font-size:10px;font-weight:800;color:var(--text-dim);letter-spacing:.14em;text-transform:uppercase;margin-top:2px}
-.avatar-edit{position:relative;display:inline-block}
-.avatar-edit-btn{position:absolute;bottom:-4px;right:-4px;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;display:grid;place-items:center;box-shadow:0 4px 12px rgba(76,92,240,.4),0 0 0 2px var(--surface);cursor:pointer}
-.avatar-edit-btn svg{width:14px;height:14px}
-.tabs{display:flex;gap:4px;background:var(--surface);padding:5px;border-radius:14px;border:1px solid var(--border-2);overflow-x:auto;scrollbar-width:none}
-.tabs::-webkit-scrollbar{display:none}
-.tabs button{flex:1;padding:10px 12px;border-radius:11px;font-size:12.5px;font-weight:800;color:var(--text-dim);white-space:nowrap;transition:.15s;min-width:fit-content}
-.tabs button.active{background:linear-gradient(180deg,var(--surface-3),var(--surface-2));color:var(--text);box-shadow:0 1px 2px rgba(20,30,60,.08)}
-.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.stat{background:linear-gradient(180deg,var(--surface),var(--surface-2));border-radius:16px;padding:14px;border:1px solid var(--border);box-shadow:0 1px 2px rgba(20,30,60,.05)}
-.stat .l{font-size:10.5px;color:var(--text-dim);font-weight:900;text-transform:uppercase;letter-spacing:.12em}
-.stat .v{font-size:24px;font-weight:900;margin-top:6px;letter-spacing:-.035em;line-height:1}
-
-/* SETTINGS */
-#settings{position:fixed;inset:0;z-index:560;display:none;flex-direction:column;background:linear-gradient(180deg,var(--bg-2),var(--bg));padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
-#settings.on{display:flex}
-.settings-head{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);flex:none}
-.settings-head h3{font-size:18px;font-weight:800;flex:1}
-.settings-body{flex:1;overflow-y:auto;padding:18px;max-width:720px;width:100%;margin:0 auto}
-.sheet-sec{margin-bottom:22px}
-.sheet-sec-title{font-size:10.5px;font-weight:900;color:var(--text-dim);letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:9px;margin:0 4px 10px}
-.sheet-sec-title::before{content:'';width:3px;height:12px;border-radius:99px;background:linear-gradient(180deg,var(--accent),var(--accent-2))}
-.setting-row{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border-bottom:1px solid var(--border);cursor:pointer}
-.setting-row:first-of-type{border-radius:16px 16px 0 0;border-top:1px solid var(--border)}
-.setting-row:last-of-type{border-radius:0 0 16px 16px;border-bottom:none}
-.setting-row:only-of-type{border-radius:16px;border:1px solid var(--border)}
-.setting-row .st{flex:1;min-width:0}
-.setting-row .st .t{font-size:13.5px;font-weight:700}
-.setting-row .st .s{font-size:11.5px;color:var(--text-dim);margin-top:2px}
-.setting-row select{background:var(--bg-2);border:1px solid var(--border-2);border-radius:10px;padding:8px 12px;font-size:12.5px;outline:none;font-weight:600;color:var(--text)}
-.switch{position:relative;width:46px;height:26px;border-radius:99px;background:var(--surface-3);border:1px solid var(--border-2);flex:none;transition:.2s;cursor:pointer}
-.switch::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.24s cubic-bezier(.3,1.5,.5,1);box-shadow:0 2px 4px rgba(0,0,0,.2)}
-.switch.on{background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent}
-.switch.on::after{left:23px}
-
-/* GAME */
-#gameScreen{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;background:var(--bg);padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
-#gameScreen.on{display:flex}
-.game-top{height:56px;display:flex;align-items:center;gap:8px;padding-inline:10px;border-bottom:1px solid var(--border);flex:none;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.game-top .title{font-size:13.5px;font-weight:800;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.game-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;gap:10px;min-height:0;overflow:hidden}
-.player-bar{width:100%;max-width:min(560px,calc(100vh - 320px));display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:14px;background:var(--surface);border:1px solid var(--border);flex:none;transition:.2s}
-.player-bar.turn{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
-.player-bar .avatar{width:34px;height:34px;border-radius:11px;font-size:13px}
-.pb-info{flex:1;min-width:0}
-.pb-info .n{font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pb-info .r{font-size:10.5px;color:var(--text-dim);margin-top:2px}
-.clock{font-family:ui-monospace,monospace;font-weight:800;font-size:16px;padding:6px 12px;border-radius:10px;background:var(--bg-2);border:1px solid var(--border-2);flex:none;min-width:80px;text-align:center}
-.clock.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent}
-.board-wrap{width:100%;max-width:min(560px,calc(100vh - 320px));aspect-ratio:1/1;flex:none;padding:6px;border-radius:18px;background:linear-gradient(155deg,#fff,#f0f2f8 40%,#e0e5ef);box-shadow:0 20px 50px rgba(20,30,60,.15);touch-action:none;user-select:none}
-[data-theme="dark"] .board-wrap{background:linear-gradient(155deg,rgba(255,255,255,.08),rgba(0,0,0,.25));box-shadow:0 20px 50px rgba(0,0,0,.5)}
-.board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:100%;height:100%;border-radius:12px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(20,30,60,.2)}
-.sq{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.sq.light{background:linear-gradient(145deg,#f0d9b5,#e8c89b)}
-.sq.dark{background:linear-gradient(145deg,#b58863,#a0764e)}
-.sq.last{box-shadow:inset 0 0 0 100px rgba(255,214,0,.28)}
-.sq.sel{box-shadow:inset 0 0 0 100px rgba(76,92,240,.42)}
-.sq.check{box-shadow:inset 0 0 0 100px rgba(231,52,74,.55)}
-.sq .dot{position:absolute;width:26%;height:26%;border-radius:50%;background:rgba(0,0,0,.35);pointer-events:none}
-.sq .ring{position:absolute;inset:6%;border-radius:50%;border:4px solid rgba(0,0,0,.28);pointer-events:none}
-.piece{width:92%;height:92%;display:block;position:relative;z-index:2;pointer-events:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
-.piece path,.piece circle,.piece rect,.piece polygon,.piece ellipse{fill:var(--pf);stroke:var(--ps);stroke-width:1.4;stroke-linejoin:round}
-.piece.pw{--pf:#fafbfd;--ps:#1a2030}
-.piece.pb{--pf:#1e2330;--ps:#a8b2c4}
-.game-tools{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 14px);left:50%;transform:translateX(-50%);display:flex;gap:6px;padding:6px 8px;border-radius:99px;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--border-2);box-shadow:0 10px 30px rgba(20,30,60,.15);z-index:10;max-width:calc(100% - 20px);overflow-x:auto;scrollbar-width:none}
-.game-tools::-webkit-scrollbar{display:none}
-.tool-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 8px;border-radius:16px;color:var(--text-dim);font-size:9px;font-weight:800;min-width:50px;flex:none;transition:.15s}
-.tool-btn svg{width:20px;height:20px}
-.tool-btn:hover{background:var(--surface-2);color:var(--text)}
-.tool-btn.danger{color:var(--danger)}
-.status-strip{text-align:center;font-size:12.5px;font-weight:800;color:var(--text-dim);min-height:18px;padding:0 12px}
-
-/* MODAL / TOAST */
-#modalRoot{position:fixed;inset:0;z-index:600;display:none;align-items:center;justify-content:center;padding:16px}
-#modalRoot.on{display:flex}
-.modal-backdrop{position:absolute;inset:0;background:rgba(10,15,30,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.modal{position:relative;background:linear-gradient(180deg,var(--surface),var(--surface-2));border-radius:22px;padding:22px;width:100%;max-width:440px;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:modalPop .3s cubic-bezier(.2,1.2,.4,1)}
-@keyframes modalPop{from{opacity:0;transform:scale(.92) translateY(12px)}to{opacity:1;transform:none}}
-.modal h3{font-size:19px;margin-bottom:8px}
+/* ============ MODAL ============ */
+.modal-root{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-root.on{display:flex}
+.modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.modal{position:relative;background:linear-gradient(180deg,var(--surface),var(--surface-2));border-radius:22px;padding:24px;width:100%;max-width:460px;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);border:1px solid var(--border-2);animation:mpop .3s cubic-bezier(.2,1.2,.4,1)}
+@keyframes mpop{from{opacity:0;transform:scale(.92) translateY(12px)}to{opacity:1;transform:none}}
+.modal h3{font-size:19px;font-weight:800;margin:0 0 8px;letter-spacing:-.02em}
 .modal p{color:var(--text-dim);font-size:13.5px;margin:0 0 16px;line-height:1.55}
 .modal-actions{display:flex;gap:8px;margin-top:18px}
-.modal-actions .btn{flex:1}
-#toastRoot{position:fixed;left:50%;transform:translateX(-50%);z-index:900;bottom:calc(90px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:calc(100% - 24px);max-width:420px}
-.toast{background:linear-gradient(180deg,var(--surface-2),var(--surface-3));color:var(--text);padding:12px 16px;border-radius:14px;font-size:13px;font-weight:700;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:10px;animation:toastIn .35s;border:1px solid var(--border-2);max-width:100%}
-.toast.out{animation:toastOut .25s forwards}
-.toast.success{border-color:rgba(10,159,104,.4)}
-.toast.success svg{color:var(--success)}
-.toast.error{border-color:rgba(231,52,74,.4)}
-.toast.error svg{color:var(--danger)}
-@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.92)}to{opacity:1;transform:none}}
-@keyframes toastOut{to{opacity:0;transform:translateY(12px) scale(.94)}}
+.modal-actions .btn{flex:1;min-height:44px}
 
-/* TTT */
-#tttScreen{position:fixed;inset:0;z-index:110;display:none;flex-direction:column;background:var(--bg);padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
-#tttScreen.on{display:flex}
-.ttt-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}
-.ttt-score{display:flex;gap:8px;justify-content:center}
-.ttt-score-item{background:var(--surface);border:1px solid var(--border-2);border-radius:12px;padding:8px 16px;text-align:center;min-width:70px}
-.ttt-score-item .lbl{font-size:9.5px;font-weight:900;color:var(--text-dim);letter-spacing:.13em;text-transform:uppercase}
-.ttt-score-item .val{font-size:20px;font-weight:900;margin-top:2px}
-.ttt-status{font-size:14px;font-weight:800;text-align:center;min-height:20px}
-.ttt-board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:min(320px,85vw);aspect-ratio:1}
-.ttt-cell{background:var(--surface);border:1px solid var(--border-2);border-radius:14px;display:grid;place-items:center;font-size:clamp(36px,10vw,60px);font-weight:900;cursor:pointer;transition:.15s;user-select:none}
-.ttt-cell:hover:not(.dis){border-color:var(--accent);transform:translateY(-2px)}
-.ttt-cell.x{color:#0891b2}
-.ttt-cell.o{color:#8b46e8}
-.ttt-cell.win{background:rgba(10,159,104,.15);border-color:var(--success)}
-.ttt-cell.dis{cursor:default}
+/* ============ TOAST ============ */
+#toastRoot{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:400px}
+.toast{background:linear-gradient(180deg,var(--surface-2),var(--surface-3));padding:12px 18px;border-radius:14px;font-size:13px;font-weight:700;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;border:1px solid var(--border-2);animation:tin .3s;pointer-events:auto}
+.toast.success{border-color:rgba(16,217,141,.4)}
+.toast.error{border-color:rgba(255,93,108,.4)}
+@keyframes tin{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+@keyframes tout{to{opacity:0;transform:translateX(40px)}}
+.toast.out{animation:tout .25s forwards}
 
-/* ADMIN */
-.adm-tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;scrollbar-width:none}
-.adm-tabs::-webkit-scrollbar{display:none}
-.adm-tab{flex:none;padding:7px 12px;border-radius:10px;background:var(--surface);border:1px solid var(--border-2);font-size:11.5px;font-weight:800;color:var(--text-dim);white-space:nowrap;cursor:pointer;transition:.15s}
-.adm-tab.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(76,92,240,.28)}
-.adm-stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
-.adm-stat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center}
-.adm-stat .l{font-size:9.5px;font-weight:900;letter-spacing:.13em;text-transform:uppercase;color:var(--text-dim2)}
-.adm-stat .v{font-size:22px;font-weight:900;letter-spacing:-.03em;margin-top:4px}
-@media (min-width:520px){.adm-stat-grid{grid-template-columns:repeat(4,1fr)}}
+/* ============ EMPTY ============ */
+.empty{text-align:center;padding:40px 16px;color:var(--text-dim2)}
+.empty svg{width:44px;height:44px;margin:0 auto 12px;opacity:.35}
+.empty p{margin:0;font-size:13.5px;font-weight:600}
+.spinner{display:inline-block;width:20px;height:20px;border-radius:50%;border:2.5px solid rgba(109,123,255,.2);border-top-color:#6d7bff;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-@media (max-width:360px){
-  .view{padding:14px 11px}
-  .quick-grid{gap:8px}
-  .quick{padding:10px 6px;min-height:96px}
-  .quick .qi{width:44px;height:44px}
-  .quick .qi svg{width:22px;height:22px}
-  .quick .qlabel{font-size:10.5px}
-  .hero-stats b{font-size:18px}
-  .stat .v{font-size:20px}
-  .bottomnav button{font-size:9px}
-}
-@media (min-width:768px){
-  .quick-grid{grid-template-columns:repeat(6,1fr)}
-  .stat-grid{grid-template-columns:repeat(4,1fr)}
-  .view{padding:24px 20px}
+/* ============ RESPONSIVE ============ */
+@media (max-width:768px){
+  .layout{grid-template-columns:1fr;padding:12px}
+  .sidebar{flex-direction:row;overflow-x:auto;padding:0 0 12px 0;border-right:none;border-bottom:1px solid var(--border);gap:6px;scrollbar-width:none}
+  .sidebar::-webkit-scrollbar{display:none}
+  .nav-btn{flex:none;padding:9px 14px;white-space:nowrap;min-width:auto}
+  .nav-btn span{display:none}
+  .nav-btn.active span{display:inline}
+  .main{padding:16px 0 0}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .topbar-title small{display:none}
+  .user-chip .name{display:none}
 }
 </style>
 </head>
 <body>
 
-<!-- SPLASH -->
-<div id="splash">
-  <div class="sp-mark" id="spMark"></div>
-  <div style="text-align:center">
-    <div class="sp-title">Cazoo</div>
-    <div class="sp-sub">Chess Arena</div>
-  </div>
-  <div class="sp-bar"><i></i></div>
-  <div class="sp-status" id="spStatus">Menyiapkan arena...</div>
-</div>
-
-<!-- AUTH -->
-<div id="authScreen">
-  <div class="auth-inner">
-    <div class="auth-logo" id="authLogo"></div>
-    <h1 class="auth-title">Cazoo</h1>
-    <div class="auth-sub">Masuk untuk melanjutkan</div>
-    <div class="auth-card">
-      <button class="btn google block" id="btnGoogle" style="min-height:52px">Masuk dengan Google</button>
-      <p style="font-size:12px;color:var(--text-dim);text-align:center;margin:14px 0 0;line-height:1.55">Login hanya tersedia melalui Google</p>
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-box">
+    <div class="login-logo"><img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg"></div>
+    <div class="login-title">Admin Panel</div>
+    <div class="login-sub">Login dengan akun Google yang terdaftar sebagai admin</div>
+    <button class="btn google" id="btnLogin" style="justify-content:center">
+      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Masuk dengan Google
+    </button>
+    <div class="login-info">
+      Hanya UID yang terdaftar di <b>adminConfig/adminUids</b> yang bisa mengakses panel ini.
     </div>
-    <div class="auth-foot">Login hanya melalui Google. Jika belum punya akun, Anda akan dibimbing membuat profil setelah masuk.</div>
-    <button class="btn ghost block" id="btnOffline">Lanjut Tanpa Akun</button>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app">
-  <header class="topbar">
-    <div class="brand">
-      <div class="mark" id="brandMark"></div>
-      <div class="txt"><div class="t">Cazoo</div><div class="s">Chess Arena</div></div>
+  <div class="topbar">
+    <div class="topbar-logo"><img src="https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg"></div>
+    <div class="topbar-title">Cazoo Admin<small>Panel Kendali</small></div>
+    <div class="user-chip" id="userChip">
+      <div class="avatar" id="userAv">A</div>
+      <div class="name" id="userName">Admin</div>
     </div>
-    <div class="topbar-right">
-      <button class="icon-btn hidden" id="btnAdmin" aria-label="Panel Admin"></button>
-      <button class="icon-btn" id="btnTheme" aria-label="Tema"></button>
-      <button class="icon-btn" id="btnSettings" aria-label="Pengaturan"></button>
-    </div>
-  </header>
-
-  <main id="views">
-    <section class="view on" id="view-home">
-      <div id="homeBanner"></div>
-      <div class="hero" id="heroCard"></div>
-      <div class="quick-grid" id="quickGrid"></div>
-      <div class="sec-title"><h3>Papan Peringkat</h3><button data-goto="leaderboard">Lihat</button></div>
-      <div class="card flat" id="homeLB"></div>
-    </section>
-
-    <section class="view" id="view-play">
-      <div class="sec-title" style="margin-top:6px"><h3>Pilih Mode Permainan</h3></div>
-      <div class="play-grid" id="playModes"></div>
-    </section>
-
-    <section class="view" id="view-leaderboard">
-      <div class="sec-title" style="margin-top:6px"><h3>Papan Peringkat</h3></div>
-      <div class="tabs" id="lbTabs">
-        <button data-lb="global" class="active">Global</button>
-      </div>
-      <div class="card flat" id="lbContent" style="margin-top:14px"></div>
-    </section>
-
-    <section class="view" id="view-profile">
-      <div id="profileHead"></div>
-      <div class="tabs" id="profileTabs" style="margin-top:14px">
-        <button data-pt="overview" class="active">Ringkasan</button>
-        <button data-pt="stats">Statistik</button>
-        <button data-pt="achievements">Pencapaian</button>
-      </div>
-      <div id="profileBody" style="margin-top:14px"></div>
-    </section>
-  </main>
-
-  <nav class="bottomnav" id="bottomNav">
-    <button data-goto="home" class="active"><span id="navHome"></span>Home</button>
-    <button data-goto="play"><span id="navPlay"></span>Play</button>
-    <button data-goto="leaderboard"><span id="navLB"></span>Rank</button>
-    <button data-goto="profile"><span id="navProfile"></span>Profil</button>
-  </nav>
-</div>
-
-<!-- GAME -->
-<div id="gameScreen">
-  <div class="game-top">
-    <button class="icon-btn" id="btnGameBack"></button>
-    <div class="title" id="gameTitle">Permainan</div>
-    <span class="pill" id="gameModePill"></span>
   </div>
-  <div class="game-body">
-    <div class="player-bar" id="barTop">
-      <div class="avatar" id="topAvatar">?</div>
-      <div class="pb-info"><div class="n" id="topName">Lawan</div><div class="r" id="topRating"></div></div>
-      <div class="clock" id="topClock">--:--</div>
-    </div>
-    <div class="board-wrap"><div class="board" id="board"></div></div>
-    <div class="player-bar" id="barBottom">
-      <div class="avatar" id="botAvatar">?</div>
-      <div class="pb-info"><div class="n" id="botName">Anda</div><div class="r" id="botRating"></div></div>
-      <div class="clock" id="botClock">--:--</div>
-    </div>
-    <div class="status-strip" id="gameStatus"></div>
-    <div class="game-tools" id="gameTools"></div>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <button class="nav-btn active" data-p="dashboard">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="nav-btn" data-p="users">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+        <span>Pengguna</span>
+      </button>
+      <button class="nav-btn" data-p="bans">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>
+        <span>Banned</span>
+      </button>
+      <button class="nav-btn" data-p="content">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        <span>Konten</span>
+      </button>
+      <button class="nav-btn" data-p="messages">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/></svg>
+        <span>Pesan</span>
+      </button>
+      <button class="nav-btn" data-p="tournaments">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5.5H4a3 3 0 0 0 3 3M17 5.5h3a3 3 0 0 1-3 3"/></svg>
+        <span>Turnamen</span>
+      </button>
+      <button class="nav-btn" data-p="shop">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>
+        <span>Toko</span>
+      </button>
+      <button class="nav-btn" data-p="admins">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span>Admin</span>
+      </button>
+      <button class="nav-btn" data-p="logs">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z"/><path d="M20 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg>
+        <span>Log</span>
+      </button>
+      <button class="nav-btn" id="btnLogout" style="margin-top:auto;color:var(--danger)">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+        <span>Keluar</span>
+      </button>
+    </aside>
+    <main class="main" id="main"></main>
   </div>
 </div>
 
-<!-- TTT -->
-<div id="tttScreen">
-  <div class="game-top">
-    <button class="icon-btn" id="btnTttBack"></button>
-    <div class="title">Tic-Tac-Toe</div>
-    <span class="pill accent" id="tttModePill">Vs AI</span>
-    <button class="icon-btn" id="btnTttRestart"></button>
-  </div>
-  <div class="ttt-body">
-    <div class="ttt-score">
-      <div class="ttt-score-item"><div class="lbl">X</div><div class="val" id="tttX">0</div></div>
-      <div class="ttt-score-item"><div class="lbl">Seri</div><div class="val" id="tttD">0</div></div>
-      <div class="ttt-score-item"><div class="lbl">O</div><div class="val" id="tttO">0</div></div>
-    </div>
-    <div class="ttt-status" id="tttStatus">Giliran X</div>
-    <div class="ttt-board" id="tttBoard"></div>
-  </div>
-</div>
-
-<!-- SETTINGS -->
-<div id="settings">
-  <div class="settings-head">
-    <button class="icon-btn" id="settingsClose"></button>
-    <h3>Pengaturan</h3>
-  </div>
-  <div class="settings-body" id="settingsBody"></div>
-</div>
-
-<div id="modalRoot"></div>
+<div class="modal-root" id="modalRoot"></div>
 <div id="toastRoot"></div>
 
-<input type="file" id="avatarFile" accept="image/*" class="hidden" />
-
 <script type="module">
-/* ===== ADMIN CONFIG ===== */
-const ADMIN_UIDS = [];   // ← Isi UID Anda di sini: ["xxx"] atau lewat Firebase Console
-const ADMIN_EMAILS = [];
+/* ========================================================
+   CAZOO ADMIN PANEL
+   ======================================================== */
 
-/* ===== UTILS ===== */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
-const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-const delay = ms => new Promise(r => setTimeout(r, ms));
-const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-const IMG = 'https://i.ibb.co.com/Jw4Fvfkn/1790573470498.jpg';
-function initial(n) { return String(n || '?').trim().charAt(0).toUpperCase() || '?'; }
-function levelFromXp(xp) { return Math.floor(Math.sqrt(Math.max(0, Number(xp) || 0) / 50)) + 1; }
-
-/* ===== ICONS ===== */
-const ICONS = {
-  home: '<path d="M3 10.2 12 3l9 7.2V20a1.5 1.5 0 0 1-1.5 1.5H14v-7h-4v7H4.5A1.5 1.5 0 0 1 3 20z"/>',
-  play: '<path d="M7 4.5v15l13-7.5z"/>',
-  users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>',
-  trophy: '<path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5.5H4a3 3 0 0 0 3 3"/><path d="M17 5.5h3a3 3 0 0 1-3 3"/>',
-  user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
-  settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
-  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
-  crown: '<path d="M3 18h18l-1.4-9-4.6 4-3-7-3 7-4.6-4z"/>',
-  chevL: '<path d="m15 5-7 7 7 7"/>',
-  chevR: '<path d="m9 5 7 7-7 7"/>',
-  check: '<path d="m4.5 12 5 5L20 6.5"/>',
-  x: '<path d="M6 6l12 12M18 6 6 18"/>',
-  lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
-  plus: '<path d="M12 5v14M5 12h14"/>',
-  refresh: '<path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/>',
-  logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
-  zap: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
-  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/>',
-  chess: '<path d="M12 3a3 3 0 0 0-2.9 3.8L8 12h8l-1.1-5.2A3 3 0 0 0 12 3z"/><rect x="8" y="12.5" width="8" height="2" rx="1"/><rect x="6" y="15" width="12" height="4" rx="1.4"/>',
-  cpu: '<rect x="6" y="6" width="12" height="12" rx="2"/><rect x="10" y="10" width="4" height="4"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>',
-  swords: '<path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="m13.5 18.5 5-5 2 2-5 5z"/><path d="M3 21l3-3"/>',
-  trash: '<path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6"/>',
-  flag: '<path d="M5 21V4h13l-2 4 2 4H5"/>',
-  flip: '<path d="M12 3v18"/><path d="M4 8h4v8H4z"/><path d="M16 8h4v8h-4z"/>',
-  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
-  camera: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
-  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
-  moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
-  grid: '<rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/>',
-  book: '<path d="M4 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z"/><path d="M20 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/>',
-  key: '<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.5 12.5 9-9M18 6l2 2M15 9l2 2"/>',
-  gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v9H5v-9"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',
-  star: '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/>'
-};
-function icon(n, c) { return '<svg class="ic ' + (c || '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' + (ICONS[n] || '') + '</svg>'; }
-const GOOGLE_SVG = '<svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
-
-/* ===== CHESS PIECE SHAPES ===== */
-const PIECE_SHAPES = {
-  p: '<circle cx="22.5" cy="12.5" r="5.2"/><path d="M17.5 20.5c0-2.2 2.2-3.8 5-3.8s5 1.6 5 3.8l-1.4 8.5h-7.2z"/><path d="M14.2 29.4h16.6c.7 0 1.2.5 1.2 1.2v1.2c0 .7-.5 1.2-1.2 1.2H14.2c-.7 0-1.2-.5-1.2-1.2v-1.2c0-.7.5-1.2 1.2-1.2z"/><path d="M10.5 33h24c1 0 1.8.8 1.8 1.8v2.4c0 1-.8 1.8-1.8 1.8h-24c-1 0-1.8-.8-1.8-1.8v-2.4c0-1 .8-1.8 1.8-1.8z"/>',
-  r: '<path d="M11 9.5h3.2c.6 0 1 .4 1 1v1.5h2.4V10.5c0-.6.4-1 1-1h3.8c.6 0 1 .4 1 1v1.5h2.4V10.5c0-.6.4-1 1-1H31.5c.6 0 1 .4 1 1v4.2c0 .3-.1.5-.3.7l-2.7 2.7v9.4l2.7 2.7c.2.2.3.4.3.7v3.6c0 .6-.4 1-1 1h-22c-.6 0-1-.4-1-1v-3.6c0-.3.1-.5.3-.7l2.7-2.7v-9.4l-2.7-2.7c-.2-.2-.3-.4-.3-.7v-4.2c0-.6.4-1 1-1z"/>',
-  n: '<path d="M14.4 40l1.6-8c-2.3-1.8-3.8-4.6-3.8-7.7 0-4.2 2.5-7.8 6.1-9.4l1.2-4.5c.2-.7.9-1.1 1.6-.9l2.6.9c.5.2.8.6.8 1.1v2.1c6.1 1.4 10.6 6.9 10.6 13.4 0 2.2-.5 4.2-1.4 6l1.6 6.9c.2.8-.4 1.5-1.2 1.5H15.6c-.7 0-1.3-.6-1.2-1.4z"/>',
-  b: '<circle cx="22.5" cy="7" r="3.2"/><path d="M22.5 10.8c-5.5 3.4-8.8 9-8.8 13.8 0 2.8 1.3 4.7 3.3 5.5h11c2-.8 3.3-2.7 3.3-5.5 0-4.8-3.3-10.4-8.8-13.8z"/><rect x="14" y="30.2" width="17" height="2.6" rx="1.3"/><path d="M10.5 33h24c1 0 1.8.8 1.8 1.8v2.4c0 1-.8 1.8-1.8 1.8h-24c-1 0-1.8-.8-1.8-1.8v-2.4c0-1 .8-1.8 1.8-1.8z"/>',
-  q: '<circle cx="9" cy="14" r="2.7"/><circle cx="15.5" cy="9.5" r="2.7"/><circle cx="22.5" cy="7.5" r="3.2"/><circle cx="29.5" cy="9.5" r="2.7"/><circle cx="36" cy="14" r="2.7"/><path d="M9 14L12.5 30h20L36 14l-6.5 7-3.5-11-3.5 11z"/><rect x="13" y="29.4" width="19" height="2.6" rx="1.3"/><path d="M10.5 32.6h24c1 0 1.8.8 1.8 1.8v2.4c0 1-.8 1.8-1.8 1.8h-24c-1 0-1.8-.8-1.8-1.8v-2.4c0-1 .8-1.8 1.8-1.8z"/>',
-  k: '<path d="M20.8 3h3.4v4h4v3.4h-4v3.4h-3.4V10.4h-4V7h4z"/><path d="M22.5 14.6c-6.2 0-10.8 4.4-10.8 9 0 3.1 1.8 5.5 4.2 6.5h13.2c2.4-1 4.2-3.4 4.2-6.5 0-4.6-4.6-9-10.8-9z"/><rect x="13" y="29.4" width="19" height="2.6" rx="1.3"/><path d="M10.5 32.6h24c1 0 1.8.8 1.8 1.8v2.4c0 1-.8 1.8-1.8 1.8h-24c-1 0-1.8-.8-1.8-1.8v-2.4c0-1 .8-1.8 1.8-1.8z"/>'
-};
-function pieceSVG(p, c) {
-  const w = p === p.toUpperCase();
-  const t = p.toLowerCase();
-  return '<svg class="piece ' + (w ? 'pw' : 'pb') + ' ' + (c || '') + '" viewBox="0 0 45 45">' + (PIECE_SHAPES[t] || '') + '</svg>';
-}
-
-/* ===== STATE ===== */
-const App = { user: null, profile: null, view: 'home', profileTab: 'overview', offline: false };
-const Admin = { isAdmin: false, uids: [], emails: [] };
-const settings = { theme: 'light', soundEnabled: true, showCoords: true, showLegal: true };
-try { Object.assign(settings, JSON.parse(localStorage.getItem('cazoo_v2_settings') || '{}')); } catch (e) {}
-function saveSettings() { try { localStorage.setItem('cazoo_v2_settings', JSON.stringify(settings)); } catch (e) {} }
-function applyTheme() {
-  document.documentElement.setAttribute('data-theme', settings.theme);
-  const m = document.querySelector('meta[name="theme-color"]');
-  if (m) m.setAttribute('content', settings.theme === 'dark' ? '#06080f' : '#eef1f8');
-}
-applyTheme();
-
-/* ===== SOUND ===== */
-const Sound = (() => {
-  let ctx = null, on = false;
-  function ensure() { if (!ctx) { try { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; ctx = new AC(); } catch (e) { return null; } } return ctx; }
-  function unlock() { const c = ensure(); if (c && c.state === 'suspended') c.resume().catch(() => {}); on = true; }
-  function tone(f, d, t, g) {
-    if (!settings.soundEnabled || !on) return;
-    const c = ensure(); if (!c) return;
-    try {
-      const o = c.createOscillator(), gn = c.createGain();
-      o.type = t || 'sine'; o.frequency.value = f;
-      const v = g == null ? 0.12 : g;
-      gn.gain.setValueAtTime(0.0001, c.currentTime);
-      gn.gain.exponentialRampToValueAtTime(v, c.currentTime + 0.01);
-      gn.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + d);
-      o.connect(gn); gn.connect(c.destination); o.start(); o.stop(c.currentTime + d + 0.03);
-    } catch (e) {}
-  }
-  return {
-    unlock,
-    move() { tone(420, 0.06, 'triangle', 0.12); },
-    capture() { tone(300, 0.08, 'square', 0.1); },
-    check() { tone(700, 0.1, 'sawtooth', 0.09); },
-    end() { tone(520, 0.13); setTimeout(() => tone(660, 0.13), 120); },
-    button() { tone(600, 0.04, 'sine', 0.06); }
-  };
-})();
-
-/* ===== TOAST / MODAL ===== */
-function toast(msg, type) {
-  const root = $('#toastRoot'); if (!root) return;
-  const t = el('div', 'toast' + (type ? ' ' + type : ''));
-  t.innerHTML = icon(type === 'success' ? 'check' : type === 'error' ? 'x' : 'info', 'ic-sm');
-  t.appendChild(el('span', null, String(msg)));
-  root.appendChild(t);
-  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 240); }, 2600);
-}
-
-const Modal = (() => {
-  let cur = null;
-  function close(r) {
-    const root = $('#modalRoot'); if (!root || !cur) return;
-    const cb = cur.resolve; cur = null; root.classList.remove('on');
-    if (cb) cb(r);
-    setTimeout(() => { if (!cur) root.innerHTML = ''; }, 0);
-  }
-  function open(opts) {
-    return new Promise(resolve => {
-      const root = $('#modalRoot'); if (!root) { resolve(null); return; }
-      if (cur) close(null);
-      root.innerHTML = '';
-      const bg = el('div', 'modal-backdrop');
-      const box = el('div', 'modal');
-      if (opts.title) box.appendChild(el('h3', null, opts.title));
-      if (opts.message) { const p = el('p'); p.textContent = opts.message; box.appendChild(p); }
-      if (opts.body) box.appendChild(opts.body);
-      const acts = el('div', 'modal-actions');
-      const btns = opts.buttons || [{ label: 'Tutup', value: null, variant: 'ghost' }];
-      btns.forEach(b => {
-        const btn = el('button', 'btn ' + (b.variant === 'primary' ? 'primary' : b.variant === 'danger' ? 'danger' : 'ghost'), b.label);
-        btn.addEventListener('click', () => { Sound.button(); close(b.value); });
-        acts.appendChild(btn);
-      });
-      if (btns.length) box.appendChild(acts);
-      bg.addEventListener('click', () => { if (opts.dismissible !== false) close(null); });
-      root.appendChild(bg); root.appendChild(box); root.classList.add('on');
-      cur = { resolve, opts };
-    });
-  }
-  function confirm(title, msg, okLabel, danger) {
-    return open({ title, message: msg, buttons: [{ label: 'Batal', value: false, variant: 'ghost' }, { label: okLabel || 'Ya', value: true, variant: danger ? 'danger' : 'primary' }] });
-  }
-  return { open, close, confirm };
-})();
+const el = (t, c, x) => { const n = document.createElement(t); if (c) n.className = c; if (x != null) n.textContent = x; return n; };
+const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
 /* ===== FIREBASE ===== */
-const firebaseConfig = {
+const cfg = {
   apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
   authDomain: "mygame-68b24.firebaseapp.com",
   databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
@@ -664,1445 +262,769 @@ const firebaseConfig = {
   messagingSenderId: "1003182873390",
   appId: "1:1003182873390:web:aabf3248f759cbc9d678bf"
 };
-const FB = { ready: false, app: null, auth: null, db: null, api: null, authApi: null };
+let FB = { app: null, auth: null, db: null, ready: false };
+let api = null;
+const State = { user: null, profile: null, page: 'dashboard' };
+
 async function initFirebase() {
   try {
-    const [a, d, au] = await Promise.all([
+    const [A, D, AU] = await Promise.all([
       import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js'),
       import('https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js'),
       import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js')
     ]);
-    FB.app = a.initializeApp(firebaseConfig);
-    FB.db = d.getDatabase(FB.app);
-    FB.auth = au.getAuth(FB.app);
-    FB.api = { ref: d.ref, set: d.set, get: d.get, update: d.update, remove: d.remove, onValue: d.onValue, serverTimestamp: d.serverTimestamp };
-    FB.authApi = { signOut: au.signOut, onAuthStateChanged: au.onAuthStateChanged, GoogleAuthProvider: au.GoogleAuthProvider, signInWithPopup: au.signInWithPopup };
+    FB.app = A.initializeApp(cfg);
+    FB.db = D.getDatabase(FB.app);
+    FB.auth = AU.getAuth(FB.app);
+    api = { ref: D.ref, set: D.set, get: D.get, update: D.update, remove: D.remove, onValue: D.onValue, serverTimestamp: D.serverTimestamp, push: D.push };
     FB.ready = true;
     return true;
   } catch (e) {
-    console.error('[fb-init]', e);
-    FB.ready = false;
+    console.error('[fb]', e);
     return false;
   }
 }
 
-/* ===== SPLASH / AUTH ===== */
-function hideSplash() {
-  const s = $('#splash'); if (!s) return;
-  s.classList.add('gone');
-  setTimeout(() => { if (s.parentNode) s.parentNode.removeChild(s); }, 600);
-}
-function spStatus(t) { const s = $('#spStatus'); if (s) s.textContent = t; }
-
-function showAuth() {
-  const a = $('#authScreen'); if (a) a.classList.add('on');
-  const app = $('#app'); if (app) app.classList.remove('on');
-}
-function hideAuth() {
-  const a = $('#authScreen'); if (a) a.classList.remove('on');
-  const app = $('#app'); if (app) app.classList.add('on');
+/* ===== TOAST ===== */
+function toast(msg, type) {
+  const root = $('#toastRoot');
+  const t = el('div', 'toast' + (type ? ' ' + type : ''));
+  t.textContent = msg;
+  root.appendChild(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 250); }, 3000);
 }
 
-async function doGoogle() {
-  if (!FB.ready) { toast('Offline mode', 'error'); return; }
-  const p = new FB.authApi.GoogleAuthProvider();
-  p.setCustomParameters({ prompt: 'select_account' });
-  try { await FB.authApi.signInWithPopup(FB.auth, p); }
-  catch (e) {
+/* ===== MODAL ===== */
+const Modal = {
+  open(opts) {
+    return new Promise(resolve => {
+      const root = $('#modalRoot');
+      root.innerHTML = '';
+      const bg = el('div', 'modal-bg');
+      const box = el('div', 'modal');
+      if (opts.title) box.appendChild(el('h3', null, opts.title));
+      if (opts.message) { const p = el('p'); p.textContent = opts.message; box.appendChild(p); }
+      if (opts.body) box.appendChild(opts.body);
+      const acts = el('div', 'modal-actions');
+      (opts.buttons || [{ label: 'Tutup', value: null, variant: 'ghost' }]).forEach(b => {
+        const btn = el('button', 'btn ' + (b.variant || 'ghost'), b.label);
+        btn.onclick = () => close(b.value);
+        acts.appendChild(btn);
+      });
+      box.appendChild(acts);
+      bg.onclick = () => { if (opts.dismissible !== false) close(null); };
+      root.appendChild(bg); root.appendChild(box);
+      root.classList.add('on');
+      function close(v) { root.classList.remove('on'); setTimeout(() => { root.innerHTML = ''; }, 0); resolve(v); }
+    });
+  },
+  confirm(title, msg, okLabel, danger) {
+    return this.open({
+      title, message: msg,
+      buttons: [
+        { label: 'Batal', value: false, variant: 'ghost' },
+        { label: okLabel || 'Ya', value: true, variant: danger ? 'danger' : 'primary' }
+      ]
+    });
+  }
+};
+
+/* ===== ADMIN LOG ===== */
+async function adminLog(action, detail) {
+  try {
+    const id = 'log_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+    await api.set(api.ref(FB.db, 'adminLogs/' + id), {
+      action, detail: detail || '', by: State.user.uid,
+      byName: State.profile ? State.profile.username : 'admin', at: Date.now()
+    });
+  } catch (e) {}
+}
+
+/* ===== AUTH FLOW ===== */
+async function checkAdmin(uid, email) {
+  email = (email || '').toLowerCase();
+  try {
+    const s = await api.get(api.ref(FB.db, 'adminConfig/adminUids'));
+    if (!s.exists()) return false;
+    const v = s.val();
+    const list = Array.isArray(v) ? v : Object.values(v || {});
+    return list.indexOf(uid) >= 0 || list.indexOf(email) >= 0;
+  } catch (e) { return false; }
+}
+
+async function doLogin() {
+  try {
+    const provider = new (await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js')).GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    const { signInWithPopup } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+    await signInWithPopup(FB.auth, provider);
+  } catch (e) {
     console.error(e);
-    if (!String(e.code || '').includes('cancel')) toast('Gagal login', 'error');
+    if (!String(e.code || '').includes('cancel')) toast('Gagal login: ' + (e.code || e.message), 'error');
   }
 }
 
-/* ===== PROFILE ===== */
-function defaultProfile(uid, name) {
-  return { uid, username: name || 'Pemain', usernameLower: String(name || 'pemain').toLowerCase(), avatar: '', rating: 1200, xp: 0, wins: 0, losses: 0, draws: 0, gamesPlayed: 0, bestRating: 1200, stars: 0, createdAt: Date.now(), lastSeen: Date.now(), nicknameTokens: 1, displayId: '' };
-}
-async function loadProfile(uid) {
-  if (!FB.ready) return null;
-  try {
-    const s = await FB.api.get(FB.api.ref(FB.db, 'users/' + uid));
-    if (!s.exists()) return null;
-    return Object.assign(defaultProfile(uid, s.val().username), s.val(), { uid });
-  } catch (e) { return null; }
-}
-function genId() { return String(1 + Math.floor(Math.random() * 9)) + String(Math.floor(Math.random() * 90000000) + 10000000); }
-async function createProfile(uid, name, email, avatar) {
-  const prof = Object.assign(defaultProfile(uid, name), { email: email || '', avatar: avatar || '', displayId: genId(), permata: 0 });
-  await FB.api.set(FB.api.ref(FB.db, 'users/' + uid), prof);
-  await FB.api.set(FB.api.ref(FB.db, 'usernames/' + name.toLowerCase()), uid);
-  await FB.api.set(FB.api.ref(FB.db, 'leaderboard/' + uid), { username: name, avatar: avatar || '', stars: 0, rating: 1200, games: 0, displayId: prof.displayId });
-  return prof;
-}
-function saveCache(uid, p) { try { localStorage.setItem('cazoo_v2_profile', JSON.stringify({ uid, p, at: Date.now() })); } catch (e) {} }
-function loadCache(uid) { try { const c = JSON.parse(localStorage.getItem('cazoo_v2_profile') || 'null'); if (c && c.uid === uid) return c.p; } catch (e) {} return null; }
-
-async function processAvatar(file) {
-  if (!file || !file.type.startsWith('image/')) return null;
-  if (file.size > 2 * 1024 * 1024) { toast('Gambar max 2MB', 'error'); return null; }
-  return new Promise(res => {
-    const r = new FileReader();
-    r.onload = e => {
-      const img = new Image();
-      img.onload = () => {
-        try {
-          const s = 200, c = document.createElement('canvas'); c.width = c.height = s;
-          const x = c.getContext('2d'), m = Math.min(img.width, img.height);
-          x.drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, s, s);
-          const d = c.toDataURL('image/jpeg', 0.72);
-          res(d.length > 200000 ? null : d);
-        } catch (err) { res(null); }
-      };
-      img.onerror = () => res(null);
-      img.src = e.target.result;
-    };
-    r.onerror = () => res(null);
-    r.readAsDataURL(file);
+/* ===== APP ENTRY ===== */
+function enterApp() {
+  $('#login').style.display = 'none';
+  $('#app').classList.add('on');
+  // user chip
+  const av = $('#userAv'), nm = $('#userName');
+  const p = State.profile || {};
+  if (p.avatar) av.innerHTML = '<img src="' + esc(p.avatar) + '">';
+  else av.textContent = (p.username || 'A').charAt(0).toUpperCase();
+  nm.textContent = p.username || 'Admin';
+  // sidebar
+  $$('#sidebar .nav-btn').forEach(b => {
+    if (!b.dataset.p) return;
+    b.onclick = () => { setPage(b.dataset.p); };
   });
+  $('#btnLogout').onclick = async () => {
+    const ok = await Modal.confirm('Keluar?', 'Anda akan sign out dari panel admin.', 'Keluar', true);
+    if (!ok) return;
+    try { const { signOut } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js'); await signOut(FB.auth); } catch (e) {}
+    location.reload();
+  };
+  $('#userChip').onclick = () => toast('UID: ' + State.user.uid, 'success');
+  setPage('dashboard');
 }
 
-/* ===== ADMIN ===== */
-async function checkAdmin() {
-  if (!App.user) { Admin.isAdmin = false; updateAdminBtn(); return; }
-  const uid = App.user.uid, email = (App.user.email || '').toLowerCase();
-  let list = [];
-  if (FB.ready) {
-    try { const s = await FB.api.get(FB.api.ref(FB.db, 'adminConfig/adminUids')); if (s.exists()) { const v = s.val(); list = Array.isArray(v) ? v : Object.values(v || {}); } } catch (e) {}
-  }
-  Admin.isAdmin = list.indexOf(uid) >= 0 || list.indexOf(email) >= 0 ||
-    ADMIN_UIDS.indexOf(uid) >= 0 || ADMIN_EMAILS.indexOf(email) >= 0 ||
-    email.endsWith('@admin.cazoo');
-  updateAdminBtn();
-}
-function updateAdminBtn() {
-  const b = $('#btnAdmin'); if (!b) return;
-  b.classList.toggle('hidden', !Admin.isAdmin);
+function setPage(p) {
+  State.page = p;
+  $$('#sidebar .nav-btn').forEach(b => b.classList.toggle('active', b.dataset.p === p));
+  const m = $('#main');
+  m.innerHTML = '<div class="empty"><span class="spinner"></span></div>';
+  if (p === 'dashboard') renderDashboard(m);
+  else if (p === 'users') renderUsers(m);
+  else if (p === 'bans') renderBans(m);
+  else if (p === 'content') renderContent(m);
+  else if (p === 'messages') renderMessages(m);
+  else if (p === 'tournaments') renderTournaments(m);
+  else if (p === 'shop') renderShop(m);
+  else if (p === 'admins') renderAdmins(m);
+  else if (p === 'logs') renderLogs(m);
 }
 
-async function adminPanel() {
-  if (!Admin.isAdmin) { toast('Akses ditolak', 'error'); return; }
-  const box = document.createElement('div');
-  box.innerHTML =
-    '<div class="adm-tabs" id="aTabs">' +
-    '<button class="adm-tab active" data-t="dash">Dashboard</button>' +
-    '<button class="adm-tab" data-t="users">Pengguna</button>' +
-    '<button class="adm-tab" data-t="content">Konten</button>' +
-    '<button class="adm-tab" data-t="msg">Pesan</button>' +
-    '<button class="adm-tab" data-t="admins">Admin</button>' +
-    '</div><div id="aBody" style="min-height:280px"></div>';
-  Modal.open({ title: '🛡️ Panel Admin', body: box, buttons: [{ label: 'Tutup', value: null, variant: 'primary' }] });
-  setTimeout(() => {
-    box.querySelectorAll('.adm-tab').forEach(t => t.addEventListener('click', () => {
-      box.querySelectorAll('.adm-tab').forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
-      renderAdminTab(t.dataset.t, box.querySelector('#aBody'));
-    }));
-    renderAdminTab('dash', box.querySelector('#aBody'));
-  }, 50);
-}
-
-function renderAdminTab(tab, c) {
-  if (!c) return;
-  c.innerHTML = '<div class="empty"><span class="spinner"></span></div>';
-  if (tab === 'dash') return renderAdminDash(c);
-  if (tab === 'users') return renderAdminUsers(c);
-  if (tab === 'content') return renderAdminContent(c);
-  if (tab === 'msg') return renderAdminMsg(c);
-  if (tab === 'admins') return renderAdminAdmins(c);
-}
-
-async function renderAdminDash(c) {
-  let users = 0, online = 0, permata = 0;
+/* ===== PAGE: DASHBOARD ===== */
+async function renderDashboard(m) {
+  let totalUsers = 0, online = 0, banned = 0, permata = 0, gamesToday = 0;
   try {
-    const [uS, pS] = await Promise.all([
-      FB.api.get(FB.api.ref(FB.db, 'users')),
-      FB.api.get(FB.api.ref(FB.db, 'presence'))
+    const [uS, pS, bS] = await Promise.all([
+      api.get(api.ref(FB.db, 'users')),
+      api.get(api.ref(FB.db, 'presence')),
+      api.get(api.ref(FB.db, 'bans'))
     ]);
     const u = uS.val() || {};
-    users = Object.keys(u).length;
+    totalUsers = Object.keys(u).length;
     Object.values(u).forEach(x => permata += Number(x.permata) || 0);
     const p = pS.val() || {};
     online = Object.values(p).filter(x => x && x.online === true).length;
-  } catch (e) {}
-  c.innerHTML =
-    '<div class="adm-stat-grid">' +
-    '<div class="adm-stat"><div class="l">Pengguna</div><div class="v">' + users + '</div></div>' +
-    '<div class="adm-stat"><div class="l">Online</div><div class="v" style="color:var(--success)">' + online + '</div></div>' +
-    '<div class="adm-stat"><div class="l">Permata</div><div class="v">' + permata.toLocaleString('id-ID') + '</div></div>' +
-    '<div class="adm-stat"><div class="l">Role</div><div class="v" style="font-size:14px">Admin</div></div>' +
+    banned = bS.exists() ? Object.keys(bS.val() || {}).length : 0;
+    const dayAgo = Date.now() - 86400000;
+    Object.values(u).forEach(x => { if ((x.lastSeen || 0) > dayAgo) gamesToday++; });
+  } catch (e) { console.error(e); }
+
+  m.innerHTML =
+    '<div class="page-head"><div><h1>Dashboard</h1><p>Ringkasan statistik real-time dari aplikasi</p></div></div>' +
+    '<div class="stats-grid">' +
+    '<div class="stat-card"><div class="l">Total Pengguna</div><div class="v">' + totalUsers + '</div><div class="ic" style="background:linear-gradient(135deg,#4c5cf0,#8b46e8)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div>' +
+    '<div class="stat-card"><div class="l">Online Sekarang</div><div class="v" style="color:var(--success)">' + online + '</div><div class="ic" style="background:linear-gradient(135deg,#10d98d,#089e60)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div></div>' +
+    '<div class="stat-card"><div class="l">Aktif 24 Jam</div><div class="v">' + gamesToday + '</div><div class="ic" style="background:linear-gradient(135deg,#ffb020,#ff6b6b)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div></div>' +
+    '<div class="stat-card"><div class="l">Banned</div><div class="v" style="color:var(--danger)">' + banned + '</div><div class="ic" style="background:linear-gradient(135deg,#ff5d6c,#c4162d)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg></div></div>' +
+    '<div class="stat-card"><div class="l">Permata Beredar</div><div class="v">' + permata.toLocaleString('id-ID') + '</div><div class="ic" style="background:linear-gradient(135deg,#ffca3c,#e0a01a)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M11 3 8 9l4 12 4-12-3-6"/><path d="M2 9h20"/></svg></div></div>' +
     '</div>' +
-    '<div style="font-size:11.5px;color:var(--text-dim);text-align:center;padding:12px;background:var(--surface-3);border-radius:12px;line-height:1.6">UID Anda: <b style="font-family:monospace;font-size:11px">' + (App.user ? App.user.uid : '-') + '</b></div>';
+    '<div class="card" style="margin-top:20px"><div class="card-title">Info Admin</div>' +
+    '<div style="font-size:13px;line-height:2;color:var(--text-dim)">' +
+    '<div><b style="color:var(--text)">UID Anda:</b> <code style="font-family:monospace;font-size:11.5px">' + State.user.uid + '</code></div>' +
+    '<div><b style="color:var(--text)">Email:</b> ' + esc(State.user.email || '-') + '</div>' +
+    '<div><b style="color:var(--text)">Nama:</b> ' + esc(State.profile ? State.profile.username : '-') + '</div>' +
+    '</div></div>';
 }
 
-async function renderAdminUsers(c) {
-  c.innerHTML = '<div class="search-bar" style="display:flex;gap:8px;margin-bottom:12px"><input class="input" id="aSearch" placeholder="Cari username/UID..." style="flex:1" /><button class="btn primary sm" id="aGo">Cari</button></div><div id="aList"></div>';
-  const run = async () => {
-    const q = ($('#aSearch') ? $('#aSearch').value : '').trim().toLowerCase();
-    const list = $('#aList');
-    list.innerHTML = '<div class="empty"><span class="spinner"></span></div>';
-    try {
-      const s = await FB.api.get(FB.api.ref(FB.db, 'users'));
-      const v = s.val() || {};
-      let arr = Object.keys(v).map(k => Object.assign({ uid: k }, v[k]));
-      if (q) arr = arr.filter(u => (u.username || '').toLowerCase().includes(q) || u.uid.includes(q));
-      arr.sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
-      if (!arr.length) { list.innerHTML = '<div class="empty"><p>Tidak ada.</p></div>'; return; }
-      list.innerHTML = '';
-      arr.slice(0, 40).forEach(u => {
-        const row = el('div', 'list-item');
-        row.innerHTML = '<div class="avatar" style="width:38px;height:38px;font-size:14px;border-radius:12px">' + esc(initial(u.username)) + '</div>' +
-          '<div class="li-main"><div class="t">' + esc(u.username || '?') + '</div>' +
-          '<div class="s">💎 ' + (Number(u.permata) || 0) + ' · ⭐ ' + (u.stars || 0) + ' · 🎟️ ' + (u.nicknameTokens || 0) + '</div></div>' +
-          '<button class="btn primary sm">Kelola</button>';
-        row.querySelector('button').onclick = () => adminEditUser(u.uid, c);
-        list.appendChild(row);
-      });
-    } catch (e) { list.innerHTML = '<div class="empty"><p>Gagal: ' + e.message + '</p></div>'; }
-  };
-  $('#aGo').onclick = run;
-  $('#aSearch').onkeydown = e => { if (e.key === 'Enter') run(); };
-  run();
+/* ===== PAGE: USERS ===== */
+async function renderUsers(m) {
+  m.innerHTML =
+    '<div class="page-head"><div><h1>Pengguna</h1><p>Kelola semua pengguna aplikasi</p></div>' +
+    '<div style="display:flex;gap:8px"><input class="input" id="search" placeholder="Cari username / UID..." style="min-width:220px"><button class="btn primary sm" id="btnSearch">Cari</button></div></div>' +
+    '<div id="userList"><div class="empty"><span class="spinner"></span></div></div>';
+
+  let allUsers = [];
+  async function load() {
+    const s = await api.get(api.ref(FB.db, 'users'));
+    const v = s.val() || {};
+    allUsers = Object.keys(v).map(k => Object.assign({ uid: k }, v[k]));
+    allUsers.sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0));
+    draw();
+  }
+  function draw() {
+    const q = ($('#search').value || '').toLowerCase();
+    let list = allUsers.filter(u =>
+      !q || (u.username || '').toLowerCase().includes(q) ||
+      u.uid.toLowerCase().includes(q) ||
+      (u.displayId || '').includes(q)
+    ).slice(0, 100);
+
+    const box = $('#userList');
+    if (!list.length) {
+      box.innerHTML = '<div class="empty"><p>Tidak ada pengguna</p></div>';
+      return;
+    }
+    box.innerHTML = '<div class="list">';
+    list.forEach(u => {
+      const row = el('div', 'row');
+      row.innerHTML =
+        '<div class="avatar">' + (u.avatar ? '<img src="' + esc(u.avatar) + '">' : esc((u.username || '?').charAt(0).toUpperCase())) + '</div>' +
+        '<div class="body">' +
+        '<div class="ttl">' + esc(u.username || 'Tanpa nama') + '</div>' +
+        '<div class="sub">💎 ' + (Number(u.permata) || 0) + ' · ⭐ ' + (u.stars || 0) + ' · 🎟️ ' + (u.nicknameTokens || 0) + ' · Elo ' + (u.rating || 1200) + '</div>' +
+        '</div>' +
+        '<div class="actions"><button class="btn sm primary">Kelola</button></div>';
+      row.querySelector('button').onclick = () => editUser(u.uid, draw);
+      box.appendChild(row);
+    });
+    box.innerHTML += '</div>';
+  }
+  $('#btnSearch').onclick = draw;
+  $('#search').oninput = draw;
+  load();
 }
 
-async function adminEditUser(uid, parent) {
-  const s = await FB.api.get(FB.api.ref(FB.db, 'users/' + uid));
+async function editUser(uid, reload) {
+  const s = await api.get(api.ref(FB.db, 'users/' + uid));
   const u = s.val() || {};
-  let ban = null;
-  try { const b = await FB.api.get(FB.api.ref(FB.db, 'bans/' + uid)); if (b.exists()) ban = b.val(); } catch (e) {}
-  const box = document.createElement('div');
+  let banSnap = null;
+  try { banSnap = await api.get(api.ref(FB.db, 'bans/' + uid)); } catch (e) {}
+  const banned = banSnap && banSnap.exists();
+
+  const box = el('div');
   box.innerHTML =
-    '<div style="font-weight:900;font-size:16px;margin-bottom:6px">' + esc(u.username || '?') + '</div>' +
-    '<div style="font-size:10.5px;color:var(--text-dim2);font-family:monospace;word-break:break-all;margin-bottom:14px">' + uid + '</div>' +
+    '<div style="display:flex;gap:12px;align-items:center;margin-bottom:16px">' +
+    '<div class="avatar" style="width:56px;height:56px;border-radius:16px;font-size:22px">' + (u.avatar ? '<img src="' + esc(u.avatar) + '">' : esc((u.username || '?').charAt(0).toUpperCase())) + '</div>' +
+    '<div style="flex:1;min-width:0">' +
+    '<div style="font-weight:900;font-size:18px">' + esc(u.username || '?') + '</div>' +
+    '<div style="font-size:10.5px;color:var(--text-dim2);font-family:monospace;margin-top:4px;word-break:break-all">' + uid + '</div>' +
+    '</div></div>' +
+    '<div class="grid-2">' +
     '<div class="field"><label>Permata 💎</label><input class="input" id="e-p" type="number" value="' + (Number(u.permata) || 0) + '"></div>' +
     '<div class="field"><label>Token Ganti Nama 🎟️</label><input class="input" id="e-t" type="number" value="' + (Number(u.nicknameTokens) || 0) + '"></div>' +
     '<div class="field"><label>Bintang ⭐</label><input class="input" id="e-s" type="number" value="' + (Number(u.stars) || 0) + '"></div>' +
     '<div class="field"><label>Rating Elo</label><input class="input" id="e-r" type="number" value="' + (Number(u.rating) || 1200) + '"></div>' +
-    '<div class="field"><label>Status</label><select class="input" id="e-b"><option value="0"' + (ban ? '' : ' selected') + '>Aktif</option><option value="1"' + (ban ? ' selected' : '') + '>Banned 🚫</option></select></div>' +
-    '<div class="field"><label>Alasan Ban</label><input class="input" id="e-br" value="' + esc((ban && ban.reason) || '') + '"></div>';
+    '<div class="field"><label>XP</label><input class="input" id="e-x" type="number" value="' + (Number(u.xp) || 0) + '"></div>' +
+    '<div class="field"><label>Wins</label><input class="input" id="e-w" type="number" value="' + (Number(u.wins) || 0) + '"></div>' +
+    '</div>' +
+    '<div class="field"><label>Status</label><select class="input" id="e-b"><option value="0"' + (banned ? '' : ' selected') + '>Aktif</option><option value="1"' + (banned ? ' selected' : '') + '>Banned 🚫</option></select></div>' +
+    '<div class="field"><label>Alasan Ban</label><input class="input" id="e-br" value="' + esc((banSnap && banSnap.val() && banSnap.val().reason) || '') + '" placeholder="Melanggar aturan..."></div>' +
+    '<div class="btn-row" style="margin-top:8px">' +
+    '<button class="btn sm danger" id="e-give">+100 💎</button>' +
+    '<button class="btn sm ghost" id="e-reset">Reset Stats</button>' +
+    '</div>';
+
   Modal.open({
     title: 'Kelola Pengguna', body: box, buttons: [
       { label: 'Batal', value: null, variant: 'ghost' },
       { label: 'Simpan', value: 'save', variant: 'primary' }
     ]
-  }).then(async res => {
-    if (res !== 'save') return;
-    const newStars = parseInt(box.querySelector('#e-s').value, 10) || 0;
-    const newRating = parseInt(box.querySelector('#e-r').value, 10) || 1200;
+  }).then(async r => {
+    if (r !== 'save') return;
     try {
-      await FB.api.update(FB.api.ref(FB.db, 'users/' + uid), {
+      const newStars = parseInt(box.querySelector('#e-s').value, 10) || 0;
+      const newRating = parseInt(box.querySelector('#e-r').value, 10) || 1200;
+      await api.update(api.ref(FB.db, 'users/' + uid), {
         permata: parseInt(box.querySelector('#e-p').value, 10) || 0,
         nicknameTokens: parseInt(box.querySelector('#e-t').value, 10) || 0,
-        stars: newStars, rating: newRating
+        stars: newStars,
+        rating: newRating,
+        xp: parseInt(box.querySelector('#e-x').value, 10) || 0,
+        wins: parseInt(box.querySelector('#e-w').value, 10) || 0
       });
-      const banVal = box.querySelector('#e-b').value === '1';
+      const ban = box.querySelector('#e-b').value === '1';
       const reason = box.querySelector('#e-br').value.trim();
-      if (banVal) await FB.api.set(FB.api.ref(FB.db, 'bans/' + uid), { reason: reason || 'Dilarang admin', by: App.user.uid, at: Date.now() });
-      else await FB.api.remove(FB.api.ref(FB.db, 'bans/' + uid)).catch(() => {});
-      await FB.api.update(FB.api.ref(FB.db, 'leaderboard/' + uid), { stars: newStars, rating: newRating }).catch(() => {});
-      toast('Disimpan.', 'success');
-      if (parent) renderAdminUsers(parent);
+      if (ban) {
+        await api.set(api.ref(FB.db, 'bans/' + uid), { reason: reason || 'Melanggar aturan', by: State.user.uid, at: Date.now() });
+        await adminLog('BAN_USER', u.username + ' · ' + reason);
+      } else {
+        await api.remove(api.ref(FB.db, 'bans/' + uid)).catch(() => {});
+        await adminLog('UNBAN_USER', u.username);
+      }
+      await api.update(api.ref(FB.db, 'leaderboard/' + uid), { stars: newStars, rating: newRating }).catch(() => {});
+      await adminLog('EDIT_USER', u.username);
+      toast('Disimpan!', 'success');
+      if (reload) reload();
     } catch (e) { toast('Gagal: ' + e.message, 'error'); }
   });
-}
 
-function renderAdminContent(c) {
-  c.innerHTML =
-    '<div class="field"><label>Judul Banner</label><input class="input" id="c-t" placeholder="Selamat datang di Cazoo!"></div>' +
-    '<div class="field"><label>Teks Banner</label><input class="input" id="c-x" placeholder="Deskripsi singkat"></div>' +
-    '<button class="btn primary block sm" id="c-save">💾 Simpan Banner Home</button>' +
-    '<div style="height:14px"></div>' +
-    '<button class="btn ghost block sm" id="c-clear">🗑️ Hapus Banner</button>' +
-    '<div style="height:20px"></div>' +
-    '<div style="font-size:11px;color:var(--text-dim);text-align:center;padding:12px;background:var(--surface-3);border-radius:12px;line-height:1.6">Photo banner dan play menu dapat diatur dari Firebase Console di <code>adminConfig</code>.</div>';
-  $('#c-save').onclick = async () => {
-    const t = $('#c-t').value.trim(), x = $('#c-x').value.trim();
-    if (!t) { toast('Judul wajib', 'error'); return; }
-    try { await FB.api.set(FB.api.ref(FB.db, 'adminConfig/homeBanner'), { icon: 'info', title: t, text: x }); toast('Disimpan.', 'success'); renderHome(); } catch (e) { toast('Gagal.', 'error'); }
-  };
-  $('#c-clear').onclick = async () => {
-    try { await FB.api.remove(FB.api.ref(FB.db, 'adminConfig/homeBanner')); toast('Dihapus.', 'success'); renderHome(); } catch (e) { toast('Gagal.', 'error'); }
-  };
-}
-
-function renderAdminMsg(c) {
-  c.innerHTML =
-    '<div class="field"><label>UID Penerima</label><input class="input" id="m-uid" placeholder="UID target"></div>' +
-    '<div class="field"><label>Judul</label><input class="input" id="m-t" placeholder="Judul pesan"></div>' +
-    '<div class="field"><label>Isi Pesan</label><textarea class="input" id="m-x" rows="3" placeholder="Tulis pesan..."></textarea></div>' +
-    '<button class="btn primary block sm" id="m-send" style="margin-bottom:14px">📩 Kirim ke 1 User</button>' +
-    '<div class="field"><label>Broadcast ke Semua</label><input class="input" id="b-t" placeholder="Judul broadcast"></div>' +
-    '<div class="field"><label>Isi Broadcast</label><textarea class="input" id="b-x" rows="3"></textarea></div>' +
-    '<button class="btn danger block sm" id="b-send">📢 Broadcast ke Semua User</button>';
-  $('#m-send').onclick = async () => {
-    const uid = $('#m-uid').value.trim(), t = $('#m-t').value.trim(), x = $('#m-x').value.trim();
-    if (!uid || !t) { toast('UID & judul wajib', 'error'); return; }
-    try { const id = 'msg_' + Date.now(); await FB.api.set(FB.api.ref(FB.db, 'adminMessages/' + uid + '/' + id), { title: t, body: x, sentAt: Date.now(), from: App.user.uid }); toast('Terkirim.', 'success'); } catch (e) { toast('Gagal.', 'error'); }
-  };
-  $('#b-send').onclick = async () => {
-    const t = $('#b-t').value.trim(), x = $('#b-x').value.trim();
-    if (!t) { toast('Judul wajib', 'error'); return; }
-    const ok = await Modal.confirm('Broadcast?', 'Kirim ke SEMUA pengguna.', 'Kirim', true);
-    if (!ok) return;
-    try { const id = 'bc_' + Date.now(); await FB.api.set(FB.api.ref(FB.db, 'adminBroadcast/' + id), { title: t, body: x, audience: 'all', sentAt: Date.now(), from: App.user.uid }); toast('Broadcast terkirim.', 'success'); } catch (e) { toast('Gagal.', 'error'); }
-  };
-}
-
-function renderAdminAdmins(c) {
-  c.innerHTML =
-    '<div style="font-size:12.5px;color:var(--text-dim);line-height:1.6;padding:12px;background:var(--accent-soft);border-radius:12px;margin-bottom:14px">Tambahkan UID atau email admin (satu per baris). UID Anda: <b style="font-family:monospace;font-size:11px">' + (App.user ? App.user.uid : '-') + '</b></div>' +
-    '<div class="field"><label>Daftar Admin</label><textarea class="input" id="ad-list" rows="5" style="font-family:monospace;font-size:12px">' + esc(Admin.uids.join('\n')) + '</textarea></div>' +
-    '<button class="btn primary block sm" id="ad-save">💾 Simpan Daftar Admin</button>';
-  (async () => {
-    try { const s = await FB.api.get(FB.api.ref(FB.db, 'adminConfig/adminUids')); if (s.exists()) { const v = s.val(); Admin.uids = Array.isArray(v) ? v : Object.values(v || {}); $('#ad-list').value = Admin.uids.join('\n'); } } catch (e) {}
-  })();
-  $('#ad-save').onclick = async () => {
-    const list = $('#ad-list').value.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
-    try { await FB.api.set(FB.api.ref(FB.db, 'adminConfig/adminUids'), list); Admin.uids = list; toast('Disimpan.', 'success'); checkAdmin(); } catch (e) { toast('Gagal.', 'error'); }
-  };
-}
-
-/* ===== CHESS ENGINE ===== */
-class Chess {
-  constructor(fen) { this.board = new Array(64).fill(null); this.turn = 'w'; this.castling = { K: true, Q: true, k: true, q: true }; this.ep = -1; this.halfmove = 0; this.fullmove = 1; this.load(fen || 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'); }
-  static colorOf(p) { return p === p.toUpperCase() ? 'w' : 'b'; }
-  static toAlg(i) { return String.fromCharCode(97 + (i & 7)) + ((i >> 3) + 1); }
-  static fromAlg(s) { return (s.charCodeAt(1) - 49) * 8 + (s.charCodeAt(0) - 97); }
-  load(fen) {
-    const parts = String(fen).trim().split(/\s+/);
-    this.board = new Array(64).fill(null);
-    let rank = 7, file = 0;
-    for (const ch of parts[0]) {
-      if (ch === '/') { rank--; file = 0; }
-      else if (ch >= '1' && ch <= '8') file += parseInt(ch, 10);
-      else { if (rank >= 0 && rank < 8 && file < 8) this.board[rank * 8 + file] = ch; file++; }
-    }
-    this.turn = parts[1] === 'b' ? 'b' : 'w';
-    const c = parts[2] || '-';
-    this.castling = { K: c.includes('K'), Q: c.includes('Q'), k: c.includes('k'), q: c.includes('q') };
-    this.ep = (parts[3] && parts[3] !== '-') ? Chess.fromAlg(parts[3]) : -1;
-    this.halfmove = Math.max(0, parseInt(parts[4] || '0', 10) || 0);
-    this.fullmove = Math.max(1, parseInt(parts[5] || '1', 10) || 1);
-    return this;
-  }
-  fen() {
-    let s = '';
-    for (let r = 7; r >= 0; r--) {
-      let e = 0;
-      for (let f = 0; f < 8; f++) {
-        const p = this.board[r * 8 + f];
-        if (!p) e++;
-        else { if (e) { s += e; e = 0; } s += p; }
-      }
-      if (e) s += e;
-      if (r > 0) s += '/';
-    }
-    let c = '';
-    if (this.castling.K) c += 'K';
-    if (this.castling.Q) c += 'Q';
-    if (this.castling.k) c += 'k';
-    if (this.castling.q) c += 'q';
-    return s + ' ' + this.turn + ' ' + (c || '-') + ' ' + (this.ep >= 0 ? Chess.toAlg(this.ep) : '-') + ' ' + this.halfmove + ' ' + this.fullmove;
-  }
-  isAttacked(sq, by) {
-    const b = this.board, f = sq & 7, r = sq >> 3;
-    if (by === 'w') {
-      if (r > 0) { if (f > 0 && b[sq - 9] === 'P') return true; if (f < 7 && b[sq - 7] === 'P') return true; }
-    } else {
-      if (r < 7) { if (f > 0 && b[sq + 7] === 'p') return true; if (f < 7 && b[sq + 9] === 'p') return true; }
-    }
-    const kn = by === 'w' ? 'N' : 'n';
-    const nd = [[1, 2], [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1], [-2, 1], [-1, 2]];
-    for (let i = 0; i < 8; i++) {
-      const nf = f + nd[i][0], nr = r + nd[i][1];
-      if (nf < 0 || nf > 7 || nr < 0 || nr > 7) continue;
-      if (b[nr * 8 + nf] === kn) return true;
-    }
-    const kg = by === 'w' ? 'K' : 'k';
-    for (let dr = -1; dr <= 1; dr++) for (let df = -1; df <= 1; df++) {
-      if (!dr && !df) continue;
-      const nf = f + df, nr = r + dr;
-      if (nf < 0 || nf > 7 || nr < 0 || nr > 7) continue;
-      if (b[nr * 8 + nf] === kg) return true;
-    }
-    const dd = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
-    for (let i = 0; i < 4; i++) {
-      let nf = f + dd[i][0], nr = r + dd[i][1];
-      while (nf >= 0 && nf < 8 && nr >= 0 && nr < 8) {
-        const p = b[nr * 8 + nf];
-        if (p) { if (Chess.colorOf(p) === by) { const t = p.toLowerCase(); if (t === 'b' || t === 'q') return true; } break; }
-        nf += dd[i][0]; nr += dd[i][1];
-      }
-    }
-    const od = [[1, 0], [-1, 0], [0, 1], [0, -1]];
-    for (let i = 0; i < 4; i++) {
-      let nf = f + od[i][0], nr = r + od[i][1];
-      while (nf >= 0 && nf < 8 && nr >= 0 && nr < 8) {
-        const p = b[nr * 8 + nf];
-        if (p) { if (Chess.colorOf(p) === by) { const t = p.toLowerCase(); if (t === 'r' || t === 'q') return true; } break; }
-        nf += od[i][0]; nr += od[i][1];
-      }
-    }
-    return false;
-  }
-  findKing(color) { const k = color === 'w' ? 'K' : 'k'; for (let i = 0; i < 64; i++) if (this.board[i] === k) return i; return -1; }
-  inCheck(color) { const k = this.findKing(color); if (k < 0) return false; return this.isAttacked(k, color === 'w' ? 'b' : 'w'); }
-  generateMoves() {
-    const us = this.turn, them = us === 'w' ? 'b' : 'w', b = this.board, moves = [];
-    for (let i = 0; i < 64; i++) {
-      const p = b[i];
-      if (!p || Chess.colorOf(p) !== us) continue;
-      const t = p.toLowerCase(), f = i & 7, r = i >> 3;
-      if (t === 'p') {
-        const dir = us === 'w' ? 8 : -8, startR = us === 'w' ? 1 : 6, promoR = us === 'w' ? 7 : 0;
-        const one = i + dir;
-        if (one >= 0 && one < 64 && !b[one]) {
-          if ((one >> 3) === promoR) ['q', 'r', 'b', 'n'].forEach(pp => moves.push({ from: i, to: one, piece: p, captured: null, flags: 33, promotion: pp }));
-          else {
-            moves.push({ from: i, to: one, piece: p, captured: null, flags: 0, promotion: null });
-            const two = i + dir * 2;
-            if (r === startR && !b[two]) moves.push({ from: i, to: two, piece: p, captured: null, flags: 2, promotion: null });
-          }
-        }
-        for (let k = -1; k <= 1; k += 2) {
-          const nf = f + k; if (nf < 0 || nf > 7) continue;
-          const to = one + k; if (to < 0 || to > 63) continue;
-          const tp = b[to];
-          if (tp && Chess.colorOf(tp) === them) {
-            if ((to >> 3) === promoR) ['q', 'r', 'b', 'n'].forEach(pp => moves.push({ from: i, to, piece: p, captured: tp, flags: 33, promotion: pp }));
-            else moves.push({ from: i, to, piece: p, captured: tp, flags: 1, promotion: null });
-          } else if (!tp && to === this.ep) moves.push({ from: i, to, piece: p, captured: them === 'w' ? 'P' : 'p', flags: 4, promotion: null });
-        }
-        continue;
-      }
-      if (t === 'n') {
-        const nd = [[1, 2], [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1], [-2, 1], [-1, 2]];
-        for (let k = 0; k < 8; k++) {
-          const nf = f + nd[k][0], nr = r + nd[k][1];
-          if (nf < 0 || nf > 7 || nr < 0 || nr > 7) continue;
-          const to = nr * 8 + nf, tp = b[to];
-          if (!tp) moves.push({ from: i, to, piece: p, captured: null, flags: 0, promotion: null });
-          else if (Chess.colorOf(tp) === them) moves.push({ from: i, to, piece: p, captured: tp, flags: 1, promotion: null });
-        }
-        continue;
-      }
-      if (t === 'b' || t === 'r' || t === 'q') {
-        const dirs = t === 'b' ? [[1, 1], [1, -1], [-1, 1], [-1, -1]]
-          : t === 'r' ? [[1, 0], [-1, 0], [0, 1], [0, -1]]
-            : [[1, 1], [1, -1], [-1, 1], [-1, -1], [1, 0], [-1, 0], [0, 1], [0, -1]];
-        for (let k = 0; k < dirs.length; k++) {
-          let nf = f + dirs[k][0], nr = r + dirs[k][1];
-          while (nf >= 0 && nf < 8 && nr >= 0 && nr < 8) {
-            const to = nr * 8 + nf, tp = b[to];
-            if (!tp) moves.push({ from: i, to, piece: p, captured: null, flags: 0, promotion: null });
-            else { if (Chess.colorOf(tp) === them) moves.push({ from: i, to, piece: p, captured: tp, flags: 1, promotion: null }); break; }
-            nf += dirs[k][0]; nr += dirs[k][1];
-          }
-        }
-        continue;
-      }
-      if (t === 'k') {
-        for (let dr = -1; dr <= 1; dr++) for (let df = -1; df <= 1; df++) {
-          if (!dr && !df) continue;
-          const nf = f + df, nr = r + dr;
-          if (nf < 0 || nf > 7 || nr < 0 || nr > 7) continue;
-          const to = nr * 8 + nf, tp = b[to];
-          if (!tp) moves.push({ from: i, to, piece: p, captured: null, flags: 0, promotion: null });
-          else if (Chess.colorOf(tp) === them) moves.push({ from: i, to, piece: p, captured: tp, flags: 1, promotion: null });
-        }
-        if (us === 'w' && i === 4) {
-          if (this.castling.K && !b[5] && !b[6] && b[7] === 'R' && !this.isAttacked(4, 'b') && !this.isAttacked(5, 'b') && !this.isAttacked(6, 'b'))
-            moves.push({ from: 4, to: 6, piece: p, captured: null, flags: 8, promotion: null });
-          if (this.castling.Q && !b[3] && !b[2] && !b[1] && b[0] === 'R' && !this.isAttacked(4, 'b') && !this.isAttacked(3, 'b') && !this.isAttacked(2, 'b'))
-            moves.push({ from: 4, to: 2, piece: p, captured: null, flags: 16, promotion: null });
-        }
-        if (us === 'b' && i === 60) {
-          if (this.castling.k && !b[61] && !b[62] && b[63] === 'r' && !this.isAttacked(60, 'w') && !this.isAttacked(61, 'w') && !this.isAttacked(62, 'w'))
-            moves.push({ from: 60, to: 62, piece: p, captured: null, flags: 8, promotion: null });
-          if (this.castling.q && !b[59] && !b[58] && !b[57] && b[56] === 'r' && !this.isAttacked(60, 'w') && !this.isAttacked(59, 'w') && !this.isAttacked(58, 'w'))
-            moves.push({ from: 60, to: 58, piece: p, captured: null, flags: 16, promotion: null });
-        }
-      }
-    }
-    return moves;
-  }
-  moves() {
-    const pseudo = this.generateMoves(), us = this.turn, out = [];
-    for (const m of pseudo) {
-      this.makeMove(m);
-      if (!this.inCheck(us)) out.push(m);
-      this.undoMove();
-    }
-    return out;
-  }
-  movesFrom(sq) { return this.moves().filter(m => m.from === sq); }
-  makeMove(m) {
-    const b = this.board, us = this.turn, piece = b[m.from];
-    const u = { m, castling: Object.assign({}, this.castling), ep: this.ep, halfmove: this.halfmove, fullmove: this.fullmove, captured: null, capSq: -1 };
-    b[m.from] = null;
-    if (m.flags & 4) { const cs = m.to + (us === 'w' ? -8 : 8); u.capSq = cs; u.captured = b[cs]; b[cs] = null; }
-    else if (m.captured) u.captured = m.captured;
-    b[m.to] = m.promotion ? (us === 'w' ? m.promotion.toUpperCase() : m.promotion) : piece;
-    if (m.flags & 8) { if (us === 'w') { b[5] = b[7]; b[7] = null; } else { b[61] = b[63]; b[63] = null; } }
-    if (m.flags & 16) { if (us === 'w') { b[3] = b[0]; b[0] = null; } else { b[59] = b[56]; b[56] = null; } }
-    const c = this.castling;
-    if (piece === 'K') { c.K = false; c.Q = false; }
-    if (piece === 'k') { c.k = false; c.q = false; }
-    if (m.from === 7 || m.to === 7) c.K = false;
-    if (m.from === 0 || m.to === 0) c.Q = false;
-    if (m.from === 63 || m.to === 63) c.k = false;
-    if (m.from === 56 || m.to === 56) c.q = false;
-    this.ep = (m.flags & 2) ? (m.from + (us === 'w' ? 8 : -8)) : -1;
-    if (piece.toLowerCase() === 'p' || u.captured) this.halfmove = 0;
-    else this.halfmove++;
-    if (us === 'b') this.fullmove++;
-    this.turn = us === 'w' ? 'b' : 'w';
-    this.stack = this.stack || [];
-    this.stack.push(u);
-  }
-  undoMove() {
-    if (!this.stack || !this.stack.length) return;
-    const u = this.stack.pop();
-    const m = u.m, b = this.board, us = this.turn === 'w' ? 'b' : 'w';
-    this.turn = us;
-    const mp = m.promotion ? (us === 'w' ? 'P' : 'p') : b[m.to];
-    b[m.from] = mp;
-    b[m.to] = null;
-    if (m.flags & 4) b[u.capSq] = u.captured;
-    else if (u.captured) b[m.to] = u.captured;
-    if (m.flags & 8) { if (us === 'w') { b[7] = b[5]; b[5] = null; } else { b[63] = b[61]; b[61] = null; } }
-    if (m.flags & 16) { if (us === 'w') { b[0] = b[3]; b[3] = null; } else { b[56] = b[59]; b[59] = null; } }
-    this.castling = u.castling;
-    this.ep = u.ep;
-    this.halfmove = u.halfmove;
-    this.fullmove = u.fullmove;
-  }
-  isCheckmate() { return this.inCheck(this.turn) && this.moves().length === 0; }
-  isStalemate() { return !this.inCheck(this.turn) && this.moves().length === 0; }
-  isInsufficientMaterial() {
-    const c = {}, pos = [];
-    for (let i = 0; i < 64; i++) {
-      const p = this.board[i]; if (!p) continue;
-      const t = p.toLowerCase();
-      c[t] = (c[t] || 0) + 1;
-      if (t !== 'k') pos.push(t);
-    }
-    if (c.p || c.q || c.r) return false;
-    if (pos.length === 0) return true;
-    if (pos.length === 1 && (pos[0] === 'b' || pos[0] === 'n')) return true;
-    return false;
-  }
-  isFiftyMove() { return this.halfmove >= 100; }
-  toSAN(move) {
-    const b = this.board, piece = b[move.from]; if (!piece) return '';
-    const t = piece.toLowerCase();
-    const cap = !!move.captured || (move.flags & 4);
-    if (move.flags & 8) return this._s('O-O', move);
-    if (move.flags & 16) return this._s('O-O-O', move);
-    let san = '';
-    if (t === 'p') {
-      if (cap) san = Chess.toAlg(move.from)[0] + 'x' + Chess.toAlg(move.to);
-      else san = Chess.toAlg(move.to);
-      if (move.promotion) san += '=' + move.promotion.toUpperCase();
-    } else {
-      const others = this.moves().filter(m => m.to === move.to && m.from !== move.from && b[m.from] && b[m.from].toLowerCase() === t);
-      let dis = '';
-      if (others.length) {
-        const sf = others.some(m => (m.from & 7) === (move.from & 7));
-        const sr = others.some(m => (m.from >> 3) === (move.from >> 3));
-        if (!sf) dis = Chess.toAlg(move.from)[0];
-        else if (!sr) dis = Chess.toAlg(move.from)[1];
-        else dis = Chess.toAlg(move.from);
-      }
-      san = t.toUpperCase() + dis + (cap ? 'x' : '') + Chess.toAlg(move.to);
-    }
-    return this._s(san, move);
-  }
-  _s(san, move) {
-    this.makeMove(move);
-    let suf = '';
-    if (this.inCheck(this.turn)) suf = this.moves().length === 0 ? '#' : '+';
-    this.undoMove();
-    return san + suf;
-  }
-}
-
-/* ===== EVAL & AI ===== */
-const PV = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 0 };
-function evaluate(c) {
-  let s = 0;
-  for (let i = 0; i < 64; i++) {
-    const p = c.board[i]; if (!p) continue;
-    const v = PV[p.toLowerCase()] || 0;
-    s += (p === p.toUpperCase() ? v : -v);
-  }
-  return s;
-}
-async function findBestMove(fen, depth) {
-  await delay(200 + Math.random() * 200);
-  const c = new Chess(fen);
-  const moves = c.moves();
-  if (!moves.length) return { ok: true, move: null };
-  // Simple 1-ply + capture preference
-  let best = moves[0], bestScore = -Infinity;
-  for (const m of moves) {
-    let sc = 0;
-    if (m.captured) sc += (PV[m.captured.toLowerCase()] || 0) * 1.5;
-    if (m.promotion) sc += PV[m.promotion] || 0;
-    sc += Math.random() * 30;
-    c.makeMove(m);
-    const opp = c.moves();
-    const isMate = c.inCheck(c.turn) && opp.length === 0;
-    if (isMate) sc += 100000;
-    c.undoMove();
-    if (sc > bestScore) { bestScore = sc; best = m; }
-  }
-  return { ok: true, move: { from: best.from, to: best.to, promotion: best.promotion } };
-}
-
-/* ===== GAME STATE ===== */
-const Game = {
-  chess: null, mode: null, flipped: false, selected: -1, legal: [], lastMove: null,
-  clocks: { w: 0, b: 0 }, increment: 0, turnStart: 0, timer: null, running: false,
-  finished: false, result: null, sans: [], aiColor: 'b', aiLabel: 'Medium',
-  aiThinking: false, playerColor: 'w', tc: '10+0'
-};
-function fmtClock(s) { s = Math.max(0, Math.ceil(s)); const m = Math.floor(s / 60), r = s % 60; return m + ':' + String(r).padStart(2, '0'); }
-function tcSec(tc) { const p = String(tc).split('+'); return { base: (parseInt(p[0], 10) || 10) * 60, inc: (parseInt(p[1], 10) || 0) }; }
-
-function renderBoard() {
-  const bEl = $('#board'); if (!bEl || !Game.chess) return;
-  const c = Game.chess, fl = Game.flipped;
-  const frag = document.createDocumentFragment();
-  const lf = Game.lastMove ? Game.lastMove.from : -1;
-  const lt = Game.lastMove ? Game.lastMove.to : -1;
-  const ck = c.inCheck(c.turn) ? c.findKing(c.turn) : -1;
-  for (let dr = 0; dr < 8; dr++) for (let df = 0; df < 8; df++) {
-    const r = fl ? dr : 7 - dr, f = fl ? 7 - df : df, sq = r * 8 + f;
-    const light = ((r + f) % 2) === 1;
-    const cell = el('div', 'sq ' + (light ? 'light' : 'dark'));
-    cell.dataset.sq = String(sq);
-    if (sq === lf || sq === lt) cell.classList.add('last');
-    if (sq === Game.selected) cell.classList.add('sel');
-    if (sq === ck) cell.classList.add('check');
-    if (settings.showLegal && Game.legal.some(m => m.to === sq)) {
-      const occ = !!c.board[sq];
-      cell.appendChild(el('div', occ ? 'ring' : 'dot'));
-    }
-    const p = c.board[sq];
-    if (p) {
-      const h = el('div');
-      h.innerHTML = pieceSVG(p);
-      const svg = h.firstElementChild;
-      if (svg) cell.appendChild(svg);
-    }
-    frag.appendChild(cell);
-  }
-  bEl.innerHTML = ''; bEl.appendChild(frag);
-}
-
-function handleTap(sq) {
-  const c = Game.chess; if (!c || Game.finished) return;
-  const p = c.board[sq];
-  if (Game.selected >= 0) {
-    const cs = Game.legal.filter(m => m.to === sq);
-    if (cs.length) { doMove(Game.selected, sq); return; }
-  }
-  if (p && Chess.colorOf(p) === c.turn) {
-    if (Game.mode === 'ai' && c.turn === Game.aiColor) return;
-    Game.selected = sq;
-    Game.legal = c.movesFrom(sq);
-    renderBoard();
-    return;
-  }
-  Game.selected = -1; Game.legal = []; renderBoard();
-}
-
-function doMove(from, to) {
-  const c = Game.chess;
-  const cands = c.moves().filter(m => m.from === from && m.to === to);
-  if (!cands.length) { Game.selected = -1; Game.legal = []; renderBoard(); return; }
-  let m;
-  if (cands.length > 1 && cands[0].promotion) m = cands.find(x => x.promotion === 'q');
-  else m = cands[0];
-  applyMove(m);
-}
-
-function applyMove(m) {
-  const c = Game.chess;
-  const san = c.toSAN(m);
-  c.makeMove(m);
-  Game.sans.push(san);
-  Game.lastMove = { from: m.from, to: m.to };
-  Game.selected = -1; Game.legal = [];
-  const mover = c.turn === 'w' ? 'b' : 'w';
-  if (Game.running && Game.increment > 0) Game.clocks[mover] += Game.increment;
-  Game.turnStart = Date.now();
-  if (m.captured) Sound.capture(); else Sound.move();
-  if (c.inCheck(c.turn)) Sound.check();
-  renderBoard(); updateGameUI(); updateClocks();
-  const ended = checkEnd();
-  if (!ended && Game.mode === 'ai' && c.turn === Game.aiColor && !Game.finished) scheduleAI();
-}
-
-function checkEnd() {
-  const c = Game.chess;
-  if (Game.finished) return true;
-  if (c.isCheckmate()) { const w = c.turn === 'w' ? 'b' : 'w'; endGame({ result: w === 'w' ? 'white' : 'black', reason: 'checkmate', winner: w }); return true; }
-  if (c.isStalemate()) { endGame({ result: 'draw', reason: 'stalemate' }); return true; }
-  if (c.isInsufficientMaterial()) { endGame({ result: 'draw', reason: 'insufficient' }); return true; }
-  if (c.isFiftyMove()) { endGame({ result: 'draw', reason: 'fifty' }); return true; }
-  return false;
-}
-
-function endGame(info) {
-  if (Game.finished) return;
-  Game.finished = true; Game.running = false; Game.result = info;
-  stopClock(); Sound.end();
-  updateGameUI();
-  const reasonText = { checkmate: 'Skakmat', stalemate: 'Stalemate', insufficient: 'Materi tidak cukup', fifty: '50 langkah', resign: 'Menyerah', timeout: 'Waktu habis' }[info.reason] || 'Selesai';
-  setTimeout(() => showResult(info, reasonText), 350);
-}
-
-function resultTitle(info) {
-  if (info.result === 'draw') return 'SERI';
-  if (Game.mode === 'local') return info.result === 'white' ? 'PUTIH MENANG' : 'HITAM MENANG';
-  return info.winner === Game.playerColor ? 'ANDA MENANG' : 'ANDA KALAH';
-}
-
-function showResult(info, reason) {
-  const box = el('div');
-  box.innerHTML =
-    '<div style="text-align:center;margin-bottom:14px">' +
-    '<div style="font-size:40px;margin-bottom:6px">' + (info.result === 'draw' ? '🤝' : info.winner === Game.playerColor ? '🏆' : '💔') + '</div>' +
-    '<div style="font-size:24px;font-weight:900;letter-spacing:-.03em">' + resultTitle(info) + '</div>' +
-    '<div style="font-size:13px;color:var(--text-dim);margin-top:4px">' + reason + '</div>' +
-    '</div>' +
-    '<div class="stat-grid">' +
-    '<div class="stat"><div class="l">Langkah</div><div class="v">' + Game.sans.length + '</div></div>' +
-    '<div class="stat"><div class="l">Mode</div><div class="v" style="font-size:16px">' + (Game.mode || '-') + '</div></div>' +
-    '</div>';
-  Modal.open({ title: '', body: box, dismissible: false, buttons: [{ label: 'Selesai', value: 'ok', variant: 'primary' }] }).then(() => closeGame());
-}
-
-function startClock() {
-  stopClock();
-  Game.running = true; Game.turnStart = Date.now();
-  Game.timer = setInterval(tick, 200);
-}
-function stopClock() { if (Game.timer) { clearInterval(Game.timer); Game.timer = null; } }
-function tick() {
-  if (!Game.running || Game.finished) return;
-  const c = Game.chess; if (!c) return;
-  const el = (Date.now() - Game.turnStart) / 1000;
-  const rem = Game.clocks[c.turn] - el;
-  if (rem <= 0) { Game.clocks[c.turn] = 0; updateClocks(); const w = c.turn === 'w' ? 'b' : 'w'; endGame({ result: w === 'w' ? 'white' : 'black', reason: 'timeout', winner: w }); return; }
-  updateClocks();
-}
-function updateClocks() {
-  const c = Game.chess; if (!c) return;
-  const el = Game.running ? (Date.now() - Game.turnStart) / 1000 : 0;
-  const wR = Math.max(0, Game.clocks.w - (c.turn === 'w' ? el : 0));
-  const bR = Math.max(0, Game.clocks.b - (c.turn === 'b' ? el : 0));
-  const topC = Game.flipped ? 'w' : 'b', botC = Game.flipped ? 'b' : 'w';
-  const tc = $('#topClock'), bc = $('#botClock');
-  if (tc) { tc.textContent = fmtClock(topC === 'w' ? wR : bR); tc.classList.toggle('active', Game.running && c.turn === topC); }
-  if (bc) { bc.textContent = fmtClock(botC === 'w' ? wR : bR); bc.classList.toggle('active', Game.running && c.turn === botC); }
-  const bt = $('#barTop'), bb = $('#barBottom');
-  if (bt) bt.classList.toggle('turn', Game.running && c.turn === topC);
-  if (bb) bb.classList.toggle('turn', Game.running && c.turn === botC);
-}
-function updateGameUI() {
-  const c = Game.chess; if (!c) return;
-  const topC = Game.flipped ? 'w' : 'b', botC = Game.flipped ? 'b' : 'w';
-  const nameFor = col => {
-    if (Game.mode === 'local') return col === 'w' ? 'Putih' : 'Hitam';
-    if (Game.mode === 'ai') return col === Game.aiColor ? 'AI · ' + Game.aiLabel : 'Anda';
-    return col === 'w' ? 'Putih' : 'Hitam';
-  };
-  const tn = $('#topName'), bn = $('#botName');
-  if (tn) tn.textContent = nameFor(topC);
-  if (bn) bn.textContent = nameFor(botC);
-  const ta = $('#topAvatar'), ba = $('#botAvatar');
-  if (ta) ta.textContent = initial(nameFor(topC));
-  if (ba) ba.textContent = initial(nameFor(botC));
-  const st = $('#gameStatus');
-  if (st) {
-    let x = '';
-    if (Game.finished && Game.result) x = resultTitle(Game.result);
-    else if (Game.aiThinking) x = 'AI berpikir...';
-    else if (c.inCheck(c.turn)) x = '⚠️ SKAK';
-    else x = c.turn === 'w' ? 'Giliran Putih' : 'Giliran Hitam';
-    st.textContent = x;
-  }
-}
-
-/* ===== AI ===== */
-function scheduleAI() {
-  if (Game.aiThinking || Game.finished) return;
-  Game.aiThinking = true; updateGameUI();
-  const fen = Game.chess.fen();
-  findBestMove(fen).then(res => {
-    Game.aiThinking = false;
-    if (!Game.chess || Game.chess.fen() !== fen || Game.finished) { updateGameUI(); return; }
-    if (res && res.ok && res.move) {
-      const cands = Game.chess.moves().filter(m => m.from === res.move.from && m.to === res.move.to);
-      if (cands.length) applyMove(cands[0]);
-      else { const legal = Game.chess.moves(); if (legal.length) applyMove(legal[0]); }
-    }
-    updateGameUI();
-  });
-}
-
-/* ===== GAME TOOLS ===== */
-function buildGameTools() {
-  const t = $('#gameTools'); if (!t) return;
-  t.innerHTML = '';
-  const add = (ic, lbl, fn, danger) => {
-    const b = el('button', 'tool-btn' + (danger ? ' danger' : ''));
-    b.innerHTML = icon(ic) + '<span>' + lbl + '</span>';
-    b.addEventListener('click', () => { Sound.button(); fn(); });
-    t.appendChild(b);
-  };
-  add('flag', 'Resign', () => onResign(), true);
-  add('target', 'Seri', () => onDraw());
-  add('flip', 'Flip', () => { Game.flipped = !Game.flipped; renderBoard(); updateClocks(); });
-  add('refresh', 'Ulangi', () => onRestart());
-  add('x', 'Keluar', () => closeGame(), true);
-}
-async function onResign() {
-  if (Game.finished) return;
-  const ok = await Modal.confirm('Menyerah?', 'Anda akan kalah.', 'Ya, menyerah', true);
-  if (!ok || Game.finished) return;
-  const loser = Game.mode === 'local' ? Game.chess.turn : Game.playerColor;
-  const winner = loser === 'w' ? 'b' : 'w';
-  endGame({ result: winner === 'w' ? 'white' : 'black', reason: 'resign', winner });
-}
-async function onDraw() {
-  if (Game.finished) return;
-  const ok = await Modal.confirm('Seri?', 'Kedua pemain setuju hasil seri.', 'Setuju');
-  if (!ok || Game.finished) return;
-  endGame({ result: 'draw', reason: 'draw_agreement' });
-}
-async function onRestart() {
-  if (Game.mode === 'local') startLocal(Game.tc);
-  else if (Game.mode === 'ai') startAI(Game.aiLabel, Game.playerColor, Game.tc);
-}
-
-function startLocal(tc) {
-  const t = tcSec(tc || '10+0');
-  Game.chess = new Chess(); Game.mode = 'local'; Game.playerColor = 'w'; Game.flipped = false;
-  Game.clocks = { w: t.base, b: t.base }; Game.increment = t.inc;
-  Game.finished = false; Game.result = null; Game.sans = [];
-  Game.lastMove = null; Game.selected = -1; Game.legal = []; Game.aiThinking = false;
-  $('#gameTitle').textContent = 'Permainan Lokal';
-  $('#gameModePill').textContent = 'LOKAL';
-  $('#gameScreen').classList.add('on');
-  buildGameTools(); renderBoard(); updateGameUI(); updateClocks(); startClock();
-}
-
-function startAI(level, colorChoice, tc) {
-  const labels = { beginner: 'Beginner', easy: 'Easy', medium: 'Medium', hard: 'Hard', expert: 'Expert', grandmaster: 'GM' };
-  const label = labels[level] || 'Medium';
-  const t = tcSec(tc || '10+0');
-  let my = colorChoice;
-  if (colorChoice === 'random') my = Math.random() < 0.5 ? 'w' : 'b';
-  Game.chess = new Chess(); Game.mode = 'ai'; Game.aiLabel = label;
-  Game.aiColor = my === 'w' ? 'b' : 'w'; Game.playerColor = my; Game.flipped = my === 'b';
-  Game.clocks = { w: t.base, b: t.base }; Game.increment = t.inc;
-  Game.finished = false; Game.result = null; Game.sans = [];
-  Game.lastMove = null; Game.selected = -1; Game.legal = []; Game.aiThinking = false;
-  $('#gameTitle').textContent = 'vs AI · ' + label;
-  $('#gameModePill').textContent = 'AI';
-  $('#gameScreen').classList.add('on');
-  buildGameTools(); renderBoard(); updateGameUI(); updateClocks(); startClock();
-  if (Game.chess.turn === Game.aiColor) scheduleAI();
-}
-
-function closeGame() {
-  stopClock();
-  Game.finished = false; Game.running = false; Game.chess = null;
-  $('#gameScreen').classList.remove('on');
-}
-
-/* ===== TTT ===== */
-const TTT = { board: Array(9).fill(''), turn: 'X', finished: false, scores: { X: 0, O: 0, D: 0 }, thinking: false };
-const TTT_LINES = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
-function tttCheck(b) { for (const L of TTT_LINES) { const [a, c, d] = L; if (b[a] && b[a] === b[c] && b[a] === b[d]) return { w: b[a], l: L }; } if (b.every(v => v)) return { w: 'D', l: null }; return null; }
-function tttReset() {
-  TTT.board = Array(9).fill(''); TTT.finished = false; TTT.thinking = false; TTT.turn = 'X';
-  tttRender();
-  setTimeout(() => { if (TTT.turn === 'O' && !TTT.finished) tttAI(); }, 400);
-}
-function tttRender() {
-  const b = $('#tttBoard'); if (!b) return;
-  b.innerHTML = '';
-  TTT.board.forEach((v, i) => {
-    const c = el('div', 'ttt-cell' + (v === 'X' ? ' x' : v === 'O' ? ' o' : ''));
-    c.textContent = v || '';
-    const clickable = !v && !TTT.finished && !TTT.thinking && !(TTT.turn === 'O');
-    if (!clickable) c.classList.add('dis');
-    if (clickable) c.addEventListener('click', () => tttPlay(i));
-    b.appendChild(c);
-  });
-  const s = $('#tttStatus');
-  if (s) {
-    const res = tttCheck(TTT.board);
-    if (res) s.textContent = res.w === 'D' ? 'Seri!' : 'Pemenang: ' + res.w;
-    else s.textContent = 'Giliran ' + TTT.turn;
-  }
-  const x = $('#tttX'), o = $('#tttO'), d = $('#tttD');
-  if (x) x.textContent = TTT.scores.X;
-  if (o) o.textContent = TTT.scores.O;
-  if (d) d.textContent = TTT.scores.D;
-}
-function tttPlay(i) {
-  if (TTT.finished || TTT.board[i] || TTT.thinking || TTT.turn !== 'X') return;
-  TTT.board[i] = 'X'; Sound.move();
-  const r = tttCheck(TTT.board);
-  if (r) return tttEnd(r);
-  TTT.turn = 'O'; tttRender();
-  setTimeout(tttAI, 400);
-}
-function tttAI() {
-  if (TTT.finished) return;
-  TTT.thinking = true;
   setTimeout(() => {
-    const empty = [];
-    TTT.board.forEach((v, i) => { if (!v) empty.push(i); });
-    if (!empty.length) { TTT.thinking = false; return tttRender(); }
-    let best = empty[0], bestSc = -Infinity;
-    for (const i of empty) {
-      let sc = Math.random() * 10;
-      // Check if O wins here
-      TTT.board[i] = 'O';
-      if (tttCheck(TTT.board)) sc += 1000;
-      TTT.board[i] = '';
-      // Check if block X
-      TTT.board[i] = 'X';
-      if (tttCheck(TTT.board)) sc += 500;
-      TTT.board[i] = '';
-      if (i === 4) sc += 50;
-      if (sc > bestSc) { bestSc = sc; best = i; }
-    }
-    TTT.thinking = false;
-    TTT.board[best] = 'O'; Sound.move();
-    const r = tttCheck(TTT.board);
-    if (r) return tttEnd(r);
-    TTT.turn = 'X'; tttRender();
-  }, 250);
-}
-function tttEnd(r) {
-  TTT.finished = true;
-  if (r.w === 'D') TTT.scores.D++;
-  else TTT.scores[r.w]++;
-  Sound.end();
-  tttRender();
-  setTimeout(() => {
-    Modal.open({
-      title: r.w === 'D' ? 'Seri' : 'Pemenang: ' + r.w,
-      message: r.w === 'X' ? 'Anda menang!' : r.w === 'O' ? 'AI menang!' : 'Permainan berakhir seri.',
-      dismissible: false,
-      buttons: [{ label: 'Keluar', value: 'exit', variant: 'ghost' }, { label: 'Ulangi', value: 'again', variant: 'primary' }]
-    }).then(v => {
-      if (v === 'again') tttReset();
-      else $('#tttScreen').classList.remove('on');
-    });
-  }, 500);
+    box.querySelector('#e-give').onclick = () => {
+      const inp = box.querySelector('#e-p');
+      inp.value = (parseInt(inp.value, 10) || 0) + 100;
+    };
+    box.querySelector('#e-reset').onclick = async () => {
+      const ok = await Modal.confirm('Reset stats?', 'Wins, losses, draws, XP akan direset ke 0.', 'Reset', true);
+      if (!ok) return;
+      box.querySelector('#e-w').value = 0;
+      box.querySelector('#e-x').value = 0;
+      toast('Stats akan direset saat simpan', 'warn');
+    };
+  }, 50);
 }
 
-/* ===== VIEWS ===== */
-function showView(name) {
-  App.view = name;
-  $$('.view').forEach(v => v.classList.remove('on'));
-  const t = $('#view-' + name); if (t) t.classList.add('on');
-  $$('#bottomNav button').forEach(b => b.classList.toggle('active', b.dataset.goto === name));
-  if (name === 'home') renderHome();
-  else if (name === 'play') renderPlay();
-  else if (name === 'leaderboard') renderLeaderboard();
-  else if (name === 'profile') renderProfile();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-async function renderHome() {
-  const banner = $('#homeBanner');
-  if (banner) {
-    banner.innerHTML = '';
-    if (FB.ready) {
+/* ===== PAGE: BANS ===== */
+async function renderBans(m) {
+  m.innerHTML = '<div class="page-head"><div><h1>Pengguna Diblokir</h1><p>Daftar semua akun yang dibanned</p></div></div><div id="banList"><div class="empty"><span class="spinner"></span></div></div>';
+  try {
+    const s = await api.get(api.ref(FB.db, 'bans'));
+    const v = s.val() || {};
+    const list = Object.keys(v).map(k => Object.assign({ uid: k }, v[k]));
+    if (!list.length) { $('#banList').innerHTML = '<div class="empty"><p>Tidak ada pengguna yang diblokir 🎉</p></div>'; return; }
+    list.sort((a, b) => (b.at || 0) - (a.at || 0));
+    const box = $('#banList');
+    box.innerHTML = '<div class="list"></div>';
+    const listEl = box.querySelector('.list');
+    for (const b of list) {
+      const row = el('div', 'row');
+      let uname = b.uid;
       try {
-        const s = await FB.api.get(FB.api.ref(FB.db, 'adminConfig/homeBanner'));
-        if (s.exists()) {
-          const b = s.val() || {};
-          if (b.title) {
-            const d = el('div', 'home-banner');
-            d.innerHTML = '<div class="hb-icon">' + icon(b.icon || 'info') + '</div>' +
-              '<div class="hb-body"><div class="hb-t">' + esc(b.title) + '</div>' +
-              (b.text ? '<div class="hb-x">' + esc(b.text) + '</div>' : '') + '</div>' +
-              '<button class="hb-close">' + icon('x', 'ic-sm') + '</button>';
-            d.querySelector('.hb-close').onclick = () => d.remove();
-            banner.appendChild(d);
-          }
-        }
+        const uSnap = await api.get(api.ref(FB.db, 'users/' + b.uid));
+        if (uSnap.exists()) uname = uSnap.val().username || b.uid;
       } catch (e) {}
+      row.innerHTML =
+        '<div class="avatar" style="background:linear-gradient(135deg,#ff5d6c,#c4162d)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg></div>' +
+        '<div class="body"><div class="ttl">' + esc(uname) + ' <span class="badge red">BANNED</span></div>' +
+        '<div class="sub">' + esc(b.reason || '-') + ' · ' + new Date(b.at || 0).toLocaleString('id-ID') + '</div></div>' +
+        '<div class="actions"><button class="btn sm ghost">Unban</button></div>';
+      row.querySelector('button').onclick = async () => {
+        const ok = await Modal.confirm('Unban user?', uname + ' akan bisa akses aplikasi lagi.', 'Unban');
+        if (!ok) return;
+        await api.remove(api.ref(FB.db, 'bans/' + b.uid));
+        await adminLog('UNBAN_USER', uname);
+        toast('User di-unban', 'success');
+        renderBans(m);
+      };
+      listEl.appendChild(row);
     }
-  }
-  const hero = $('#heroCard');
-  const p = App.profile || defaultProfile(App.user ? App.user.uid : 'guest', App.user ? 'Pemain' : 'Tamu');
-  const lvl = levelFromXp(p.xp);
-  if (hero) {
-    hero.innerHTML =
-      '<div class="hero-inner">' +
-      '<div class="avatar xl">' + (p.avatar ? '<img src="' + esc(p.avatar) + '" />' : esc(initial(p.username))) + '</div>' +
-      '<div class="hero-info">' +
-      '<div class="hero-name">' + esc(p.username) + '</div>' +
-      '<div class="hero-meta"><span class="pill gold">⭐ ' + (p.stars || 0) + '</span><span>Level ' + lvl + '</span></div>' +
-      '<div class="hero-stats">' +
-      '<div>Bintang<b>' + (p.stars || 0) + '</b></div>' +
-      '<div>Menang<b>' + (p.wins || 0) + '</b></div>' +
-      '<div>Game<b>' + (p.gamesPlayed || 0) + '</b></div>' +
-      '</div></div></div>';
-  }
-  // Quick menu
-  const q = $('#quickGrid');
-  if (q) {
-    q.innerHTML = '';
-    const items = [
-      { l: 'Ranked', s: 'Kompetitif', i: 'target', c: 'pc-ranked', a: 'ranked' },
-      { l: 'Classic', s: 'Santai', i: 'swords', c: 'pc-casual', a: 'casual' },
-      { l: 'vs AI', s: 'Latihan', i: 'cpu', c: 'pc-ai', a: 'ai' },
-      { l: 'Teman', s: 'Room', i: 'users', c: 'pc-friend', a: 'friend' },
-      { l: 'Lokal', s: '2 Pemain', i: 'chess', c: 'pc-local', a: 'local' },
-      { l: 'Turnamen', s: 'Hadiah', i: 'trophy', c: 'pc-tournament', a: 'tournament' }
-    ];
-    items.forEach(it => {
-      const b = el('button', 'quick');
-      b.innerHTML = '<div class="qi ' + it.c + '">' + icon(it.i) + '</div><span class="qlabel">' + it.l + '</span><span class="qsub">' + it.s + '</span>';
-      b.onclick = () => { Sound.button(); runAction(it.a); };
-      q.appendChild(b);
-    });
-  }
-  renderHomeLB();
+  } catch (e) { $('#banList').innerHTML = '<div class="empty"><p>Gagal: ' + e.message + '</p></div>'; }
 }
 
-async function renderHomeLB() {
-  const box = $('#homeLB'); if (!box) return;
-  if (!FB.ready) { box.innerHTML = '<div class="empty">' + icon('info', 'ic-lg') + '<p>Login untuk melihat peringkat</p></div>'; return; }
-  box.innerHTML = '<div class="empty"><span class="spinner"></span></div>';
+/* ===== PAGE: CONTENT ===== */
+async function renderContent(m) {
+  let banner = { icon: 'info', title: '', text: '' };
+  let photoBanner = { images: [], autoSlideInterval: 5000 };
   try {
-    const s = await FB.api.get(FB.api.ref(FB.db, 'leaderboard'));
-    const v = s.val() || {};
-    const arr = Object.keys(v).map(k => Object.assign({ uid: k }, v[k]))
-      .sort((a, b) => (b.stars || 0) - (a.stars || 0)).slice(0, 5);
-    if (!arr.length) { box.innerHTML = '<div class="empty"><p>Belum ada data</p></div>'; return; }
-    box.innerHTML = '';
-    arr.forEach((e, i) => {
-      const row = el('div', 'list-item');
-      const posClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
-      row.innerHTML =
-        '<div style="width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-weight:900;font-size:13px;background:var(--surface-3)">' + (i + 1) + '</div>' +
-        '<div class="avatar" style="width:36px;height:36px;font-size:14px;border-radius:11px">' + (e.avatar ? '<img src="' + esc(e.avatar) + '" />' : esc(initial(e.username))) + '</div>' +
-        '<div class="li-main"><div class="t">' + esc(e.username || '?') + '</div>' +
-        '<div class="s">⭐ ' + (e.stars || 0) + ' · ' + (e.rating || 1200) + ' elo</div></div>';
-      box.appendChild(row);
-    });
-  } catch (e) { box.innerHTML = '<div class="empty"><p>Gagal memuat</p></div>'; }
-}
+    const [bS, pS] = await Promise.all([
+      api.get(api.ref(FB.db, 'adminConfig/homeBanner')),
+      api.get(api.ref(FB.db, 'adminConfig/photoBanner'))
+    ]);
+    if (bS.exists()) banner = Object.assign(banner, bS.val() || {});
+    if (pS.exists()) photoBanner = Object.assign(photoBanner, pS.val() || {});
+  } catch (e) {}
 
-function renderPlay() {
-  const box = $('#playModes'); if (!box) return;
-  box.innerHTML = '';
-  const modes = [
-    { t: 'Ranked', d: 'Pertandingan kompetitif dengan rating', i: 'target', c: 'pc-ranked', a: 'ranked' },
-    { t: 'Classic', d: 'Tanpa rating, santai saja', i: 'swords', c: 'pc-casual', a: 'casual' },
-    { t: 'Lawan AI', d: 'Berbagai tingkat kesulitan', i: 'cpu', c: 'pc-ai', a: 'ai' },
-    { t: 'Dua Pemain', d: 'Satu perangkat, bergantian', i: 'chess', c: 'pc-local', a: 'local' },
-    { t: 'Main Teman', d: 'Buat room privat', i: 'users', c: 'pc-friend', a: 'friend' },
-    { t: 'Turnamen', d: 'Berhadiah nyata', i: 'trophy', c: 'pc-tournament', a: 'tournament' },
-    { t: 'Tic-Tac-Toe', d: 'Lawan AI', i: 'grid', c: 'pc-tictactoe', a: 'ttt' },
-    { t: 'Toko', d: 'Kosmetik & item', i: 'gift', c: 'pc-shop', a: 'shop' }
-  ];
-  modes.forEach(m => {
-    const c = el('div', 'play-card');
-    c.innerHTML = '<div class="pc-icon ' + m.c + '">' + icon(m.i) + '</div>' +
-      '<div class="pc-title">' + m.t + '</div>' +
-      '<div class="pc-sub">' + m.d + '</div>';
-    c.onclick = () => { Sound.button(); runAction(m.a); };
-    box.appendChild(c);
-  });
-}
-
-function runAction(a) {
-  if (a === 'ranked' || a === 'casual') {
-    Modal.open({ title: 'Mode ' + (a === 'ranked' ? 'Ranked' : 'Classic'), message: 'Matchmaking online akan segera hadir. Untuk sekarang, coba lawan AI atau main lokal.', buttons: [{ label: 'Main vs AI', value: 'ai', variant: 'primary' }, { label: 'Tutup', value: null, variant: 'ghost' }] }).then(v => { if (v === 'ai') openAI(); });
-    return;
-  }
-  if (a === 'ai') return openAI();
-  if (a === 'local') return openLocal();
-  if (a === 'friend') return openFriend();
-  if (a === 'tournament') return toast('Turnamen segera hadir!', 'info');
-  if (a === 'ttt') return openTTT();
-  if (a === 'shop') return toast('Toko segera hadir!', 'info');
-}
-
-function openAI() {
-  const box = el('div');
-  box.innerHTML =
-    '<div class="field"><label>Tingkat Kesulitan</label><select class="input" id="aiL"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select></div>' +
-    '<div class="field"><label>Warna</label><select class="input" id="aiC"><option value="w">Putih</option><option value="b">Hitam</option><option value="random" selected>Acak</option></select></div>' +
-    '<div class="field"><label>Waktu</label><select class="input" id="aiT"><option value="5+0">5 menit</option><option value="10+0" selected>10 menit</option><option value="15+10">15+10 detik</option><option value="30+0">30 menit</option></select></div>';
-  Modal.open({ title: 'Lawan AI', body: box, buttons: [{ label: 'Batal', value: null, variant: 'ghost' }, { label: 'Mulai', value: 'go', variant: 'primary' }] }).then(v => {
-    if (v !== 'go') return;
-    Game.tc = $('#aiT').value;
-    startAI($('#aiL').value, $('#aiC').value, Game.tc);
-  });
-}
-
-function openLocal() {
-  const box = el('div');
-  box.innerHTML = '<div class="field"><label>Waktu</label><select class="input" id="lT"><option value="5+0">5 menit</option><option value="10+0" selected>10 menit</option><option value="15+10">15+10 detik</option></select></div>';
-  Modal.open({ title: 'Dua Pemain Lokal', body: box, buttons: [{ label: 'Batal', value: null, variant: 'ghost' }, { label: 'Mulai', value: 'go', variant: 'primary' }] }).then(v => {
-    if (v !== 'go') return;
-    Game.tc = $('#lT').value;
-    startLocal(Game.tc);
-  });
-}
-
-function openFriend() {
-  Modal.open({ title: 'Main dengan Teman', message: 'Fitur room privat akan segera hadir. Untuk sekarang, mainkan mode Lokal atau vs AI.', buttons: [{ label: 'OK', value: null, variant: 'primary' }] });
-}
-
-function openTTT() {
-  TTT.scores = { X: 0, O: 0, D: 0 };
-  $('#tttScreen').classList.add('on');
-  tttReset();
-}
-
-async function renderLeaderboard() {
-  const box = $('#lbContent'); if (!box) return;
-  if (!FB.ready) { box.innerHTML = '<div class="empty">' + icon('info', 'ic-lg') + '<p>Login untuk melihat peringkat</p></div>'; return; }
-  box.innerHTML = '<div class="empty"><span class="spinner"></span></div>';
-  try {
-    const s = await FB.api.get(FB.api.ref(FB.db, 'leaderboard'));
-    const v = s.val() || {};
-    const arr = Object.keys(v).map(k => Object.assign({ uid: k }, v[k]))
-      .sort((a, b) => (b.stars || 0) - (a.stars || 0));
-    if (!arr.length) { box.innerHTML = '<div class="empty"><p>Belum ada data</p></div>'; return; }
-    box.innerHTML = '';
-    arr.slice(0, 100).forEach((e, i) => {
-      const row = el('div', 'list-item');
-      const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '';
-      const me = App.user && e.uid === App.user.uid;
-      if (me) row.style.background = 'linear-gradient(90deg,var(--accent-soft),transparent)';
-      row.innerHTML =
-        '<div style="width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-weight:900;font-size:14px;background:var(--surface-3)">' + (medal || (i + 1)) + '</div>' +
-        '<div class="avatar" style="width:38px;height:38px;font-size:14px;border-radius:12px">' + (e.avatar ? '<img src="' + esc(e.avatar) + '" />' : esc(initial(e.username))) + '</div>' +
-        '<div class="li-main"><div class="t">' + esc(e.username || '?') + (me ? ' (Anda)' : '') + '</div>' +
-        '<div class="s">⭐ ' + (e.stars || 0) + ' · ' + (e.rating || 1200) + ' elo</div></div>';
-      box.appendChild(row);
-    });
-  } catch (e) { box.innerHTML = '<div class="empty"><p>Gagal memuat</p></div>'; }
-}
-
-function renderProfile() {
-  const head = $('#profileHead'); const body = $('#profileBody');
-  if (!head || !body) return;
-  const p = App.profile || defaultProfile(App.user ? App.user.uid : 'guest', App.user ? 'Pemain' : 'Tamu');
-  const lvl = levelFromXp(p.xp);
-  const winRate = p.gamesPlayed > 0 ? Math.round((p.wins / p.gamesPlayed) * 100) : 0;
-  head.innerHTML =
-    '<div class="profile-cover">' +
-    '<div class="profile-head">' +
-    '<div class="avatar-edit">' +
-    '<div class="avatar xl">' + (p.avatar ? '<img src="' + esc(p.avatar) + '" />' : esc(initial(p.username))) + '</div>' +
-    (App.user ? '<div class="avatar-edit-btn" id="editAv">' + icon('camera') + '</div>' : '') +
+  m.innerHTML =
+    '<div class="page-head"><div><h1>Konten</h1><p>Kelola banner dan konten tampilan aplikasi</p></div></div>' +
+    '<div class="card"><div class="card-title">Banner Home</div>' +
+    '<div class="field"><label>Ikon (nama: info, trophy, zap, gift)</label><input class="input" id="c-icon" value="' + esc(banner.icon || 'info') + '"></div>' +
+    '<div class="field"><label>Judul</label><input class="input" id="c-title" value="' + esc(banner.title || '') + '" placeholder="Selamat datang di Cazoo!"></div>' +
+    '<div class="field"><label>Teks</label><textarea class="input" id="c-text" rows="2" placeholder="Deskripsi singkat...">' + esc(banner.text || '') + '</textarea></div>' +
+    '<div class="btn-row"><button class="btn primary sm" id="c-save">💾 Simpan Banner</button><button class="btn danger sm" id="c-del">🗑️ Hapus</button></div>' +
     '</div>' +
-    '<div class="profile-body">' +
-    '<div class="profile-name">' + esc(p.username) + '</div>' +
-    '<div class="profile-id">ID: ' + esc(p.displayId || '-') + ' · LV ' + lvl + '</div>' +
-    '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">' +
-    '<span class="pill gold">⭐ ' + (p.stars || 0) + '</span>' +
-    '<span class="pill accent">Elo ' + (p.rating || 1200) + '</span>' +
-    '<span class="pill">🎟️ ' + (p.nicknameTokens || 0) + '</span>' +
-    '</div></div>' +
-    '<div class="profile-rating"><div class="rnum">⭐' + (p.stars || 0) + '</div><div class="rlabel">Bintang</div></div>' +
-    '</div></div>';
-  const av = $('#editAv'); if (av) av.onclick = uploadAvatar;
+    '<div class="card"><div class="card-title">Photo Banner (Carousel)</div>' +
+    '<div class="field"><label>URL Gambar (1 per baris)</label><textarea class="input" id="p-urls" rows="4" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg">' + esc((photoBanner.images || []).map(x => x.url).join('\n')) + '</textarea></div>' +
+    '<div class="field"><label>Interval Slide (ms)</label><input class="input" id="p-int" type="number" value="' + (photoBanner.autoSlideInterval || 5000) + '"></div>' +
+    '<div class="btn-row"><button class="btn primary sm" id="p-save">💾 Simpan Photo Banner</button><button class="btn danger sm" id="p-del">🗑️ Hapus</button></div>' +
+    '</div>' +
+    '<div class="card"><div class="card-title">Play Menu (JSON)</div>' +
+    '<div class="field"><label>Konfigurasi item menu play (valid JSON array)</label><textarea class="input" id="pm-json" rows="12" style="min-height:240px" placeholder=\'[{"id":"ranked","title":"Ranked","desc":"Kompetitif","icon":"target","action":"ranked"}]\'></textarea></div>' +
+    '<div class="btn-row"><button class="btn primary sm" id="pm-save">💾 Simpan</button><button class="btn ghost sm" id="pm-load">📥 Muat dari Server</button><button class="btn ghost sm" id="pm-default">🔄 Contoh Default</button></div>' +
+    '</div>';
 
-  if (App.profileTab === 'overview') {
-    body.innerHTML =
-      '<div class="stat-grid">' +
-      '<div class="stat"><div class="l">Menang</div><div class="v" style="color:var(--success)">' + (p.wins || 0) + '</div></div>' +
-      '<div class="stat"><div class="l">Kalah</div><div class="v" style="color:var(--danger)">' + (p.losses || 0) + '</div></div>' +
-      '<div class="stat"><div class="l">Seri</div><div class="v">' + (p.draws || 0) + '</div></div>' +
-      '<div class="stat"><div class="l">Win Rate</div><div class="v">' + winRate + '%</div></div>' +
-      '</div>';
-  } else if (App.profileTab === 'stats') {
-    body.innerHTML = '<div class="card"><div style="font-size:13px;line-height:2.2">' +
-      '<div style="display:flex;justify-content:space-between"><span style="color:var(--text-dim)">Total Game</span><b>' + (p.gamesPlayed || 0) + '</b></div>' +
-      '<div style="display:flex;justify-content:space-between"><span style="color:var(--text-dim)">Rating Tertinggi</span><b>' + (p.bestRating || 1200) + '</b></div>' +
-      '<div style="display:flex;justify-content:space-between"><span style="color:var(--text-dim)">XP</span><b>' + (p.xp || 0) + '</b></div>' +
-      '<div style="display:flex;justify-content:space-between"><span style="color:var(--text-dim)">Bergabung</span><b>' + new Date(p.createdAt || Date.now()).toLocaleDateString('id-ID') + '</b></div>' +
-      '</div></div>';
-  } else if (App.profileTab === 'achievements') {
-    const achs = [
-      { id: 'first', n: 'Langkah Pertama', d: 'Selesaikan 1 game', ic: 'play', done: (p.gamesPlayed || 0) >= 1 },
-      { id: 'win1', n: 'Menang Pertama', d: 'Raih 1 kemenangan', ic: 'trophy', done: (p.wins || 0) >= 1 },
-      { id: 'w10', n: 'Kolektor', d: 'Raih 10 kemenangan', ic: 'target', done: (p.wins || 0) >= 10 },
-      { id: 'g5', n: 'Gold', d: '5 bintang', ic: 'star', done: (p.stars || 0) >= 5 },
-      { id: 'g15', n: 'Platinum', d: '15 bintang', ic: 'crown', done: (p.stars || 0) >= 15 }
-    ];
-    body.innerHTML = achs.map(a =>
-      '<div class="card" style="padding:12px 14px;display:flex;gap:12px;align-items:center;' + (a.done ? '' : 'opacity:.5;') + '">' +
-      '<div style="width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:' + (a.done ? 'linear-gradient(135deg,var(--accent),var(--accent-2))' : 'var(--surface-3)') + ';color:' + (a.done ? '#fff' : 'var(--text-dim2)') + '">' + icon(a.ic) + '</div>' +
-      '<div style="flex:1"><div style="font-weight:800;font-size:13.5px">' + a.n + '</div>' +
-      '<div style="font-size:11.5px;color:var(--text-dim);margin-top:2px">' + a.d + '</div></div>' +
-      (a.done ? '<span style="color:var(--success)">' + icon('check') + '</span>' : '') +
-      '</div>').join('');
-  }
-}
-
-async function uploadAvatar() {
-  if (!FB.ready || !App.user) { toast('Login dulu', 'error'); return; }
-  const inp = $('#avatarFile'); if (!inp) return;
-  inp.value = '';
-  inp.onchange = async () => {
-    const f = inp.files && inp.files[0]; if (!f) return;
-    const d = await processAvatar(f);
-    if (!d) { toast('Gagal proses gambar', 'error'); return; }
+  $('#c-save').onclick = async () => {
     try {
-      await FB.api.update(FB.api.ref(FB.db, 'users/' + App.user.uid), { avatar: d });
-      if (App.profile) App.profile.avatar = d;
-      saveCache(App.user.uid, App.profile);
-      await FB.api.update(FB.api.ref(FB.db, 'leaderboard/' + App.user.uid), { avatar: d }).catch(() => {});
-      toast('Foto diperbarui', 'success');
-      if (App.view === 'profile') renderProfile();
-      if (App.view === 'home') renderHome();
-    } catch (e) { toast('Gagal upload', 'error'); }
+      const data = {
+        icon: $('#c-icon').value.trim() || 'info',
+        title: $('#c-title').value.trim(),
+        text: $('#c-text').value.trim()
+      };
+      if (!data.title) { toast('Judul wajib diisi', 'error'); return; }
+      await api.set(api.ref(FB.db, 'adminConfig/homeBanner'), data);
+      await adminLog('SAVE_BANNER', data.title);
+      toast('Banner disimpan!', 'success');
+    } catch (e) { toast('Gagal: ' + e.message, 'error'); }
   };
-  inp.click();
-}
-
-/* ===== SETTINGS ===== */
-function openSettings() {
-  const s = $('#settings'); const b = $('#settingsBody');
-  if (!s || !b) return;
-  b.innerHTML =
-    '<div class="sheet-sec"><div class="sheet-sec-title">Tampilan</div>' +
-    '<div class="setting-row"><div class="st"><div class="t">Tema</div></div><select id="setTheme"><option value="light">Terang</option><option value="dark">Gelap</option></select></div>' +
-    '<div class="setting-row"><div class="st"><div class="t">Tampilkan Koordinat</div></div><div class="switch" data-sw="showCoords"></div></div>' +
-    '<div class="setting-row"><div class="st"><div class="t">Tampilkan Langkah Legal</div></div><div class="switch" data-sw="showLegal"></div></div>' +
-    '</div>' +
-    '<div class="sheet-sec"><div class="sheet-sec-title">Suara</div>' +
-    '<div class="setting-row"><div class="st"><div class="t">Aktifkan Suara</div></div><div class="switch" data-sw="soundEnabled"></div></div>' +
-    '</div>' +
-    (App.user ? '<div class="sheet-sec"><div class="sheet-sec-title">Akun</div>' +
-      '<div class="setting-row" id="setLogout"><div class="st"><div class="t" style="color:var(--danger)">Keluar</div><div class="s">Sign out dari akun</div></div></div>' +
-      '</div>' : '') +
-    (Admin.isAdmin ? '<div class="sheet-sec"><div class="sheet-sec-title">Admin</div>' +
-      '<div class="setting-row" id="setAdmin"><div class="st"><div class="t" style="color:var(--gold)">Panel Admin</div><div class="s">Kelola pengguna & konten</div></div></div>' +
-      '</div>' : '');
-  const sel = b.querySelector('#setTheme');
-  if (sel) { sel.value = settings.theme; sel.onchange = () => { settings.theme = sel.value; saveSettings(); applyTheme(); }; }
-  b.querySelectorAll('[data-sw]').forEach(sw => {
-    const k = sw.dataset.sw;
-    sw.classList.toggle('on', !!settings[k]);
-    sw.onclick = () => { settings[k] = !settings[k]; sw.classList.toggle('on', !!settings[k]); saveSettings(); Sound.button(); };
-  });
-  const lo = b.querySelector('#setLogout');
-  if (lo) lo.onclick = async () => {
-    const ok = await Modal.confirm('Keluar?', 'Anda akan sign out.', 'Keluar', true);
+  $('#c-del').onclick = async () => {
+    const ok = await Modal.confirm('Hapus banner?', 'Banner home akan dihapus.', 'Hapus', true);
     if (!ok) return;
-    try { if (FB.ready) await FB.authApi.signOut(FB.auth); } catch (e) {}
-    location.reload();
+    await api.remove(api.ref(FB.db, 'adminConfig/homeBanner'));
+    await adminLog('DELETE_BANNER', '');
+    toast('Banner dihapus', 'success');
+    renderContent(m);
   };
-  const ad = b.querySelector('#setAdmin');
-  if (ad) ad.onclick = () => { s.classList.remove('on'); setTimeout(adminPanel, 150); };
-  s.classList.add('on');
-}
 
-/* ===== SHELL WIRING ===== */
-function wireShell() {
-  $('#navHome').innerHTML = icon('home');
-  $('#navPlay').innerHTML = icon('play');
-  $('#navLB').innerHTML = icon('trophy');
-  $('#navProfile').innerHTML = icon('user');
-  $('#btnAdmin').innerHTML = icon('shield');
-  $('#btnSettings').innerHTML = icon('settings');
-  $('#btnTheme').innerHTML = settings.theme === 'dark' ? icon('sun') : icon('moon');
-  $('#brandMark').innerHTML = '<img src="' + IMG + '" />';
-
-  $$('#bottomNav button').forEach(bt => bt.onclick = () => { Sound.button(); showView(bt.dataset.goto); });
-  $('#btnSettings').onclick = () => { Sound.button(); openSettings(); };
-  $('#btnTheme').onclick = () => {
-    settings.theme = settings.theme === 'dark' ? 'light' : 'dark';
-    saveSettings(); applyTheme();
-    $('#btnTheme').innerHTML = settings.theme === 'dark' ? icon('sun') : icon('moon');
-    Sound.button();
+  $('#p-save').onclick = async () => {
+    try {
+      const urls = $('#p-urls').value.split('\n').map(x => x.trim()).filter(Boolean);
+      const interval = parseInt($('#p-int').value, 10) || 5000;
+      await api.set(api.ref(FB.db, 'adminConfig/photoBanner'), { images: urls.map(u => ({ url: u })), autoSlideInterval: interval });
+      await adminLog('SAVE_PHOTO_BANNER', urls.length + ' gambar');
+      toast('Photo banner disimpan!', 'success');
+    } catch (e) { toast('Gagal: ' + e.message, 'error'); }
   };
-  $('#btnAdmin').onclick = () => { Sound.button(); adminPanel(); };
-  $('#settingsClose').innerHTML = icon('x');
-  $('#settingsClose').onclick = () => { Sound.button(); $('#settings').classList.remove('on'); };
+  $('#p-del').onclick = async () => {
+    const ok = await Modal.confirm('Hapus photo banner?', '', 'Hapus', true);
+    if (!ok) return;
+    await api.remove(api.ref(FB.db, 'adminConfig/photoBanner'));
+    toast('Dihapus', 'success');
+    renderContent(m);
+  };
 
-  $$('#profileTabs button').forEach(bt => bt.onclick = () => {
-    App.profileTab = bt.dataset.pt;
-    $$('#profileTabs button').forEach(x => x.classList.toggle('active', x === bt));
-    renderProfile();
-  });
-  $$('#lbTabs button').forEach(bt => bt.onclick = () => {
-    $$('#lbTabs button').forEach(x => x.classList.toggle('active', x === bt));
-    renderLeaderboard();
-  });
+  $('#pm-load').onclick = async () => {
+    try {
+      const s = await api.get(api.ref(FB.db, 'adminConfig/playMenuItems'));
+      if (s.exists()) {
+        const v = s.val();
+        $('#pm-json').value = JSON.stringify(Array.isArray(v) ? v : Object.values(v || {}), null, 2);
+        toast('Dimuat dari server', 'success');
+      } else toast('Belum ada data di server', 'warn');
+    } catch (e) { toast('Gagal', 'error'); }
+  };
+  $('#pm-default').onclick = () => {
+    $('#pm-json').value = JSON.stringify([
+      { id: 'ranked', title: 'Ranked', desc: 'Kompetitif', icon: 'target', action: 'ranked' },
+      { id: 'casual', title: 'Classic', desc: 'Santai', icon: 'swords', action: 'casual' },
+      { id: 'ai', title: 'Lawan AI', desc: 'Latihan', icon: 'cpu', action: 'ai' }
+    ], null, 2);
+  };
+  $('#pm-save').onclick = async () => {
+    try {
+      const data = JSON.parse($('#pm-json').value);
+      if (!Array.isArray(data)) throw new Error('Harus array');
+      await api.set(api.ref(FB.db, 'adminConfig/playMenuItems'), data);
+      await adminLog('SAVE_PLAY_MENU', data.length + ' item');
+      toast('Play menu disimpan!', 'success');
+    } catch (e) { toast('JSON tidak valid: ' + e.message, 'error'); }
+  };
+}
 
-  // Game back
-  $('#btnGameBack').innerHTML = icon('chevL');
-  $('#btnGameBack').onclick = () => { Sound.button(); closeGame(); };
-  // TTT back
-  $('#btnTttBack').innerHTML = icon('chevL');
-  $('#btnTttBack').onclick = () => { Sound.button(); $('#tttScreen').classList.remove('on'); };
-  $('#btnTttRestart').innerHTML = icon('refresh');
-  $('#btnTttRestart').onclick = () => { Sound.button(); tttReset(); };
+/* ===== PAGE: MESSAGES ===== */
+function renderMessages(m) {
+  m.innerHTML =
+    '<div class="page-head"><div><h1>Pesan</h1><p>Kirim pesan ke pengguna atau broadcast</p></div></div>' +
+    '<div class="card"><div class="card-title">Kirim ke 1 Pengguna</div>' +
+    '<div class="field"><label>UID Penerima</label><input class="input" id="m-uid" placeholder="UID pengguna..."></div>' +
+    '<div class="field"><label>Judul</label><input class="input" id="m-title" placeholder="Judul pesan"></div>' +
+    '<div class="field"><label>Isi Pesan</label><textarea class="input" id="m-body" rows="4" placeholder="Tulis pesan..."></textarea></div>' +
+    '<button class="btn primary sm" id="m-send">📩 Kirim Pesan</button>' +
+    '</div>' +
+    '<div class="card"><div class="card-title">Broadcast ke Semua</div>' +
+    '<div class="field"><label>Judul Broadcast</label><input class="input" id="b-title" placeholder="Pengumuman"></div>' +
+    '<div class="field"><label>Isi Broadcast</label><textarea class="input" id="b-body" rows="4" placeholder="Isi pengumuman..."></textarea></div>' +
+    '<button class="btn danger sm" id="b-send">📢 Broadcast Sekarang</button>' +
+    '</div>' +
+    '<div class="card"><div class="card-title">Riwayat Broadcast</div><div id="bcList"><div class="empty"><span class="spinner"></span></div></div></div>';
 
-  // Board events
-  const bw = document.querySelector('.board-wrap');
-  if (bw) {
-    bw.addEventListener('pointerup', ev => {
-      if (Game.finished || !Game.chess) return;
-      const boardEl = $('#board'); if (!boardEl) return;
-      const r = boardEl.getBoundingClientRect();
-      if (ev.clientX < r.left || ev.clientX > r.right || ev.clientY < r.top || ev.clientY > r.bottom) return;
-      let col = Math.floor(((ev.clientX - r.left) / r.width) * 8);
-      let row = Math.floor(((ev.clientY - r.top) / r.height) * 8);
-      col = clamp(col, 0, 7); row = clamp(row, 0, 7);
-      const rr = Game.flipped ? row : 7 - row;
-      const ff = Game.flipped ? 7 - col : col;
-      handleTap(rr * 8 + ff);
-    });
+  $('#m-send').onclick = async () => {
+    const uid = $('#m-uid').value.trim();
+    const title = $('#m-title').value.trim();
+    const body = $('#m-body').value.trim();
+    if (!uid || !title) { toast('UID & judul wajib', 'error'); return; }
+    try {
+      const id = 'msg_' + Date.now();
+      await api.set(api.ref(FB.db, 'adminMessages/' + uid + '/' + id), { title, body, sentAt: Date.now(), from: State.user.uid, fromName: State.profile ? State.profile.username : 'Admin' });
+      await adminLog('SEND_MSG', 'To ' + uid.slice(0, 12));
+      toast('Pesan terkirim!', 'success');
+      $('#m-uid').value = ''; $('#m-title').value = ''; $('#m-body').value = '';
+    } catch (e) { toast('Gagal: ' + e.message, 'error'); }
+  };
+
+  $('#b-send').onclick = async () => {
+    const title = $('#b-title').value.trim();
+    const body = $('#b-body').value.trim();
+    if (!title) { toast('Judul wajib', 'error'); return; }
+    const ok = await Modal.confirm('Broadcast?', 'Pesan akan dikirim ke SEMUA pengguna aktif.', 'Kirim', true);
+    if (!ok) return;
+    try {
+      const id = 'bc_' + Date.now();
+      await api.set(api.ref(FB.db, 'adminBroadcast/' + id), { title, body, audience: 'all', sentAt: Date.now(), from: State.user.uid, fromName: State.profile ? State.profile.username : 'Admin' });
+      await adminLog('BROADCAST', title);
+      toast('Broadcast terkirim!', 'success');
+      $('#b-title').value = ''; $('#b-body').value = '';
+      loadBroadcasts();
+    } catch (e) { toast('Gagal: ' + e.message, 'error'); }
+  };
+
+  async function loadBroadcasts() {
+    try {
+      const s = await api.get(api.ref(FB.db, 'adminBroadcast'));
+      const v = s.val() || {};
+      const list = Object.keys(v).map(k => Object.assign({ id: k }, v[k])).sort((a, b) => (b.sentAt || 0) - (a.sentAt || 0)).slice(0, 20);
+      const box = $('#bcList');
+      if (!list.length) { box.innerHTML = '<div class="empty"><p>Belum ada broadcast</p></div>'; return; }
+      box.innerHTML = '<div class="list"></div>';
+      const listEl = box.querySelector('.list');
+      list.forEach(b => {
+        const row = el('div', 'row');
+        row.innerHTML = '<div class="body"><div class="ttl">' + esc(b.title) + '</div><div class="sub">' + new Date(b.sentAt || 0).toLocaleString('id-ID') + '</div></div>' +
+          '<div class="actions"><button class="btn sm danger">Hapus</button></div>';
+        row.querySelector('button').onclick = async () => {
+          const ok = await Modal.confirm('Hapus broadcast?', '', 'Hapus', true);
+          if (!ok) return;
+          await api.remove(api.ref(FB.db, 'adminBroadcast/' + b.id));
+          toast('Dihapus', 'success');
+          loadBroadcasts();
+        };
+        listEl.appendChild(row);
+      });
+    } catch (e) { $('#bcList').innerHTML = '<div class="empty"><p>Gagal memuat</p></div>'; }
   }
+  loadBroadcasts();
 }
 
-/* ===== AUTH FLOW ===== */
-async function promptUsername(user) {
-  return new Promise(resolve => {
-    const box = el('div');
-    const def = String(user.displayName || 'Player').replace(/[^A-Za-z0-9_]/g, '').slice(0, 16) || 'Player' + Math.floor(Math.random() * 999);
-    box.innerHTML =
-      '<p style="font-size:13px;color:var(--text-dim);margin:0 0 14px">Selamat datang! Pilih username untuk profil Anda.</p>' +
-      '<div class="field"><label>Username (3-16 karakter)</label><input class="input" id="pu-n" maxlength="16" value="' + esc(def) + '"></div>' +
-      '<div class="err" id="pu-e"></div>';
-    Modal.open({
-      title: 'Buat Profil', body: box, dismissible: false,
-      buttons: [{ label: 'Lanjut', value: 'go', variant: 'primary' }]
-    }).then(async v => {
-      if (v !== 'go') { resolve(null); return; }
-      const n = $('#pu-n').value.trim();
-      const e = $('#pu-e');
-      if (n.length < 3 || n.length > 16 || !/^[A-Za-z0-9_]+$/.test(n)) { if (e) e.textContent = 'Username 3-16 karakter (huruf/angka/_)'; resolve(promptUsername(user)); return; }
-      try {
-        const s = await FB.api.get(FB.api.ref(FB.db, 'usernames/' + n.toLowerCase()));
-        if (s.exists()) { if (e) e.textContent = 'Username sudah dipakai'; resolve(promptUsername(user)); return; }
-      } catch (err) {}
-      resolve(n);
-    });
-  });
+/* ===== PAGE: TOURNAMENTS ===== */
+async function renderTournaments(m) {
+  let tours = [];
+  try {
+    const s = await api.get(api.ref(FB.db, 'adminConfig/tournaments'));
+    if (s.exists()) { const v = s.val(); tours = Array.isArray(v) ? v : Object.values(v || {}); }
+  } catch (e) {}
+
+  m.innerHTML =
+    '<div class="page-head"><div><h1>Turnamen</h1><p>Kelola daftar turnamen aplikasi</p></div></div>' +
+    '<div class="card"><div class="card-title">Edit Turnamen (JSON)</div>' +
+    '<div class="field"><label>Konfigurasi turnamen (array JSON)</label><textarea class="input" id="t-json" rows="18" style="min-height:320px"></textarea></div>' +
+    '<div class="btn-row"><button class="btn primary sm" id="t-save">💾 Simpan</button><button class="btn ghost sm" id="t-load">📥 Muat</button><button class="btn ghost sm" id="t-ex">📝 Contoh</button></div>' +
+    '</div>';
+  $('#t-json').value = JSON.stringify(tours, null, 2);
+  $('#t-load').onclick = async () => {
+    const s = await api.get(api.ref(FB.db, 'adminConfig/tournaments'));
+    if (s.exists()) {
+      const v = s.val();
+      $('#t-json').value = JSON.stringify(Array.isArray(v) ? v : Object.values(v || {}), null, 2);
+    }
+  };
+  $('#t-ex').onclick = () => {
+    $('#t-json').value = JSON.stringify([
+      {
+        id: 'weekly-1', name: 'Weekly Cup #1', desc: 'Turnamen mingguan',
+        status: 'open', entryFee: 10000, prizePool: 1000000,
+        currentPot: 500000, targetPot: 1000000,
+        maxPlayers: 32, currentPlayers: 15, timeControl: '10+0',
+        startAt: Date.now() + 86400000 * 2,
+        prizeDistribution: [
+          { rank: 1, amount: 500000, label: 'Juara 1' },
+          { rank: 2, amount: 300000, label: 'Juara 2' },
+          { rank: 3, amount: 200000, label: 'Juara 3' }
+        ],
+        verificationCode: 'CUP2025'
+      }
+    ], null, 2);
+  };
+  $('#t-save').onclick = async () => {
+    try {
+      const data = JSON.parse($('#t-json').value);
+      if (!Array.isArray(data)) throw new Error('Harus array');
+      await api.set(api.ref(FB.db, 'adminConfig/tournaments'), data);
+      await adminLog('SAVE_TOURNAMENTS', data.length + ' turnamen');
+      toast('Turnamen disimpan!', 'success');
+    } catch (e) { toast('JSON tidak valid: ' + e.message, 'error'); }
+  };
 }
 
-async function handleUser(user) {
-  App.user = user;
-  const cached = loadCache(user.uid);
-  if (cached) { App.profile = cached; hideSplash(); enterApp(); }
-  let prof = await loadProfile(user.uid);
-  if (!prof) {
-    if (!cached) { hideSplash(); }
-    const name = await promptUsername(user);
-    if (!name) { try { await FB.authApi.signOut(FB.auth); } catch (e) {} return; }
-    try { prof = await createProfile(user.uid, name, user.email || '', ''); }
-    catch (e) { toast('Gagal buat profil', 'error'); return; }
-    toast('Selamat datang! 🎉', 'success');
-    setTimeout(() => toast('🎁 1 token gratis untuk ganti nickname!', 'success'), 1400);
+/* ===== PAGE: SHOP ===== */
+async function renderShop(m) {
+  let items = [];
+  let topups = [];
+  try {
+    const [iS, tS] = await Promise.all([
+      api.get(api.ref(FB.db, 'adminConfig/shopItems')),
+      api.get(api.ref(FB.db, 'adminConfig/topupPackages'))
+    ]);
+    if (iS.exists()) { const v = iS.val(); items = Array.isArray(v) ? v : Object.values(v || {}); }
+    if (tS.exists()) { const v = tS.val(); topups = Array.isArray(v) ? v : Object.values(v || {}); }
+  } catch (e) {}
+
+  m.innerHTML =
+    '<div class="page-head"><div><h1>Toko</h1><p>Kelola item kosmetik dan paket top-up</p></div></div>' +
+    '<div class="card"><div class="card-title">Item Toko (JSON)</div>' +
+    '<div class="field"><label>Daftar item kosmetik</label><textarea class="input" id="s-items" rows="14" style="min-height:260px"></textarea></div>' +
+    '<div class="btn-row"><button class="btn primary sm" id="s-save-items">💾 Simpan Item</button><button class="btn ghost sm" id="s-load-items">📥 Muat</button><button class="btn ghost sm" id="s-ex-items">📝 Contoh</button></div>' +
+    '</div>' +
+    '<div class="card"><div class="card-title">Paket Top-Up (JSON)</div>' +
+    '<div class="field"><label>Daftar paket</label><textarea class="input" id="s-topups" rows="10" style="min-height:200px"></textarea></div>' +
+    '<div class="btn-row"><button class="btn primary sm" id="s-save-topups">💾 Simpan Paket</button><button class="btn ghost sm" id="s-load-topups">📥 Muat</button></div>' +
+    '</div>' +
+    '<div class="card"><div class="card-title">Hadiah Ranked</div>' +
+    '<div class="grid-3">' +
+    '<div class="field"><label>Menang 💎</label><input class="input" id="r-win" type="number" value="5"></div>' +
+    '<div class="field"><label>Kalah 💎</label><input class="input" id="r-loss" type="number" value="0"></div>' +
+    '<div class="field"><label>Seri 💎</label><input class="input" id="r-draw" type="number" value="1"></div>' +
+    '</div>' +
+    '<button class="btn primary sm" id="r-save">💾 Simpan Hadiah</button>' +
+    '</div>';
+
+  $('#s-items').value = JSON.stringify(items, null, 2);
+  $('#s-topups').value = JSON.stringify(topups, null, 2);
+
+  // Load reward config
+  try {
+    const rS = await api.get(api.ref(FB.db, 'adminConfig/rewardConfig'));
+    if (rS.exists()) {
+      const r = rS.val();
+      $('#r-win').value = r.rankedWin || 5;
+      $('#r-loss').value = r.rankedLoss || 0;
+      $('#r-draw').value = r.rankedDraw || 1;
+    }
+  } catch (e) {}
+
+  $('#s-load-items').onclick = async () => {
+    const s = await api.get(api.ref(FB.db, 'adminConfig/shopItems'));
+    if (s.exists()) { const v = s.val(); $('#s-items').value = JSON.stringify(Array.isArray(v) ? v : Object.values(v || {}), null, 2); }
+  };
+  $('#s-ex-items').onclick = () => {
+    $('#s-items').value = JSON.stringify([
+      { id: 'name_gold', cat: 'name', name: 'Gold Name', desc: 'Warna emas', rarity: 'rare', price: 800, emoji: '🟡' },
+      { id: 'bg_diamond', cat: 'bg', name: 'Diamond BG', desc: 'Berlian', rarity: 'mythic', price: 8000, emoji: '💎' }
+    ], null, 2);
+  };
+  $('#s-save-items').onclick = async () => {
+    try {
+      const data = JSON.parse($('#s-items').value);
+      if (!Array.isArray(data)) throw new Error('Harus array');
+      await api.set(api.ref(FB.db, 'adminConfig/shopItems'), data);
+      await adminLog('SAVE_SHOP', data.length + ' item');
+      toast('Item disimpan!', 'success');
+    } catch (e) { toast('JSON tidak valid: ' + e.message, 'error'); }
+  };
+  $('#s-load-topups').onclick = async () => {
+    const s = await api.get(api.ref(FB.db, 'adminConfig/topupPackages'));
+    if (s.exists()) { const v = s.val(); $('#s-topups').value = JSON.stringify(Array.isArray(v) ? v : Object.values(v || {}), null, 2); }
+  };
+  $('#s-save-topups').onclick = async () => {
+    try {
+      const data = JSON.parse($('#s-topups').value);
+      if (!Array.isArray(data)) throw new Error('Harus array');
+      await api.set(api.ref(FB.db, 'adminConfig/topupPackages'), data);
+      await adminLog('SAVE_TOPUPS', data.length + ' paket');
+      toast('Paket disimpan!', 'success');
+    } catch (e) { toast('JSON tidak valid: ' + e.message, 'error'); }
+  };
+  $('#r-save').onclick = async () => {
+    try {
+      const data = {
+        rankedWin: parseInt($('#r-win').value, 10) || 0,
+        rankedLoss: parseInt($('#r-loss').value, 10) || 0,
+        rankedDraw: parseInt($('#r-draw').value, 10) || 0
+      };
+      await api.set(api.ref(FB.db, 'adminConfig/rewardConfig'), data);
+      await adminLog('SAVE_REWARDS', JSON.stringify(data));
+      toast('Hadiah disimpan!', 'success');
+    } catch (e) { toast('Gagal: ' + e.message, 'error'); }
+  };
+}
+
+/* ===== PAGE: ADMINS ===== */
+async function renderAdmins(m) {
+  let list = [];
+  try {
+    const s = await api.get(api.ref(FB.db, 'adminConfig/adminUids'));
+    if (s.exists()) { const v = s.val(); list = Array.isArray(v) ? v : Object.values(v || {}); }
+  } catch (e) {}
+
+  m.innerHTML =
+    '<div class="page-head"><div><h1>Admin</h1><p>Kelola siapa saja yang bisa akses panel ini</p></div></div>' +
+    '<div class="card"><div class="card-title">Daftar Admin</div>' +
+    '<div style="font-size:12.5px;color:var(--text-dim);margin-bottom:14px;line-height:1.6;padding:12px;background:var(--surface-3);border-radius:12px">' +
+    'Masukkan UID atau email admin, satu per baris.<br>' +
+    '<b style="color:var(--text)">UID Anda saat ini:</b> <code style="font-family:monospace;font-size:11px;color:var(--gold)">' + State.user.uid + '</code>' +
+    '</div>' +
+    '<div class="field"><label>Daftar Admin</label><textarea class="input" id="ad-list" rows="8" style="min-height:180px">' + esc(list.join('\n')) + '</textarea></div>' +
+    '<div class="btn-row"><button class="btn primary sm" id="ad-save">💾 Simpan</button><button class="btn ghost sm" id="ad-addme">➕ Tambahkan Saya</button></div>' +
+    '</div>';
+
+  $('#ad-addme').onclick = () => {
+    const ta = $('#ad-list');
+    const lines = ta.value.split('\n').map(x => x.trim()).filter(Boolean);
+    if (!lines.includes(State.user.uid)) { lines.push(State.user.uid); ta.value = lines.join('\n'); }
+    if (State.user.email && !lines.includes(State.user.email)) { lines.push(State.user.email); ta.value = lines.join('\n'); }
+  };
+  $('#ad-save').onclick = async () => {
+    const data = $('#ad-list').value.split('\n').map(x => x.trim()).filter(Boolean);
+    try {
+      await api.set(api.ref(FB.db, 'adminConfig/adminUids'), data);
+      await adminLog('SAVE_ADMINS', data.length + ' admin');
+      toast('Daftar admin disimpan!', 'success');
+    } catch (e) { toast('Gagal: ' + e.message, 'error'); }
+  };
+}
+
+/* ===== PAGE: LOGS ===== */
+async function renderLogs(m) {
+  m.innerHTML = '<div class="page-head"><div><h1>Log Aktivitas</h1><p>Riwayat semua aksi admin</p></div><button class="btn danger sm" id="clearLogs">🗑️ Hapus Semua</button></div><div id="logList"><div class="empty"><span class="spinner"></span></div></div>';
+  async function load() {
+    try {
+      const s = await api.get(api.ref(FB.db, 'adminLogs'));
+      const v = s.val() || {};
+      const list = Object.keys(v).map(k => Object.assign({ id: k }, v[k])).sort((a, b) => (b.at || 0) - (a.at || 0)).slice(0, 100);
+      const box = $('#logList');
+      if (!list.length) { box.innerHTML = '<div class="empty"><p>Belum ada log</p></div>'; return; }
+      box.innerHTML = '<div class="list"></div>';
+      const listEl = box.querySelector('.list');
+      list.forEach(l => {
+        const row = el('div', 'row');
+        const badge = l.action.includes('BAN') ? 'red' : l.action.includes('DELETE') ? 'warn' : 'blue';
+        row.innerHTML =
+          '<div class="body"><div class="ttl"><span class="badge ' + badge + '">' + esc(l.action || 'ACTION') + '</span> ' + esc(l.detail || '') + '</div>' +
+          '<div class="sub">' + esc(l.byName || 'admin') + ' · ' + new Date(l.at || 0).toLocaleString('id-ID') + '</div></div>';
+        listEl.appendChild(row);
+      });
+    } catch (e) { $('#logList').innerHTML = '<div class="empty"><p>Gagal: ' + e.message + '</p></div>'; }
   }
-  App.profile = prof;
-  saveCache(user.uid, prof);
-  hideSplash();
-  enterApp();
-  // Realtime sync
-  FB.api.onValue(FB.api.ref(FB.db, 'users/' + user.uid), snap => {
-    if (!snap.exists()) return;
-    App.profile = Object.assign(defaultProfile(user.uid, snap.val().username), snap.val(), { uid: user.uid });
-    saveCache(user.uid, App.profile);
-    if (App.view === 'home') renderHome();
-    if (App.view === 'profile') renderProfile();
-  });
-  checkAdmin();
-  setInterval(checkAdmin, 5000);
-}
-
-function enterApp() {
-  hideAuth();
-  showView('home');
-  wireShell();
-  $('#btnTheme').innerHTML = settings.theme === 'dark' ? icon('sun') : icon('moon');
-}
-
-function setOffline() {
-  App.user = null;
-  App.profile = defaultProfile('guest', 'Tamu');
-  hideSplash();
-  enterApp();
-  toast('Mode offline', 'info');
+  $('#clearLogs').onclick = async () => {
+    const ok = await Modal.confirm('Hapus semua log?', 'Tindakan ini tidak bisa dibatalkan.', 'Hapus', true);
+    if (!ok) return;
+    await api.remove(api.ref(FB.db, 'adminLogs'));
+    toast('Log dihapus', 'success');
+    load();
+  };
+  load();
 }
 
 /* ===== BOOT ===== */
-async function boot() {
-  try {
-    $('#spMark').innerHTML = '<img src="' + IMG + '">';
-    $('#authLogo').innerHTML = '<img src="' + IMG + '">';
-    spStatus('Menghubungkan...');
-    wireShell();
+(async () => {
+  const ok = await initFirebase();
+  if (!ok) { toast('Firebase gagal load', 'error'); return; }
+  $('#btnLogin').onclick = doLogin;
 
-    // Wire auth buttons
-    $('#btnGoogle').innerHTML = GOOGLE_SVG + ' <span>Masuk dengan Google</span>';
-    $('#btnGoogle').onclick = doGoogle;
-    $('#btnOffline').onclick = () => { Sound.unlock(); setOffline(); };
+  const { onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
 
-    // Audio unlock
-    const ul = () => { Sound.unlock(); document.removeEventListener('pointerdown', ul); };
-    document.addEventListener('pointerdown', ul);
+  let handled = false;
+  onAuthStateChanged(FB.auth, async user => {
+    if (handled) return;
+    handled = true;
+    if (!user) { $('#login').style.display = 'flex'; return; }
 
-    spStatus('Memuat server...');
-    const ok = await initFirebase();
-    if (!ok) {
-      spStatus('Server tidak tersedia');
-      await delay(800);
-      hideSplash();
-      showAuth();
-      toast('Server offline. Coba mode offline.', 'error');
+    // Load user profile
+    try {
+      const s = await api.get(api.ref(FB.db, 'users/' + user.uid));
+      if (s.exists()) State.profile = Object.assign({ uid: user.uid }, s.val());
+    } catch (e) {}
+    State.user = user;
+
+    // Check admin
+    const isAdmin = await checkAdmin(user.uid, user.email);
+    if (!isAdmin) {
+      $('#login').style.display = 'flex';
+      await Modal.open({
+        title: '⛔ Akses Ditolak',
+        message: 'UID/email Anda tidak terdaftar sebagai admin.\n\nUID Anda: ' + user.uid + '\n\nTambahkan UID di atas ke adminConfig/adminUids, lalu refresh halaman.',
+        dismissible: false,
+        buttons: [{ label: 'OK, Keluar', value: 'out', variant: 'danger' }]
+      });
+      const { signOut } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+      await signOut(FB.auth);
+      location.reload();
       return;
     }
-
-    spStatus('Memeriksa sesi...');
-    let handled = false;
-    FB.authApi.onAuthStateChanged(FB.auth, async user => {
-      if (handled) return;
-      handled = true;
-      if (user) {
-        await handleUser(user);
-      } else {
-        await delay(500);
-        hideSplash();
-        showAuth();
-      }
-    });
-
-    // Fallback: hide splash after 8 seconds no matter what
-    setTimeout(() => { if (document.getElementById('splash')) { hideSplash(); showAuth(); } }, 8000);
-  } catch (e) {
-    console.error('[boot]', e);
-    hideSplash();
-    showAuth();
-    toast('Error: ' + e.message, 'error');
-  }
-}
-
-boot();
+    enterApp();
+  });
+})();
 </script>
 </body>
 </html>
