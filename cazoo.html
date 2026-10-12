@@ -1,1688 +1,2286 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>CAZO — Digital Card Chart</title>
-  <meta name="description" content="CAZO — Platform grafik card digital premium, real-time, dan modern." />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>CAZO — Trading Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FFFFFF;--bg-2:#F8FAFC;--bg-3:#F1F5F9;
+  --txt:#0F172A;--txt-2:#64748B;--txt-3:#94A3B8;
+  --border:#E2E8F0;--border-2:#F1F5F9;
+  --up:#16A34A;--up-2:#F0FDF4;--down:#DC2626;--down-2:#FEF2F2;
+  --blue:#2563EB;--blue-2:#EFF6FF;--warn:#F59E0B;--warn-2:#FFFBEB;
+  --radius:14px;--radius-lg:20px;
+  --shadow:0 1px 3px rgba(15,23,42,.06);
+  --shadow-md:0 4px 16px rgba(15,23,42,.08);
+  --shadow-lg:0 20px 40px rgba(15,23,42,.15);
+  --t:200ms cubic-bezier(.4,0,.2,1);
+  --font:'Inter','Plus Jakarta Sans',sans-serif;
+  --font-d:'Plus Jakarta Sans','Inter',sans-serif;
+}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg-2);color:var(--txt);line-height:1.55;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.hidden{display:none!important}
+button{font-family:inherit}
 
-  <!-- Lightweight Charts (TradingView) — cepat & ringan -->
-  <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid var(--border-2)}
+.topbar-in{max-width:1400px;margin:0 auto;padding:0 16px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+.brand img{width:38px;height:38px;border-radius:11px;object-fit:cover}
+.brand-txt{line-height:1.1}
+.brand-name{font-family:var(--font-d);font-weight:800;font-size:17px;letter-spacing:-.3px}
+.brand-sub{font-size:9px;font-weight:600;color:var(--txt-3);letter-spacing:2.5px;text-transform:uppercase}
+.nav-tabs{display:flex;gap:2px;align-items:center}
+.nav-tab{padding:8px 14px;border-radius:10px;border:none;background:transparent;color:var(--txt-2);font-size:13px;font-weight:600;cursor:pointer;transition:var(--t);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.nav-tab:hover{background:var(--bg-3);color:var(--txt)}
+.nav-tab.active{background:var(--txt);color:#fff}
+.nav-tab svg{width:15px;height:15px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.conn-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;background:var(--bg-3);font-size:11px;font-weight:600;color:var(--txt-2)}
+.conn-dot{width:7px;height:7px;border-radius:50%;background:var(--txt-3)}
+.conn-pill.on .conn-dot{background:var(--up);box-shadow:0 0 0 3px rgba(22,163,74,.15)}
+.conn-pill.off .conn-dot{background:var(--down);box-shadow:0 0 0 3px rgba(220,38,38,.15)}
+.user-chip{display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border-radius:24px;background:var(--bg-3);cursor:pointer;border:1px solid transparent;transition:var(--t)}
+.user-chip:hover{border-color:var(--border)}
+.user-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;background:var(--border)}
+.user-name{font-size:12px;font-weight:600;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mobile-toggle{display:none;width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:#fff;cursor:pointer;align-items:center;justify-content:center;color:var(--txt)}
+@media (max-width:900px){
+  .nav-tabs{position:fixed;top:60px;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);flex-direction:column;padding:10px 12px 14px;gap:2px;transform:translateY(-130%);opacity:0;pointer-events:none;transition:var(--t);box-shadow:var(--shadow-md);align-items:stretch}
+  .nav-tabs.open{transform:translateY(0);opacity:1;pointer-events:auto}
+  .nav-tab{padding:12px 14px;font-size:14px}
+  .mobile-toggle{display:flex}
+  .user-name{display:none}
+}
 
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+.container{max-width:1400px;margin:0 auto;padding:20px 16px 80px}
+@media (max-width:480px){.container{padding:14px 10px 60px}}
 
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+.page{display:none}
+.page.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.page-title{font-family:var(--font-d);font-size:20px;font-weight:800;letter-spacing:-.5px;display:flex;align-items:center;gap:8px}
+.page-title svg{width:20px;height:20px;color:var(--txt-2)}
+.page-sub{font-size:12.5px;color:var(--txt-2);margin-top:2px}
 
-    :root {
-      --bg: #FFFFFF;
-      --bg-secondary: #F8FAFC;
-      --bg-tertiary: #F1F5F9;
-      --text-primary: #111827;
-      --text-secondary: #6B7280;
-      --text-muted: #9CA3AF;
-      --border: #E5E7EB;
-      --border-light: #F3F4F6;
-      --up: #16A34A;
-      --up-bg: #F0FDF4;
-      --down: #DC2626;
-      --down-bg: #FEF2F2;
-      --accent: #2563EB;
-      --accent-bg: #EFF6FF;
-      --radius-sm: 8px;
-      --radius: 16px;
-      --radius-lg: 24px;
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
-      --shadow-lg: 0 12px 32px rgba(0,0,0,0.08);
-      --transition: 240ms cubic-bezier(0.4, 0, 0.2, 1);
-      --font: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
-    }
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden}
+.card+.card{margin-top:14px}
+.card-h{padding:14px 18px;border-bottom:1px solid var(--border-2);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.card-h h2{font-family:var(--font-d);font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-h h2 svg{width:16px;height:16px;color:var(--txt-2)}
+.card-b{padding:18px}
+@media (max-width:480px){.card-b{padding:12px}}
 
-    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+.grid-2{display:grid;grid-template-columns:1fr 360px;gap:16px;align-items:start}
+@media (max-width:1024px){.grid-2{grid-template-columns:1fr}}
 
-    body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text-primary);
-      line-height: 1.6;
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
+/* ====== STATS SLIDER (BARU) ====== */
+.stats-slider{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:6px;
+  scrollbar-width:none;
+  margin-bottom:16px;
+}
+.stats-slider::-webkit-scrollbar{display:none}
+.stat-mini{
+  flex:0 0 auto;
+  min-width:150px;
+  padding:11px 14px;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:14px;
+  scroll-snap-align:start;
+  box-shadow:var(--shadow);
+  transition:var(--t);
+}
+.stat-mini:active{transform:scale(.98)}
+@media (max-width:480px){.stat-mini{min-width:135px;padding:10px 12px}}
+.stat-mini-icon{
+  width:24px;height:24px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:8px;
+}
+.stat-mini-icon svg{width:13px;height:13px}
+.stat-mini-icon.up{background:var(--up-2);color:var(--up)}
+.stat-mini-icon.down{background:var(--down-2);color:var(--down)}
+.stat-mini-icon.blue{background:var(--blue-2);color:var(--blue)}
+.stat-mini-icon.warn{background:var(--warn-2);color:var(--warn)}
+.stat-mini-lbl{font-size:9.5px;font-weight:700;color:var(--txt-3);text-transform:uppercase;letter-spacing:.5px}
+.stat-mini-val{font-family:var(--font-d);font-weight:700;font-size:15px;font-variant-numeric:tabular-nums;margin-top:3px;line-height:1.2}
+.stat-mini-val.up{color:var(--up)}
+.stat-mini-val.down{color:var(--down)}
+.stat-mini-sub{font-size:10px;color:var(--txt-3);margin-top:2px}
+.stats-hint{font-size:10.5px;color:var(--txt-3);text-align:right;margin-top:-6px;margin-bottom:12px;display:flex;align-items:center;justify-content:flex-end;gap:4px}
+.stats-hint svg{width:12px;height:12px}
 
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+/* ====== CHART ====== */
+.chart-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)}
+.chart-header{padding:14px 18px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.chart-asset{display:flex;align-items:center;gap:10px}
+.chart-asset-img{width:42px;height:42px;border-radius:12px;object-fit:cover;box-shadow:0 3px 12px rgba(15,23,42,.12)}
+.chart-asset-name{font-family:var(--font-d);font-weight:700;font-size:15px;letter-spacing:-.2px}
+.chart-asset-symbol{font-size:11px;font-weight:600;color:var(--txt-3);letter-spacing:1px;text-transform:uppercase}
+.chart-price-block{text-align:right}
+.chart-price{font-family:var(--font-d);font-weight:800;font-size:26px;letter-spacing:-.8px;line-height:1;font-variant-numeric:tabular-nums;transition:color .3s}
+.chart-price.up{color:var(--up)}
+.chart-price.down{color:var(--down)}
+.chart-change-row{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-top:4px;flex-wrap:wrap}
+.chart-change-val{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.chart-change-val.up{color:var(--up)}
+.chart-change-val.down{color:var(--down)}
+.chart-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:6px;font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.chart-badge.up{background:var(--up-2);color:var(--up)}
+.chart-badge.down{background:var(--down-2);color:var(--down)}
 
-    .hidden { display: none !important; }
+.chart-toolbar{display:flex;gap:8px;padding:12px 18px 0;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.range-group{display:flex;gap:3px;overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap}
+.range-group::-webkit-scrollbar{display:none}
+.range-btn{padding:5px 12px;border-radius:16px;border:1px solid var(--border);background:#fff;color:var(--txt-2);font-size:11.5px;font-weight:600;cursor:pointer;transition:var(--t);white-space:nowrap;flex-shrink:0}
+.range-btn:hover{background:var(--bg-3)}
+.range-btn.active{background:var(--txt);color:#fff;border-color:var(--txt)}
+.chart-actions{display:flex;gap:5px;flex-wrap:wrap}
+.icon-btn{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:#fff;color:var(--txt-2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:var(--t)}
+.icon-btn:hover{background:var(--bg-3);color:var(--txt)}
+.icon-btn.active{background:var(--blue-2);color:var(--blue);border-color:var(--blue)}
+.icon-btn svg{width:14px;height:14px}
 
-    /* ========== NAVBAR ========== */
-    .navbar {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(255,255,255,0.85);
-      backdrop-filter: blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
-      border-bottom: 1px solid var(--border-light);
-      transition: var(--transition);
-    }
-    .navbar-inner {
-      max-width: 1280px; margin: 0 auto;
-      padding: 0 16px;
-      display: flex; align-items: center; justify-content: space-between;
-      height: 64px;
-    }
-    .navbar-brand {
-      display: flex; align-items: center; gap: 10px;
-      text-decoration: none; color: inherit; flex-shrink: 0;
-    }
-    .navbar-logo {
-      width: 36px; height: 36px; border-radius: 10px;
-      object-fit: cover; flex-shrink: 0;
-      box-shadow: 0 2px 8px rgba(17,24,39,0.15);
-      background: #111827;
-    }
-    .navbar-brand-text { display: flex; flex-direction: column; line-height: 1.1; }
-    .navbar-brand-name {
-      font-family: var(--font-display); font-weight: 800;
-      font-size: 18px; letter-spacing: -0.4px; color: var(--text-primary);
-    }
-    .navbar-brand-sub {
-      font-size: 9px; font-weight: 600; letter-spacing: 2.5px;
-      color: var(--text-muted); text-transform: uppercase;
-    }
-    .navbar-links { display: flex; align-items: center; gap: 4px; }
-    .navbar-link {
-      display: flex; align-items: center; gap: 6px;
-      padding: 8px 14px; border-radius: var(--radius-sm);
-      font-size: 13.5px; font-weight: 500; color: var(--text-secondary);
-      text-decoration: none; transition: var(--transition);
-      border: none; background: none; cursor: pointer; font-family: var(--font);
-      white-space: nowrap;
-    }
-    .navbar-link:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-    .navbar-link.active { background: var(--bg-tertiary); color: var(--text-primary); font-weight: 600; }
-    .navbar-link svg { width: 16px; height: 16px; }
+.chart-wrap{position:relative;padding:8px 4px 12px;height:440px}
+@media (max-width:768px){.chart-wrap{height:340px}}
+@media (max-width:480px){.chart-wrap{height:300px}}
+.chart-wrap.fullscreen{position:fixed;inset:0;z-index:500;background:#fff;height:100vh!important;padding:12px;border-radius:0}
+.chart-wrap.fullscreen .fs-close{display:flex!important}
+.fs-close{display:none;position:absolute;top:12px;right:12px;z-index:20;width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:#fff;cursor:pointer;align-items:center;justify-content:center;color:var(--txt)}
+.fs-close svg{width:18px;height:18px}
+#mainChart{width:100%;height:100%;position:relative;z-index:2}
+#drawLayer{position:absolute;inset:0;z-index:10;pointer-events:none;touch-action:none}
 
-    .navbar-right { display: flex; align-items: center; gap: 12px; }
-    .connection-badge {
-      display: flex; align-items: center; gap: 6px;
-      padding: 5px 10px; border-radius: 20px;
-      font-size: 11px; font-weight: 600; letter-spacing: 0.3px;
-      background: var(--bg-tertiary); color: var(--text-secondary);
-      transition: var(--transition);
-    }
-    .connection-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--text-muted); transition: var(--transition);
-    }
-    .connection-badge.online .connection-dot { background: var(--up); box-shadow: 0 0 0 3px rgba(22,163,74,0.15); }
-    .connection-badge.offline .connection-dot { background: var(--down); box-shadow: 0 0 0 3px rgba(220,38,38,0.15); }
+/* Floating tools */
+.chart-fab-group{position:absolute;right:10px;bottom:10px;z-index:15;display:flex;flex-direction:column;gap:8px}
+.fab{width:42px;height:42px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--txt);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);transition:var(--t)}
+.fab:hover{background:var(--bg-3);transform:translateY(-2px)}
+.fab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.fab svg{width:18px;height:18px}
+@media (max-width:480px){.fab{width:38px;height:38px}.fab svg{width:16px;height:16px}}
 
-    .clock-display {
-      font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums;
-      color: var(--text-secondary); letter-spacing: 0.5px;
-      padding: 5px 10px; border-radius: var(--radius-sm);
-      background: var(--bg-tertiary); white-space: nowrap;
-    }
+/* Floating badge */
+.draw-active-badge{
+  position:absolute;top:10px;left:10px;z-index:15;
+  display:none;align-items:center;gap:6px;
+  padding:6px 10px;border-radius:20px;
+  background:var(--blue);color:#fff;
+  font-size:11px;font-weight:700;
+  box-shadow:var(--shadow-md);
+}
+.draw-active-badge.on{display:flex}
+.draw-active-badge svg{width:13px;height:13px}
+.draw-active-badge button{background:rgba(255,255,255,.25);border:none;color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;font-weight:700}
 
-    .mobile-menu-btn {
-      display: none; align-items: center; justify-content: center;
-      width: 40px; height: 40px; border-radius: var(--radius-sm);
-      border: 1px solid var(--border); background: var(--bg);
-      cursor: pointer; transition: var(--transition); color: var(--text-primary);
-      position: relative; z-index: 101;
-    }
-    .mobile-menu-btn:hover { background: var(--bg-tertiary); }
-    .mobile-menu-btn:active { transform: scale(0.95); }
+/* ====== DRAWING TOOLS MODAL ====== */
+.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(8px);z-index:600;display:none;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:var(--radius-lg);max-width:520px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .3s cubic-bezier(.4,0,.2,1)}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-h{padding:16px 20px;border-bottom:1px solid var(--border-2);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:2}
+.modal-h h3{font-family:var(--font-d);font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.modal-h h3 svg{width:18px;height:18px}
+.modal-close{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt-2)}
+.modal-b{padding:16px 20px}
+.modal-f{padding:14px 20px;border-top:1px solid var(--border-2);display:flex;gap:8px;position:sticky;bottom:0;background:#fff}
+.modal-f .btn{flex:1}
 
-    @media (max-width: 768px) {
-      .navbar-links {
-        position: fixed; top: 64px; left: 0; right: 0;
-        background: rgba(255,255,255,0.98);
-        backdrop-filter: blur(16px);
-        flex-direction: column; align-items: stretch;
-        padding: 12px 16px 16px;
-        border-bottom: 1px solid var(--border);
-        gap: 2px;
-        transform: translateY(-110%); opacity: 0;
-        transition: transform 0.3s ease, opacity 0.3s ease;
-        pointer-events: none;
-        box-shadow: var(--shadow-md);
-        z-index: 99;
-      }
-      .navbar-links.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
-      .navbar-link { padding: 12px 14px; font-size: 14px; }
-      .mobile-menu-btn { display: flex; }
-      .clock-display { display: none; }
-    }
+/* Drawing tip (hijau seperti screenshot) */
+.drawing-tip{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;background:linear-gradient(135deg,#052e16,#166534);color:#dcfce7;font-size:12px;line-height:1.5;margin:0}
+.drawing-tip svg{width:18px;height:18px;flex-shrink:0;color:#4ade80;margin-top:1px;fill:#4ade80}
 
-    /* ========== MAIN ========== */
-    .main-content {
-      max-width: 1280px; margin: 0 auto;
-      padding: 24px 16px 64px;
-    }
-    @media (max-width: 480px) { .main-content { padding: 16px 12px 48px; } }
+/* Quick actions row */
+.drawing-quick{display:flex;gap:6px;padding:12px 16px 8px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border-2)}
+.drawing-quick::-webkit-scrollbar{display:none}
+.dq-btn{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:20px;border:1px solid var(--border);background:#fff;color:var(--txt);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:var(--t);flex-shrink:0}
+.dq-btn:hover{background:var(--bg-3)}
+.dq-btn.active{background:var(--blue-2);color:var(--blue);border-color:var(--blue)}
+.dq-btn svg{width:14px;height:14px}
 
-    .section { margin-bottom: 32px; }
-    .section-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 16px; flex-wrap: wrap; gap: 12px;
-    }
-    .section-title {
-      font-family: var(--font-display); font-size: 18px; font-weight: 700;
-      letter-spacing: -0.3px; display: flex; align-items: center; gap: 8px;
-    }
-    .section-title svg { width: 20px; height: 20px; color: var(--text-secondary); }
+/* Category & Tool grid */
+.tool-cat{padding:14px 16px 6px;font-size:11px;font-weight:700;color:var(--txt-3);text-transform:uppercase;letter-spacing:.6px}
+.tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px 14px}
+@media (max-width:400px){.tool-grid{grid-template-columns:repeat(2,1fr)}}
+.tool-item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;padding:14px 8px;border:1px solid var(--border);border-radius:12px;
+  background:#fff;cursor:pointer;transition:var(--t);text-align:center;
+  min-height:88px;
+}
+.tool-item:hover{background:var(--bg-3);border-color:#CBD5E1}
+.tool-item.active{background:var(--blue-2);border-color:var(--blue);color:var(--blue)}
+.tool-item svg{width:22px;height:22px;color:var(--txt)}
+.tool-item.active svg{color:var(--blue)}
+.tool-item span{font-size:11px;font-weight:600;line-height:1.25;color:inherit}
 
-    /* ========== CHART CARD ========== */
-    .chart-card {
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); box-shadow: var(--shadow);
-      overflow: hidden; transition: var(--transition);
-    }
-    .chart-card:hover { box-shadow: var(--shadow-md); }
+/* Indicators modal */
+.ind-search{position:relative;padding:12px 16px}
+.ind-search input{width:100%;padding:10px 14px 10px 38px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:13.5px;outline:none}
+.ind-search input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.ind-search svg{position:absolute;left:28px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--txt-3)}
+.ind-active-chips{display:flex;gap:6px;padding:0 16px 12px;flex-wrap:wrap}
+.ind-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--blue-2);color:var(--blue);border-radius:20px;font-size:11.5px;font-weight:600}
+.ind-chip button{background:transparent;border:none;color:inherit;cursor:pointer;display:flex;padding:0;font-size:14px;line-height:1}
+.ind-list{padding:0 16px 16px;max-height:52vh;overflow-y:auto}
+.ind-row{display:flex;align-items:center;gap:12px;padding:11px 4px;border-bottom:1px solid var(--border-2);cursor:pointer}
+.ind-row:hover{background:var(--bg-3);border-radius:8px;padding-left:10px;padding-right:10px}
+.ind-row:last-child{border-bottom:none}
+.ind-row-title{flex:1;font-size:13.5px;font-weight:500;color:var(--txt)}
+.ind-row-desc{font-size:10.5px;color:var(--txt-3);margin-top:1px}
+.ind-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:var(--t)}
+.ind-check.on{background:var(--blue);border-color:var(--blue)}
+.ind-check svg{width:12px;height:12px;color:#fff;display:none}
+.ind-check.on svg{display:block}
 
-    .chart-card-header {
-      padding: 20px 24px 0;
-      display: flex; align-items: flex-start; justify-content: space-between;
-      flex-wrap: wrap; gap: 16px;
-    }
-    .chart-asset-info { display: flex; align-items: center; gap: 14px; }
-    .chart-asset-icon {
-      width: 48px; height: 48px; border-radius: 14px;
-      object-fit: cover; flex-shrink: 0;
-      background: linear-gradient(135deg, #111827, #374151);
-      box-shadow: 0 2px 10px rgba(17,24,39,0.15);
-    }
-    .chart-asset-details { display: flex; flex-direction: column; }
-    .chart-asset-name {
-      font-family: var(--font-display); font-weight: 700; font-size: 16px;
-      letter-spacing: -0.2px;
-    }
-    .chart-asset-symbol {
-      font-size: 12px; font-weight: 600; color: var(--text-muted);
-      letter-spacing: 1px; text-transform: uppercase;
-    }
+/* SL/TP panel */
+.sltp-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sltp-card{border:1px solid var(--border);border-radius:12px;padding:12px}
+.sltp-card.stop{border-color:#FECACA;background:#FEF2F2}
+.sltp-card.take{border-color:#BBF7D0;background:#F0FDF4}
+.sltp-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.sltp-card.stop .sltp-label{color:#991B1B}
+.sltp-card.take .sltp-label{color:#166534}
+.sltp-input{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);background:#fff;outline:none}
+.sltp-card.stop .sltp-input:focus{border-color:var(--down);box-shadow:0 0 0 3px rgba(220,38,38,.1)}
+.sltp-card.take .sltp-input:focus{border-color:var(--up);box-shadow:0 0 0 3px rgba(22,163,74,.1)}
+.sltp-hint{font-size:10.5px;color:var(--txt-3);margin-top:4px}
 
-    .chart-price-block { text-align: right; }
-    .chart-price {
-      font-family: var(--font-display); font-weight: 800; font-size: 32px;
-      letter-spacing: -1px; line-height: 1.1;
-      font-variant-numeric: tabular-nums;
-      transition: color 0.3s ease;
-    }
-    .chart-price.up { color: var(--up); }
-    .chart-price.down { color: var(--down); }
-    .chart-change-row {
-      display: flex; align-items: center; justify-content: flex-end; gap: 8px;
-      margin-top: 4px; flex-wrap: wrap;
-    }
-    .chart-change-value {
-      font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums;
-    }
-    .chart-change-value.up { color: var(--up); }
-    .chart-change-value.down { color: var(--down); }
-    .chart-change-badge {
-      display: inline-flex; align-items: center; gap: 3px;
-      padding: 2px 8px; border-radius: 6px;
-      font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
-    }
-    .chart-change-badge.up { background: var(--up-bg); color: var(--up); }
-    .chart-change-badge.down { background: var(--down-bg); color: var(--down); }
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border:none;border-radius:10px;font-family:var(--font);font-size:13.5px;font-weight:700;cursor:pointer;transition:var(--t);white-space:nowrap;text-decoration:none}
+.btn svg{width:15px;height:15px}
+.btn:active:not(:disabled){transform:scale(.97)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-block{width:100%}
+.btn-primary{background:var(--txt);color:#fff}
+.btn-up{background:var(--up);color:#fff}
+.btn-down{background:var(--down);color:#fff}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-outline{background:#fff;color:var(--txt);border:1px solid var(--border)}
+.btn-outline:hover:not(:disabled){background:var(--bg-3)}
+.btn-ghost{background:transparent;color:var(--txt-2)}
+.btn-sm{padding:7px 12px;font-size:12.5px;border-radius:8px}
 
-    .range-selector {
-      display: flex; gap: 4px; padding: 16px 24px 0;
-      overflow-x: auto; -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .range-selector::-webkit-scrollbar { display: none; }
-    .range-btn {
-      padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
-      background: var(--bg); color: var(--text-secondary);
-      font-size: 12px; font-weight: 600; font-family: var(--font);
-      cursor: pointer; transition: var(--transition); white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .range-btn:hover { background: var(--bg-tertiary); border-color: var(--text-muted); }
-    .range-btn.active {
-      background: var(--text-primary); color: #fff; border-color: var(--text-primary);
-    }
+/* Form */
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.fg label{font-size:11.5px;font-weight:600;color:var(--txt-2);letter-spacing:.3px}
+.inp,.sel{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;background:#fff;font-family:var(--font);font-size:14px;color:var(--txt);outline:none;transition:var(--t);-webkit-appearance:none}
+.inp:focus,.sel:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.sel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
-    /* Chart container — Lightweight Charts */
-    .chart-canvas-wrapper {
-      position: relative;
-      padding: 12px 12px 8px;
-      height: 400px;
-    }
-    #mainChart {
-      width: 100%;
-      height: 100%;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    @media (max-width: 768px) {
-      .chart-canvas-wrapper { height: 320px; padding: 8px 4px 4px; }
-      .chart-card-header { padding: 16px 16px 0; }
-      .chart-price { font-size: 26px; }
-      .range-selector { padding: 12px 12px 0; }
-    }
-    @media (max-width: 480px) {
-      .chart-canvas-wrapper { height: 280px; }
-      .chart-price { font-size: 22px; }
-    }
+.order-tabs{display:flex;gap:4px;padding:4px;background:var(--bg-3);border-radius:12px;margin-bottom:14px}
+.order-tab{flex:1;padding:8px;border:none;background:transparent;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;transition:var(--t);color:var(--txt-2)}
+.order-tab.active{background:#fff;color:var(--txt);box-shadow:var(--shadow)}
+.order-tab.buy.active{background:var(--up);color:#fff}
+.order-tab.sell.active{background:var(--down);color:#fff}
 
-    .chart-loading {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      background: rgba(255,255,255,0.8); z-index: 5;
-      border-radius: var(--radius); transition: var(--transition);
-    }
-    .chart-loading.hidden { display: none; }
-    .spinner {
-      width: 28px; height: 28px; border: 3px solid var(--border);
-      border-top-color: var(--text-primary); border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+.market-list{display:flex;flex-direction:column;gap:6px}
+.market-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#fff;border:1px solid var(--border);border-radius:14px}
+.market-item img{width:40px;height:40px;border-radius:11px;object-fit:cover}
+.market-info{flex:1}
+.market-name{font-weight:700;font-size:14px}
+.market-symbol{font-size:11.5px;color:var(--txt-3);font-weight:600}
+.market-price{text-align:right}
+.market-price-val{font-family:var(--font-d);font-weight:700;font-size:14.5px;font-variant-numeric:tabular-nums}
+.market-price-chg{font-size:11.5px;font-weight:600;margin-top:2px}
+.market-price-chg.up{color:var(--up)}
+.market-price-chg.down{color:var(--down)}
 
-    .chart-empty {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 8px; color: var(--text-muted); font-size: 14px;
-      background: var(--bg); z-index: 4; border-radius: var(--radius);
-    }
-    .chart-empty.hidden { display: none; }
-    .chart-empty svg { width: 32px; height: 32px; opacity: 0.5; }
+.holding{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#fff;border:1px solid var(--border);border-radius:14px;margin-bottom:8px}
+.holding img{width:40px;height:40px;border-radius:11px;object-fit:cover}
+.holding-info{flex:1}
+.holding-name{font-weight:700;font-size:14px}
+.holding-qty{font-size:11.5px;color:var(--txt-3);margin-top:2px}
+.holding-val{text-align:right}
+.holding-val-main{font-family:var(--font-d);font-weight:700;font-size:14.5px;font-variant-numeric:tabular-nums}
+.holding-val-pl{font-size:11.5px;font-weight:600;margin-top:2px}
+.holding-val-pl.up{color:var(--up)}
+.holding-val-pl.down{color:var(--down)}
 
-    /* ========== STATS ========== */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-    }
-    @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 480px) { .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+.hist-list{display:flex;flex-direction:column;gap:6px}
+.hist-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:12px;font-size:13px}
+.hist-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hist-icon.buy{background:var(--up-2);color:var(--up)}
+.hist-icon.sell{background:var(--down-2);color:var(--down)}
+.hist-icon.dep{background:var(--blue-2);color:var(--blue)}
+.hist-icon svg{width:16px;height:16px}
+.hist-main{flex:1}
+.hist-title{font-weight:600;font-variant-numeric:tabular-nums}
+.hist-time{font-size:11px;color:var(--txt-3);margin-top:2px}
+.hist-amount{font-weight:700;text-align:right;font-variant-numeric:tabular-nums;font-size:13.5px}
+.hist-amount.up{color:var(--up)}
+.hist-amount.down{color:var(--down)}
 
-    .stat-card {
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 16px 18px;
-      box-shadow: var(--shadow-sm); transition: var(--transition);
-    }
-    .stat-card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
-    .stat-icon {
-      width: 34px; height: 34px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 12px;
-    }
-    .stat-icon svg { width: 18px; height: 18px; }
-    .stat-icon.high { background: var(--up-bg); color: var(--up); }
-    .stat-icon.low { background: var(--down-bg); color: var(--down); }
-    .stat-icon.change { background: var(--accent-bg); color: var(--accent); }
-    .stat-icon.points { background: #F5F3FF; color: #7C3AED; }
+.qr-box{background:#fff;border:2px dashed var(--border);border-radius:var(--radius);padding:16px;text-align:center;margin-bottom:14px}
+.qr-box img{max-width:100%;width:270px;border-radius:12px}
+.qr-hint{font-size:12px;color:var(--txt-2);margin-top:10px;line-height:1.6;text-align:left}
 
-    .stat-label {
-      font-size: 11px; font-weight: 600; color: var(--text-muted);
-      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;
-    }
-    .stat-value {
-      font-family: var(--font-display); font-weight: 700; font-size: 18px;
-      letter-spacing: -0.3px; font-variant-numeric: tabular-nums;
-      word-break: break-all;
-    }
-    .stat-value.up { color: var(--up); }
-    .stat-value.down { color: var(--down); }
-    .stat-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-    @media (max-width: 480px) {
-      .stat-card { padding: 12px 14px; }
-      .stat-value { font-size: 15px; }
-      .stat-icon { width: 28px; height: 28px; margin-bottom: 8px; }
-      .stat-icon svg { width: 15px; height: 15px; }
-    }
+.toasts{position:fixed;bottom:16px;right:16px;z-index:800;display:flex;flex-direction:column;gap:8px;max-width:340px;pointer-events:none}
+@media (max-width:480px){.toasts{left:12px;right:12px;max-width:none}}
+.toast{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:12px;background:var(--txt);color:#fff;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);pointer-events:auto;animation:slideIn .3s ease;border-left:3px solid var(--blue)}
+.toast.success{border-left-color:var(--up)}
+.toast.error{border-left-color:var(--down)}
+.toast.warning{border-left-color:var(--warn)}
+.toast svg{width:16px;height:16px;flex-shrink:0;margin-top:1px}
+.toast-close{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;display:flex}
+@keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-    /* ========== HISTORY ========== */
-    .history-list { display: flex; flex-direction: column; gap: 8px; }
-    .history-item {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 18px; background: var(--bg);
-      border: 1px solid var(--border); border-radius: var(--radius);
-      transition: var(--transition); font-size: 13.5px;
-    }
-    .history-item:hover { box-shadow: var(--shadow); border-color: #D1D5DB; }
-    .history-icon {
-      width: 36px; height: 36px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .history-icon.up { background: var(--up-bg); color: var(--up); }
-    .history-icon.down { background: var(--down-bg); color: var(--down); }
-    .history-icon svg { width: 17px; height: 17px; }
-    .history-main { flex: 1; min-width: 0; }
-    .history-prices {
-      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-      font-weight: 600; font-variant-numeric: tabular-nums;
-    }
-    .history-old { color: var(--text-secondary); text-decoration: line-through; font-weight: 400; }
-    .history-arrow { color: var(--text-muted); }
-    .history-new { font-weight: 700; }
-    .history-new.up { color: var(--up); }
-    .history-new.down { color: var(--down); }
-    .history-meta {
-      display: flex; align-items: center; gap: 10px; margin-top: 3px;
-      font-size: 11.5px; color: var(--text-muted); flex-wrap: wrap;
-    }
-    .history-change {
-      font-weight: 700; font-variant-numeric: tabular-nums;
-      padding: 2px 8px; border-radius: 6px; font-size: 12px;
-      text-align: right; line-height: 1.3;
-    }
-    .history-change.up { background: var(--up-bg); color: var(--up); }
-    .history-change.down { background: var(--down-bg); color: var(--down); }
-    .history-empty {
-      text-align: center; padding: 40px 16px; color: var(--text-muted);
-      font-size: 14px; border: 1px dashed var(--border); border-radius: var(--radius);
-    }
-    @media (max-width: 480px) {
-      .history-item { padding: 12px 14px; gap: 10px; }
-      .history-prices { font-size: 12.5px; }
-    }
+.empty{padding:32px 16px;text-align:center;color:var(--txt-3);font-size:13px;border:1px dashed var(--border);border-radius:var(--radius)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.pill.up{background:var(--up-2);color:var(--up)}
+.pill.down{background:var(--down-2);color:var(--down)}
+.pill.blue{background:var(--blue-2);color:var(--blue)}
+.pill.warn{background:var(--warn-2);color:var(--warn)}
+.pill.gray{background:var(--bg-3);color:var(--txt-2)}
+.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;display:inline-block}
+@keyframes rot{to{transform:rotate(360deg)}}
+.divider{height:1px;background:var(--border-2);margin:12px 0}
+.text-muted{color:var(--txt-3);font-size:12px}
 
-    /* ========== ADMIN PANEL ========== */
-    .admin-overlay {
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(17,24,39,0.4); backdrop-filter: blur(4px);
-      opacity: 0; pointer-events: none; transition: var(--transition);
-    }
-    .admin-overlay.open { opacity: 1; pointer-events: auto; }
-
-    .admin-panel {
-      position: fixed; top: 0; right: 0; bottom: 0; z-index: 201;
-      width: 440px; max-width: 100vw;
-      background: var(--bg); box-shadow: -8px 0 40px rgba(0,0,0,0.1);
-      transform: translateX(100%); transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
-      display: flex; flex-direction: column; overflow: hidden;
-    }
-    .admin-panel.open { transform: translateX(0); }
-    @media (max-width: 480px) { .admin-panel { width: 100vw; } }
-
-    .admin-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 20px; border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-    .admin-header-title {
-      font-family: var(--font-display); font-weight: 700; font-size: 16px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .admin-header-title svg { width: 18px; height: 18px; }
-    .admin-close-btn {
-      width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border);
-      background: var(--bg); display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: var(--transition); color: var(--text-secondary);
-    }
-    .admin-close-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-
-    .admin-body {
-      flex: 1; overflow-y: auto; padding: 20px;
-      display: flex; flex-direction: column; gap: 24px;
-    }
-    .admin-section { display: flex; flex-direction: column; gap: 12px; }
-    .admin-section-title {
-      font-size: 12px; font-weight: 700; color: var(--text-muted);
-      text-transform: uppercase; letter-spacing: 1px;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .admin-section-title svg { width: 14px; height: 14px; }
-
-    .form-group { display: flex; flex-direction: column; gap: 5px; }
-    .form-label { font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
-    .form-input, .form-select {
-      width: 100%; padding: 10px 12px; border-radius: 10px;
-      border: 1px solid var(--border); background: var(--bg);
-      font-family: var(--font); font-size: 14px; color: var(--text-primary);
-      transition: var(--transition); outline: none;
-      -webkit-appearance: none; appearance: none;
-    }
-    .form-input:focus, .form-select:focus {
-      border-color: var(--text-primary);
-      box-shadow: 0 0 0 3px rgba(17,24,39,0.08);
-    }
-    .form-input::placeholder { color: var(--text-muted); }
-    .form-select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 12px center;
-      padding-right: 34px;
-    }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-      padding: 10px 16px; border-radius: 10px; border: none;
-      font-family: var(--font); font-size: 13.5px; font-weight: 600;
-      cursor: pointer; transition: var(--transition); white-space: nowrap;
-      text-decoration: none;
-    }
-    .btn svg { width: 15px; height: 15px; }
-    .btn:active { transform: scale(0.97); }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .btn-primary { background: var(--text-primary); color: #fff; }
-    .btn-primary:hover:not(:disabled) { background: #1F2937; }
-    .btn-success { background: var(--up); color: #fff; }
-    .btn-success:hover:not(:disabled) { background: #15803D; }
-    .btn-danger { background: var(--down); color: #fff; }
-    .btn-danger:hover:not(:disabled) { background: #B91C1C; }
-    .btn-outline {
-      background: var(--bg); color: var(--text-primary);
-      border: 1px solid var(--border);
-    }
-    .btn-outline:hover:not(:disabled) { background: var(--bg-tertiary); border-color: #D1D5DB; }
-    .btn-sm { padding: 7px 12px; font-size: 12.5px; border-radius: 8px; }
-    .btn-block { width: 100%; }
-    .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
-    .btn-group .btn { flex: 1; min-width: 0; }
-
-    .admin-status {
-      display: flex; align-items: center; gap: 8px;
-      padding: 10px 14px; border-radius: 10px; font-size: 12.5px;
-      font-weight: 500;
-    }
-    .admin-status.info { background: var(--accent-bg); color: var(--accent); }
-    .admin-status.success { background: var(--up-bg); color: var(--up); }
-    .admin-status.error { background: var(--down-bg); color: var(--down); }
-    .admin-status svg { width: 15px; height: 15px; flex-shrink: 0; }
-
-    .admin-footer {
-      padding: 16px 20px; border-top: 1px solid var(--border);
-      display: flex; gap: 8px; flex-shrink: 0; background: var(--bg);
-    }
-    .admin-footer .btn { flex: 1; }
-
-    /* ========== TOAST ========== */
-    .toast-container {
-      position: fixed; bottom: 20px; right: 20px; z-index: 300;
-      display: flex; flex-direction: column; gap: 8px;
-      pointer-events: none; max-width: 360px;
-    }
-    @media (max-width: 480px) {
-      .toast-container { left: 12px; right: 12px; bottom: 12px; max-width: none; }
-    }
-    .toast {
-      display: flex; align-items: flex-start; gap: 10px;
-      padding: 12px 16px; border-radius: 12px;
-      background: var(--text-primary); color: #fff;
-      font-size: 13px; font-weight: 500; line-height: 1.4;
-      box-shadow: var(--shadow-lg); pointer-events: auto;
-      animation: toastIn 0.3s ease forwards;
-      border-left: 3px solid var(--accent);
-    }
-    .toast.success { border-left-color: var(--up); }
-    .toast.error { border-left-color: var(--down); }
-    .toast.warning { border-left-color: #F59E0B; }
-    .toast svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
-    .toast-close {
-      margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.6);
-      cursor: pointer; padding: 0; display: flex; flex-shrink: 0;
-    }
-    .toast-close:hover { color: #fff; }
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateY(12px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .toast.removing { animation: toastOut 0.25s ease forwards; }
-    @keyframes toastOut { to { opacity: 0; transform: translateY(8px) scale(0.96); } }
-
-    /* ========== DATA STATUS ========== */
-    .data-status-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 16px; margin-bottom: 20px;
-      background: var(--bg-secondary); border: 1px solid var(--border);
-      border-radius: var(--radius); font-size: 12px;
-      color: var(--text-secondary); flex-wrap: wrap; gap: 8px;
-    }
-    .data-status-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .data-status-item { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
-    .data-status-item svg { width: 13px; height: 13px; }
-
-    @media (max-width: 360px) {
-      .navbar-inner { padding: 0 10px; height: 56px; }
-      .navbar-logo { width: 30px; height: 30px; }
-      .navbar-brand-name { font-size: 15px; }
-      .navbar-brand-sub { font-size: 8px; letter-spacing: 2px; }
-      .main-content { padding: 12px 8px 40px; }
-      .chart-card-header { padding: 12px 10px 0; }
-      .chart-price { font-size: 20px; }
-      .chart-canvas-wrapper { height: 240px; padding: 6px 2px 4px; }
-      .stats-grid { gap: 8px; }
-      .stat-card { padding: 10px 10px; }
-      .stat-value { font-size: 13px; }
-    }
-  </style>
+/* Login prompt modal */
+.login-modal{text-align:center;padding:32px 24px}
+.login-modal-icon{width:70px;height:70px;margin:0 auto 16px;border-radius:20px;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);display:flex;align-items:center;justify-content:center}
+.login-modal-icon svg{width:32px;height:32px;color:var(--blue)}
+.login-modal-title{font-family:var(--font-d);font-size:20px;font-weight:800;margin-bottom:8px}
+.login-modal-desc{font-size:13.5px;color:var(--txt-2);line-height:1.6;margin-bottom:22px}
+.login-google-btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 20px;border-radius:12px;border:none;background:var(--txt);color:#fff;font-size:14px;font-weight:600;cursor:pointer;width:100%;transition:var(--t)}
+.login-google-btn:hover:not(:disabled){background:#1E293B;transform:translateY(-1px)}
+.login-google-btn svg{width:18px;height:18px}
+.login-features{margin-top:18px;padding-top:18px;border-top:1px solid var(--border-2);display:flex;flex-direction:column;gap:9px;text-align:left}
+.login-feature{display:flex;gap:10px;font-size:12.5px;color:var(--txt-2);line-height:1.5}
+.login-feature svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;color:var(--up)}
+</style>
 </head>
 <body>
 
-  <!-- ========== NAVBAR ========== -->
-  <nav class="navbar" id="navbar">
-    <div class="navbar-inner">
-      <a href="#" class="navbar-brand" id="brandHome">
-        <img class="navbar-logo" src="https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg" alt="CAZO" />
-        <div class="navbar-brand-text">
-          <span class="navbar-brand-name">CAZO</span>
-          <span class="navbar-brand-sub">Digital Card</span>
-        </div>
-      </a>
-
-      <div class="navbar-links" id="navbarLinks">
-        <button class="navbar-link active" data-target="section-home">
-          <i data-lucide="home"></i> Home
-        </button>
-        <button class="navbar-link" data-target="section-market">
-          <i data-lucide="bar-chart-3"></i> Market
-        </button>
-        <button class="navbar-link" data-target="section-about">
-          <i data-lucide="info"></i> About
-        </button>
+<header class="topbar">
+  <div class="topbar-in">
+    <a href="#" class="brand" onclick="event.preventDefault();CAZO.nav('dashboard')">
+      <img src="https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg" alt="CAZO" />
+      <div class="brand-txt"><div class="brand-name">CAZO</div><div class="brand-sub">Trading</div></div>
+    </a>
+    <nav class="nav-tabs" id="navTabs">
+      <button class="nav-tab active" data-page="dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</button>
+      <button class="nav-tab" data-page="market"><i data-lucide="bar-chart-3"></i> Market</button>
+      <button class="nav-tab" data-page="portfolio" data-auth="1"><i data-lucide="briefcase"></i> Portfolio</button>
+      <button class="nav-tab" data-page="deposit" data-auth="1"><i data-lucide="wallet"></i> Deposit</button>
+      <button class="nav-tab" data-page="history" data-auth="1"><i data-lucide="history"></i> Riwayat</button>
+      <button class="nav-tab" data-page="settings" data-auth="1"><i data-lucide="settings"></i> Pengaturan</button>
+    </nav>
+    <div class="topbar-right">
+      <div class="conn-pill off" id="connPill"><span class="conn-dot"></span><span id="connText">Offline</span></div>
+      <div class="user-chip" id="userChip">
+        <img class="user-avatar" id="userAvatar" src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="user" />
+        <span class="user-name" id="userName">Masuk</span>
       </div>
-
-      <div class="navbar-right">
-        <div class="connection-badge offline" id="connectionBadge">
-          <span class="connection-dot"></span>
-          <span id="connectionText">Offline</span>
-        </div>
-        <div class="clock-display" id="clockDisplay">--:--:--</div>
-        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu" type="button">
-          <i data-lucide="menu"></i>
-        </button>
-      </div>
+      <button class="mobile-toggle" id="mobileToggle"><i data-lucide="menu"></i></button>
     </div>
-  </nav>
+  </div>
+</header>
 
-  <!-- ========== MAIN ========== -->
-  <main class="main-content">
+<main class="container">
 
-    <div class="data-status-bar" id="dataStatusBar">
-      <div class="data-status-left">
-        <div class="data-status-item">
-          <i data-lucide="database"></i>
-          <span id="dataSourceText">Menghubungkan...</span>
-        </div>
-      </div>
-      <div class="data-status-item">
-        <i data-lucide="clock"></i>
-        <span id="lastUpdatedText">Terakhir: --</span>
+  <!-- ===== DASHBOARD ===== -->
+  <section class="page active" id="page-dashboard">
+    <div class="page-head">
+      <div>
+        <h1 class="page-title"><i data-lucide="layout-dashboard"></i> Dashboard</h1>
+        <p class="page-sub" id="greeting">Pantau grafik & trading CAZO</p>
       </div>
     </div>
 
-    <!-- SECTION HOME -->
-    <section class="section" id="section-home">
-      <div class="chart-card">
-        <div class="chart-card-header">
-          <div class="chart-asset-info">
-            <img class="chart-asset-icon" src="https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg" alt="CAZO" />
-            <div class="chart-asset-details">
-              <span class="chart-asset-name" id="assetName">CAZO CARD</span>
-              <span class="chart-asset-symbol" id="assetSymbol">CAZO</span>
+    <!-- Stats Slider (1 baris horizontal scroll) -->
+    <div class="stats-slider" id="statsSlider">
+      <div class="stat-mini">
+        <div class="stat-mini-icon blue"><i data-lucide="wallet"></i></div>
+        <div class="stat-mini-lbl">Saldo</div>
+        <div class="stat-mini-val" id="dashBalance">—</div>
+        <div class="stat-mini-sub">Rp (virtual)</div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-icon up"><i data-lucide="briefcase"></i></div>
+        <div class="stat-mini-lbl">Portfolio</div>
+        <div class="stat-mini-val" id="dashPortfolio">—</div>
+        <div class="stat-mini-sub">Nilai aset</div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-icon blue"><i data-lucide="pie-chart"></i></div>
+        <div class="stat-mini-lbl">Equity</div>
+        <div class="stat-mini-val" id="dashEquity">—</div>
+        <div class="stat-mini-sub">Saldo + aset</div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-icon warn"><i data-lucide="activity"></i></div>
+        <div class="stat-mini-lbl">P&L</div>
+        <div class="stat-mini-val" id="dashPL">—</div>
+        <div class="stat-mini-sub" id="dashPLPct">—</div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-icon up"><i data-lucide="arrow-up-circle"></i></div>
+        <div class="stat-mini-lbl">Tertinggi</div>
+        <div class="stat-mini-val" id="dashHigh">—</div>
+        <div class="stat-mini-sub" id="dashHighTime">—</div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-icon down"><i data-lucide="arrow-down-circle"></i></div>
+        <div class="stat-mini-lbl">Terendah</div>
+        <div class="stat-mini-val" id="dashLow">—</div>
+        <div class="stat-mini-sub" id="dashLowTime">—</div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-icon warn"><i data-lucide="clock"></i></div>
+        <div class="stat-mini-lbl">Update</div>
+        <div class="stat-mini-val" id="dashUpdate" style="font-size:13px">—</div>
+        <div class="stat-mini-sub">dari Firebase</div>
+      </div>
+    </div>
+    <div class="stats-hint"><i data-lucide="move-horizontal"></i> Geser untuk melihat kartu lain</div>
+
+    <div class="grid-2">
+      <div>
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-asset">
+              <img class="chart-asset-img" id="dashAssetIcon" src="https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg" alt="CAZO" />
+              <div>
+                <span class="chart-asset-name" id="dashAssetName">CAZO CARD</span>
+                <div class="chart-asset-symbol" id="dashAssetSymbol">CAZO</div>
+              </div>
+            </div>
+            <div class="chart-price-block">
+              <div class="chart-price up" id="dashPrice">—</div>
+              <div class="chart-change-row">
+                <span class="chart-change-val up" id="dashChange">—</span>
+                <span class="chart-badge up" id="dashChangeBadge"><i data-lucide="trending-up"></i><span id="dashChangePct">—</span></span>
+              </div>
             </div>
           </div>
-          <div class="chart-price-block">
-            <div class="chart-price" id="currentPrice">1.250,00</div>
-            <div class="chart-change-row">
-              <span class="chart-change-value up" id="changeValue">+0,00</span>
-              <span class="chart-change-badge up" id="changeBadge">
-                <i data-lucide="trending-up"></i>
-                <span id="changePercent">+0,00%</span>
-              </span>
+
+          <div class="chart-toolbar">
+            <div class="range-group" id="rangeGroup">
+              <button class="range-btn" data-range="1m">1M</button>
+              <button class="range-btn" data-range="5m">5M</button>
+              <button class="range-btn" data-range="15m">15M</button>
+              <button class="range-btn" data-range="1h">1J</button>
+              <button class="range-btn" data-range="24h">24J</button>
+              <button class="range-btn active" data-range="7d">7H</button>
+              <button class="range-btn" data-range="30d">30H</button>
+              <button class="range-btn" data-range="all">SEMUA</button>
+            </div>
+            <div class="chart-actions">
+              <button class="icon-btn" id="btnVolume" title="Volume"><i data-lucide="bar-chart-2"></i></button>
+              <button class="icon-btn" id="btnFullscreen" title="Layar penuh"><i data-lucide="maximize-2"></i></button>
+            </div>
+          </div>
+
+          <div class="chart-wrap" id="chartWrap">
+            <div id="mainChart"></div>
+            <canvas id="drawLayer"></canvas>
+            <div class="draw-active-badge" id="drawBadge">
+              <i data-lucide="pencil"></i>
+              <span id="drawBadgeText">Alat aktif</span>
+              <button id="drawBadgeClose">×</button>
+            </div>
+            <div class="chart-fab-group">
+              <button class="fab" id="fabDrawing" title="Alat Gambar"><i data-lucide="pencil-ruler"></i></button>
+              <button class="fab" id="fabIndicators" title="Indikator"><i data-lucide="activity"></i></button>
+              <button class="fab" id="fabSLTP" title="Stop Loss / Take Profit"><i data-lucide="shield-alert"></i></button>
+            </div>
+            <button class="fs-close" id="fsClose"><i data-lucide="x"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-h"><h2><i data-lucide="zap"></i> Trading Cepat</h2></div>
+          <div class="card-b">
+            <div class="order-tabs">
+              <button class="order-tab buy active" data-side="buy">BUY</button>
+              <button class="order-tab sell" data-side="sell">SELL</button>
+            </div>
+            <div class="fg"><label>Jumlah</label><input class="inp" id="tradeQty" type="number" step="1" min="1" placeholder="1" value="1" /></div>
+            <div class="fg"><label>Harga per Unit</label><input class="inp" id="tradePrice" type="number" step="0.01" readonly /></div>
+            <div class="fg"><label>Total</label><input class="inp" id="tradeTotal" type="number" step="0.01" readonly /></div>
+            <button class="btn btn-up btn-block" id="btnQuickTrade"><i data-lucide="zap"></i> Beli Sekarang</button>
+            <div class="divider"></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--txt-2)">
+              <span>Saldo tersedia</span><strong id="quickBalance" style="color:var(--txt)">—</strong>
             </div>
           </div>
         </div>
 
-        <div class="range-selector" id="rangeSelector">
-          <button class="range-btn" data-range="1m">1M</button>
-          <button class="range-btn" data-range="5m">5M</button>
-          <button class="range-btn" data-range="15m">15M</button>
-          <button class="range-btn" data-range="1h">1J</button>
-          <button class="range-btn" data-range="24h">24J</button>
-          <button class="range-btn active" data-range="7d">7H</button>
-          <button class="range-btn" data-range="30d">30H</button>
-          <button class="range-btn" data-range="all">SEMUA</button>
-        </div>
-
-        <div class="chart-canvas-wrapper">
-          <div id="mainChart"></div>
-          <div class="chart-loading" id="chartLoading">
-            <div class="spinner"></div>
-          </div>
-          <div class="chart-empty hidden" id="chartEmpty">
-            <i data-lucide="bar-chart-2"></i>
-            <span>Belum ada data grafik</span>
+        <div class="card">
+          <div class="card-h"><h2><i data-lucide="info"></i> Status</h2></div>
+          <div class="card-b">
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0">
+              <span style="color:var(--txt-2)">Pengunjung</span>
+              <span class="pill blue" id="visitorStatus">Bebas akses grafik</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0">
+              <span style="color:var(--txt-2)">Login</span>
+              <span class="pill gray" id="loginStatus">Belum login</span>
+            </div>
+            <div class="divider"></div>
+            <p class="text-muted" style="line-height:1.6">Untuk bertransaksi, membuka portfolio, deposit, dan riwayat, silakan login dengan Google.</p>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- SECTION STATS -->
-    <section class="section" id="section-market">
-      <div class="section-header">
-        <h2 class="section-title">
-          <i data-lucide="activity"></i>
-          Statistik Pasar
-        </h2>
-      </div>
-      <div class="stats-grid" id="statsGrid">
-        <div class="stat-card">
-          <div class="stat-icon high"><i data-lucide="arrow-up-circle"></i></div>
-          <div class="stat-label">Harga Tertinggi</div>
-          <div class="stat-value" id="statHigh">—</div>
-          <div class="stat-sub" id="statHighTime">—</div>
+  <!-- ===== MARKET ===== -->
+  <section class="page" id="page-market">
+    <div class="page-head"><div><h1 class="page-title"><i data-lucide="bar-chart-3"></i> Market</h1><p class="page-sub">Daftar aset yang tersedia</p></div></div>
+    <div class="market-list" id="marketList"></div>
+  </section>
+
+  <!-- ===== PORTFOLIO ===== -->
+  <section class="page" id="page-portfolio">
+    <div class="page-head"><div><h1 class="page-title"><i data-lucide="briefcase"></i> Portfolio</h1><p class="page-sub">Aset yang Anda miliki</p></div></div>
+    <div class="stats-slider">
+      <div class="stat-mini"><div class="stat-mini-icon blue"><i data-lucide="wallet"></i></div><div class="stat-mini-lbl">Saldo</div><div class="stat-mini-val" id="pfBalance">—</div></div>
+      <div class="stat-mini"><div class="stat-mini-icon up"><i data-lucide="briefcase"></i></div><div class="stat-mini-lbl">Nilai Aset</div><div class="stat-mini-val" id="pfValue">—</div></div>
+      <div class="stat-mini"><div class="stat-mini-icon blue"><i data-lucide="pie-chart"></i></div><div class="stat-mini-lbl">Equity</div><div class="stat-mini-val" id="pfEquity">—</div></div>
+      <div class="stat-mini"><div class="stat-mini-icon warn"><i data-lucide="trending-up"></i></div><div class="stat-mini-lbl">Total P&L</div><div class="stat-mini-val" id="pfPL">—</div></div>
+    </div>
+    <div class="card"><div class="card-h"><h2><i data-lucide="list"></i> Holdings</h2></div><div class="card-b" id="holdingsList"></div></div>
+  </section>
+
+  <!-- ===== DEPOSIT ===== -->
+  <section class="page" id="page-deposit">
+    <div class="page-head"><div><h1 class="page-title"><i data-lucide="wallet"></i> Deposit</h1><p class="page-sub">Scan QRIS & konfirmasi manual oleh admin</p></div></div>
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-h"><h2><i data-lucide="qr-code"></i> Scan QRIS</h2></div>
+          <div class="card-b">
+            <div class="qr-box">
+              <img src="https://i.ibb.co.com/PGRy3SyQ/IMG-20261012-160202.jpg" alt="QRIS Deposit" />
+              <div class="qr-hint"><strong>Langkah Deposit:</strong><br>1. Buka e-wallet / m-banking<br>2. Scan QR di atas<br>3. Masukkan nominal<br>4. Screenshot bukti<br>5. Isi form → tunggu admin</div>
+            </div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon low"><i data-lucide="arrow-down-circle"></i></div>
-          <div class="stat-label">Harga Terendah</div>
-          <div class="stat-value" id="statLow">—</div>
-          <div class="stat-sub" id="statLowTime">—</div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-h"><h2><i data-lucide="send"></i> Ajukan Deposit</h2></div>
+          <div class="card-b">
+            <div class="fg"><label>Nominal (Rp)</label><input class="inp" id="depAmount" type="number" step="1000" min="10000" placeholder="50000" /><span class="text-muted" style="font-size:11px">Minimal Rp 10.000</span></div>
+            <div class="fg"><label>Nama Pengirim</label><input class="inp" id="depSender" placeholder="Nama sesuai rekening" /></div>
+            <div class="fg"><label>Catatan (opsional)</label><input class="inp" id="depNote" placeholder="No. referensi" /></div>
+            <button class="btn btn-blue btn-block" id="btnSubmitDeposit"><i data-lucide="send"></i> Ajukan Deposit</button>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-icon change"><i data-lucide="trending-up"></i></div>
-          <div class="stat-label">Perubahan</div>
-          <div class="stat-value up" id="statChange">—</div>
-          <div class="stat-sub" id="statChangePercent">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon points"><i data-lucide="hash"></i></div>
-          <div class="stat-label">Total Titik</div>
-          <div class="stat-value" id="statPoints">—</div>
-          <div class="stat-sub">titik data tersimpan</div>
+        <div class="card">
+          <div class="card-h"><h2><i data-lucide="clock"></i> Pengajuan Deposit</h2></div>
+          <div class="card-b" id="depositHistory"><div class="empty">Belum ada pengajuan.</div></div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- SECTION HISTORY -->
-    <section class="section" id="section-about">
-      <div class="section-header">
-        <h2 class="section-title">
-          <i data-lucide="history"></i>
-          Riwayat Pergerakan
-        </h2>
-        <span style="font-size:12px;color:var(--text-muted);" id="historyCount">0 entri</span>
+  <!-- ===== HISTORY ===== -->
+  <section class="page" id="page-history">
+    <div class="page-head"><div><h1 class="page-title"><i data-lucide="history"></i> Riwayat Transaksi</h1><p class="page-sub">Pembelian, penjualan, deposit, harga</p></div></div>
+    <div class="order-tabs" style="max-width:400px">
+      <button class="order-tab active" data-hist="tx">Transaksi</button>
+      <button class="order-tab" data-hist="price">Harga</button>
+      <button class="order-tab" data-hist="deposit">Deposit</button>
+    </div>
+    <div class="card" style="margin-top:12px"><div class="card-b" id="historyContent"><div class="empty">Memuat...</div></div></div>
+  </section>
+
+  <!-- ===== SETTINGS ===== -->
+  <section class="page" id="page-settings">
+    <div class="page-head"><div><h1 class="page-title"><i data-lucide="settings"></i> Pengaturan</h1><p class="page-sub">Konfigurasi akun & tampilan</p></div></div>
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-h"><h2><i data-lucide="user"></i> Profil Akun</h2></div>
+          <div class="card-b">
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+              <img id="settingsAvatar" src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:var(--shadow-md)" />
+              <div>
+                <div style="font-weight:700;font-size:15px" id="settingsName">—</div>
+                <div style="font-size:12.5px;color:var(--txt-2)" id="settingsEmail">—</div>
+                <div style="font-size:11px;color:var(--txt-3);margin-top:2px">UID: <span id="settingsUid">—</span></div>
+              </div>
+            </div>
+            <button class="btn btn-outline btn-block" id="btnLogout"><i data-lucide="log-out"></i> Keluar dari Akun</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h2><i data-lucide="palette"></i> Tampilan</h2></div>
+          <div class="card-b">
+            <div class="fg"><label>Rentang Waktu Default</label>
+              <select class="sel" id="setRange">
+                <option value="1m">1 Menit</option><option value="5m">5 Menit</option><option value="15m">15 Menit</option>
+                <option value="1h">1 Jam</option><option value="24h">24 Jam</option><option value="7d" selected>7 Hari</option>
+                <option value="30d">30 Hari</option><option value="all">Semua</option>
+              </select>
+            </div>
+            <button class="btn btn-primary btn-block" id="btnSaveSettings"><i data-lucide="save"></i> Simpan Pengaturan</button>
+          </div>
+        </div>
       </div>
-      <div class="history-list" id="historyList">
-        <div class="history-empty">Memuat riwayat...</div>
+      <div>
+        <div class="card">
+          <div class="card-h"><h2><i data-lucide="shield"></i> Keamanan</h2></div>
+          <div class="card-b">
+            <p class="text-muted" style="margin-bottom:12px;line-height:1.6">Akun Anda terhubung dengan Google.</p>
+            <div class="divider"></div>
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0"><span style="color:var(--txt-2)">Metode</span><strong>Google OAuth</strong></div>
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0"><span style="color:var(--txt-2)">Status</span><span class="pill up">Terverifikasi</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h2><i data-lucide="info"></i> Tentang CAZO</h2></div>
+          <div class="card-b"><p class="text-muted" style="line-height:1.7"><strong>CAZO</strong> adalah platform trading digital simulasi. Saldo virtual. Data real-time via Firebase.</p><div class="divider"></div><div style="font-size:12px;color:var(--txt-3)">Versi 2.1 • Trading Platform Edition</div></div>
+        </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-  </main>
+</main>
 
-  <!-- ========== ADMIN OVERLAY & PANEL ========== -->
-  <div class="admin-overlay" id="adminOverlay"></div>
-
-  <aside class="admin-panel" id="adminPanel">
-    <div class="admin-header">
-      <div class="admin-header-title">
-        <i data-lucide="sliders"></i>
-        Panel Admin CAZO
-      </div>
-      <button class="admin-close-btn" id="adminCloseBtn" aria-label="Tutup">
-        <i data-lucide="x"></i>
+<!-- ===== MODAL: LOGIN PROMPT ===== -->
+<div class="modal-bg" id="modalLogin">
+  <div class="modal" style="max-width:440px">
+    <div class="login-modal">
+      <div class="login-modal-icon"><i data-lucide="lock"></i></div>
+      <div class="login-modal-title">Login Diperlukan</div>
+      <div class="login-modal-desc" id="loginPromptDesc">Fitur ini memerlukan login. Silakan masuk dengan akun Google.</div>
+      <button class="login-google-btn" id="btnGoogleLoginModal">
+        <svg viewBox="0 0 48 48" width="18" height="18"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.1-11.3-7.9l-6.5 5C9.6 39.6 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.6l6.2 5.2C41 35.6 44 30.2 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
+        Masuk dengan Google
       </button>
-    </div>
-
-    <div class="admin-body" id="adminContentView">
-      <div class="admin-status info">
-        <i data-lucide="info"></i>
-        <span>Panel admin dipindahkan ke halaman <strong>admin.html</strong>.</span>
-      </div>
-      <div class="admin-status success hidden" id="adminSaveStatus">
-        <i data-lucide="check-circle"></i>
-        <span id="adminSaveStatusText">Tersimpan</span>
-      </div>
-
-      <div class="admin-section">
-        <div class="admin-section-title"><i data-lucide="info"></i> Informasi Aset</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Nama Aset</label>
-            <input class="form-input" id="adminAssetName" placeholder="CAZO CARD" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Simbol</label>
-            <input class="form-input" id="adminAssetSymbol" placeholder="CAZO" />
-          </div>
-        </div>
-      </div>
-
-      <div class="admin-section">
-        <div class="admin-section-title"><i data-lucide="dollar-sign"></i> Pengaturan Harga</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Harga Saat Ini</label>
-            <input class="form-input" id="adminCurrentPrice" type="number" step="0.01" placeholder="1250" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Harga Sebelumnya</label>
-            <input class="form-input" id="adminPreviousPrice" type="number" step="0.01" placeholder="1220" />
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Harga Tertinggi</label>
-            <input class="form-input" id="adminHigh" type="number" step="0.01" placeholder="1280" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Harga Terendah</label>
-            <input class="form-input" id="adminLow" type="number" step="0.01" placeholder="1180" />
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Warna Grafik</label>
-            <select class="form-select" id="adminChartColor">
-              <option value="#16A34A">Hijau (Naik)</option>
-              <option value="#DC2626">Merah (Turun)</option>
-              <option value="#2563EB">Biru (Aksen)</option>
-              <option value="#7C3AED">Ungu</option>
-              <option value="#111827">Hitam</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Jumlah Titik Maks</label>
-            <input class="form-input" id="adminMaxPoints" type="number" min="10" max="500" placeholder="100" />
-          </div>
-        </div>
-      </div>
-
-      <div class="admin-section">
-        <div class="admin-section-title"><i data-lucide="git-branch"></i> Mode Pergerakan</div>
-        <div class="form-group">
-          <label class="form-label">Mode</label>
-          <select class="form-select" id="adminMovementMode">
-            <option value="manual">Manual</option>
-            <option value="up">Naik Bertahap</option>
-            <option value="down">Turun Bertahap</option>
-            <option value="stable">Stabil</option>
-            <option value="random">Acak</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Target / Perubahan</label>
-            <input class="form-input" id="adminTargetPrice" type="number" step="0.01" placeholder="1300" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Interval (detik)</label>
-            <select class="form-select" id="adminInterval">
-              <option value="1">1 detik</option>
-              <option value="5" selected>5 detik</option>
-              <option value="10">10 detik</option>
-              <option value="30">30 detik</option>
-              <option value="60">1 menit</option>
-              <option value="0">Manual</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Titik Manual (pisahkan dengan koma)</label>
-          <input class="form-input" id="adminManualPoints" placeholder="1200, 1220, 1210, 1250" />
-        </div>
-      </div>
-
-      <div class="admin-section">
-        <div class="admin-section-title"><i data-lucide="play-circle"></i> Kontrol</div>
-        <div class="btn-group">
-          <button class="btn btn-success btn-sm" id="btnStartMovement">
-            <i data-lucide="play"></i> Mulai
-          </button>
-          <button class="btn btn-danger btn-sm" id="btnStopMovement">
-            <i data-lucide="square"></i> Hentikan
-          </button>
-          <button class="btn btn-outline btn-sm" id="btnResetChart">
-            <i data-lucide="rotate-ccw"></i> Reset
-          </button>
-        </div>
-        <div class="btn-group">
-          <button class="btn btn-outline btn-sm" id="btnAddPoint">
-            <i data-lucide="plus-circle"></i> Tambah Titik
-          </button>
-          <button class="btn btn-outline btn-sm" id="btnDeleteLast">
-            <i data-lucide="minus-circle"></i> Hapus Terakhir
-          </button>
-        </div>
-        <div class="admin-status info">
-          <i data-lucide="activity"></i>
-          <span id="movementStatusText">Mode: Manual — Tidak berjalan</span>
-        </div>
+      <button class="btn btn-ghost btn-block" style="margin-top:8px" id="btnCancelLogin">Nanti saja</button>
+      <div class="login-features">
+        <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Saldo awal <strong>Rp 100.000</strong></span></div>
+        <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Beli & jual aset CAZO real-time</span></div>
+        <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Deposit via QRIS & konfirmasi admin</span></div>
+        <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Riwayat & portfolio lengkap</span></div>
       </div>
     </div>
+  </div>
+</div>
 
-    <div class="admin-footer" id="adminFooter">
-      <button class="btn btn-outline" id="adminCloseBtn2">Tutup</button>
-      <button class="btn btn-primary" id="btnSaveSettings">
-        <i data-lucide="save"></i> Simpan Perubahan
-      </button>
+<!-- ===== MODAL: ALAT GAMBAR ===== -->
+<div class="modal-bg" id="modalDrawing">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-h">
+      <h3><i data-lucide="pencil-ruler"></i> Alat Gambar</h3>
+      <button class="modal-close" onclick="CAZO.closeModal('modalDrawing')"><i data-lucide="x"></i></button>
     </div>
-  </aside>
+    <div class="drawing-tip">
+      <i data-lucide="star"></i>
+      <span>Tap dan tahan alat gambar untuk menambahkan ke favorit dan menyematkan di atas.</span>
+    </div>
+    <div class="drawing-quick">
+      <button class="dq-btn" data-dq="measure"><i data-lucide="ruler"></i> Pengukuran</button>
+      <button class="dq-btn" data-dq="delete"><i data-lucide="trash-2"></i> Hapus</button>
+      <button class="dq-btn" data-dq="lock"><i data-lucide="lock"></i> Kunci</button>
+      <button class="dq-btn" data-dq="pin"><i data-lucide="pin"></i> Tetap</button>
+    </div>
+    <div id="drawingCategories"></div>
+    <div class="modal-f">
+      <button class="btn btn-outline" id="btnClearDrawings"><i data-lucide="trash-2"></i> Hapus Semua</button>
+      <button class="btn btn-primary" onclick="CAZO.closeModal('modalDrawing')">Selesai</button>
+    </div>
+  </div>
+</div>
 
-  <div class="toast-container" id="toastContainer"></div>
+<!-- ===== MODAL: INDIKATOR ===== -->
+<div class="modal-bg" id="modalIndicators">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-h">
+      <h3><i data-lucide="activity"></i> Indikator</h3>
+      <button class="modal-close" onclick="CAZO.closeModal('modalIndicators')"><i data-lucide="x"></i></button>
+    </div>
+    <div style="padding:12px 16px 6px;display:flex;justify-content:space-between;align-items:center">
+      <button class="btn btn-outline btn-sm" id="btnClearIndicators"><i data-lucide="trash-2"></i> Hapus semua</button>
+    </div>
+    <div class="ind-active-chips" id="indActiveChips"></div>
+    <div class="ind-search">
+      <i data-lucide="search"></i>
+      <input type="text" id="indSearch" placeholder="Cari indikator..." />
+    </div>
+    <div class="ind-list" id="indList"></div>
+    <div class="modal-f"><button class="btn btn-primary btn-block" onclick="CAZO.closeModal('modalIndicators')">Selesai</button></div>
+  </div>
+</div>
 
-  <!-- ============================================================
-       SCRIPT UI (NON-MODULE)
-       ============================================================ -->
-  <script>
-    (function () {
-      'use strict';
+<!-- ===== MODAL: STOP LOSS / TAKE PROFIT ===== -->
+<div class="modal-bg" id="modalSLTP">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-h">
+      <h3><i data-lucide="shield-alert"></i> Stop Loss / Take Profit</h3>
+      <button class="modal-close" onclick="CAZO.closeModal('modalSLTP')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-b">
+      <p class="text-muted" style="margin-bottom:14px;line-height:1.6">
+        Tetapkan level otomatis. Ketika harga menyentuh level, posisi akan ditutup dan Anda diberi notifikasi.
+      </p>
+      <div class="sltp-row">
+        <div class="sltp-card stop">
+          <div class="sltp-label">🛑 Stop Loss</div>
+          <input class="sltp-input" id="sltpSL" type="number" step="0.01" placeholder="0.00" />
+          <div class="sltp-hint" id="sltpHintSL">—</div>
+        </div>
+        <div class="sltp-card take">
+          <div class="sltp-label">🎯 Take Profit</div>
+          <input class="sltp-input" id="sltpTP" type="number" step="0.01" placeholder="0.00" />
+          <div class="sltp-hint" id="sltpHintTP">—</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:4px 0">
+        <span style="color:var(--txt-2)">Harga saat ini</span>
+        <strong id="sltpCurrentPrice">—</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:4px 0">
+        <span style="color:var(--txt-2)">Status SL/TP</span>
+        <span class="pill gray" id="sltpStatus">Tidak aktif</span>
+      </div>
+    </div>
+    <div class="modal-f">
+      <button class="btn btn-outline" id="btnClearSLTP">Hapus</button>
+      <button class="btn btn-primary" id="btnSaveSLTP">Simpan</button>
+    </div>
+  </div>
+</div>
 
-      var mobileMenuBtn = document.getElementById('mobileMenuBtn');
-      var navbarLinks = document.getElementById('navbarLinks');
+<!-- ===== MODAL: INFO ===== -->
+<div class="modal-bg" id="modalInfo">
+  <div class="modal">
+    <div class="modal-h">
+      <h3><i data-lucide="info"></i> <span id="modalInfoTitle">Info</span></h3>
+      <button class="modal-close" onclick="CAZO.closeModal('modalInfo')"><i data-lucide="x"></i></button>
+    </div>
+    <div class="modal-b" id="modalInfoBody"></div>
+    <div class="modal-f"><button class="btn btn-primary btn-block" onclick="CAZO.closeModal('modalInfo')">Tutup</button></div>
+  </div>
+</div>
 
-      if (mobileMenuBtn && navbarLinks) {
-        mobileMenuBtn.addEventListener('click', function (e) {
-          e.stopPropagation();
-          navbarLinks.classList.toggle('open');
-        });
-        document.addEventListener('click', function (e) {
-          if (navbarLinks.classList.contains('open') &&
-              !navbarLinks.contains(e.target) &&
-              !mobileMenuBtn.contains(e.target)) {
-            navbarLinks.classList.remove('open');
-          }
-        });
-        navbarLinks.querySelectorAll('.navbar-link').forEach(function (link) {
-          link.addEventListener('click', function () {
-            navbarLinks.classList.remove('open');
-          });
-        });
+<div class="toasts" id="toasts"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getDatabase, ref, onValue, push, update, set, get, query,
+  orderByChild, limitToLast, serverTimestamp, remove, runTransaction
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import {
+  getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
+  authDomain: "mygame-68b24.firebaseapp.com",
+  databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
+  projectId: "mygame-68b24",
+  storageBucket: "mygame-68b24.firebasestorage.app",
+  messagingSenderId: "1003182873390",
+  appId: "1:1003182873390:web:aabf3248f759cbc9d678bf"
+};
+const ADMIN_EMAILS = ["admin@cazo.app", "cazo.admin@gmail.com"];
+const DEFAULT_BALANCE = 100000;
+const ASSET_ICON = "https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg";
+
+const DEFAULT_SETTINGS = {
+  assetName: "CAZO CARD", symbol: "CAZO",
+  currentPrice: 1250, previousPrice: 1220,
+  highestPrice: 1280, lowestPrice: 1180,
+  chartColor: "#16A34A", updateInterval: 5,
+  movementMode: "up", isRunning: false,
+  loopMode: true, direction: "up",
+  targetPrice: 1300, basePrice: 1200,
+  maxPoints: 200, updatedAt: null
+};
+
+// ====== DEFINISI ALAT GAMBAR (sesuai screenshot TradingView) ======
+const DRAWING_CATEGORIES = [
+  {
+    name: "Garis Tren",
+    tools: [
+      { id: "trendline", name: "Garis Tren", icon: "trending-up" },
+      { id: "ray", name: "Sinar", icon: "move-up-right" },
+      { id: "info-line", name: "Garis Info", icon: "info" },
+      { id: "extended", name: "Garis Perpanjangan", icon: "arrow-right-to-line" },
+      { id: "angle", name: "Sudut", icon: "triangle-right" },
+      { id: "hline", name: "Garis Horizontal", icon: "minus" },
+      { id: "vline", name: "Garis Vertikal", icon: "separator-vertical" },
+    ]
+  },
+  {
+    name: "Gann dan Fibonacci",
+    tools: [
+      { id: "fib-ret", name: "Retracement Fib", icon: "align-horizontal-justify-start" },
+      { id: "fib-ext", name: "Fibonacci Extension", icon: "align-horizontal-justify-center" },
+      { id: "fib-channel", name: "Kanal Fib", icon: "git-branch" },
+      { id: "fib-time", name: "Zona Waktu Fib", icon: "clock" },
+      { id: "gann-fan", name: "Kipas Gann", icon: "git-fork" },
+      { id: "gann-square", name: "Kotak Gann", icon: "square" },
+    ]
+  },
+  {
+    name: "Pola",
+    tools: [
+      { id: "xabcd", name: "Pola XABCD", icon: "git-branch" },
+      { id: "cypher", name: "Pola Cypher", icon: "git-branch" },
+      { id: "hns", name: "Head & Shoulder", icon: "waves" },
+      { id: "abcd", name: "Pola ABCD", icon: "git-commit" },
+      { id: "triangle", name: "Segitiga", icon: "triangle" },
+      { id: "elliot", name: "Gelombang Elliot", icon: "waves" },
+    ]
+  },
+  {
+    name: "Proyeksi dan Pengukuran",
+    tools: [
+      { id: "projection", name: "Proyeksi", icon: "git-pull-request" },
+      { id: "price-range", name: "Rentang Harga", icon: "move-vertical" },
+      { id: "date-range", name: "Rentang Tanggal", icon: "move-horizontal" },
+      { id: "date-price-range", name: "Rentang Tgl & Harga", icon: "grid-2x2" },
+      { id: "measure", name: "Ukur", icon: "ruler" },
+    ]
+  },
+  {
+    name: "Bentuk Geometris",
+    tools: [
+      { id: "brush", name: "Kuas", icon: "brush" },
+      { id: "highlighter", name: "Highlighter", icon: "highlighter" },
+      { id: "arrow", name: "Panah", icon: "arrow-up-right" },
+      { id: "arrow-mark", name: "Penanda Panah", icon: "arrow-right" },
+      { id: "rect", name: "Persegi", icon: "square" },
+      { id: "circle", name: "Elips", icon: "circle" },
+    ]
+  },
+  {
+    name: "Anotasi",
+    tools: [
+      { id: "text", name: "Teks", icon: "type" },
+      { id: "anchored-text", name: "Teks Terjangkar", icon: "anchor" },
+      { id: "note", name: "Catatan", icon: "sticky-note" },
+      { id: "price-note", name: "Catatan Harga", icon: "tag" },
+      { id: "label", name: "Label", icon: "tag" },
+      { id: "signpost", name: "Signpost", icon: "signpost" },
+      { id: "flag", name: "Tanda Bendera", icon: "flag" },
+    ]
+  }
+];
+
+// ====== DAFTAR INDIKATOR ======
+const INDICATORS = [
+  { id: "ma", name: "Moving Average", desc: "Rata-rata harga bergerak" },
+  { id: "ema", name: "EMA (Exponential MA)", desc: "MA dengan bobot eksponensial" },
+  { id: "bb", name: "Bollinger Bands", desc: "Band volatilitas" },
+  { id: "bbw", name: "Bollinger Bands Width", desc: "Lebar band" },
+  { id: "vwap", name: "VWAP", desc: "Volume Weighted Average Price" },
+  { id: "rsi", name: "RSI", desc: "Relative Strength Index" },
+  { id: "macd", name: "MACD", desc: "Moving Average Convergence Divergence" },
+  { id: "stoch", name: "Stochastic", desc: "Oscillator momentum" },
+  { id: "cci", name: "CCI", desc: "Commodity Channel Index" },
+  { id: "atr", name: "ATR", desc: "Average True Range" },
+  { id: "obv", name: "OBV", desc: "On Balance Volume" },
+  { id: "adx", name: "ADX", desc: "Average Directional Index" },
+  { id: "mfi", name: "MFI", desc: "Money Flow Index" },
+  { id: "willr", name: "Williams %R", desc: "Williams Percent Range" },
+  { id: "mom", name: "Momentum", desc: "Momentum indicator" },
+  { id: "roc", name: "ROC", desc: "Rate of Change" },
+  { id: "ao", name: "Awesome Oscillator", desc: "AO Bill Williams" },
+  { id: "bbwp", name: "Bollinger Bands %B", desc: "%B" },
+];
+
+// ==================== STATE ====================
+const S = {
+  app: null, db: null, auth: null,
+  user: null, isAdmin: false,
+  ready: false, online: false,
+  settings: { ...DEFAULT_SETTINGS },
+  history: [],
+  balance: 0, portfolio: {},
+  transactions: [], deposits: [],
+  // Chart series
+  chart: null, candleSeries: null, volumeSeries: null,
+  activeRange: "7d",
+  showVolume: true,
+  chartFullscreen: false,
+  tradeSide: "buy",
+  histTab: "tx",
+  unsubs: [], unsubsUser: [],
+  _lastChartKey: "",
+  pendingAction: null,
+  // Drawing
+  drawings: [],
+  activeTool: null,
+  drawing: null, // {points:[], ...}
+  // Indicators
+  activeIndicators: new Set(),
+  indicatorSeries: new Map(),
+  activePane: null,
+  // SL/TP
+  stopLoss: null, takeProfit: null,
+  sltpLines: [],
+};
+
+const $ = (id) => document.getElementById(id);
+
+// ==================== UTIL ====================
+function fmt(n, dec = 2) {
+  if (n == null || isNaN(n)) return "—";
+  return Number(n).toLocaleString("id-ID", { minimumFractionDigits: dec, maximumFractionDigits: dec });
+}
+function fmtIDR(n) {
+  if (n == null || isNaN(n)) return "—";
+  return "Rp " + Number(n).toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+function fmtTime(ts) {
+  if (!ts) return "—";
+  const d = new Date(ts);
+  return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short" }) + " " +
+         d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+}
+function ago(ts) {
+  if (!ts) return "—";
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 5) return "baru saja";
+  if (s < 60) return s + "s lalu";
+  const m = Math.floor(s / 60);
+  if (m < 60) return m + "m lalu";
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + "j lalu";
+  return Math.floor(h / 24) + "h lalu";
+}
+function num(v, fb = 0) { const n = Number(v); return isNaN(n) ? fb : n; }
+
+function toast(msg, type = "info", dur = 3500) {
+  const wrap = $("toasts"); if (!wrap) return;
+  const icons = { success: "check-circle", error: "alert-circle", warning: "alert-triangle", info: "info" };
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  el.innerHTML = `<i data-lucide="${icons[type] || icons.info}"></i><span></span><button class="toast-close"><i data-lucide="x" style="width:14px;height:14px"></i></button>`;
+  el.querySelector("span").textContent = msg;
+  el.querySelector(".toast-close").addEventListener("click", () => el.remove());
+  wrap.appendChild(el);
+  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+  setTimeout(() => { el.style.opacity = "0"; setTimeout(() => el.remove(), 250); }, dur);
+}
+
+function openModal(id) { $(id).classList.add("open"); }
+function closeModal(id) { $(id).classList.remove("open"); }
+
+function requireLogin(reason, action) {
+  if (S.user) { if (typeof action === "function") action(); return true; }
+  S.pendingAction = action || null;
+  const desc = {
+    profile: "Silakan masuk dengan Google untuk melihat profil akun Anda.",
+    trade: "Untuk membeli atau menjual aset, silakan masuk dengan akun Google.",
+    portfolio: "Login untuk melihat portfolio, saldo, dan P&L.",
+    deposit: "Login untuk melakukan deposit saldo virtual.",
+    history: "Login untuk melihat riwayat transaksi.",
+    default: "Fitur ini memerlukan login."
+  }[reason] || "Fitur ini memerlukan login.";
+  $("loginPromptDesc").textContent = desc;
+  openModal("modalLogin");
+  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+  return false;
+}
+
+// ==================== CHART INIT ====================
+function initChart() {
+  const box = $("mainChart");
+  if (!box || typeof LightweightCharts === "undefined") return;
+  if (S.chart) return;
+
+  S.chart = LightweightCharts.createChart(box, {
+    width: box.clientWidth, height: box.clientHeight,
+    layout: { background: { type: "solid", color: "#FFFFFF" }, textColor: "#64748B", fontFamily: "'Inter',sans-serif", fontSize: 11 },
+    grid: { vertLines: { color: "rgba(226,232,240,0.6)" }, horzLines: { color: "rgba(226,232,240,0.6)" } },
+    rightPriceScale: { borderColor: "#E2E8F0", scaleMargins: { top: 0.08, bottom: 0.25 } },
+    timeScale: { borderColor: "#E2E8F0", timeVisible: true, secondsVisible: false, rightOffset: 3, barSpacing: 8 },
+    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+    handleScroll: { mouseWheel: true, pressedMouseMove: true, horzTouchDrag: true, vertTouchDrag: false },
+    handleScale: { axisPressedMouseMove: true, mouseWheel: true, pinch: true },
+    localization: { priceFormatter: (p) => fmt(p, 2) }
+  });
+
+  S.volumeSeries = S.chart.addHistogramSeries({ priceFormat: { type: "volume" }, priceScaleId: "volume", color: "rgba(148,163,184,0.4)" });
+  S.chart.priceScale("volume").applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
+
+  S.candleSeries = S.chart.addCandlestickSeries({
+    upColor: "#16A34A", downColor: "#DC2626",
+    borderUpColor: "#16A34A", borderDownColor: "#DC2626",
+    wickUpColor: "#16A34A", wickDownColor: "#DC2626",
+    priceFormat: { type: "price", precision: 2, minMove: 0.01 }
+  });
+
+  new ResizeObserver(() => {
+    if (!S.chart) return;
+    S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
+    resizeDrawLayer();
+    redrawAll();
+  }).observe(box);
+
+  setupDrawingCanvas();
+}
+
+function buildCandles(hist) {
+  const out = []; let lastT = 0;
+  for (let i = 0; i < hist.length; i++) {
+    const h = hist[i];
+    const open = i === 0 ? h.price : hist[i - 1].price;
+    const close = h.price;
+    const body = Math.abs(close - open);
+    const wick = Math.max(body * 0.35, close * 0.0004);
+    let t = Math.floor(h.timestamp / 1000);
+    if (t <= lastT) t = lastT + 1;
+    lastT = t;
+    out.push({
+      time: t, open: +open.toFixed(2),
+      high: +(Math.max(open, close) + wick).toFixed(2),
+      low: +(Math.min(open, close) - wick).toFixed(2),
+      close: +close.toFixed(2),
+      volume: Math.round(10000 + Math.random() * 50000)
+    });
+  }
+  return out;
+}
+
+function getFilteredHistory(range) {
+  const hist = S.history; if (!hist.length) return [];
+  const now = Date.now();
+  const ranges = { "1m": 60e3, "5m": 5 * 60e3, "15m": 15 * 60e3, "1h": 60 * 60e3, "24h": 24 * 60 * 60e3, "7d": 7 * 24 * 60 * 60e3, "30d": 30 * 24 * 60 * 60e3, "all": Infinity };
+  const cutoff = ranges[range] === Infinity ? 0 : now - ranges[range];
+  const filtered = hist.filter(h => h.timestamp >= cutoff);
+  if (filtered.length < 2 && hist.length >= 2) return hist.slice(-Math.min(hist.length, 30));
+  return filtered;
+}
+
+function updateChart() {
+  if (!S.candleSeries || !S.chart) return;
+  const filtered = getFilteredHistory(S.activeRange);
+  if (!filtered.length) {
+    S.candleSeries.setData([]);
+    if (S.volumeSeries) S.volumeSeries.setData([]);
+    return;
+  }
+  const key = S.activeRange + "_" + filtered.length + "_" + (filtered[filtered.length - 1]?.timestamp || 0);
+  if (key === S._lastChartKey) return;
+  S._lastChartKey = key;
+  const candles = buildCandles(filtered);
+  S.candleSeries.applyOptions({
+    upColor: S.settings.chartColor || "#16A34A",
+    borderUpColor: S.settings.chartColor || "#16A34A",
+    wickUpColor: S.settings.chartColor || "#16A34A"
+  });
+  S.candleSeries.setData(candles);
+  if (S.volumeSeries) {
+    if (S.showVolume) {
+      S.volumeSeries.setData(candles.map(c => ({ time: c.time, value: c.volume, color: c.close >= c.open ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)" })));
+    } else S.volumeSeries.setData([]);
+  }
+  if (S._lastFitRange !== S.activeRange) {
+    S.chart.timeScale().fitContent();
+    S._lastFitRange = S.activeRange;
+  }
+  // Update indicators dengan data baru
+  updateIndicators(candles);
+  setTimeout(redrawAll, 50);
+}
+
+// ==================== DRAWING CANVAS ====================
+function setupDrawingCanvas() {
+  const canvas = $("drawLayer");
+  if (!canvas) return;
+  const wrap = $("chartWrap");
+  canvas.width = wrap.clientWidth * window.devicePixelRatio;
+  canvas.height = wrap.clientHeight * window.devicePixelRatio;
+  canvas.style.width = wrap.clientWidth + "px";
+  canvas.style.height = wrap.clientHeight + "px";
+
+  canvas.addEventListener("pointerdown", onCanvasDown);
+  canvas.addEventListener("pointermove", onCanvasMove);
+  canvas.addEventListener("pointerup", onCanvasUp);
+  canvas.addEventListener("pointercancel", onCanvasUp);
+}
+
+function resizeDrawLayer() {
+  const canvas = $("drawLayer");
+  const wrap = $("chartWrap");
+  if (!canvas || !wrap) return;
+  canvas.width = wrap.clientWidth * window.devicePixelRatio;
+  canvas.height = wrap.clientHeight * window.devicePixelRatio;
+  canvas.style.width = wrap.clientWidth + "px";
+  canvas.style.height = wrap.clientHeight + "px";
+}
+
+function canvasToChartPoint(clientX, clientY) {
+  const wrap = $("chartWrap");
+  const rect = wrap.getBoundingClientRect();
+  const x = clientX - rect.left;
+  const y = clientY - rect.top;
+  const time = S.chart.timeScale().coordinateToTime(x);
+  const price = S.candleSeries.coordinateToPrice(y);
+  return { x, y, time, price };
+}
+
+function chartToCanvasPoint(time, price) {
+  const x = S.chart.timeScale().timeToCoordinate(time);
+  const y = S.candleSeries.priceToCoordinate(price);
+  return { x, y };
+}
+
+let drawPointerDown = false;
+
+function onCanvasDown(e) {
+  if (!S.activeTool) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const canvas = $("drawLayer");
+  canvas.setPointerCapture(e.pointerId);
+  drawPointerDown = true;
+  const pt = canvasToChartPoint(e.clientX, e.clientY);
+  if (!pt.time || !pt.price) return;
+
+  // Single-click tools
+  if (S.activeTool === "hline") {
+    S.drawings.push({ type: "hline", price: pt.price, color: "#0F172A" });
+    redrawAll();
+    toast("Garis horizontal ditambahkan", "success", 2000);
+    setActiveTool(null);
+    return;
+  }
+  if (S.activeTool === "vline") {
+    S.drawings.push({ type: "vline", time: pt.time, color: "#0F172A" });
+    redrawAll();
+    setActiveTool(null);
+    return;
+  }
+  if (S.activeTool === "text") {
+    const txt = prompt("Masukkan teks:");
+    if (txt) S.drawings.push({ type: "text", time: pt.time, price: pt.price, text: txt, color: "#0F172A" });
+    redrawAll();
+    setActiveTool(null);
+    return;
+  }
+  if (S.activeTool === "arrow") {
+    S.drawings.push({ type: "arrow", time: pt.time, price: pt.price, color: "#16A34A" });
+    redrawAll();
+    setActiveTool(null);
+    return;
+  }
+
+  // Multi-point tools
+  S.drawing = { type: S.activeTool, start: pt, end: pt, color: "#2563EB" };
+}
+
+function onCanvasMove(e) {
+  if (!drawPointerDown || !S.drawing) return;
+  e.preventDefault();
+  const pt = canvasToChartPoint(e.clientX, e.clientY);
+  if (!pt.time || !pt.price) return;
+  S.drawing.end = pt;
+  redrawAll();
+}
+
+function onCanvasUp(e) {
+  if (!drawPointerDown) return;
+  drawPointerDown = false;
+  if (!S.drawing) return;
+  const d = S.drawing;
+  S.drawing = null;
+
+  // Save final drawing
+  if (d.start && d.end) {
+    const final = { type: d.type, start: d.start, end: d.end, color: d.color };
+    S.drawings.push(final);
+    redrawAll();
+    toast("Gambar disimpan", "success", 1800);
+  }
+  setActiveTool(null);
+}
+
+function redrawAll() {
+  const canvas = $("drawLayer");
+  if (!canvas || !S.chart || !S.candleSeries) return;
+  const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw saved drawings
+  S.drawings.forEach(d => drawShape(ctx, d));
+
+  // Draw in-progress drawing
+  if (S.drawing) drawShape(ctx, { ...S.drawing, preview: true });
+
+  // Draw SL/TP lines
+  drawSLTP(ctx);
+}
+
+function drawShape(ctx, d) {
+  const start = d.start ? chartToCanvasPoint(d.start.time, d.start.price) : null;
+  const end = d.end ? chartToCanvasPoint(d.end.time, d.end.price) : null;
+  const color = d.color || "#2563EB";
+  const isPreview = d.preview;
+
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 2;
+  if (isPreview) ctx.setLineDash([6, 4]);
+
+  if (d.type === "hline") {
+    const y = S.candleSeries.priceToCoordinate(d.price);
+    if (y != null) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(ctx.canvas.width / window.devicePixelRatio, y); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = color;
+      ctx.fillRect(4, y - 10, 70, 20);
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 11px Inter, sans-serif";
+      ctx.fillText(fmt(d.price, 2), 10, y + 4);
+    }
+  } else if (d.type === "vline") {
+    const x = S.chart.timeScale().timeToCoordinate(d.time);
+    if (x != null) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, ctx.canvas.height / window.devicePixelRatio); ctx.stroke();
+    }
+  } else if (d.type === "text") {
+    if (start && start.x != null && start.y != null) {
+      ctx.fillStyle = "rgba(255,255,255,0.9)";
+      ctx.fillRect(start.x - 3, start.y - 16, ctx.measureText(d.text).width + 12, 20);
+      ctx.fillStyle = color;
+      ctx.font = "bold 12px Inter, sans-serif";
+      ctx.fillText(d.text, start.x + 3, start.y - 3);
+    }
+  } else if (d.type === "arrow") {
+    if (start && start.x != null) {
+      ctx.beginPath();
+      ctx.moveTo(start.x - 12, start.y + 12);
+      ctx.lineTo(start.x, start.y);
+      ctx.lineTo(start.x - 4, start.y + 2);
+      ctx.lineTo(start.x - 2, start.y + 8);
+      ctx.closePath();
+      ctx.fill();
+    }
+  } else if (start && end && start.x != null && end.x != null) {
+    if (d.type === "trendline" || d.type === "extended") {
+      ctx.beginPath();
+      ctx.moveTo(start.x, start.y);
+      ctx.lineTo(end.x, end.y);
+      if (d.type === "extended") {
+        const dx = end.x - start.x, dy = end.y - start.y;
+        ctx.lineTo(end.x + dx * 5, end.y + dy * 5);
       }
-
-      window.scrollToSection = function (id) {
-        var el = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        if (navbarLinks) navbarLinks.classList.remove('open');
-      };
-
-      document.querySelectorAll('.navbar-link[data-target]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          var target = btn.getAttribute('data-target');
-          if (target) window.scrollToSection(target);
-          document.querySelectorAll('.navbar-link').forEach(function (b) { b.classList.remove('active'); });
-          btn.classList.add('active');
-        });
+      ctx.stroke();
+      // Endpoints
+      ctx.fillStyle = color;
+      ctx.beginPath(); ctx.arc(start.x, start.y, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(end.x, end.y, 4, 0, Math.PI * 2); ctx.fill();
+    } else if (d.type === "ray") {
+      const dx = end.x - start.x, dy = end.y - start.y;
+      ctx.beginPath();
+      ctx.moveTo(start.x, start.y);
+      ctx.lineTo(start.x + dx * 10, start.y + dy * 10);
+      ctx.stroke();
+    } else if (d.type === "rect") {
+      ctx.beginPath();
+      ctx.rect(start.x, start.y, end.x - start.x, end.y - start.y);
+      ctx.globalAlpha = 0.1; ctx.fill(); ctx.globalAlpha = 1;
+      ctx.stroke();
+    } else if (d.type === "circle") {
+      const rx = Math.abs(end.x - start.x), ry = Math.abs(end.y - start.y);
+      ctx.beginPath();
+      ctx.ellipse((start.x + end.x) / 2, (start.y + end.y) / 2, rx / 2, ry / 2, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    } else if (d.type === "fib-ret" || d.type === "fib-ext") {
+      // Fibonacci retracement levels
+      const levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
+      const hi = Math.max(start.y, end.y), lo = Math.min(start.y, end.y);
+      const leftX = Math.min(start.x, end.x), rightX = Math.max(start.x, end.x);
+      const colors = ["#DC2626", "#F59E0B", "#F59E0B", "#16A34A", "#F59E0B", "#F59E0B", "#DC2626"];
+      levels.forEach((lvl, i) => {
+        const y = lo + (hi - lo) * lvl;
+        ctx.strokeStyle = colors[i];
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(leftX, y); ctx.lineTo(rightX + 80, y); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = colors[i];
+        ctx.font = "10px Inter, sans-serif";
+        ctx.fillText((lvl * 100).toFixed(1) + "%", rightX + 4, y - 2);
       });
+    } else if (d.type === "measure") {
+      const dx = Math.abs(end.x - start.x);
+      const priceDiff = d.end.price - d.start.price;
+      const pct = d.start.price !== 0 ? (priceDiff / d.start.price) * 100 : 0;
+      ctx.strokeStyle = priceDiff >= 0 ? "#16A34A" : "#DC2626";
+      ctx.fillStyle = priceDiff >= 0 ? "rgba(22,163,74,0.15)" : "rgba(220,38,38,0.15)";
+      ctx.beginPath();
+      ctx.rect(start.x, start.y, end.x - start.x, end.y - start.y);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = priceDiff >= 0 ? "#16A34A" : "#DC2626";
+      ctx.font = "bold 11px Inter, sans-serif";
+      ctx.fillText((priceDiff >= 0 ? "+" : "") + fmt(priceDiff, 2) + " (" + fmt(pct, 2) + "%)", Math.min(start.x, end.x) + 6, Math.min(start.y, end.y) - 6);
+    } else {
+      // Default: trendline
+      ctx.beginPath();
+      ctx.moveTo(start.x, start.y);
+      ctx.lineTo(end.x, end.y);
+      ctx.stroke();
+      ctx.fillStyle = color;
+      ctx.beginPath(); ctx.arc(start.x, start.y, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(end.x, end.y, 4, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  ctx.restore();
+}
 
-      var brandHome = document.getElementById('brandHome');
-      if (brandHome) {
-        brandHome.addEventListener('click', function (e) {
-          e.preventDefault();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+function drawSLTP(ctx) {
+  if (!S.candleSeries) return;
+  if (S.stopLoss) {
+    const y = S.candleSeries.priceToCoordinate(S.stopLoss);
+    if (y != null) {
+      ctx.save();
+      ctx.strokeStyle = "#DC2626"; ctx.setLineDash([8, 4]); ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(ctx.canvas.width / window.devicePixelRatio, y); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#DC2626";
+      ctx.fillRect(4, y - 10, 110, 20);
+      ctx.fillStyle = "#fff"; ctx.font = "bold 11px Inter, sans-serif";
+      ctx.fillText("SL " + fmt(S.stopLoss, 2), 8, y + 4);
+      ctx.restore();
+    }
+  }
+  if (S.takeProfit) {
+    const y = S.candleSeries.priceToCoordinate(S.takeProfit);
+    if (y != null) {
+      ctx.save();
+      ctx.strokeStyle = "#16A34A"; ctx.setLineDash([8, 4]); ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(ctx.canvas.width / window.devicePixelRatio, y); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#16A34A";
+      ctx.fillRect(4, y - 10, 110, 20);
+      ctx.fillStyle = "#fff"; ctx.font = "bold 11px Inter, sans-serif";
+      ctx.fillText("TP " + fmt(S.takeProfit, 2), 8, y + 4);
+      ctx.restore();
+    }
+  }
+}
+
+function setActiveTool(toolId) {
+  S.activeTool = toolId;
+  const canvas = $("drawLayer");
+  const badge = $("drawBadge");
+  if (toolId) {
+    canvas.style.pointerEvents = "auto";
+    canvas.style.cursor = "crosshair";
+    badge.classList.add("on");
+    $("drawBadgeText").textContent = DRAWING_CATEGORIES.flatMap(c => c.tools).find(t => t.id === toolId)?.name || toolId;
+  } else {
+    canvas.style.pointerEvents = "none";
+    canvas.style.cursor = "default";
+    badge.classList.remove("on");
+  }
+  // Update tool item UI
+  document.querySelectorAll(".tool-item").forEach(el => el.classList.toggle("active", el.dataset.tool === toolId));
+}
+
+// ==================== INDICATORS ====================
+function addIndicator(id) {
+  if (!S.chart || !S.candleSeries) return;
+  if (S.indicatorSeries.has(id)) return;
+  const s = S.settings;
+  let series = [];
+  const candles = buildCandles(getFilteredHistory(S.activeRange));
+  if (!candles.length) return;
+
+  if (id === "ma") {
+    const ma7 = S.chart.addLineSeries({ color: "#F59E0B", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "MA7" });
+    const ma25 = S.chart.addLineSeries({ color: "#8B5CF6", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "MA25" });
+    ma7.setData(calcMA(candles, 7));
+    ma25.setData(calcMA(candles, 25));
+    series.push(ma7, ma25);
+  } else if (id === "ema") {
+    const ema12 = S.chart.addLineSeries({ color: "#2563EB", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "EMA12" });
+    const ema26 = S.chart.addLineSeries({ color: "#EC4899", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "EMA26" });
+    ema12.setData(calcEMA(candles, 12));
+    ema26.setData(calcEMA(candles, 26));
+    series.push(ema12, ema26);
+  } else if (id === "bb") {
+    const bb = calcBB(candles, 20, 2);
+    const upper = S.chart.addLineSeries({ color: "#3B82F6", lineWidth: 1, lineStyle: 2, priceLineVisible: false, lastValueVisible: false, title: "BB Upper" });
+    const middle = S.chart.addLineSeries({ color: "#94A3B8", lineWidth: 1, priceLineVisible: false, lastValueVisible: false, title: "BB Mid" });
+    const lower = S.chart.addLineSeries({ color: "#3B82F6", lineWidth: 1, lineStyle: 2, priceLineVisible: false, lastValueVisible: false, title: "BB Lower" });
+    upper.setData(bb.upper); middle.setData(bb.middle); lower.setData(bb.lower);
+    series.push(upper, middle, lower);
+  } else if (id === "vwap") {
+    const vwap = S.chart.addLineSeries({ color: "#F97316", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "VWAP" });
+    vwap.setData(calcVWAP(candles));
+    series.push(vwap);
+  } else {
+    // Pane indicators — tampilkan sebagai overlay sederhana di chart utama
+    if (id === "rsi") {
+      const rsi = S.chart.addLineSeries({ color: "#8B5CF6", lineWidth: 2, priceLineVisible: false, lastValueVisible: true, title: "RSI(14)", priceScaleId: "right" });
+      rsi.setData(calcRSI(candles, 14));
+      series.push(rsi);
+    } else if (id === "macd") {
+      const macd = S.chart.addLineSeries({ color: "#2563EB", lineWidth: 2, priceLineVisible: false, lastValueVisible: true, title: "MACD" });
+      const signal = S.chart.addLineSeries({ color: "#F59E0B", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "Signal" });
+      const m = calcMACD(candles);
+      macd.setData(m.macd); signal.setData(m.signal);
+      series.push(macd, signal);
+    } else if (id === "stoch") {
+      const k = S.chart.addLineSeries({ color: "#16A34A", lineWidth: 2, priceLineVisible: false, lastValueVisible: true, title: "Stoch K" });
+      const d = S.chart.addLineSeries({ color: "#DC2626", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "Stoch D" });
+      const st = calcStoch(candles);
+      k.setData(st.k); d.setData(st.d);
+      series.push(k, d);
+    } else {
+      // Indikator lain: tampilkan garis MA(7) sebagai placeholder visual
+      const line = S.chart.addLineSeries({ color: "#6366F1", lineWidth: 2, priceLineVisible: false, lastValueVisible: true, title: INDICATORS.find(x => x.id === id)?.name || id });
+      line.setData(calcMA(candles, 7));
+      series.push(line);
+    }
+  }
+
+  S.indicatorSeries.set(id, series);
+  S.activeIndicators.add(id);
+  renderIndicatorChips();
+  renderIndicatorList();
+  toast("Indikator " + (INDICATORS.find(x => x.id === id)?.name || id) + " ditambahkan", "success", 2000);
+}
+
+function removeIndicator(id) {
+  const series = S.indicatorSeries.get(id);
+  if (!series) return;
+  series.forEach(s => { try { S.chart.removeSeries(s); } catch (e) {} });
+  S.indicatorSeries.delete(id);
+  S.activeIndicators.delete(id);
+  renderIndicatorChips();
+  renderIndicatorList();
+}
+
+function updateIndicators(candles) {
+  if (!S.activeIndicators.size) return;
+  S.activeIndicators.forEach(id => {
+    const series = S.indicatorSeries.get(id);
+    if (!series) return;
+    try {
+      if (id === "ma") { series[0].setData(calcMA(candles, 7)); series[1].setData(calcMA(candles, 25)); }
+      else if (id === "ema") { series[0].setData(calcEMA(candles, 12)); series[1].setData(calcEMA(candles, 26)); }
+      else if (id === "bb") { const bb = calcBB(candles, 20, 2); series[0].setData(bb.upper); series[1].setData(bb.middle); series[2].setData(bb.lower); }
+      else if (id === "vwap") series[0].setData(calcVWAP(candles));
+      else if (id === "rsi") series[0].setData(calcRSI(candles, 14));
+      else if (id === "macd") { const m = calcMACD(candles); series[0].setData(m.macd); series[1].setData(m.signal); }
+      else if (id === "stoch") { const st = calcStoch(candles); series[0].setData(st.k); series[1].setData(st.d); }
+    } catch (e) {}
+  });
+}
+
+// Kalkulasi indikator
+function calcMA(candles, period) {
+  const out = [];
+  for (let i = period - 1; i < candles.length; i++) {
+    let sum = 0;
+    for (let j = 0; j < period; j++) sum += candles[i - j].close;
+    out.push({ time: candles[i].time, value: +(sum / period).toFixed(2) });
+  }
+  return out;
+}
+function calcEMA(candles, period) {
+  const out = []; const k = 2 / (period + 1);
+  let ema = candles[0]?.close || 0;
+  for (let i = 0; i < candles.length; i++) {
+    const c = candles[i].close;
+    ema = i === 0 ? c : c * k + ema * (1 - k);
+    out.push({ time: candles[i].time, value: +ema.toFixed(2) });
+  }
+  return out;
+}
+function calcBB(candles, period = 20, mult = 2) {
+  const upper = [], middle = [], lower = [];
+  for (let i = period - 1; i < candles.length; i++) {
+    let sum = 0;
+    for (let j = 0; j < period; j++) sum += candles[i - j].close;
+    const ma = sum / period;
+    let variance = 0;
+    for (let j = 0; j < period; j++) variance += Math.pow(candles[i - j].close - ma, 2);
+    const sd = Math.sqrt(variance / period);
+    const t = candles[i].time;
+    middle.push({ time: t, value: +ma.toFixed(2) });
+    upper.push({ time: t, value: +(ma + mult * sd).toFixed(2) });
+    lower.push({ time: t, value: +(ma - mult * sd).toFixed(2) });
+  }
+  return { upper, middle, lower };
+}
+function calcVWAP(candles) {
+  const out = []; let cumPV = 0, cumV = 0;
+  for (const c of candles) {
+    const tp = (c.high + c.low + c.close) / 3;
+    cumPV += tp * (c.volume || 1); cumV += (c.volume || 1);
+    out.push({ time: c.time, value: +(cumPV / cumV).toFixed(2) });
+  }
+  return out;
+}
+function calcRSI(candles, period = 14) {
+  const out = []; let gains = 0, losses = 0;
+  for (let i = 1; i < candles.length; i++) {
+    const diff = candles[i].close - candles[i - 1].close;
+    const gain = diff > 0 ? diff : 0, loss = diff < 0 ? -diff : 0;
+    if (i <= period) { gains += gain; losses += loss; if (i === period) { gains /= period; losses /= period; } }
+    else { gains = (gains * (period - 1) + gain) / period; losses = (losses * (period - 1) + loss) / period; }
+    if (i >= period) {
+      const rs = losses === 0 ? 100 : gains / losses;
+      const rsi = 100 - (100 / (1 + rs));
+      out.push({ time: candles[i].time, value: +rsi.toFixed(2) });
+    }
+  }
+  return out;
+}
+function calcMACD(candles) {
+  const ema12 = calcEMA(candles, 12), ema26 = calcEMA(candles, 26);
+  const macd = []; const start = ema26.length - ema12.length;
+  for (let i = 0; i < ema12.length; i++) {
+    const idx26 = i + start;
+    if (idx26 < 0 || idx26 >= ema26.length) continue;
+    macd.push({ time: ema12[i].time, value: +(ema12[i].value - ema26[idx26].value).toFixed(2) });
+  }
+  // Signal = EMA(9) of MACD
+  const signal = []; const k = 2 / (9 + 1);
+  let ema = macd[0]?.value || 0;
+  for (let i = 0; i < macd.length; i++) {
+    ema = i === 0 ? macd[i].value : macd[i].value * k + ema * (1 - k);
+    signal.push({ time: macd[i].time, value: +ema.toFixed(2) });
+  }
+  return { macd, signal };
+}
+function calcStoch(candles, kPeriod = 14, dPeriod = 3) {
+  const k = [];
+  for (let i = kPeriod - 1; i < candles.length; i++) {
+    let hh = -Infinity, ll = Infinity;
+    for (let j = 0; j < kPeriod; j++) {
+      hh = Math.max(hh, candles[i - j].high);
+      ll = Math.min(ll, candles[i - j].low);
+    }
+    const denom = hh - ll;
+    const kv = denom === 0 ? 50 : ((candles[i].close - ll) / denom) * 100;
+    k.push({ time: candles[i].time, value: +kv.toFixed(2) });
+  }
+  const d = [];
+  for (let i = dPeriod - 1; i < k.length; i++) {
+    let sum = 0;
+    for (let j = 0; j < dPeriod; j++) sum += k[i - j].value;
+    d.push({ time: k[i].time, value: +(sum / dPeriod).toFixed(2) });
+  }
+  return { k, d };
+}
+
+function renderIndicatorChips() {
+  const wrap = $("indActiveChips");
+  if (!wrap) return;
+  if (!S.activeIndicators.size) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = Array.from(S.activeIndicators).map(id => {
+    const name = INDICATORS.find(x => x.id === id)?.name || id;
+    return `<span class="ind-chip">${name}<button data-remove="${id}" title="Hapus">×</button></span>`;
+  }).join('');
+  wrap.querySelectorAll('[data-remove]').forEach(btn => {
+    btn.addEventListener('click', () => removeIndicator(btn.dataset.remove));
+  });
+}
+
+function renderIndicatorList(filter = "") {
+  const list = $("indList");
+  if (!list) return;
+  const f = filter.toLowerCase().trim();
+  const items = INDICATORS.filter(i => !f || i.name.toLowerCase().includes(f) || i.desc.toLowerCase().includes(f));
+  if (!items.length) { list.innerHTML = '<div class="empty">Tidak ada indikator yang cocok.</div>'; return; }
+  list.innerHTML = items.map(i => {
+    const on = S.activeIndicators.has(i.id);
+    return `<div class="ind-row" data-id="${i.id}">
+      <div style="flex:1">
+        <div class="ind-row-title">${i.name}</div>
+        <div class="ind-row-desc">${i.desc}</div>
+      </div>
+      <div class="ind-check ${on ? "on" : ""}"><i data-lucide="check"></i></div>
+    </div>`;
+  }).join('');
+  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+  list.querySelectorAll('.ind-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const id = row.dataset.id;
+      if (S.activeIndicators.has(id)) removeIndicator(id);
+      else addIndicator(id);
+    });
+  });
+}
+
+function renderDrawingCategories() {
+  const wrap = $("drawingCategories");
+  if (!wrap) return;
+  wrap.innerHTML = DRAWING_CATEGORIES.map(cat => `
+    <div class="tool-cat">${cat.name}</div>
+    <div class="tool-grid">
+      ${cat.tools.map(t => `
+        <button class="tool-item" data-tool="${t.id}">
+          <i data-lucide="${t.icon}"></i>
+          <span>${t.name}</span>
+        </button>
+      `).join('')}
+    </div>
+  `).join('');
+  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+  wrap.querySelectorAll('.tool-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const toolId = el.dataset.tool;
+      const supported = ["trendline", "hline", "vline", "ray", "extended", "rect", "circle", "fib-ret", "fib-ext", "measure", "text", "arrow"];
+      if (!supported.includes(toolId)) {
+        toast("Alat '" + el.querySelector('span').textContent + "' belum tersedia. Fitur UI siap, fungsionalitas akan datang.", "info", 4500);
+        return;
       }
+      setActiveTool(toolId);
+      closeModal("modalDrawing");
+      toast("Alat aktif: " + el.querySelector('span').textContent + ". Tap pada chart untuk mulai.", "info", 3500);
+    });
+  });
+}
 
-      var clockDisplay = document.getElementById('clockDisplay');
-      function tickClock() {
-        if (!clockDisplay) return;
-        var d = new Date();
-        clockDisplay.textContent =
-          String(d.getHours()).padStart(2, '0') + ':' +
-          String(d.getMinutes()).padStart(2, '0') + ':' +
-          String(d.getSeconds()).padStart(2, '0');
-      }
-      tickClock();
-      setInterval(tickClock, 1000);
+// ==================== SL/TP ====================
+function openSLTP() {
+  if (!requireLogin("trade", openSLTP)) return;
+  const cur = S.history.length ? S.history[S.history.length - 1].price : S.settings.currentPrice;
+  $("sltpCurrentPrice").textContent = fmt(cur, 2);
+  $("sltpSL").value = S.stopLoss || "";
+  $("sltpTP").value = S.takeProfit || "";
+  updateSLTPHints();
+  const st = (S.stopLoss || S.takeProfit) ? "Aktif" : "Tidak aktif";
+  $("sltpStatus").textContent = st;
+  $("sltpStatus").className = "pill " + ((S.stopLoss || S.takeProfit) ? "up" : "gray");
+  openModal("modalSLTP");
+}
 
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') {
-          if (navbarLinks) navbarLinks.classList.remove('open');
-          if (typeof window.closeAdminPanel === 'function') window.closeAdminPanel();
-        }
+function updateSLTPHints() {
+  const cur = S.history.length ? S.history[S.history.length - 1].price : S.settings.currentPrice;
+  const sl = num($("sltpSL").value, 0), tp = num($("sltpTP").value, 0);
+  if (sl > 0) {
+    const pct = cur !== 0 ? ((sl - cur) / cur) * 100 : 0;
+    $("sltpHintSL").textContent = (pct >= 0 ? "+" : "") + fmt(pct, 2) + "% dari harga';
+  } else $("sltpHintSL").textContent = "Belum diisi";
+  if (tp > 0) {
+    const pct = cur !== 0 ? ((tp - cur) / cur) * 100 : 0;
+    $("sltpHintTP").textContent = (pct >= 0 ? "+" : "") + fmt(pct, 2) + "% dari harga";
+  } else $("sltpHintTP").textContent = "Belum diisi";
+}
+
+function saveSLTP() {
+  const sl = num($("sltpSL").value, 0), tp = num($("sltpTP").value, 0);
+  const cur = S.history.length ? S.history[S.history.length - 1].price : S.settings.currentPrice;
+  if (sl > 0 && sl >= cur) return toast("Stop Loss harus di bawah harga saat ini", "warning");
+  if (tp > 0 && tp <= cur) return toast("Take Profit harus di atas harga saat ini", "warning");
+  S.stopLoss = sl > 0 ? sl : null;
+  S.takeProfit = tp > 0 ? tp : null;
+  closeModal("modalSLTP");
+  redrawAll();
+  toast((S.stopLoss || S.takeProfit) ? "Stop Loss & Take Profit disimpan" : "SL/TP dihapus", "success");
+}
+
+function clearSLTP() {
+  S.stopLoss = null; S.takeProfit = null;
+  $("sltpSL").value = ""; $("sltpTP").value = "";
+  redrawAll();
+  closeModal("modalSLTP");
+  toast("Stop Loss & Take Profit dihapus", "info");
+}
+
+// Cek SL/TP saat harga update
+function checkSLTP(price) {
+  if (!S.user) return;
+  if (S.stopLoss && price <= S.stopLoss) {
+    toast(`🛑 STOP LOSS tersentuh di ${fmt(S.stopLoss)}!`, "error", 8000);
+    S.stopLoss = null;
+    redrawAll();
+  }
+  if (S.takeProfit && price >= S.takeProfit) {
+    toast(`🎯 TAKE PROFIT tercapai di ${fmt(S.takeProfit)}!`, "success", 8000);
+    S.takeProfit = null;
+    redrawAll();
+  }
+}
+
+// ==================== PRICE & USER RENDER ====================
+function renderPriceUI() {
+  const s = S.settings, hist = S.history;
+  $("dashAssetName").textContent = s.assetName || "CAZO CARD";
+  $("dashAssetSymbol").textContent = s.symbol || "CAZO";
+  const price = hist.length > 0 ? hist[hist.length - 1].price : s.currentPrice;
+  const priceEl = $("dashPrice");
+  priceEl.textContent = fmt(price);
+
+  let change = 0, pct = 0;
+  if (hist.length >= 2) {
+    const last = hist[hist.length - 1], prev = hist[hist.length - 2];
+    change = last.price - prev.price;
+    pct = prev.price !== 0 ? (change / prev.price) * 100 : 0;
+  }
+  const isUp = change >= 0;
+  priceEl.className = "chart-price " + (isUp ? "up" : "down");
+  $("dashChange").textContent = (isUp ? "+" : "") + fmt(change);
+  $("dashChange").className = "chart-change-val " + (isUp ? "up" : "down");
+  $("dashChangePct").textContent = (isUp ? "+" : "") + fmt(pct) + "%";
+  $("dashChangeBadge").className = "chart-badge " + (isUp ? "up" : "down");
+  const icon = $("dashChangeBadge").querySelector("i");
+  if (icon) icon.setAttribute("data-lucide", isUp ? "trending-up" : "trending-down");
+
+  // Harga tertinggi/terendah (dipindah ke stats slider)
+  let high = -Infinity, low = Infinity, highTs = null, lowTs = null;
+  hist.forEach(h => {
+    if (h.price > high) { high = h.price; highTs = h.timestamp; }
+    if (h.price < low) { low = h.price; lowTs = h.timestamp; }
+  });
+  $("dashHigh").textContent = hist.length ? fmt(high) : "—";
+  $("dashHighTime").textContent = hist.length ? fmtTime(highTs) : "—";
+  $("dashLow").textContent = hist.length ? fmt(low) : "—";
+  $("dashLowTime").textContent = hist.length ? fmtTime(lowTs) : "—";
+  const lastTs = hist.length ? hist[hist.length - 1].timestamp : null;
+  $("dashUpdate").textContent = lastTs ? ago(lastTs) : "—";
+
+  $("tradePrice").value = price.toFixed(2);
+  updateTradeTotal();
+  renderMarketList();
+  checkSLTP(price);
+
+  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+}
+
+function renderMarketList() {
+  const list = $("marketList"); if (!list) return;
+  const s = S.settings, hist = S.history;
+  const last = hist.length ? hist[hist.length - 1].price : s.currentPrice;
+  const prev = hist.length >= 2 ? hist[hist.length - 2].price : last;
+  const chg = last - prev, pct = prev !== 0 ? (chg / prev) * 100 : 0, up = chg >= 0;
+  list.innerHTML = `<div class="market-item">
+    <img src="${ASSET_ICON}" alt="CAZO" />
+    <div class="market-info"><div class="market-name">${s.assetName || "CAZO CARD"}</div><div class="market-symbol">${s.symbol || "CAZO"}</div></div>
+    <div class="market-price">
+      <div class="market-price-val">${fmt(last)}</div>
+      <div class="market-price-chg ${up ? "up" : "down"}">${up ? "+" : ""}${fmt(pct)}%</div>
+    </div>
+  </div>`;
+}
+
+function calcPortfolioValue() {
+  const price = S.history.length ? S.history[S.history.length - 1].price : S.settings.currentPrice;
+  let total = 0, cost = 0;
+  for (const id in S.portfolio) {
+    const p = S.portfolio[id];
+    total += p.qty * price; cost += p.qty * p.avgPrice;
+  }
+  return { value: total, cost, pl: total - cost, plPct: cost > 0 ? ((total - cost) / cost) * 100 : 0 };
+}
+
+function renderUserUI() {
+  const u = S.user;
+  if (u) {
+    const name = u.displayName || u.email?.split("@")[0] || "Trader";
+    $("greeting").textContent = "Halo, " + name;
+    $("userName").textContent = name;
+    if (u.photoURL) $("userAvatar").src = u.photoURL;
+    $("settingsAvatar").src = u.photoURL || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+    $("settingsName").textContent = name;
+    $("settingsEmail").textContent = u.email || "—";
+    $("settingsUid").textContent = (u.uid || "").slice(0, 16) + "…";
+    $("loginStatus").textContent = "Login";
+    $("loginStatus").className = "pill up";
+  } else {
+    $("greeting").textContent = "Pantau grafik & trading CAZO";
+    $("userName").textContent = "Masuk";
+    $("userAvatar").src = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+    $("settingsAvatar").src = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+    $("settingsName").textContent = "—";
+    $("settingsEmail").textContent = "—";
+    $("settingsUid").textContent = "—";
+    $("loginStatus").textContent = "Belum login";
+    $("loginStatus").className = "pill gray";
+  }
+
+  const pv = calcPortfolioValue();
+  const bal = S.balance || 0;
+
+  $("dashBalance").textContent = S.user ? fmtIDR(bal) : "Login dulu";
+  $("dashPortfolio").textContent = S.user ? fmtIDR(pv.value) : "—";
+  $("dashEquity").textContent = S.user ? fmtIDR(bal + pv.value) : "—";
+  const plEl = $("dashPL");
+  if (S.user) {
+    plEl.textContent = (pv.pl >= 0 ? "+" : "") + fmtIDR(pv.pl);
+    plEl.className = "stat-mini-val " + (pv.pl >= 0 ? "up" : "down");
+    $("dashPLPct").textContent = (pv.plPct >= 0 ? "+" : "") + fmt(pv.plPct) + "%";
+  } else {
+    plEl.textContent = "—";
+    plEl.className = "stat-mini-val";
+    $("dashPLPct").textContent = "—";
+  }
+  $("quickBalance").textContent = S.user ? fmtIDR(bal) : "—";
+
+  $("pfBalance").textContent = S.user ? fmtIDR(bal) : "—";
+  $("pfValue").textContent = S.user ? fmtIDR(pv.value) : "—";
+  $("pfEquity").textContent = S.user ? fmtIDR(bal + pv.value) : "—";
+  const pfPL = $("pfPL");
+  if (S.user) {
+    pfPL.textContent = (pv.pl >= 0 ? "+" : "") + fmtIDR(pv.pl);
+    pfPL.className = "stat-mini-val " + (pv.pl >= 0 ? "up" : "down");
+  } else {
+    pfPL.textContent = "—";
+    pfPL.className = "stat-mini-val";
+  }
+
+  const holdings = $("holdingsList");
+  const ids = Object.keys(S.portfolio).filter(id => S.portfolio[id].qty > 0);
+  if (!S.user) holdings.innerHTML = '<div class="empty">Login untuk melihat portfolio Anda.</div>';
+  else if (!ids.length) holdings.innerHTML = '<div class="empty">Belum ada aset.</div>';
+  else {
+    const price = S.history.length ? S.history[S.history.length - 1].price : S.settings.currentPrice;
+    holdings.innerHTML = ids.map(id => {
+      const p = S.portfolio[id];
+      const val = p.qty * price;
+      const pl = val - p.qty * p.avgPrice;
+      const plPct = p.avgPrice > 0 ? (pl / (p.qty * p.avgPrice)) * 100 : 0;
+      const up = pl >= 0;
+      return `<div class="holding">
+        <img src="${ASSET_ICON}" alt="asset" />
+        <div class="holding-info">
+          <div class="holding-name">${S.settings.assetName || "CAZO CARD"}</div>
+          <div class="holding-qty">${p.qty} unit • avg ${fmt(p.avgPrice)}</div>
+        </div>
+        <div class="holding-val">
+          <div class="holding-val-main">${fmtIDR(val)}</div>
+          <div class="holding-val-pl ${up ? "up" : "down"}">${up ? "+" : ""}${fmt(plPct)}%</div>
+        </div>
+      </div>`;
+    }).join("");
+  }
+}
+
+// ==================== HISTORY ====================
+function renderHistoryTab() {
+  const wrap = $("historyContent"); if (!wrap) return;
+  if (!S.user) { wrap.innerHTML = '<div class="empty">Login untuk melihat riwayat Anda.</div>'; return; }
+  if (S.histTab === "price") renderPriceHistory(wrap);
+  else if (S.histTab === "deposit") renderDepositHistory(wrap);
+  else renderTransactionHistory(wrap);
+}
+
+function renderTransactionHistory(wrap) {
+  const list = S.transactions.slice().reverse().slice(0, 50);
+  if (!list.length) { wrap.innerHTML = '<div class="empty">Belum ada transaksi.</div>'; return; }
+  wrap.innerHTML = '<div class="hist-list">' + list.map(t => {
+    const isBuy = t.type === "buy";
+    return `<div class="hist-item">
+      <div class="hist-icon ${isBuy ? "buy" : "sell"}"><i data-lucide="${isBuy ? "arrow-down-left" : "arrow-up-right"}"></i></div>
+      <div class="hist-main">
+        <div class="hist-title">${isBuy ? "Beli" : "Jual"} ${t.qty} ${S.settings.symbol || "CAZO"}</div>
+        <div class="hist-time">${fmtTime(t.timestamp)} • ${ago(t.timestamp)}</div>
+      </div>
+      <div class="hist-amount ${isBuy ? "down" : "up"}">${isBuy ? "-" : "+"}${fmtIDR(t.total)}<div style="font-size:11px;color:var(--txt-3);font-weight:500">@${fmt(t.price)}</div></div>
+    </div>`;
+  }).join("") + '</div>';
+  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+}
+
+function renderPriceHistory(wrap) {
+  const list = S.history.slice().reverse().slice(0, 50);
+  if (!list.length) { wrap.innerHTML = '<div class="empty">Belum ada riwayat harga.</div>'; return; }
+  wrap.innerHTML = '<div class="hist-list">' + list.map((h, i) => {
+    const idx = S.history.length - 1 - i;
+    const prev = idx > 0 ? S.history[idx - 1].price : h.price;
+    const chg = h.price - prev;
+    const pct = prev !== 0 ? (chg / prev) * 100 : 0;
+    const up = chg >= 0;
+    return `<div class="hist-item">
+      <div class="hist-icon ${up ? "buy" : "sell"}"><i data-lucide="${up ? "trending-up" : "trending-down"}"></i></div>
+      <div class="hist-main">
+        <div class="hist-title">${fmt(prev)} → ${fmt(h.price)}</div>
+        <div class="hist-time">${fmtTime(h.timestamp)} • ${ago(h.timestamp)}</div>
+      </div>
+      <div class="hist-amount ${up ? "up" : "down"}">${up ? "+" : ""}${fmt(chg)}<div style="font-size:11px">${up ? "+" : ""}${fmt(pct)}%</div></div>
+    </div>`;
+  }).join("") + '</div>';
+  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+}
+
+function renderDepositHistory(wrap) {
+  const list = S.deposits.slice().reverse().slice(0, 30);
+  const pending = list.filter(d => d.status === "pending").length;
+  let html = '';
+  if (pending > 0) html += `<div style="padding:12px 14px;background:var(--warn-2);border:1px solid #FDE68A;border-radius:12px;font-size:12.5px;color:#92400E;margin-bottom:12px"><i data-lucide="alert-triangle" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px"></i>${pending} pengajuan deposit menunggu konfirmasi admin.</div>`;
+  if (!list.length) { wrap.innerHTML = html + '<div class="empty">Belum ada pengajuan deposit.</div>'; if (window.lucide) try { lucide.createIcons(); } catch (e) {} return; }
+  const statusMap = { pending: { cls: "warn", txt: "Menunggu" }, approved: { cls: "up", txt: "Disetujui" }, rejected: { cls: "down", txt: "Ditolak" } };
+  html += '<div class="hist-list">' + list.map(d => {
+    const st = statusMap[d.status] || statusMap.pending;
+    return `<div class="hist-item">
+      <div class="hist-icon dep"><i data-lucide="wallet"></i></div>
+      <div class="hist-main">
+        <div class="hist-title">${fmtIDR(d.amount)}</div>
+        <div class="hist-time">${fmtTime(d.timestamp)} • <span class="pill ${st.cls}" style="padding:1px 6px;font-size:10px">${st.txt}</span></div>
+      </div>
+      <div class="hist-amount">${d.sender || "—"}</div>
+    </div>`;
+  }).join("") + '</div>';
+  wrap.innerHTML = html;
+  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+}
+
+// ==================== FIREBASE ====================
+async function initFirebase() {
+  S.app = initializeApp(FIREBASE_CONFIG);
+  S.db = getDatabase(S.app);
+  S.auth = getAuth(S.app);
+
+  onValue(ref(S.db, ".info/connected"), (snap) => {
+    S.online = snap.val() === true;
+    updateConnPill();
+  });
+
+  onAuthStateChanged(S.auth, async (user) => {
+    const wasLoggedOut = !S.user;
+    S.user = user;
+    if (user) {
+      S.isAdmin = ADMIN_EMAILS.map(e => e.toLowerCase()).includes((user.email || "").toLowerCase());
+      closeModal("modalLogin");
+      await ensureUserProfile(user);
+      subscribeUserData(user.uid);
+      renderUserUI();
+      toast("Berhasil masuk sebagai " + (user.displayName || user.email), "success");
+      const action = S.pendingAction; S.pendingAction = null;
+      if (typeof action === "function") setTimeout(action, 500);
+    } else {
+      S.balance = 0; S.portfolio = {}; S.transactions = []; S.deposits = [];
+      S.unsubsUser.forEach(fn => { try { fn(); } catch (e) {} });
+      S.unsubsUser = [];
+      renderUserUI();
+      renderHistoryTab();
+      renderDepositHistory($("depositHistory"));
+      if (!wasLoggedOut) toast("Anda telah keluar", "info");
+    }
+    if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+  });
+
+  subscribePublicData();
+  S.ready = true;
+}
+
+async function ensureUserProfile(user) {
+  const uref = ref(S.db, "cazo/users/" + user.uid);
+  try {
+    const snap = await get(uref);
+    if (!snap.exists()) {
+      await set(uref, {
+        displayName: user.displayName || "Trader", email: user.email || "",
+        photoURL: user.photoURL || "", balance: DEFAULT_BALANCE,
+        createdAt: Date.now(), updatedAt: Date.now()
       });
-
-      if (window.lucide) { try { window.lucide.createIcons(); } catch (e) {} }
-    })();
-  </script>
-
-  <!-- ============================================================
-       SCRIPT MODULE — Firebase + Lightweight Charts
-       ============================================================ -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAnalytics, isSupported as analyticsSupported } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
-    import {
-      getDatabase, ref, onValue, push, update, set, get, query,
-      orderByChild, limitToLast, serverTimestamp, remove
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-    import {
-      getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-    // ============ KONFIGURASI ============
-    const firebaseConfig = {
-      apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
-      authDomain: "mygame-68b24.firebaseapp.com",
-      databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
-      projectId: "mygame-68b24",
-      storageBucket: "mygame-68b24.firebasestorage.app",
-      messagingSenderId: "1003182873390",
-      appId: "1:1003182873390:web:aabf3248f759cbc9d678bf",
-      measurementId: "G-4C0MYZ19YW"
-    };
-
-    const ADMIN_EMAILS = ["admin@cazo.app", "cazo.admin@gmail.com"];
-
-    const DEFAULT_SETTINGS = {
-      assetName: "CAZO CARD",
-      symbol: "CAZO",
-      currentPrice: 1250,
-      previousPrice: 1220,
-      highestPrice: 1280,
-      lowestPrice: 1180,
-      chartColor: "#16A34A",
-      updateInterval: 5,
-      movementMode: "manual",
-      isRunning: false,
-      maxPoints: 100,
-      updatedAt: null
-    };
-
-    const DEFAULT_HISTORY = [
-      { price: 1180, change: 0, changePercent: 0, timestamp: Date.now() - 86400000 * 6 },
-      { price: 1195, change: 15, changePercent: 1.27, timestamp: Date.now() - 86400000 * 5 },
-      { price: 1210, change: 15, changePercent: 1.26, timestamp: Date.now() - 86400000 * 4 },
-      { price: 1205, change: -5, changePercent: -0.41, timestamp: Date.now() - 86400000 * 3 },
-      { price: 1230, change: 25, changePercent: 2.07, timestamp: Date.now() - 86400000 * 2 },
-      { price: 1220, change: -10, changePercent: -0.81, timestamp: Date.now() - 86400000 },
-      { price: 1250, change: 30, changePercent: 2.46, timestamp: Date.now() }
-    ];
-
-    // ============ STATE ============
-    const state = {
-      app: null, db: null, auth: null,
-      currentUser: null, isAdmin: false,
-      firebaseReady: false, connected: false,
-      settings: { ...DEFAULT_SETTINGS },
-      history: [],
-      activeRange: "7d",
-      lwChart: null,
-      candleSeries: null,
-      resizeObserver: null,
-      movementTimer: null,
-      movementRunning: false,
-      movementTarget: null,
-      manualPoints: [],
-      manualIndex: 0,
-      publicUnsubscribe: null,
-      historyUnsubscribe: null,
-      _lastChartKey: "",
-      _lastHistoryKey: ""
-    };
-
-    // ============ UTIL ============
-    const $ = (id) => document.getElementById(id);
-
-    function formatNumber(n, decimals = 2) {
-      if (n === null || n === undefined || isNaN(n)) return "—";
-      return Number(n).toLocaleString("id-ID", {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals
-      });
+      toast(`Selamat datang! Saldo awal ${fmtIDR(DEFAULT_BALANCE)} diberikan.`, "success", 5000);
+    } else {
+      await update(uref, { displayName: user.displayName || "Trader", photoURL: user.photoURL || "", updatedAt: Date.now() });
     }
-    function formatDateTime(ts) {
-      if (!ts) return "—";
-      const d = new Date(ts);
-      return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short" }) + " " +
-             d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+  } catch (err) { console.error("ensureUserProfile:", err); }
+}
+
+function subscribeUserData(uid) {
+  S.unsubsUser.forEach(fn => { try { fn(); } catch (e) {} }); S.unsubsUser = [];
+  const uref = ref(S.db, "cazo/users/" + uid);
+  const u1 = onValue(uref, (snap) => {
+    if (snap.exists()) { const v = snap.val(); S.balance = num(v.balance, 0); S.portfolio = v.portfolio || {}; renderUserUI(); }
+  });
+  S.unsubsUser.push(() => u1());
+  const tref = query(ref(S.db, `cazo/users/${uid}/transactions`), orderByChild("timestamp"), limitToLast(100));
+  const u2 = onValue(tref, (snap) => { const arr = []; snap.forEach(c => arr.push({ key: c.key, ...c.val() })); arr.sort((a, b) => a.timestamp - b.timestamp); S.transactions = arr; if (S.histTab === "tx") renderHistoryTab(); });
+  S.unsubsUser.push(() => u2());
+  const dref = query(ref(S.db, `cazo/users/${uid}/deposits`), orderByChild("timestamp"), limitToLast(50));
+  const u3 = onValue(dref, (snap) => { const arr = []; snap.forEach(c => arr.push({ key: c.key, ...c.val() })); arr.sort((a, b) => a.timestamp - b.timestamp); S.deposits = arr; if (S.histTab === "deposit") renderHistoryTab(); renderDepositHistory($("depositHistory")); });
+  S.unsubsUser.push(() => u3());
+}
+
+function subscribePublicData() {
+  const sref = ref(S.db, "cazo/settings");
+  const u1 = onValue(sref, (snap) => { if (snap.exists()) { S.settings = { ...DEFAULT_SETTINGS, ...snap.val() }; renderPriceUI(); updateChart(); } });
+  S.unsubs.push(() => u1());
+  const href = query(ref(S.db, "cazo/history"), orderByChild("timestamp"), limitToLast(300));
+  const u2 = onValue(href, (snap) => {
+    const arr = [];
+    snap.forEach(c => { const v = c.val(); if (v && typeof v.price === "number") arr.push({ key: c.key, price: v.price, change: num(v.change, 0), changePercent: num(v.changePercent, 0), timestamp: num(v.timestamp, Date.now()) }); });
+    arr.sort((a, b) => a.timestamp - b.timestamp);
+    S.history = arr; S._lastChartKey = "";
+    renderPriceUI(); updateChart(); renderUserUI();
+    if (S.histTab === "price") renderHistoryTab();
+  });
+  S.unsubs.push(() => u2());
+}
+
+function updateConnPill() {
+  const pill = $("connPill"); if (!pill) return;
+  if (S.online) { pill.className = "conn-pill on"; $("connText").textContent = "Online"; }
+  else { pill.className = "conn-pill off"; $("connText").textContent = "Offline"; }
+}
+
+// ==================== TRADING ====================
+function updateTradeTotal() {
+  const qty = num($("tradeQty").value, 0);
+  const price = num($("tradePrice").value, 0);
+  $("tradeTotal").value = (qty * price).toFixed(2);
+}
+
+async function doTrade(side) {
+  if (!requireLogin("trade", () => doTrade(side))) return;
+  const qty = num($("tradeQty").value, 0);
+  const price = num($("tradePrice").value, 0);
+  if (qty <= 0) return toast("Jumlah harus > 0", "error");
+  if (price <= 0) return toast("Harga tidak valid", "error");
+  const total = qty * price;
+  const uid = S.user.uid;
+  try {
+    if (side === "buy") {
+      if (S.balance < total) return toast("Saldo tidak cukup.", "error", 5000);
+      await runTransaction(ref(S.db, `cazo/users/${uid}/balance`), (bal) => { bal = num(bal, 0); if (bal < total) return; return bal - total; });
+      const pref = ref(S.db, `cazo/users/${uid}/portfolio/CAZO`);
+      const snap = await get(pref);
+      const cur = snap.val() || { qty: 0, avgPrice: 0 };
+      const newQty = cur.qty + qty;
+      const newAvg = (cur.qty * cur.avgPrice + qty * price) / newQty;
+      await set(pref, { qty: newQty, avgPrice: newAvg, updatedAt: Date.now() });
+      await push(ref(S.db, `cazo/users/${uid}/transactions`), { type: "buy", qty, price, total, timestamp: Date.now() });
+      toast(`Beli ${qty} ${S.settings.symbol || "CAZO"} berhasil!`, "success");
+    } else {
+      const pref = ref(S.db, `cazo/users/${uid}/portfolio/CAZO`);
+      const snap = await get(pref);
+      const cur = snap.val() || { qty: 0, avgPrice: 0 };
+      if (cur.qty < qty) return toast("Unit tidak cukup", "error");
+      const newQty = cur.qty - qty;
+      if (newQty <= 0) await remove(pref);
+      else await set(pref, { qty: newQty, avgPrice: cur.avgPrice, updatedAt: Date.now() });
+      await runTransaction(ref(S.db, `cazo/users/${uid}/balance`), (bal) => num(bal, 0) + total);
+      await push(ref(S.db, `cazo/users/${uid}/transactions`), { type: "sell", qty, price, total, timestamp: Date.now() });
+      toast(`Jual ${qty} ${S.settings.symbol || "CAZO"} berhasil!`, "success");
     }
-    function timeAgo(ts) {
-      if (!ts) return "—";
-      const diff = Date.now() - ts;
-      const sec = Math.floor(diff / 1000);
-      if (sec < 5) return "baru saja";
-      if (sec < 60) return sec + " detik lalu";
-      const min = Math.floor(sec / 60);
-      if (min < 60) return min + " menit lalu";
-      const hr = Math.floor(min / 60);
-      if (hr < 24) return hr + " jam lalu";
-      return Math.floor(hr / 24) + " hari lalu";
-    }
-    function safeNum(v, fb = 0) { const n = Number(v); return isNaN(n) ? fb : n; }
-    function validatePrice(value, label = "Harga") {
-      const n = Number(value);
-      if (isNaN(n) || n <= 0) { showNotification(label + " harus angka positif.", "error"); return null; }
-      if (n > 1e12) { showNotification(label + " terlalu besar.", "error"); return null; }
-      return n;
-    }
-    function showNotification(message, type = "info", duration = 4000) {
-      const container = $("toastContainer");
-      if (!container) return;
-      const icons = { success: "check-circle", error: "alert-circle", warning: "alert-triangle", info: "info" };
-      const toast = document.createElement("div");
-      toast.className = "toast " + type;
-      toast.innerHTML =
-        '<i data-lucide="' + (icons[type] || icons.info) + '"></i>' +
-        '<span></span>' +
-        '<button class="toast-close" type="button"><i data-lucide="x" style="width:14px;height:14px;"></i></button>';
-      toast.querySelector("span").textContent = message;
-      toast.querySelector(".toast-close").addEventListener("click", () => toast.remove());
-      container.appendChild(toast);
-      if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
-      setTimeout(() => {
-        toast.classList.add("removing");
-        setTimeout(() => toast.remove(), 250);
-      }, duration);
-    }
-    window.showNotification = showNotification;
+  } catch (err) { console.error(err); toast("Transaksi gagal: " + err.message, "error", 5000); }
+}
 
-    // ============ FIREBASE ============
-    async function initFirebase() {
-      try {
-        state.app = initializeApp(firebaseConfig);
-        state.db = getDatabase(state.app);
+async function submitDeposit() {
+  if (!requireLogin("deposit", submitDeposit)) return;
+  const amount = num($("depAmount").value, 0);
+  const sender = $("depSender").value.trim();
+  const note = $("depNote").value.trim();
+  if (amount < 10000) return toast("Minimal deposit Rp 10.000", "error");
+  if (!sender) return toast("Isi nama pengirim", "error");
+  const uid = S.user.uid;
+  try {
+    await push(ref(S.db, `cazo/users/${uid}/deposits`), { amount, sender, note, status: "pending", timestamp: Date.now() });
+    await push(ref(S.db, "cazo/depositQueue"), { uid, email: S.user.email, amount, sender, note, status: "pending", timestamp: Date.now() });
+    $("depAmount").value = ""; $("depSender").value = ""; $("depNote").value = "";
+    toast("Pengajuan deposit terkirim.", "success", 5000);
+  } catch (err) { console.error(err); toast("Gagal: " + err.message, "error"); }
+}
 
-        try {
-          const supported = await analyticsSupported();
-          if (supported) getAnalytics(state.app);
-        } catch (e) {}
+async function doGoogleLogin(btn) {
+  const orig = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></span> Menghubungkan...';
+  try {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+    await signInWithPopup(S.auth, provider);
+  } catch (err) {
+    console.error("Login error:", err);
+    let msg = "Gagal login. Coba lagi.";
+    if (err.code === "auth/popup-closed-by-user") msg = "Pop-up ditutup.";
+    if (err.code === "auth/popup-blocked") msg = "Pop-up diblokir.";
+    if (err.code === "auth/unauthorized-domain") msg = "Domain belum diizinkan di Firebase Auth.";
+    toast(msg, "error", 6000);
+  } finally {
+    btn.disabled = false; btn.innerHTML = orig;
+    if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+  }
+}
 
-        state.auth = getAuth(state.app);
-        onAuthStateChanged(state.auth, (user) => {
-          state.currentUser = user;
-          if (user) {
-            const email = (user.email || "").toLowerCase();
-            state.isAdmin = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(email);
-            loadAdminSettings();
-          } else {
-            state.isAdmin = false;
-          }
-        });
+// ==================== EVENTS ====================
+function bindEvents() {
+  $("btnGoogleLoginModal").addEventListener("click", function () { doGoogleLogin(this); });
+  $("btnCancelLogin").addEventListener("click", () => { S.pendingAction = null; closeModal("modalLogin"); });
+  $("btnLogout").addEventListener("click", async () => { if (!confirm("Keluar?")) return; try { await signOut(S.auth); toast("Berhasil keluar", "info"); } catch (e) {} });
 
-        const connectedRef = ref(state.db, ".info/connected");
-        onValue(connectedRef, (snap) => {
-          state.connected = snap.val() === true;
-          updateConnectionBadge();
-        });
+  $("userChip").addEventListener("click", () => {
+    if (S.user) CAZO.nav("settings");
+    else requireLogin("profile", () => CAZO.nav("settings"));
+  });
 
-        state.firebaseReady = true;
-        updateConnectionBadge();
-
-        await loadPublicData();
-        subscribeToChartData();
-      } catch (err) {
-        console.error("Firebase init error:", err);
-        state.firebaseReady = false;
-        updateConnectionBadge();
-        setDataSourceText("Gagal terhubung ke Firebase");
-        loadDemoData();
+  document.querySelectorAll(".nav-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      const page = tab.dataset.page;
+      const needsAuth = tab.dataset.auth === "1";
+      if (needsAuth && !S.user) {
+        const reasonMap = { portfolio: "portfolio", deposit: "deposit", history: "history", settings: "profile" };
+        requireLogin(reasonMap[page] || "default", () => activatePage(page));
+        return;
       }
-    }
+      activatePage(page);
+    });
+  });
 
-    function updateConnectionBadge() {
-      const badge = $("connectionBadge");
-      const text = $("connectionText");
-      if (!badge || !text) return;
-      if (state.connected && state.firebaseReady) {
-        badge.className = "connection-badge online";
-        text.textContent = "Online";
-      } else if (state.firebaseReady) {
-        badge.className = "connection-badge offline";
-        text.textContent = "Menghubungkan...";
-      } else {
-        badge.className = "connection-badge offline";
-        text.textContent = "Offline";
-      }
-    }
+  function activatePage(page) {
+    document.querySelectorAll(".nav-tab").forEach(t => t.classList.toggle("active", t.dataset.page === page));
+    document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id === "page-" + page));
+    $("navTabs").classList.remove("open");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (page === "history") renderHistoryTab();
+  }
 
-    function setDataSourceText(txt) {
-      const el = $("dataSourceText");
-      if (el) el.textContent = txt;
-    }
+  $("mobileToggle").addEventListener("click", (e) => { e.stopPropagation(); $("navTabs").classList.toggle("open"); });
 
-    async function loadPublicData() {
-      if (!state.firebaseReady) { loadDemoData(); return; }
-      try {
-        const snap = await get(ref(state.db, "cazo/settings"));
-        if (snap.exists()) {
-          state.settings = { ...DEFAULT_SETTINGS, ...snap.val() };
-        } else {
-          await initializeDatabase();
-          state.settings = { ...DEFAULT_SETTINGS };
-        }
-        setDataSourceText("Terhubung ke Firebase");
-        await loadHistory(200);
-        renderPublicUI();
-        renderHistory();
-        updateStatistics();
-        updateLastUpdated();
-      } catch (err) {
-        console.error("loadPublicData error:", err);
-        setDataSourceText("Gagal memuat data");
-        loadDemoData();
-      }
-    }
-
-    async function initializeDatabase() {
-      const updates = {};
-      updates["cazo/settings"] = { ...DEFAULT_SETTINGS, updatedAt: serverTimestamp() };
-      updates["cazo/public"] = {
-        currentPrice: DEFAULT_SETTINGS.currentPrice,
-        previousPrice: DEFAULT_SETTINGS.previousPrice,
-        movementMode: "manual",
-        isRunning: false,
-        updatedAt: serverTimestamp()
-      };
-      const base = Date.now() - 86400000 * 6;
-      DEFAULT_HISTORY.forEach((h, i) => {
-        updates["cazo/history/" + (base + i * 86400000)] = {
-          price: h.price, change: h.change,
-          changePercent: h.changePercent,
-          timestamp: base + i * 86400000
-        };
-      });
-      await update(ref(state.db), updates);
-    }
-
-    async function loadHistory(limit = 200) {
-      if (!state.firebaseReady) return;
-      try {
-        const q = query(ref(state.db, "cazo/history"), orderByChild("timestamp"), limitToLast(limit));
-        const snap = await get(q);
-        const arr = [];
-        snap.forEach((child) => {
-          const v = child.val();
-          if (v && typeof v.price === "number") {
-            arr.push({
-              key: child.key,
-              price: v.price,
-              change: safeNum(v.change, 0),
-              changePercent: safeNum(v.changePercent, 0),
-              timestamp: safeNum(v.timestamp, Date.now())
-            });
-          }
-        });
-        arr.sort((a, b) => a.timestamp - b.timestamp);
-        state.history = arr;
-      } catch (err) { console.error("loadHistory error:", err); }
-    }
-
-    function loadDemoData() {
-      state.settings = { ...DEFAULT_SETTINGS };
-      state.history = DEFAULT_HISTORY.map((h, i) => ({ key: "local_" + i, ...h }));
-      renderPublicUI();
-      renderHistory();
-      updateStatistics();
-      updateLastUpdated();
-    }
-
-    function subscribeToChartData() {
-      if (!state.firebaseReady) return;
-      if (state.publicUnsubscribe) state.publicUnsubscribe();
-      if (state.historyUnsubscribe) state.historyUnsubscribe();
-
-      state.publicUnsubscribe = onValue(ref(state.db, "cazo/settings"), (snap) => {
-        if (snap.exists()) {
-          const old = state.settings;
-          state.settings = { ...DEFAULT_SETTINGS, ...snap.val() };
-          if (old.currentPrice !== state.settings.currentPrice ||
-              old.updatedAt !== state.settings.updatedAt ||
-              old.assetName !== state.settings.assetName ||
-              old.symbol !== state.settings.symbol) {
-            renderPublicUI();
-            updateStatistics();
-            updateLastUpdated();
-          }
-        }
-      }, (err) => console.error("Settings listener:", err));
-
-      const q = query(ref(state.db, "cazo/history"), orderByChild("timestamp"), limitToLast(200));
-      state.historyUnsubscribe = onValue(q, (snap) => {
-        const arr = [];
-        snap.forEach((child) => {
-          const v = child.val();
-          if (v && typeof v.price === "number") {
-            arr.push({
-              key: child.key,
-              price: v.price,
-              change: safeNum(v.change, 0),
-              changePercent: safeNum(v.changePercent, 0),
-              timestamp: safeNum(v.timestamp, Date.now())
-            });
-          }
-        });
-        arr.sort((a, b) => a.timestamp - b.timestamp);
-        state.history = arr;
-        if (arr.length > 0) {
-          const latest = arr[arr.length - 1];
-          const prev = arr.length > 1 ? arr[arr.length - 2] : null;
-          state.settings.currentPrice = latest.price;
-          if (prev) state.settings.previousPrice = prev.price;
-        }
-        renderPublicUI();
-        renderHistory();
-        updateStatistics();
-        updateLastUpdated();
-      }, (err) => console.error("History listener:", err));
-    }
-
-    // ============ RENDER PUBLIC UI ============
-    function renderPublicUI() {
-      const s = state.settings;
-      const hist = state.history;
-
-      $("assetName").textContent = s.assetName || "CAZO CARD";
-      $("assetSymbol").textContent = s.symbol || "CAZO";
-
-      const price = hist.length > 0 ? hist[hist.length - 1].price : s.currentPrice;
-      $("currentPrice").textContent = formatNumber(price);
-
-      let change = 0, changePct = 0;
-      if (hist.length >= 2) {
-        const last = hist[hist.length - 1];
-        const secondLast = hist[hist.length - 2];
-        change = last.price - secondLast.price;
-        changePct = secondLast.price !== 0 ? (change / secondLast.price) * 100 : 0;
-      } else if (s.previousPrice && s.currentPrice) {
-        change = s.currentPrice - s.previousPrice;
-        changePct = s.previousPrice !== 0 ? (change / s.previousPrice) * 100 : 0;
-      }
-
-      const isUp = change >= 0;
-      const cv = $("changeValue");
-      const cb = $("changeBadge");
-      const cp = $("changePercent");
-
-      cv.textContent = (isUp ? "+" : "") + formatNumber(change);
-      cv.className = "chart-change-value " + (isUp ? "up" : "down");
-      cb.className = "chart-change-badge " + (isUp ? "up" : "down");
-      const icon = cb.querySelector("i");
-      if (icon) icon.setAttribute("data-lucide", isUp ? "trending-up" : "trending-down");
-      cp.textContent = (isUp ? "+" : "") + formatNumber(changePct) + "%";
-      $("currentPrice").className = "chart-price " + (isUp ? "up" : "down");
-
+  document.querySelectorAll("#rangeGroup .range-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#rangeGroup .range-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      S.activeRange = btn.dataset.range;
+      S._lastChartKey = ""; S._lastFitRange = null;
       updateChart();
-
-      if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
-    }
-
-    function updateLastUpdated() {
-      const el = $("lastUpdatedText");
-      if (!el) return;
-      const ts = state.settings.updatedAt ||
-        (state.history.length ? state.history[state.history.length - 1].timestamp : null);
-      el.textContent = "Terakhir: " + (ts ? timeAgo(ts) : "—");
-    }
-
-    // ============ LIGHTWEIGHT CHARTS ============
-    function initChart() {
-      const container = $("mainChart");
-      if (!container) return;
-      if (typeof LightweightCharts === "undefined") {
-        console.error("Lightweight Charts tidak termuat.");
-        showNotification("Gagal memuat library grafik.", "error");
-        return;
-      }
-
-      state.lwChart = LightweightCharts.createChart(container, {
-        width: container.clientWidth,
-        height: container.clientHeight,
-        layout: {
-          background: { type: 'solid', color: '#FFFFFF' },
-          textColor: '#6B7280',
-          fontFamily: "'Inter', sans-serif",
-          fontSize: 11,
-        },
-        grid: {
-          vertLines: { color: 'rgba(229,231,235,0.55)', style: 0 },
-          horzLines: { color: 'rgba(229,231,235,0.55)', style: 0 },
-        },
-        crosshair: {
-          mode: LightweightCharts.CrosshairMode.Normal,
-          vertLine: {
-            color: '#9CA3AF', width: 1, style: 2,
-            labelBackgroundColor: '#111827'
-          },
-          horzLine: {
-            color: '#9CA3AF', width: 1, style: 2,
-            labelBackgroundColor: '#111827'
-          },
-        },
-        rightPriceScale: {
-          borderColor: '#E5E7EB',
-          scaleMargins: { top: 0.08, bottom: 0.08 },
-        },
-        timeScale: {
-          borderColor: '#E5E7EB',
-          timeVisible: true,
-          secondsVisible: false,
-          rightOffset: 3,
-          barSpacing: 8,
-        },
-        handleScroll: { mouseWheel: true, pressedMouseMove: true, horzTouchDrag: true, vertTouchDrag: false },
-        handleScale: { axisPressedMouseMove: true, mouseWheel: true, pinch: true },
-        localization: {
-          priceFormatter: (price) => formatNumber(price, 2),
-        },
-      });
-
-      state.candleSeries = state.lwChart.addCandlestickSeries({
-        upColor: '#16A34A',
-        downColor: '#DC2626',
-        borderUpColor: '#16A34A',
-        borderDownColor: '#DC2626',
-        wickUpColor: '#16A34A',
-        wickDownColor: '#DC2626',
-        priceFormat: { type: 'price', precision: 2, minMove: 0.01 },
-      });
-
-      // Resize responsif
-      if (typeof ResizeObserver !== "undefined") {
-        state.resizeObserver = new ResizeObserver(() => {
-          if (!state.lwChart || !container) return;
-          state.lwChart.applyOptions({
-            width: container.clientWidth,
-            height: container.clientHeight,
-          });
-        });
-        state.resizeObserver.observe(container);
-      } else {
-        window.addEventListener("resize", () => {
-          if (!state.lwChart || !container) return;
-          state.lwChart.applyOptions({
-            width: container.clientWidth,
-            height: container.clientHeight,
-          });
-        });
-      }
-    }
-
-    function getFilteredHistory(range) {
-      const hist = state.history;
-      if (!hist.length) return [];
-      const now = Date.now();
-      const ranges = {
-        "1m": 60 * 1000, "5m": 5 * 60 * 1000, "15m": 15 * 60 * 1000,
-        "1h": 60 * 60 * 1000, "24h": 24 * 60 * 60 * 1000,
-        "7d": 7 * 24 * 60 * 60 * 1000, "30d": 30 * 24 * 60 * 60 * 1000,
-        "all": Infinity
-      };
-      const cutoff = ranges[range] === Infinity ? 0 : now - ranges[range];
-      const filtered = hist.filter(h => h.timestamp >= cutoff);
-      if (filtered.length < 2 && hist.length >= 2) return hist.slice(-Math.min(hist.length, 20));
-      return filtered;
-    }
-
-    // Bangun candle OHLC dari titik harga (close-only)
-    function buildCandles(history) {
-      const candles = [];
-      let lastTime = 0;
-      for (let i = 0; i < history.length; i++) {
-        const h = history[i];
-        const open = i === 0 ? h.price : history[i - 1].price;
-        const close = h.price;
-        const bodySize = Math.abs(close - open);
-        const wick = Math.max(bodySize * 0.35, close * 0.0004);
-        const high = Math.max(open, close) + wick;
-        const low = Math.min(open, close) - wick;
-
-        let t = Math.floor(h.timestamp / 1000);
-        if (t <= lastTime) t = lastTime + 1;
-        lastTime = t;
-
-        candles.push({
-          time: t,
-          open: +open.toFixed(2),
-          high: +high.toFixed(2),
-          low: +low.toFixed(2),
-          close: +close.toFixed(2),
-        });
-      }
-      return candles;
-    }
-
-    function updateChart() {
-      const loadingEl = $("chartLoading");
-      const emptyEl = $("chartEmpty");
-
-      if (!state.candleSeries) return;
-
-      const filtered = getFilteredHistory(state.activeRange);
-
-      if (filtered.length === 0) {
-        if (loadingEl) loadingEl.classList.add("hidden");
-        if (emptyEl) emptyEl.classList.remove("hidden");
-        state.candleSeries.setData([]);
-        state._lastChartKey = "";
-        return;
-      }
-      if (emptyEl) emptyEl.classList.add("hidden");
-
-      // Deduplikasi: skip jika data tidak berubah
-      const key = state.activeRange + "_" + filtered.length + "_" +
-                  (filtered[filtered.length - 1]?.timestamp || 0);
-      if (key === state._lastChartKey) {
-        if (loadingEl) loadingEl.classList.add("hidden");
-        return;
-      }
-      state._lastChartKey = key;
-
-      const candles = buildCandles(filtered);
-
-      // Update warna sesuai tren
-      const isUp = candles.length >= 2
-        ? candles[candles.length - 1].close >= candles[0].open
-        : true;
-      const upColor = state.settings.chartColor || "#16A34A";
-      const downColor = "#DC2626";
-
-      state.candleSeries.applyOptions({
-        upColor: upColor,
-        borderUpColor: upColor,
-        wickUpColor: upColor,
-        downColor: downColor,
-        borderDownColor: downColor,
-        wickDownColor: downColor,
-      });
-
-      state.candleSeries.setData(candles);
-
-      // Fit content hanya saat range berubah
-      if (state._lastFitRange !== state.activeRange) {
-        state.lwChart.timeScale().fitContent();
-        state._lastFitRange = state.activeRange;
-      }
-
-      if (loadingEl) loadingEl.classList.add("hidden");
-    }
-
-    document.querySelectorAll(".range-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".range-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        state.activeRange = btn.dataset.range;
-        state._lastChartKey = ""; // paksa refresh
-        updateChart();
-      });
     });
+  });
 
-    // ============ STATISTIK ============
-    function updateStatistics() {
-      const hist = state.history;
-      if (!hist.length) {
-        $("statHigh").textContent = "—";
-        $("statLow").textContent = "—";
-        $("statChange").textContent = "—";
-        $("statPoints").textContent = "0";
-        return;
-      }
-      let high = -Infinity, low = Infinity, highTs = null, lowTs = null;
-      hist.forEach(h => {
-        if (h.price > high) { high = h.price; highTs = h.timestamp; }
-        if (h.price < low) { low = h.price; lowTs = h.timestamp; }
-      });
-      const first = hist[0].price;
-      const last = hist[hist.length - 1].price;
-      const totalChange = last - first;
-      const totalChangePct = first !== 0 ? (totalChange / first) * 100 : 0;
+  $("btnVolume").addEventListener("click", function () {
+    S.showVolume = !S.showVolume;
+    this.classList.toggle("active", S.showVolume);
+    S._lastChartKey = ""; updateChart();
+  });
 
-      $("statHigh").textContent = formatNumber(high);
-      $("statHighTime").textContent = formatDateTime(highTs);
-      $("statLow").textContent = formatNumber(low);
-      $("statLowTime").textContent = formatDateTime(lowTs);
+  $("btnFullscreen").addEventListener("click", () => {
+    const wrap = $("chartWrap");
+    wrap.classList.toggle("fullscreen");
+    S.chartFullscreen = wrap.classList.contains("fullscreen");
+    setTimeout(() => {
+      const box = $("mainChart");
+      S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
+      S.chart.timeScale().fitContent();
+      resizeDrawLayer(); redrawAll();
+    }, 250);
+    if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+  });
+  $("fsClose").addEventListener("click", () => {
+    $("chartWrap").classList.remove("fullscreen");
+    S.chartFullscreen = false;
+    setTimeout(() => {
+      const box = $("mainChart");
+      S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
+      resizeDrawLayer(); redrawAll();
+    }, 250);
+  });
 
-      const chgEl = $("statChange");
-      chgEl.textContent = (totalChange >= 0 ? "+" : "") + formatNumber(totalChange);
-      chgEl.className = "stat-value " + (totalChange >= 0 ? "up" : "down");
-      $("statChangePercent").textContent =
-        (totalChangePct >= 0 ? "+" : "") + formatNumber(totalChangePct) + "%";
-      $("statPoints").textContent = hist.length.toLocaleString("id-ID");
-    }
+  // Drawing tools
+  $("fabDrawing").addEventListener("click", () => { renderDrawingCategories(); openModal("modalDrawing"); });
+  $("fabIndicators").addEventListener("click", () => { renderIndicatorList(); renderIndicatorChips(); openModal("modalIndicators"); });
+  $("fabSLTP").addEventListener("click", openSLTP);
+  $("drawBadgeClose").addEventListener("click", () => setActiveTool(null));
+  $("btnClearDrawings").addEventListener("click", () => { if (!S.drawings.length) return toast("Tidak ada gambar", "info"); if (!confirm("Hapus semua gambar?")) return; S.drawings = []; redrawAll(); toast("Semua gambar dihapus", "success"); });
+  $("indSearch").addEventListener("input", (e) => renderIndicatorList(e.target.value));
+  $("btnClearIndicators").addEventListener("click", () => { if (!S.activeIndicators.size) return; Array.from(S.activeIndicators).forEach(id => removeIndicator(id)); toast("Semua indikator dihapus", "info"); });
+  $("btnSaveSLTP").addEventListener("click", saveSLTP);
+  $("btnClearSLTP").addEventListener("click", clearSLTP);
+  $("sltpSL").addEventListener("input", updateSLTPHints);
+  $("sltpTP").addEventListener("input", updateSLTPHints);
 
-    // ============ RIWAYAT (5 TERAKHIR) ============
-    function renderHistory() {
-      const list = $("historyList");
-      const cntEl = $("historyCount");
-
-      // ===== HANYA 5 TERAKHIR =====
-      const hist = state.history.slice().reverse().slice(0, 5);
-      const key = hist.map(h => h.key || h.timestamp).join(",");
-
-      if (cntEl) cntEl.textContent = state.history.length + " entri";
-
-      // Deduplikasi render
-      if (key === state._lastHistoryKey) return;
-      state._lastHistoryKey = key;
-
-      if (!hist.length) {
-        list.innerHTML = '<div class="history-empty">Belum ada riwayat pergerakan.</div>';
-        return;
-      }
-
-      list.innerHTML = hist.map(h => {
-        const isUp = h.change >= 0;
-        const prevPrice = h.price - h.change;
-        return '<div class="history-item">' +
-          '<div class="history-icon ' + (isUp ? "up" : "down") + '">' +
-            '<i data-lucide="' + (isUp ? "arrow-up-right" : "arrow-down-right") + '"></i>' +
-          '</div>' +
-          '<div class="history-main">' +
-            '<div class="history-prices">' +
-              '<span class="history-old">' + formatNumber(prevPrice) + '</span>' +
-              '<span class="history-arrow">→</span>' +
-              '<span class="history-new ' + (isUp ? "up" : "down") + '">' + formatNumber(h.price) + '</span>' +
-            '</div>' +
-            '<div class="history-meta">' +
-              '<span>' + formatDateTime(h.timestamp) + '</span>' +
-              '<span>•</span>' +
-              '<span>' + timeAgo(h.timestamp) + '</span>' +
-            '</div>' +
-          '</div>' +
-          '<div class="history-change ' + (isUp ? "up" : "down") + '">' +
-            (isUp ? "+" : "") + formatNumber(h.change) +
-            '<br><span style="font-size:10px;">' + (isUp ? "+" : "") + formatNumber(h.changePercent) + '%</span>' +
-          '</div>' +
-        '</div>';
-      }).join("");
-
-      if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
-    }
-
-    // ============ ADMIN LOGIC (dipanggil dari console / halaman lain) ============
-    function openAdminPanel() {
-      $("adminOverlay").classList.add("open");
-      $("adminPanel").classList.add("open");
-      document.body.style.overflow = "hidden";
-      if (state.isAdmin) loadAdminSettings();
-    }
-    function closeAdminPanel() {
-      $("adminOverlay").classList.remove("open");
-      $("adminPanel").classList.remove("open");
-      document.body.style.overflow = "";
-    }
-    window.openAdminPanel = openAdminPanel;
-    window.closeAdminPanel = closeAdminPanel;
-
-    $("adminCloseBtn").addEventListener("click", closeAdminPanel);
-    $("adminCloseBtn2").addEventListener("click", closeAdminPanel);
-    $("adminOverlay").addEventListener("click", closeAdminPanel);
-
-    function loadAdminSettings() {
-      if (!state.isAdmin) return;
-      const s = state.settings;
-      const set = (id, val) => { const el = $(id); if (el) el.value = val; };
-      set("adminAssetName", s.assetName || "");
-      set("adminAssetSymbol", s.symbol || "");
-      set("adminCurrentPrice", s.currentPrice || "");
-      set("adminPreviousPrice", s.previousPrice || "");
-      set("adminHigh", s.highestPrice || "");
-      set("adminLow", s.lowestPrice || "");
-      set("adminChartColor", s.chartColor || "#16A34A");
-      set("adminMaxPoints", s.maxPoints || 100);
-      set("adminMovementMode", s.movementMode || "manual");
-      set("adminInterval", String(s.updateInterval || 5));
-    }
-
-    $("btnSaveSettings").addEventListener("click", async () => {
-      if (!state.isAdmin) { showNotification("Hanya admin yang dapat menyimpan.", "error"); return; }
-      if (!state.firebaseReady) { showNotification("Firebase belum siap.", "error"); return; }
-      const btn = $("btnSaveSettings");
-      btn.disabled = true;
-      btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div> Menyimpan...';
-
-      try {
-        const currentPrice = validatePrice($("adminCurrentPrice").value, "Harga saat ini");
-        if (currentPrice === null) throw new Error("Harga tidak valid");
-        const previousPrice = validatePrice($("adminPreviousPrice").value, "Harga sebelumnya");
-        if (previousPrice === null) throw new Error("Harga tidak valid");
-        const high = validatePrice($("adminHigh").value, "Harga tertinggi");
-        if (high === null) throw new Error("Harga tidak valid");
-        const low = validatePrice($("adminLow").value, "Harga terendah");
-        if (low === null) throw new Error("Harga tidak valid");
-
-        const updates = {};
-        updates["cazo/settings"] = {
-          assetName: $("adminAssetName").value.trim() || "CAZO CARD",
-          symbol: $("adminAssetSymbol").value.trim() || "CAZO",
-          currentPrice, previousPrice,
-          highestPrice: high, lowestPrice: low,
-          chartColor: $("adminChartColor").value,
-          maxPoints: Math.max(10, Math.min(500, safeNum($("adminMaxPoints").value, 100))),
-          movementMode: $("adminMovementMode").value,
-          updateInterval: safeNum($("adminInterval").value, 5),
-          isRunning: state.movementRunning,
-          updatedAt: serverTimestamp()
-        };
-        await update(ref(state.db), updates);
-        showNotification("Pengaturan disimpan.", "success");
-      } catch (err) {
-        showNotification("Gagal menyimpan: " + err.message, "error", 6000);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i data-lucide="save"></i> Simpan Perubahan';
-        if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
-      }
+  // Trade side
+  document.querySelectorAll(".order-tab[data-side]").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".order-tab[data-side]").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      S.tradeSide = tab.dataset.side;
+      const btn = $("btnQuickTrade");
+      btn.className = "btn btn-block " + (S.tradeSide === "buy" ? "btn-up" : "btn-down");
+      btn.innerHTML = `<i data-lucide="zap"></i> ${S.tradeSide === "buy" ? "Beli Sekarang" : "Jual Sekarang"}`;
+      if (window.lucide) try { lucide.createIcons(); } catch (e) {}
     });
+  });
 
-    // ============ OFFLINE DETECTION ============
-    window.addEventListener("offline", () => {
-      showNotification("Koneksi internet terputus.", "warning", 5000);
-      updateConnectionBadge();
-    });
-    window.addEventListener("online", () => {
-      showNotification("Koneksi internet kembali.", "success");
-      updateConnectionBadge();
-    });
+  $("tradeQty").addEventListener("input", updateTradeTotal);
+  $("btnQuickTrade").addEventListener("click", () => doTrade(S.tradeSide));
+  $("btnSubmitDeposit").addEventListener("click", submitDeposit);
 
-    // ============ BOOTSTRAP ============
-    async function bootstrap() {
-      if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
-      initChart();
-      await initFirebase();
-      if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
-      setInterval(updateLastUpdated, 30000);
+  document.querySelectorAll(".order-tab[data-hist]").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".order-tab[data-hist]").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      S.histTab = tab.dataset.hist;
+      renderHistoryTab();
+    });
+  });
+
+  $("btnSaveSettings").addEventListener("click", () => {
+    S.activeRange = $("setRange").value;
+    document.querySelectorAll("#rangeGroup .range-btn").forEach(b => b.classList.toggle("active", b.dataset.range === S.activeRange));
+    S._lastChartKey = ""; S._lastFitRange = null;
+    updateChart();
+    toast("Pengaturan disimpan", "success");
+  });
+
+  $("modalInfo").addEventListener("click", (e) => { if (e.target === $("modalInfo")) closeModal("modalInfo"); });
+  $("modalLogin").addEventListener("click", (e) => { if (e.target === $("modalLogin")) { S.pendingAction = null; closeModal("modalLogin"); } });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (S.chartFullscreen) $("fsClose").click();
+      closeModal("modalInfo"); closeModal("modalLogin"); closeModal("modalDrawing"); closeModal("modalIndicators"); closeModal("modalSLTP");
+      $("navTabs").classList.remove("open");
+      setActiveTool(null);
     }
-    bootstrap();
-  </script>
+  });
 
+  document.addEventListener("click", (e) => {
+    const nav = $("navTabs"), tog = $("mobileToggle");
+    if (nav.classList.contains("open") && !nav.contains(e.target) && !tog.contains(e.target)) nav.classList.remove("open");
+  });
+
+  window.addEventListener("offline", () => { updateConnPill(); toast("Koneksi terputus", "warning"); });
+  window.addEventListener("online", () => { updateConnPill(); toast("Koneksi kembali", "success"); });
+}
+
+// ==================== BOOT ====================
+async function boot() {
+  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+  bindEvents();
+  initChart();
+  try { await initFirebase(); } catch (err) { console.error(err); toast("Gagal inisialisasi", "error", 6000); }
+  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+  renderUserUI();
+  renderDepositHistory($("depositHistory"));
+  $("btnVolume").classList.toggle("active", S.showVolume);
+}
+
+window.CAZO = {
+  nav: (p) => document.querySelector(`.nav-tab[data-page="${p}"]`)?.click(),
+  closeModal
+};
+
+boot();
+</script>
 </body>
-</html>
+                </html>
