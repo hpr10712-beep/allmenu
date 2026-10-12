@@ -4,11 +4,30 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>CAZO — Trading Platform</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="preconnect" href="https://www.gstatic.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+<!-- ========== LIGHTWEIGHT CHARTS (jsDelivr + fallback) ========== -->
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<script>
+if (typeof LightweightCharts === 'undefined') {
+  document.write('<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"><\/script>');
+}
+</script>
+
+<!-- ========== LUCIDE ICONS (jsDelivr + fallback) ========== -->
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.446.0/dist/umd/lucide.min.js"></script>
+<script>
+if (typeof lucide === 'undefined') {
+  document.write('<script src="https://unpkg.com/lucide@0.446.0/dist/umd/lucide.min.js"><\/script>');
+}
+</script>
+
+<!-- ========== FIREBASE COMPAT (Google CDN — jarang diblokir) ========== -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -32,6 +51,9 @@ body{font-family:var(--font);background:var(--bg-2);color:var(--txt);line-height
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 .hidden{display:none!important}
 button{font-family:inherit}
+
+/* Inline SVG fallback kalau Lucide gagal — sembunyikan [data-lucide] kosong */
+[data-lucide]:empty::before{content:"·";color:#94A3B8;font-size:14px;line-height:1}
 
 /* TOPBAR */
 .topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid var(--border-2)}
@@ -63,10 +85,8 @@ button{font-family:inherit}
   .mobile-toggle{display:flex}
   .user-name{display:none}
 }
-
 .container{max-width:1400px;margin:0 auto;padding:20px 16px 80px}
 @media (max-width:480px){.container{padding:14px 10px 60px}}
-
 .page{display:none}
 .page.active{display:block;animation:fadeIn .25s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
@@ -74,7 +94,6 @@ button{font-family:inherit}
 .page-title{font-family:var(--font-d);font-size:20px;font-weight:800;letter-spacing:-.5px;display:flex;align-items:center;gap:8px}
 .page-title svg{width:20px;height:20px;color:var(--txt-2)}
 .page-sub{font-size:12.5px;color:var(--txt-2);margin-top:2px}
-
 .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden}
 .card+.card{margin-top:14px}
 .card-h{padding:14px 18px;border-bottom:1px solid var(--border-2);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
@@ -82,41 +101,16 @@ button{font-family:inherit}
 .card-h h2 svg{width:16px;height:16px;color:var(--txt-2)}
 .card-b{padding:18px}
 @media (max-width:480px){.card-b{padding:12px}}
-
 .grid-2{display:grid;grid-template-columns:1fr 360px;gap:16px;align-items:start}
 @media (max-width:1024px){.grid-2{grid-template-columns:1fr}}
 
-/* ====== STATS SLIDER (BARU) ====== */
-.stats-slider{
-  display:flex;
-  gap:10px;
-  overflow-x:auto;
-  overflow-y:hidden;
-  scroll-snap-type:x mandatory;
-  -webkit-overflow-scrolling:touch;
-  padding-bottom:6px;
-  scrollbar-width:none;
-  margin-bottom:16px;
-}
+/* Stats slider */
+.stats-slider{display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:6px;scrollbar-width:none;margin-bottom:16px}
 .stats-slider::-webkit-scrollbar{display:none}
-.stat-mini{
-  flex:0 0 auto;
-  min-width:150px;
-  padding:11px 14px;
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:14px;
-  scroll-snap-align:start;
-  box-shadow:var(--shadow);
-  transition:var(--t);
-}
+.stat-mini{flex:0 0 auto;min-width:150px;padding:11px 14px;background:#fff;border:1px solid var(--border);border-radius:14px;scroll-snap-align:start;box-shadow:var(--shadow);transition:var(--t)}
 .stat-mini:active{transform:scale(.98)}
 @media (max-width:480px){.stat-mini{min-width:135px;padding:10px 12px}}
-.stat-mini-icon{
-  width:24px;height:24px;border-radius:7px;
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:8px;
-}
+.stat-mini-icon{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
 .stat-mini-icon svg{width:13px;height:13px}
 .stat-mini-icon.up{background:var(--up-2);color:var(--up)}
 .stat-mini-icon.down{background:var(--down-2);color:var(--down)}
@@ -130,7 +124,6 @@ button{font-family:inherit}
 .stats-hint{font-size:10.5px;color:var(--txt-3);text-align:right;margin-top:-6px;margin-bottom:12px;display:flex;align-items:center;justify-content:flex-end;gap:4px}
 .stats-hint svg{width:12px;height:12px}
 
-/* ====== CHART ====== */
 .chart-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)}
 .chart-header{padding:14px 18px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .chart-asset{display:flex;align-items:center;gap:10px}
@@ -148,7 +141,6 @@ button{font-family:inherit}
 .chart-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:6px;font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums}
 .chart-badge.up{background:var(--up-2);color:var(--up)}
 .chart-badge.down{background:var(--down-2);color:var(--down)}
-
 .chart-toolbar{display:flex;gap:8px;padding:12px 18px 0;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .range-group{display:flex;gap:3px;overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap}
 .range-group::-webkit-scrollbar{display:none}
@@ -160,7 +152,6 @@ button{font-family:inherit}
 .icon-btn:hover{background:var(--bg-3);color:var(--txt)}
 .icon-btn.active{background:var(--blue-2);color:var(--blue);border-color:var(--blue)}
 .icon-btn svg{width:14px;height:14px}
-
 .chart-wrap{position:relative;padding:8px 4px 12px;height:440px}
 @media (max-width:768px){.chart-wrap{height:340px}}
 @media (max-width:480px){.chart-wrap{height:300px}}
@@ -170,29 +161,19 @@ button{font-family:inherit}
 .fs-close svg{width:18px;height:18px}
 #mainChart{width:100%;height:100%;position:relative;z-index:2}
 #drawLayer{position:absolute;inset:0;z-index:10;pointer-events:none;touch-action:none}
-
-/* Floating tools */
+.chart-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.9);z-index:30;font-size:13px;color:var(--txt-3);flex-direction:column;gap:10px}
+.chart-loading.hidden{display:none}
+.spinner-lg{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:rot .8s linear infinite}
 .chart-fab-group{position:absolute;right:10px;bottom:10px;z-index:15;display:flex;flex-direction:column;gap:8px}
 .fab{width:42px;height:42px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--txt);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);transition:var(--t)}
 .fab:hover{background:var(--bg-3);transform:translateY(-2px)}
-.fab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
 .fab svg{width:18px;height:18px}
 @media (max-width:480px){.fab{width:38px;height:38px}.fab svg{width:16px;height:16px}}
-
-/* Floating badge */
-.draw-active-badge{
-  position:absolute;top:10px;left:10px;z-index:15;
-  display:none;align-items:center;gap:6px;
-  padding:6px 10px;border-radius:20px;
-  background:var(--blue);color:#fff;
-  font-size:11px;font-weight:700;
-  box-shadow:var(--shadow-md);
-}
+.draw-active-badge{position:absolute;top:10px;left:10px;z-index:15;display:none;align-items:center;gap:6px;padding:6px 10px;border-radius:20px;background:var(--blue);color:#fff;font-size:11px;font-weight:700;box-shadow:var(--shadow-md)}
 .draw-active-badge.on{display:flex}
 .draw-active-badge svg{width:13px;height:13px}
 .draw-active-badge button{background:rgba(255,255,255,.25);border:none;color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;font-weight:700}
 
-/* ====== DRAWING TOOLS MODAL ====== */
 .modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(8px);z-index:600;display:none;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease}
 .modal-bg.open{display:flex}
 .modal{background:#fff;border-radius:var(--radius-lg);max-width:520px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .3s cubic-bezier(.4,0,.2,1)}
@@ -204,36 +185,23 @@ button{font-family:inherit}
 .modal-b{padding:16px 20px}
 .modal-f{padding:14px 20px;border-top:1px solid var(--border-2);display:flex;gap:8px;position:sticky;bottom:0;background:#fff}
 .modal-f .btn{flex:1}
-
-/* Drawing tip (hijau seperti screenshot) */
-.drawing-tip{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;background:linear-gradient(135deg,#052e16,#166534);color:#dcfce7;font-size:12px;line-height:1.5;margin:0}
-.drawing-tip svg{width:18px;height:18px;flex-shrink:0;color:#4ade80;margin-top:1px;fill:#4ade80}
-
-/* Quick actions row */
+.drawing-tip{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;background:linear-gradient(135deg,#052e16,#166534);color:#dcfce7;font-size:12px;line-height:1.5}
+.drawing-tip svg{width:18px;height:18px;flex-shrink:0;color:#4ade80;fill:#4ade80}
 .drawing-quick{display:flex;gap:6px;padding:12px 16px 8px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border-2)}
 .drawing-quick::-webkit-scrollbar{display:none}
 .dq-btn{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:20px;border:1px solid var(--border);background:#fff;color:var(--txt);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:var(--t);flex-shrink:0}
 .dq-btn:hover{background:var(--bg-3)}
 .dq-btn.active{background:var(--blue-2);color:var(--blue);border-color:var(--blue)}
 .dq-btn svg{width:14px;height:14px}
-
-/* Category & Tool grid */
 .tool-cat{padding:14px 16px 6px;font-size:11px;font-weight:700;color:var(--txt-3);text-transform:uppercase;letter-spacing:.6px}
 .tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px 14px}
 @media (max-width:400px){.tool-grid{grid-template-columns:repeat(2,1fr)}}
-.tool-item{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:8px;padding:14px 8px;border:1px solid var(--border);border-radius:12px;
-  background:#fff;cursor:pointer;transition:var(--t);text-align:center;
-  min-height:88px;
-}
+.tool-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 8px;border:1px solid var(--border);border-radius:12px;background:#fff;cursor:pointer;transition:var(--t);text-align:center;min-height:88px}
 .tool-item:hover{background:var(--bg-3);border-color:#CBD5E1}
 .tool-item.active{background:var(--blue-2);border-color:var(--blue);color:var(--blue)}
 .tool-item svg{width:22px;height:22px;color:var(--txt)}
 .tool-item.active svg{color:var(--blue)}
 .tool-item span{font-size:11px;font-weight:600;line-height:1.25;color:inherit}
-
-/* Indicators modal */
 .ind-search{position:relative;padding:12px 16px}
 .ind-search input{width:100%;padding:10px 14px 10px 38px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:13.5px;outline:none}
 .ind-search input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
@@ -251,8 +219,6 @@ button{font-family:inherit}
 .ind-check.on{background:var(--blue);border-color:var(--blue)}
 .ind-check svg{width:12px;height:12px;color:#fff;display:none}
 .ind-check.on svg{display:block}
-
-/* SL/TP panel */
 .sltp-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .sltp-card{border:1px solid var(--border);border-radius:12px;padding:12px}
 .sltp-card.stop{border-color:#FECACA;background:#FEF2F2}
@@ -261,11 +227,7 @@ button{font-family:inherit}
 .sltp-card.stop .sltp-label{color:#991B1B}
 .sltp-card.take .sltp-label{color:#166534}
 .sltp-input{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:var(--font);background:#fff;outline:none}
-.sltp-card.stop .sltp-input:focus{border-color:var(--down);box-shadow:0 0 0 3px rgba(220,38,38,.1)}
-.sltp-card.take .sltp-input:focus{border-color:var(--up);box-shadow:0 0 0 3px rgba(22,163,74,.1)}
 .sltp-hint{font-size:10.5px;color:var(--txt-3);margin-top:4px}
-
-/* Buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border:none;border-radius:10px;font-family:var(--font);font-size:13.5px;font-weight:700;cursor:pointer;transition:var(--t);white-space:nowrap;text-decoration:none}
 .btn svg{width:15px;height:15px}
 .btn:active:not(:disabled){transform:scale(.97)}
@@ -279,21 +241,16 @@ button{font-family:inherit}
 .btn-outline:hover:not(:disabled){background:var(--bg-3)}
 .btn-ghost{background:transparent;color:var(--txt-2)}
 .btn-sm{padding:7px 12px;font-size:12.5px;border-radius:8px}
-
-/* Form */
 .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
 .fg label{font-size:11.5px;font-weight:600;color:var(--txt-2);letter-spacing:.3px}
 .inp,.sel{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;background:#fff;font-family:var(--font);font-size:14px;color:var(--txt);outline:none;transition:var(--t);-webkit-appearance:none}
 .inp:focus,.sel:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
 .sel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-
 .order-tabs{display:flex;gap:4px;padding:4px;background:var(--bg-3);border-radius:12px;margin-bottom:14px}
 .order-tab{flex:1;padding:8px;border:none;background:transparent;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;transition:var(--t);color:var(--txt-2)}
 .order-tab.active{background:#fff;color:var(--txt);box-shadow:var(--shadow)}
 .order-tab.buy.active{background:var(--up);color:#fff}
 .order-tab.sell.active{background:var(--down);color:#fff}
-
 .market-list{display:flex;flex-direction:column;gap:6px}
 .market-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#fff;border:1px solid var(--border);border-radius:14px}
 .market-item img{width:40px;height:40px;border-radius:11px;object-fit:cover}
@@ -305,7 +262,6 @@ button{font-family:inherit}
 .market-price-chg{font-size:11.5px;font-weight:600;margin-top:2px}
 .market-price-chg.up{color:var(--up)}
 .market-price-chg.down{color:var(--down)}
-
 .holding{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#fff;border:1px solid var(--border);border-radius:14px;margin-bottom:8px}
 .holding img{width:40px;height:40px;border-radius:11px;object-fit:cover}
 .holding-info{flex:1}
@@ -316,7 +272,6 @@ button{font-family:inherit}
 .holding-val-pl{font-size:11.5px;font-weight:600;margin-top:2px}
 .holding-val-pl.up{color:var(--up)}
 .holding-val-pl.down{color:var(--down)}
-
 .hist-list{display:flex;flex-direction:column;gap:6px}
 .hist-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:12px;font-size:13px}
 .hist-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -330,11 +285,9 @@ button{font-family:inherit}
 .hist-amount{font-weight:700;text-align:right;font-variant-numeric:tabular-nums;font-size:13.5px}
 .hist-amount.up{color:var(--up)}
 .hist-amount.down{color:var(--down)}
-
 .qr-box{background:#fff;border:2px dashed var(--border);border-radius:var(--radius);padding:16px;text-align:center;margin-bottom:14px}
 .qr-box img{max-width:100%;width:270px;border-radius:12px}
 .qr-hint{font-size:12px;color:var(--txt-2);margin-top:10px;line-height:1.6;text-align:left}
-
 .toasts{position:fixed;bottom:16px;right:16px;z-index:800;display:flex;flex-direction:column;gap:8px;max-width:340px;pointer-events:none}
 @media (max-width:480px){.toasts{left:12px;right:12px;max-width:none}}
 .toast{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:12px;background:var(--txt);color:#fff;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);pointer-events:auto;animation:slideIn .3s ease;border-left:3px solid var(--blue)}
@@ -344,7 +297,6 @@ button{font-family:inherit}
 .toast svg{width:16px;height:16px;flex-shrink:0;margin-top:1px}
 .toast-close{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;display:flex}
 @keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-
 .empty{padding:32px 16px;text-align:center;color:var(--txt-3);font-size:13px;border:1px dashed var(--border);border-radius:var(--radius)}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
 .pill.up{background:var(--up-2);color:var(--up)}
@@ -356,8 +308,6 @@ button{font-family:inherit}
 @keyframes rot{to{transform:rotate(360deg)}}
 .divider{height:1px;background:var(--border-2);margin:12px 0}
 .text-muted{color:var(--txt-3);font-size:12px}
-
-/* Login prompt modal */
 .login-modal{text-align:center;padding:32px 24px}
 .login-modal-icon{width:70px;height:70px;margin:0 auto 16px;border-radius:20px;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);display:flex;align-items:center;justify-content:center}
 .login-modal-icon svg{width:32px;height:32px;color:var(--blue)}
@@ -380,12 +330,12 @@ button{font-family:inherit}
       <div class="brand-txt"><div class="brand-name">CAZO</div><div class="brand-sub">Trading</div></div>
     </a>
     <nav class="nav-tabs" id="navTabs">
-      <button class="nav-tab active" data-page="dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</button>
-      <button class="nav-tab" data-page="market"><i data-lucide="bar-chart-3"></i> Market</button>
-      <button class="nav-tab" data-page="portfolio" data-auth="1"><i data-lucide="briefcase"></i> Portfolio</button>
-      <button class="nav-tab" data-page="deposit" data-auth="1"><i data-lucide="wallet"></i> Deposit</button>
-      <button class="nav-tab" data-page="history" data-auth="1"><i data-lucide="history"></i> Riwayat</button>
-      <button class="nav-tab" data-page="settings" data-auth="1"><i data-lucide="settings"></i> Pengaturan</button>
+      <button class="nav-tab active" data-page="dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></button>
+      <button class="nav-tab" data-page="market"><i data-lucide="bar-chart-3"></i><span>Market</span></button>
+      <button class="nav-tab" data-page="portfolio" data-auth="1"><i data-lucide="briefcase"></i><span>Portfolio</span></button>
+      <button class="nav-tab" data-page="deposit" data-auth="1"><i data-lucide="wallet"></i><span>Deposit</span></button>
+      <button class="nav-tab" data-page="history" data-auth="1"><i data-lucide="history"></i><span>Riwayat</span></button>
+      <button class="nav-tab" data-page="settings" data-auth="1"><i data-lucide="settings"></i><span>Pengaturan</span></button>
     </nav>
     <div class="topbar-right">
       <div class="conn-pill off" id="connPill"><span class="conn-dot"></span><span id="connText">Offline</span></div>
@@ -399,60 +349,22 @@ button{font-family:inherit}
 </header>
 
 <main class="container">
-
-  <!-- ===== DASHBOARD ===== -->
   <section class="page active" id="page-dashboard">
     <div class="page-head">
       <div>
-        <h1 class="page-title"><i data-lucide="layout-dashboard"></i> Dashboard</h1>
+        <h1 class="page-title"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></h1>
         <p class="page-sub" id="greeting">Pantau grafik & trading CAZO</p>
       </div>
     </div>
 
-    <!-- Stats Slider (1 baris horizontal scroll) -->
     <div class="stats-slider" id="statsSlider">
-      <div class="stat-mini">
-        <div class="stat-mini-icon blue"><i data-lucide="wallet"></i></div>
-        <div class="stat-mini-lbl">Saldo</div>
-        <div class="stat-mini-val" id="dashBalance">—</div>
-        <div class="stat-mini-sub">Rp (virtual)</div>
-      </div>
-      <div class="stat-mini">
-        <div class="stat-mini-icon up"><i data-lucide="briefcase"></i></div>
-        <div class="stat-mini-lbl">Portfolio</div>
-        <div class="stat-mini-val" id="dashPortfolio">—</div>
-        <div class="stat-mini-sub">Nilai aset</div>
-      </div>
-      <div class="stat-mini">
-        <div class="stat-mini-icon blue"><i data-lucide="pie-chart"></i></div>
-        <div class="stat-mini-lbl">Equity</div>
-        <div class="stat-mini-val" id="dashEquity">—</div>
-        <div class="stat-mini-sub">Saldo + aset</div>
-      </div>
-      <div class="stat-mini">
-        <div class="stat-mini-icon warn"><i data-lucide="activity"></i></div>
-        <div class="stat-mini-lbl">P&L</div>
-        <div class="stat-mini-val" id="dashPL">—</div>
-        <div class="stat-mini-sub" id="dashPLPct">—</div>
-      </div>
-      <div class="stat-mini">
-        <div class="stat-mini-icon up"><i data-lucide="arrow-up-circle"></i></div>
-        <div class="stat-mini-lbl">Tertinggi</div>
-        <div class="stat-mini-val" id="dashHigh">—</div>
-        <div class="stat-mini-sub" id="dashHighTime">—</div>
-      </div>
-      <div class="stat-mini">
-        <div class="stat-mini-icon down"><i data-lucide="arrow-down-circle"></i></div>
-        <div class="stat-mini-lbl">Terendah</div>
-        <div class="stat-mini-val" id="dashLow">—</div>
-        <div class="stat-mini-sub" id="dashLowTime">—</div>
-      </div>
-      <div class="stat-mini">
-        <div class="stat-mini-icon warn"><i data-lucide="clock"></i></div>
-        <div class="stat-mini-lbl">Update</div>
-        <div class="stat-mini-val" id="dashUpdate" style="font-size:13px">—</div>
-        <div class="stat-mini-sub">dari Firebase</div>
-      </div>
+      <div class="stat-mini"><div class="stat-mini-icon blue"><i data-lucide="wallet"></i></div><div class="stat-mini-lbl">Saldo</div><div class="stat-mini-val" id="dashBalance">—</div><div class="stat-mini-sub">Rp (virtual)</div></div>
+      <div class="stat-mini"><div class="stat-mini-icon up"><i data-lucide="briefcase"></i></div><div class="stat-mini-lbl">Portfolio</div><div class="stat-mini-val" id="dashPortfolio">—</div><div class="stat-mini-sub">Nilai aset</div></div>
+      <div class="stat-mini"><div class="stat-mini-icon blue"><i data-lucide="pie-chart"></i></div><div class="stat-mini-lbl">Equity</div><div class="stat-mini-val" id="dashEquity">—</div><div class="stat-mini-sub">Saldo + aset</div></div>
+      <div class="stat-mini"><div class="stat-mini-icon warn"><i data-lucide="activity"></i></div><div class="stat-mini-lbl">P&L</div><div class="stat-mini-val" id="dashPL">—</div><div class="stat-mini-sub" id="dashPLPct">—</div></div>
+      <div class="stat-mini"><div class="stat-mini-icon up"><i data-lucide="arrow-up-circle"></i></div><div class="stat-mini-lbl">Tertinggi</div><div class="stat-mini-val" id="dashHigh">—</div><div class="stat-mini-sub" id="dashHighTime">—</div></div>
+      <div class="stat-mini"><div class="stat-mini-icon down"><i data-lucide="arrow-down-circle"></i></div><div class="stat-mini-lbl">Terendah</div><div class="stat-mini-val" id="dashLow">—</div><div class="stat-mini-sub" id="dashLowTime">—</div></div>
+      <div class="stat-mini"><div class="stat-mini-icon warn"><i data-lucide="clock"></i></div><div class="stat-mini-lbl">Update</div><div class="stat-mini-val" id="dashUpdate" style="font-size:13px">—</div><div class="stat-mini-sub">dari Firebase</div></div>
     </div>
     <div class="stats-hint"><i data-lucide="move-horizontal"></i> Geser untuk melihat kartu lain</div>
 
@@ -461,7 +373,7 @@ button{font-family:inherit}
         <div class="chart-card">
           <div class="chart-header">
             <div class="chart-asset">
-              <img class="chart-asset-img" id="dashAssetIcon" src="https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg" alt="CAZO" />
+              <img class="chart-asset-img" src="https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg" alt="CAZO" />
               <div>
                 <span class="chart-asset-name" id="dashAssetName">CAZO CARD</span>
                 <div class="chart-asset-symbol" id="dashAssetSymbol">CAZO</div>
@@ -475,7 +387,6 @@ button{font-family:inherit}
               </div>
             </div>
           </div>
-
           <div class="chart-toolbar">
             <div class="range-group" id="rangeGroup">
               <button class="range-btn" data-range="1m">1M</button>
@@ -492,13 +403,15 @@ button{font-family:inherit}
               <button class="icon-btn" id="btnFullscreen" title="Layar penuh"><i data-lucide="maximize-2"></i></button>
             </div>
           </div>
-
           <div class="chart-wrap" id="chartWrap">
             <div id="mainChart"></div>
             <canvas id="drawLayer"></canvas>
+            <div class="chart-loading" id="chartLoading">
+              <div class="spinner-lg"></div>
+              <div>Memuat grafik...</div>
+            </div>
             <div class="draw-active-badge" id="drawBadge">
-              <i data-lucide="pencil"></i>
-              <span id="drawBadgeText">Alat aktif</span>
+              <i data-lucide="pencil"></i><span id="drawBadgeText">Alat aktif</span>
               <button id="drawBadgeClose">×</button>
             </div>
             <div class="chart-fab-group">
@@ -510,70 +423,63 @@ button{font-family:inherit}
           </div>
         </div>
       </div>
-
       <div>
         <div class="card">
-          <div class="card-h"><h2><i data-lucide="zap"></i> Trading Cepat</h2></div>
+          <div class="card-h"><h2><i data-lucide="zap"></i><span>Trading Cepat</span></h2></div>
           <div class="card-b">
             <div class="order-tabs">
               <button class="order-tab buy active" data-side="buy">BUY</button>
               <button class="order-tab sell" data-side="sell">SELL</button>
             </div>
-            <div class="fg"><label>Jumlah</label><input class="inp" id="tradeQty" type="number" step="1" min="1" placeholder="1" value="1" /></div>
+            <div class="fg"><label>Jumlah</label><input class="inp" id="tradeQty" type="number" step="1" min="1" value="1" /></div>
             <div class="fg"><label>Harga per Unit</label><input class="inp" id="tradePrice" type="number" step="0.01" readonly /></div>
             <div class="fg"><label>Total</label><input class="inp" id="tradeTotal" type="number" step="0.01" readonly /></div>
-            <button class="btn btn-up btn-block" id="btnQuickTrade"><i data-lucide="zap"></i> Beli Sekarang</button>
+            <button class="btn btn-up btn-block" id="btnQuickTrade"><i data-lucide="zap"></i><span>Beli Sekarang</span></button>
             <div class="divider"></div>
             <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--txt-2)">
               <span>Saldo tersedia</span><strong id="quickBalance" style="color:var(--txt)">—</strong>
             </div>
           </div>
         </div>
-
         <div class="card">
-          <div class="card-h"><h2><i data-lucide="info"></i> Status</h2></div>
+          <div class="card-h"><h2><i data-lucide="info"></i><span>Status</span></h2></div>
           <div class="card-b">
             <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0">
-              <span style="color:var(--txt-2)">Pengunjung</span>
-              <span class="pill blue" id="visitorStatus">Bebas akses grafik</span>
+              <span style="color:var(--txt-2)">Pengunjung</span><span class="pill blue">Bebas akses grafik</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0">
-              <span style="color:var(--txt-2)">Login</span>
-              <span class="pill gray" id="loginStatus">Belum login</span>
+              <span style="color:var(--txt-2)">Login</span><span class="pill gray" id="loginStatus">Belum login</span>
             </div>
             <div class="divider"></div>
-            <p class="text-muted" style="line-height:1.6">Untuk bertransaksi, membuka portfolio, deposit, dan riwayat, silakan login dengan Google.</p>
+            <p class="text-muted" style="line-height:1.6">Untuk bertransaksi, portfolio, deposit, dan riwayat, silakan login dengan Google.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== MARKET ===== -->
   <section class="page" id="page-market">
-    <div class="page-head"><div><h1 class="page-title"><i data-lucide="bar-chart-3"></i> Market</h1><p class="page-sub">Daftar aset yang tersedia</p></div></div>
+    <div class="page-head"><div><h1 class="page-title"><i data-lucide="bar-chart-3"></i><span>Market</span></h1><p class="page-sub">Daftar aset yang tersedia</p></div></div>
     <div class="market-list" id="marketList"></div>
   </section>
 
-  <!-- ===== PORTFOLIO ===== -->
   <section class="page" id="page-portfolio">
-    <div class="page-head"><div><h1 class="page-title"><i data-lucide="briefcase"></i> Portfolio</h1><p class="page-sub">Aset yang Anda miliki</p></div></div>
+    <div class="page-head"><div><h1 class="page-title"><i data-lucide="briefcase"></i><span>Portfolio</span></h1><p class="page-sub">Aset yang Anda miliki</p></div></div>
     <div class="stats-slider">
       <div class="stat-mini"><div class="stat-mini-icon blue"><i data-lucide="wallet"></i></div><div class="stat-mini-lbl">Saldo</div><div class="stat-mini-val" id="pfBalance">—</div></div>
       <div class="stat-mini"><div class="stat-mini-icon up"><i data-lucide="briefcase"></i></div><div class="stat-mini-lbl">Nilai Aset</div><div class="stat-mini-val" id="pfValue">—</div></div>
       <div class="stat-mini"><div class="stat-mini-icon blue"><i data-lucide="pie-chart"></i></div><div class="stat-mini-lbl">Equity</div><div class="stat-mini-val" id="pfEquity">—</div></div>
       <div class="stat-mini"><div class="stat-mini-icon warn"><i data-lucide="trending-up"></i></div><div class="stat-mini-lbl">Total P&L</div><div class="stat-mini-val" id="pfPL">—</div></div>
     </div>
-    <div class="card"><div class="card-h"><h2><i data-lucide="list"></i> Holdings</h2></div><div class="card-b" id="holdingsList"></div></div>
+    <div class="card"><div class="card-h"><h2><i data-lucide="list"></i><span>Holdings</span></h2></div><div class="card-b" id="holdingsList"></div></div>
   </section>
 
-  <!-- ===== DEPOSIT ===== -->
   <section class="page" id="page-deposit">
-    <div class="page-head"><div><h1 class="page-title"><i data-lucide="wallet"></i> Deposit</h1><p class="page-sub">Scan QRIS & konfirmasi manual oleh admin</p></div></div>
+    <div class="page-head"><div><h1 class="page-title"><i data-lucide="wallet"></i><span>Deposit</span></h1><p class="page-sub">Scan QRIS & konfirmasi manual oleh admin</p></div></div>
     <div class="grid-2">
       <div>
         <div class="card">
-          <div class="card-h"><h2><i data-lucide="qr-code"></i> Scan QRIS</h2></div>
+          <div class="card-h"><h2><i data-lucide="qr-code"></i><span>Scan QRIS</span></h2></div>
           <div class="card-b">
             <div class="qr-box">
               <img src="https://i.ibb.co.com/PGRy3SyQ/IMG-20261012-160202.jpg" alt="QRIS Deposit" />
@@ -584,25 +490,24 @@ button{font-family:inherit}
       </div>
       <div>
         <div class="card">
-          <div class="card-h"><h2><i data-lucide="send"></i> Ajukan Deposit</h2></div>
+          <div class="card-h"><h2><i data-lucide="send"></i><span>Ajukan Deposit</span></h2></div>
           <div class="card-b">
             <div class="fg"><label>Nominal (Rp)</label><input class="inp" id="depAmount" type="number" step="1000" min="10000" placeholder="50000" /><span class="text-muted" style="font-size:11px">Minimal Rp 10.000</span></div>
             <div class="fg"><label>Nama Pengirim</label><input class="inp" id="depSender" placeholder="Nama sesuai rekening" /></div>
             <div class="fg"><label>Catatan (opsional)</label><input class="inp" id="depNote" placeholder="No. referensi" /></div>
-            <button class="btn btn-blue btn-block" id="btnSubmitDeposit"><i data-lucide="send"></i> Ajukan Deposit</button>
+            <button class="btn btn-blue btn-block" id="btnSubmitDeposit"><i data-lucide="send"></i><span>Ajukan Deposit</span></button>
           </div>
         </div>
         <div class="card">
-          <div class="card-h"><h2><i data-lucide="clock"></i> Pengajuan Deposit</h2></div>
+          <div class="card-h"><h2><i data-lucide="clock"></i><span>Pengajuan Deposit</span></h2></div>
           <div class="card-b" id="depositHistory"><div class="empty">Belum ada pengajuan.</div></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== HISTORY ===== -->
   <section class="page" id="page-history">
-    <div class="page-head"><div><h1 class="page-title"><i data-lucide="history"></i> Riwayat Transaksi</h1><p class="page-sub">Pembelian, penjualan, deposit, harga</p></div></div>
+    <div class="page-head"><div><h1 class="page-title"><i data-lucide="history"></i><span>Riwayat Transaksi</span></h1><p class="page-sub">Pembelian, penjualan, deposit, harga</p></div></div>
     <div class="order-tabs" style="max-width:400px">
       <button class="order-tab active" data-hist="tx">Transaksi</button>
       <button class="order-tab" data-hist="price">Harga</button>
@@ -611,13 +516,12 @@ button{font-family:inherit}
     <div class="card" style="margin-top:12px"><div class="card-b" id="historyContent"><div class="empty">Memuat...</div></div></div>
   </section>
 
-  <!-- ===== SETTINGS ===== -->
   <section class="page" id="page-settings">
-    <div class="page-head"><div><h1 class="page-title"><i data-lucide="settings"></i> Pengaturan</h1><p class="page-sub">Konfigurasi akun & tampilan</p></div></div>
+    <div class="page-head"><div><h1 class="page-title"><i data-lucide="settings"></i><span>Pengaturan</span></h1><p class="page-sub">Konfigurasi akun & tampilan</p></div></div>
     <div class="grid-2">
       <div>
         <div class="card">
-          <div class="card-h"><h2><i data-lucide="user"></i> Profil Akun</h2></div>
+          <div class="card-h"><h2><i data-lucide="user"></i><span>Profil Akun</span></h2></div>
           <div class="card-b">
             <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
               <img id="settingsAvatar" src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:var(--shadow-md)" />
@@ -627,11 +531,11 @@ button{font-family:inherit}
                 <div style="font-size:11px;color:var(--txt-3);margin-top:2px">UID: <span id="settingsUid">—</span></div>
               </div>
             </div>
-            <button class="btn btn-outline btn-block" id="btnLogout"><i data-lucide="log-out"></i> Keluar dari Akun</button>
+            <button class="btn btn-outline btn-block" id="btnLogout"><i data-lucide="log-out"></i><span>Keluar dari Akun</span></button>
           </div>
         </div>
         <div class="card">
-          <div class="card-h"><h2><i data-lucide="palette"></i> Tampilan</h2></div>
+          <div class="card-h"><h2><i data-lucide="palette"></i><span>Tampilan</span></h2></div>
           <div class="card-b">
             <div class="fg"><label>Rentang Waktu Default</label>
               <select class="sel" id="setRange">
@@ -640,13 +544,13 @@ button{font-family:inherit}
                 <option value="30d">30 Hari</option><option value="all">Semua</option>
               </select>
             </div>
-            <button class="btn btn-primary btn-block" id="btnSaveSettings"><i data-lucide="save"></i> Simpan Pengaturan</button>
+            <button class="btn btn-primary btn-block" id="btnSaveSettings"><i data-lucide="save"></i><span>Simpan</span></button>
           </div>
         </div>
       </div>
       <div>
         <div class="card">
-          <div class="card-h"><h2><i data-lucide="shield"></i> Keamanan</h2></div>
+          <div class="card-h"><h2><i data-lucide="shield"></i><span>Keamanan</span></h2></div>
           <div class="card-b">
             <p class="text-muted" style="margin-bottom:12px;line-height:1.6">Akun Anda terhubung dengan Google.</p>
             <div class="divider"></div>
@@ -655,22 +559,21 @@ button{font-family:inherit}
           </div>
         </div>
         <div class="card">
-          <div class="card-h"><h2><i data-lucide="info"></i> Tentang CAZO</h2></div>
-          <div class="card-b"><p class="text-muted" style="line-height:1.7"><strong>CAZO</strong> adalah platform trading digital simulasi. Saldo virtual. Data real-time via Firebase.</p><div class="divider"></div><div style="font-size:12px;color:var(--txt-3)">Versi 2.1 • Trading Platform Edition</div></div>
+          <div class="card-h"><h2><i data-lucide="info"></i><span>Tentang CAZO</span></h2></div>
+          <div class="card-b"><p class="text-muted" style="line-height:1.7"><strong>CAZO</strong> adalah platform trading digital simulasi. Saldo virtual. Data real-time via Firebase.</p><div class="divider"></div><div style="font-size:12px;color:var(--txt-3)">Versi 2.2 • Trading Platform</div></div>
         </div>
       </div>
     </div>
   </section>
-
 </main>
 
-<!-- ===== MODAL: LOGIN PROMPT ===== -->
+<!-- MODAL: LOGIN PROMPT -->
 <div class="modal-bg" id="modalLogin">
   <div class="modal" style="max-width:440px">
     <div class="login-modal">
       <div class="login-modal-icon"><i data-lucide="lock"></i></div>
       <div class="login-modal-title">Login Diperlukan</div>
-      <div class="login-modal-desc" id="loginPromptDesc">Fitur ini memerlukan login. Silakan masuk dengan akun Google.</div>
+      <div class="login-modal-desc" id="loginPromptDesc">Fitur ini memerlukan login.</div>
       <button class="login-google-btn" id="btnGoogleLoginModal">
         <svg viewBox="0 0 48 48" width="18" height="18"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.1-11.3-7.9l-6.5 5C9.6 39.6 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.6l6.2 5.2C41 35.6 44 30.2 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
         Masuk dengan Google
@@ -679,90 +582,58 @@ button{font-family:inherit}
       <div class="login-features">
         <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Saldo awal <strong>Rp 100.000</strong></span></div>
         <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Beli & jual aset CAZO real-time</span></div>
-        <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Deposit via QRIS & konfirmasi admin</span></div>
+        <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Deposit via QRIS</span></div>
         <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Riwayat & portfolio lengkap</span></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ===== MODAL: ALAT GAMBAR ===== -->
+<!-- MODAL: ALAT GAMBAR -->
 <div class="modal-bg" id="modalDrawing">
-  <div class="modal" style="max-width:520px">
-    <div class="modal-h">
-      <h3><i data-lucide="pencil-ruler"></i> Alat Gambar</h3>
-      <button class="modal-close" onclick="CAZO.closeModal('modalDrawing')"><i data-lucide="x"></i></button>
-    </div>
-    <div class="drawing-tip">
-      <i data-lucide="star"></i>
-      <span>Tap dan tahan alat gambar untuk menambahkan ke favorit dan menyematkan di atas.</span>
-    </div>
+  <div class="modal">
+    <div class="modal-h"><h3><i data-lucide="pencil-ruler"></i><span>Alat Gambar</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalDrawing')"><i data-lucide="x"></i></button></div>
+    <div class="drawing-tip"><i data-lucide="star"></i><span>Tap alat untuk mengaktifkan. Setelah aktif, tap & drag pada chart untuk menggambar.</span></div>
     <div class="drawing-quick">
       <button class="dq-btn" data-dq="measure"><i data-lucide="ruler"></i> Pengukuran</button>
       <button class="dq-btn" data-dq="delete"><i data-lucide="trash-2"></i> Hapus</button>
       <button class="dq-btn" data-dq="lock"><i data-lucide="lock"></i> Kunci</button>
-      <button class="dq-btn" data-dq="pin"><i data-lucide="pin"></i> Tetap</button>
     </div>
     <div id="drawingCategories"></div>
     <div class="modal-f">
-      <button class="btn btn-outline" id="btnClearDrawings"><i data-lucide="trash-2"></i> Hapus Semua</button>
+      <button class="btn btn-outline" id="btnClearDrawings"><i data-lucide="trash-2"></i><span>Hapus Semua</span></button>
       <button class="btn btn-primary" onclick="CAZO.closeModal('modalDrawing')">Selesai</button>
     </div>
   </div>
 </div>
 
-<!-- ===== MODAL: INDIKATOR ===== -->
+<!-- MODAL: INDIKATOR -->
 <div class="modal-bg" id="modalIndicators">
-  <div class="modal" style="max-width:520px">
-    <div class="modal-h">
-      <h3><i data-lucide="activity"></i> Indikator</h3>
-      <button class="modal-close" onclick="CAZO.closeModal('modalIndicators')"><i data-lucide="x"></i></button>
-    </div>
+  <div class="modal">
+    <div class="modal-h"><h3><i data-lucide="activity"></i><span>Indikator</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalIndicators')"><i data-lucide="x"></i></button></div>
     <div style="padding:12px 16px 6px;display:flex;justify-content:space-between;align-items:center">
-      <button class="btn btn-outline btn-sm" id="btnClearIndicators"><i data-lucide="trash-2"></i> Hapus semua</button>
+      <button class="btn btn-outline btn-sm" id="btnClearIndicators"><i data-lucide="trash-2"></i><span>Hapus semua</span></button>
     </div>
     <div class="ind-active-chips" id="indActiveChips"></div>
-    <div class="ind-search">
-      <i data-lucide="search"></i>
-      <input type="text" id="indSearch" placeholder="Cari indikator..." />
-    </div>
+    <div class="ind-search"><i data-lucide="search"></i><input type="text" id="indSearch" placeholder="Cari indikator..." /></div>
     <div class="ind-list" id="indList"></div>
     <div class="modal-f"><button class="btn btn-primary btn-block" onclick="CAZO.closeModal('modalIndicators')">Selesai</button></div>
   </div>
 </div>
 
-<!-- ===== MODAL: STOP LOSS / TAKE PROFIT ===== -->
+<!-- MODAL: SL/TP -->
 <div class="modal-bg" id="modalSLTP">
   <div class="modal" style="max-width:440px">
-    <div class="modal-h">
-      <h3><i data-lucide="shield-alert"></i> Stop Loss / Take Profit</h3>
-      <button class="modal-close" onclick="CAZO.closeModal('modalSLTP')"><i data-lucide="x"></i></button>
-    </div>
+    <div class="modal-h"><h3><i data-lucide="shield-alert"></i><span>Stop Loss / Take Profit</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalSLTP')"><i data-lucide="x"></i></button></div>
     <div class="modal-b">
-      <p class="text-muted" style="margin-bottom:14px;line-height:1.6">
-        Tetapkan level otomatis. Ketika harga menyentuh level, posisi akan ditutup dan Anda diberi notifikasi.
-      </p>
+      <p class="text-muted" style="margin-bottom:14px;line-height:1.6">Tetapkan level otomatis. Ketika harga menyentuh level, Anda akan diberi notifikasi.</p>
       <div class="sltp-row">
-        <div class="sltp-card stop">
-          <div class="sltp-label">🛑 Stop Loss</div>
-          <input class="sltp-input" id="sltpSL" type="number" step="0.01" placeholder="0.00" />
-          <div class="sltp-hint" id="sltpHintSL">—</div>
-        </div>
-        <div class="sltp-card take">
-          <div class="sltp-label">🎯 Take Profit</div>
-          <input class="sltp-input" id="sltpTP" type="number" step="0.01" placeholder="0.00" />
-          <div class="sltp-hint" id="sltpHintTP">—</div>
-        </div>
+        <div class="sltp-card stop"><div class="sltp-label">🛑 Stop Loss</div><input class="sltp-input" id="sltpSL" type="number" step="0.01" placeholder="0.00" /><div class="sltp-hint" id="sltpHintSL">—</div></div>
+        <div class="sltp-card take"><div class="sltp-label">🎯 Take Profit</div><input class="sltp-input" id="sltpTP" type="number" step="0.01" placeholder="0.00" /><div class="sltp-hint" id="sltpHintTP">—</div></div>
       </div>
       <div class="divider"></div>
-      <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:4px 0">
-        <span style="color:var(--txt-2)">Harga saat ini</span>
-        <strong id="sltpCurrentPrice">—</strong>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:4px 0">
-        <span style="color:var(--txt-2)">Status SL/TP</span>
-        <span class="pill gray" id="sltpStatus">Tidak aktif</span>
-      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:4px 0"><span style="color:var(--txt-2)">Harga saat ini</span><strong id="sltpCurrentPrice">—</strong></div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:4px 0"><span style="color:var(--txt-2)">Status</span><span class="pill gray" id="sltpStatus">Tidak aktif</span></div>
     </div>
     <div class="modal-f">
       <button class="btn btn-outline" id="btnClearSLTP">Hapus</button>
@@ -771,13 +642,10 @@ button{font-family:inherit}
   </div>
 </div>
 
-<!-- ===== MODAL: INFO ===== -->
+<!-- MODAL: INFO -->
 <div class="modal-bg" id="modalInfo">
   <div class="modal">
-    <div class="modal-h">
-      <h3><i data-lucide="info"></i> <span id="modalInfoTitle">Info</span></h3>
-      <button class="modal-close" onclick="CAZO.closeModal('modalInfo')"><i data-lucide="x"></i></button>
-    </div>
+    <div class="modal-h"><h3><i data-lucide="info"></i><span id="modalInfoTitle">Info</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalInfo')"><i data-lucide="x"></i></button></div>
     <div class="modal-b" id="modalInfoBody"></div>
     <div class="modal-f"><button class="btn btn-primary btn-block" onclick="CAZO.closeModal('modalInfo')">Tutup</button></div>
   </div>
@@ -785,17 +653,15 @@ button{font-family:inherit}
 
 <div class="toasts" id="toasts"></div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getDatabase, ref, onValue, push, update, set, get, query,
-  orderByChild, limitToLast, serverTimestamp, remove, runTransaction
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-import {
-  getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+<!-- ============================================================
+     SCRIPT UTAMA (CLASSIC, BUKAN MODULE)
+     ============================================================ -->
+<script>
+(function(){
+'use strict';
 
-const FIREBASE_CONFIG = {
+// ============ CONFIG ============
+var FIREBASE_CONFIG = {
   apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
   authDomain: "mygame-68b24.firebaseapp.com",
   databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
@@ -804,11 +670,10 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "1003182873390",
   appId: "1:1003182873390:web:aabf3248f759cbc9d678bf"
 };
-const ADMIN_EMAILS = ["admin@cazo.app", "cazo.admin@gmail.com"];
-const DEFAULT_BALANCE = 100000;
-const ASSET_ICON = "https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg";
+var DEFAULT_BALANCE = 100000;
+var ASSET_ICON = "https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg";
 
-const DEFAULT_SETTINGS = {
+var DEFAULT_SETTINGS = {
   assetName: "CAZO CARD", symbol: "CAZO",
   currentPrice: 1250, previousPrice: 1220,
   highestPrice: 1280, lowestPrice: 1180,
@@ -819,86 +684,77 @@ const DEFAULT_SETTINGS = {
   maxPoints: 200, updatedAt: null
 };
 
-// ====== DEFINISI ALAT GAMBAR (sesuai screenshot TradingView) ======
-const DRAWING_CATEGORIES = [
-  {
-    name: "Garis Tren",
-    tools: [
-      { id: "trendline", name: "Garis Tren", icon: "trending-up" },
-      { id: "ray", name: "Sinar", icon: "move-up-right" },
-      { id: "info-line", name: "Garis Info", icon: "info" },
-      { id: "extended", name: "Garis Perpanjangan", icon: "arrow-right-to-line" },
-      { id: "angle", name: "Sudut", icon: "triangle-right" },
-      { id: "hline", name: "Garis Horizontal", icon: "minus" },
-      { id: "vline", name: "Garis Vertikal", icon: "separator-vertical" },
-    ]
-  },
-  {
-    name: "Gann dan Fibonacci",
-    tools: [
-      { id: "fib-ret", name: "Retracement Fib", icon: "align-horizontal-justify-start" },
-      { id: "fib-ext", name: "Fibonacci Extension", icon: "align-horizontal-justify-center" },
-      { id: "fib-channel", name: "Kanal Fib", icon: "git-branch" },
-      { id: "fib-time", name: "Zona Waktu Fib", icon: "clock" },
-      { id: "gann-fan", name: "Kipas Gann", icon: "git-fork" },
-      { id: "gann-square", name: "Kotak Gann", icon: "square" },
-    ]
-  },
-  {
-    name: "Pola",
-    tools: [
-      { id: "xabcd", name: "Pola XABCD", icon: "git-branch" },
-      { id: "cypher", name: "Pola Cypher", icon: "git-branch" },
-      { id: "hns", name: "Head & Shoulder", icon: "waves" },
-      { id: "abcd", name: "Pola ABCD", icon: "git-commit" },
-      { id: "triangle", name: "Segitiga", icon: "triangle" },
-      { id: "elliot", name: "Gelombang Elliot", icon: "waves" },
-    ]
-  },
-  {
-    name: "Proyeksi dan Pengukuran",
-    tools: [
-      { id: "projection", name: "Proyeksi", icon: "git-pull-request" },
-      { id: "price-range", name: "Rentang Harga", icon: "move-vertical" },
-      { id: "date-range", name: "Rentang Tanggal", icon: "move-horizontal" },
-      { id: "date-price-range", name: "Rentang Tgl & Harga", icon: "grid-2x2" },
-      { id: "measure", name: "Ukur", icon: "ruler" },
-    ]
-  },
-  {
-    name: "Bentuk Geometris",
-    tools: [
-      { id: "brush", name: "Kuas", icon: "brush" },
-      { id: "highlighter", name: "Highlighter", icon: "highlighter" },
-      { id: "arrow", name: "Panah", icon: "arrow-up-right" },
-      { id: "arrow-mark", name: "Penanda Panah", icon: "arrow-right" },
-      { id: "rect", name: "Persegi", icon: "square" },
-      { id: "circle", name: "Elips", icon: "circle" },
-    ]
-  },
-  {
-    name: "Anotasi",
-    tools: [
-      { id: "text", name: "Teks", icon: "type" },
-      { id: "anchored-text", name: "Teks Terjangkar", icon: "anchor" },
-      { id: "note", name: "Catatan", icon: "sticky-note" },
-      { id: "price-note", name: "Catatan Harga", icon: "tag" },
-      { id: "label", name: "Label", icon: "tag" },
-      { id: "signpost", name: "Signpost", icon: "signpost" },
-      { id: "flag", name: "Tanda Bendera", icon: "flag" },
-    ]
-  }
+var DEMO_HISTORY = [
+  { price: 1180, change: 0, changePercent: 0 },
+  { price: 1195, change: 15, changePercent: 1.27 },
+  { price: 1210, change: 15, changePercent: 1.26 },
+  { price: 1205, change: -5, changePercent: -0.41 },
+  { price: 1230, change: 25, changePercent: 2.07 },
+  { price: 1220, change: -10, changePercent: -0.81 },
+  { price: 1250, change: 30, changePercent: 2.46 }
 ];
 
-// ====== DAFTAR INDIKATOR ======
-const INDICATORS = [
+// ============ DRAWING TOOLS ============
+var DRAWING_CATEGORIES = [
+  { name: "Garis Tren", tools: [
+    { id: "trendline", name: "Garis Tren", icon: "trending-up" },
+    { id: "ray", name: "Sinar", icon: "move-up-right" },
+    { id: "extended", name: "Garis Perpanjangan", icon: "arrow-right-to-line" },
+    { id: "hline", name: "Horizontal", icon: "minus" },
+    { id: "vline", name: "Vertikal", icon: "separator-vertical" },
+    { id: "angle", name: "Sudut", icon: "triangle-right" }
+  ]},
+  { name: "Gann dan Fibonacci", tools: [
+    { id: "fib-ret", name: "Retracement Fib", icon: "align-horizontal-justify-start" },
+    { id: "fib-ext", name: "Fibonacci Extension", icon: "align-horizontal-justify-center" },
+    { id: "fib-channel", name: "Kanal Fib", icon: "git-branch" },
+    { id: "fib-time", name: "Zona Waktu Fib", icon: "clock" },
+    { id: "gann-fan", name: "Kipas Gann", icon: "git-fork" },
+    { id: "gann-square", name: "Kotak Gann", icon: "square" }
+  ]},
+  { name: "Pola", tools: [
+    { id: "xabcd", name: "Pola XABCD", icon: "git-branch" },
+    { id: "cypher", name: "Pola Cypher", icon: "git-branch" },
+    { id: "hns", name: "Head & Shoulder", icon: "waves" },
+    { id: "triangle-pattern", name: "Segitiga", icon: "triangle" },
+    { id: "elliot", name: "Gelombang Elliot", icon: "waves" },
+    { id: "wxyxz", name: "Kombinasi Triple", icon: "waves" }
+  ]},
+  { name: "Proyeksi & Pengukuran", tools: [
+    { id: "projection", name: "Proyeksi", icon: "git-pull-request" },
+    { id: "price-range", name: "Rentang Harga", icon: "move-vertical" },
+    { id: "date-range", name: "Rentang Tanggal", icon: "move-horizontal" },
+    { id: "date-price-range", name: "Tgl & Harga", icon: "grid-2x2" },
+    { id: "measure", name: "Ukur", icon: "ruler" },
+    { id: "sine-line", name: "Garis Sinus", icon: "activity" }
+  ]},
+  { name: "Bentuk Geometris", tools: [
+    { id: "brush", name: "Kuas", icon: "brush" },
+    { id: "highlighter", name: "Highlighter", icon: "highlighter" },
+    { id: "arrow", name: "Panah", icon: "arrow-up-right" },
+    { id: "arrow-mark", name: "Penanda Panah", icon: "arrow-right" },
+    { id: "rect", name: "Persegi", icon: "square" },
+    { id: "circle", name: "Elips", icon: "circle" }
+  ]},
+  { name: "Anotasi", tools: [
+    { id: "text", name: "Teks", icon: "type" },
+    { id: "anchored-text", name: "Teks Terjangkar", icon: "anchor" },
+    { id: "note", name: "Catatan", icon: "sticky-note" },
+    { id: "price-note", name: "Catatan Harga", icon: "tag" },
+    { id: "label", name: "Label", icon: "tag" },
+    { id: "flag", name: "Tanda Bendera", icon: "flag" }
+  ]}
+];
+
+// ============ INDIKATORS ============
+var INDICATORS = [
   { id: "ma", name: "Moving Average", desc: "Rata-rata harga bergerak" },
   { id: "ema", name: "EMA (Exponential MA)", desc: "MA dengan bobot eksponensial" },
   { id: "bb", name: "Bollinger Bands", desc: "Band volatilitas" },
   { id: "bbw", name: "Bollinger Bands Width", desc: "Lebar band" },
-  { id: "vwap", name: "VWAP", desc: "Volume Weighted Average Price" },
+  { id: "vwap", name: "VWAP", desc: "Volume Weighted Avg Price" },
   { id: "rsi", name: "RSI", desc: "Relative Strength Index" },
-  { id: "macd", name: "MACD", desc: "Moving Average Convergence Divergence" },
+  { id: "macd", name: "MACD", desc: "MA Convergence Divergence" },
   { id: "stoch", name: "Stochastic", desc: "Oscillator momentum" },
   { id: "cci", name: "CCI", desc: "Commodity Channel Index" },
   { id: "atr", name: "ATR", desc: "Average True Range" },
@@ -909,45 +765,34 @@ const INDICATORS = [
   { id: "mom", name: "Momentum", desc: "Momentum indicator" },
   { id: "roc", name: "ROC", desc: "Rate of Change" },
   { id: "ao", name: "Awesome Oscillator", desc: "AO Bill Williams" },
-  { id: "bbwp", name: "Bollinger Bands %B", desc: "%B" },
+  { id: "bbp", name: "Bollinger Bands %B", desc: "%B" }
 ];
 
-// ==================== STATE ====================
-const S = {
+// ============ STATE ============
+var S = {
   app: null, db: null, auth: null,
   user: null, isAdmin: false,
   ready: false, online: false,
-  settings: { ...DEFAULT_SETTINGS },
+  settings: Object.assign({}, DEFAULT_SETTINGS),
   history: [],
   balance: 0, portfolio: {},
   transactions: [], deposits: [],
-  // Chart series
   chart: null, candleSeries: null, volumeSeries: null,
-  activeRange: "7d",
-  showVolume: true,
-  chartFullscreen: false,
-  tradeSide: "buy",
-  histTab: "tx",
+  activeRange: "7d", showVolume: true, chartFullscreen: false,
+  tradeSide: "buy", histTab: "tx",
   unsubs: [], unsubsUser: [],
-  _lastChartKey: "",
+  _lastChartKey: "", _lastFitRange: null,
   pendingAction: null,
-  // Drawing
-  drawings: [],
-  activeTool: null,
-  drawing: null, // {points:[], ...}
-  // Indicators
-  activeIndicators: new Set(),
-  indicatorSeries: new Map(),
-  activePane: null,
-  // SL/TP
-  stopLoss: null, takeProfit: null,
-  sltpLines: [],
+  drawings: [], activeTool: null, drawing: null,
+  activeIndicators: {}, indicatorSeries: {},
+  stopLoss: null, takeProfit: null
 };
 
-const $ = (id) => document.getElementById(id);
+function $(id) { return document.getElementById(id); }
 
-// ==================== UTIL ====================
-function fmt(n, dec = 2) {
+// ============ UTIL ============
+function fmt(n, dec) {
+  dec = dec == null ? 2 : dec;
   if (n == null || isNaN(n)) return "—";
   return Number(n).toLocaleString("id-ID", { minimumFractionDigits: dec, maximumFractionDigits: dec });
 }
@@ -957,45 +802,52 @@ function fmtIDR(n) {
 }
 function fmtTime(ts) {
   if (!ts) return "—";
-  const d = new Date(ts);
+  var d = new Date(ts);
   return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short" }) + " " +
          d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
 }
 function ago(ts) {
   if (!ts) return "—";
-  const s = Math.floor((Date.now() - ts) / 1000);
+  var s = Math.floor((Date.now() - ts) / 1000);
   if (s < 5) return "baru saja";
   if (s < 60) return s + "s lalu";
-  const m = Math.floor(s / 60);
+  var m = Math.floor(s / 60);
   if (m < 60) return m + "m lalu";
-  const h = Math.floor(m / 60);
+  var h = Math.floor(m / 60);
   if (h < 24) return h + "j lalu";
   return Math.floor(h / 24) + "h lalu";
 }
-function num(v, fb = 0) { const n = Number(v); return isNaN(n) ? fb : n; }
+function num(v, fb) { var n = Number(v); return isNaN(n) ? (fb || 0) : n; }
 
-function toast(msg, type = "info", dur = 3500) {
-  const wrap = $("toasts"); if (!wrap) return;
-  const icons = { success: "check-circle", error: "alert-circle", warning: "alert-triangle", info: "info" };
-  const el = document.createElement("div");
+function toast(msg, type, dur) {
+  type = type || "info"; dur = dur || 3500;
+  var wrap = $("toasts"); if (!wrap) return;
+  var icons = { success: "check-circle", error: "alert-circle", warning: "alert-triangle", info: "info" };
+  var el = document.createElement("div");
   el.className = "toast " + type;
-  el.innerHTML = `<i data-lucide="${icons[type] || icons.info}"></i><span></span><button class="toast-close"><i data-lucide="x" style="width:14px;height:14px"></i></button>`;
+  el.innerHTML = '<i data-lucide="' + (icons[type] || icons.info) + '"></i><span></span><button class="toast-close"><i data-lucide="x" style="width:14px;height:14px"></i></button>';
   el.querySelector("span").textContent = msg;
-  el.querySelector(".toast-close").addEventListener("click", () => el.remove());
+  el.querySelector(".toast-close").addEventListener("click", function(){ el.remove(); });
   wrap.appendChild(el);
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
-  setTimeout(() => { el.style.opacity = "0"; setTimeout(() => el.remove(), 250); }, dur);
+  renderIcons();
+  setTimeout(function(){ el.style.opacity = "0"; setTimeout(function(){ el.remove(); }, 250); }, dur);
 }
 
-function openModal(id) { $(id).classList.add("open"); }
-function closeModal(id) { $(id).classList.remove("open"); }
+function renderIcons() {
+  if (window.lucide && typeof window.lucide.createIcons === "function") {
+    try { window.lucide.createIcons(); } catch (e) {}
+  }
+}
+
+function openModal(id) { var el = $(id); if (el) el.classList.add("open"); }
+function closeModal(id) { var el = $(id); if (el) el.classList.remove("open"); }
 
 function requireLogin(reason, action) {
   if (S.user) { if (typeof action === "function") action(); return true; }
   S.pendingAction = action || null;
-  const desc = {
+  var desc = {
     profile: "Silakan masuk dengan Google untuk melihat profil akun Anda.",
-    trade: "Untuk membeli atau menjual aset, silakan masuk dengan akun Google.",
+    trade: "Untuk membeli atau menjual aset, silakan masuk dengan Google.",
     portfolio: "Login untuk melihat portfolio, saldo, dan P&L.",
     deposit: "Login untuk melakukan deposit saldo virtual.",
     history: "Login untuk melihat riwayat transaksi.",
@@ -1003,18 +855,22 @@ function requireLogin(reason, action) {
   }[reason] || "Fitur ini memerlukan login.";
   $("loginPromptDesc").textContent = desc;
   openModal("modalLogin");
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+  renderIcons();
   return false;
 }
 
-// ==================== CHART INIT ====================
+// ============ CHART ============
 function initChart() {
-  const box = $("mainChart");
-  if (!box || typeof LightweightCharts === "undefined") return;
-  if (S.chart) return;
+  var box = $("mainChart");
+  if (!box) return false;
+  if (typeof LightweightCharts === "undefined") return false;
+  if (S.chart) return true;
+
+  var w = box.clientWidth || 600;
+  var h = box.clientHeight || 400;
 
   S.chart = LightweightCharts.createChart(box, {
-    width: box.clientWidth, height: box.clientHeight,
+    width: w, height: h,
     layout: { background: { type: "solid", color: "#FFFFFF" }, textColor: "#64748B", fontFamily: "'Inter',sans-serif", fontSize: 11 },
     grid: { vertLines: { color: "rgba(226,232,240,0.6)" }, horzLines: { color: "rgba(226,232,240,0.6)" } },
     rightPriceScale: { borderColor: "#E2E8F0", scaleMargins: { top: 0.08, bottom: 0.25 } },
@@ -1022,7 +878,7 @@ function initChart() {
     crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
     handleScroll: { mouseWheel: true, pressedMouseMove: true, horzTouchDrag: true, vertTouchDrag: false },
     handleScale: { axisPressedMouseMove: true, mouseWheel: true, pinch: true },
-    localization: { priceFormatter: (p) => fmt(p, 2) }
+    localization: { priceFormatter: function(p){ return fmt(p, 2); } }
   });
 
   S.volumeSeries = S.chart.addHistogramSeries({ priceFormat: { type: "volume" }, priceScaleId: "volume", color: "rgba(148,163,184,0.4)" });
@@ -1035,25 +891,34 @@ function initChart() {
     priceFormat: { type: "price", precision: 2, minMove: 0.01 }
   });
 
-  new ResizeObserver(() => {
-    if (!S.chart) return;
-    S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
-    resizeDrawLayer();
-    redrawAll();
-  }).observe(box);
+  if (window.ResizeObserver) {
+    new ResizeObserver(function() {
+      if (!S.chart) return;
+      S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
+      resizeDrawLayer(); redrawAll();
+    }).observe(box);
+  } else {
+    window.addEventListener("resize", function(){
+      if (!S.chart) return;
+      S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
+      resizeDrawLayer(); redrawAll();
+    });
+  }
 
   setupDrawingCanvas();
+  $("chartLoading").classList.add("hidden");
+  return true;
 }
 
 function buildCandles(hist) {
-  const out = []; let lastT = 0;
-  for (let i = 0; i < hist.length; i++) {
-    const h = hist[i];
-    const open = i === 0 ? h.price : hist[i - 1].price;
-    const close = h.price;
-    const body = Math.abs(close - open);
-    const wick = Math.max(body * 0.35, close * 0.0004);
-    let t = Math.floor(h.timestamp / 1000);
+  var out = [], lastT = 0;
+  for (var i = 0; i < hist.length; i++) {
+    var h = hist[i];
+    var open = i === 0 ? h.price : hist[i - 1].price;
+    var close = h.price;
+    var body = Math.abs(close - open);
+    var wick = Math.max(body * 0.35, close * 0.0004);
+    var t = Math.floor(h.timestamp / 1000);
     if (t <= lastT) t = lastT + 1;
     lastT = t;
     out.push({
@@ -1068,153 +933,113 @@ function buildCandles(hist) {
 }
 
 function getFilteredHistory(range) {
-  const hist = S.history; if (!hist.length) return [];
-  const now = Date.now();
-  const ranges = { "1m": 60e3, "5m": 5 * 60e3, "15m": 15 * 60e3, "1h": 60 * 60e3, "24h": 24 * 60 * 60e3, "7d": 7 * 24 * 60 * 60e3, "30d": 30 * 24 * 60 * 60e3, "all": Infinity };
-  const cutoff = ranges[range] === Infinity ? 0 : now - ranges[range];
-  const filtered = hist.filter(h => h.timestamp >= cutoff);
+  var hist = S.history; if (!hist.length) return [];
+  var now = Date.now();
+  var ranges = { "1m": 60e3, "5m": 5*60e3, "15m": 15*60e3, "1h": 60*60e3, "24h": 24*60*60e3, "7d": 7*24*60*60e3, "30d": 30*24*60*60e3, "all": Infinity };
+  var cutoff = ranges[range] === Infinity ? 0 : now - ranges[range];
+  var filtered = hist.filter(function(h){ return h.timestamp >= cutoff; });
   if (filtered.length < 2 && hist.length >= 2) return hist.slice(-Math.min(hist.length, 30));
   return filtered;
 }
 
 function updateChart() {
   if (!S.candleSeries || !S.chart) return;
-  const filtered = getFilteredHistory(S.activeRange);
+  var filtered = getFilteredHistory(S.activeRange);
   if (!filtered.length) {
     S.candleSeries.setData([]);
     if (S.volumeSeries) S.volumeSeries.setData([]);
     return;
   }
-  const key = S.activeRange + "_" + filtered.length + "_" + (filtered[filtered.length - 1]?.timestamp || 0);
+  var key = S.activeRange + "_" + filtered.length + "_" + (filtered[filtered.length-1].timestamp || 0);
   if (key === S._lastChartKey) return;
   S._lastChartKey = key;
-  const candles = buildCandles(filtered);
+
+  var candles = buildCandles(filtered);
+  var upColor = S.settings.chartColor || "#16A34A";
   S.candleSeries.applyOptions({
-    upColor: S.settings.chartColor || "#16A34A",
-    borderUpColor: S.settings.chartColor || "#16A34A",
-    wickUpColor: S.settings.chartColor || "#16A34A"
+    upColor: upColor, borderUpColor: upColor, wickUpColor: upColor
   });
   S.candleSeries.setData(candles);
+
   if (S.volumeSeries) {
     if (S.showVolume) {
-      S.volumeSeries.setData(candles.map(c => ({ time: c.time, value: c.volume, color: c.close >= c.open ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)" })));
+      S.volumeSeries.setData(candles.map(function(c){
+        return { time: c.time, value: c.volume, color: c.close >= c.open ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)" };
+      }));
     } else S.volumeSeries.setData([]);
   }
   if (S._lastFitRange !== S.activeRange) {
     S.chart.timeScale().fitContent();
     S._lastFitRange = S.activeRange;
   }
-  // Update indicators dengan data baru
   updateIndicators(candles);
   setTimeout(redrawAll, 50);
 }
 
-// ==================== DRAWING CANVAS ====================
+// ============ DRAWING ============
 function setupDrawingCanvas() {
-  const canvas = $("drawLayer");
-  if (!canvas) return;
-  const wrap = $("chartWrap");
-  canvas.width = wrap.clientWidth * window.devicePixelRatio;
-  canvas.height = wrap.clientHeight * window.devicePixelRatio;
-  canvas.style.width = wrap.clientWidth + "px";
-  canvas.style.height = wrap.clientHeight + "px";
-
+  var canvas = $("drawLayer"); if (!canvas) return;
+  resizeDrawLayer();
   canvas.addEventListener("pointerdown", onCanvasDown);
   canvas.addEventListener("pointermove", onCanvasMove);
   canvas.addEventListener("pointerup", onCanvasUp);
   canvas.addEventListener("pointercancel", onCanvasUp);
 }
-
 function resizeDrawLayer() {
-  const canvas = $("drawLayer");
-  const wrap = $("chartWrap");
-  if (!canvas || !wrap) return;
-  canvas.width = wrap.clientWidth * window.devicePixelRatio;
-  canvas.height = wrap.clientHeight * window.devicePixelRatio;
-  canvas.style.width = wrap.clientWidth + "px";
-  canvas.style.height = wrap.clientHeight + "px";
+  var c = $("drawLayer"), w = $("chartWrap");
+  if (!c || !w) return;
+  var dpr = window.devicePixelRatio || 1;
+  c.width = w.clientWidth * dpr;
+  c.height = w.clientHeight * dpr;
+  c.style.width = w.clientWidth + "px";
+  c.style.height = w.clientHeight + "px";
 }
-
 function canvasToChartPoint(clientX, clientY) {
-  const wrap = $("chartWrap");
-  const rect = wrap.getBoundingClientRect();
-  const x = clientX - rect.left;
-  const y = clientY - rect.top;
-  const time = S.chart.timeScale().coordinateToTime(x);
-  const price = S.candleSeries.coordinateToPrice(y);
-  return { x, y, time, price };
+  var w = $("chartWrap");
+  var r = w.getBoundingClientRect();
+  var x = clientX - r.left, y = clientY - r.top;
+  var time = S.chart.timeScale().coordinateToTime(x);
+  var price = S.candleSeries.coordinateToPrice(y);
+  return { x: x, y: y, time: time, price: price };
 }
-
 function chartToCanvasPoint(time, price) {
-  const x = S.chart.timeScale().timeToCoordinate(time);
-  const y = S.candleSeries.priceToCoordinate(price);
-  return { x, y };
+  var x = S.chart.timeScale().timeToCoordinate(time);
+  var y = S.candleSeries.priceToCoordinate(price);
+  return { x: x, y: y };
 }
 
-let drawPointerDown = false;
-
+var drawPointerDown = false;
 function onCanvasDown(e) {
   if (!S.activeTool) return;
-  e.preventDefault();
-  e.stopPropagation();
-  const canvas = $("drawLayer");
-  canvas.setPointerCapture(e.pointerId);
+  e.preventDefault(); e.stopPropagation();
+  var c = $("drawLayer");
+  try { c.setPointerCapture(e.pointerId); } catch(err) {}
   drawPointerDown = true;
-  const pt = canvasToChartPoint(e.clientX, e.clientY);
+  var pt = canvasToChartPoint(e.clientX, e.clientY);
   if (!pt.time || !pt.price) return;
 
-  // Single-click tools
-  if (S.activeTool === "hline") {
-    S.drawings.push({ type: "hline", price: pt.price, color: "#0F172A" });
-    redrawAll();
-    toast("Garis horizontal ditambahkan", "success", 2000);
-    setActiveTool(null);
-    return;
-  }
-  if (S.activeTool === "vline") {
-    S.drawings.push({ type: "vline", time: pt.time, color: "#0F172A" });
-    redrawAll();
-    setActiveTool(null);
-    return;
-  }
-  if (S.activeTool === "text") {
-    const txt = prompt("Masukkan teks:");
-    if (txt) S.drawings.push({ type: "text", time: pt.time, price: pt.price, text: txt, color: "#0F172A" });
-    redrawAll();
-    setActiveTool(null);
-    return;
-  }
-  if (S.activeTool === "arrow") {
-    S.drawings.push({ type: "arrow", time: pt.time, price: pt.price, color: "#16A34A" });
-    redrawAll();
-    setActiveTool(null);
-    return;
-  }
+  if (S.activeTool === "hline") { S.drawings.push({ type: "hline", price: pt.price, color: "#0F172A" }); redrawAll(); setActiveTool(null); toast("Garis ditambahkan", "success", 2000); return; }
+  if (S.activeTool === "vline") { S.drawings.push({ type: "vline", time: pt.time, color: "#0F172A" }); redrawAll(); setActiveTool(null); return; }
+  if (S.activeTool === "text") { var txt = prompt("Teks:"); if (txt) S.drawings.push({ type: "text", time: pt.time, price: pt.price, text: txt, color: "#0F172A" }); redrawAll(); setActiveTool(null); return; }
+  if (S.activeTool === "arrow") { S.drawings.push({ type: "arrow", time: pt.time, price: pt.price, color: "#16A34A" }); redrawAll(); setActiveTool(null); return; }
 
-  // Multi-point tools
   S.drawing = { type: S.activeTool, start: pt, end: pt, color: "#2563EB" };
 }
-
 function onCanvasMove(e) {
   if (!drawPointerDown || !S.drawing) return;
   e.preventDefault();
-  const pt = canvasToChartPoint(e.clientX, e.clientY);
+  var pt = canvasToChartPoint(e.clientX, e.clientY);
   if (!pt.time || !pt.price) return;
   S.drawing.end = pt;
   redrawAll();
 }
-
 function onCanvasUp(e) {
   if (!drawPointerDown) return;
   drawPointerDown = false;
   if (!S.drawing) return;
-  const d = S.drawing;
-  S.drawing = null;
-
-  // Save final drawing
+  var d = S.drawing; S.drawing = null;
   if (d.start && d.end) {
-    const final = { type: d.type, start: d.start, end: d.end, color: d.color };
-    S.drawings.push(final);
+    S.drawings.push({ type: d.type, start: d.start, end: d.end, color: d.color });
     redrawAll();
     toast("Gambar disimpan", "success", 1800);
   }
@@ -1222,137 +1047,86 @@ function onCanvasUp(e) {
 }
 
 function redrawAll() {
-  const canvas = $("drawLayer");
-  if (!canvas || !S.chart || !S.candleSeries) return;
-  const ctx = canvas.getContext("2d");
-  const dpr = window.devicePixelRatio;
+  var c = $("drawLayer"); if (!c || !S.chart || !S.candleSeries) return;
+  var ctx = c.getContext("2d");
+  var dpr = window.devicePixelRatio || 1;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Draw saved drawings
-  S.drawings.forEach(d => drawShape(ctx, d));
-
-  // Draw in-progress drawing
-  if (S.drawing) drawShape(ctx, { ...S.drawing, preview: true });
-
-  // Draw SL/TP lines
+  ctx.clearRect(0, 0, c.width, c.height);
+  S.drawings.forEach(function(d){ drawShape(ctx, d); });
+  if (S.drawing) drawShape(ctx, Object.assign({}, S.drawing, { preview: true }));
   drawSLTP(ctx);
 }
 
 function drawShape(ctx, d) {
-  const start = d.start ? chartToCanvasPoint(d.start.time, d.start.price) : null;
-  const end = d.end ? chartToCanvasPoint(d.end.time, d.end.price) : null;
-  const color = d.color || "#2563EB";
-  const isPreview = d.preview;
-
+  var start = d.start ? chartToCanvasPoint(d.start.time, d.start.price) : null;
+  var end = d.end ? chartToCanvasPoint(d.end.time, d.end.price) : null;
+  var color = d.color || "#2563EB";
   ctx.save();
-  ctx.strokeStyle = color;
-  ctx.fillStyle = color;
-  ctx.lineWidth = 2;
-  if (isPreview) ctx.setLineDash([6, 4]);
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 2;
+  if (d.preview) ctx.setLineDash([6,4]);
 
   if (d.type === "hline") {
-    const y = S.candleSeries.priceToCoordinate(d.price);
+    var y = S.candleSeries.priceToCoordinate(d.price);
     if (y != null) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(ctx.canvas.width / window.devicePixelRatio, y); ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.fillStyle = color;
-      ctx.fillRect(4, y - 10, 70, 20);
-      ctx.fillStyle = "#fff";
-      ctx.font = "bold 11px Inter, sans-serif";
-      ctx.fillText(fmt(d.price, 2), 10, y + 4);
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(ctx.canvas.width / (window.devicePixelRatio||1), y); ctx.stroke();
+      ctx.setLineDash([]); ctx.fillStyle = color;
+      ctx.fillRect(4, y - 10, 80, 20); ctx.fillStyle = "#fff";
+      ctx.font = "bold 11px Inter, sans-serif"; ctx.fillText(fmt(d.price, 2), 10, y + 4);
     }
   } else if (d.type === "vline") {
-    const x = S.chart.timeScale().timeToCoordinate(d.time);
-    if (x != null) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, ctx.canvas.height / window.devicePixelRatio); ctx.stroke();
-    }
+    var x = S.chart.timeScale().timeToCoordinate(d.time);
+    if (x != null) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, ctx.canvas.height / (window.devicePixelRatio||1)); ctx.stroke(); }
   } else if (d.type === "text") {
-    if (start && start.x != null && start.y != null) {
-      ctx.fillStyle = "rgba(255,255,255,0.9)";
-      ctx.fillRect(start.x - 3, start.y - 16, ctx.measureText(d.text).width + 12, 20);
-      ctx.fillStyle = color;
-      ctx.font = "bold 12px Inter, sans-serif";
-      ctx.fillText(d.text, start.x + 3, start.y - 3);
+    if (start && start.x != null) {
+      ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.fillRect(start.x - 3, start.y - 16, ctx.measureText(d.text).width + 12, 20);
+      ctx.fillStyle = color; ctx.font = "bold 12px Inter, sans-serif"; ctx.fillText(d.text, start.x + 3, start.y - 3);
     }
   } else if (d.type === "arrow") {
     if (start && start.x != null) {
-      ctx.beginPath();
-      ctx.moveTo(start.x - 12, start.y + 12);
-      ctx.lineTo(start.x, start.y);
-      ctx.lineTo(start.x - 4, start.y + 2);
-      ctx.lineTo(start.x - 2, start.y + 8);
-      ctx.closePath();
-      ctx.fill();
+      ctx.beginPath(); ctx.moveTo(start.x - 12, start.y + 12); ctx.lineTo(start.x, start.y);
+      ctx.lineTo(start.x - 4, start.y + 2); ctx.lineTo(start.x - 2, start.y + 8); ctx.closePath(); ctx.fill();
     }
   } else if (start && end && start.x != null && end.x != null) {
     if (d.type === "trendline" || d.type === "extended") {
-      ctx.beginPath();
-      ctx.moveTo(start.x, start.y);
-      ctx.lineTo(end.x, end.y);
-      if (d.type === "extended") {
-        const dx = end.x - start.x, dy = end.y - start.y;
-        ctx.lineTo(end.x + dx * 5, end.y + dy * 5);
-      }
-      ctx.stroke();
-      // Endpoints
-      ctx.fillStyle = color;
-      ctx.beginPath(); ctx.arc(start.x, start.y, 4, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(end.x, end.y, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(start.x, start.y); ctx.lineTo(end.x, end.y);
+      if (d.type === "extended") { var dx = end.x - start.x, dy = end.y - start.y; ctx.lineTo(end.x + dx*5, end.y + dy*5); }
+      ctx.stroke(); ctx.fillStyle = color;
+      ctx.beginPath(); ctx.arc(start.x, start.y, 4, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(end.x, end.y, 4, 0, Math.PI*2); ctx.fill();
     } else if (d.type === "ray") {
-      const dx = end.x - start.x, dy = end.y - start.y;
-      ctx.beginPath();
-      ctx.moveTo(start.x, start.y);
-      ctx.lineTo(start.x + dx * 10, start.y + dy * 10);
-      ctx.stroke();
+      var dx2 = end.x - start.x, dy2 = end.y - start.y;
+      ctx.beginPath(); ctx.moveTo(start.x, start.y); ctx.lineTo(start.x + dx2*10, start.y + dy2*10); ctx.stroke();
     } else if (d.type === "rect") {
-      ctx.beginPath();
-      ctx.rect(start.x, start.y, end.x - start.x, end.y - start.y);
-      ctx.globalAlpha = 0.1; ctx.fill(); ctx.globalAlpha = 1;
-      ctx.stroke();
+      ctx.beginPath(); ctx.rect(start.x, start.y, end.x - start.x, end.y - start.y);
+      ctx.globalAlpha = 0.1; ctx.fill(); ctx.globalAlpha = 1; ctx.stroke();
     } else if (d.type === "circle") {
-      const rx = Math.abs(end.x - start.x), ry = Math.abs(end.y - start.y);
-      ctx.beginPath();
-      ctx.ellipse((start.x + end.x) / 2, (start.y + end.y) / 2, rx / 2, ry / 2, 0, 0, Math.PI * 2);
-      ctx.stroke();
+      var rx = Math.abs(end.x - start.x), ry = Math.abs(end.y - start.y);
+      ctx.beginPath(); ctx.ellipse((start.x+end.x)/2, (start.y+end.y)/2, rx/2, ry/2, 0, 0, Math.PI*2); ctx.stroke();
     } else if (d.type === "fib-ret" || d.type === "fib-ext") {
-      // Fibonacci retracement levels
-      const levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
-      const hi = Math.max(start.y, end.y), lo = Math.min(start.y, end.y);
-      const leftX = Math.min(start.x, end.x), rightX = Math.max(start.x, end.x);
-      const colors = ["#DC2626", "#F59E0B", "#F59E0B", "#16A34A", "#F59E0B", "#F59E0B", "#DC2626"];
-      levels.forEach((lvl, i) => {
-        const y = lo + (hi - lo) * lvl;
-        ctx.strokeStyle = colors[i];
-        ctx.lineWidth = 1;
-        ctx.setLineDash([3, 3]);
+      var levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
+      var hi = Math.max(start.y, end.y), lo = Math.min(start.y, end.y);
+      var leftX = Math.min(start.x, end.x), rightX = Math.max(start.x, end.x);
+      var colors = ["#DC2626","#F59E0B","#F59E0B","#16A34A","#F59E0B","#F59E0B","#DC2626"];
+      levels.forEach(function(lvl, i){
+        var y = lo + (hi - lo) * lvl;
+        ctx.strokeStyle = colors[i]; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
         ctx.beginPath(); ctx.moveTo(leftX, y); ctx.lineTo(rightX + 80, y); ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.fillStyle = colors[i];
-        ctx.font = "10px Inter, sans-serif";
-        ctx.fillText((lvl * 100).toFixed(1) + "%", rightX + 4, y - 2);
+        ctx.setLineDash([]); ctx.fillStyle = colors[i]; ctx.font = "10px Inter, sans-serif";
+        ctx.fillText((lvl*100).toFixed(1) + "%", rightX + 4, y - 2);
       });
     } else if (d.type === "measure") {
-      const dx = Math.abs(end.x - start.x);
-      const priceDiff = d.end.price - d.start.price;
-      const pct = d.start.price !== 0 ? (priceDiff / d.start.price) * 100 : 0;
-      ctx.strokeStyle = priceDiff >= 0 ? "#16A34A" : "#DC2626";
-      ctx.fillStyle = priceDiff >= 0 ? "rgba(22,163,74,0.15)" : "rgba(220,38,38,0.15)";
-      ctx.beginPath();
-      ctx.rect(start.x, start.y, end.x - start.x, end.y - start.y);
-      ctx.fill(); ctx.stroke();
-      ctx.fillStyle = priceDiff >= 0 ? "#16A34A" : "#DC2626";
-      ctx.font = "bold 11px Inter, sans-serif";
-      ctx.fillText((priceDiff >= 0 ? "+" : "") + fmt(priceDiff, 2) + " (" + fmt(pct, 2) + "%)", Math.min(start.x, end.x) + 6, Math.min(start.y, end.y) - 6);
+      var diff = d.end.price - d.start.price;
+      var pct = d.start.price !== 0 ? (diff / d.start.price) * 100 : 0;
+      ctx.strokeStyle = diff >= 0 ? "#16A34A" : "#DC2626";
+      ctx.fillStyle = diff >= 0 ? "rgba(22,163,74,0.15)" : "rgba(220,38,38,0.15)";
+      ctx.beginPath(); ctx.rect(start.x, start.y, end.x - start.x, end.y - start.y); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = diff >= 0 ? "#16A34A" : "#DC2626"; ctx.font = "bold 11px Inter, sans-serif";
+      ctx.fillText((diff>=0?"+":"") + fmt(diff, 2) + " (" + fmt(pct, 2) + "%)", Math.min(start.x,end.x)+6, Math.min(start.y,end.y)-6);
     } else {
-      // Default: trendline
-      ctx.beginPath();
-      ctx.moveTo(start.x, start.y);
-      ctx.lineTo(end.x, end.y);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(start.x, start.y); ctx.lineTo(end.x, end.y); ctx.stroke();
       ctx.fillStyle = color;
-      ctx.beginPath(); ctx.arc(start.x, start.y, 4, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(end.x, end.y, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(start.x, start.y, 4, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(end.x, end.y, 4, 0, Math.PI*2); ctx.fill();
     }
   }
   ctx.restore();
@@ -1361,30 +1135,22 @@ function drawShape(ctx, d) {
 function drawSLTP(ctx) {
   if (!S.candleSeries) return;
   if (S.stopLoss) {
-    const y = S.candleSeries.priceToCoordinate(S.stopLoss);
-    if (y != null) {
-      ctx.save();
-      ctx.strokeStyle = "#DC2626"; ctx.setLineDash([8, 4]); ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(ctx.canvas.width / window.devicePixelRatio, y); ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.fillStyle = "#DC2626";
-      ctx.fillRect(4, y - 10, 110, 20);
-      ctx.fillStyle = "#fff"; ctx.font = "bold 11px Inter, sans-serif";
-      ctx.fillText("SL " + fmt(S.stopLoss, 2), 8, y + 4);
+    var y1 = S.candleSeries.priceToCoordinate(S.stopLoss);
+    if (y1 != null) {
+      ctx.save(); ctx.strokeStyle = "#DC2626"; ctx.setLineDash([8,4]); ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(0, y1); ctx.lineTo(ctx.canvas.width / (window.devicePixelRatio||1), y1); ctx.stroke();
+      ctx.setLineDash([]); ctx.fillStyle = "#DC2626"; ctx.fillRect(4, y1 - 10, 110, 20);
+      ctx.fillStyle = "#fff"; ctx.font = "bold 11px Inter, sans-serif"; ctx.fillText("SL " + fmt(S.stopLoss, 2), 8, y1 + 4);
       ctx.restore();
     }
   }
   if (S.takeProfit) {
-    const y = S.candleSeries.priceToCoordinate(S.takeProfit);
-    if (y != null) {
-      ctx.save();
-      ctx.strokeStyle = "#16A34A"; ctx.setLineDash([8, 4]); ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(ctx.canvas.width / window.devicePixelRatio, y); ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.fillStyle = "#16A34A";
-      ctx.fillRect(4, y - 10, 110, 20);
-      ctx.fillStyle = "#fff"; ctx.font = "bold 11px Inter, sans-serif";
-      ctx.fillText("TP " + fmt(S.takeProfit, 2), 8, y + 4);
+    var y2 = S.candleSeries.priceToCoordinate(S.takeProfit);
+    if (y2 != null) {
+      ctx.save(); ctx.strokeStyle = "#16A34A"; ctx.setLineDash([8,4]); ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(0, y2); ctx.lineTo(ctx.canvas.width / (window.devicePixelRatio||1), y2); ctx.stroke();
+      ctx.setLineDash([]); ctx.fillStyle = "#16A34A"; ctx.fillRect(4, y2 - 10, 110, 20);
+      ctx.fillStyle = "#fff"; ctx.font = "bold 11px Inter, sans-serif"; ctx.fillText("TP " + fmt(S.takeProfit, 2), 8, y2 + 4);
       ctx.restore();
     }
   }
@@ -1392,418 +1158,347 @@ function drawSLTP(ctx) {
 
 function setActiveTool(toolId) {
   S.activeTool = toolId;
-  const canvas = $("drawLayer");
-  const badge = $("drawBadge");
+  var c = $("drawLayer"), b = $("drawBadge");
   if (toolId) {
-    canvas.style.pointerEvents = "auto";
-    canvas.style.cursor = "crosshair";
-    badge.classList.add("on");
-    $("drawBadgeText").textContent = DRAWING_CATEGORIES.flatMap(c => c.tools).find(t => t.id === toolId)?.name || toolId;
+    c.style.pointerEvents = "auto"; c.style.cursor = "crosshair";
+    b.classList.add("on");
+    var all = DRAWING_CATEGORIES.reduce(function(a, x){ return a.concat(x.tools); }, []);
+    var t = all.find(function(x){ return x.id === toolId; });
+    $("drawBadgeText").textContent = t ? t.name : toolId;
   } else {
-    canvas.style.pointerEvents = "none";
-    canvas.style.cursor = "default";
-    badge.classList.remove("on");
+    c.style.pointerEvents = "none"; c.style.cursor = "default";
+    b.classList.remove("on");
   }
-  // Update tool item UI
-  document.querySelectorAll(".tool-item").forEach(el => el.classList.toggle("active", el.dataset.tool === toolId));
+  document.querySelectorAll(".tool-item").forEach(function(el){ el.classList.toggle("active", el.dataset.tool === toolId); });
 }
 
-// ==================== INDICATORS ====================
+// ============ INDICATORS ============
 function addIndicator(id) {
   if (!S.chart || !S.candleSeries) return;
-  if (S.indicatorSeries.has(id)) return;
-  const s = S.settings;
-  let series = [];
-  const candles = buildCandles(getFilteredHistory(S.activeRange));
+  if (S.indicatorSeries[id]) return;
+  var candles = buildCandles(getFilteredHistory(S.activeRange));
   if (!candles.length) return;
+  var series = [];
 
   if (id === "ma") {
-    const ma7 = S.chart.addLineSeries({ color: "#F59E0B", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "MA7" });
-    const ma25 = S.chart.addLineSeries({ color: "#8B5CF6", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "MA25" });
-    ma7.setData(calcMA(candles, 7));
-    ma25.setData(calcMA(candles, 25));
+    var ma7 = S.chart.addLineSeries({ color: "#F59E0B", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "MA7" });
+    var ma25 = S.chart.addLineSeries({ color: "#8B5CF6", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "MA25" });
+    ma7.setData(calcMA(candles, 7)); ma25.setData(calcMA(candles, 25));
     series.push(ma7, ma25);
   } else if (id === "ema") {
-    const ema12 = S.chart.addLineSeries({ color: "#2563EB", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "EMA12" });
-    const ema26 = S.chart.addLineSeries({ color: "#EC4899", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "EMA26" });
-    ema12.setData(calcEMA(candles, 12));
-    ema26.setData(calcEMA(candles, 26));
-    series.push(ema12, ema26);
+    var e12 = S.chart.addLineSeries({ color: "#2563EB", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "EMA12" });
+    var e26 = S.chart.addLineSeries({ color: "#EC4899", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "EMA26" });
+    e12.setData(calcEMA(candles, 12)); e26.setData(calcEMA(candles, 26));
+    series.push(e12, e26);
   } else if (id === "bb") {
-    const bb = calcBB(candles, 20, 2);
-    const upper = S.chart.addLineSeries({ color: "#3B82F6", lineWidth: 1, lineStyle: 2, priceLineVisible: false, lastValueVisible: false, title: "BB Upper" });
-    const middle = S.chart.addLineSeries({ color: "#94A3B8", lineWidth: 1, priceLineVisible: false, lastValueVisible: false, title: "BB Mid" });
-    const lower = S.chart.addLineSeries({ color: "#3B82F6", lineWidth: 1, lineStyle: 2, priceLineVisible: false, lastValueVisible: false, title: "BB Lower" });
-    upper.setData(bb.upper); middle.setData(bb.middle); lower.setData(bb.lower);
-    series.push(upper, middle, lower);
+    var bb = calcBB(candles, 20, 2);
+    var up = S.chart.addLineSeries({ color: "#3B82F6", lineWidth: 1, lineStyle: 2, priceLineVisible: false, lastValueVisible: false, title: "BB Up" });
+    var mid = S.chart.addLineSeries({ color: "#94A3B8", lineWidth: 1, priceLineVisible: false, lastValueVisible: false, title: "BB Mid" });
+    var lo = S.chart.addLineSeries({ color: "#3B82F6", lineWidth: 1, lineStyle: 2, priceLineVisible: false, lastValueVisible: false, title: "BB Lo" });
+    up.setData(bb.upper); mid.setData(bb.middle); lo.setData(bb.lower);
+    series.push(up, mid, lo);
   } else if (id === "vwap") {
-    const vwap = S.chart.addLineSeries({ color: "#F97316", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "VWAP" });
-    vwap.setData(calcVWAP(candles));
-    series.push(vwap);
+    var vw = S.chart.addLineSeries({ color: "#F97316", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "VWAP" });
+    vw.setData(calcVWAP(candles)); series.push(vw);
+  } else if (id === "rsi") {
+    var rsi = S.chart.addLineSeries({ color: "#8B5CF6", lineWidth: 2, priceLineVisible: false, lastValueVisible: true, title: "RSI(14)", priceScaleId: "right" });
+    rsi.setData(calcRSI(candles, 14)); series.push(rsi);
+  } else if (id === "macd") {
+    var m = calcMACD(candles);
+    var macd = S.chart.addLineSeries({ color: "#2563EB", lineWidth: 2, priceLineVisible: false, lastValueVisible: true, title: "MACD" });
+    var sig = S.chart.addLineSeries({ color: "#F59E0B", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "Signal" });
+    macd.setData(m.macd); sig.setData(m.signal); series.push(macd, sig);
+  } else if (id === "stoch") {
+    var st = calcStoch(candles);
+    var k = S.chart.addLineSeries({ color: "#16A34A", lineWidth: 2, priceLineVisible: false, lastValueVisible: true, title: "Stoch K" });
+    var d = S.chart.addLineSeries({ color: "#DC2626", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "Stoch D" });
+    k.setData(st.k); d.setData(st.d); series.push(k, d);
   } else {
-    // Pane indicators — tampilkan sebagai overlay sederhana di chart utama
-    if (id === "rsi") {
-      const rsi = S.chart.addLineSeries({ color: "#8B5CF6", lineWidth: 2, priceLineVisible: false, lastValueVisible: true, title: "RSI(14)", priceScaleId: "right" });
-      rsi.setData(calcRSI(candles, 14));
-      series.push(rsi);
-    } else if (id === "macd") {
-      const macd = S.chart.addLineSeries({ color: "#2563EB", lineWidth: 2, priceLineVisible: false, lastValueVisible: true, title: "MACD" });
-      const signal = S.chart.addLineSeries({ color: "#F59E0B", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "Signal" });
-      const m = calcMACD(candles);
-      macd.setData(m.macd); signal.setData(m.signal);
-      series.push(macd, signal);
-    } else if (id === "stoch") {
-      const k = S.chart.addLineSeries({ color: "#16A34A", lineWidth: 2, priceLineVisible: false, lastValueVisible: true, title: "Stoch K" });
-      const d = S.chart.addLineSeries({ color: "#DC2626", lineWidth: 2, priceLineVisible: false, lastValueVisible: false, title: "Stoch D" });
-      const st = calcStoch(candles);
-      k.setData(st.k); d.setData(st.d);
-      series.push(k, d);
-    } else {
-      // Indikator lain: tampilkan garis MA(7) sebagai placeholder visual
-      const line = S.chart.addLineSeries({ color: "#6366F1", lineWidth: 2, priceLineVisible: false, lastValueVisible: true, title: INDICATORS.find(x => x.id === id)?.name || id });
-      line.setData(calcMA(candles, 7));
-      series.push(line);
-    }
+    var name = "Indicator";
+    for (var i = 0; i < INDICATORS.length; i++) if (INDICATORS[i].id === id) name = INDICATORS[i].name;
+    var line = S.chart.addLineSeries({ color: "#6366F1", lineWidth: 2, priceLineVisible: false, lastValueVisible: true, title: name });
+    line.setData(calcMA(candles, 7)); series.push(line);
   }
-
-  S.indicatorSeries.set(id, series);
-  S.activeIndicators.add(id);
-  renderIndicatorChips();
-  renderIndicatorList();
-  toast("Indikator " + (INDICATORS.find(x => x.id === id)?.name || id) + " ditambahkan", "success", 2000);
+  S.indicatorSeries[id] = series;
+  S.activeIndicators[id] = true;
+  renderIndicatorChips(); renderIndicatorList();
+  toast("Indikator ditambahkan", "success", 2000);
 }
 
 function removeIndicator(id) {
-  const series = S.indicatorSeries.get(id);
-  if (!series) return;
-  series.forEach(s => { try { S.chart.removeSeries(s); } catch (e) {} });
-  S.indicatorSeries.delete(id);
-  S.activeIndicators.delete(id);
-  renderIndicatorChips();
-  renderIndicatorList();
+  var series = S.indicatorSeries[id]; if (!series) return;
+  series.forEach(function(s){ try { S.chart.removeSeries(s); } catch (e) {} });
+  delete S.indicatorSeries[id]; delete S.activeIndicators[id];
+  renderIndicatorChips(); renderIndicatorList();
 }
 
 function updateIndicators(candles) {
-  if (!S.activeIndicators.size) return;
-  S.activeIndicators.forEach(id => {
-    const series = S.indicatorSeries.get(id);
-    if (!series) return;
+  Object.keys(S.activeIndicators).forEach(function(id){
+    var s = S.indicatorSeries[id]; if (!s) return;
     try {
-      if (id === "ma") { series[0].setData(calcMA(candles, 7)); series[1].setData(calcMA(candles, 25)); }
-      else if (id === "ema") { series[0].setData(calcEMA(candles, 12)); series[1].setData(calcEMA(candles, 26)); }
-      else if (id === "bb") { const bb = calcBB(candles, 20, 2); series[0].setData(bb.upper); series[1].setData(bb.middle); series[2].setData(bb.lower); }
-      else if (id === "vwap") series[0].setData(calcVWAP(candles));
-      else if (id === "rsi") series[0].setData(calcRSI(candles, 14));
-      else if (id === "macd") { const m = calcMACD(candles); series[0].setData(m.macd); series[1].setData(m.signal); }
-      else if (id === "stoch") { const st = calcStoch(candles); series[0].setData(st.k); series[1].setData(st.d); }
+      if (id === "ma") { s[0].setData(calcMA(candles,7)); s[1].setData(calcMA(candles,25)); }
+      else if (id === "ema") { s[0].setData(calcEMA(candles,12)); s[1].setData(calcEMA(candles,26)); }
+      else if (id === "bb") { var bb = calcBB(candles,20,2); s[0].setData(bb.upper); s[1].setData(bb.middle); s[2].setData(bb.lower); }
+      else if (id === "vwap") s[0].setData(calcVWAP(candles));
+      else if (id === "rsi") s[0].setData(calcRSI(candles,14));
+      else if (id === "macd") { var m = calcMACD(candles); s[0].setData(m.macd); s[1].setData(m.signal); }
+      else if (id === "stoch") { var st = calcStoch(candles); s[0].setData(st.k); s[1].setData(st.d); }
     } catch (e) {}
   });
 }
 
-// Kalkulasi indikator
-function calcMA(candles, period) {
-  const out = [];
-  for (let i = period - 1; i < candles.length; i++) {
-    let sum = 0;
-    for (let j = 0; j < period; j++) sum += candles[i - j].close;
-    out.push({ time: candles[i].time, value: +(sum / period).toFixed(2) });
+function calcMA(candles, p) {
+  var out = [];
+  for (var i = p-1; i < candles.length; i++) {
+    var sum = 0; for (var j = 0; j < p; j++) sum += candles[i-j].close;
+    out.push({ time: candles[i].time, value: +(sum/p).toFixed(2) });
   }
   return out;
 }
-function calcEMA(candles, period) {
-  const out = []; const k = 2 / (period + 1);
-  let ema = candles[0]?.close || 0;
-  for (let i = 0; i < candles.length; i++) {
-    const c = candles[i].close;
-    ema = i === 0 ? c : c * k + ema * (1 - k);
+function calcEMA(candles, p) {
+  var out = [], k = 2/(p+1), ema = candles[0] ? candles[0].close : 0;
+  for (var i = 0; i < candles.length; i++) {
+    var c = candles[i].close;
+    ema = i === 0 ? c : c*k + ema*(1-k);
     out.push({ time: candles[i].time, value: +ema.toFixed(2) });
   }
   return out;
 }
-function calcBB(candles, period = 20, mult = 2) {
-  const upper = [], middle = [], lower = [];
-  for (let i = period - 1; i < candles.length; i++) {
-    let sum = 0;
-    for (let j = 0; j < period; j++) sum += candles[i - j].close;
-    const ma = sum / period;
-    let variance = 0;
-    for (let j = 0; j < period; j++) variance += Math.pow(candles[i - j].close - ma, 2);
-    const sd = Math.sqrt(variance / period);
-    const t = candles[i].time;
-    middle.push({ time: t, value: +ma.toFixed(2) });
-    upper.push({ time: t, value: +(ma + mult * sd).toFixed(2) });
-    lower.push({ time: t, value: +(ma - mult * sd).toFixed(2) });
+function calcBB(candles, p, mult) {
+  var upper = [], middle = [], lower = [];
+  for (var i = p-1; i < candles.length; i++) {
+    var sum = 0; for (var j = 0; j < p; j++) sum += candles[i-j].close;
+    var ma = sum/p, v = 0;
+    for (var j = 0; j < p; j++) v += Math.pow(candles[i-j].close - ma, 2);
+    var sd = Math.sqrt(v/p);
+    upper.push({ time: candles[i].time, value: +(ma + mult*sd).toFixed(2) });
+    middle.push({ time: candles[i].time, value: +ma.toFixed(2) });
+    lower.push({ time: candles[i].time, value: +(ma - mult*sd).toFixed(2) });
   }
-  return { upper, middle, lower };
+  return { upper: upper, middle: middle, lower: lower };
 }
 function calcVWAP(candles) {
-  const out = []; let cumPV = 0, cumV = 0;
-  for (const c of candles) {
-    const tp = (c.high + c.low + c.close) / 3;
+  var out = [], cumPV = 0, cumV = 0;
+  for (var i = 0; i < candles.length; i++) {
+    var c = candles[i], tp = (c.high + c.low + c.close)/3;
     cumPV += tp * (c.volume || 1); cumV += (c.volume || 1);
-    out.push({ time: c.time, value: +(cumPV / cumV).toFixed(2) });
+    out.push({ time: c.time, value: +(cumPV/cumV).toFixed(2) });
   }
   return out;
 }
-function calcRSI(candles, period = 14) {
-  const out = []; let gains = 0, losses = 0;
-  for (let i = 1; i < candles.length; i++) {
-    const diff = candles[i].close - candles[i - 1].close;
-    const gain = diff > 0 ? diff : 0, loss = diff < 0 ? -diff : 0;
-    if (i <= period) { gains += gain; losses += loss; if (i === period) { gains /= period; losses /= period; } }
-    else { gains = (gains * (period - 1) + gain) / period; losses = (losses * (period - 1) + loss) / period; }
-    if (i >= period) {
-      const rs = losses === 0 ? 100 : gains / losses;
-      const rsi = 100 - (100 / (1 + rs));
-      out.push({ time: candles[i].time, value: +rsi.toFixed(2) });
+function calcRSI(candles, p) {
+  var out = [], gains = 0, losses = 0;
+  for (var i = 1; i < candles.length; i++) {
+    var diff = candles[i].close - candles[i-1].close;
+    var g = diff > 0 ? diff : 0, l = diff < 0 ? -diff : 0;
+    if (i <= p) { gains += g; losses += l; if (i === p) { gains /= p; losses /= p; } }
+    else { gains = (gains*(p-1)+g)/p; losses = (losses*(p-1)+l)/p; }
+    if (i >= p) {
+      var rs = losses === 0 ? 100 : gains/losses;
+      out.push({ time: candles[i].time, value: +(100 - 100/(1+rs)).toFixed(2) });
     }
   }
   return out;
 }
 function calcMACD(candles) {
-  const ema12 = calcEMA(candles, 12), ema26 = calcEMA(candles, 26);
-  const macd = []; const start = ema26.length - ema12.length;
-  for (let i = 0; i < ema12.length; i++) {
-    const idx26 = i + start;
-    if (idx26 < 0 || idx26 >= ema26.length) continue;
-    macd.push({ time: ema12[i].time, value: +(ema12[i].value - ema26[idx26].value).toFixed(2) });
+  var e12 = calcEMA(candles, 12), e26 = calcEMA(candles, 26);
+  var macd = [], start = e26.length - e12.length;
+  for (var i = 0; i < e12.length; i++) {
+    var idx = i + start; if (idx < 0 || idx >= e26.length) continue;
+    macd.push({ time: e12[i].time, value: +(e12[i].value - e26[idx].value).toFixed(2) });
   }
-  // Signal = EMA(9) of MACD
-  const signal = []; const k = 2 / (9 + 1);
-  let ema = macd[0]?.value || 0;
-  for (let i = 0; i < macd.length; i++) {
-    ema = i === 0 ? macd[i].value : macd[i].value * k + ema * (1 - k);
-    signal.push({ time: macd[i].time, value: +ema.toFixed(2) });
+  var sig = [], k = 2/10, ema = macd[0] ? macd[0].value : 0;
+  for (var i = 0; i < macd.length; i++) {
+    ema = i === 0 ? macd[i].value : macd[i].value*k + ema*(1-k);
+    sig.push({ time: macd[i].time, value: +ema.toFixed(2) });
   }
-  return { macd, signal };
+  return { macd: macd, signal: sig };
 }
-function calcStoch(candles, kPeriod = 14, dPeriod = 3) {
-  const k = [];
-  for (let i = kPeriod - 1; i < candles.length; i++) {
-    let hh = -Infinity, ll = Infinity;
-    for (let j = 0; j < kPeriod; j++) {
-      hh = Math.max(hh, candles[i - j].high);
-      ll = Math.min(ll, candles[i - j].low);
-    }
-    const denom = hh - ll;
-    const kv = denom === 0 ? 50 : ((candles[i].close - ll) / denom) * 100;
+function calcStoch(candles, kp, dp) {
+  kp = kp || 14; dp = dp || 3;
+  var k = [];
+  for (var i = kp-1; i < candles.length; i++) {
+    var hh = -Infinity, ll = Infinity;
+    for (var j = 0; j < kp; j++) { hh = Math.max(hh, candles[i-j].high); ll = Math.min(ll, candles[i-j].low); }
+    var den = hh - ll, kv = den === 0 ? 50 : ((candles[i].close - ll)/den)*100;
     k.push({ time: candles[i].time, value: +kv.toFixed(2) });
   }
-  const d = [];
-  for (let i = dPeriod - 1; i < k.length; i++) {
-    let sum = 0;
-    for (let j = 0; j < dPeriod; j++) sum += k[i - j].value;
-    d.push({ time: k[i].time, value: +(sum / dPeriod).toFixed(2) });
+  var d = [];
+  for (var i = dp-1; i < k.length; i++) {
+    var s = 0; for (var j = 0; j < dp; j++) s += k[i-j].value;
+    d.push({ time: k[i].time, value: +(s/dp).toFixed(2) });
   }
-  return { k, d };
+  return { k: k, d: d };
 }
 
 function renderIndicatorChips() {
-  const wrap = $("indActiveChips");
-  if (!wrap) return;
-  if (!S.activeIndicators.size) { wrap.innerHTML = ''; return; }
-  wrap.innerHTML = Array.from(S.activeIndicators).map(id => {
-    const name = INDICATORS.find(x => x.id === id)?.name || id;
-    return `<span class="ind-chip">${name}<button data-remove="${id}" title="Hapus">×</button></span>`;
+  var w = $("indActiveChips"); if (!w) return;
+  var ids = Object.keys(S.activeIndicators);
+  if (!ids.length) { w.innerHTML = ''; return; }
+  w.innerHTML = ids.map(function(id){
+    var nm = id; for (var i = 0; i < INDICATORS.length; i++) if (INDICATORS[i].id === id) nm = INDICATORS[i].name;
+    return '<span class="ind-chip">' + nm + '<button data-remove="' + id + '">×</button></span>';
   }).join('');
-  wrap.querySelectorAll('[data-remove]').forEach(btn => {
-    btn.addEventListener('click', () => removeIndicator(btn.dataset.remove));
+  w.querySelectorAll('[data-remove]').forEach(function(b){
+    b.addEventListener('click', function(){ removeIndicator(b.dataset.remove); });
   });
 }
 
-function renderIndicatorList(filter = "") {
-  const list = $("indList");
-  if (!list) return;
-  const f = filter.toLowerCase().trim();
-  const items = INDICATORS.filter(i => !f || i.name.toLowerCase().includes(f) || i.desc.toLowerCase().includes(f));
+function renderIndicatorList(filter) {
+  var list = $("indList"); if (!list) return;
+  var f = (filter || "").toLowerCase().trim();
+  var items = INDICATORS.filter(function(i){ return !f || i.name.toLowerCase().indexOf(f) >= 0 || i.desc.toLowerCase().indexOf(f) >= 0; });
   if (!items.length) { list.innerHTML = '<div class="empty">Tidak ada indikator yang cocok.</div>'; return; }
-  list.innerHTML = items.map(i => {
-    const on = S.activeIndicators.has(i.id);
-    return `<div class="ind-row" data-id="${i.id}">
-      <div style="flex:1">
-        <div class="ind-row-title">${i.name}</div>
-        <div class="ind-row-desc">${i.desc}</div>
-      </div>
-      <div class="ind-check ${on ? "on" : ""}"><i data-lucide="check"></i></div>
-    </div>`;
+  list.innerHTML = items.map(function(i){
+    var on = S.activeIndicators[i.id];
+    return '<div class="ind-row" data-id="' + i.id + '">' +
+      '<div style="flex:1"><div class="ind-row-title">' + i.name + '</div><div class="ind-row-desc">' + i.desc + '</div></div>' +
+      '<div class="ind-check ' + (on ? 'on' : '') + '"><i data-lucide="check"></i></div></div>';
   }).join('');
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
-  list.querySelectorAll('.ind-row').forEach(row => {
-    row.addEventListener('click', () => {
-      const id = row.dataset.id;
-      if (S.activeIndicators.has(id)) removeIndicator(id);
+  renderIcons();
+  list.querySelectorAll('.ind-row').forEach(function(r){
+    r.addEventListener('click', function(){
+      var id = r.dataset.id;
+      if (S.activeIndicators[id]) removeIndicator(id);
       else addIndicator(id);
     });
   });
 }
 
 function renderDrawingCategories() {
-  const wrap = $("drawingCategories");
-  if (!wrap) return;
-  wrap.innerHTML = DRAWING_CATEGORIES.map(cat => `
-    <div class="tool-cat">${cat.name}</div>
-    <div class="tool-grid">
-      ${cat.tools.map(t => `
-        <button class="tool-item" data-tool="${t.id}">
-          <i data-lucide="${t.icon}"></i>
-          <span>${t.name}</span>
-        </button>
-      `).join('')}
-    </div>
-  `).join('');
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
-  wrap.querySelectorAll('.tool-item').forEach(el => {
-    el.addEventListener('click', () => {
-      const toolId = el.dataset.tool;
-      const supported = ["trendline", "hline", "vline", "ray", "extended", "rect", "circle", "fib-ret", "fib-ext", "measure", "text", "arrow"];
-      if (!supported.includes(toolId)) {
-        toast("Alat '" + el.querySelector('span').textContent + "' belum tersedia. Fitur UI siap, fungsionalitas akan datang.", "info", 4500);
+  var w = $("drawingCategories"); if (!w) return;
+  w.innerHTML = DRAWING_CATEGORIES.map(function(cat){
+    return '<div class="tool-cat">' + cat.name + '</div><div class="tool-grid">' +
+      cat.tools.map(function(t){
+        return '<button class="tool-item" data-tool="' + t.id + '"><i data-lucide="' + t.icon + '"></i><span>' + t.name + '</span></button>';
+      }).join('') + '</div>';
+  }).join('');
+  renderIcons();
+  w.querySelectorAll('.tool-item').forEach(function(el){
+    el.addEventListener('click', function(){
+      var toolId = el.dataset.tool;
+      var supported = ["trendline","hline","vline","ray","extended","rect","circle","fib-ret","fib-ext","measure","text","arrow"];
+      if (supported.indexOf(toolId) < 0) {
+        toast("Alat '" + el.querySelector('span').textContent + "' akan segera hadir", "info", 4000);
         return;
       }
       setActiveTool(toolId);
       closeModal("modalDrawing");
-      toast("Alat aktif: " + el.querySelector('span').textContent + ". Tap pada chart untuk mulai.", "info", 3500);
+      toast("Alat aktif: " + el.querySelector('span').textContent, "info", 3000);
     });
   });
 }
 
-// ==================== SL/TP ====================
+// ============ SL/TP ============
 function openSLTP() {
   if (!requireLogin("trade", openSLTP)) return;
-  const cur = S.history.length ? S.history[S.history.length - 1].price : S.settings.currentPrice;
+  var cur = S.history.length ? S.history[S.history.length-1].price : S.settings.currentPrice;
   $("sltpCurrentPrice").textContent = fmt(cur, 2);
   $("sltpSL").value = S.stopLoss || "";
   $("sltpTP").value = S.takeProfit || "";
   updateSLTPHints();
-  const st = (S.stopLoss || S.takeProfit) ? "Aktif" : "Tidak aktif";
-  $("sltpStatus").textContent = st;
-  $("sltpStatus").className = "pill " + ((S.stopLoss || S.takeProfit) ? "up" : "gray");
+  var active = (S.stopLoss || S.takeProfit);
+  $("sltpStatus").textContent = active ? "Aktif" : "Tidak aktif";
+  $("sltpStatus").className = "pill " + (active ? "up" : "gray");
   openModal("modalSLTP");
 }
 
 function updateSLTPHints() {
-  const cur = S.history.length ? S.history[S.history.length - 1].price : S.settings.currentPrice;
-  const sl = num($("sltpSL").value, 0), tp = num($("sltpTP").value, 0);
+  var cur = S.history.length ? S.history[S.history.length-1].price : S.settings.currentPrice;
+  var sl = num($("sltpSL").value, 0), tp = num($("sltpTP").value, 0);
   if (sl > 0) {
-    const pct = cur !== 0 ? ((sl - cur) / cur) * 100 : 0;
-    $("sltpHintSL").textContent = (pct >= 0 ? "+" : "") + fmt(pct, 2) + "% dari harga';
+    var pct = cur !== 0 ? ((sl - cur)/cur)*100 : 0;
+    $("sltpHintSL").textContent = (pct >= 0 ? "+" : "") + fmt(pct, 2) + "% dari harga";
   } else $("sltpHintSL").textContent = "Belum diisi";
   if (tp > 0) {
-    const pct = cur !== 0 ? ((tp - cur) / cur) * 100 : 0;
-    $("sltpHintTP").textContent = (pct >= 0 ? "+" : "") + fmt(pct, 2) + "% dari harga";
+    var pct2 = cur !== 0 ? ((tp - cur)/cur)*100 : 0;
+    $("sltpHintTP").textContent = (pct2 >= 0 ? "+" : "") + fmt(pct2, 2) + "% dari harga";
   } else $("sltpHintTP").textContent = "Belum diisi";
 }
 
 function saveSLTP() {
-  const sl = num($("sltpSL").value, 0), tp = num($("sltpTP").value, 0);
-  const cur = S.history.length ? S.history[S.history.length - 1].price : S.settings.currentPrice;
-  if (sl > 0 && sl >= cur) return toast("Stop Loss harus di bawah harga saat ini", "warning");
-  if (tp > 0 && tp <= cur) return toast("Take Profit harus di atas harga saat ini", "warning");
+  var sl = num($("sltpSL").value, 0), tp = num($("sltpTP").value, 0);
+  var cur = S.history.length ? S.history[S.history.length-1].price : S.settings.currentPrice;
+  if (sl > 0 && sl >= cur) return toast("Stop Loss harus di bawah harga", "warning");
+  if (tp > 0 && tp <= cur) return toast("Take Profit harus di atas harga", "warning");
   S.stopLoss = sl > 0 ? sl : null;
   S.takeProfit = tp > 0 ? tp : null;
-  closeModal("modalSLTP");
-  redrawAll();
-  toast((S.stopLoss || S.takeProfit) ? "Stop Loss & Take Profit disimpan" : "SL/TP dihapus", "success");
+  closeModal("modalSLTP"); redrawAll();
+  toast((S.stopLoss || S.takeProfit) ? "SL/TP disimpan" : "SL/TP dihapus", "success");
 }
 
 function clearSLTP() {
   S.stopLoss = null; S.takeProfit = null;
   $("sltpSL").value = ""; $("sltpTP").value = "";
-  redrawAll();
-  closeModal("modalSLTP");
-  toast("Stop Loss & Take Profit dihapus", "info");
+  redrawAll(); closeModal("modalSLTP");
+  toast("SL/TP dihapus", "info");
 }
 
-// Cek SL/TP saat harga update
 function checkSLTP(price) {
   if (!S.user) return;
-  if (S.stopLoss && price <= S.stopLoss) {
-    toast(`🛑 STOP LOSS tersentuh di ${fmt(S.stopLoss)}!`, "error", 8000);
-    S.stopLoss = null;
-    redrawAll();
-  }
-  if (S.takeProfit && price >= S.takeProfit) {
-    toast(`🎯 TAKE PROFIT tercapai di ${fmt(S.takeProfit)}!`, "success", 8000);
-    S.takeProfit = null;
-    redrawAll();
-  }
+  if (S.stopLoss && price <= S.stopLoss) { toast("🛑 STOP LOSS tersentuh!", "error", 8000); S.stopLoss = null; redrawAll(); }
+  if (S.takeProfit && price >= S.takeProfit) { toast("🎯 TAKE PROFIT tercapai!", "success", 8000); S.takeProfit = null; redrawAll(); }
 }
 
-// ==================== PRICE & USER RENDER ====================
+// ============ RENDER PRICE ============
 function renderPriceUI() {
-  const s = S.settings, hist = S.history;
+  var s = S.settings, hist = S.history;
   $("dashAssetName").textContent = s.assetName || "CAZO CARD";
   $("dashAssetSymbol").textContent = s.symbol || "CAZO";
-  const price = hist.length > 0 ? hist[hist.length - 1].price : s.currentPrice;
-  const priceEl = $("dashPrice");
-  priceEl.textContent = fmt(price);
+  var price = hist.length > 0 ? hist[hist.length-1].price : s.currentPrice;
+  $("dashPrice").textContent = fmt(price);
 
-  let change = 0, pct = 0;
+  var change = 0, pct = 0;
   if (hist.length >= 2) {
-    const last = hist[hist.length - 1], prev = hist[hist.length - 2];
+    var last = hist[hist.length-1], prev = hist[hist.length-2];
     change = last.price - prev.price;
-    pct = prev.price !== 0 ? (change / prev.price) * 100 : 0;
+    pct = prev.price !== 0 ? (change/prev.price)*100 : 0;
   }
-  const isUp = change >= 0;
-  priceEl.className = "chart-price " + (isUp ? "up" : "down");
+  var isUp = change >= 0;
+  $("dashPrice").className = "chart-price " + (isUp ? "up" : "down");
   $("dashChange").textContent = (isUp ? "+" : "") + fmt(change);
   $("dashChange").className = "chart-change-val " + (isUp ? "up" : "down");
   $("dashChangePct").textContent = (isUp ? "+" : "") + fmt(pct) + "%";
   $("dashChangeBadge").className = "chart-badge " + (isUp ? "up" : "down");
-  const icon = $("dashChangeBadge").querySelector("i");
-  if (icon) icon.setAttribute("data-lucide", isUp ? "trending-up" : "trending-down");
+  var ic = $("dashChangeBadge").querySelector("i");
+  if (ic) ic.setAttribute("data-lucide", isUp ? "trending-up" : "trending-down");
 
-  // Harga tertinggi/terendah (dipindah ke stats slider)
-  let high = -Infinity, low = Infinity, highTs = null, lowTs = null;
-  hist.forEach(h => {
-    if (h.price > high) { high = h.price; highTs = h.timestamp; }
-    if (h.price < low) { low = h.price; lowTs = h.timestamp; }
-  });
+  var high = -Infinity, low = Infinity, highTs = null, lowTs = null;
+  hist.forEach(function(h){ if (h.price > high) { high = h.price; highTs = h.timestamp; } if (h.price < low) { low = h.price; lowTs = h.timestamp; } });
   $("dashHigh").textContent = hist.length ? fmt(high) : "—";
   $("dashHighTime").textContent = hist.length ? fmtTime(highTs) : "—";
   $("dashLow").textContent = hist.length ? fmt(low) : "—";
   $("dashLowTime").textContent = hist.length ? fmtTime(lowTs) : "—";
-  const lastTs = hist.length ? hist[hist.length - 1].timestamp : null;
+  var lastTs = hist.length ? hist[hist.length-1].timestamp : null;
   $("dashUpdate").textContent = lastTs ? ago(lastTs) : "—";
 
   $("tradePrice").value = price.toFixed(2);
   updateTradeTotal();
   renderMarketList();
   checkSLTP(price);
-
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+  renderIcons();
 }
 
 function renderMarketList() {
-  const list = $("marketList"); if (!list) return;
-  const s = S.settings, hist = S.history;
-  const last = hist.length ? hist[hist.length - 1].price : s.currentPrice;
-  const prev = hist.length >= 2 ? hist[hist.length - 2].price : last;
-  const chg = last - prev, pct = prev !== 0 ? (chg / prev) * 100 : 0, up = chg >= 0;
-  list.innerHTML = `<div class="market-item">
-    <img src="${ASSET_ICON}" alt="CAZO" />
-    <div class="market-info"><div class="market-name">${s.assetName || "CAZO CARD"}</div><div class="market-symbol">${s.symbol || "CAZO"}</div></div>
-    <div class="market-price">
-      <div class="market-price-val">${fmt(last)}</div>
-      <div class="market-price-chg ${up ? "up" : "down"}">${up ? "+" : ""}${fmt(pct)}%</div>
-    </div>
-  </div>`;
+  var list = $("marketList"); if (!list) return;
+  var s = S.settings, hist = S.history;
+  var last = hist.length ? hist[hist.length-1].price : s.currentPrice;
+  var prev = hist.length >= 2 ? hist[hist.length-2].price : last;
+  var chg = last - prev, pct = prev !== 0 ? (chg/prev)*100 : 0, up = chg >= 0;
+  list.innerHTML = '<div class="market-item"><img src="' + ASSET_ICON + '" /><div class="market-info"><div class="market-name">' + (s.assetName || "CAZO CARD") + '</div><div class="market-symbol">' + (s.symbol || "CAZO") + '</div></div><div class="market-price"><div class="market-price-val">' + fmt(last) + '</div><div class="market-price-chg ' + (up ? "up" : "down") + '">' + (up ? "+" : "") + fmt(pct) + '%</div></div></div>';
 }
 
 function calcPortfolioValue() {
-  const price = S.history.length ? S.history[S.history.length - 1].price : S.settings.currentPrice;
-  let total = 0, cost = 0;
-  for (const id in S.portfolio) {
-    const p = S.portfolio[id];
-    total += p.qty * price; cost += p.qty * p.avgPrice;
-  }
-  return { value: total, cost, pl: total - cost, plPct: cost > 0 ? ((total - cost) / cost) * 100 : 0 };
+  var price = S.history.length ? S.history[S.history.length-1].price : S.settings.currentPrice;
+  var total = 0, cost = 0;
+  for (var id in S.portfolio) { var p = S.portfolio[id]; total += p.qty * price; cost += p.qty * p.avgPrice; }
+  return { value: total, cost: cost, pl: total - cost, plPct: cost > 0 ? ((total-cost)/cost)*100 : 0 };
 }
 
 function renderUserUI() {
-  const u = S.user;
+  var u = S.user;
   if (u) {
-    const name = u.displayName || u.email?.split("@")[0] || "Trader";
+    var name = u.displayName || (u.email ? u.email.split("@")[0] : "Trader");
     $("greeting").textContent = "Halo, " + name;
     $("userName").textContent = name;
     if (u.photoURL) $("userAvatar").src = u.photoURL;
@@ -1824,323 +1519,375 @@ function renderUserUI() {
     $("loginStatus").textContent = "Belum login";
     $("loginStatus").className = "pill gray";
   }
-
-  const pv = calcPortfolioValue();
-  const bal = S.balance || 0;
-
+  var pv = calcPortfolioValue(), bal = S.balance || 0;
   $("dashBalance").textContent = S.user ? fmtIDR(bal) : "Login dulu";
   $("dashPortfolio").textContent = S.user ? fmtIDR(pv.value) : "—";
   $("dashEquity").textContent = S.user ? fmtIDR(bal + pv.value) : "—";
-  const plEl = $("dashPL");
+  var plEl = $("dashPL");
   if (S.user) {
     plEl.textContent = (pv.pl >= 0 ? "+" : "") + fmtIDR(pv.pl);
     plEl.className = "stat-mini-val " + (pv.pl >= 0 ? "up" : "down");
     $("dashPLPct").textContent = (pv.plPct >= 0 ? "+" : "") + fmt(pv.plPct) + "%";
   } else {
-    plEl.textContent = "—";
-    plEl.className = "stat-mini-val";
-    $("dashPLPct").textContent = "—";
+    plEl.textContent = "—"; plEl.className = "stat-mini-val"; $("dashPLPct").textContent = "—";
   }
   $("quickBalance").textContent = S.user ? fmtIDR(bal) : "—";
-
   $("pfBalance").textContent = S.user ? fmtIDR(bal) : "—";
   $("pfValue").textContent = S.user ? fmtIDR(pv.value) : "—";
   $("pfEquity").textContent = S.user ? fmtIDR(bal + pv.value) : "—";
-  const pfPL = $("pfPL");
+  var pfPL = $("pfPL");
   if (S.user) {
     pfPL.textContent = (pv.pl >= 0 ? "+" : "") + fmtIDR(pv.pl);
     pfPL.className = "stat-mini-val " + (pv.pl >= 0 ? "up" : "down");
-  } else {
-    pfPL.textContent = "—";
-    pfPL.className = "stat-mini-val";
-  }
+  } else { pfPL.textContent = "—"; pfPL.className = "stat-mini-val"; }
 
-  const holdings = $("holdingsList");
-  const ids = Object.keys(S.portfolio).filter(id => S.portfolio[id].qty > 0);
-  if (!S.user) holdings.innerHTML = '<div class="empty">Login untuk melihat portfolio Anda.</div>';
+  var holdings = $("holdingsList");
+  var ids = [];
+  for (var id in S.portfolio) if (S.portfolio[id].qty > 0) ids.push(id);
+  if (!S.user) holdings.innerHTML = '<div class="empty">Login untuk melihat portfolio.</div>';
   else if (!ids.length) holdings.innerHTML = '<div class="empty">Belum ada aset.</div>';
   else {
-    const price = S.history.length ? S.history[S.history.length - 1].price : S.settings.currentPrice;
-    holdings.innerHTML = ids.map(id => {
-      const p = S.portfolio[id];
-      const val = p.qty * price;
-      const pl = val - p.qty * p.avgPrice;
-      const plPct = p.avgPrice > 0 ? (pl / (p.qty * p.avgPrice)) * 100 : 0;
-      const up = pl >= 0;
-      return `<div class="holding">
-        <img src="${ASSET_ICON}" alt="asset" />
-        <div class="holding-info">
-          <div class="holding-name">${S.settings.assetName || "CAZO CARD"}</div>
-          <div class="holding-qty">${p.qty} unit • avg ${fmt(p.avgPrice)}</div>
-        </div>
-        <div class="holding-val">
-          <div class="holding-val-main">${fmtIDR(val)}</div>
-          <div class="holding-val-pl ${up ? "up" : "down"}">${up ? "+" : ""}${fmt(plPct)}%</div>
-        </div>
-      </div>`;
-    }).join("");
+    var price = S.history.length ? S.history[S.history.length-1].price : S.settings.currentPrice;
+    holdings.innerHTML = ids.map(function(id){
+      var p = S.portfolio[id];
+      var val = p.qty * price, pl = val - p.qty * p.avgPrice;
+      var plPct = p.avgPrice > 0 ? (pl/(p.qty*p.avgPrice))*100 : 0;
+      var up = pl >= 0;
+      return '<div class="holding"><img src="' + ASSET_ICON + '" /><div class="holding-info"><div class="holding-name">' + (S.settings.assetName || "CAZO CARD") + '</div><div class="holding-qty">' + p.qty + ' unit • avg ' + fmt(p.avgPrice) + '</div></div><div class="holding-val"><div class="holding-val-main">' + fmtIDR(val) + '</div><div class="holding-val-pl ' + (up ? "up" : "down") + '">' + (up ? "+" : "") + fmt(plPct) + '%</div></div></div>';
+    }).join('');
   }
 }
 
-// ==================== HISTORY ====================
 function renderHistoryTab() {
-  const wrap = $("historyContent"); if (!wrap) return;
-  if (!S.user) { wrap.innerHTML = '<div class="empty">Login untuk melihat riwayat Anda.</div>'; return; }
-  if (S.histTab === "price") renderPriceHistory(wrap);
-  else if (S.histTab === "deposit") renderDepositHistory(wrap);
-  else renderTransactionHistory(wrap);
+  var w = $("historyContent"); if (!w) return;
+  if (!S.user) { w.innerHTML = '<div class="empty">Login untuk melihat riwayat.</div>'; return; }
+  if (S.histTab === "price") renderPriceHistory(w);
+  else if (S.histTab === "deposit") renderDepositHistory(w);
+  else renderTransactionHistory(w);
 }
 
-function renderTransactionHistory(wrap) {
-  const list = S.transactions.slice().reverse().slice(0, 50);
-  if (!list.length) { wrap.innerHTML = '<div class="empty">Belum ada transaksi.</div>'; return; }
-  wrap.innerHTML = '<div class="hist-list">' + list.map(t => {
-    const isBuy = t.type === "buy";
-    return `<div class="hist-item">
-      <div class="hist-icon ${isBuy ? "buy" : "sell"}"><i data-lucide="${isBuy ? "arrow-down-left" : "arrow-up-right"}"></i></div>
-      <div class="hist-main">
-        <div class="hist-title">${isBuy ? "Beli" : "Jual"} ${t.qty} ${S.settings.symbol || "CAZO"}</div>
-        <div class="hist-time">${fmtTime(t.timestamp)} • ${ago(t.timestamp)}</div>
-      </div>
-      <div class="hist-amount ${isBuy ? "down" : "up"}">${isBuy ? "-" : "+"}${fmtIDR(t.total)}<div style="font-size:11px;color:var(--txt-3);font-weight:500">@${fmt(t.price)}</div></div>
-    </div>`;
-  }).join("") + '</div>';
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+function renderTransactionHistory(w) {
+  var list = S.transactions.slice().reverse().slice(0, 50);
+  if (!list.length) { w.innerHTML = '<div class="empty">Belum ada transaksi.</div>'; return; }
+  w.innerHTML = '<div class="hist-list">' + list.map(function(t){
+    var isBuy = t.type === "buy";
+    return '<div class="hist-item"><div class="hist-icon ' + (isBuy ? "buy" : "sell") + '"><i data-lucide="' + (isBuy ? "arrow-down-left" : "arrow-up-right") + '"></i></div><div class="hist-main"><div class="hist-title">' + (isBuy ? "Beli" : "Jual") + ' ' + t.qty + ' ' + (S.settings.symbol || "CAZO") + '</div><div class="hist-time">' + fmtTime(t.timestamp) + ' • ' + ago(t.timestamp) + '</div></div><div class="hist-amount ' + (isBuy ? "down" : "up") + '">' + (isBuy ? "-" : "+") + fmtIDR(t.total) + '</div></div>';
+  }).join('') + '</div>';
+  renderIcons();
 }
 
-function renderPriceHistory(wrap) {
-  const list = S.history.slice().reverse().slice(0, 50);
-  if (!list.length) { wrap.innerHTML = '<div class="empty">Belum ada riwayat harga.</div>'; return; }
-  wrap.innerHTML = '<div class="hist-list">' + list.map((h, i) => {
-    const idx = S.history.length - 1 - i;
-    const prev = idx > 0 ? S.history[idx - 1].price : h.price;
-    const chg = h.price - prev;
-    const pct = prev !== 0 ? (chg / prev) * 100 : 0;
-    const up = chg >= 0;
-    return `<div class="hist-item">
-      <div class="hist-icon ${up ? "buy" : "sell"}"><i data-lucide="${up ? "trending-up" : "trending-down"}"></i></div>
-      <div class="hist-main">
-        <div class="hist-title">${fmt(prev)} → ${fmt(h.price)}</div>
-        <div class="hist-time">${fmtTime(h.timestamp)} • ${ago(h.timestamp)}</div>
-      </div>
-      <div class="hist-amount ${up ? "up" : "down"}">${up ? "+" : ""}${fmt(chg)}<div style="font-size:11px">${up ? "+" : ""}${fmt(pct)}%</div></div>
-    </div>`;
-  }).join("") + '</div>';
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+function renderPriceHistory(w) {
+  var list = S.history.slice().reverse().slice(0, 50);
+  if (!list.length) { w.innerHTML = '<div class="empty">Belum ada riwayat harga.</div>'; return; }
+  w.innerHTML = '<div class="hist-list">' + list.map(function(h, i){
+    var idx = S.history.length - 1 - i;
+    var prev = idx > 0 ? S.history[idx-1].price : h.price;
+    var chg = h.price - prev, pct = prev !== 0 ? (chg/prev)*100 : 0, up = chg >= 0;
+    return '<div class="hist-item"><div class="hist-icon ' + (up ? "buy" : "sell") + '"><i data-lucide="' + (up ? "trending-up" : "trending-down") + '"></i></div><div class="hist-main"><div class="hist-title">' + fmt(prev) + ' → ' + fmt(h.price) + '</div><div class="hist-time">' + fmtTime(h.timestamp) + ' • ' + ago(h.timestamp) + '</div></div><div class="hist-amount ' + (up ? "up" : "down") + '">' + (up ? "+" : "") + fmt(chg) + '<div style="font-size:11px">' + (up ? "+" : "") + fmt(pct) + '%</div></div></div>';
+  }).join('') + '</div>';
+  renderIcons();
 }
 
-function renderDepositHistory(wrap) {
-  const list = S.deposits.slice().reverse().slice(0, 30);
-  const pending = list.filter(d => d.status === "pending").length;
-  let html = '';
-  if (pending > 0) html += `<div style="padding:12px 14px;background:var(--warn-2);border:1px solid #FDE68A;border-radius:12px;font-size:12.5px;color:#92400E;margin-bottom:12px"><i data-lucide="alert-triangle" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px"></i>${pending} pengajuan deposit menunggu konfirmasi admin.</div>`;
-  if (!list.length) { wrap.innerHTML = html + '<div class="empty">Belum ada pengajuan deposit.</div>'; if (window.lucide) try { lucide.createIcons(); } catch (e) {} return; }
-  const statusMap = { pending: { cls: "warn", txt: "Menunggu" }, approved: { cls: "up", txt: "Disetujui" }, rejected: { cls: "down", txt: "Ditolak" } };
-  html += '<div class="hist-list">' + list.map(d => {
-    const st = statusMap[d.status] || statusMap.pending;
-    return `<div class="hist-item">
-      <div class="hist-icon dep"><i data-lucide="wallet"></i></div>
-      <div class="hist-main">
-        <div class="hist-title">${fmtIDR(d.amount)}</div>
-        <div class="hist-time">${fmtTime(d.timestamp)} • <span class="pill ${st.cls}" style="padding:1px 6px;font-size:10px">${st.txt}</span></div>
-      </div>
-      <div class="hist-amount">${d.sender || "—"}</div>
-    </div>`;
-  }).join("") + '</div>';
-  wrap.innerHTML = html;
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+function renderDepositHistory(w) {
+  if (!w) w = $("depositHistory");
+  if (!w) return;
+  var list = S.deposits.slice().reverse().slice(0, 30);
+  var pending = list.filter(function(d){ return d.status === "pending"; }).length;
+  var html = '';
+  if (pending > 0) html += '<div style="padding:12px 14px;background:var(--warn-2);border:1px solid #FDE68A;border-radius:12px;font-size:12.5px;color:#92400E;margin-bottom:12px">' + pending + ' pengajuan deposit menunggu konfirmasi admin.</div>';
+  if (!list.length) { w.innerHTML = html + '<div class="empty">Belum ada pengajuan deposit.</div>'; return; }
+  var statusMap = { pending: { cls: "warn", txt: "Menunggu" }, approved: { cls: "up", txt: "Disetujui" }, rejected: { cls: "down", txt: "Ditolak" } };
+  html += '<div class="hist-list">' + list.map(function(d){
+    var st = statusMap[d.status] || statusMap.pending;
+    return '<div class="hist-item"><div class="hist-icon dep"><i data-lucide="wallet"></i></div><div class="hist-main"><div class="hist-title">' + fmtIDR(d.amount) + '</div><div class="hist-time">' + fmtTime(d.timestamp) + ' • <span class="pill ' + st.cls + '" style="padding:1px 6px;font-size:10px">' + st.txt + '</span></div></div><div class="hist-amount">' + (d.sender || "—") + '</div></div>';
+  }).join('') + '</div>';
+  w.innerHTML = html;
+  renderIcons();
 }
 
-// ==================== FIREBASE ====================
-async function initFirebase() {
-  S.app = initializeApp(FIREBASE_CONFIG);
-  S.db = getDatabase(S.app);
-  S.auth = getAuth(S.app);
+// ============ FIREBASE ============
+function initFirebase() {
+  try {
+    if (typeof firebase === "undefined") throw new Error("Firebase SDK belum termuat");
+    S.app = firebase.initializeApp(FIREBASE_CONFIG);
+    S.db = firebase.database();
+    S.auth = firebase.auth();
+  } catch (err) {
+    console.error("[CAZO] Firebase init error:", err);
+    toast("Firebase tidak dapat diinisialisasi. Menampilkan data demo.", "error", 6000);
+    loadDemoMode();
+    return;
+  }
 
-  onValue(ref(S.db, ".info/connected"), (snap) => {
+  // Connection listener
+  var connectedRef = S.db.ref(".info/connected");
+  connectedRef.on("value", function(snap) {
     S.online = snap.val() === true;
     updateConnPill();
   });
 
-  onAuthStateChanged(S.auth, async (user) => {
-    const wasLoggedOut = !S.user;
+  // Timeout fallback
+  setTimeout(function() {
+    if (!S.online && !S.history.length) {
+      console.warn("[CAZO] Firebase timeout — fallback ke demo");
+      loadDemoMode();
+      toast("Koneksi Firebase lambat. Menampilkan data demo.", "warning", 6000);
+    }
+  }, 8000);
+
+  // Auth state
+  S.auth.onAuthStateChanged(async function(user) {
+    var wasLoggedOut = !S.user;
     S.user = user;
     if (user) {
-      S.isAdmin = ADMIN_EMAILS.map(e => e.toLowerCase()).includes((user.email || "").toLowerCase());
       closeModal("modalLogin");
-      await ensureUserProfile(user);
+      try { await ensureUserProfile(user); } catch(e){ console.warn(e); }
       subscribeUserData(user.uid);
       renderUserUI();
-      toast("Berhasil masuk sebagai " + (user.displayName || user.email), "success");
-      const action = S.pendingAction; S.pendingAction = null;
+      toast("Berhasil masuk: " + (user.displayName || user.email), "success");
+      var action = S.pendingAction; S.pendingAction = null;
       if (typeof action === "function") setTimeout(action, 500);
     } else {
       S.balance = 0; S.portfolio = {}; S.transactions = []; S.deposits = [];
-      S.unsubsUser.forEach(fn => { try { fn(); } catch (e) {} });
+      S.unsubsUser.forEach(function(fn){ try { fn(); } catch(e){} });
       S.unsubsUser = [];
       renderUserUI();
       renderHistoryTab();
       renderDepositHistory($("depositHistory"));
       if (!wasLoggedOut) toast("Anda telah keluar", "info");
     }
-    if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+    renderIcons();
   });
 
   subscribePublicData();
   S.ready = true;
 }
 
-async function ensureUserProfile(user) {
-  const uref = ref(S.db, "cazo/users/" + user.uid);
-  try {
-    const snap = await get(uref);
+function ensureUserProfile(user) {
+  var uref = S.db.ref("cazo/users/" + user.uid);
+  return uref.once("value").then(function(snap) {
     if (!snap.exists()) {
-      await set(uref, {
-        displayName: user.displayName || "Trader", email: user.email || "",
-        photoURL: user.photoURL || "", balance: DEFAULT_BALANCE,
-        createdAt: Date.now(), updatedAt: Date.now()
+      return uref.set({
+        displayName: user.displayName || "Trader",
+        email: user.email || "",
+        photoURL: user.photoURL || "",
+        balance: DEFAULT_BALANCE,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      }).then(function() {
+        toast("Selamat datang! Saldo awal " + fmtIDR(DEFAULT_BALANCE) + " diberikan.", "success", 5000);
       });
-      toast(`Selamat datang! Saldo awal ${fmtIDR(DEFAULT_BALANCE)} diberikan.`, "success", 5000);
     } else {
-      await update(uref, { displayName: user.displayName || "Trader", photoURL: user.photoURL || "", updatedAt: Date.now() });
+      return uref.update({
+        displayName: user.displayName || "Trader",
+        photoURL: user.photoURL || "",
+        updatedAt: Date.now()
+      });
     }
-  } catch (err) { console.error("ensureUserProfile:", err); }
+  });
 }
 
 function subscribeUserData(uid) {
-  S.unsubsUser.forEach(fn => { try { fn(); } catch (e) {} }); S.unsubsUser = [];
-  const uref = ref(S.db, "cazo/users/" + uid);
-  const u1 = onValue(uref, (snap) => {
-    if (snap.exists()) { const v = snap.val(); S.balance = num(v.balance, 0); S.portfolio = v.portfolio || {}; renderUserUI(); }
+  S.unsubsUser.forEach(function(fn){ try { fn(); } catch(e){} });
+  S.unsubsUser = [];
+
+  var uref = S.db.ref("cazo/users/" + uid);
+  uref.on("value", function(snap) {
+    if (snap.exists()) {
+      var v = snap.val();
+      S.balance = num(v.balance, 0);
+      S.portfolio = v.portfolio || {};
+      renderUserUI();
+    }
   });
-  S.unsubsUser.push(() => u1());
-  const tref = query(ref(S.db, `cazo/users/${uid}/transactions`), orderByChild("timestamp"), limitToLast(100));
-  const u2 = onValue(tref, (snap) => { const arr = []; snap.forEach(c => arr.push({ key: c.key, ...c.val() })); arr.sort((a, b) => a.timestamp - b.timestamp); S.transactions = arr; if (S.histTab === "tx") renderHistoryTab(); });
-  S.unsubsUser.push(() => u2());
-  const dref = query(ref(S.db, `cazo/users/${uid}/deposits`), orderByChild("timestamp"), limitToLast(50));
-  const u3 = onValue(dref, (snap) => { const arr = []; snap.forEach(c => arr.push({ key: c.key, ...c.val() })); arr.sort((a, b) => a.timestamp - b.timestamp); S.deposits = arr; if (S.histTab === "deposit") renderHistoryTab(); renderDepositHistory($("depositHistory")); });
-  S.unsubsUser.push(() => u3());
+  S.unsubsUser.push(function(){ uref.off(); });
+
+  var tref = S.db.ref("cazo/users/" + uid + "/transactions").orderByChild("timestamp").limitToLast(100);
+  tref.on("value", function(snap) {
+    var arr = [];
+    snap.forEach(function(c){ arr.push(Object.assign({ key: c.key }, c.val())); });
+    arr.sort(function(a, b){ return a.timestamp - b.timestamp; });
+    S.transactions = arr;
+    if (S.histTab === "tx") renderHistoryTab();
+  });
+  S.unsubsUser.push(function(){ tref.off(); });
+
+  var dref = S.db.ref("cazo/users/" + uid + "/deposits").orderByChild("timestamp").limitToLast(50);
+  dref.on("value", function(snap) {
+    var arr = [];
+    snap.forEach(function(c){ arr.push(Object.assign({ key: c.key }, c.val())); });
+    arr.sort(function(a, b){ return a.timestamp - b.timestamp; });
+    S.deposits = arr;
+    if (S.histTab === "deposit") renderHistoryTab();
+    renderDepositHistory($("depositHistory"));
+  });
+  S.unsubsUser.push(function(){ dref.off(); });
 }
 
 function subscribePublicData() {
-  const sref = ref(S.db, "cazo/settings");
-  const u1 = onValue(sref, (snap) => { if (snap.exists()) { S.settings = { ...DEFAULT_SETTINGS, ...snap.val() }; renderPriceUI(); updateChart(); } });
-  S.unsubs.push(() => u1());
-  const href = query(ref(S.db, "cazo/history"), orderByChild("timestamp"), limitToLast(300));
-  const u2 = onValue(href, (snap) => {
-    const arr = [];
-    snap.forEach(c => { const v = c.val(); if (v && typeof v.price === "number") arr.push({ key: c.key, price: v.price, change: num(v.change, 0), changePercent: num(v.changePercent, 0), timestamp: num(v.timestamp, Date.now()) }); });
-    arr.sort((a, b) => a.timestamp - b.timestamp);
-    S.history = arr; S._lastChartKey = "";
-    renderPriceUI(); updateChart(); renderUserUI();
+  var sref = S.db.ref("cazo/settings");
+  sref.on("value", function(snap) {
+    if (snap.exists()) {
+      S.settings = Object.assign({}, DEFAULT_SETTINGS, snap.val());
+      renderPriceUI();
+      updateChart();
+    }
+  });
+  S.unsubs.push(function(){ sref.off(); });
+
+  var href = S.db.ref("cazo/history").orderByChild("timestamp").limitToLast(300);
+  href.on("value", function(snap) {
+    var arr = [];
+    snap.forEach(function(c) {
+      var v = c.val();
+      if (v && typeof v.price === "number") {
+        arr.push({ key: c.key, price: v.price, change: num(v.change, 0), changePercent: num(v.changePercent, 0), timestamp: num(v.timestamp, Date.now()) });
+      }
+    });
+    arr.sort(function(a, b){ return a.timestamp - b.timestamp; });
+    S.history = arr;
+    S._lastChartKey = "";
+    renderPriceUI();
+    updateChart();
+    renderUserUI();
     if (S.histTab === "price") renderHistoryTab();
   });
-  S.unsubs.push(() => u2());
+  S.unsubs.push(function(){ href.off(); });
+}
+
+function loadDemoMode() {
+  console.log("[CAZO] Loading demo mode");
+  S.settings = Object.assign({}, DEFAULT_SETTINGS);
+  S.history = DEMO_HISTORY.map(function(h, i){ return Object.assign({ key: 'demo_' + i }, h, { timestamp: Date.now() - (7 - i) * 86400000 }); });
+  S._lastChartKey = "";
+  renderPriceUI();
+  updateChart();
+  renderUserUI();
+  renderMarketList();
+  renderIcons();
 }
 
 function updateConnPill() {
-  const pill = $("connPill"); if (!pill) return;
+  var pill = $("connPill"); if (!pill) return;
   if (S.online) { pill.className = "conn-pill on"; $("connText").textContent = "Online"; }
   else { pill.className = "conn-pill off"; $("connText").textContent = "Offline"; }
 }
 
-// ==================== TRADING ====================
+// ============ TRADING ============
 function updateTradeTotal() {
-  const qty = num($("tradeQty").value, 0);
-  const price = num($("tradePrice").value, 0);
+  var qty = num($("tradeQty").value, 0), price = num($("tradePrice").value, 0);
   $("tradeTotal").value = (qty * price).toFixed(2);
 }
 
-async function doTrade(side) {
-  if (!requireLogin("trade", () => doTrade(side))) return;
-  const qty = num($("tradeQty").value, 0);
-  const price = num($("tradePrice").value, 0);
+function doTrade(side) {
+  if (!requireLogin("trade", function(){ doTrade(side); })) return;
+  var qty = num($("tradeQty").value, 0), price = num($("tradePrice").value, 0);
   if (qty <= 0) return toast("Jumlah harus > 0", "error");
   if (price <= 0) return toast("Harga tidak valid", "error");
-  const total = qty * price;
-  const uid = S.user.uid;
-  try {
-    if (side === "buy") {
-      if (S.balance < total) return toast("Saldo tidak cukup.", "error", 5000);
-      await runTransaction(ref(S.db, `cazo/users/${uid}/balance`), (bal) => { bal = num(bal, 0); if (bal < total) return; return bal - total; });
-      const pref = ref(S.db, `cazo/users/${uid}/portfolio/CAZO`);
-      const snap = await get(pref);
-      const cur = snap.val() || { qty: 0, avgPrice: 0 };
-      const newQty = cur.qty + qty;
-      const newAvg = (cur.qty * cur.avgPrice + qty * price) / newQty;
-      await set(pref, { qty: newQty, avgPrice: newAvg, updatedAt: Date.now() });
-      await push(ref(S.db, `cazo/users/${uid}/transactions`), { type: "buy", qty, price, total, timestamp: Date.now() });
-      toast(`Beli ${qty} ${S.settings.symbol || "CAZO"} berhasil!`, "success");
-    } else {
-      const pref = ref(S.db, `cazo/users/${uid}/portfolio/CAZO`);
-      const snap = await get(pref);
-      const cur = snap.val() || { qty: 0, avgPrice: 0 };
-      if (cur.qty < qty) return toast("Unit tidak cukup", "error");
-      const newQty = cur.qty - qty;
-      if (newQty <= 0) await remove(pref);
-      else await set(pref, { qty: newQty, avgPrice: cur.avgPrice, updatedAt: Date.now() });
-      await runTransaction(ref(S.db, `cazo/users/${uid}/balance`), (bal) => num(bal, 0) + total);
-      await push(ref(S.db, `cazo/users/${uid}/transactions`), { type: "sell", qty, price, total, timestamp: Date.now() });
-      toast(`Jual ${qty} ${S.settings.symbol || "CAZO"} berhasil!`, "success");
-    }
-  } catch (err) { console.error(err); toast("Transaksi gagal: " + err.message, "error", 5000); }
-}
+  var total = qty * price, uid = S.user.uid;
 
-async function submitDeposit() {
-  if (!requireLogin("deposit", submitDeposit)) return;
-  const amount = num($("depAmount").value, 0);
-  const sender = $("depSender").value.trim();
-  const note = $("depNote").value.trim();
-  if (amount < 10000) return toast("Minimal deposit Rp 10.000", "error");
-  if (!sender) return toast("Isi nama pengirim", "error");
-  const uid = S.user.uid;
-  try {
-    await push(ref(S.db, `cazo/users/${uid}/deposits`), { amount, sender, note, status: "pending", timestamp: Date.now() });
-    await push(ref(S.db, "cazo/depositQueue"), { uid, email: S.user.email, amount, sender, note, status: "pending", timestamp: Date.now() });
-    $("depAmount").value = ""; $("depSender").value = ""; $("depNote").value = "";
-    toast("Pengajuan deposit terkirim.", "success", 5000);
-  } catch (err) { console.error(err); toast("Gagal: " + err.message, "error"); }
-}
-
-async function doGoogleLogin(btn) {
-  const orig = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></span> Menghubungkan...';
-  try {
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
-    await signInWithPopup(S.auth, provider);
-  } catch (err) {
-    console.error("Login error:", err);
-    let msg = "Gagal login. Coba lagi.";
-    if (err.code === "auth/popup-closed-by-user") msg = "Pop-up ditutup.";
-    if (err.code === "auth/popup-blocked") msg = "Pop-up diblokir.";
-    if (err.code === "auth/unauthorized-domain") msg = "Domain belum diizinkan di Firebase Auth.";
-    toast(msg, "error", 6000);
-  } finally {
-    btn.disabled = false; btn.innerHTML = orig;
-    if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+  if (side === "buy") {
+    if (S.balance < total) return toast("Saldo tidak cukup.", "error", 5000);
+    S.db.ref("cazo/users/" + uid + "/balance").transaction(function(bal) {
+      bal = num(bal, 0);
+      if (bal < total) return;
+      return bal - total;
+    }).then(function() {
+      var pref = S.db.ref("cazo/users/" + uid + "/portfolio/CAZO");
+      return pref.once("value").then(function(snap) {
+        var cur = snap.val() || { qty: 0, avgPrice: 0 };
+        var newQty = cur.qty + qty;
+        var newAvg = (cur.qty * cur.avgPrice + qty * price) / newQty;
+        return pref.set({ qty: newQty, avgPrice: newAvg, updatedAt: Date.now() });
+      });
+    }).then(function() {
+      return S.db.ref("cazo/users/" + uid + "/transactions").push({ type: "buy", qty: qty, price: price, total: total, timestamp: Date.now() });
+    }).then(function() {
+      toast("Beli " + qty + " " + (S.settings.symbol || "CAZO") + " berhasil!", "success");
+    }).catch(function(err) {
+      console.error(err); toast("Transaksi gagal: " + err.message, "error", 5000);
+    });
+  } else {
+    var pref = S.db.ref("cazo/users/" + uid + "/portfolio/CAZO");
+    pref.once("value").then(function(snap) {
+      var cur = snap.val() || { qty: 0, avgPrice: 0 };
+      if (cur.qty < qty) throw new Error("Unit tidak cukup");
+      var newQty = cur.qty - qty;
+      if (newQty <= 0) return pref.remove();
+      return pref.set({ qty: newQty, avgPrice: cur.avgPrice, updatedAt: Date.now() });
+    }).then(function() {
+      return S.db.ref("cazo/users/" + uid + "/balance").transaction(function(bal) { return num(bal, 0) + total; });
+    }).then(function() {
+      return S.db.ref("cazo/users/" + uid + "/transactions").push({ type: "sell", qty: qty, price: price, total: total, timestamp: Date.now() });
+    }).then(function() {
+      toast("Jual " + qty + " " + (S.settings.symbol || "CAZO") + " berhasil!", "success");
+    }).catch(function(err) {
+      console.error(err); toast("Transaksi gagal: " + err.message, "error", 5000);
+    });
   }
 }
 
-// ==================== EVENTS ====================
-function bindEvents() {
-  $("btnGoogleLoginModal").addEventListener("click", function () { doGoogleLogin(this); });
-  $("btnCancelLogin").addEventListener("click", () => { S.pendingAction = null; closeModal("modalLogin"); });
-  $("btnLogout").addEventListener("click", async () => { if (!confirm("Keluar?")) return; try { await signOut(S.auth); toast("Berhasil keluar", "info"); } catch (e) {} });
+function submitDeposit() {
+  if (!requireLogin("deposit", submitDeposit)) return;
+  var amount = num($("depAmount").value, 0);
+  var sender = $("depSender").value.trim();
+  var note = $("depNote").value.trim();
+  if (amount < 10000) return toast("Minimal deposit Rp 10.000", "error");
+  if (!sender) return toast("Isi nama pengirim", "error");
+  var uid = S.user.uid;
+  S.db.ref("cazo/users/" + uid + "/deposits").push({ amount: amount, sender: sender, note: note, status: "pending", timestamp: Date.now() })
+    .then(function() {
+      return S.db.ref("cazo/depositQueue").push({ uid: uid, email: S.user.email, amount: amount, sender: sender, note: note, status: "pending", timestamp: Date.now() });
+    })
+    .then(function() {
+      $("depAmount").value = ""; $("depSender").value = ""; $("depNote").value = "";
+      toast("Pengajuan deposit terkirim.", "success", 5000);
+    })
+    .catch(function(err) { console.error(err); toast("Gagal: " + err.message, "error"); });
+}
 
-  $("userChip").addEventListener("click", () => {
-    if (S.user) CAZO.nav("settings");
-    else requireLogin("profile", () => CAZO.nav("settings"));
+function doGoogleLogin(btn) {
+  var orig = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></span> Menghubungkan...';
+  var provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });
+  S.auth.signInWithPopup(provider)
+    .catch(function(err) {
+      console.error("Login error:", err);
+      var msg = "Gagal login. Coba lagi.";
+      if (err.code === "auth/popup-closed-by-user") msg = "Pop-up ditutup.";
+      if (err.code === "auth/popup-blocked") msg = "Pop-up diblokir.";
+      if (err.code === "auth/unauthorized-domain") msg = "Domain belum diizinkan di Firebase Auth.";
+      toast(msg, "error", 6000);
+    })
+    .then(function() {
+      btn.disabled = false; btn.innerHTML = orig;
+      renderIcons();
+    });
+}
+
+// ============ EVENTS ============
+function bindEvents() {
+  $("btnGoogleLoginModal").addEventListener("click", function(){ doGoogleLogin(this); });
+  $("btnCancelLogin").addEventListener("click", function(){ S.pendingAction = null; closeModal("modalLogin"); });
+  $("btnLogout").addEventListener("click", function(){
+    if (!confirm("Keluar?")) return;
+    S.auth.signOut().then(function(){ toast("Berhasil keluar", "info"); });
   });
 
-  document.querySelectorAll(".nav-tab").forEach(tab => {
-    tab.addEventListener("click", () => {
-      const page = tab.dataset.page;
-      const needsAuth = tab.dataset.auth === "1";
+  $("userChip").addEventListener("click", function(){
+    if (S.user) CAZO.nav("settings");
+    else requireLogin("profile", function(){ CAZO.nav("settings"); });
+  });
+
+  document.querySelectorAll(".nav-tab").forEach(function(tab){
+    tab.addEventListener("click", function(){
+      var page = tab.dataset.page;
+      var needsAuth = tab.dataset.auth === "1";
       if (needsAuth && !S.user) {
-        const reasonMap = { portfolio: "portfolio", deposit: "deposit", history: "history", settings: "profile" };
-        requireLogin(reasonMap[page] || "default", () => activatePage(page));
+        var reasonMap = { portfolio: "portfolio", deposit: "deposit", history: "history", settings: "profile" };
+        requireLogin(reasonMap[page] || "default", function(){ activatePage(page); });
         return;
       }
       activatePage(page);
@@ -2148,18 +1895,18 @@ function bindEvents() {
   });
 
   function activatePage(page) {
-    document.querySelectorAll(".nav-tab").forEach(t => t.classList.toggle("active", t.dataset.page === page));
-    document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id === "page-" + page));
+    document.querySelectorAll(".nav-tab").forEach(function(t){ t.classList.toggle("active", t.dataset.page === page); });
+    document.querySelectorAll(".page").forEach(function(p){ p.classList.toggle("active", p.id === "page-" + page); });
     $("navTabs").classList.remove("open");
     window.scrollTo({ top: 0, behavior: "smooth" });
     if (page === "history") renderHistoryTab();
   }
 
-  $("mobileToggle").addEventListener("click", (e) => { e.stopPropagation(); $("navTabs").classList.toggle("open"); });
+  $("mobileToggle").addEventListener("click", function(e){ e.stopPropagation(); $("navTabs").classList.toggle("open"); });
 
-  document.querySelectorAll("#rangeGroup .range-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll("#rangeGroup .range-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll("#rangeGroup .range-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      document.querySelectorAll("#rangeGroup .range-btn").forEach(function(b){ b.classList.remove("active"); });
       btn.classList.add("active");
       S.activeRange = btn.dataset.range;
       S._lastChartKey = ""; S._lastFitRange = null;
@@ -2167,85 +1914,91 @@ function bindEvents() {
     });
   });
 
-  $("btnVolume").addEventListener("click", function () {
+  $("btnVolume").addEventListener("click", function(){
     S.showVolume = !S.showVolume;
     this.classList.toggle("active", S.showVolume);
     S._lastChartKey = ""; updateChart();
   });
 
-  $("btnFullscreen").addEventListener("click", () => {
-    const wrap = $("chartWrap");
+  $("btnFullscreen").addEventListener("click", function(){
+    var wrap = $("chartWrap");
     wrap.classList.toggle("fullscreen");
     S.chartFullscreen = wrap.classList.contains("fullscreen");
-    setTimeout(() => {
-      const box = $("mainChart");
-      S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
-      S.chart.timeScale().fitContent();
+    setTimeout(function(){
+      var box = $("mainChart");
+      if (S.chart) {
+        S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
+        S.chart.timeScale().fitContent();
+      }
       resizeDrawLayer(); redrawAll();
     }, 250);
-    if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+    renderIcons();
   });
-  $("fsClose").addEventListener("click", () => {
+  $("fsClose").addEventListener("click", function(){
     $("chartWrap").classList.remove("fullscreen");
     S.chartFullscreen = false;
-    setTimeout(() => {
-      const box = $("mainChart");
-      S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
+    setTimeout(function(){
+      var box = $("mainChart");
+      if (S.chart) S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
       resizeDrawLayer(); redrawAll();
     }, 250);
   });
 
-  // Drawing tools
-  $("fabDrawing").addEventListener("click", () => { renderDrawingCategories(); openModal("modalDrawing"); });
-  $("fabIndicators").addEventListener("click", () => { renderIndicatorList(); renderIndicatorChips(); openModal("modalIndicators"); });
+  $("fabDrawing").addEventListener("click", function(){ renderDrawingCategories(); openModal("modalDrawing"); });
+  $("fabIndicators").addEventListener("click", function(){ renderIndicatorList(); renderIndicatorChips(); openModal("modalIndicators"); });
   $("fabSLTP").addEventListener("click", openSLTP);
-  $("drawBadgeClose").addEventListener("click", () => setActiveTool(null));
-  $("btnClearDrawings").addEventListener("click", () => { if (!S.drawings.length) return toast("Tidak ada gambar", "info"); if (!confirm("Hapus semua gambar?")) return; S.drawings = []; redrawAll(); toast("Semua gambar dihapus", "success"); });
-  $("indSearch").addEventListener("input", (e) => renderIndicatorList(e.target.value));
-  $("btnClearIndicators").addEventListener("click", () => { if (!S.activeIndicators.size) return; Array.from(S.activeIndicators).forEach(id => removeIndicator(id)); toast("Semua indikator dihapus", "info"); });
+  $("drawBadgeClose").addEventListener("click", function(){ setActiveTool(null); });
+  $("btnClearDrawings").addEventListener("click", function(){
+    if (!S.drawings.length) return toast("Tidak ada gambar", "info");
+    if (!confirm("Hapus semua gambar?")) return;
+    S.drawings = []; redrawAll(); toast("Semua gambar dihapus", "success");
+  });
+  $("indSearch").addEventListener("input", function(e){ renderIndicatorList(e.target.value); });
+  $("btnClearIndicators").addEventListener("click", function(){
+    Object.keys(S.activeIndicators).forEach(function(id){ removeIndicator(id); });
+  });
   $("btnSaveSLTP").addEventListener("click", saveSLTP);
   $("btnClearSLTP").addEventListener("click", clearSLTP);
   $("sltpSL").addEventListener("input", updateSLTPHints);
   $("sltpTP").addEventListener("input", updateSLTPHints);
 
-  // Trade side
-  document.querySelectorAll(".order-tab[data-side]").forEach(tab => {
-    tab.addEventListener("click", () => {
-      document.querySelectorAll(".order-tab[data-side]").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".order-tab[data-side]").forEach(function(tab){
+    tab.addEventListener("click", function(){
+      document.querySelectorAll(".order-tab[data-side]").forEach(function(t){ t.classList.remove("active"); });
       tab.classList.add("active");
       S.tradeSide = tab.dataset.side;
-      const btn = $("btnQuickTrade");
+      var btn = $("btnQuickTrade");
       btn.className = "btn btn-block " + (S.tradeSide === "buy" ? "btn-up" : "btn-down");
-      btn.innerHTML = `<i data-lucide="zap"></i> ${S.tradeSide === "buy" ? "Beli Sekarang" : "Jual Sekarang"}`;
-      if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+      btn.innerHTML = '<i data-lucide="zap"></i><span>' + (S.tradeSide === "buy" ? "Beli Sekarang" : "Jual Sekarang") + '</span>';
+      renderIcons();
     });
   });
 
   $("tradeQty").addEventListener("input", updateTradeTotal);
-  $("btnQuickTrade").addEventListener("click", () => doTrade(S.tradeSide));
+  $("btnQuickTrade").addEventListener("click", function(){ doTrade(S.tradeSide); });
   $("btnSubmitDeposit").addEventListener("click", submitDeposit);
 
-  document.querySelectorAll(".order-tab[data-hist]").forEach(tab => {
-    tab.addEventListener("click", () => {
-      document.querySelectorAll(".order-tab[data-hist]").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".order-tab[data-hist]").forEach(function(tab){
+    tab.addEventListener("click", function(){
+      document.querySelectorAll(".order-tab[data-hist]").forEach(function(t){ t.classList.remove("active"); });
       tab.classList.add("active");
       S.histTab = tab.dataset.hist;
       renderHistoryTab();
     });
   });
 
-  $("btnSaveSettings").addEventListener("click", () => {
+  $("btnSaveSettings").addEventListener("click", function(){
     S.activeRange = $("setRange").value;
-    document.querySelectorAll("#rangeGroup .range-btn").forEach(b => b.classList.toggle("active", b.dataset.range === S.activeRange));
+    document.querySelectorAll("#rangeGroup .range-btn").forEach(function(b){ b.classList.toggle("active", b.dataset.range === S.activeRange); });
     S._lastChartKey = ""; S._lastFitRange = null;
     updateChart();
     toast("Pengaturan disimpan", "success");
   });
 
-  $("modalInfo").addEventListener("click", (e) => { if (e.target === $("modalInfo")) closeModal("modalInfo"); });
-  $("modalLogin").addEventListener("click", (e) => { if (e.target === $("modalLogin")) { S.pendingAction = null; closeModal("modalLogin"); } });
+  $("modalInfo").addEventListener("click", function(e){ if (e.target === this) closeModal("modalInfo"); });
+  $("modalLogin").addEventListener("click", function(e){ if (e.target === this) { S.pendingAction = null; closeModal("modalLogin"); } });
 
-  document.addEventListener("keydown", (e) => {
+  document.addEventListener("keydown", function(e){
     if (e.key === "Escape") {
       if (S.chartFullscreen) $("fsClose").click();
       closeModal("modalInfo"); closeModal("modalLogin"); closeModal("modalDrawing"); closeModal("modalIndicators"); closeModal("modalSLTP");
@@ -2254,33 +2007,97 @@ function bindEvents() {
     }
   });
 
-  document.addEventListener("click", (e) => {
-    const nav = $("navTabs"), tog = $("mobileToggle");
+  document.addEventListener("click", function(e){
+    var nav = $("navTabs"), tog = $("mobileToggle");
     if (nav.classList.contains("open") && !nav.contains(e.target) && !tog.contains(e.target)) nav.classList.remove("open");
   });
 
-  window.addEventListener("offline", () => { updateConnPill(); toast("Koneksi terputus", "warning"); });
-  window.addEventListener("online", () => { updateConnPill(); toast("Koneksi kembali", "success"); });
+  window.addEventListener("offline", function(){ updateConnPill(); toast("Koneksi terputus", "warning"); });
+  window.addEventListener("online", function(){ updateConnPill(); toast("Koneksi kembali", "success"); });
 }
 
-// ==================== BOOT ====================
-async function boot() {
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+// ============ ICON RENDERER ROBUST ============
+function startIconRenderer() {
+  var tries = 0, maxTries = 30;
+  function tryRender() {
+    tries++;
+    if (window.lucide && typeof window.lucide.createIcons === "function") {
+      try { window.lucide.createIcons(); } catch(e){}
+    } else if (tries < maxTries) {
+      setTimeout(tryRender, 200);
+    } else {
+      console.warn("[CAZO] Lucide gagal dimuat. Menampilkan fallback.");
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tryRender);
+  else tryRender();
+
+  if (window.MutationObserver) {
+    var t = null;
+    new MutationObserver(function(){
+      if (t) clearTimeout(t);
+      t = setTimeout(function(){ if (window.lucide) try { window.lucide.createIcons(); } catch(e){} }, 120);
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+}
+
+// ============ BOOT ============
+function boot() {
+  startIconRenderer();
   bindEvents();
-  initChart();
-  try { await initFirebase(); } catch (err) { console.error(err); toast("Gagal inisialisasi", "error", 6000); }
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+
+  // Tunggu library chart siap (max 5 detik)
+  var chartTries = 0;
+  function tryInitChart() {
+    chartTries++;
+    var ok = initChart();
+    if (ok) {
+      console.log("[CAZO] Chart initialized");
+      setTimeout(function(){
+        renderPriceUI();
+        updateChart();
+      }, 300);
+      return;
+    }
+    if (chartTries < 25) {
+      setTimeout(tryInitChart, 200);
+    } else {
+      console.error("[CAZO] Lightweight Charts gagal dimuat.");
+      var loading = $("chartLoading");
+      if (loading) {
+        loading.innerHTML = '<div style="font-size:32px">📉</div><div>Grafik tidak dapat dimuat</div><div style="font-size:11px">Periksa koneksi internet</div>';
+      }
+    }
+  }
+  tryInitChart();
+
+  // Firebase
+  if (typeof firebase !== "undefined") {
+    initFirebase();
+  } else {
+    console.error("[CAZO] Firebase SDK tidak tersedia");
+    toast("Firebase tidak tersedia. Mode demo.", "error", 6000);
+    setTimeout(function(){ loadDemoMode(); }, 500);
+  }
+
   renderUserUI();
   renderDepositHistory($("depositHistory"));
   $("btnVolume").classList.toggle("active", S.showVolume);
+  renderIcons();
 }
 
 window.CAZO = {
-  nav: (p) => document.querySelector(`.nav-tab[data-page="${p}"]`)?.click(),
-  closeModal
+  nav: function(p){
+    var tab = document.querySelector('.nav-tab[data-page="' + p + '"]');
+    if (tab) tab.click();
+  },
+  closeModal: closeModal
 };
 
-boot();
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+else boot();
+
+})();
 </script>
 </body>
 </html>
