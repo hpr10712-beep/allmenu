@@ -1,1750 +1,2297 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Cazoo Stock Exchange</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0e17'/%3E%3Cpath d='M20 42 L28 26 L36 34 L44 18' stroke='%233b82f6' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='44' cy='18' r='5' fill='%2310b981'/%3E%3C/svg%3E" />
-<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
-<style>
-:root{
-  --bg:#080b13;--panel:#111827;--panel-2:#151d2e;--border:#1e2a44;--border-2:#25324f;
-  --text:#e6edf7;--muted:#8a98b5;--muted-2:#5a6784;
-  --blue:#3b82f6;--blue-2:#2563eb;--green:#10b981;--green-2:#059669;--red:#ef4444;--red-2:#dc2626;
-  --yellow:#f59e0b;--purple:#8b5cf6;
-  --radius:14px;--shadow:0 10px 30px rgba(0,0,0,.45);
-  --shadow-glow:0 0 0 1px rgba(59,130,246,.25),0 8px 24px rgba(59,130,246,.15);
-  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(900px 500px at 15% -10%,rgba(59,130,246,.14),transparent 60%),radial-gradient(700px 500px at 100% 0%,rgba(16,185,129,.08),transparent 60%),linear-gradient(180deg,#080b13,#0a0f1c)}
-a{color:var(--blue);text-decoration:none}a:hover{color:#60a5fa}
-button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
-input,select{font-family:inherit}
-::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-thumb{background:#1f2a44;border-radius:6px}
-h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
-h2{font-size:22px;font-weight:700}h3{font-size:17px;font-weight:700}h4{font-size:14px;font-weight:600}
-.muted{color:var(--muted)}.mono{font-family:var(--mono)}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800}
-.logo-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#1e3a8a,#0a0e17);display:grid;place-items:center;border:1px solid rgba(59,130,246,.35);box-shadow:0 0 20px rgba(59,130,246,.35)}
-.logo-mark svg{width:22px;height:22px}
-.logo-text{font-size:19px}.logo-text span{color:var(--blue)}
-.logo-badge{font-size:9px;font-weight:700;letter-spacing:.12em;padding:2px 6px;border-radius:5px;background:rgba(59,130,246,.15);color:#93c5fd;border:1px solid rgba(59,130,246,.35);text-transform:uppercase}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;transition:all .18s;white-space:nowrap;border:1px solid transparent}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn-primary{background:linear-gradient(135deg,var(--blue-2),var(--blue));color:#fff;box-shadow:0 6px 20px rgba(37,99,235,.35)}
-.btn-primary:hover:not(:disabled){transform:translateY(-1px)}
-.btn-green{background:linear-gradient(135deg,var(--green-2),var(--green));color:#fff}
-.btn-green:hover:not(:disabled){transform:translateY(-1px)}
-.btn-red{background:linear-gradient(135deg,var(--red-2),var(--red));color:#fff}
-.btn-ghost{background:rgba(255,255,255,.04);border:1px solid var(--border-2);color:var(--text)}
-.btn-ghost:hover:not(:disabled){background:rgba(255,255,255,.08);border-color:var(--blue)}
-.btn-sm{padding:7px 12px;font-size:12.5px;border-radius:8px}
-.btn-block{width:100%}
-.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-.field label{font-size:12.5px;font-weight:600;color:var(--muted)}
-.field input,.field select{width:100%;padding:11px 13px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border-2);color:var(--text);font-size:14px;outline:none;transition:all .18s}
-.field input:focus,.field select:focus{border-color:var(--blue);background:rgba(59,130,246,.06);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
-.field .hint{font-size:11.5px;color:var(--muted-2)}
-.card{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
-.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:12px;flex-wrap:wrap}
-.card-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
-.card-title svg{width:16px;height:16px;color:var(--blue)}
-.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700}
-.pill-green{background:rgba(16,185,129,.14);color:#4ade80;border:1px solid rgba(16,185,129,.3)}
-.pill-red{background:rgba(239,68,68,.14);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
-.pill-blue{background:rgba(59,130,246,.14);color:#93c5fd;border:1px solid rgba(59,130,246,.3)}
-.pill-yellow{background:rgba(245,158,11,.14);color:#fcd34d;border:1px solid rgba(245,158,11,.3)}
-.pill-gray{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--border-2)}
-.pill-purple{background:rgba(139,92,246,.14);color:#c4b5fd;border:1px solid rgba(139,92,246,.3)}
-#toasts{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:10px;max-width:360px}
-.toast{background:linear-gradient(180deg,#161f33,#111827);border:1px solid var(--border-2);border-left:3px solid var(--blue);border-radius:10px;padding:12px 14px;box-shadow:var(--shadow);animation:slideIn .25s}
-.toast.success{border-left-color:var(--green)}.toast.error{border-left-color:var(--red)}.toast.warn{border-left-color:var(--yellow)}
-.toast-title{font-weight:700;font-size:13.5px}.toast-msg{font-size:12.5px;color:var(--muted);margin-top:2px}
-@keyframes slideIn{from{transform:translateX(30px);opacity:0}to{transform:translateX(0);opacity:1}}
-.modal-backdrop{position:fixed;inset:0;background:rgba(2,4,10,.7);backdrop-filter:blur(6px);z-index:9000;display:grid;place-items:center;padding:16px}
-.modal{background:linear-gradient(180deg,#131b2b,#0f1524);border:1px solid var(--border-2);border-radius:20px;padding:22px;width:100%;max-width:440px;box-shadow:var(--shadow);max-height:92vh;overflow-y:auto}
-.modal h3{margin-bottom:6px}.modal-sub{color:var(--muted);font-size:13px;margin-bottom:14px}
-.modal-actions{display:flex;gap:10px;margin-top:18px}.modal-actions .btn{flex:1}
-#landing{min-height:100vh;display:flex;flex-direction:column}
-.navbar{position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 28px;background:rgba(8,11,19,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
-.nav-links{display:flex;gap:26px;font-size:14px;color:var(--muted);font-weight:500}
-.nav-links a{color:var(--muted)}.nav-links a:hover{color:var(--text)}
-.nav-actions{display:flex;gap:10px;align-items:center}
-.hero{padding:70px 28px 50px;max-width:1300px;margin:0 auto;width:100%}
-.hero-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:50px;align-items:center}
-@media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:30px}}
-.hero h1{font-size:52px;line-height:1.05;margin-bottom:18px}
-.hero h1 .accent{background:linear-gradient(135deg,#60a5fa,#3b82f6 40%,#10b981);-webkit-background-clip:text;background-clip:text;color:transparent}
-@media(max-width:600px){.hero h1{font-size:34px}}
-.hero p.lead{font-size:16px;color:var(--muted);max-width:560px;margin-bottom:26px}
-.hero-cta{display:flex;gap:12px;flex-wrap:wrap}
-.hero-stats{display:flex;gap:32px;margin-top:36px;flex-wrap:wrap}
-.hero-stat .v{font-size:22px;font-weight:800;font-family:var(--mono)}
-.hero-stat .l{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
-.hero-visual{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--border-2);border-radius:20px;padding:18px;box-shadow:var(--shadow-glow)}
-#heroChart{height:260px}
-.section{padding:60px 28px;max-width:1300px;margin:0 auto;width:100%}
-.section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:26px;gap:16px;flex-wrap:wrap}
-.section-head h2{margin-bottom:4px}.section-head p{color:var(--muted);font-size:14px}
-.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-.feat{padding:20px;border-radius:var(--radius);background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--border);transition:all .2s}
-.feat:hover{transform:translateY(-3px);border-color:var(--blue)}
-.feat-icon{width:40px;height:40px;border-radius:10px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);display:grid;place-items:center;color:#93c5fd;margin-bottom:12px}
-.feat-icon svg{width:20px;height:20px}.feat h3{font-size:15px;margin-bottom:6px}.feat p{font-size:13px;color:var(--muted);line-height:1.55}
-.grid-half{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media(max-width:700px){.grid-half{grid-template-columns:1fr}}
-footer{margin-top:40px;border-top:1px solid var(--border);padding:40px 28px 20px;background:rgba(8,11,19,.5)}
-.footer-grid{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px;padding-bottom:26px}
-@media(max-width:800px){.footer-grid{grid-template-columns:1fr 1fr}}@media(max-width:500px){.footer-grid{grid-template-columns:1fr}}
-.footer-grid h4{font-size:13px;margin-bottom:12px}
-.footer-grid a{display:block;color:var(--muted);font-size:13px;padding:4px 0}
-.footer-bottom{max-width:1300px;margin:0 auto;padding-top:20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12.5px;color:var(--muted)}
-#auth{min-height:100vh;display:grid;place-items:center;padding:24px}
-.auth-card{width:100%;max-width:420px;background:linear-gradient(180deg,#131b2b,#0f1524);border:1px solid var(--border-2);border-radius:20px;padding:28px;box-shadow:var(--shadow-glow)}
-.auth-card h2{margin-bottom:6px}.auth-sub{color:var(--muted);font-size:13px;margin-bottom:20px}
-.google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;border-radius:10px;background:#fff;color:#1a1a1a;font-weight:600;font-size:14.5px;border:1px solid #e5e7eb;transition:all .15s}
-.google-btn:hover{background:#f3f4f6}.google-btn:disabled{opacity:.6;cursor:wait}
-.google-btn svg{width:20px;height:20px}
-.auth-info{margin-top:18px;padding:13px;border-radius:10px;background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);font-size:12px;color:#93c5fd;line-height:1.55}
-#app{display:none;min-height:100vh}
-#app.active{display:grid;grid-template-columns:250px 1fr}
-@media(max-width:900px){#app.active{grid-template-columns:1fr}}
-.sidebar{background:linear-gradient(180deg,#0d1220,#0a0f1c);border-right:1px solid var(--border);padding:20px 14px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
-.sidebar .logo{padding:0 8px 20px;border-bottom:1px solid var(--border);margin-bottom:16px}
-.nav-section{font-size:10.5px;color:var(--muted-2);text-transform:uppercase;letter-spacing:.12em;font-weight:700;padding:12px 10px 6px}
-.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:var(--muted);font-size:13.5px;font-weight:500;cursor:pointer;transition:all .15s;margin-bottom:2px}
-.nav-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
-.nav-item.active{background:linear-gradient(90deg,rgba(59,130,246,.18),rgba(59,130,246,.04));color:#fff;border-left:2px solid var(--blue);padding-left:10px}
-.nav-item svg{width:17px;height:17px;flex-shrink:0}
-.nav-badge{margin-left:auto;font-size:10px;padding:2px 6px;border-radius:5px;background:rgba(239,68,68,.18);color:#fca5a5;font-weight:700}
-.main{min-height:100vh;padding-bottom:40px}
-.topbar{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:14px 24px;background:rgba(10,14,23,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);gap:16px}
-.topbar-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
-#menuBtn{display:none}@media(max-width:900px){#menuBtn{display:inline-flex}}
-.page-title{font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.topbar-right{display:flex;align-items:center;gap:10px}
-.market-clock{display:flex;align-items:center;gap:8px;padding:6px 11px;border-radius:9px;background:rgba(255,255,255,.03);border:1px solid var(--border-2);font-size:12px;font-family:var(--mono)}
-.market-clock .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
-.market-clock.closed .dot{background:var(--red);box-shadow:0 0 8px var(--red)}
-@media(max-width:600px){.market-clock{display:none}}
-.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;cursor:pointer;border:2px solid var(--border-2);overflow:hidden}
-.avatar img{width:100%;height:100%;object-fit:cover}
-.icon-btn{position:relative;width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.03);border:1px solid var(--border-2);display:grid;place-items:center;cursor:pointer}
-.icon-btn:hover{background:rgba(255,255,255,.07)}
-.icon-btn svg{width:17px;height:17px;color:var(--muted)}
-.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid var(--bg);display:none}
-.content{padding:22px 24px;max-width:1500px;margin:0 auto;width:100%}
-@media(max-width:600px){.content{padding:16px}}
-.page{display:none}.page.active{display:block;animation:fadeIn .25s}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:22px}
-.stat{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-.stat .label{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:6px}
-.stat .value{font-size:22px;font-weight:800;font-family:var(--mono)}
-.stat .delta{font-size:12.5px;margin-top:6px;font-weight:600;font-family:var(--mono)}
-.stat.blue .value{color:#93c5fd}.stat.green .value{color:#4ade80}.stat.red .value{color:#fca5a5}.stat.yellow .value{color:#fcd34d}
-.grid-2{display:grid;grid-template-columns:2fr 1fr;gap:18px}
-@media(max-width:1000px){.grid-2{grid-template-columns:1fr}}
-.table-wrap{overflow-x:auto;margin:0 -6px}
-table.tbl{width:100%;border-collapse:collapse;font-size:13px}
-.tbl th{text-align:left;padding:10px 8px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);white-space:nowrap}
-.tbl td{padding:12px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
-.tbl tr:last-child td{border-bottom:none}.tbl tr:hover td{background:rgba(59,130,246,.04)}
-.tbl .num{text-align:right;font-family:var(--mono)}
-.chart-box{height:380px;width:100%;position:relative}.chart-box.sm{height:220px}
-.chip{padding:7px 13px;border-radius:9px;font-size:12.5px;font-weight:600;background:rgba(255,255,255,.03);border:1px solid var(--border-2);color:var(--muted);cursor:pointer}
-.chip:hover{border-color:var(--blue);color:var(--text)}
-.chip.active{background:var(--blue);color:#fff;border-color:var(--blue)}
-.trade-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:18px}
-@media(max-width:900px){.trade-grid{grid-template-columns:1fr}}
-.side-toggle{display:flex;gap:6px;padding:4px;background:rgba(255,255,255,.03);border-radius:10px;margin-bottom:16px}
-.side-toggle button{flex:1;padding:10px;border-radius:8px;font-weight:700;color:var(--muted)}
-.side-toggle button.buy.active{background:var(--green);color:#fff}
-.side-toggle button.sell.active{background:var(--red);color:#fff}
-.summary-box{background:rgba(255,255,255,.02);border:1px dashed var(--border-2);border-radius:10px;padding:12px;margin:12px 0}
-.summary-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12.5px;gap:10px}
-.summary-row .k{color:var(--muted);flex-shrink:0}
-.summary-row .v{font-family:var(--mono);font-weight:600;text-align:right;overflow:hidden;text-overflow:ellipsis}
-.summary-row.total{border-top:1px solid var(--border-2);padding-top:8px;margin-top:4px;font-weight:700;font-size:13.5px}
-.empty{padding:36px 20px;text-align:center;color:var(--muted)}
-.empty h4{color:var(--text);margin-bottom:4px}.empty p{font-size:13px}
-.up{color:var(--green)}.down{color:var(--red)}
-.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:80;background:rgba(10,14,23,.95);backdrop-filter:blur(14px);border-top:1px solid var(--border);padding:8px 6px calc(8px + env(safe-area-inset-bottom));grid-template-columns:repeat(5,1fr);gap:2px}
-.mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px;color:var(--muted);font-size:10.5px;font-weight:600;border-radius:8px}
-.mobile-nav button.active{color:var(--blue);background:rgba(59,130,246,.08)}
-.mobile-nav button svg{width:19px;height:19px}
-@media(max-width:900px){.mobile-nav{display:grid}.main{padding-bottom:80px}}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:60;display:none}.overlay.show{display:block}
-@media(max-width:900px){.sidebar{position:fixed;left:-260px;top:0;z-index:70;transition:left .25s;width:250px}.sidebar.open{left:0}}
-.risk-banner{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:12px;margin-bottom:18px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.25);font-size:12.5px;color:#fcd34d;line-height:1.55}
-.risk-banner svg{width:18px;height:18px;flex-shrink:0;margin-top:1px}
-.flex{display:flex}.between{justify-content:space-between}.center{align-items:center}
-.gap-8{gap:8px}.gap-12{gap:12px}.mt-12{margin-top:12px}.mb-12{margin-bottom:12px}.mb-16{margin-bottom:16px}
-.text-right{text-align:right}.hidden{display:none!important}
-/* Asset hero card */
-.asset-hero{display:flex;gap:20px;align-items:center;padding:20px;border-radius:16px;background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(16,185,129,.06));border:1px solid rgba(59,130,246,.25);margin-bottom:20px;flex-wrap:wrap}
-.asset-icon{width:70px;height:70px;border-radius:18px;background:linear-gradient(135deg,#1e3a8a,#0a0e17);display:grid;place-items:center;border:1px solid rgba(59,130,246,.4);box-shadow:0 0 30px rgba(59,130,246,.35)}
-.asset-icon svg{width:44px;height:44px}
-.asset-meta{flex:1;min-width:200px}
-.asset-meta h2{font-size:24px;margin-bottom:2px}
-.asset-price{font-size:32px;font-weight:800;font-family:var(--mono)}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>CAZO — Digital Card Chart</title>
+  <meta name="description" content="CAZO — Platform grafik card digital premium, real-time, dan modern." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <style>
+    /* ========== RESET & VARIABEL ========== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #FFFFFF;
+      --bg-secondary: #F8FAFC;
+      --bg-tertiary: #F1F5F9;
+      --text-primary: #111827;
+      --text-secondary: #6B7280;
+      --text-muted: #9CA3AF;
+      --border: #E5E7EB;
+      --border-light: #F3F4F6;
+      --up: #16A34A;
+      --up-bg: #F0FDF4;
+      --down: #DC2626;
+      --down-bg: #FEF2F2;
+      --accent: #2563EB;
+      --accent-bg: #EFF6FF;
+      --radius-sm: 8px;
+      --radius: 16px;
+      --radius-lg: 24px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.08);
+      --transition: 240ms cubic-bezier(0.4, 0, 0.2, 1);
+      --font: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    }
+
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ========== SCROLLBAR ========== */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* ========== UTILITY ========== */
+    .hidden { display: none !important; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+    /* ========== NAVBAR ========== */
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border-bottom: 1px solid var(--border-light);
+      transition: var(--transition);
+    }
+    .navbar-inner {
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .navbar-brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: inherit; flex-shrink: 0;
+    }
+    .navbar-logo {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, #111827, #374151);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 800; font-size: 15px;
+      font-family: var(--font-display);
+      letter-spacing: -0.5px;
+      box-shadow: 0 2px 8px rgba(17,24,39,0.15);
+    }
+    .navbar-brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+    .navbar-brand-name {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: 18px; letter-spacing: -0.4px; color: var(--text-primary);
+    }
+    .navbar-brand-sub {
+      font-size: 9px; font-weight: 600; letter-spacing: 2.5px;
+      color: var(--text-muted); text-transform: uppercase;
+    }
+    .navbar-links {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .navbar-link {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: var(--radius-sm);
+      font-size: 13.5px; font-weight: 500; color: var(--text-secondary);
+      text-decoration: none; transition: var(--transition);
+      border: none; background: none; cursor: pointer; font-family: var(--font);
+      white-space: nowrap;
+    }
+    .navbar-link:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+    .navbar-link.active { background: var(--bg-tertiary); color: var(--text-primary); font-weight: 600; }
+    .navbar-link svg { width: 16px; height: 16px; }
+
+    .navbar-right {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .connection-badge {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.3px;
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      transition: var(--transition);
+    }
+    .connection-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--text-muted); transition: var(--transition);
+    }
+    .connection-badge.online .connection-dot { background: var(--up); box-shadow: 0 0 0 3px rgba(22,163,74,0.15); }
+    .connection-badge.offline .connection-dot { background: var(--down); box-shadow: 0 0 0 3px rgba(220,38,38,0.15); }
+
+    .clock-display {
+      font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums;
+      color: var(--text-secondary); letter-spacing: 0.5px;
+      padding: 5px 10px; border-radius: var(--radius-sm);
+      background: var(--bg-tertiary); white-space: nowrap;
+    }
+
+    .mobile-menu-btn {
+      display: none; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: var(--bg);
+      cursor: pointer; transition: var(--transition); color: var(--text-primary);
+    }
+    .mobile-menu-btn:hover { background: var(--bg-tertiary); }
+
+    @media (max-width: 768px) {
+      .navbar-links {
+        position: fixed; top: 64px; left: 0; right: 0;
+        background: rgba(255,255,255,0.98);
+        backdrop-filter: blur(16px);
+        flex-direction: column; align-items: stretch;
+        padding: 12px 16px 16px;
+        border-bottom: 1px solid var(--border);
+        gap: 2px;
+        transform: translateY(-110%); opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        pointer-events: none;
+        box-shadow: var(--shadow-md);
+      }
+      .navbar-links.open {
+        transform: translateY(0); opacity: 1; pointer-events: auto;
+      }
+      .navbar-link { padding: 12px 14px; font-size: 14px; }
+      .mobile-menu-btn { display: flex; }
+      .clock-display { display: none; }
+    }
+
+    /* ========== MAIN LAYOUT ========== */
+    .main-content {
+      max-width: 1280px; margin: 0 auto;
+      padding: 24px 16px 64px;
+    }
+    @media (max-width: 480px) {
+      .main-content { padding: 16px 12px 48px; }
+    }
+
+    /* ========== SECTION ========== */
+    .section { margin-bottom: 32px; }
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px; flex-wrap: wrap; gap: 12px;
+    }
+    .section-title {
+      font-family: var(--font-display); font-size: 18px; font-weight: 700;
+      letter-spacing: -0.3px; display: flex; align-items: center; gap: 8px;
+    }
+    .section-title svg { width: 20px; height: 20px; color: var(--text-secondary); }
+
+    /* ========== CHART CARD ========== */
+    .chart-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow);
+      overflow: hidden; transition: var(--transition);
+    }
+    .chart-card:hover { box-shadow: var(--shadow-md); }
+
+    .chart-card-header {
+      padding: 20px 24px 0;
+      display: flex; align-items: flex-start; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .chart-asset-info { display: flex; align-items: center; gap: 14px; }
+    .chart-asset-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: linear-gradient(135deg, #111827, #374151);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 800; font-size: 18px;
+      font-family: var(--font-display);
+      flex-shrink: 0;
+    }
+    .chart-asset-details { display: flex; flex-direction: column; }
+    .chart-asset-name {
+      font-family: var(--font-display); font-weight: 700; font-size: 16px;
+      letter-spacing: -0.2px;
+    }
+    .chart-asset-symbol {
+      font-size: 12px; font-weight: 600; color: var(--text-muted);
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+
+    .chart-price-block { text-align: right; }
+    .chart-price {
+      font-family: var(--font-display); font-weight: 800; font-size: 32px;
+      letter-spacing: -1px; line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+      transition: color 0.3s ease;
+    }
+    .chart-price.up { color: var(--up); }
+    .chart-price.down { color: var(--down); }
+    .chart-change-row {
+      display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+      margin-top: 4px; flex-wrap: wrap;
+    }
+    .chart-change-value {
+      font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums;
+    }
+    .chart-change-value.up { color: var(--up); }
+    .chart-change-value.down { color: var(--down); }
+    .chart-change-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 2px 8px; border-radius: 6px;
+      font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
+    }
+    .chart-change-badge.up { background: var(--up-bg); color: var(--up); }
+    .chart-change-badge.down { background: var(--down-bg); color: var(--down); }
+
+    /* Range selector */
+    .range-selector {
+      display: flex; gap: 4px; padding: 16px 24px 0;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .range-selector::-webkit-scrollbar { display: none; }
+    .range-btn {
+      padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text-secondary);
+      font-size: 12px; font-weight: 600; font-family: var(--font);
+      cursor: pointer; transition: var(--transition); white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .range-btn:hover { background: var(--bg-tertiary); border-color: var(--text-muted); }
+    .range-btn.active {
+      background: var(--text-primary); color: #fff; border-color: var(--text-primary);
+    }
+
+    /* Chart canvas wrapper */
+    .chart-canvas-wrapper {
+      position: relative; padding: 16px 24px 24px;
+      height: 340px;
+    }
+    @media (max-width: 768px) {
+      .chart-canvas-wrapper { height: 260px; padding: 12px 12px 16px; }
+      .chart-card-header { padding: 16px 16px 0; }
+      .chart-price { font-size: 26px; }
+      .range-selector { padding: 12px 12px 0; }
+    }
+    @media (max-width: 480px) {
+      .chart-canvas-wrapper { height: 220px; }
+      .chart-price { font-size: 22px; }
+    }
+
+    /* Chart overlay states */
+    .chart-loading {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.8); z-index: 5;
+      border-radius: var(--radius); transition: var(--transition);
+    }
+    .chart-loading.hidden { display: none; }
+    .spinner {
+      width: 28px; height: 28px; border: 3px solid var(--border);
+      border-top-color: var(--text-primary); border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .chart-empty {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px; color: var(--text-muted); font-size: 14px;
+      background: var(--bg); z-index: 4; border-radius: var(--radius);
+    }
+    .chart-empty.hidden { display: none; }
+    .chart-empty svg { width: 32px; height: 32px; opacity: 0.5; }
+
+    /* ========== STATS GRID ========== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+
+    .stat-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 18px;
+      box-shadow: var(--shadow-sm); transition: var(--transition);
+    }
+    .stat-card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+    .stat-icon {
+      width: 34px; height: 34px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 12px;
+    }
+    .stat-icon svg { width: 18px; height: 18px; }
+    .stat-icon.high { background: var(--up-bg); color: var(--up); }
+    .stat-icon.low { background: var(--down-bg); color: var(--down); }
+    .stat-icon.change { background: var(--accent-bg); color: var(--accent); }
+    .stat-icon.points { background: #F5F3FF; color: #7C3AED; }
+
+    .stat-label {
+      font-size: 11px; font-weight: 600; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;
+    }
+    .stat-value {
+      font-family: var(--font-display); font-weight: 700; font-size: 18px;
+      letter-spacing: -0.3px; font-variant-numeric: tabular-nums;
+      word-break: break-all;
+    }
+    .stat-value.up { color: var(--up); }
+    .stat-value.down { color: var(--down); }
+    .stat-sub {
+      font-size: 11px; color: var(--text-muted); margin-top: 2px;
+    }
+    @media (max-width: 480px) {
+      .stat-card { padding: 12px 14px; }
+      .stat-value { font-size: 15px; }
+      .stat-icon { width: 28px; height: 28px; margin-bottom: 8px; }
+      .stat-icon svg { width: 15px; height: 15px; }
+    }
+
+    /* ========== HISTORY ========== */
+    .history-list {
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .history-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 18px; background: var(--bg);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      transition: var(--transition); font-size: 13.5px;
+    }
+    .history-item:hover { box-shadow: var(--shadow); border-color: #D1D5DB; }
+    .history-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .history-icon.up { background: var(--up-bg); color: var(--up); }
+    .history-icon.down { background: var(--down-bg); color: var(--down); }
+    .history-icon svg { width: 17px; height: 17px; }
+    .history-main { flex: 1; min-width: 0; }
+    .history-prices {
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+      font-weight: 600; font-variant-numeric: tabular-nums;
+    }
+    .history-old { color: var(--text-secondary); text-decoration: line-through; font-weight: 400; }
+    .history-arrow { color: var(--text-muted); }
+    .history-new { font-weight: 700; }
+    .history-new.up { color: var(--up); }
+    .history-new.down { color: var(--down); }
+    .history-meta {
+      display: flex; align-items: center; gap: 10px; margin-top: 3px;
+      font-size: 11.5px; color: var(--text-muted); flex-wrap: wrap;
+    }
+    .history-change {
+      font-weight: 700; font-variant-numeric: tabular-nums;
+      padding: 2px 8px; border-radius: 6px; font-size: 12px;
+    }
+    .history-change.up { background: var(--up-bg); color: var(--up); }
+    .history-change.down { background: var(--down-bg); color: var(--down); }
+    .history-empty {
+      text-align: center; padding: 40px 16px; color: var(--text-muted);
+      font-size: 14px; border: 1px dashed var(--border); border-radius: var(--radius);
+    }
+    @media (max-width: 480px) {
+      .history-item { padding: 12px 14px; gap: 10px; }
+      .history-prices { font-size: 12.5px; }
+    }
+
+    /* ========== ADMIN PANEL ========== */
+    .admin-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(17,24,39,0.4); backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none; transition: var(--transition);
+    }
+    .admin-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .admin-panel {
+      position: fixed; top: 0; right: 0; bottom: 0; z-index: 201;
+      width: 440px; max-width: 100vw;
+      background: var(--bg); box-shadow: -8px 0 40px rgba(0,0,0,0.1);
+      transform: translateX(100%); transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .admin-panel.open { transform: translateX(0); }
+    @media (max-width: 480px) {
+      .admin-panel { width: 100vw; }
+    }
+
+    .admin-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .admin-header-title {
+      font-family: var(--font-display); font-weight: 700; font-size: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .admin-header-title svg { width: 18px; height: 18px; }
+    .admin-close-btn {
+      width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--bg); display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: var(--transition); color: var(--text-secondary);
+    }
+    .admin-close-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+
+    .admin-body {
+      flex: 1; overflow-y: auto; padding: 20px;
+      display: flex; flex-direction: column; gap: 24px;
+    }
+
+    .admin-section { display: flex; flex-direction: column; gap: 12px; }
+    .admin-section-title {
+      font-size: 12px; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 1px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .admin-section-title svg { width: 14px; height: 14px; }
+
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-label {
+      font-size: 12.5px; font-weight: 600; color: var(--text-secondary);
+    }
+    .form-input, .form-select {
+      width: 100%; padding: 10px 12px; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--bg);
+      font-family: var(--font); font-size: 14px; color: var(--text-primary);
+      transition: var(--transition); outline: none;
+      -webkit-appearance: none; appearance: none;
+    }
+    .form-input:focus, .form-select:focus {
+      border-color: var(--text-primary);
+      box-shadow: 0 0 0 3px rgba(17,24,39,0.08);
+    }
+    .form-input::placeholder { color: var(--text-muted); }
+    .form-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center;
+      padding-right: 34px;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      padding: 10px 16px; border-radius: 10px; border: none;
+      font-family: var(--font); font-size: 13.5px; font-weight: 600;
+      cursor: pointer; transition: var(--transition); white-space: nowrap;
+      text-decoration: none;
+    }
+    .btn svg { width: 15px; height: 15px; }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-primary { background: var(--text-primary); color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: #1F2937; }
+    .btn-success { background: var(--up); color: #fff; }
+    .btn-success:hover:not(:disabled) { background: #15803D; }
+    .btn-danger { background: var(--down); color: #fff; }
+    .btn-danger:hover:not(:disabled) { background: #B91C1C; }
+    .btn-outline {
+      background: var(--bg); color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover:not(:disabled) { background: var(--bg-tertiary); border-color: #D1D5DB; }
+    .btn-ghost {
+      background: transparent; color: var(--text-secondary);
+    }
+    .btn-ghost:hover:not(:disabled) { background: var(--bg-tertiary); color: var(--text-primary); }
+    .btn-sm { padding: 7px 12px; font-size: 12.5px; border-radius: 8px; }
+    .btn-block { width: 100%; }
+
+    .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-group .btn { flex: 1; min-width: 0; }
+
+    /* Admin login screen */
+    .admin-login {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 24px; text-align: center; gap: 16px;
+    }
+    .admin-login-icon {
+      width: 56px; height: 56px; border-radius: 16px;
+      background: var(--bg-tertiary); display: flex;
+      align-items: center; justify-content: center; color: var(--text-secondary);
+    }
+    .admin-login-icon svg { width: 26px; height: 26px; }
+    .admin-login-title {
+      font-family: var(--font-display); font-weight: 700; font-size: 18px;
+    }
+    .admin-login-desc {
+      font-size: 13.5px; color: var(--text-secondary); max-width: 280px;
+    }
+
+    /* Admin connection status */
+    .admin-status {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px; border-radius: 10px; font-size: 12.5px;
+      font-weight: 500;
+    }
+    .admin-status.info { background: var(--accent-bg); color: var(--accent); }
+    .admin-status.success { background: var(--up-bg); color: var(--up); }
+    .admin-status.error { background: var(--down-bg); color: var(--down); }
+    .admin-status svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    /* Admin preview chart */
+    .admin-preview-wrapper {
+      height: 160px; border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; position: relative;
+      background: var(--bg-secondary);
+    }
+    .admin-preview-wrapper canvas { width: 100% !important; height: 100% !important; }
+
+    /* Admin footer */
+    .admin-footer {
+      padding: 16px 20px; border-top: 1px solid var(--border);
+      display: flex; gap: 8px; flex-shrink: 0; background: var(--bg);
+    }
+    .admin-footer .btn { flex: 1; }
+
+    /* ========== TOAST ========== */
+    .toast-container {
+      position: fixed; bottom: 20px; right: 20px; z-index: 300;
+      display: flex; flex-direction: column; gap: 8px;
+      pointer-events: none; max-width: 360px;
+    }
+    @media (max-width: 480px) {
+      .toast-container { left: 12px; right: 12px; bottom: 12px; max-width: none; }
+    }
+    .toast {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 16px; border-radius: 12px;
+      background: var(--text-primary); color: #fff;
+      font-size: 13px; font-weight: 500; line-height: 1.4;
+      box-shadow: var(--shadow-lg); pointer-events: auto;
+      animation: toastIn 0.3s ease forwards;
+      border-left: 3px solid var(--accent);
+    }
+    .toast.success { border-left-color: var(--up); }
+    .toast.error { border-left-color: var(--down); }
+    .toast.warning { border-left-color: #F59E0B; }
+    .toast svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+    .toast-close {
+      margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.6);
+      cursor: pointer; padding: 0; display: flex; flex-shrink: 0;
+    }
+    .toast-close:hover { color: #fff; }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .toast.removing { animation: toastOut 0.25s ease forwards; }
+    @keyframes toastOut {
+      to { opacity: 0; transform: translateY(8px) scale(0.96); }
+    }
+
+    /* ========== SKELETON ========== */
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-tertiary) 25%, #E2E8F0 50%, var(--bg-tertiary) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s ease-in-out infinite;
+      border-radius: 6px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ========== DATA STATUS ========== */
+    .data-status-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; margin-bottom: 20px;
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: var(--radius); font-size: 12px;
+      color: var(--text-secondary); flex-wrap: wrap; gap: 8px;
+    }
+    .data-status-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .data-status-item {
+      display: flex; align-items: center; gap: 5px; white-space: nowrap;
+    }
+    .data-status-item svg { width: 13px; height: 13px; }
+    .data-status-badge {
+      padding: 2px 8px; border-radius: 6px; font-weight: 600; font-size: 10.5px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .data-status-badge.live { background: var(--up-bg); color: var(--up); }
+    .data-status-badge.demo { background: #FEF3C7; color: #D97706; }
+
+    /* ========== RESPONSIVE EXTRA ========== */
+    @media (max-width: 360px) {
+      .navbar-inner { padding: 0 10px; height: 56px; }
+      .navbar-logo { width: 30px; height: 30px; font-size: 13px; }
+      .navbar-brand-name { font-size: 15px; }
+      .navbar-brand-sub { font-size: 8px; letter-spacing: 2px; }
+      .main-content { padding: 12px 8px 40px; }
+      .chart-card-header { padding: 12px 10px 0; }
+      .chart-price { font-size: 20px; }
+      .chart-canvas-wrapper { height: 200px; padding: 8px 6px 12px; }
+      .stats-grid { gap: 8px; }
+      .stat-card { padding: 10px 10px; }
+      .stat-value { font-size: 13px; }
+    }
+  </style>
 </head>
 <body>
 
-<div id="toasts"></div>
-<div id="modalRoot"></div>
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="#" class="navbar-brand" onclick="event.preventDefault(); scrollToTop();">
+        <div class="navbar-logo">CZ</div>
+        <div class="navbar-brand-text">
+          <span class="navbar-brand-name">CAZO</span>
+          <span class="navbar-brand-sub">Digital Card</span>
+        </div>
+      </a>
 
-<!-- ================= LANDING ================= -->
-<div id="landing">
-  <nav class="navbar">
-    <div class="logo">
-      <div class="logo-mark"><svg viewBox="0 0 64 64" fill="none"><path d="M14 44 L24 26 L34 34 L46 14" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46" cy="14" r="5" fill="#10b981"/></svg></div>
-      <div class="logo-text">Cazoo<span>.</span></div>
-      <span class="logo-badge">Exchange</span>
-    </div>
-    <div class="nav-links">
-      <a href="#pasar">Pasar</a>
-      <a href="#fitur">Fitur</a>
-      <a href="#berita">Berita</a>
-    </div>
-    <div class="nav-actions">
-      <button class="btn btn-ghost btn-sm" onclick="go('auth')">Masuk</button>
-      <button class="btn btn-primary btn-sm" onclick="go('auth')">Daftar</button>
+      <div class="navbar-links" id="navbarLinks">
+        <button class="navbar-link active" onclick="scrollToSection('section-home')">
+          <i data-lucide="home"></i> Home
+        </button>
+        <button class="navbar-link" onclick="scrollToSection('section-market')">
+          <i data-lucide="bar-chart-3"></i> Market
+        </button>
+        <button class="navbar-link" onclick="scrollToSection('section-about')">
+          <i data-lucide="info"></i> About
+        </button>
+        <button class="navbar-link" onclick="openAdminPanel()">
+          <i data-lucide="shield"></i> Admin
+        </button>
+      </div>
+
+      <div class="navbar-right">
+        <div class="connection-badge offline" id="connectionBadge">
+          <span class="connection-dot"></span>
+          <span id="connectionText">Offline</span>
+        </div>
+        <div class="clock-display" id="clockDisplay">--:--:--</div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
     </div>
   </nav>
 
-  <section class="hero">
-    <div class="hero-grid">
-      <div>
-        <h1>Perdagangkan <span class="accent">CAZOO</span> di platform resmi kami.</h1>
-        <p class="lead">Aset tunggal CAZOO dengan likuiditas penuh. Masuk dengan akun Google Anda dan mulai trading dalam hitungan detik.</p>
-        <div class="hero-cta">
-          <button class="btn btn-primary" onclick="go('auth')">
-            <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#4285F4" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#34A853" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#FBBC05" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.1-11.3-7.6l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#EA4335" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.6l6.2 5.2C41.4 35.4 44 30.1 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
-            Masuk dengan Google
-          </button>
-          <button class="btn btn-ghost" onclick="document.getElementById('pasar').scrollIntoView({behavior:'smooth'})">Lihat Harga</button>
+  <!-- ========== MAIN ========== -->
+  <main class="main-content">
+
+    <!-- Data status bar -->
+    <div class="data-status-bar" id="dataStatusBar">
+      <div class="data-status-left">
+        <div class="data-status-item">
+          <i data-lucide="database"></i>
+          <span id="dataSourceText">Menghubungkan...</span>
         </div>
-        <div class="hero-stats">
-          <div class="hero-stat"><div class="v" id="heroPrice">—</div><div class="l">Harga CAZOO</div></div>
-          <div class="hero-stat"><div class="v" id="heroChg">—</div><div class="l">Perubahan Hari Ini</div></div>
-          <div class="hero-stat"><div class="v" id="heroVol">—</div><div class="l">Volume</div></div>
-        </div>
+        <span class="data-status-badge demo" id="dataModeBadge">DEMO</span>
       </div>
-      <div class="hero-visual">
-        <div class="flex between center mb-12">
-          <div>
-            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700">CAZOO / IDR</div>
-            <div style="font-size:24px;font-weight:800;font-family:var(--mono);margin-top:2px" id="heroBigPrice">—</div>
+      <div class="data-status-item">
+        <i data-lucide="clock"></i>
+        <span id="lastUpdatedText">Terakhir: --</span>
+      </div>
+    </div>
+
+    <!-- ========== SECTION HOME (CHART) ========== -->
+    <section class="section" id="section-home">
+      <div class="chart-card">
+        <!-- Header -->
+        <div class="chart-card-header">
+          <div class="chart-asset-info">
+            <div class="chart-asset-icon" id="assetIcon">CZ</div>
+            <div class="chart-asset-details">
+              <span class="chart-asset-name" id="assetName">CAZO CARD</span>
+              <span class="chart-asset-symbol" id="assetSymbol">CAZO</span>
+            </div>
           </div>
-          <span class="pill pill-green" id="heroBigChg">—</span>
+          <div class="chart-price-block">
+            <div class="chart-price" id="currentPrice">1.250,00</div>
+            <div class="chart-change-row">
+              <span class="chart-change-value up" id="changeValue">+0,00</span>
+              <span class="chart-change-badge up" id="changeBadge">
+                <i data-lucide="trending-up"></i>
+                <span id="changePercent">+0,00%</span>
+              </span>
+            </div>
+          </div>
         </div>
-        <div id="heroChart"></div>
+
+        <!-- Range selector -->
+        <div class="range-selector" id="rangeSelector">
+          <button class="range-btn" data-range="1m">1M</button>
+          <button class="range-btn" data-range="5m">5M</button>
+          <button class="range-btn" data-range="15m">15M</button>
+          <button class="range-btn" data-range="1h">1J</button>
+          <button class="range-btn" data-range="24h">24J</button>
+          <button class="range-btn active" data-range="7d">7H</button>
+          <button class="range-btn" data-range="30d">30H</button>
+          <button class="range-btn" data-range="all">SEMUA</button>
+        </div>
+
+        <!-- Canvas -->
+        <div class="chart-canvas-wrapper">
+          <canvas id="mainChart"></canvas>
+          <div class="chart-loading hidden" id="chartLoading">
+            <div class="spinner"></div>
+          </div>
+          <div class="chart-empty hidden" id="chartEmpty">
+            <i data-lucide="bar-chart-2"></i>
+            <span>Belum ada data grafik</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== SECTION STATS ========== -->
+    <section class="section" id="section-market">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i data-lucide="activity"></i>
+          Statistik Pasar
+        </h2>
+      </div>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+          <div class="stat-icon high"><i data-lucide="arrow-up-circle"></i></div>
+          <div class="stat-label">Harga Tertinggi</div>
+          <div class="stat-value" id="statHigh">—</div>
+          <div class="stat-sub" id="statHighTime">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon low"><i data-lucide="arrow-down-circle"></i></div>
+          <div class="stat-label">Harga Terendah</div>
+          <div class="stat-value" id="statLow">—</div>
+          <div class="stat-sub" id="statLowTime">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon change"><i data-lucide="trending-up"></i></div>
+          <div class="stat-label">Perubahan</div>
+          <div class="stat-value up" id="statChange">—</div>
+          <div class="stat-sub" id="statChangePercent">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon points"><i data-lucide="hash"></i></div>
+          <div class="stat-label">Total Titik</div>
+          <div class="stat-value" id="statPoints">—</div>
+          <div class="stat-sub">titik data tersimpan</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== SECTION HISTORY ========== -->
+    <section class="section" id="section-about">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i data-lucide="history"></i>
+          Riwayat Pergerakan
+        </h2>
+        <span style="font-size:12px;color:var(--text-muted);" id="historyCount">0 entri</span>
+      </div>
+      <div class="history-list" id="historyList">
+        <div class="history-empty">Memuat riwayat...</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== ADMIN OVERLAY ========== -->
+  <div class="admin-overlay" id="adminOverlay" onclick="closeAdminPanel()"></div>
+
+  <!-- ========== ADMIN PANEL ========== -->
+  <aside class="admin-panel" id="adminPanel">
+    <div class="admin-header">
+      <div class="admin-header-title">
+        <i data-lucide="sliders"></i>
+        Panel Admin CAZO
+      </div>
+      <button class="admin-close-btn" onclick="closeAdminPanel()" aria-label="Tutup">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <!-- Login state -->
+    <div class="admin-login" id="adminLoginView">
+      <div class="admin-login-icon"><i data-lucide="shield"></i></div>
+      <div class="admin-login-title">Akses Admin Diperlukan</div>
+      <div class="admin-login-desc">
+        Masuk dengan akun Google yang terdaftar sebagai admin untuk mengelola pengaturan grafik CAZO.
+      </div>
+      <button class="btn btn-primary btn-block" id="googleSignInBtn" style="max-width:280px;">
+        <i data-lucide="log-in"></i>
+        Masuk dengan Google
+      </button>
+      <div style="font-size:11.5px;color:var(--text-muted);max-width:280px;line-height:1.5;">
+        Hanya akun dengan email admin yang dapat mengakses panel ini. Pengunjung tetap dapat melihat grafik tanpa login.
+      </div>
+      <div class="admin-status error hidden" id="adminAuthError" style="max-width:280px;width:100%;">
+        <i data-lucide="alert-triangle"></i>
+        <span id="adminAuthErrorText"></span>
       </div>
     </div>
-  </section>
 
-  <section class="section" id="pasar">
-    <div class="section-head"><div><h2>Pasar CAZOO</h2><p>Data harga terkini dari orderbook internal kami.</p></div></div>
-    <div class="card">
-      <div id="landingMarket"></div>
-    </div>
-  </section>
+    <!-- Admin content -->
+    <div class="admin-body hidden" id="adminContentView">
 
-  <section class="section" id="fitur">
-    <div class="section-head"><div><h2>Fitur Platform</h2><p>Semua yang Anda butuhkan untuk trading CAZOO.</p></div></div>
-    <div class="feat-grid">
-      <div class="feat"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 6-6"/></svg></div><h3>Grafik Interaktif</h3><p>Candlestick, garis, dan area dengan indikator teknikal.</p></div>
-      <div class="feat"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg></div><h3>Portofolio Real-time</h3><p>Hitung otomatis nilai CAZOO Anda dan P&L.</p></div>
-      <div class="feat"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 2 7l10 5 10-5-10-5z"/></svg></div><h3>Transaksi Aman</h3><p>Validasi saldo dan kepemilikan sebelum order dieksekusi.</p></div>
-      <div class="feat"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><h3>Jam Pasar</h3><p>Status buka/tutup dengan zona waktu Asia/Jakarta.</p></div>
-      <div class="feat"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3>Login Google</h3><p>Autentikasi cepat dan aman menggunakan akun Google.</p></div>
-      <div class="feat"><div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg></div><h3>Notifikasi</h3><p>Pemberitahuan transaksi dan pengumuman admin.</p></div>
-    </div>
-  </section>
-
-  <section class="section" id="berita">
-    <div class="section-head"><div><h2>Berita & Pengumuman</h2></div></div>
-    <div class="grid-half">
-      <div class="card"><div id="newsList"></div></div>
-      <div class="card">
-        <div class="card-header"><div class="card-title">Jam Perdagangan</div></div>
-        <div class="summary-row"><span class="k">Sesi 1</span><span class="v">09:00 – 12:00 WIB</span></div>
-        <div class="summary-row"><span class="k">Sesi 2</span><span class="v">13:30 – 15:50 WIB</span></div>
-        <div class="summary-row"><span class="k">Hari Bursa</span><span class="v">Senin – Jumat</span></div>
-        <div class="summary-row"><span class="k">Zona Waktu</span><span class="v">Asia/Jakarta</span></div>
+      <!-- Status -->
+      <div class="admin-status success hidden" id="adminSaveStatus">
+        <i data-lucide="check-circle"></i>
+        <span id="adminSaveStatusText">Tersimpan</span>
       </div>
-    </div>
-  </section>
 
-  <footer>
-    <div class="footer-grid">
-      <div>
-        <div class="logo" style="margin-bottom:12px"><div class="logo-mark"><svg viewBox="0 0 64 64" fill="none"><path d="M14 44 L24 26 L34 34 L46 14" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46" cy="14" r="5" fill="#10b981"/></svg></div><div class="logo-text">Cazoo<span>.</span></div></div>
-        <p class="muted" style="font-size:13px;line-height:1.6;max-width:340px">Cazoo Stock Exchange adalah platform perdagangan aset CAZOO untuk investor Indonesia.</p>
+      <!-- Asset Info -->
+      <div class="admin-section">
+        <div class="admin-section-title"><i data-lucide="info"></i> Informasi Aset</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nama Aset</label>
+            <input class="form-input" id="adminAssetName" placeholder="CAZO CARD" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Simbol</label>
+            <input class="form-input" id="adminAssetSymbol" placeholder="CAZO" />
+          </div>
+        </div>
       </div>
-      <div><h4>Platform</h4><a href="#" onclick="go('auth');return false">Masuk</a><a href="#" onclick="go('auth');return false">Daftar</a><a href="#pasar">Pasar</a></div>
-      <div><h4>Legal</h4><a href="#" onclick="openLegal('tentang');return false">Tentang</a><a href="#" onclick="openLegal('syarat');return false">Syarat</a><a href="#" onclick="openLegal('privasi');return false">Privasi</a><a href="#" onclick="openLegal('risiko');return false">Risiko</a></div>
-      <div><h4>Bantuan</h4><a href="#" onclick="openLegal('kontak');return false">Kontak</a></div>
+
+      <!-- Price Settings -->
+      <div class="admin-section">
+        <div class="admin-section-title"><i data-lucide="dollar-sign"></i> Pengaturan Harga</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Harga Saat Ini</label>
+            <input class="form-input" id="adminCurrentPrice" type="number" step="0.01" placeholder="1250" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Harga Sebelumnya</label>
+            <input class="form-input" id="adminPreviousPrice" type="number" step="0.01" placeholder="1220" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Harga Tertinggi</label>
+            <input class="form-input" id="adminHigh" type="number" step="0.01" placeholder="1280" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Harga Terendah</label>
+            <input class="form-input" id="adminLow" type="number" step="0.01" placeholder="1180" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Warna Grafik</label>
+            <select class="form-select" id="adminChartColor">
+              <option value="#16A34A">Hijau (Naik)</option>
+              <option value="#DC2626">Merah (Turun)</option>
+              <option value="#2563EB">Biru (Aksen)</option>
+              <option value="#7C3AED">Ungu</option>
+              <option value="#111827">Hitam</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Jumlah Titik Maks</label>
+            <input class="form-input" id="adminMaxPoints" type="number" min="10" max="500" placeholder="100" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Movement Mode -->
+      <div class="admin-section">
+        <div class="admin-section-title"><i data-lucide="git-branch"></i> Mode Pergerakan</div>
+        <div class="form-group">
+          <label class="form-label">Mode</label>
+          <select class="form-select" id="adminMovementMode">
+            <option value="manual">Manual</option>
+            <option value="up">Naik Bertahap</option>
+            <option value="down">Turun Bertahap</option>
+            <option value="stable">Stabil</option>
+            <option value="random">Acak</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Target / Perubahan</label>
+            <input class="form-input" id="adminTargetPrice" type="number" step="0.01" placeholder="1300" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Interval (detik)</label>
+            <select class="form-select" id="adminInterval">
+              <option value="1">1 detik</option>
+              <option value="5" selected>5 detik</option>
+              <option value="10">10 detik</option>
+              <option value="30">30 detik</option>
+              <option value="60">1 menit</option>
+              <option value="0">Manual</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Titik Manual (pisahkan dengan koma)</label>
+          <input class="form-input" id="adminManualPoints" placeholder="1200, 1220, 1210, 1250" />
+        </div>
+      </div>
+
+      <!-- Control Buttons -->
+      <div class="admin-section">
+        <div class="admin-section-title"><i data-lucide="play-circle"></i> Kontrol</div>
+        <div class="btn-group">
+          <button class="btn btn-success btn-sm" id="btnStartMovement">
+            <i data-lucide="play"></i> Mulai
+          </button>
+          <button class="btn btn-danger btn-sm" id="btnStopMovement">
+            <i data-lucide="square"></i> Hentikan
+          </button>
+          <button class="btn btn-outline btn-sm" id="btnResetChart">
+            <i data-lucide="rotate-ccw"></i> Reset
+          </button>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-outline btn-sm" id="btnAddPoint">
+            <i data-lucide="plus-circle"></i> Tambah Titik
+          </button>
+          <button class="btn btn-outline btn-sm" id="btnDeleteLast">
+            <i data-lucide="minus-circle"></i> Hapus Terakhir
+          </button>
+        </div>
+        <div class="admin-status info">
+          <i data-lucide="activity"></i>
+          <span id="movementStatusText">Mode: Manual — Tidak berjalan</span>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="admin-section">
+        <div class="admin-section-title"><i data-lucide="eye"></i> Pratinjau Grafik</div>
+        <div class="admin-preview-wrapper">
+          <canvas id="previewChart"></canvas>
+        </div>
+      </div>
+
     </div>
-    <div class="footer-bottom">
-      <div>© <span id="year"></span> Cazoo Stock Exchange.</div>
-      <div>Platform perdagangan aset digital CAZOO.</div>
-    </div>
-  </footer>
-</div>
 
-<!-- ================= AUTH ================= -->
-<div id="auth" class="hidden">
-  <div class="auth-card">
-    <div class="logo" style="margin-bottom:22px" onclick="go('landing')">
-      <div class="logo-mark"><svg viewBox="0 0 64 64" fill="none"><path d="M14 44 L24 26 L34 34 L46 14" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46" cy="14" r="5" fill="#10b981"/></svg></div>
-      <div class="logo-text">Cazoo<span>.</span></div>
-    </div>
-    <h2>Selamat datang</h2>
-    <p class="auth-sub">Masuk atau daftar dengan akun Google Anda.</p>
-    <button class="google-btn" id="googleBtn" onclick="signInWithGoogle()">
-      <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.1-11.3-7.6l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.6l6.2 5.2C41.4 35.4 44 30.1 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
-      <span id="googleBtnText">Lanjutkan dengan Google</span>
-    </button>
-    <div class="auth-info">Dengan melanjutkan, Anda menyetujui Syarat & Ketentuan serta Kebijakan Privasi Cazoo.</div>
-    <div style="text-align:center;margin-top:20px"><button class="btn btn-ghost btn-sm" onclick="go('landing')">← Kembali</button></div>
-  </div>
-</div>
-
-<!-- ================= APP ================= -->
-<div id="app">
-  <div class="overlay" id="overlay" onclick="toggleSidebar(false)"></div>
-
-  <aside class="sidebar" id="sidebar">
-    <div class="logo">
-      <div class="logo-mark"><svg viewBox="0 0 64 64" fill="none"><path d="M14 44 L24 26 L34 34 L46 14" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46" cy="14" r="5" fill="#10b981"/></svg></div>
-      <div class="logo-text">Cazoo<span>.</span></div>
-    </div>
-    <div class="nav-section">Utama</div>
-    <div class="nav-item" data-page="dashboard" onclick="openPage('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Dashboard</div>
-    <div class="nav-item" data-page="market" onclick="openPage('market')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 6-6"/></svg>Pasar CAZOO</div>
-    <div class="nav-item" data-page="trading" onclick="openPage('trading')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3l4 4-4 4M21 7H9a4 4 0 0 0-4 4v1M7 21l-4-4 4-4M3 17h12a4 4 0 0 0 4-4v-1"/></svg>Trading</div>
-    <div class="nav-item" data-page="portfolio" onclick="openPage('portfolio')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7a2 2 0 0 0-2-2h-3V3H8v2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1"/><circle cx="17" cy="12" r="3"/></svg>Portofolio</div>
-
-    <div class="nav-section">Keuangan</div>
-    <div class="nav-item" data-page="wallet" onclick="openPage('wallet')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Dompet</div>
-    <div class="nav-item" data-page="history" onclick="openPage('history')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Riwayat</div>
-
-    <div id="adminNav" class="hidden">
-      <div class="nav-section">Admin</div>
-      <div class="nav-item" data-page="admin" onclick="openPage('admin')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Admin Panel <span class="nav-badge" id="adminBadge" style="display:none">0</span></div>
-    </div>
-
-    <div style="margin-top:auto;padding-top:20px">
-      <div class="nav-item" onclick="openPage('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Pengaturan</div>
-      <div class="nav-item" onclick="logout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Keluar</div>
+    <!-- Footer actions -->
+    <div class="admin-footer hidden" id="adminFooter">
+      <button class="btn btn-outline" onclick="closeAdminPanel()">Tutup</button>
+      <button class="btn btn-primary" id="btnSaveSettings">
+        <i data-lucide="save"></i> Simpan Perubahan
+      </button>
     </div>
   </aside>
 
-  <main class="main">
-    <div class="topbar">
-      <div class="topbar-left">
-        <button id="menuBtn" class="icon-btn" onclick="toggleSidebar(true)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-        <div class="page-title" id="pageTitle">Dashboard</div>
-      </div>
-      <div class="topbar-right">
-        <div class="market-clock" id="clock"><span class="dot"></span><span id="clockText">—</span></div>
-        <button class="icon-btn" onclick="toggleNotifications()" title="Notifikasi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="notif-dot" id="notifDot"></span></button>
-        <div class="avatar" id="userAvatar" onclick="openPage('settings')">?</div>
-      </div>
-    </div>
+  <!-- ========== TOAST ========== -->
+  <div class="toast-container" id="toastContainer"></div>
 
-    <div class="content">
-      <!-- Dashboard -->
-      <section class="page" id="page-dashboard">
-        <div class="asset-hero">
-          <div class="asset-icon"><svg viewBox="0 0 64 64" fill="none"><path d="M14 44 L24 26 L34 34 L46 14" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46" cy="14" r="5" fill="#10b981"/></svg></div>
-          <div class="asset-meta">
-            <h2>CAZOO</h2>
-            <div class="muted" style="font-size:12.5px">Cazoo Digital Asset • CAZOO / IDR</div>
-          </div>
-          <div class="text-right">
-            <div class="asset-price" id="dashAssetPrice">—</div>
-            <div id="dashAssetChg" class="pill pill-green" style="margin-top:6px">—</div>
-          </div>
-          <button class="btn btn-primary" onclick="openPage('trading')">Trading CAZOO</button>
-        </div>
+  <!-- ========== MODULE SCRIPT ========== -->
+  <script type="module">
+    // ================================================================
+    // CAZO — Digital Card Chart
+    // Firebase Realtime Database + Auth + Chart.js
+    // ================================================================
 
-        <div class="stat-grid">
-          <div class="stat blue"><div class="label">Total Portofolio</div><div class="value" id="dashTotal">Rp 0</div><div class="delta muted">Nilai aset + kas</div></div>
-          <div class="stat green"><div class="label">Saldo Kas</div><div class="value" id="dashCash">Rp 0</div></div>
-          <div class="stat yellow"><div class="label">Nilai CAZOO</div><div class="value" id="dashAssetVal">Rp 0</div><div class="delta muted" id="dashAssetSub">—</div></div>
-          <div class="stat"><div class="label">Total P&L</div><div class="value" id="dashPnl">Rp 0</div><div class="delta" id="dashPnlPct">0,00%</div></div>
-        </div>
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAnalytics, isSupported as analyticsSupported } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+    import {
+      getDatabase, ref, onValue, push, update, set, get, query,
+      orderByChild, limitToLast, serverTimestamp, remove, off
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import {
+      getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-        <div class="grid-2 mb-16">
-          <div class="card"><div class="card-header"><div class="card-title">Perkembangan Portofolio</div></div><div class="chart-box sm" id="portfolioChart"></div></div>
-          <div class="card"><div class="card-header"><div class="card-title">Aktivitas Terakhir</div></div><div id="dashActivity"></div></div>
-        </div>
+    // ================================================================
+    // 1. KONFIGURASI
+    // ================================================================
 
-        <div class="card">
-          <div class="card-header"><div class="card-title">Kepemilikan CAZOO</div><button class="btn btn-ghost btn-sm" onclick="openPage('portfolio')">Detail</button></div>
-          <div id="dashHolding"></div>
-        </div>
-      </section>
-
-      <!-- Market (CAZOO only) -->
-      <section class="page" id="page-market">
-        <div class="asset-hero">
-          <div class="asset-icon"><svg viewBox="0 0 64 64" fill="none"><path d="M14 44 L24 26 L34 34 L46 14" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46" cy="14" r="5" fill="#10b981"/></svg></div>
-          <div class="asset-meta">
-            <h2>CAZOO <span class="pill pill-blue">ASSET TUNGGAL</span></h2>
-            <div class="muted" style="font-size:12.5px">Cazoo Digital Asset • Tersedia untuk trading 24/7</div>
-          </div>
-          <div class="text-right">
-            <div class="asset-price" id="mktAssetPrice">—</div>
-            <div id="mktAssetChg" class="pill pill-green" style="margin-top:6px">—</div>
-          </div>
-        </div>
-
-        <div class="grid-2 mb-16">
-          <div class="card">
-            <div class="card-header"><div class="card-title">Grafik CAZOO / IDR</div>
-              <div class="flex gap-8">
-                <button class="chip active" data-mtf="1D" onclick="setMarketTF('1D')">1H</button>
-                <button class="chip" data-mtf="1W" onclick="setMarketTF('1W')">1M</button>
-                <button class="chip" data-mtf="1M" onclick="setMarketTF('1M')">1B</button>
-              </div>
-            </div>
-            <div class="chart-box" id="marketChart"></div>
-          </div>
-          <div class="card">
-            <div class="card-header"><div class="card-title">Statistik</div></div>
-            <div class="summary-row"><span class="k">Pembukaan</span><span class="v" id="stOpen">—</span></div>
-            <div class="summary-row"><span class="k">Tertinggi</span><span class="v up" id="stHigh">—</span></div>
-            <div class="summary-row"><span class="k">Terendah</span><span class="v down" id="stLow">—</span></div>
-            <div class="summary-row"><span class="k">Sebelumnya</span><span class="v" id="stPrev">—</span></div>
-            <div class="summary-row"><span class="k">Volume</span><span class="v" id="stVol">—</span></div>
-            <div class="summary-row"><span class="k">Kategori</span><span class="v">Digital Asset</span></div>
-            <div style="margin-top:14px"><button class="btn btn-primary btn-block" onclick="openPage('trading')">Beli / Jual CAZOO</button></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header"><div class="card-title">Riwayat Harga</div></div>
-          <div id="marketHistory"></div>
-        </div>
-      </section>
-
-      <!-- Trading -->
-      <section class="page" id="page-trading">
-        <div class="trade-grid">
-          <div class="card">
-            <div class="card-header"><div class="card-title">Order CAZOO</div></div>
-            <div class="side-toggle">
-              <button class="buy active" id="btnBuy" onclick="setSide('BUY')">BELI</button>
-              <button class="sell" id="btnSell" onclick="setSide('SELL')">JUAL</button>
-            </div>
-            <div class="field"><label>Jumlah Unit</label><input type="number" id="tradeQty" min="1" step="1" value="1" oninput="updateTradeSummary()" /><div class="hint" id="tradeQtyHint">—</div></div>
-            <div class="field"><label>Harga (per unit)</label><input type="text" id="tradePrice" readonly style="opacity:.7" /></div>
-            <div class="summary-box">
-              <div class="summary-row"><span class="k">Harga</span><span class="v" id="sumPrice">Rp 0</span></div>
-              <div class="summary-row"><span class="k">Jumlah</span><span class="v" id="sumQty">0</span></div>
-              <div class="summary-row"><span class="k">Bruto</span><span class="v" id="sumGross">Rp 0</span></div>
-              <div class="summary-row"><span class="k">Fee (0,15%)</span><span class="v" id="sumFee">Rp 0</span></div>
-              <div class="summary-row total"><span>Total</span><span id="sumTotal">Rp 0</span></div>
-            </div>
-            <button class="btn btn-primary btn-block" id="btnSubmitOrder" onclick="confirmOrder()">Konfirmasi Order</button>
-            <div class="hint" style="margin-top:10px;text-align:center">Saldo tersedia: <span id="tradeCash" class="mono">Rp 0</span></div>
-          </div>
-          <div class="card">
-            <div class="card-header"><div class="card-title">Grafik CAZOO / IDR</div>
-              <div class="flex gap-8">
-                <button class="chip active" data-tf="1D" onclick="setTimeframe('1D')">1H</button>
-                <button class="chip" data-tf="1W" onclick="setTimeframe('1W')">1M</button>
-                <button class="chip" data-tf="1M" onclick="setTimeframe('1M')">1B</button>
-              </div>
-            </div>
-            <div class="chart-box" id="tradeChart"></div>
-          </div>
-        </div>
-        <div class="card mt-12">
-          <div class="card-header"><div class="card-title">Buku Order</div></div>
-          <div class="grid-half">
-            <div><div style="color:var(--green);font-size:12px;font-weight:700;margin-bottom:6px">BID</div><div id="orderBookBid"></div></div>
-            <div><div style="color:var(--red);font-size:12px;font-weight:700;margin-bottom:6px">ASK</div><div id="orderBookAsk"></div></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Portfolio -->
-      <section class="page" id="page-portfolio">
-        <div class="stat-grid">
-          <div class="stat blue"><div class="label">Total Nilai</div><div class="value" id="pfTotal">Rp 0</div></div>
-          <div class="stat green"><div class="label">P&L Belum Terealisasi</div><div class="value" id="pfUnreal">Rp 0</div></div>
-          <div class="stat yellow"><div class="label">P&L Terealisasi</div><div class="value" id="pfReal">Rp 0</div></div>
-          <div class="stat"><div class="label">Unit CAZOO</div><div class="value" id="pfUnits">0</div></div>
-        </div>
-        <div class="card mb-16">
-          <div class="card-header"><div class="card-title">Kepemilikan CAZOO</div><button class="btn btn-ghost btn-sm" onclick="exportCSV()">Ekspor CSV</button></div>
-          <div id="portfolioTable"></div>
-        </div>
-        <div class="card"><div class="card-header"><div class="card-title">Grafik Perkembangan</div></div><div class="chart-box" id="pfChart"></div></div>
-      </section>
-
-      <!-- Wallet -->
-      <section class="page" id="page-wallet">
-        <div class="grid-2 mb-16">
-          <div class="card">
-            <div class="card-header"><div class="card-title">Dompet Saya</div></div>
-            <div style="padding:14px 0 6px">
-              <div class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Saldo Kas</div>
-              <div style="font-size:34px;font-weight:800;font-family:var(--mono);margin-top:4px" id="walletCash">Rp 0</div>
-            </div>
-            <div class="flex gap-8 mt-12">
-              <button class="btn btn-green btn-block" onclick="openDeposit()">Deposit</button>
-              <button class="btn btn-ghost btn-block" onclick="openWithdraw()">Tarik Dana</button>
-            </div>
-          </div>
-          <div class="card"><div class="card-header"><div class="card-title">Ringkasan</div></div><div id="walletSummary"></div></div>
-        </div>
-        <div class="grid-half">
-          <div class="card"><div class="card-header"><div class="card-title">Riwayat Deposit</div></div><div id="depositList"></div></div>
-          <div class="card"><div class="card-header"><div class="card-title">Riwayat Penarikan</div></div><div id="withdrawList"></div></div>
-        </div>
-      </section>
-
-      <!-- History -->
-      <section class="page" id="page-history">
-        <div class="card">
-          <div class="card-header"><div class="card-title">Riwayat Transaksi</div><input type="date" id="historyFilter" onchange="renderHistory()" style="padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid var(--border-2);color:var(--text)" /></div>
-          <div id="historyContent"></div>
-        </div>
-      </section>
-
-      <!-- Admin -->
-      <section class="page" id="page-admin">
-        <div class="stat-grid">
-          <div class="stat blue"><div class="label">Total Pengguna</div><div class="value" id="admUsers">0</div></div>
-          <div class="stat green"><div class="label">Total Order</div><div class="value" id="admOrders">0</div></div>
-          <div class="stat yellow"><div class="label">Volume CAZOO</div><div class="value" id="admVolume">0</div></div>
-          <div class="stat red"><div class="label">Pending Verifikasi</div><div class="value" id="admPending">0</div></div>
-        </div>
-
-        <div class="card mb-16">
-          <div class="card-header"><div class="card-title">Deposit Menunggu Verifikasi</div></div>
-          <div id="admDepositList"></div>
-        </div>
-
-        <div class="card mb-16">
-          <div class="card-header"><div class="card-title">Penarikan Menunggu Verifikasi</div></div>
-          <div id="admWithdrawList"></div>
-        </div>
-
-        <div class="grid-2 mb-16">
-          <div class="card"><div class="card-header"><div class="card-title">Pengguna</div></div><div id="admUserList"></div></div>
-          <div class="card"><div class="card-header"><div class="card-title">Audit Log</div></div><div id="admAuditLog"></div></div>
-        </div>
-
-        <div class="card mb-16">
-          <div class="card-header"><div class="card-title">Pengaturan Harga CAZOO</div></div>
-          <div id="admAssetMgmt"></div>
-        </div>
-
-        <div class="card"><div class="card-header"><div class="card-title">Status Layanan</div></div><div id="admSettings"></div></div>
-      </section>
-
-      <!-- Settings -->
-      <section class="page" id="page-settings">
-        <div class="grid-half">
-          <div class="card"><div class="card-header"><div class="card-title">Profil</div></div><div id="profileView"></div></div>
-          <div class="card">
-            <div class="card-header"><div class="card-title">Preferensi</div></div>
-            <div class="field"><label>Notifikasi Email</label><select id="prefEmail" onchange="savePrefs()"><option value="off">Nonaktif</option><option value="on">Aktifkan</option></select></div>
-            <div class="flex gap-8 mt-12"><button class="btn btn-primary btn-block" onclick="savePrefs(true)">Simpan</button></div>
-          </div>
-        </div>
-        <div class="card mt-12"><div class="card-header"><div class="card-title">Riwayat Login</div></div><div id="loginHistory"></div></div>
-      </section>
-    </div>
-  </main>
-
-  <nav class="mobile-nav">
-    <button data-page="dashboard" onclick="openPage('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Beranda</button>
-    <button data-page="market" onclick="openPage('market')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 6-6"/></svg>Pasar</button>
-    <button data-page="trading" onclick="openPage('trading')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3l4 4-4 4M21 7H9a4 4 0 0 0-4 4v1M7 21l-4-4 4-4M3 17h12a4 4 0 0 0 4-4v-1"/></svg>Trading</button>
-    <button data-page="portfolio" onclick="openPage('portfolio')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7a2 2 0 0 0-2-2h-3V3H8v2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1"/><circle cx="17" cy="12" r="3"/></svg>Portofolio</button>
-    <button data-page="wallet" onclick="openPage('wallet')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Dompet</button>
-  </nav>
-</div>
-
-<!-- ================= FIREBASE ================= -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
-  authDomain: "mygame-68b24.firebaseapp.com",
-  databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
-  projectId: "mygame-68b24",
-  storageBucket: "mygame-68b24.firebasestorage.app",
-  messagingSenderId: "1003182873390",
-  appId: "1:1003182873390:web:aabf3248f759cbc9d678bf",
-  measurementId: "G-4C0MYZ19YW"
-};
-
-const fbApp = initializeApp(firebaseConfig);
-const fbAuth = getAuth(fbApp);
-const googleProvider = new GoogleAuthProvider();
-googleProvider.setCustomParameters({ prompt: 'select_account' });
-
-window.__cazoo = { fbAuth, googleProvider, signInWithPopup, signOut };
-window.CAZOO_FIREBASE_READY = true;
-window.dispatchEvent(new Event('cazoo-ready'));
-</script>
-
-<script>
-/* =========================================================
-   CAZOO APP — Aset tunggal: CAZOO
-   ========================================================= */
-const APP = { name:'Cazoo', tz:'Asia/Jakarta', feePct:0.0015, marketOpen:9, marketClose:16 };
-const LS = {
-  users:'cazoo_users_v2', session:'cazoo_session_v2', holding:'cazoo_holding_v2',
-  orders:'cazoo_orders_v2', notifications:'cazoo_notifications_v2',
-  deposits:'cazoo_deposits_v2', withdrawals:'cazoo_withdrawals_v2',
-  loginHistory:'cazoo_login_v2', auditLog:'cazoo_audit_v2',
-  prefs:'cazoo_prefs_v2', asset:'cazoo_asset_v2',
-};
-const ADMIN_EMAILS = ['admin@cazoo.demo'];
-const ASSET = { symbol:'CAZOO', name:'Cazoo Digital Asset', category:'Digital Asset' };
-
-const $  = (s,r=document) => r.querySelector(s);
-const $$ = (s,r=document) => Array.from(r.querySelectorAll(s));
-const fmtIDR = n => (!isFinite(n)?'Rp 0':'Rp ' + Math.round(n).toLocaleString('id-ID'));
-const fmtNum = n => Number(n||0).toLocaleString('id-ID');
-const fmtPct = n => (n>=0?'+':'') + Number(n||0).toFixed(2) + '%';
-const uid = p => p + Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
-const nowISO = () => new Date().toISOString();
-
-function read(k,f){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):f; }catch{ return f; } }
-function write(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
-
-function toast(title,msg='',type='info',dur=3200){
-  const el = document.createElement('div');
-  el.className = 'toast ' + type;
-  el.innerHTML = `<div><div class="toast-title">${title}</div>${msg?`<div class="toast-msg">${msg}</div>`:''}</div>`;
-  $('#toasts').appendChild(el);
-  setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateX(30px)'; el.style.transition='.25s'; setTimeout(()=>el.remove(),280); }, dur);
-}
-
-function modal({ title, body, actions = [] }){
-  return new Promise(resolve => {
-    const root = $('#modalRoot');
-    const wrap = document.createElement('div');
-    wrap.className = 'modal-backdrop';
-    wrap.innerHTML = `<div class="modal"><h3>${title}</h3><div class="modal-body">${body}</div><div class="modal-actions">${actions.map((a,i)=>`<button class="btn ${a.cls||'btn-ghost'}" data-i="${i}">${a.label}</button>`).join('')}</div></div>`;
-    root.appendChild(wrap);
-    const close = v => { wrap.remove(); resolve(v); };
-    wrap.addEventListener('click', e => { if(e.target === wrap) close(null); });
-    wrap.querySelectorAll('.modal-actions button').forEach(b => { b.onclick = () => close(actions[+b.dataset.i].value); });
-  });
-}
-
-// ---------- Asset (CAZOO) ----------
-function getAsset(){
-  let a = read(LS.asset, null);
-  if(!a){
-    a = { ...ASSET, price: 2500, prevClose: 2450, open: 2470, high: 2560, low: 2440, volume: 8500000, updatedAt: nowISO() };
-    write(LS.asset, a);
-  }
-  return a;
-}
-function saveAsset(a){ write(LS.asset, a); }
-function tickAsset(){
-  const a = getAsset();
-  const drift = (Math.random() - 0.49) * 0.005;
-  a.price = Math.max(1, a.price * (1 + drift));
-  if(a.price > a.high) a.high = a.price;
-  if(a.price < a.low) a.low = a.price;
-  a.volume += Math.floor(Math.random() * 8000);
-  a.updatedAt = nowISO();
-  saveAsset(a);
-}
-
-// ---------- Auth ----------
-function setGoogleLoading(on){
-  const btn = $('#googleBtn'), txt = $('#googleBtnText');
-  if(!btn) return;
-  btn.disabled = on;
-  txt.textContent = on ? 'Menghubungkan...' : 'Lanjutkan dengan Google';
-}
-
-function signInWithGoogle(){
-  if(!window.CAZOO_FIREBASE_READY) return toast('Tunggu','Firebase sedang dimuat.','warn');
-  const { fbAuth, googleProvider, signInWithPopup } = window.__cazoo;
-  setGoogleLoading(true);
-  signInWithPopup(fbAuth, googleProvider)
-    .then(result => handleFirebaseUser(result.user))
-    .catch(err => {
-      console.error(err);
-      setGoogleLoading(false);
-      let msg = 'Gagal masuk dengan Google.';
-      if(err.code === 'auth/popup-closed-by-user') msg = 'Jendela login ditutup.';
-      else if(err.code === 'auth/popup-blocked') msg = 'Popup diblokir. Izinkan popup.';
-      else if(err.code === 'auth/unauthorized-domain') msg = 'Domain belum diizinkan di Firebase Console.';
-      else if(err.code === 'auth/network-request-failed') msg = 'Koneksi bermasalah.';
-      else if(err.code === 'auth/operation-not-allowed') msg = 'Google Sign-In belum diaktifkan di Firebase Console.';
-      toast('Gagal Masuk', msg, 'error', 5000);
-    });
-}
-
-function handleFirebaseUser(fbUser){
-  if(!fbUser) return;
-  const users = read(LS.users, []);
-  let user = users.find(u => u.firebaseUid === fbUser.uid || u.email === fbUser.email);
-  if(!user){
-    user = {
-      id: uid('usr_'), firebaseUid: fbUser.uid, email: fbUser.email,
-      username: (fbUser.displayName || fbUser.email.split('@')[0]).replace(/\s+/g,'_').toLowerCase(),
-      displayName: fbUser.displayName || fbUser.email.split('@')[0],
-      avatar: fbUser.photoURL || '',
-      role: ADMIN_EMAILS.includes(fbUser.email) ? 'SUPERADMIN' : 'USER',
-      cash: 100000000, createdAt: nowISO(),
+    const firebaseConfig = {
+      apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
+      authDomain: "mygame-68b24.firebaseapp.com",
+      databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
+      projectId: "mygame-68b24",
+      storageBucket: "mygame-68b24.firebasestorage.app",
+      messagingSenderId: "1003182873390",
+      appId: "1:1003182873390:web:aabf3248f759cbc9d678bf",
+      measurementId: "G-4C0MYZ19YW"
     };
-    users.push(user);
-    write(LS.users, users);
-    toast('Selamat datang!', `Akun dibuat. Saldo awal Rp 100.000.000.`, 'success', 5000);
-    logAudit(user.id, 'REGISTER_GOOGLE', 'user', { email: user.email });
-  } else {
-    user.firebaseUid = fbUser.uid;
-    user.displayName = fbUser.displayName || user.displayName;
-    user.avatar = fbUser.photoURL || user.avatar;
-    if(ADMIN_EMAILS.includes(fbUser.email)) user.role = 'SUPERADMIN';
-    const idx = users.findIndex(u => u.id === user.id);
-    users[idx] = user;
-    write(LS.users, users);
-  }
-  addLoginHistory(user.id, true);
-  write(LS.session, { userId: user.id, createdAt: nowISO() });
-  setGoogleLoading(false);
-  afterLogin();
-}
 
-function currentUser(){
-  const s = read(LS.session, null); if(!s) return null;
-  return read(LS.users, []).find(u => u.id === s.userId) || null;
-}
-function updateUser(patch){
-  const u = currentUser(); if(!u) return;
-  const users = read(LS.users, []);
-  const i = users.findIndex(x => x.id === u.id);
-  if(i >= 0){ users[i] = {...users[i], ...patch}; write(LS.users, users); }
-}
-function addLoginHistory(userId, success){
-  const h = read(LS.loginHistory, []);
-  h.unshift({ id: uid('h_'), userId, success, ua: navigator.userAgent.slice(0,80), at: nowISO() });
-  write(LS.loginHistory, h.slice(0,50));
-}
-function logAudit(adminId, action, target, meta={}){
-  const logs = read(LS.auditLog, []);
-  logs.unshift({ id: uid('log_'), adminId, action, target, meta, at: nowISO() });
-  write(LS.auditLog, logs.slice(0,500));
-}
-
-function logout(){
-  modal({ title:'Keluar?', body:'<p class="modal-sub">Anda dapat masuk kembali dengan Google kapan saja.</p>',
-    actions:[{label:'Batal',cls:'btn-ghost',value:0},{label:'Keluar',cls:'btn-red',value:1}]
-  }).then(async ok => {
-    if(!ok) return;
-    try { if(window.__cazoo?.signOut) await window.__cazoo.signOut(window.__cazoo.fbAuth); } catch(e){}
-    localStorage.removeItem(LS.session);
-    toast('Berhasil','Anda telah keluar.','success');
-    go('landing');
-  });
-}
-
-// ---------- Navigation ----------
-function go(page){
-  if(page === 'landing'){ $('#landing').classList.remove('hidden'); $('#auth').classList.add('hidden'); $('#app').classList.remove('active'); }
-  else if(page === 'auth'){ $('#landing').classList.add('hidden'); $('#auth').classList.remove('hidden'); $('#app').classList.remove('active'); }
-  else if(page === 'app'){ $('#landing').classList.add('hidden'); $('#auth').classList.add('hidden'); $('#app').classList.add('active'); }
-}
-
-function openPage(name){
-  $$('.page').forEach(p => p.classList.remove('active'));
-  const t = $('#page-'+name); if(t) t.classList.add('active');
-  $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === name));
-  $$('.mobile-nav button').forEach(b => b.classList.toggle('active', b.dataset.page === name));
-  const titles = { dashboard:'Dashboard', market:'Pasar CAZOO', trading:'Trading CAZOO', portfolio:'Portofolio', wallet:'Dompet', history:'Riwayat', admin:'Admin Panel', settings:'Pengaturan' };
-  $('#pageTitle').textContent = titles[name] || 'Cazoo';
-  toggleSidebar(false);
-
-  if(name === 'dashboard') renderDashboard();
-  if(name === 'market') renderMarket();
-  if(name === 'trading') renderTrading();
-  if(name === 'portfolio') renderPortfolio();
-  if(name === 'wallet') renderWallet();
-  if(name === 'history') renderHistory();
-  if(name === 'admin') renderAdmin();
-  if(name === 'settings') renderSettings();
-}
-function toggleSidebar(open){
-  $('#sidebar').classList.toggle('open', open);
-  $('#overlay').classList.toggle('show', open);
-}
-
-function afterLogin(){
-  const u = currentUser(); if(!u) return;
-  if(!read(LS.prefs, null)) write(LS.prefs, { email:'off' });
-  ensureHolding(u.id);
-  ensureNotifications(u.id);
-  const av = $('#userAvatar');
-  if(u.avatar) av.innerHTML = `<img src="${u.avatar}" alt="" referrerpolicy="no-referrer" onerror="this.parentElement.textContent='${(u.username||'U')[0].toUpperCase()}'">`;
-  else av.textContent = (u.username || 'U')[0].toUpperCase();
-  if(u.role === 'ADMIN' || u.role === 'SUPERADMIN') $('#adminNav').classList.remove('hidden');
-  else $('#adminNav').classList.add('hidden');
-  go('app');
-  openPage('dashboard');
-  startClock();
-  updateAdminBadge();
-}
-
-// ---------- Holding (single asset) ----------
-function ensureHolding(userId){
-  const all = read(LS.holding, {});
-  if(!all[userId]){ all[userId] = { qty: 0, avgPrice: 0 }; write(LS.holding, all); }
-}
-function getHolding(userId){
-  const all = read(LS.holding, {});
-  return all[userId] || { qty: 0, avgPrice: 0 };
-}
-function setHolding(userId, h){
-  const all = read(LS.holding, {});
-  all[userId] = h; write(LS.holding, all);
-}
-function ensureNotifications(userId){
-  const all = read(LS.notifications, {});
-  if(!all[userId]){ all[userId] = []; write(LS.notifications, all); }
-}
-function pushNotification(userId, type, title, body=''){
-  const all = read(LS.notifications, {});
-  if(!all[userId]) all[userId] = [];
-  all[userId].unshift({ id: uid('n_'), type, title, body, read:false, at: nowISO() });
-  all[userId] = all[userId].slice(0,40);
-  write(LS.notifications, all);
-  updateNotifDot();
-}
-
-// ---------- Portfolio ----------
-function calcPortfolio(userId){
-  const u = currentUser();
-  const cash = u ? Number(u.cash || 0) : 0;
-  const h = getHolding(userId);
-  const a = getAsset();
-  const value = a.price * h.qty;
-  const cost = h.avgPrice * h.qty;
-  const pnl = value - cost;
-  const pnlPct = cost ? (pnl/cost)*100 : 0;
-  const realized = read(LS.orders, []).filter(o => o.userId === userId && o.side === 'SELL').reduce((s,o)=>s+(o.realizedPnl||0),0);
-  return { cash, stockValue: value, totalCost: cost, totalValue: cash+value, unrealized: pnl, unrealizedPct: pnlPct, realized, qty: h.qty, avgPrice: h.avgPrice };
-}
-
-// =========================================================
-// LANDING
-// =========================================================
-let heroChartApi = null;
-function renderHeroChart(){
-  const el = $('#heroChart'); if(!el || heroChartApi) return;
-  heroChartApi = LightweightCharts.createChart(el, {
-    layout:{ background:{color:'transparent'}, textColor:'#8a98b5', fontSize:11 },
-    grid:{ vertLines:{color:'rgba(30,42,68,.5)'}, horzLines:{color:'rgba(30,42,68,.5)'} },
-    rightPriceScale:{ borderColor:'#1e2a44' }, timeScale:{ borderColor:'#1e2a44', timeVisible:true },
-    height:260, width: el.clientWidth,
-  });
-  const s = heroChartApi.addAreaSeries({ lineColor:'#3b82f6', topColor:'rgba(59,130,246,.4)', bottomColor:'rgba(59,130,246,.02)', lineWidth:2 });
-  const a = getAsset();
-  const data = []; const now = Math.floor(Date.now()/1000); let v = a.prevClose * 0.98;
-  for(let i=120;i>=0;i--){ v *= 1+(Math.random()-0.48)*0.006; data.push({ time: now - i*600, value: +v.toFixed(2) }); }
-  s.setData(data);
-  heroChartApi.timeScale().fitContent();
-  window.addEventListener('resize', ()=>{ if(heroChartApi) heroChartApi.applyOptions({ width: el.clientWidth }); });
-}
-
-function renderLanding(){
-  const a = getAsset();
-  const chg = ((a.price/a.prevClose)-1)*100;
-  $('#heroPrice').textContent = fmtIDR(a.price);
-  $('#heroChg').textContent = fmtPct(chg);
-  $('#heroChg').style.color = chg >= 0 ? '#4ade80' : '#fca5a5';
-  $('#heroVol').textContent = fmtNum(a.volume);
-  $('#heroBigPrice').textContent = fmtIDR(a.price);
-  const bc = $('#heroBigChg');
-  bc.textContent = fmtPct(chg);
-  bc.className = 'pill ' + (chg >= 0 ? 'pill-green' : 'pill-red');
-
-  $('#landingMarket').innerHTML = `
-    <div class="table-wrap"><table class="tbl">
-      <thead><tr><th>Aset</th><th class="num">Harga</th><th class="num">Perubahan</th><th class="num">Volume</th><th></th></tr></thead>
-      <tbody><tr>
-        <td><div style="display:flex;align-items:center;gap:10px">
-          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#1e3a8a,#0a0e17);display:grid;place-items:center;border:1px solid rgba(59,130,246,.3)">
-            <svg width="20" height="20" viewBox="0 0 64 64" fill="none"><path d="M14 44 L24 26 L34 34 L46 14" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46" cy="14" r="5" fill="#10b981"/></svg>
-          </div>
-          <div><strong>CAZOO</strong><div class="muted" style="font-size:11px">Cazoo Digital Asset</div></div>
-        </div></td>
-        <td class="num"><strong>${fmtIDR(a.price)}</strong></td>
-        <td class="num ${chg>=0?'up':'down'}">${fmtPct(chg)}</td>
-        <td class="num muted">${fmtNum(a.volume)}</td>
-        <td><button class="btn btn-primary btn-sm" onclick="go('auth')">Trading</button></td>
-      </tr></tbody>
-    </table></div>`;
-
-  const news = [
-    { t:'Peluncuran resmi perdagangan CAZOO', m:'Platform • 1 jam lalu' },
-    { t:'Panduan analisis teknikal CAZOO', m:'Edukasi • 3 jam lalu' },
-    { t:'Update jam perdagangan sesi II', m:'Pengumuman • 1 hari lalu' },
-    { t:'Tips mengelola risiko portofolio CAZOO', m:'Edukasi • 2 hari lalu' },
-  ];
-  $('#newsList').innerHTML = news.map(n => `<div style="padding:12px 0;border-bottom:1px solid var(--border)"><h4 style="font-size:13.5px;font-weight:600">${n.t}</h4><div class="muted" style="font-size:11.5px;margin-top:4px">${n.m}</div></div>`).join('');
-
-  setTimeout(renderHeroChart, 60);
-}
-
-// =========================================================
-// CLOCK
-// =========================================================
-let clockInterval = null;
-function startClock(){
-  if(clockInterval) clearInterval(clockInterval);
-  const tick = () => {
-    const jkt = new Date(new Date().toLocaleString('en-US', { timeZone: APP.tz }));
-    const h = jkt.getHours(), m = jkt.getMinutes(), s = jkt.getSeconds();
-    const day = jkt.getDay();
-    const isWeekend = day === 0 || day === 6;
-    const isOpen = !isWeekend && ((h > APP.marketOpen && h < 12) || (h >= 13 && h < APP.marketClose - 1));
-    const hh = String(h).padStart(2,'0'), mm = String(m).padStart(2,'0'), ss = String(s).padStart(2,'0');
-    $('#clockText').textContent = `${hh}:${mm}:${ss} WIB • ${isOpen?'BUKA':'TUTUP'}`;
-    $('#clock').classList.toggle('closed', !isOpen);
-  };
-  tick(); clockInterval = setInterval(tick, 1000);
-}
-
-// =========================================================
-// DASHBOARD
-// =========================================================
-function renderDashboard(){
-  const u = currentUser(); if(!u) return;
-  const pf = calcPortfolio(u.id);
-  const a = getAsset();
-  const chg = ((a.price/a.prevClose)-1)*100;
-
-  $('#dashAssetPrice').textContent = fmtIDR(a.price);
-  const dc = $('#dashAssetChg');
-  dc.textContent = fmtPct(chg);
-  dc.className = 'pill ' + (chg >= 0 ? 'pill-green' : 'pill-red');
-
-  $('#dashTotal').textContent = fmtIDR(pf.totalValue);
-  $('#dashCash').textContent = fmtIDR(pf.cash);
-  $('#dashAssetVal').textContent = fmtIDR(pf.stockValue);
-  $('#dashAssetSub').textContent = `${fmtNum(pf.qty)} unit CAZOO`;
-  $('#dashPnl').textContent = (pf.unrealized>=0?'+':'') + fmtIDR(Math.abs(pf.unrealized));
-  $('#dashPnl').style.color = pf.unrealized >= 0 ? '#4ade80' : '#fca5a5';
-  $('#dashPnlPct').textContent = fmtPct(pf.unrealizedPct);
-  $('#dashPnlPct').className = 'delta ' + (pf.unrealized >= 0 ? 'up' : 'down');
-
-  const orders = read(LS.orders, []).filter(o => o.userId === u.id).slice(0,5);
-  $('#dashActivity').innerHTML = orders.length ? orders.map(o => `
-    <div style="padding:9px 0;border-bottom:1px solid var(--border)">
-      <div class="flex between center"><div style="font-size:13px;font-weight:600">${o.side==='BUY'?'Beli':'Jual'} CAZOO</div>
-      <div class="mono" style="font-size:12px;color:${o.side==='BUY'?'#fca5a5':'#4ade80'}">${o.side==='BUY'?'-':'+'}${fmtIDR(o.total)}</div></div>
-      <div class="muted" style="font-size:11px;margin-top:2px">${new Date(o.createdAt).toLocaleString('id-ID')}</div>
-    </div>`).join('') : `<div class="empty"><p>Belum ada aktivitas.</p></div>`;
-
-  $('#dashHolding').innerHTML = pf.qty > 0 ? `
-    <div class="summary-row"><span class="k">Unit</span><span class="v">${fmtNum(pf.qty)} CAZOO</span></div>
-    <div class="summary-row"><span class="k">Harga Rata²</span><span class="v">${fmtIDR(pf.avgPrice)}</span></div>
-    <div class="summary-row"><span class="k">Harga Kini</span><span class="v">${fmtIDR(a.price)}</span></div>
-    <div class="summary-row"><span class="k">Nilai</span><span class="v">${fmtIDR(pf.stockValue)}</span></div>
-    <div class="summary-row total"><span>P&L</span><span class="${pf.unrealized>=0?'up':'down'}">${pf.unrealized>=0?'+':''}${fmtIDR(Math.abs(pf.unrealized))} (${fmtPct(pf.unrealizedPct)})</span></div>
-  ` : `<div class="empty"><h4>Belum memiliki CAZOO</h4><p>Mulai dengan membeli CAZOO.</p><button class="btn btn-primary btn-sm mt-12" onclick="openPage('trading')">Buka Trading</button></div>`;
-
-  setTimeout(renderPortfolioMiniChart, 60);
-}
-
-let pfMiniChart = null;
-function renderPortfolioMiniChart(){
-  const el = $('#portfolioChart'); if(!el) return;
-  if(pfMiniChart){ pfMiniChart.remove(); pfMiniChart = null; }
-  pfMiniChart = LightweightCharts.createChart(el, {
-    layout:{ background:{color:'transparent'}, textColor:'#8a98b5', fontSize:11 },
-    grid:{ vertLines:{color:'rgba(30,42,68,.4)'}, horzLines:{color:'rgba(30,42,68,.4)'} },
-    rightPriceScale:{ borderColor:'#1e2a44' }, timeScale:{ borderColor:'#1e2a44', timeVisible:true },
-    height:220, width: el.clientWidth,
-  });
-  const s = pfMiniChart.addAreaSeries({ lineColor:'#10b981', topColor:'rgba(16,185,129,.35)', bottomColor:'rgba(16,185,129,.02)', lineWidth:2 });
-  const u = currentUser(); if(!u) return;
-  const pf = calcPortfolio(u.id);
-  const data = []; const now = Math.floor(Date.now()/1000);
-  let v = pf.totalValue * 0.9 || 100000000;
-  for(let i=60;i>=0;i--){ v *= 1+(Math.random()-0.47)*0.008; data.push({ time: now - i*3600, value:+v.toFixed(2) }); }
-  s.setData(data);
-  pfMiniChart.timeScale().fitContent();
-  window.addEventListener('resize', ()=>{ if(pfMiniChart) pfMiniChart.applyOptions({ width: el.clientWidth }); });
-}
-
-// =========================================================
-// MARKET
-// =========================================================
-let marketChartApi = null;
-let marketTF = '1D';
-
-function renderMarket(){
-  const a = getAsset();
-  const chg = ((a.price/a.prevClose)-1)*100;
-
-  $('#mktAssetPrice').textContent = fmtIDR(a.price);
-  const mc = $('#mktAssetChg');
-  mc.textContent = fmtPct(chg);
-  mc.className = 'pill ' + (chg >= 0 ? 'pill-green' : 'pill-red');
-
-  $('#stOpen').textContent = fmtIDR(a.open);
-  $('#stHigh').textContent = fmtIDR(a.high);
-  $('#stLow').textContent = fmtIDR(a.low);
-  $('#stPrev').textContent = fmtIDR(a.prevClose);
-  $('#stVol').textContent = fmtNum(a.volume);
-
-  // History table (last 10 ticks simulated)
-  const rows = [];
-  let p = a.prevClose;
-  const now = Date.now();
-  for(let i=0; i<10; i++){
-    const o = p;
-    const c = o * (1 + (Math.random()-0.5)*0.008);
-    rows.push({ t: new Date(now - i*3600000), o, c, chg: ((c-o)/o)*100 });
-    p = c;
-  }
-  $('#marketHistory').innerHTML = `
-    <div class="table-wrap"><table class="tbl">
-      <thead><tr><th>Waktu</th><th class="num">Open</th><th class="num">Close</th><th class="num">Perubahan</th></tr></thead>
-      <tbody>${rows.map(r => `<tr>
-        <td>${r.t.toLocaleString('id-ID')}</td>
-        <td class="num">${fmtIDR(r.o)}</td>
-        <td class="num">${fmtIDR(r.c)}</td>
-        <td class="num ${r.chg>=0?'up':'down'}">${fmtPct(r.chg)}</td>
-      </tr>`).join('')}</tbody>
-    </table></div>`;
-
-  setTimeout(() => renderMarketChart(marketTF), 60);
-}
-
-function setMarketTF(tf){
-  marketTF = tf;
-  $$('.chip[data-mtf]').forEach(c => c.classList.toggle('active', c.dataset.mtf === tf));
-  renderMarketChart(tf);
-}
-
-function renderMarketChart(tf){
-  const el = $('#marketChart'); if(!el) return;
-  if(marketChartApi){ marketChartApi.remove(); marketChartApi = null; }
-  marketChartApi = LightweightCharts.createChart(el, {
-    layout:{ background:{color:'transparent'}, textColor:'#8a98b5', fontSize:11 },
-    grid:{ vertLines:{color:'rgba(30,42,68,.4)'}, horzLines:{color:'rgba(30,42,68,.4)'} },
-    rightPriceScale:{ borderColor:'#1e2a44' }, timeScale:{ borderColor:'#1e2a44', timeVisible:true },
-    crosshair:{ mode:LightweightCharts.CrosshairMode.Normal },
-    height:380, width: el.clientWidth,
-  });
-  const c = marketChartApi.addCandlestickSeries({ upColor:'#10b981', downColor:'#ef4444', borderUpColor:'#10b981', borderDownColor:'#ef4444', wickUpColor:'#10b981', wickDownColor:'#ef4444' });
-  const a = getAsset();
-  const n = tf === '1D' ? 96 : tf === '1W' ? 168 : 180;
-  const step = tf === '1D' ? 900 : tf === '1W' ? 3600 : 14400;
-  const now = Math.floor(Date.now()/1000);
-  const data = []; let p = a.prevClose * 0.99;
-  for(let i=n;i>=0;i--){
-    const o = p; const cl = o * (1 + (Math.random()-0.5)*0.008);
-    const hi = Math.max(o,cl)*(1+Math.random()*0.002); const lo = Math.min(o,cl)*(1-Math.random()*0.002);
-    data.push({ time: now - i*step, open:+o.toFixed(2), high:+hi.toFixed(2), low:+lo.toFixed(2), close:+cl.toFixed(2) });
-    p = cl;
-  }
-  c.setData(data);
-  marketChartApi.timeScale().fitContent();
-  window.addEventListener('resize', ()=>{ if(marketChartApi) marketChartApi.applyOptions({ width: el.clientWidth }); });
-}
-
-// =========================================================
-// TRADING
-// =========================================================
-let tradeSide = 'BUY';
-let tradeTF = '1D';
-let tradeChartApi = null;
-
-function renderTrading(){
-  const a = getAsset();
-  $('#tradePrice').value = fmtIDR(a.price);
-  $('#tradeCash').textContent = fmtIDR(currentUser()?.cash || 0);
-  updateTradeSummary();
-  renderTradeChart(tradeTF);
-  renderOrderBook(a);
-}
-
-function setSide(side){
-  tradeSide = side;
-  $('#btnBuy').classList.toggle('active', side === 'BUY');
-  $('#btnSell').classList.toggle('active', side === 'SELL');
-  $('#btnSubmitOrder').className = 'btn btn-block ' + (side === 'BUY' ? 'btn-green' : 'btn-red');
-  $('#btnSubmitOrder').textContent = side === 'BUY' ? 'Konfirmasi BELI' : 'Konfirmasi JUAL';
-  updateTradeSummary();
-}
-
-function setTimeframe(tf){
-  tradeTF = tf;
-  $$('.chip[data-tf]').forEach(c => c.classList.toggle('active', c.dataset.tf === tf));
-  renderTradeChart(tf);
-}
-
-function updateTradeSummary(){
-  const a = getAsset();
-  const qty = Math.max(0, Math.floor(Number($('#tradeQty').value) || 0));
-  const price = a.price;
-  const gross = price * qty;
-  const fee = gross * APP.feePct;
-  const total = tradeSide === 'BUY' ? gross + fee : gross - fee;
-
-  $('#sumPrice').textContent = fmtIDR(price);
-  $('#sumQty').textContent = fmtNum(qty);
-  $('#sumGross').textContent = fmtIDR(gross);
-  $('#sumFee').textContent = fmtIDR(fee);
-  $('#sumTotal').textContent = fmtIDR(total);
-
-  const u = currentUser();
-  if(tradeSide === 'SELL' && u){
-    $('#tradeQtyHint').textContent = `Maksimal jual: ${fmtNum(getHolding(u.id).qty)} unit`;
-  } else if(u){
-    const maxQ = Math.floor(u.cash / (price * (1 + APP.feePct)));
-    $('#tradeQtyHint').textContent = `Perkiraan maksimal: ${fmtNum(maxQ)} unit`;
-  }
-}
-
-function renderTradeChart(tf){
-  const el = $('#tradeChart'); if(!el) return;
-  if(tradeChartApi){ tradeChartApi.remove(); tradeChartApi = null; }
-  tradeChartApi = LightweightCharts.createChart(el, {
-    layout:{ background:{color:'transparent'}, textColor:'#8a98b5', fontSize:11 },
-    grid:{ vertLines:{color:'rgba(30,42,68,.4)'}, horzLines:{color:'rgba(30,42,68,.4)'} },
-    rightPriceScale:{ borderColor:'#1e2a44' }, timeScale:{ borderColor:'#1e2a44', timeVisible:true },
-    crosshair:{ mode:LightweightCharts.CrosshairMode.Normal },
-    height:380, width: el.clientWidth,
-  });
-  const c = tradeChartApi.addCandlestickSeries({ upColor:'#10b981', downColor:'#ef4444', borderUpColor:'#10b981', borderDownColor:'#ef4444', wickUpColor:'#10b981', wickDownColor:'#ef4444' });
-  const a = getAsset();
-  const n = tf === '1D' ? 96 : tf === '1W' ? 168 : 180;
-  const step = tf === '1D' ? 900 : tf === '1W' ? 3600 : 14400;
-  const now = Math.floor(Date.now()/1000);
-  const data = []; let p = a.prevClose * 0.99;
-  for(let i=n;i>=0;i--){
-    const o = p; const cl = o * (1 + (Math.random()-0.5)*0.008);
-    const hi = Math.max(o,cl)*(1+Math.random()*0.002); const lo = Math.min(o,cl)*(1-Math.random()*0.002);
-    data.push({ time: now - i*step, open:+o.toFixed(2), high:+hi.toFixed(2), low:+lo.toFixed(2), close:+cl.toFixed(2) });
-    p = cl;
-  }
-  c.setData(data);
-  tradeChartApi.timeScale().fitContent();
-  window.addEventListener('resize', ()=>{ if(tradeChartApi) tradeChartApi.applyOptions({ width: el.clientWidth }); });
-}
-
-function renderOrderBook(a){
-  const bids = [], asks = [];
-  for(let i=0;i<6;i++){
-    bids.push({ price: a.price * (1 - (i+1)*0.0008), qty: Math.floor(100 + Math.random()*900) });
-    asks.push({ price: a.price * (1 + (i+1)*0.0008), qty: Math.floor(100 + Math.random()*900) });
-  }
-  $('#orderBookBid').innerHTML = bids.map(b => `<div class="flex between center" style="padding:5px 0;font-size:12.5px;font-family:var(--mono)"><span class="up">${fmtIDR(b.price)}</span><span class="muted">${fmtNum(b.qty)}</span></div>`).join('');
-  $('#orderBookAsk').innerHTML = asks.map(x => `<div class="flex between center" style="padding:5px 0;font-size:12.5px;font-family:var(--mono)"><span class="down">${fmtIDR(x.price)}</span><span class="muted">${fmtNum(x.qty)}</span></div>`).join('');
-}
-
-async function confirmOrder(){
-  const u = currentUser(); if(!u) return;
-  const a = getAsset();
-  const qty = Math.floor(Number($('#tradeQty').value) || 0);
-  if(qty <= 0) return toast('Gagal','Jumlah harus lebih dari 0.','error');
-
-  const price = a.price;
-  const gross = price * qty;
-  const fee = gross * APP.feePct;
-  const total = tradeSide === 'BUY' ? gross + fee : gross - fee;
-
-  const ok = await modal({
-    title: `Konfirmasi ${tradeSide === 'BUY' ? 'Pembelian' : 'Penjualan'}`,
-    body: `
-      <div class="summary-box">
-        <div class="summary-row"><span class="k">Aset</span><span class="v">CAZOO</span></div>
-        <div class="summary-row"><span class="k">Sisi</span><span class="v">${tradeSide === 'BUY' ? 'BELI' : 'JUAL'}</span></div>
-        <div class="summary-row"><span class="k">Jumlah</span><span class="v">${fmtNum(qty)} unit</span></div>
-        <div class="summary-row"><span class="k">Harga</span><span class="v">${fmtIDR(price)}</span></div>
-        <div class="summary-row"><span class="k">Fee</span><span class="v">${fmtIDR(fee)}</span></div>
-        <div class="summary-row total"><span>Total</span><span>${fmtIDR(total)}</span></div>
-      </div>`,
-    actions: [{label:'Batal', cls:'btn-ghost', value:0},{label:'Konfirmasi', cls:'btn-primary', value:1}]
-  });
-  if(!ok) return;
-
-  try { executeOrder(u.id, tradeSide, qty, price, fee, total); }
-  catch(e){ toast('Order ditolak', e.message, 'error'); }
-}
-
-function executeOrder(userId, side, qty, price, fee, total){
-  const users = read(LS.users, []);
-  const ui = users.findIndex(x => x.id === userId);
-  if(ui < 0) throw new Error('Pengguna tidak ditemukan');
-  const user = users[ui];
-  const h = getHolding(userId);
-  let realizedPnl = 0;
-
-  if(side === 'BUY'){
-    if(Number(user.cash) < total) throw new Error('Saldo tidak cukup');
-    const nq = h.qty + qty;
-    const na = (h.qty * h.avgPrice + qty * price) / nq;
-    setHolding(userId, { qty: nq, avgPrice: na });
-    user.cash = Number(user.cash) - total;
-  } else {
-    if(h.qty < qty) throw new Error('Kepemilikan tidak cukup');
-    realizedPnl = (price - h.avgPrice) * qty - fee;
-    setHolding(userId, { qty: h.qty - qty, avgPrice: h.qty - qty > 0 ? h.avgPrice : 0 });
-    user.cash = Number(user.cash) + total;
-  }
-  users[ui] = user;
-  write(LS.users, users);
-
-  const order = { id: uid('ord_'), userId, symbol:'CAZOO', side, qty, price, fee, total, realizedPnl, status:'FILLED', createdAt: nowISO() };
-  const orders = read(LS.orders, []);
-  orders.unshift(order);
-  write(LS.orders, orders);
-
-  pushNotification(userId, side === 'BUY' ? 'trade_buy' : 'trade_sell',
-    `${side === 'BUY' ? 'Pembelian' : 'Penjualan'} CAZOO berhasil`,
-    `${fmtNum(qty)} unit @ ${fmtIDR(price)} • Total ${fmtIDR(total)}`);
-
-  toast('Order berhasil', `${side === 'BUY' ? 'Beli' : 'Jual'} ${qty} CAZOO @ ${fmtIDR(price)}`, 'success');
-  $('#tradeCash').textContent = fmtIDR(user.cash);
-  updateTradeSummary();
-  renderDashboard();
-  if($('#page-trading').classList.contains('active')) renderTrading();
-}
-
-// =========================================================
-// PORTFOLIO
-// =========================================================
-function renderPortfolio(){
-  const u = currentUser(); if(!u) return;
-  const pf = calcPortfolio(u.id);
-  const a = getAsset();
-
-  $('#pfTotal').textContent = fmtIDR(pf.totalValue);
-  $('#pfUnreal').textContent = (pf.unrealized>=0?'+':'') + fmtIDR(Math.abs(pf.unrealized));
-  $('#pfUnreal').style.color = pf.unrealized >= 0 ? '#4ade80' : '#fca5a5';
-  $('#pfReal').textContent = (pf.realized>=0?'+':'') + fmtIDR(Math.abs(pf.realized));
-  $('#pfReal').style.color = pf.realized >= 0 ? '#4ade80' : '#fca5a5';
-  $('#pfUnits').textContent = fmtNum(pf.qty);
-
-  $('#portfolioTable').innerHTML = pf.qty > 0 ? `
-    <div class="table-wrap"><table class="tbl">
-      <thead><tr><th>Aset</th><th class="num">Unit</th><th class="num">Harga Rata²</th><th class="num">Harga Kini</th><th class="num">Nilai</th><th class="num">P&L</th><th></th></tr></thead>
-      <tbody><tr>
-        <td><strong>CAZOO</strong><div class="muted" style="font-size:11px">Cazoo Digital Asset</div></td>
-        <td class="num">${fmtNum(pf.qty)}</td>
-        <td class="num">${fmtIDR(pf.avgPrice)}</td>
-        <td class="num">${fmtIDR(a.price)}</td>
-        <td class="num">${fmtIDR(pf.stockValue)}</td>
-        <td class="num ${pf.unrealized>=0?'up':'down'}">${pf.unrealized>=0?'+':''}${fmtIDR(Math.abs(pf.unrealized))}<div style="font-size:11px">${fmtPct(pf.unrealizedPct)}</div></td>
-        <td><button class="btn btn-primary btn-sm" onclick="openPage('trading')">Trading</button></td>
-      </tr></tbody>
-    </table></div>` : `<div class="empty"><h4>Belum ada kepemilikan CAZOO</h4><p>Beli CAZOO untuk memulai portofolio.</p></div>`;
-
-  setTimeout(renderPFChart, 60);
-}
-
-let pfFullChart = null;
-function renderPFChart(){
-  const el = $('#pfChart'); if(!el) return;
-  if(pfFullChart){ pfFullChart.remove(); pfFullChart = null; }
-  const u = currentUser(); if(!u) return;
-  const pf = calcPortfolio(u.id);
-  pfFullChart = LightweightCharts.createChart(el, {
-    layout:{ background:{color:'transparent'}, textColor:'#8a98b5', fontSize:11 },
-    grid:{ vertLines:{color:'rgba(30,42,68,.4)'}, horzLines:{color:'rgba(30,42,68,.4)'} },
-    rightPriceScale:{ borderColor:'#1e2a44' }, timeScale:{ borderColor:'#1e2a44', timeVisible:true },
-    height:380, width: el.clientWidth,
-  });
-  const s = pfFullChart.addAreaSeries({ lineColor:'#3b82f6', topColor:'rgba(59,130,246,.35)', bottomColor:'rgba(59,130,246,.02)', lineWidth:2 });
-  const now = Math.floor(Date.now()/1000);
-  const data = []; let v = pf.totalValue * 0.92 || 100000000;
-  for(let i=90;i>=0;i--){ v *= 1+(Math.random()-0.47)*0.007; data.push({ time: now - i*3600, value:+v.toFixed(2) }); }
-  s.setData(data);
-  pfFullChart.timeScale().fitContent();
-  window.addEventListener('resize', ()=>{ if(pfFullChart) pfFullChart.applyOptions({ width: el.clientWidth }); });
-}
-
-function exportCSV(){
-  const u = currentUser(); if(!u) return;
-  const pf = calcPortfolio(u.id);
-  if(pf.qty <= 0) return toast('Kosong','Belum ada data.','warn');
-  const rows = [['Symbol','Qty','Avg Price','Current Price','Value','P&L','P&L %']];
-  rows.push(['CAZOO', pf.qty, pf.avgPrice.toFixed(2), getAsset().price.toFixed(2), pf.stockValue.toFixed(2), pf.unrealized.toFixed(2), pf.unrealizedPct.toFixed(2)]);
-  const csv = rows.map(r => r.map(x => `"${String(x).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = `cazoo-portfolio-${Date.now()}.csv`; a.click();
-  toast('Berhasil','File CSV diunduh.','success');
-}
-
-// =========================================================
-// WALLET — Deposit & Withdraw (verifikasi manual admin)
-// =========================================================
-function renderWallet(){
-  const u = currentUser(); if(!u) return;
-  $('#walletCash').textContent = fmtIDR(u.cash);
-  const deps = read(LS.deposits, []).filter(d => d.userId === u.id);
-  const wds = read(LS.withdrawals, []).filter(w => w.userId === u.id);
-  const totalDep = deps.filter(d => d.status === 'APPROVED').reduce((s,d)=>s+d.amount,0);
-  const totalWd = wds.filter(w => w.status === 'APPROVED').reduce((s,w)=>s+w.amount,0);
-  const pendingDep = deps.filter(d => d.status === 'PENDING').length;
-  const pendingWd = wds.filter(w => w.status === 'PENDING').length;
-
-  $('#walletSummary').innerHTML = `
-    <div class="summary-row"><span class="k">Saldo</span><span class="v">${fmtIDR(u.cash)}</span></div>
-    <div class="summary-row"><span class="k">Total Deposit Disetujui</span><span class="v">${fmtIDR(totalDep)}</span></div>
-    <div class="summary-row"><span class="k">Total Penarikan Disetujui</span><span class="v">${fmtIDR(totalWd)}</span></div>
-    <div class="summary-row"><span class="k">Deposit Menunggu</span><span class="v">${pendingDep}</span></div>
-    <div class="summary-row"><span class="k">Penarikan Menunggu</span><span class="v">${pendingWd}</span></div>`;
-
-  $('#depositList').innerHTML = deps.length ? `<div class="table-wrap"><table class="tbl">
-    <thead><tr><th>Tanggal</th><th>Metode</th><th class="num">Jumlah</th><th>Status</th></tr></thead>
-    <tbody>${deps.map(d => `<tr>
-      <td>${new Date(d.createdAt).toLocaleString('id-ID')}</td>
-      <td>${d.method}</td>
-      <td class="num">${fmtIDR(d.amount)}</td>
-      <td><span class="pill ${d.status==='APPROVED'?'pill-green':d.status==='REJECTED'?'pill-red':'pill-yellow'}">${statusLabel(d.status)}</span></td>
-    </tr>`).join('')}</tbody></table></div>` : `<div class="empty"><p>Belum ada deposit.</p></div>`;
-
-  $('#withdrawList').innerHTML = wds.length ? `<div class="table-wrap"><table class="tbl">
-    <thead><tr><th>Tanggal</th><th>Bank</th><th class="num">Jumlah</th><th>Status</th></tr></thead>
-    <tbody>${wds.map(w => `<tr>
-      <td>${new Date(w.createdAt).toLocaleString('id-ID')}</td>
-      <td>${w.bankName}</td>
-      <td class="num">${fmtIDR(w.amount)}</td>
-      <td><span class="pill ${w.status==='APPROVED'?'pill-green':w.status==='REJECTED'?'pill-red':'pill-yellow'}">${statusLabel(w.status)}</span></td>
-    </tr>`).join('')}</tbody></table></div>` : `<div class="empty"><p>Belum ada penarikan.</p></div>`;
-}
-
-function statusLabel(s){
-  return s === 'PENDING' ? 'MENUNGGU' : s === 'APPROVED' ? 'DISETUJUI' : s === 'REJECTED' ? 'DITOLAK' : s;
-}
-
-async function openDeposit(){
-  const amounts = [1000000, 5000000, 10000000, 25000000];
-  const ok = await modal({
-    title: 'Deposit',
-    body: `
-      <div class="field"><label>Nominal (Rp)</label><input type="number" id="depAmount" value="5000000" min="10000" step="10000" /></div>
-      <div class="field"><label>Metode Pembayaran</label>
-        <select id="depMethod"><option>QRIS</option><option>Transfer Bank BCA</option><option>Transfer Bank Mandiri</option><option>Transfer Bank BRI</option></select>
-      </div>
-      <div class="flex gap-8" style="flex-wrap:wrap;margin-top:6px">
-        ${amounts.map(x => `<button class="chip" onclick="document.getElementById('depAmount').value=${x}">${fmtIDR(x)}</button>`).join('')}
-      </div>`,
-    actions: [{label:'Batal', cls:'btn-ghost', value:0},{label:'Ajukan Deposit', cls:'btn-green', value:1}]
-  });
-  if(!ok) return;
-  const amount = Number($('#depAmount').value);
-  const method = $('#depMethod').value;
-  if(!(amount > 0)) return toast('Gagal','Nominal tidak valid.','error');
-  const deps = read(LS.deposits, []);
-  const d = { id: uid('dep_'), userId: currentUser().id, amount, method, reference: 'DEP-' + uid().toUpperCase().slice(0,12), status:'PENDING', createdAt: nowISO() };
-  deps.unshift(d);
-  write(LS.deposits, deps);
-  toast('Berhasil', `Permintaan deposit ${fmtIDR(amount)} diajukan.`, 'success');
-  renderWallet();
-  updateAdminBadge();
-}
-
-async function openWithdraw(){
-  const u = currentUser();
-  const ok = await modal({
-    title: 'Penarikan',
-    body: `
-      <div class="field"><label>Nominal (Rp)</label><input type="number" id="wdAmount" value="1000000" min="10000" step="10000" /><div class="hint">Tersedia: ${fmtIDR(u.cash)}</div></div>
-      <div class="field"><label>Bank</label><input type="text" id="wdBank" value="BCA" /></div>
-      <div class="field"><label>No. Rekening</label><input type="text" id="wdAcc" placeholder="1234567890" /></div>
-      <div class="field"><label>Nama Pemilik</label><input type="text" id="wdName" value="${u.displayName || u.username}" /></div>`,
-    actions: [{label:'Batal', cls:'btn-ghost', value:0},{label:'Ajukan Penarikan', cls:'btn-primary', value:1}]
-  });
-  if(!ok) return;
-  const amount = Number($('#wdAmount').value);
-  const bankName = $('#wdBank').value.trim();
-  const accountNo = $('#wdAcc').value.trim();
-  const accountName = $('#wdName').value.trim();
-  if(amount <= 0) return toast('Gagal','Nominal tidak valid.','error');
-  if(amount > u.cash) return toast('Gagal','Saldo tidak cukup.','error');
-  if(!bankName || !accountNo || !accountName) return toast('Gagal','Lengkapi data rekening.','error');
-
-  const wds = read(LS.withdrawals, []);
-  const w = { id: uid('wd_'), userId: u.id, amount, bankName, accountNo, accountName,
-    reference: 'WD-' + uid().toUpperCase().slice(0,12), status: 'PENDING', createdAt: nowISO() };
-  wds.unshift(w);
-  write(LS.withdrawals, wds);
-  // Tahan saldo selama menunggu (escrow)
-  updateUser({ cash: u.cash - amount });
-  toast('Berhasil', `Permintaan penarikan ${fmtIDR(amount)} diajukan.`, 'success');
-  renderWallet();
-  updateAdminBadge();
-}
-
-// =========================================================
-// HISTORY
-// =========================================================
-function renderHistory(){
-  const u = currentUser(); if(!u) return;
-  const filter = $('#historyFilter').value;
-  let orders = read(LS.orders, []).filter(o => o.userId === u.id);
-  if(filter) orders = orders.filter(o => o.createdAt.startsWith(filter));
-  $('#historyContent').innerHTML = orders.length ? `
-    <div class="table-wrap"><table class="tbl">
-      <thead><tr><th>ID</th><th>Waktu</th><th>Sisi</th><th class="num">Jumlah</th><th class="num">Harga</th><th class="num">Total</th><th>Status</th></tr></thead>
-      <tbody>${orders.map(o => `<tr>
-        <td class="mono" style="font-size:11px">${o.id.slice(-8)}</td>
-        <td>${new Date(o.createdAt).toLocaleString('id-ID')}</td>
-        <td><span class="pill ${o.side==='BUY'?'pill-green':'pill-red'}">${o.side}</span></td>
-        <td class="num">${fmtNum(o.qty)}</td>
-        <td class="num">${fmtIDR(o.price)}</td>
-        <td class="num">${fmtIDR(o.total)}</td>
-        <td><span class="pill pill-blue">${o.status}</span></td>
-      </tr>`).join('')}</tbody>
-    </table></div>` : `<div class="empty"><h4>Belum ada transaksi</h4><p>Transaksi Anda akan muncul di sini.</p></div>`;
-}
-
-// =========================================================
-// ADMIN
-// =========================================================
-function updateAdminBadge(){
-  const u = currentUser(); if(!u) return;
-  if(u.role !== 'ADMIN' && u.role !== 'SUPERADMIN') return;
-  const deps = read(LS.deposits, []).filter(d => d.status === 'PENDING');
-  const wds = read(LS.withdrawals, []).filter(w => w.status === 'PENDING');
-  const total = deps.length + wds.length;
-  const badge = $('#adminBadge');
-  if(total > 0){ badge.textContent = total; badge.style.display = 'inline-block'; }
-  else badge.style.display = 'none';
-}
-
-function renderAdmin(){
-  const u = currentUser(); if(!u) return;
-  if(u.role !== 'ADMIN' && u.role !== 'SUPERADMIN'){
-    $('#page-admin').innerHTML = `<div class="card"><div class="empty"><h4>Akses Ditolak</h4><p>Halaman ini hanya untuk administrator.</p></div></div>`;
-    return;
-  }
-
-  const users = read(LS.users, []);
-  const orders = read(LS.orders, []);
-  const deps = read(LS.deposits, []);
-  const wds = read(LS.withdrawals, []);
-  const a = getAsset();
-
-  $('#admUsers').textContent = users.length;
-  $('#admOrders').textContent = orders.length;
-  $('#admVolume').textContent = fmtNum(a.volume);
-  $('#admPending').textContent = deps.filter(d => d.status === 'PENDING').length + wds.filter(w => w.status === 'PENDING').length;
-
-  // Deposit pending
-  const pendingDeps = deps.filter(d => d.status === 'PENDING');
-  $('#admDepositList').innerHTML = pendingDeps.length ? `
-    <div class="table-wrap"><table class="tbl">
-      <thead><tr><th>Waktu</th><th>Pengguna</th><th>Metode</th><th class="num">Jumlah</th><th>Ref</th><th>Aksi</th></tr></thead>
-      <tbody>${pendingDeps.map(d => {
-        const user = users.find(x => x.id === d.userId);
-        return `<tr>
-          <td>${new Date(d.createdAt).toLocaleString('id-ID')}</td>
-          <td>${user ? user.email : '—'}</td>
-          <td>${d.method}</td>
-          <td class="num">${fmtIDR(d.amount)}</td>
-          <td class="mono" style="font-size:11px">${d.reference}</td>
-          <td>
-            <button class="btn btn-green btn-sm" onclick="approveDeposit('${d.id}')">Setujui</button>
-            <button class="btn btn-red btn-sm" onclick="rejectDeposit('${d.id}')">Tolak</button>
-          </td>
-        </tr>`;
-      }).join('')}</tbody>
-    </table></div>` : `<div class="empty"><p>Tidak ada deposit menunggu.</p></div>`;
-
-  // Withdraw pending
-  const pendingWds = wds.filter(w => w.status === 'PENDING');
-  $('#admWithdrawList').innerHTML = pendingWds.length ? `
-    <div class="table-wrap"><table class="tbl">
-      <thead><tr><th>Waktu</th><th>Pengguna</th><th>Bank</th><th class="num">Jumlah</th><th>Ref</th><th>Aksi</th></tr></thead>
-      <tbody>${pendingWds.map(w => {
-        const user = users.find(x => x.id === w.userId);
-        return `<tr>
-          <td>${new Date(w.createdAt).toLocaleString('id-ID')}</td>
-          <td>${user ? user.email : '—'}</td>
-          <td>${w.bankName}<div class="muted" style="font-size:11px">${w.accountNo} • ${w.accountName}</div></td>
-          <td class="num">${fmtIDR(w.amount)}</td>
-          <td class="mono" style="font-size:11px">${w.reference}</td>
-          <td>
-            <button class="btn btn-green btn-sm" onclick="approveWithdraw('${w.id}')">Setujui</button>
-            <button class="btn btn-red btn-sm" onclick="rejectWithdraw('${w.id}')">Tolak</button>
-          </td>
-        </tr>`;
-      }).join('')}</tbody>
-    </table></div>` : `<div class="empty"><p>Tidak ada penarikan menunggu.</p></div>`;
-
-  // Users
-  $('#admUserList').innerHTML = users.length ? `<div class="table-wrap"><table class="tbl">
-    <thead><tr><th>Pengguna</th><th>Role</th><th class="num">Saldo</th></tr></thead>
-    <tbody>${users.map(x => `<tr>
-      <td><strong>${x.username}</strong><div class="muted" style="font-size:11px">${x.email}</div></td>
-      <td><span class="pill ${x.role==='SUPERADMIN'?'pill-purple':x.role==='ADMIN'?'pill-blue':'pill-gray'}">${x.role}</span></td>
-      <td class="num">${fmtIDR(x.cash)}</td>
-    </tr>`).join('')}</tbody></table></div>` : `<div class="empty"><p>Belum ada pengguna.</p></div>`;
-
-  // Audit log
-  const logs = read(LS.auditLog, []).slice(0,15);
-  $('#admAuditLog').innerHTML = logs.length ? logs.map(l => `
-    <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:12.5px">
-      <div style="font-weight:600">${l.action}</div>
-      <div class="muted" style="font-size:11px">${new Date(l.at).toLocaleString('id-ID')} • target: ${l.target}</div>
-    </div>`).join('') : `<div class="empty"><p>Belum ada aktivitas.</p></div>`;
-
-  // Asset management
-  $('#admAssetMgmt').innerHTML = `
-    <div class="summary-row"><span class="k">Simbol</span><span class="v">CAZOO</span></div>
-    <div class="summary-row"><span class="k">Nama</span><span class="v">${a.name}</span></div>
-    <div class="summary-row"><span class="k">Harga Saat Ini</span><span class="v">${fmtIDR(a.price)}</span></div>
-    <div class="summary-row"><span class="k">Harga Sebelumnya</span><span class="v">${fmtIDR(a.prevClose)}</span></div>
-    <div class="summary-row"><span class="k">Volume</span><span class="v">${fmtNum(a.volume)}</span></div>
-    <div style="margin-top:14px"><button class="btn btn-primary btn-sm" onclick="editAssetPrice()">Ubah Harga Manual</button></div>`;
-
-  // Status
-  $('#admSettings').innerHTML = `
-    <div class="summary-row"><span class="k">Payment Gateway</span><span class="v"><span class="pill pill-yellow">VERIFIKASI MANUAL ADMIN</span></span></div>
-    <div class="summary-row"><span class="k">Stock Data API</span><span class="v"><span class="pill pill-red">INTERNAL</span></span></div>
-    <div class="summary-row"><span class="k">Firebase Auth</span><span class="v"><span class="pill pill-green">AKTIF</span></span></div>
-    <div class="summary-row"><span class="k">Email Service</span><span class="v"><span class="pill pill-red">BELUM DIKONFIGURASI</span></span></div>`;
-
-  updateAdminBadge();
-}
-
-async function editAssetPrice(){
-  const a = getAsset();
-  const ok = await modal({
-    title: 'Ubah Harga CAZOO',
-    body: `<div class="field"><label>Harga Baru (Rp)</label><input type="number" id="edPrice" value="${Math.round(a.price)}" min="1" /></div>
-           <div class="field"><label>Harga Sebelumnya</label><input type="number" id="edPrev" value="${Math.round(a.prevClose)}" min="1" /></div>`,
-    actions: [{label:'Batal', cls:'btn-ghost', value:0},{label:'Simpan', cls:'btn-primary', value:1}]
-  });
-  if(!ok) return;
-  const np = Number($('#edPrice').value);
-  const npr = Number($('#edPrev').value);
-  if(!(np > 0) || !(npr > 0)) return toast('Gagal','Harga tidak valid.','error');
-  const before = a.price;
-  a.price = np; a.prevClose = npr; a.updatedAt = nowISO();
-  saveAsset(a);
-  logAudit(currentUser().id, 'EDIT_ASSET_PRICE', 'CAZOO', { from: before, to: np });
-  toast('Berhasil','Harga CAZOO diperbarui.','success');
-  renderAdmin();
-}
-
-function approveDeposit(id){
-  const deps = read(LS.deposits, []);
-  const i = deps.findIndex(d => d.id === id); if(i < 0) return;
-  if(deps[i].status !== 'PENDING') return toast('Gagal','Sudah diproses.','warn');
-  deps[i].status = 'APPROVED';
-  deps[i].processedAt = nowISO();
-  write(LS.deposits, deps);
-  // Tambah saldo user
-  const users = read(LS.users, []);
-  const ui = users.findIndex(x => x.id === deps[i].userId);
-  if(ui >= 0){
-    users[ui].cash = Number(users[ui].cash) + Number(deps[i].amount);
-    write(LS.users, users);
-  }
-  logAudit(currentUser().id, 'APPROVE_DEPOSIT', deps[i].userId, { amount: deps[i].amount, ref: deps[i].reference });
-  toast('Disetujui','Deposit telah dikonfirmasi.','success');
-  renderAdmin();
-}
-
-function rejectDeposit(id){
-  const deps = read(LS.deposits, []);
-  const i = deps.findIndex(d => d.id === id); if(i < 0) return;
-  if(deps[i].status !== 'PENDING') return toast('Gagal','Sudah diproses.','warn');
-  deps[i].status = 'REJECTED';
-  deps[i].processedAt = nowISO();
-  write(LS.deposits, deps);
-  logAudit(currentUser().id, 'REJECT_DEPOSIT', deps[i].userId, { ref: deps[i].reference });
-  toast('Ditolak','Deposit telah ditolak.','warn');
-  renderAdmin();
-}
-
-function approveWithdraw(id){
-  const wds = read(LS.withdrawals, []);
-  const i = wds.findIndex(w => w.id === id); if(i < 0) return;
-  if(wds[i].status !== 'PENDING') return toast('Gagal','Sudah diproses.','warn');
-  wds[i].status = 'APPROVED';
-  wds[i].processedAt = nowISO();
-  write(LS.withdrawals, wds);
-  logAudit(currentUser().id, 'APPROVE_WITHDRAW', wds[i].userId, { amount: wds[i].amount, ref: wds[i].reference });
-  toast('Disetujui','Penarikan telah dikonfirmasi.','success');
-  renderAdmin();
-}
-
-function rejectWithdraw(id){
-  const wds = read(LS.withdrawals, []);
-  const i = wds.findIndex(w => w.id === id); if(i < 0) return;
-  if(wds[i].status !== 'PENDING') return toast('Gagal','Sudah diproses.','warn');
-  wds[i].status = 'REJECTED';
-  wds[i].processedAt = nowISO();
-  write(LS.withdrawals, wds);
-  // Kembalikan saldo user (escrow)
-  const users = read(LS.users, []);
-  const ui = users.findIndex(x => x.id === wds[i].userId);
-  if(ui >= 0){
-    users[ui].cash = Number(users[ui].cash) + Number(wds[i].amount);
-    write(LS.users, users);
-  }
-  logAudit(currentUser().id, 'REJECT_WITHDRAW', wds[i].userId, { ref: wds[i].reference });
-  toast('Ditolak','Penarikan ditolak, saldo dikembalikan.','warn');
-  renderAdmin();
-}
-
-// =========================================================
-// SETTINGS
-// =========================================================
-function renderSettings(){
-  const u = currentUser(); if(!u) return;
-  $('#profileView').innerHTML = `
-    <div class="flex center gap-12" style="margin-bottom:16px">
-      <div class="avatar" style="width:56px;height:56px;font-size:22px">${u.avatar ? `<img src="${u.avatar}" referrerpolicy="no-referrer">` : u.username.slice(0,1).toUpperCase()}</div>
-      <div><div style="font-size:17px;font-weight:700">${u.displayName || u.username}</div><div class="muted" style="font-size:12.5px">${u.email}</div></div>
-    </div>
-    <div class="summary-row"><span class="k">ID Pengguna</span><span class="v mono" style="font-size:11px">${u.id}</span></div>
-    <div class="summary-row"><span class="k">Role</span><span class="v"><span class="pill ${u.role==='SUPERADMIN'?'pill-purple':u.role==='ADMIN'?'pill-blue':'pill-gray'}">${u.role}</span></span></div>
-    <div class="summary-row"><span class="k">Terdaftar</span><span class="v">${new Date(u.createdAt).toLocaleString('id-ID')}</span></div>
-    <div class="summary-row"><span class="k">Saldo</span><span class="v">${fmtIDR(u.cash)}</span></div>`;
-
-  const prefs = read(LS.prefs, { email:'off' });
-  $('#prefEmail').value = prefs.email || 'off';
-
-  const hist = read(LS.loginHistory, []).filter(h => h.userId === u.id).slice(0,10);
-  $('#loginHistory').innerHTML = hist.length ? `<div class="table-wrap"><table class="tbl">
-    <thead><tr><th>Waktu</th><th>Status</th><th>Perangkat</th></tr></thead>
-    <tbody>${hist.map(h => `<tr>
-      <td>${new Date(h.at).toLocaleString('id-ID')}</td>
-      <td><span class="pill ${h.success?'pill-green':'pill-red'}">${h.success?'Berhasil':'Gagal'}</span></td>
-      <td class="muted" style="font-size:11px;max-width:280px;overflow:hidden;text-overflow:ellipsis">${h.ua}</td>
-    </tr>`).join('')}</tbody></table></div>` : `<div class="empty"><p>Belum ada riwayat login.</p></div>`;
-}
-
-function savePrefs(explicit){
-  write(LS.prefs, { email: $('#prefEmail').value });
-  if(explicit) toast('Berhasil','Preferensi disimpan.','success');
-}
-
-// =========================================================
-// NOTIFICATIONS
-// =========================================================
-function toggleNotifications(){
-  const u = currentUser(); if(!u) return;
-  const all = read(LS.notifications, {});
-  const list = all[u.id] || [];
-  all[u.id] = list.map(n => ({...n, read:true}));
-  write(LS.notifications, all);
-  updateNotifDot();
-  modal({
-    title: 'Notifikasi',
-    body: list.length ? list.map(n => `
-      <div style="padding:10px 0;border-bottom:1px solid var(--border)">
-        <div style="font-weight:600;font-size:13.5px">${n.title}</div>
-        <div class="muted" style="font-size:12px;margin-top:2px">${n.body}</div>
-        <div class="muted" style="font-size:11px;margin-top:4px">${new Date(n.at).toLocaleString('id-ID')}</div>
-      </div>`).join('') : `<div class="empty"><p>Tidak ada notifikasi.</p></div>`,
-    actions: [{label:'Tutup', cls:'btn-primary', value:1}]
-  });
-}
-
-function updateNotifDot(){
-  const u = currentUser(); if(!u) return;
-  const all = read(LS.notifications, {});
-  const unread = (all[u.id] || []).some(n => !n.read);
-  $('#notifDot').style.display = unread ? 'block' : 'none';
-}
-
-// =========================================================
-// LEGAL
-// =========================================================
-function openLegal(type){
-  const map = {
-    tentang: { title: 'Tentang Cazoo', body: '<p>Cazoo Stock Exchange adalah platform perdagangan aset digital CAZOO untuk investor Indonesia.</p>' },
-    syarat: { title: 'Syarat & Ketentuan', body: '<p>Dengan menggunakan platform, Anda menyetujui ketentuan layanan yang berlaku.</p>' },
-    privasi: { title: 'Kebijakan Privasi', body: '<p>Kami melindungi data pribadi Anda sesuai dengan regulasi yang berlaku.</p>' },
-    risiko: { title: 'Pengungkapan Risiko', body: '<p>Perdagangan aset digital mengandung risiko. Harga dapat naik atau turun.</p>' },
-    kontak: { title: 'Kontak Dukungan', body: '<p>Email: <a href="mailto:support@cazoo.demo">support@cazoo.demo</a></p>' },
-  };
-  const c = map[type]; if(!c) return;
-  modal({ title: c.title, body: c.body, actions: [{label:'Tutup', cls:'btn-primary', value:1}] });
-}
-
-// =========================================================
-// BOOT
-// =========================================================
-function boot(){
-  $('#year').textContent = new Date().getFullYear();
-  renderLanding();
-  updateNotifDot();
-
-  if(currentUser()){
-    afterLogin();
-  } else {
-    go('landing');
-  }
-
-  setInterval(() => {
-    tickAsset();
-    if($('#page-dashboard').classList.contains('active')) renderDashboard();
-    if($('#page-market').classList.contains('active')) renderMarket();
-    if($('#page-trading').classList.contains('active')) {
-      const a = getAsset();
-      $('#tradePrice').value = fmtIDR(a.price);
-      updateTradeSummary();
+    // Email admin yang diizinkan (ganti sesuai kebutuhan)
+    // Untuk produksi, gunakan Firebase Custom Claims.
+    const ADMIN_EMAILS = [
+      "admin@cazo.app",
+      "cazo.admin@gmail.com"
+    ];
+
+    // Data awal default
+    const DEFAULT_SETTINGS = {
+      assetName: "CAZO CARD",
+      symbol: "CAZO",
+      currentPrice: 1250,
+      previousPrice: 1220,
+      highestPrice: 1280,
+      lowestPrice: 1180,
+      chartColor: "#16A34A",
+      updateInterval: 5,
+      movementMode: "manual",
+      isRunning: false,
+      maxPoints: 100,
+      updatedAt: null
+    };
+
+    const DEFAULT_HISTORY = [
+      { price: 1180, change: 0, changePercent: 0, timestamp: Date.now() - 86400000 * 6 },
+      { price: 1195, change: 15, changePercent: 1.27, timestamp: Date.now() - 86400000 * 5 },
+      { price: 1210, change: 15, changePercent: 1.26, timestamp: Date.now() - 86400000 * 4 },
+      { price: 1205, change: -5, changePercent: -0.41, timestamp: Date.now() - 86400000 * 3 },
+      { price: 1230, change: 25, changePercent: 2.07, timestamp: Date.now() - 86400000 * 2 },
+      { price: 1220, change: -10, changePercent: -0.81, timestamp: Date.now() - 86400000 },
+      { price: 1250, change: 30, changePercent: 2.46, timestamp: Date.now() }
+    ];
+
+    // ================================================================
+    // 2. STATE
+    // ================================================================
+
+    const state = {
+      app: null,
+      db: null,
+      auth: null,
+      currentUser: null,
+      isAdmin: false,
+      firebaseReady: false,
+      connected: false,
+      settings: { ...DEFAULT_SETTINGS },
+      history: [],
+      publicData: null,
+      activeRange: "7d",
+      chart: null,
+      previewChart: null,
+      movementTimer: null,
+      movementRunning: false,
+      movementTarget: null,
+      adminUnsubscribe: null,
+      publicUnsubscribe: null,
+      historyUnsubscribe: null,
+      clockInterval: null,
+      savePending: false
+    };
+
+    // ================================================================
+    // 3. UTILITAS
+    // ================================================================
+
+    function formatNumber(n, decimals = 2) {
+      if (n === null || n === undefined || isNaN(n)) return "—";
+      return Number(n).toLocaleString("id-ID", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
     }
-    if($('#page-portfolio').classList.contains('active')) renderPortfolio();
-  }, 5000);
-}
 
-document.addEventListener('DOMContentLoaded', boot);
+    function formatTime(ts) {
+      if (!ts) return "—";
+      const d = new Date(ts);
+      return d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
 
-// Expose
-window.go = go;
-window.openPage = openPage;
-window.signInWithGoogle = signInWithGoogle;
-window.logout = logout;
-window.toggleSidebar = toggleSidebar;
-window.setSide = setSide;
-window.setTimeframe = setTimeframe;
-window.setMarketTF = setMarketTF;
-window.updateTradeSummary = updateTradeSummary;
-window.confirmOrder = confirmOrder;
-window.exportCSV = exportCSV;
-window.openDeposit = openDeposit;
-window.openWithdraw = openWithdraw;
-window.toggleNotifications = toggleNotifications;
-window.openLegal = openLegal;
-window.savePrefs = savePrefs;
-window.editAssetPrice = editAssetPrice;
-window.approveDeposit = approveDeposit;
-window.rejectDeposit = rejectDeposit;
-window.approveWithdraw = approveWithdraw;
-window.rejectWithdraw = rejectWithdraw;
-window.renderHistory = renderHistory;
-</script>
+    function formatDateTime(ts) {
+      if (!ts) return "—";
+      const d = new Date(ts);
+      return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short" }) + " " +
+             d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function timeAgo(ts) {
+      if (!ts) return "—";
+      const diff = Date.now() - ts;
+      const sec = Math.floor(diff / 1000);
+      if (sec < 5) return "baru saja";
+      if (sec < 60) return `${sec} detik lalu`;
+      const min = Math.floor(sec / 60);
+      if (min < 60) return `${min} menit lalu`;
+      const hr = Math.floor(min / 60);
+      if (hr < 24) return `${hr} jam lalu`;
+      const day = Math.floor(hr / 24);
+      return `${day} hari lalu`;
+    }
+
+    function showNotification(message, type = "info", duration = 4000) {
+      const container = document.getElementById("toastContainer");
+      const icons = {
+        success: "check-circle",
+        error: "alert-circle",
+        warning: "alert-triangle",
+        info: "info"
+      };
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <i data-lucide="${icons[type] || icons.info}"></i>
+        <span>${message}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+          <i data-lucide="x" style="width:14px;height:14px;"></i>
+        </button>
+      `;
+      container.appendChild(toast);
+      if (window.lucide) lucide.createIcons();
+
+      setTimeout(() => {
+        toast.classList.add("removing");
+        setTimeout(() => toast.remove(), 250);
+      }, duration);
+    }
+
+    function validatePrice(value, label = "Harga") {
+      const n = Number(value);
+      if (isNaN(n) || n <= 0) {
+        showNotification(`${label} harus berupa angka positif.`, "error");
+        return null;
+      }
+      if (n > 1e12) {
+        showNotification(`${label} terlalu besar.`, "error");
+        return null;
+      }
+      return n;
+    }
+
+    function safeNum(v, fallback = 0) {
+      const n = Number(v);
+      return isNaN(n) ? fallback : n;
+    }
+
+    // ================================================================
+    // 4. INIT FIREBASE
+    // ================================================================
+
+    async function initFirebase() {
+      try {
+        state.app = initializeApp(firebaseConfig);
+        state.db = getDatabase(state.app);
+
+        // Analytics kondisional
+        try {
+          const supported = await analyticsSupported();
+          if (supported) {
+            getAnalytics(state.app);
+          }
+        } catch (e) {
+          console.warn("Analytics tidak tersedia:", e);
+        }
+
+        // Auth
+        state.auth = getAuth(state.app);
+        const provider = new GoogleAuthProvider();
+
+        onAuthStateChanged(state.auth, (user) => {
+          state.currentUser = user;
+          if (user) {
+            const email = (user.email || "").toLowerCase();
+            state.isAdmin = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(email);
+            if (state.isAdmin) {
+              showAdminContent();
+              loadAdminSettings();
+            } else {
+              showAdminLoginError("Email Anda tidak terdaftar sebagai admin. Hubungi pemilik website.");
+            }
+          } else {
+            state.isAdmin = false;
+            showAdminLoginView();
+          }
+        });
+
+        // Koneksi
+        const connectedRef = ref(state.db, ".info/connected");
+        onValue(connectedRef, (snap) => {
+          state.connected = snap.val() === true;
+          updateConnectionBadge();
+        });
+
+        state.firebaseReady = true;
+        updateConnectionBadge();
+
+        // Muat data publik
+        await loadPublicData();
+        subscribeToChartData();
+
+      } catch (err) {
+        console.error("Firebase init error:", err);
+        state.firebaseReady = false;
+        updateConnectionBadge();
+        showNotification("Gagal terhubung ke Firebase. Menggunakan data demo.", "error", 6000);
+        loadDemoData();
+      }
+    }
+
+    function updateConnectionBadge() {
+      const badge = document.getElementById("connectionBadge");
+      const text = document.getElementById("connectionText");
+      if (!badge || !text) return;
+
+      if (state.connected && state.firebaseReady) {
+        badge.className = "connection-badge online";
+        text.textContent = "Online";
+      } else if (state.firebaseReady) {
+        badge.className = "connection-badge offline";
+        text.textContent = "Menghubungkan...";
+      } else {
+        badge.className = "connection-badge offline";
+        text.textContent = "Offline";
+      }
+    }
+
+    // ================================================================
+    // 5. LOAD PUBLIC DATA
+    // ================================================================
+
+    async function loadPublicData() {
+      if (!state.firebaseReady) { loadDemoData(); return; }
+
+      try {
+        const settingsSnap = await get(ref(state.db, "cazo/settings"));
+        if (settingsSnap.exists()) {
+          state.settings = { ...DEFAULT_SETTINGS, ...settingsSnap.val() };
+          setDataSourceStatus("live");
+        } else {
+          // Tulis data awal ke Firebase (sekali saja)
+          await initializeDatabase();
+          state.settings = { ...DEFAULT_SETTINGS };
+          setDataSourceStatus("live");
+        }
+
+        // Muat riwayat terbatas
+        await loadHistory(200);
+
+        // Muat data publik
+        const publicSnap = await get(ref(state.db, "cazo/public"));
+        if (publicSnap.exists()) {
+          state.publicData = publicSnap.val();
+        }
+
+        renderPublicUI();
+        renderHistory();
+        updateStatistics();
+
+      } catch (err) {
+        console.error("loadPublicData error:", err);
+        showNotification("Gagal memuat data dari Firebase.", "error");
+        loadDemoData();
+      }
+    }
+
+    async function initializeDatabase() {
+      try {
+        const updates = {};
+        updates["cazo/settings"] = {
+          ...DEFAULT_SETTINGS,
+          updatedAt: serverTimestamp()
+        };
+        updates["cazo/public"] = {
+          currentPrice: DEFAULT_SETTINGS.currentPrice,
+          previousPrice: DEFAULT_SETTINGS.previousPrice,
+          movementMode: "manual",
+          isRunning: false,
+          updatedAt: serverTimestamp()
+        };
+        updates["cazo/admin/settingsUpdatedAt"] = serverTimestamp();
+
+        // Riwayat awal
+        const historyBase = Date.now() - 86400000 * 6;
+        for (let i = 0; i < DEFAULT_HISTORY.length; i++) {
+          const h = DEFAULT_HISTORY[i];
+          const key = "cazo/history/" + (historyBase + i * 86400000);
+          updates[key] = {
+            price: h.price,
+            change: h.change,
+            changePercent: h.changePercent,
+            timestamp: historyBase + i * 86400000
+          };
+        }
+
+        await update(ref(state.db), updates);
+        showNotification("Database diinisialisasi dengan data awal.", "success");
+      } catch (err) {
+        console.error("initializeDatabase error:", err);
+        throw err;
+      }
+    }
+
+    async function loadHistory(limit = 200) {
+      if (!state.firebaseReady) return;
+      try {
+        const histQuery = query(
+          ref(state.db, "cazo/history"),
+          orderByChild("timestamp"),
+          limitToLast(limit)
+        );
+        const snap = await get(histQuery);
+        const arr = [];
+        snap.forEach(child => {
+          const v = child.val();
+          if (v && typeof v.price === "number") {
+            arr.push({
+              key: child.key,
+              price: v.price,
+              change: safeNum(v.change, 0),
+              changePercent: safeNum(v.changePercent, 0),
+              timestamp: safeNum(v.timestamp, Date.now())
+            });
+          }
+        });
+        arr.sort((a, b) => a.timestamp - b.timestamp);
+        state.history = arr;
+      } catch (err) {
+        console.error("loadHistory error:", err);
+      }
+    }
+
+    function loadDemoData() {
+      state.settings = { ...DEFAULT_SETTINGS };
+      state.history = DEFAULT_HISTORY.map((h, i) => ({
+        key: "demo_" + i,
+        ...h
+      }));
+      setDataSourceStatus("demo");
+      renderPublicUI();
+      renderHistory();
+      updateStatistics();
+    }
+
+    function setDataSourceStatus(mode) {
+      const badge = document.getElementById("dataModeBadge");
+      const sourceText = document.getElementById("dataSourceText");
+      if (mode === "live") {
+        badge.textContent = "LIVE";
+        badge.className = "data-status-badge live";
+        sourceText.textContent = "Data tersinkronisasi dari Firebase";
+      } else {
+        badge.textContent = "DEMO";
+        badge.className = "data-status-badge demo";
+        sourceText.textContent = "Pratinjau lokal — data belum tersimpan";
+      }
+    }
+
+    // ================================================================
+    // 6. SUBSCRIBE REAL-TIME
+    // ================================================================
+
+    function subscribeToChartData() {
+      if (!state.firebaseReady) return;
+
+      // Unsubscribe lama
+      if (state.publicUnsubscribe) state.publicUnsubscribe();
+      if (state.historyUnsubscribe) state.historyUnsubscribe();
+
+      // Settings
+      const settingsRef = ref(state.db, "cazo/settings");
+      state.publicUnsubscribe = onValue(settingsRef, (snap) => {
+        if (snap.exists()) {
+          const old = state.settings;
+          state.settings = { ...DEFAULT_SETTINGS, ...snap.val() };
+          // Jika harga berubah, perbarui UI
+          if (old.currentPrice !== state.settings.currentPrice || old.updatedAt !== state.settings.updatedAt) {
+            renderPublicUI();
+            updateStatistics();
+          }
+        }
+      }, (err) => {
+        console.error("Settings listener error:", err);
+      });
+
+      // History — gunakan limitToLast untuk performa
+      const histRef = query(
+        ref(state.db, "cazo/history"),
+        orderByChild("timestamp"),
+        limitToLast(200)
+      );
+      state.historyUnsubscribe = onValue(histRef, (snap) => {
+        const arr = [];
+        snap.forEach(child => {
+          const v = child.val();
+          if (v && typeof v.price === "number") {
+            arr.push({
+              key: child.key,
+              price: v.price,
+              change: safeNum(v.change, 0),
+              changePercent: safeNum(v.changePercent, 0),
+              timestamp: safeNum(v.timestamp, Date.now())
+            });
+          }
+        });
+        arr.sort((a, b) => a.timestamp - b.timestamp);
+        state.history = arr;
+
+        if (arr.length > 0) {
+          const latest = arr[arr.length - 1];
+          const prev = arr.length > 1 ? arr[arr.length - 2] : null;
+          state.settings.currentPrice = latest.price;
+          if (prev) state.settings.previousPrice = prev.price;
+        }
+
+        renderPublicUI();
+        updateChart();
+        renderHistory();
+        updateStatistics();
+        updateLastUpdated();
+      }, (err) => {
+        console.error("History listener error:", err);
+      });
+    }
+
+    // ================================================================
+    // 7. RENDER PUBLIC UI
+    // ================================================================
+
+    function renderPublicUI() {
+      const s = state.settings;
+      const hist = state.history;
+
+      // Header
+      document.getElementById("assetName").textContent = s.assetName || "CAZO CARD";
+      document.getElementById("assetSymbol").textContent = s.symbol || "CAZO";
+      document.getElementById("assetIcon").textContent = (s.symbol || "CZ").slice(0, 2).toUpperCase();
+
+      const priceEl = document.getElementById("currentPrice");
+      const price = hist.length > 0 ? hist[hist.length - 1].price : s.currentPrice;
+      priceEl.textContent = formatNumber(price);
+
+      // Perubahan
+      let change = 0, changePct = 0, prevPrice = s.previousPrice || price;
+      if (hist.length >= 2) {
+        const last = hist[hist.length - 1];
+        const secondLast = hist[hist.length - 2];
+        change = last.price - secondLast.price;
+        changePct = secondLast.price !== 0 ? (change / secondLast.price) * 100 : 0;
+        prevPrice = secondLast.price;
+      } else if (s.previousPrice && s.currentPrice) {
+        change = s.currentPrice - s.previousPrice;
+        changePct = s.previousPrice !== 0 ? (change / s.previousPrice) * 100 : 0;
+      }
+
+      const isUp = change >= 0;
+      const changeValEl = document.getElementById("changeValue");
+      const changeBadgeEl = document.getElementById("changeBadge");
+      const changePctEl = document.getElementById("changePercent");
+
+      changeValEl.textContent = (isUp ? "+" : "") + formatNumber(change);
+      changeValEl.className = "chart-change-value " + (isUp ? "up" : "down");
+      changeBadgeEl.className = "chart-change-badge " + (isUp ? "up" : "down");
+      changeBadgeEl.querySelector("i").setAttribute("data-lucide", isUp ? "trending-up" : "trending-down");
+      changePctEl.textContent = (isUp ? "+" : "") + formatNumber(changePct) + "%";
+
+      priceEl.className = "chart-price " + (isUp ? "up" : "down");
+
+      // Update chart
+      updateChart();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function updateLastUpdated() {
+      const el = document.getElementById("lastUpdatedText");
+      const ts = state.settings.updatedAt || (state.history.length > 0 ? state.history[state.history.length - 1].timestamp : null);
+      el.textContent = "Terakhir: " + (ts ? timeAgo(ts) : "—");
+    }
+
+    // ================================================================
+    // 8. CHART
+    // ================================================================
+
+    function getFilteredHistory(range) {
+      const hist = state.history;
+      if (!hist.length) return [];
+
+      const now = Date.now();
+      const ranges = {
+        "1m": 60 * 1000,
+        "5m": 5 * 60 * 1000,
+        "15m": 15 * 60 * 1000,
+        "1h": 60 * 60 * 1000,
+        "24h": 24 * 60 * 60 * 1000,
+        "7d": 7 * 24 * 60 * 60 * 1000,
+        "30d": 30 * 24 * 60 * 60 * 1000,
+        "all": Infinity
+      };
+      const cutoff = ranges[range] === Infinity ? 0 : now - ranges[range];
+      const filtered = hist.filter(h => h.timestamp >= cutoff);
+
+      // Selalu sertakan minimal beberapa titik terakhir agar grafik tidak kosong
+      if (filtered.length < 2 && hist.length >= 2) {
+        return hist.slice(-Math.min(hist.length, 10));
+      }
+      return filtered;
+    }
+
+    function updateChart() {
+      const canvas = document.getElementById("mainChart");
+      if (!canvas) return;
+
+      const filtered = getFilteredHistory(state.activeRange);
+      const loadingEl = document.getElementById("chartLoading");
+      const emptyEl = document.getElementById("chartEmpty");
+
+      if (filtered.length === 0) {
+        loadingEl.classList.add("hidden");
+        emptyEl.classList.remove("hidden");
+        if (state.chart) { state.chart.destroy(); state.chart = null; }
+        return;
+      }
+
+      emptyEl.classList.add("hidden");
+
+      const labels = filtered.map(h => {
+        const d = new Date(h.timestamp);
+        const r = state.activeRange;
+        if (r === "1m" || r === "5m" || r === "15m") {
+          return d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        }
+        if (r === "1h" || r === "24h") {
+          return d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+        }
+        return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short" });
+      });
+
+      const data = filtered.map(h => h.price);
+      const isUp = data.length >= 2 ? data[data.length - 1] >= data[0] : true;
+      const lineColor = isUp ? "#16A34A" : "#DC2626";
+      const fillColor = isUp ? "rgba(22,163,74,0.08)" : "rgba(220,38,38,0.08)";
+
+      if (state.chart) {
+        state.chart.data.labels = labels;
+        state.chart.data.datasets[0].data = data;
+        state.chart.data.datasets[0].borderColor = lineColor;
+        state.chart.data.datasets[0].backgroundColor = fillColor;
+        state.chart.update("none");
+      } else {
+        const ctx = canvas.getContext("2d");
+        state.chart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [{
+              label: state.settings.assetName || "CAZO",
+              data,
+              borderColor: lineColor,
+              backgroundColor: fillColor,
+              borderWidth: 2,
+              pointRadius: 0,
+              pointHoverRadius: 5,
+              pointHoverBackgroundColor: lineColor,
+              pointHoverBorderColor: "#fff",
+              pointHoverBorderWidth: 2,
+              fill: true,
+              tension: 0.35,
+              spanGaps: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { intersect: false, mode: "index" },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: "#111827",
+                titleColor: "#fff",
+                bodyColor: "#D1D5DB",
+                borderColor: "#374151",
+                borderWidth: 1,
+                padding: 10,
+                cornerRadius: 8,
+                displayColors: false,
+                callbacks: {
+                  title: (items) => {
+                    const i = items[0].dataIndex;
+                    const h = filtered[i];
+                    return h ? formatDateTime(h.timestamp) : "";
+                  },
+                  label: (item) => {
+                    const h = filtered[item.dataIndex];
+                    const chg = h ? h.change : 0;
+                    const pct = h ? h.changePercent : 0;
+                    return [
+                      "Harga: " + formatNumber(item.parsed.y),
+                      "Perubahan: " + (chg >= 0 ? "+" : "") + formatNumber(chg),
+                      "Persentase: " + (pct >= 0 ? "+" : "") + formatNumber(pct) + "%"
+                    ];
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { color: "rgba(229,231,235,0.5)", drawBorder: false },
+                ticks: {
+                  color: "#9CA3AF",
+                  font: { size: 10, family: "Inter" },
+                  maxTicksLimit: 6,
+                  maxRotation: 0
+                }
+              },
+              y: {
+                position: "right",
+                grid: { color: "rgba(229,231,235,0.5)", drawBorder: false },
+                ticks: {
+                  color: "#9CA3AF",
+                  font: { size: 10, family: "Inter" },
+                  callback: (v) => formatNumber(v, 0)
+                }
+              }
+            },
+            animation: { duration: 300, easing: "easeOutQuart" }
+          }
+        });
+      }
+
+      loadingEl.classList.add("hidden");
+    }
+
+    // Range buttons
+    document.querySelectorAll(".range-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".range-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.activeRange = btn.dataset.range;
+        updateChart();
+      });
+    });
+
+    // ================================================================
+    // 9. STATISTIK
+    // ================================================================
+
+    function updateStatistics() {
+      const hist = state.history;
+      if (!hist.length) {
+        document.getElementById("statHigh").textContent = "—";
+        document.getElementById("statLow").textContent = "—";
+        document.getElementById("statChange").textContent = "—";
+        document.getElementById("statPoints").textContent = "0";
+        return;
+      }
+
+      let high = -Infinity, low = Infinity, highTs = null, lowTs = null;
+      hist.forEach(h => {
+        if (h.price > high) { high = h.price; highTs = h.timestamp; }
+        if (h.price < low) { low = h.price; lowTs = h.timestamp; }
+      });
+
+      const first = hist[0].price;
+      const last = hist[hist.length - 1].price;
+      const totalChange = last - first;
+      const totalChangePct = first !== 0 ? (totalChange / first) * 100 : 0;
+
+      document.getElementById("statHigh").textContent = formatNumber(high);
+      document.getElementById("statHighTime").textContent = formatDateTime(highTs);
+      document.getElementById("statLow").textContent = formatNumber(low);
+      document.getElementById("statLowTime").textContent = formatDateTime(lowTs);
+
+      const chgEl = document.getElementById("statChange");
+      chgEl.textContent = (totalChange >= 0 ? "+" : "") + formatNumber(totalChange);
+      chgEl.className = "stat-value " + (totalChange >= 0 ? "up" : "down");
+      document.getElementById("statChangePercent").textContent =
+        (totalChangePct >= 0 ? "+" : "") + formatNumber(totalChangePct) + "%";
+
+      document.getElementById("statPoints").textContent = hist.length.toLocaleString("id-ID");
+    }
+
+    // ================================================================
+    // 10. RIWAYAT
+    // ================================================================
+
+    function renderHistory() {
+      const list = document.getElementById("historyList");
+      const hist = [...state.history].reverse().slice(0, 50);
+
+      document.getElementById("historyCount").textContent = state.history.length + " entri";
+
+      if (!hist.length) {
+        list.innerHTML = `<div class="history-empty">Belum ada riwayat pergerakan.</div>`;
+        return;
+      }
+
+      list.innerHTML = hist.map(h => {
+        const isUp = h.change >= 0;
+        const prevPrice = h.price - h.change;
+        return `
+          <div class="history-item">
+            <div class="history-icon ${isUp ? "up" : "down"}">
+              <i data-lucide="${isUp ? "arrow-up-right" : "arrow-down-right"}"></i>
+            </div>
+            <div class="history-main">
+              <div class="history-prices">
+                <span class="history-old">${formatNumber(prevPrice)}</span>
+                <span class="history-arrow">→</span>
+                <span class="history-new ${isUp ? "up" : "down"}">${formatNumber(h.price)}</span>
+              </div>
+              <div class="history-meta">
+                <span>${formatDateTime(h.timestamp)}</span>
+                <span>•</span>
+                <span>${timeAgo(h.timestamp)}</span>
+              </div>
+            </div>
+            <div class="history-change ${isUp ? "up" : "down"}">
+              ${isUp ? "+" : ""}${formatNumber(h.change)}
+              <br>
+              <span style="font-size:10px;">${isUp ? "+" : ""}${formatNumber(h.changePercent)}%</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // ================================================================
+    // 11. ADMIN — AUTH
+    // ================================================================
+
+    function openAdminPanel() {
+      document.getElementById("adminOverlay").classList.add("open");
+      document.getElementById("adminPanel").classList.add("open");
+      document.body.style.overflow = "hidden";
+      if (state.isAdmin) {
+        loadAdminSettings();
+      }
+    }
+
+    function closeAdminPanel() {
+      document.getElementById("adminOverlay").classList.remove("open");
+      document.getElementById("adminPanel").classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    function showAdminLoginView() {
+      document.getElementById("adminLoginView").classList.remove("hidden");
+      document.getElementById("adminContentView").classList.add("hidden");
+      document.getElementById("adminFooter").classList.add("hidden");
+      document.getElementById("adminAuthError").classList.add("hidden");
+    }
+
+    function showAdminContent() {
+      document.getElementById("adminLoginView").classList.add("hidden");
+      document.getElementById("adminContentView").classList.remove("hidden");
+      document.getElementById("adminFooter").classList.remove("hidden");
+      renderPreviewChart();
+    }
+
+    function showAdminLoginError(msg) {
+      const el = document.getElementById("adminAuthError");
+      document.getElementById("adminAuthErrorText").textContent = msg;
+      el.classList.remove("hidden");
+    }
+
+    // Google Sign-In
+    document.getElementById("googleSignInBtn").addEventListener("click", async () => {
+      if (!state.auth) {
+        showNotification("Firebase Auth belum siap.", "error");
+        return;
+      }
+      try {
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: "select_account" });
+        await signInWithPopup(state.auth, provider);
+      } catch (err) {
+        console.error("Sign-in error:", err);
+        let msg = "Gagal masuk. Coba lagi.";
+        if (err.code === "auth/popup-closed-by-user") msg = "Pop-up ditutup sebelum selesai.";
+        if (err.code === "auth/unauthorized-domain") msg = "Domain belum diizinkan di Firebase Auth.";
+        showAdminLoginError(msg);
+        showNotification(msg, "error");
+      }
+    });
+
+    // ================================================================
+    // 12. ADMIN — SETTINGS
+    // ================================================================
+
+    function loadAdminSettings() {
+      if (!state.isAdmin) return;
+      const s = state.settings;
+      document.getElementById("adminAssetName").value = s.assetName || "";
+      document.getElementById("adminAssetSymbol").value = s.symbol || "";
+      document.getElementById("adminCurrentPrice").value = s.currentPrice || "";
+      document.getElementById("adminPreviousPrice").value = s.previousPrice || "";
+      document.getElementById("adminHigh").value = s.highestPrice || "";
+      document.getElementById("adminLow").value = s.lowestPrice || "";
+      document.getElementById("adminChartColor").value = s.chartColor || "#16A34A";
+      document.getElementById("adminMaxPoints").value = s.maxPoints || 100;
+      document.getElementById("adminMovementMode").value = s.movementMode || "manual";
+      document.getElementById("adminInterval").value = String(s.updateInterval || 5);
+      updateMovementStatusText();
+      renderPreviewChart();
+    }
+
+    function updateMovementStatusText() {
+      const el = document.getElementById("movementStatusText");
+      const mode = document.getElementById("adminMovementMode").value;
+      const running = state.movementRunning;
+      const modeNames = {
+        manual: "Manual", up: "Naik Bertahap", down: "Turun Bertahap",
+        stable: "Stabil", random: "Acak"
+      };
+      el.textContent = `Mode: ${modeNames[mode] || mode} — ${running ? "Berjalan" : "Tidak berjalan"}`;
+    }
+
+    // Simpan pengaturan
+    document.getElementById("btnSaveSettings").addEventListener("click", async () => {
+      if (!state.isAdmin) { showNotification("Anda bukan admin.", "error"); return; }
+      if (!state.firebaseReady) { showNotification("Firebase belum siap.", "error"); return; }
+
+      const btn = document.getElementById("btnSaveSettings");
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div> Menyimpan...';
+
+      try {
+        const name = document.getElementById("adminAssetName").value.trim() || "CAZO CARD";
+        const symbol = document.getElementById("adminAssetSymbol").value.trim() || "CAZO";
+        const currentPrice = validatePrice(document.getElementById("adminCurrentPrice").value, "Harga saat ini");
+        if (currentPrice === null) throw new Error("Harga tidak valid");
+        const previousPrice = validatePrice(document.getElementById("adminPreviousPrice").value, "Harga sebelumnya");
+        if (previousPrice === null) throw new Error("Harga tidak valid");
+        const high = validatePrice(document.getElementById("adminHigh").value, "Harga tertinggi");
+        if (high === null) throw new Error("Harga tidak valid");
+        const low = validatePrice(document.getElementById("adminLow").value, "Harga terendah");
+        if (low === null) throw new Error("Harga tidak valid");
+        const chartColor = document.getElementById("adminChartColor").value;
+        const maxPoints = Math.max(10, Math.min(500, safeNum(document.getElementById("adminMaxPoints").value, 100)));
+        const movementMode = document.getElementById("adminMovementMode").value;
+        const updateInterval = safeNum(document.getElementById("adminInterval").value, 5);
+
+        const updates = {};
+        updates["cazo/settings"] = {
+          assetName: name,
+          symbol,
+          currentPrice,
+          previousPrice,
+          highestPrice: high,
+          lowestPrice: low,
+          chartColor,
+          maxPoints,
+          movementMode,
+          updateInterval,
+          isRunning: state.movementRunning,
+          updatedAt: serverTimestamp()
+        };
+        updates["cazo/public"] = {
+          currentPrice,
+          previousPrice,
+          movementMode,
+          isRunning: state.movementRunning,
+          updatedAt: serverTimestamp()
+        };
+        updates["cazo/admin/settingsUpdatedAt"] = serverTimestamp();
+
+        await update(ref(state.db), updates);
+
+        state.settings = { ...state.settings, assetName: name, symbol, currentPrice, previousPrice, highestPrice: high, lowestPrice: low, chartColor, maxPoints, movementMode, updateInterval };
+
+        // Catat titik harga baru jika berbeda
+        const lastHist = state.history.length > 0 ? state.history[state.history.length - 1] : null;
+        if (!lastHist || lastHist.price !== currentPrice) {
+          await addPricePoint(currentPrice, previousPrice);
+        }
+
+        renderPublicUI();
+        updateStatistics();
+        renderPreviewChart();
+        showNotification("Pengaturan berhasil disimpan ke Firebase.", "success");
+        setAdminSaveStatus("Tersimpan pada " + new Date().toLocaleTimeString("id-ID"));
+      } catch (err) {
+        console.error("Save error:", err);
+        showNotification("Gagal menyimpan: " + err.message, "error", 6000);
+        setAdminSaveStatus("Gagal menyimpan", "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="save"></i> Simpan Perubahan';
+        if (window.lucide) lucide.createIcons();
+      }
+    });
+
+    function setAdminSaveStatus(msg, type = "success") {
+      const el = document.getElementById("adminSaveStatus");
+      const text = document.getElementById("adminSaveStatusText");
+      text.textContent = msg;
+      el.className = "admin-status " + type;
+      el.classList.remove("hidden");
+    }
+
+    // ================================================================
+    // 13. ADMIN — TAMBAH TITIK HARGA
+    // ================================================================
+
+    async function addPricePoint(price, prevPrice) {
+      if (!state.firebaseReady) throw new Error("Firebase belum siap");
+      const change = price - (prevPrice || price);
+      const changePercent = prevPrice && prevPrice !== 0 ? (change / prevPrice) * 100 : 0;
+      const now = Date.now();
+
+      const newRef = push(ref(state.db, "cazo/history"));
+      await set(newRef, {
+        price: Number(price),
+        change: Number(change.toFixed(2)),
+        changePercent: Number(changePercent.toFixed(2)),
+        timestamp: now
+      });
+
+      // Batasi jumlah titik
+      await pruneHistory(state.settings.maxPoints || 100);
+
+      // Update public
+      await update(ref(state.db, "cazo/public"), {
+        currentPrice: Number(price),
+        previousPrice: Number(prevPrice || price),
+        updatedAt: serverTimestamp()
+      });
+
+      return newRef.key;
+    }
+
+    async function pruneHistory(maxPoints) {
+      try {
+        const snap = await get(query(ref(state.db, "cazo/history"), orderByChild("timestamp")));
+        const keys = [];
+        snap.forEach(c => keys.push({ key: c.key, ts: safeNum(c.val().timestamp, 0) }));
+        if (keys.length <= maxPoints) return;
+        keys.sort((a, b) => a.ts - b.ts);
+        const toDelete = keys.slice(0, keys.length - maxPoints);
+        const updates = {};
+        toDelete.forEach(k => { updates["cazo/history/" + k.key] = null; });
+        if (Object.keys(updates).length > 0) {
+          await update(ref(state.db), updates);
+        }
+      } catch (e) {
+        console.warn("pruneHistory:", e);
+      }
+    }
+
+    document.getElementById("btnAddPoint").addEventListener("click", async () => {
+      if (!state.isAdmin) return;
+      const price = validatePrice(document.getElementById("adminCurrentPrice").value, "Harga");
+      if (price === null) return;
+      try {
+        const prev = state.history.length > 0 ? state.history[state.history.length - 1].price : price;
+        await addPricePoint(price, prev);
+        await loadHistory(200);
+        renderPublicUI();
+        updateStatistics();
+        renderPreviewChart();
+        showNotification("Titik harga ditambahkan.", "success");
+      } catch (err) {
+        showNotification("Gagal menambah titik: " + err.message, "error");
+      }
+    });
+
+    document.getElementById("btnDeleteLast").addEventListener("click", async () => {
+      if (!state.isAdmin) return;
+      if (!state.history.length) { showNotification("Tidak ada data untuk dihapus.", "warning"); return; }
+      const last = state.history[state.history.length - 1];
+      if (!last.key || last.key.startsWith("demo_")) { showNotification("Data demo tidak dapat dihapus.", "warning"); return; }
+      try {
+        await remove(ref(state.db, "cazo/history/" + last.key));
+        await loadHistory(200);
+        renderPublicUI();
+        updateStatistics();
+        renderPreviewChart();
+        showNotification("Titik terakhir dihapus.", "success");
+      } catch (err) {
+        showNotification("Gagal menghapus: " + err.message, "error");
+      }
+    });
+
+    // ================================================================
+    // 14. ADMIN — PERGERAKAN OTOMATIS
+    // ================================================================
+
+    document.getElementById("btnStartMovement").addEventListener("click", startMovement);
+    document.getElementById("btnStopMovement").addEventListener("click", stopMovement);
+
+    async function startMovement() {
+      if (!state.isAdmin) return;
+      if (state.movementRunning) { showNotification("Pergerakan sudah berjalan.", "warning"); return; }
+
+      const mode = document.getElementById("adminMovementMode").value;
+      const interval = safeNum(document.getElementById("adminInterval").value, 5);
+
+      if (interval === 0) {
+        showNotification("Mode manual: gunakan tombol Tambah Titik.", "info");
+        return;
+      }
+      if (interval < 1) {
+        showNotification("Interval minimal 1 detik.", "error");
+        return;
+      }
+
+      state.movementRunning = true;
+      state.movementTarget = null;
+
+      // Simpan status ke Firebase
+      try {
+        await update(ref(state.db, "cazo/settings"), { isRunning: true, movementMode: mode, updateInterval: interval, updatedAt: serverTimestamp() });
+        await update(ref(state.db, "cazo/public"), { isRunning: true, movementMode: mode, updatedAt: serverTimestamp() });
+      } catch (e) {
+        console.warn("Gagal simpan status running:", e);
+      }
+
+      updateMovementStatusText();
+      showNotification(`Pergerakan ${mode} dimulai (interval ${interval}s).`, "success");
+
+      // Jika mode up/down, ambil target
+      if (mode === "up" || mode === "down") {
+        const target = validatePrice(document.getElementById("adminTargetPrice").value, "Target harga");
+        if (target !== null) state.movementTarget = target;
+      }
+
+      // Manual points
+      let manualPoints = [];
+      if (mode === "manual") {
+        const raw = document.getElementById("adminManualPoints").value.trim();
+        if (raw) {
+          manualPoints = raw.split(",").map(v => Number(v.trim())).filter(v => !isNaN(v) && v > 0);
+        }
+        if (manualPoints.length === 0) {
+          showNotification("Masukkan titik manual yang valid.", "error");
+          state.movementRunning = false;
+          updateMovementStatusText();
+          return;
+        }
+      }
+
+      let manualIndex = 0;
+
+      state.movementTimer = setInterval(async () => {
+        if (!state.movementRunning) return;
+        try {
+          const current = state.settings.currentPrice || 1250;
+          let nextPrice = current;
+
+          if (mode === "up") {
+            const target = state.movementTarget || current * 1.05;
+            const step = Math.max((target - current) * 0.15, 0.5);
+            nextPrice = current + step;
+            if (nextPrice >= target) { nextPrice = target; stopMovement(true); }
+          } else if (mode === "down") {
+            const target = state.movementTarget || current * 0.95;
+            const step = Math.max((current - target) * 0.15, 0.5);
+            nextPrice = current - step;
+            if (nextPrice <= target) { nextPrice = target; stopMovement(true); }
+          } else if (mode === "stable") {
+            const volatility = current * 0.005;
+            nextPrice = current + (Math.random() - 0.5) * volatility * 2;
+          } else if (mode === "random") {
+            const range = current * 0.02;
+            nextPrice = current + (Math.random() - 0.5) * range * 2;
+          } else if (mode === "manual") {
+            if (manualIndex >= manualPoints.length) { stopMovement(true); return; }
+            nextPrice = manualPoints[manualIndex++];
+          }
+
+          if (nextPrice <= 0) nextPrice = 0.01;
+          nextPrice = Number(nextPrice.toFixed(2));
+
+          await addPricePoint(nextPrice, current);
+          state.settings.currentPrice = nextPrice;
+          state.settings.previousPrice = current;
+
+          // Update form
+          document.getElementById("adminCurrentPrice").value = nextPrice;
+          document.getElementById("adminPreviousPrice").value = current;
+
+          await loadHistory(200);
+          renderPublicUI();
+          updateStatistics();
+          renderPreviewChart();
+          updateLastUpdated();
+
+        } catch (err) {
+          console.error("Movement tick error:", err);
+          showNotification("Error pergerakan: " + err.message, "error");
+          stopMovement(true);
+        }
+      }, interval * 1000);
+    }
+
+    async function stopMovement(silent = false) {
+      state.movementRunning = false;
+      if (state.movementTimer) { clearInterval(state.movementTimer); state.movementTimer = null; }
+      updateMovementStatusText();
+
+      if (state.firebaseReady && state.isAdmin) {
+        try {
+          await update(ref(state.db, "cazo/settings"), { isRunning: false, updatedAt: serverTimestamp() });
+          await update(ref(state.db, "cazo/public"), { isRunning: false, updatedAt: serverTimestamp() });
+        } catch (e) { console.warn("stopMovement save:", e); }
+      }
+
+      if (!silent) showNotification("Pergerakan dihentikan.", "info");
+    }
+
+    // Reset grafik
+    document.getElementById("btnResetChart").addEventListener("click", async () => {
+      if (!state.isAdmin) return;
+      if (!confirm("Reset grafik ke data awal? Riwayat saat ini akan dihapus.")) return;
+      try {
+        // Hapus riwayat
+        await remove(ref(state.db, "cazo/history"));
+        // Tulis data awal
+        const updates = {};
+        const base = Date.now() - 86400000 * 6;
+        DEFAULT_HISTORY.forEach((h, i) => {
+          const key = "cazo/history/" + (base + i * 86400000);
+          updates[key] = { price: h.price, change: h.change, changePercent: h.changePercent, timestamp: base + i * 86400000 };
+        });
+        updates["cazo/settings"] = { ...DEFAULT_SETTINGS, updatedAt: serverTimestamp() };
+        updates["cazo/public"] = { currentPrice: DEFAULT_SETTINGS.currentPrice, previousPrice: DEFAULT_SETTINGS.previousPrice, movementMode: "manual", isRunning: false, updatedAt: serverTimestamp() };
+        await update(ref(state.db), updates);
+
+        state.settings = { ...DEFAULT_SETTINGS };
+        await loadHistory(200);
+        renderPublicUI();
+        updateStatistics();
+        loadAdminSettings();
+        renderPreviewChart();
+        showNotification("Grafik berhasil direset.", "success");
+      } catch (err) {
+        showNotification("Gagal reset: " + err.message, "error");
+      }
+    });
+
+    // ================================================================
+    // 15. PREVIEW CHART (ADMIN)
+    // ================================================================
+
+    function renderPreviewChart() {
+      const canvas = document.getElementById("previewChart");
+      if (!canvas) return;
+
+      const hist = state.history.slice(-30);
+      const labels = hist.map(h => formatTime(h.timestamp));
+      const data = hist.map(h => h.price);
+      const isUp = data.length >= 2 ? data[data.length - 1] >= data[0] : true;
+      const color = isUp ? "#16A34A" : "#DC2626";
+
+      if (state.previewChart) {
+        state.previewChart.data.labels = labels;
+        state.previewChart.data.datasets[0].data = data;
+        state.previewChart.data.datasets[0].borderColor = color;
+        state.previewChart.update("none");
+      } else {
+        const ctx = canvas.getContext("2d");
+        state.previewChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [{
+              data,
+              borderColor: color,
+              borderWidth: 1.5,
+              pointRadius: 0,
+              fill: true,
+              backgroundColor: isUp ? "rgba(22,163,74,0.06)" : "rgba(220,38,38,0.06)",
+              tension: 0.35
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            scales: {
+              x: { display: false },
+              y: {
+                display: true,
+                position: "right",
+                grid: { color: "rgba(229,231,235,0.4)", drawBorder: false },
+                ticks: { color: "#9CA3AF", font: { size: 9 }, maxTicksLimit: 4, callback: v => formatNumber(v, 0) }
+              }
+            },
+            animation: { duration: 200 }
+          }
+        });
+      }
+    }
+
+    // ================================================================
+    // 16. JAM DIGITAL
+    // ================================================================
+
+    function startClock() {
+      const el = document.getElementById("clockDisplay");
+      function tick() {
+        const d = new Date();
+        el.textContent = d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+      }
+      tick();
+      state.clockInterval = setInterval(tick, 1000);
+    }
+
+    // ================================================================
+    // 17. NAVIGASI & MENU
+    // ================================================================
+
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById("navbarLinks").classList.remove("open");
+    }
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.getElementById("mobileMenuBtn").addEventListener("click", () => {
+      document.getElementById("navbarLinks").classList.toggle("open");
+    });
+
+    // Tutup menu saat klik di luar
+    document.addEventListener("click", (e) => {
+      const menu = document.getElementById("navbarLinks");
+      const btn = document.getElementById("mobileMenuBtn");
+      if (menu.classList.contains("open") && !menu.contains(e.target) && !btn.contains(e.target)) {
+        menu.classList.remove("open");
+      }
+    });
+
+    // Escape tutup panel
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closeAdminPanel();
+        document.getElementById("navbarLinks").classList.remove("open");
+      }
+    });
+
+    // ================================================================
+    // 18. OFFLINE DETECTION
+    // ================================================================
+
+    window.addEventListener("offline", () => {
+      showNotification("Koneksi internet terputus. Data mungkin tidak tersinkronisasi.", "warning", 5000);
+      updateConnectionBadge();
+    });
+
+    window.addEventListener("online", () => {
+      showNotification("Koneksi internet kembali.", "success");
+      updateConnectionBadge();
+    });
+
+    // ================================================================
+    // 19. BOOTSTRAP
+    // ================================================================
+
+    async function bootstrap() {
+      startClock();
+      if (window.lucide) lucide.createIcons();
+      await initFirebase();
+      if (window.lucide) lucide.createIcons();
+      updateLastUpdated();
+      setInterval(updateLastUpdated, 30000);
+    }
+
+    bootstrap();
+
+  </script>
+
 </body>
 </html>
