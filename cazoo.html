@@ -1,1588 +1,2707 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CAZOO — Trading & Investasi Saham</title>
-<meta name="theme-color" content="#ffffff">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0e17" />
+<title>Cazoo Stock Exchange — Platform Perdagangan Saham</title>
+<meta name="description" content="Cazoo Stock Exchange — platform perdagangan saham modern (mode demonstrasi)." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0e17'/%3E%3Cpath d='M20 42 L28 26 L36 34 L44 18' stroke='%233b82f6' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='44' cy='18' r='5' fill='%2310b981'/%3E%3C/svg%3E" />
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
 <style>
-/* ================= RESET & TOKENS ================= */
-*{margin:0;padding:0;box-sizing:border-box}
+/* =========================================================
+   CAZOO — GLOBAL STYLES
+   ========================================================= */
 :root{
-  --bg:#f6f8fb;
-  --card:#ffffff;
-  --line:#e7ebf2;
-  --line-2:#eef2f7;
-  --txt:#0b1220;
-  --txt-2:#475569;
-  --txt-3:#94a3b8;
-  --emerald:#10b981;
-  --emerald-d:#059669;
-  --emerald-l:#d1fae5;
+  --bg:#080b13;
+  --bg-2:#0d1220;
+  --panel:#111827;
+  --panel-2:#151d2e;
+  --panel-3:#1a2338;
+  --border:#1e2a44;
+  --border-2:#25324f;
+  --text:#e6edf7;
+  --muted:#8a98b5;
+  --muted-2:#5a6784;
+  --blue:#3b82f6;
+  --blue-2:#2563eb;
+  --blue-glow:rgba(59,130,246,.35);
+  --green:#10b981;
+  --green-2:#059669;
   --red:#ef4444;
-  --red-l:#fee2e2;
-  --blue:#2563eb;
-  --blue-l:#dbeafe;
-  --amber:#f59e0b;
-  --radius:16px;
+  --red-2:#dc2626;
+  --yellow:#f59e0b;
+  --purple:#8b5cf6;
+  --radius:14px;
   --radius-sm:10px;
-  --shadow-sm:0 1px 2px rgba(15,23,42,.04),0 1px 3px rgba(15,23,42,.06);
-  --shadow:0 4px 12px rgba(15,23,42,.06),0 2px 4px rgba(15,23,42,.04);
-  --shadow-lg:0 12px 32px rgba(15,23,42,.10),0 4px 12px rgba(15,23,42,.06);
-  --font:'Inter',system-ui,-apple-system,sans-serif;
-  --mono:'JetBrains Mono',monospace;
+  --radius-lg:20px;
+  --shadow:0 10px 30px rgba(0,0,0,.45);
+  --shadow-glow:0 0 0 1px rgba(59,130,246,.25), 0 8px 24px rgba(59,130,246,.15);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 }
+*{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
   font-family:var(--font);
   background:var(--bg);
-  color:var(--txt);
+  color:var(--text);
   font-size:14px;
   line-height:1.5;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
-button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
-input,select,textarea{font-family:inherit;font-size:14px;color:inherit}
-a{color:inherit;text-decoration:none}
-.hidden{display:none!important}
-
-/* ================= HEADER ================= */
-.header{
-  position:sticky;top:0;z-index:50;
-  background:rgba(255,255,255,.85);
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--line);
-}
-.header-inner{
-  max-width:1240px;margin:0 auto;
-  display:flex;align-items:center;gap:24px;
-  padding:14px 24px;
-}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.5px}
-.brand-mark{
-  width:34px;height:34px;border-radius:10px;
-  background:linear-gradient(135deg,#0a0f1f,#10b981);
-  color:#fff;font-weight:900;font-size:16px;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 12px rgba(16,185,129,.35);
-}
-.brand-name{background:linear-gradient(135deg,#0b1220,#10b981);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.nav{display:flex;gap:4px;margin-left:auto;align-items:center}
-.nav-tab{
-  padding:8px 14px;border-radius:10px;
-  font-weight:600;font-size:13.5px;color:var(--txt-2);
-  transition:all .15s;cursor:pointer;
-}
-.nav-tab:hover{background:var(--line-2);color:var(--txt)}
-.nav-tab.active{background:#0b1220;color:#fff}
-.btn-login{
-  padding:9px 16px;border-radius:10px;
-  background:#0b1220;color:#fff;font-weight:600;font-size:13.5px;
-  display:flex;align-items:center;gap:8px;
-  transition:transform .15s,box-shadow .15s;
-}
-.btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(11,18,32,.2)}
-.user-chip{
-  display:flex;align-items:center;gap:8px;padding:6px 10px 6px 6px;
-  border-radius:99px;background:var(--line-2);cursor:pointer;
-  font-size:13px;font-weight:600;
-}
-.user-chip img{width:28px;height:28px;border-radius:50%;object-fit:cover}
-.user-chip .avatar-fallback{
-  width:28px;height:28px;border-radius:50%;
-  background:linear-gradient(135deg,#10b981,#2563eb);color:#fff;
-  display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:800;
-}
-.hamburger{display:none;width:38px;height:38px;border-radius:10px;
-  align-items:center;justify-content:center;background:var(--line-2)}
-
-/* ================= LAYOUT ================= */
-.container{max-width:1240px;margin:0 auto;padding:24px}
-.grid-2{display:grid;grid-template-columns:1.6fr 1fr;gap:24px}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.section{margin-bottom:24px}
-.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px}
-.section-title{font-size:16px;font-weight:700;letter-spacing:-.2px}
-.section-sub{font-size:12.5px;color:var(--txt-3)}
-
-/* ================= CARD ================= */
-.card{
-  background:var(--card);border:1px solid var(--line);
-  border-radius:var(--radius);padding:20px;
-  box-shadow:var(--shadow-sm);
-}
-.card-pad-0{padding:0}
-
-/* ================= CAZOO ASSET CARD ================= */
-.asset-card{
-  position:relative;overflow:hidden;
-  border-radius:22px;
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;
   background:
-    radial-gradient(600px 300px at 110% 0%,rgba(16,185,129,.35),transparent 55%),
-    radial-gradient(500px 280px at 0% 100%,rgba(37,99,235,.28),transparent 60%),
-    linear-gradient(135deg,#0a0f1f 0%,#0f1a2e 45%,#0a1f1c 100%);
-  color:#fff;padding:28px;
-  box-shadow:0 20px 50px rgba(10,15,31,.25),0 8px 20px rgba(16,185,129,.15);
-  min-height:220px;
-  display:flex;flex-direction:column;justify-content:space-between;
+    radial-gradient(900px 500px at 15% -10%, rgba(59,130,246,.14), transparent 60%),
+    radial-gradient(700px 500px at 100% 0%, rgba(16,185,129,.08), transparent 60%),
+    linear-gradient(180deg,#080b13 0%, #0a0f1c 100%);
 }
-.asset-card::before{
-  content:'';position:absolute;top:-40%;right:-20%;
-  width:60%;height:120%;
-  background:radial-gradient(circle,rgba(16,185,129,.28),transparent 60%);
-  filter:blur(40px);pointer-events:none;
-}
-.asset-card::after{
-  content:'';position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
-  background-size:40px 40px;
-  pointer-events:none;mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent 80%);
-  -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.8),transparent 80%);
-}
-.asset-card>*{position:relative;z-index:1}
-.ac-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
-.ac-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;letter-spacing:.5px}
-.ac-brand-mark{
-  width:26px;height:26px;border-radius:7px;
-  background:linear-gradient(135deg,#10b981,#34d399);
-  display:flex;align-items:center;justify-content:center;
-  color:#0a0f1f;font-weight:900;font-size:13px;
-}
-.ac-chip{
-  width:38px;height:28px;border-radius:6px;
-  background:linear-gradient(135deg,#f4d03f,#e6b800);
-  position:relative;overflow:hidden;
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,.15);
-}
-.ac-chip::before,.ac-chip::after{
-  content:'';position:absolute;left:0;right:0;height:1px;background:rgba(0,0,0,.2)
-}
-.ac-chip::before{top:9px}.ac-chip::after{top:18px}
-.ac-chip i{position:absolute;top:0;bottom:0;width:1px;background:rgba(0,0,0,.2);left:14px}
-.ac-chip i+i{left:24px}
-.ac-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:6px;font-weight:600}
-.ac-balance{font-family:var(--mono);font-size:clamp(26px,4vw,34px);font-weight:700;letter-spacing:-1px}
-.ac-details{display:flex;gap:32px;margin-top:22px;flex-wrap:wrap}
-.ac-detail-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5);font-weight:600;margin-bottom:4px}
-.ac-detail-value{font-family:var(--mono);font-size:13px;font-weight:600}
-.ac-pl{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;
-  padding:6px 10px;border-radius:99px;background:rgba(16,185,129,.2);color:#34d399;
-  border:1px solid rgba(16,185,129,.3)}
-.ac-pl.down{background:rgba(239,68,68,.15);color:#fca5a5;border-color:rgba(239,68,68,.3)}
+a{color:var(--blue);text-decoration:none}
+a:hover{color:#60a5fa}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit}
+::selection{background:var(--blue-glow);color:#fff}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#1f2a44;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#2a3a5e}
 
-/* ================= BALANCE MINI ================= */
-.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;height:100%}
-.mini-card{
-  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  padding:18px;box-shadow:var(--shadow-sm);
-  display:flex;flex-direction:column;justify-content:space-between;
-  transition:transform .15s,box-shadow .15s;
-}
-.mini-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
-.mini-label{font-size:11.5px;color:var(--txt-3);font-weight:600;letter-spacing:.3px;text-transform:uppercase;margin-bottom:6px}
-.mini-value{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--txt)}
-.mini-delta{font-size:11.5px;font-weight:600;margin-top:4px}
-.up{color:var(--emerald-d)}
-.down{color:var(--red)}
-.mini-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;
-  background:var(--emerald-l);color:var(--emerald-d);margin-bottom:10px}
-.mini-icon.blue{background:var(--blue-l);color:var(--blue)}
-.mini-icon.red{background:var(--red-l);color:var(--red)}
-.mini-icon.amber{background:#fef3c7;color:#b45309}
-.mini-icon svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
+h2{font-size:22px;font-weight:700;letter-spacing:-.01em}
+h3{font-size:17px;font-weight:700}
+h4{font-size:14px;font-weight:600}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono)}
 
-/* ================= ACTION BUTTONS ================= */
-.actions-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.action-btn{
-  background:var(--card);border:1px solid var(--line);
-  border-radius:14px;padding:14px 10px;
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  font-size:12.5px;font-weight:600;color:var(--txt);
-  transition:all .15s;
+/* =========================================================
+   LOGO
+   ========================================================= */
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em}
+.logo-mark{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(135deg,#1e3a8a 0%,#0a0e17 100%);
+  display:grid;place-items:center;
+  border:1px solid rgba(59,130,246,.35);
+  box-shadow:0 0 20px rgba(59,130,246,.35), inset 0 0 12px rgba(59,130,246,.15);
+  position:relative;
 }
-.action-btn:hover{border-color:var(--emerald);background:#f0fdf9;transform:translateY(-2px)}
-.action-btn svg{width:20px;height:20px;fill:none;stroke:var(--emerald-d);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.action-btn.danger svg{stroke:var(--red)}
-.action-btn.danger:hover{border-color:var(--red);background:#fef2f2}
-.action-btn.blue svg{stroke:var(--blue)}
-.action-btn.blue:hover{border-color:var(--blue);background:#eff6ff}
+.logo-mark svg{width:22px;height:22px}
+.logo-text{font-size:19px}
+.logo-text span{color:var(--blue)}
+.logo-badge{
+  font-size:9px;font-weight:700;letter-spacing:.12em;
+  padding:2px 6px;border-radius:5px;
+  background:rgba(59,130,246,.15);
+  color:#93c5fd;border:1px solid rgba(59,130,246,.35);
+  margin-left:4px;text-transform:uppercase;
+}
 
-/* ================= CHART ================= */
-.chart-card{
-  background:var(--card);border:1px solid var(--line);
-  border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);
-}
-.chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
-.chart-symbol{font-family:var(--mono);font-weight:800;font-size:18px;color:var(--txt);letter-spacing:-.3px}
-.chart-name{font-size:12px;color:var(--txt-3);margin-top:2px}
-.chart-price{font-family:var(--mono);font-weight:800;font-size:24px;color:var(--txt);letter-spacing:-.5px;text-align:right}
-.chart-delta{font-size:12.5px;font-weight:700;text-align:right;margin-top:2px}
-.tf-bar{display:flex;gap:6px;flex-wrap:wrap;padding:5px;background:var(--line-2);border-radius:10px;margin-bottom:14px}
-.tf-btn{
-  padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;
-  color:var(--txt-2);transition:all .15s;
-}
-.tf-btn:hover{color:var(--txt)}
-.tf-btn.active{background:#fff;color:var(--txt);box-shadow:var(--shadow-sm)}
-.chart-wrap{position:relative;height:340px}
-.chart-wrap canvas{max-width:100%!important}
-
-/* ================= STOCK LIST ================= */
-.stock-list{display:flex;flex-direction:column}
-.stock-row{
-  display:grid;grid-template-columns:56px 1fr auto auto;gap:14px;align-items:center;
-  padding:14px 8px;border-bottom:1px solid var(--line-2);cursor:pointer;
-  transition:background .12s;border-radius:10px;
-}
-.stock-row:last-child{border-bottom:none}
-.stock-row:hover{background:#f8fafc}
-.stock-logo{
-  width:44px;height:44px;border-radius:12px;
-  background:linear-gradient(135deg,#0b1220,#334155);
-  color:#fff;font-weight:800;font-size:12px;
-  display:flex;align-items:center;justify-content:center;letter-spacing:-.3px;
-}
-.stock-logo.g{border-radius:12px;background:linear-gradient(135deg,#10b981,#059669)}
-.stock-logo.b{border-radius:12px;background:linear-gradient(135deg,#2563eb,#1e40af)}
-.stock-logo.a{border-radius:12px;background:linear-gradient(135deg,#f59e0b,#b45309)}
-.stock-logo.r{border-radius:12px;background:linear-gradient(135deg,#ef4444,#991b1b)}
-.stock-sym{font-weight:700;font-size:14px;color:var(--txt);letter-spacing:-.2px}
-.stock-nm{font-size:12px;color:var(--txt-3);margin-top:2px}
-.stock-price{font-family:var(--mono);font-weight:700;font-size:14px;text-align:right;color:var(--txt)}
-.stock-prev{font-size:11px;color:var(--txt-3);text-align:right;font-family:var(--mono)}
-.stock-delta{
-  font-family:var(--mono);font-weight:700;font-size:12.5px;
-  padding:5px 10px;border-radius:8px;min-width:76px;text-align:center;
-}
-.stock-delta.up{background:var(--emerald-l);color:var(--emerald-d)}
-.stock-delta.down{background:var(--red-l);color:var(--red)}
-
-/* ================= PORTFOLIO ================= */
-.pf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.pf-item{
-  padding:16px;border-radius:14px;border:1px solid var(--line);background:var(--card);
-  transition:transform .15s,box-shadow .15s;
-}
-.pf-item:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
-.pf-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
-.pf-sym{font-family:var(--mono);font-weight:800;font-size:14px}
-.pf-lot{font-size:11.5px;color:var(--txt-3);margin-top:2px}
-.pf-val{font-family:var(--mono);font-weight:700;font-size:16px;text-align:right}
-.pf-pl{font-size:11.5px;font-weight:700;text-align:right;margin-top:2px}
-.pf-meta{font-size:11.5px;color:var(--txt-3);display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid var(--line-2)}
-
-/* ================= TABLE ================= */
-.tbl-wrap{overflow-x:auto;border-radius:var(--radius-sm)}
-table{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
-th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line-2)}
-th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--txt-3);font-weight:700;background:#f8fafc}
-th:first-child{border-top-left-radius:var(--radius-sm)}
-th:last-child{border-top-right-radius:var(--radius-sm)}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#f8fafc}
-.tag{
-  display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;
-}
-.tag.g{background:var(--emerald-l);color:var(--emerald-d)}
-.tag.y{background:#fef3c7;color:#b45309}
-.tag.r{background:var(--red-l);color:var(--red)}
-.tag.b{background:var(--blue-l);color:var(--blue)}
-
-/* ================= BUTTONS ================= */
+/* =========================================================
+   BUTTONS
+   ========================================================= */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:11px 18px;border-radius:11px;font-weight:600;font-size:13.5px;
-  transition:all .15s;border:1px solid transparent;
+  padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;
+  transition:all .18s ease;white-space:nowrap;user-select:none;
+  border:1px solid transparent;
 }
-.btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.btn-primary{background:#0b1220;color:#fff}
-.btn-primary:hover{background:#1a2438;transform:translateY(-1px);box-shadow:0 8px 20px rgba(11,18,32,.2)}
-.btn-emerald{background:linear-gradient(135deg,#10b981,#059669);color:#fff}
-.btn-emerald:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(16,185,129,.35)}
-.btn-red{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
-.btn-red:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(239,68,68,.35)}
-.btn-outline{background:#fff;border-color:var(--line);color:var(--txt)}
-.btn-outline:hover{background:#f8fafc;border-color:#cbd5e1}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{
+  background:linear-gradient(135deg,var(--blue-2),var(--blue));
+  color:#fff;box-shadow:0 6px 20px rgba(37,99,235,.35);
+}
+.btn-primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 10px 26px rgba(37,99,235,.5)}
+.btn-green{background:linear-gradient(135deg,var(--green-2),var(--green));color:#fff;box-shadow:0 6px 20px rgba(16,185,129,.3)}
+.btn-green:hover:not(:disabled){transform:translateY(-1px)}
+.btn-red{background:linear-gradient(135deg,var(--red-2),var(--red));color:#fff}
+.btn-red:hover:not(:disabled){transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,.04);border:1px solid var(--border-2);color:var(--text)}
+.btn-ghost:hover:not(:disabled){background:rgba(255,255,255,.08);border-color:var(--blue)}
+.btn-sm{padding:7px 12px;font-size:12.5px;border-radius:8px}
 .btn-block{width:100%}
-.btn:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
+.btn-icon{padding:8px;width:36px;height:36px;border-radius:9px}
 
-/* ================= FORM ================= */
-.field{margin-bottom:14px}
-.field-label{display:block;font-size:12.5px;font-weight:600;color:var(--txt-2);margin-bottom:6px}
-.input{
-  width:100%;padding:12px 14px;border-radius:11px;
-  background:#fff;border:1.5px solid var(--line);color:var(--txt);
-  outline:none;transition:border .15s,box-shadow .15s;font-size:14px;
+/* =========================================================
+   INPUTS
+   ========================================================= */
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:12.5px;font-weight:600;color:var(--muted)}
+.field input,.field select,.field textarea{
+  width:100%;padding:11px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--border-2);
+  color:var(--text);font-size:14px;outline:none;transition:all .18s;
 }
-.input:focus{border-color:var(--emerald);box-shadow:0 0 0 3px rgba(16,185,129,.15)}
-.input::placeholder{color:var(--txt-3)}
-.input[readonly]{background:#f8fafc;color:var(--txt-2)}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-.chip{
-  padding:8px 14px;border-radius:99px;background:#fff;border:1.5px solid var(--line);
-  font-size:12.5px;font-weight:600;color:var(--txt-2);transition:all .15s;cursor:pointer;
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--blue);background:rgba(59,130,246,.06);
+  box-shadow:0 0 0 3px rgba(59,130,246,.15);
 }
-.chip:hover{border-color:var(--emerald);color:var(--emerald-d)}
-.chip.active{background:var(--emerald-l);border-color:var(--emerald);color:var(--emerald-d)}
+.field input::placeholder{color:var(--muted-2)}
+.field .hint{font-size:11.5px;color:var(--muted-2)}
 
-/* ================= TABS (buy/sell) ================= */
-.switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--line-2);padding:5px;border-radius:12px;margin-bottom:16px}
-.switch-item{
-  padding:11px;border-radius:9px;text-align:center;font-weight:700;font-size:13.5px;
-  color:var(--txt-2);transition:all .15s;cursor:pointer;
+/* =========================================================
+   CARDS / PANELS
+   ========================================================= */
+.card{
+  background:linear-gradient(180deg,var(--panel) 0%, var(--panel-2) 100%);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px;
+  box-shadow:var(--shadow);
 }
-.switch-item.active.buy{background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:0 4px 12px rgba(16,185,129,.3)}
-.switch-item.active.sell{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;box-shadow:0 4px 12px rgba(239,68,68,.3)}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:12px;flex-wrap:wrap}
+.card-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-title svg{width:16px;height:16px;color:var(--blue)}
 
-/* ================= MODAL ================= */
-.modal-bg{
-  position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.4);
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  display:none;align-items:center;justify-content:center;padding:20px;
+/* =========================================================
+   BADGES / PILLS
+   ========================================================= */
+.pill{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700;
+  letter-spacing:.02em;
 }
-.modal-bg.show{display:flex;animation:fade .2s}
-@keyframes fade{from{opacity:0}to{opacity:1}}
-.modal{
-  background:#fff;border-radius:20px;width:100%;max-width:460px;
-  max-height:90vh;display:flex;flex-direction:column;
-  box-shadow:0 24px 60px rgba(15,23,42,.25);
-  animation:pop .25s cubic-bezier(.2,.9,.3,1.2);
-}
-@keyframes pop{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
-.modal-head{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:18px 22px;border-bottom:1px solid var(--line);
-}
-.modal-head h3{font-size:16px;font-weight:700}
-.modal-close{
-  width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;
-  color:var(--txt-3);transition:all .15s;
-}
-.modal-close:hover{background:var(--line-2);color:var(--txt)}
-.modal-close svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
-.modal-body{padding:22px;overflow-y:auto;flex:1}
-.modal-foot{
-  padding:16px 22px;border-top:1px solid var(--line);
-  display:flex;gap:10px;justify-content:flex-end;
-}
-.modal-foot .btn{flex:1}
+.pill-green{background:rgba(16,185,129,.14);color:#4ade80;border:1px solid rgba(16,185,129,.3)}
+.pill-red{background:rgba(239,68,68,.14);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+.pill-blue{background:rgba(59,130,246,.14);color:#93c5fd;border:1px solid rgba(59,130,246,.3)}
+.pill-yellow{background:rgba(245,158,11,.14);color:#fcd34d;border:1px solid rgba(245,158,11,.3)}
+.pill-gray{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--border-2)}
+.pill-purple{background:rgba(139,92,246,.14);color:#c4b5fd;border:1px solid rgba(139,92,246,.3)}
 
-/* ================= TOAST ================= */
-.toast-wrap{
-  position:fixed;top:80px;right:20px;z-index:300;
-  display:flex;flex-direction:column;gap:10px;max-width:340px;
-}
+/* =========================================================
+   TOAST
+   ========================================================= */
+#toasts{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:10px;max-width:360px}
 .toast{
-  background:#fff;border:1px solid var(--line);border-left:4px solid var(--emerald);
-  padding:13px 16px;border-radius:12px;box-shadow:var(--shadow-lg);
-  font-size:13px;font-weight:500;color:var(--txt);
-  animation:slideIn .3s cubic-bezier(.2,.9,.3,1.2);
+  background:linear-gradient(180deg,#161f33,#111827);
+  border:1px solid var(--border-2);
+  border-left:3px solid var(--blue);
+  border-radius:10px;padding:12px 14px;
+  box-shadow:var(--shadow);animation:slideIn .25s ease;
+  display:flex;gap:10px;align-items:flex-start;
 }
-.toast.err{border-left-color:var(--red)}
-.toast.warn{border-left-color:var(--amber)}
-.toast.info{border-left-color:var(--blue)}
-@keyframes slideIn{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:none}}
-.toast.out{animation:slideOut .25s forwards}
-@keyframes slideOut{to{opacity:0;transform:translateX(60px)}}
+.toast.success{border-left-color:var(--green)}
+.toast.error{border-left-color:var(--red)}
+.toast.warn{border-left-color:var(--yellow)}
+.toast-title{font-weight:700;font-size:13.5px}
+.toast-msg{font-size:12.5px;color:var(--muted);margin-top:2px}
+@keyframes slideIn{from{transform:translateX(30px);opacity:0}to{transform:translateX(0);opacity:1}}
 
-/* ================= QRIS ================= */
-.qris-box{
-  background:#fff;border-radius:14px;padding:18px;
-  border:1px solid var(--line);text-align:center;max-width:300px;margin:0 auto;
-  box-shadow:var(--shadow-sm);
+/* =========================================================
+   MODAL
+   ========================================================= */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(2,4,10,.7);backdrop-filter:blur(6px);
+  z-index:9000;display:grid;place-items:center;padding:16px;
+  animation:fadeIn .18s ease;
 }
-.qris-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;
-  padding-bottom:10px;border-bottom:1px dashed var(--line)}
-.qris-head span:first-child{font-weight:800;color:#e11d48;font-size:13px;letter-spacing:.5px}
-.qris-head span:last-child{font-weight:700;color:var(--txt);font-size:13px}
-.qris-box img{width:100%;border-radius:8px;display:block}
-.qris-amt{font-family:var(--mono);font-weight:800;font-size:17px;color:var(--txt);margin-top:12px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{
+  background:linear-gradient(180deg,#131b2b,#0f1524);
+  border:1px solid var(--border-2);
+  border-radius:var(--radius-lg);
+  padding:22px;width:100%;max-width:440px;
+  box-shadow:var(--shadow);
+  animation:pop .22s ease;
+  max-height:92vh;overflow-y:auto;
+}
+@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.modal h3{margin-bottom:6px}
+.modal .modal-sub{color:var(--muted);font-size:13px;margin-bottom:16px}
+.modal-actions{display:flex;gap:10px;margin-top:18px}
+.modal-actions .btn{flex:1}
 
-/* ================= CS FAB ================= */
-.fab{position:fixed;bottom:22px;right:22px;z-index:100}
-.fab-btn{
-  width:56px;height:56px;border-radius:50%;
-  background:linear-gradient(135deg,#10b981,#059669);color:#fff;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 12px 30px rgba(16,185,129,.4);
-  transition:transform .2s;
+/* =========================================================
+   LANDING PAGE
+   ========================================================= */
+#landing{min-height:100vh;display:flex;flex-direction:column}
+.navbar{
+  position:sticky;top:0;z-index:100;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 28px;
+  background:rgba(8,11,19,.85);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
 }
-.fab-btn:hover{transform:scale(1.08)}
-.fab-btn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.fab-menu{
-  position:absolute;bottom:70px;right:0;
-  display:none;flex-direction:column;gap:8px;
+.nav-links{display:flex;gap:26px;font-size:14px;color:var(--muted);font-weight:500}
+.nav-links a{color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+.nav-actions{display:flex;gap:10px;align-items:center}
+.demo-flag{
+  display:inline-flex;gap:6px;align-items:center;
+  padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;
+  background:rgba(245,158,11,.15);color:#fcd34d;
+  border:1px solid rgba(245,158,11,.35);letter-spacing:.04em;
 }
-.fab-menu.show{display:flex;animation:pop .25s}
-.fab-item{
-  display:flex;align-items:center;gap:10px;padding:12px 18px;
-  background:#fff;border:1px solid var(--line);border-radius:12px;
-  box-shadow:var(--shadow-lg);font-size:13px;font-weight:600;white-space:nowrap;
-  transition:transform .15s;
-}
-.fab-item:hover{transform:translateX(-4px)}
-.fab-item svg{width:18px;height:18px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.fab-wa svg{stroke:#25D366}
-.fab-mail svg{stroke:#2563eb}
+.demo-flag::before{content:"";width:6px;height:6px;border-radius:50%;background:#f59e0b;box-shadow:0 0 8px #f59e0b;animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 
-/* ================= EMPTY ================= */
-.empty{
-  padding:40px 20px;text-align:center;color:var(--txt-3);font-size:13px;
-  border:1.5px dashed var(--line);border-radius:var(--radius-sm);
+.hero{padding:70px 28px 50px;max-width:1300px;margin:0 auto;width:100%}
+.hero-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:50px;align-items:center}
+.hero h1{font-size:52px;line-height:1.05;margin-bottom:18px}
+.hero h1 .accent{
+  background:linear-gradient(135deg,#60a5fa,#3b82f6 40%,#10b981);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
 }
+.hero p.lead{font-size:16px;color:var(--muted);max-width:560px;margin-bottom:26px}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+.hero-stats{display:flex;gap:32px;margin-top:36px;flex-wrap:wrap}
+.hero-stat .v{font-size:22px;font-weight:800;font-family:var(--mono)}
+.hero-stat .l{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
 
-/* ================= MOBILE NAV ================= */
+.hero-visual{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--border-2);border-radius:var(--radius-lg);
+  padding:18px;box-shadow:var(--shadow-glow);
+  position:relative;overflow:hidden;
+}
+.hero-visual::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(400px 200px at 80% 0%, rgba(59,130,246,.18), transparent 60%);
+  pointer-events:none;
+}
+#heroChart{height:260px;border-radius:12px;overflow:hidden}
+
+.section{padding:60px 28px;max-width:1300px;margin:0 auto;width:100%}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:26px;gap:16px;flex-wrap:wrap}
+.section-head h2{margin-bottom:4px}
+.section-head p{color:var(--muted);font-size:14px}
+
+/* Feature grid */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.feat{padding:20px;border-radius:var(--radius);background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--border);transition:all .2s}
+.feat:hover{transform:translateY(-3px);border-color:var(--blue);box-shadow:var(--shadow-glow)}
+.feat-icon{width:40px;height:40px;border-radius:10px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);display:grid;place-items:center;color:#93c5fd;margin-bottom:12px}
+.feat-icon svg{width:20px;height:20px}
+.feat h3{font-size:15px;margin-bottom:6px}
+.feat p{font-size:13px;color:var(--muted);line-height:1.55}
+
+/* Market tables on landing */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.two-col-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:900px){.two-col,.two-col-3{grid-template-columns:1fr}}
+
+/* Stock row */
+.stock-row{
+  display:grid;
+  grid-template-columns: 40px 1fr auto auto;
+  gap:12px;align-items:center;
+  padding:11px 4px;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background .15s;
+}
+.stock-row:last-child{border-bottom:none}
+.stock-row:hover{background:rgba(59,130,246,.05)}
+.stock-sym{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#1e293b,#0f172a);display:grid;place-items:center;font-size:11px;font-weight:800;color:#93c5fd;border:1px solid var(--border-2)}
+.stock-info .n{font-weight:600;font-size:13.5px}
+.stock-info .s{font-size:11px;color:var(--muted);letter-spacing:.03em}
+.stock-price{text-align:right;font-family:var(--mono);font-weight:600;font-size:13.5px}
+.stock-chg{min-width:70px;text-align:right;font-family:var(--mono);font-weight:700;font-size:12.5px}
+.up{color:var(--green)}
+.down{color:var(--red)}
+
+/* Footer */
+footer{margin-top:40px;border-top:1px solid var(--border);padding:40px 28px 20px;background:rgba(8,11,19,.5)}
+.footer-grid{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px;padding-bottom:26px}
+.footer-grid h4{font-size:13px;margin-bottom:12px;color:var(--text)}
+.footer-grid a{display:block;color:var(--muted);font-size:13px;padding:4px 0}
+.footer-grid a:hover{color:var(--blue)}
+.footer-bottom{max-width:1300px;margin:0 auto;padding-top:20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12.5px;color:var(--muted)}
+@media(max-width:800px){.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.footer-grid{grid-template-columns:1fr}}
+
+/* =========================================================
+   AUTH PAGE
+   ========================================================= */
+#auth{min-height:100vh;display:grid;place-items:center;padding:24px}
+.auth-card{
+  width:100%;max-width:420px;
+  background:linear-gradient(180deg,#131b2b,#0f1524);
+  border:1px solid var(--border-2);border-radius:var(--radius-lg);
+  padding:28px;box-shadow:var(--shadow-glow);
+}
+.auth-card h2{margin-bottom:6px}
+.auth-sub{color:var(--muted);font-size:13px;margin-bottom:20px}
+.auth-tabs{display:flex;gap:4px;padding:4px;background:rgba(255,255,255,.03);border-radius:10px;margin-bottom:20px}
+.auth-tab{flex:1;padding:9px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);transition:all .15s}
+.auth-tab.active{background:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(59,130,246,.35)}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted-2);font-size:12px}
+.auth-divider::before,.auth-divider::after{content:"";flex:1;height:1px;background:var(--border-2)}
+.google-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:11px;border-radius:10px;
+  background:#fff;color:#1a1a1a;font-weight:600;font-size:14px;
+  border:1px solid #e5e7eb;transition:all .15s;
+}
+.google-btn:hover{background:#f3f4f6}
+.google-btn svg{width:18px;height:18px}
+.auth-note{margin-top:16px;padding:11px;border-radius:10px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);font-size:12px;color:#fcd34d;line-height:1.5}
+
+/* =========================================================
+   APP SHELL
+   ========================================================= */
+#app{display:none;min-height:100vh}
+#app.active{display:grid;grid-template-columns:250px 1fr}
+@media(max-width:900px){#app.active{grid-template-columns:1fr}}
+
+.sidebar{
+  background:linear-gradient(180deg,#0d1220,#0a0f1c);
+  border-right:1px solid var(--border);
+  padding:20px 14px;display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+.sidebar .logo{padding:0 8px 20px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.nav-section{font-size:10.5px;color:var(--muted-2);text-transform:uppercase;letter-spacing:.12em;font-weight:700;padding:12px 10px 6px}
+.nav-item{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 12px;border-radius:10px;
+  color:var(--muted);font-size:13.5px;font-weight:500;
+  cursor:pointer;transition:all .15s;margin-bottom:2px;
+}
+.nav-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.nav-item.active{background:linear-gradient(90deg,rgba(59,130,246,.18),rgba(59,130,246,.04));color:#fff;border-left:2px solid var(--blue);padding-left:10px}
+.nav-item svg{width:17px;height:17px;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:10px;padding:2px 6px;border-radius:5px;background:rgba(16,185,129,.18);color:#4ade80;font-weight:700}
+
+.main{min-height:100vh;padding-bottom:40px}
+.topbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 24px;
+  background:rgba(10,14,23,.85);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  gap:16px;
+}
+.topbar-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+#menuBtn{display:none}
+@media(max-width:900px){#menuBtn{display:inline-flex}}
+.page-title{font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.market-clock{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 11px;border-radius:9px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border-2);
+  font-size:12px;font-family:var(--mono);
+}
+.market-clock .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.market-clock.closed .dot{background:var(--red);box-shadow:0 0 8px var(--red)}
+@media(max-width:600px){.market-clock{display:none}}
+.avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;
+  cursor:pointer;border:2px solid var(--border-2);
+}
+.icon-btn{position:relative;width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.03);border:1px solid var(--border-2);display:grid;place-items:center;cursor:pointer;transition:all .15s}
+.icon-btn:hover{background:rgba(255,255,255,.07);border-color:var(--blue)}
+.icon-btn svg{width:17px;height:17px;color:var(--muted)}
+.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid var(--bg);display:none}
+
+.content{padding:22px 24px;max-width:1500px;margin:0 auto;width:100%}
+@media(max-width:600px){.content{padding:16px}}
+
+/* Page switching */
+.page{display:none;animation:fadeIn .25s ease}
+.page.active{display:block}
+
+/* Stat cards */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:22px}
+.stat{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;position:relative;overflow:hidden;
+}
+.stat::after{content:"";position:absolute;top:0;right:0;width:80px;height:80px;background:radial-gradient(circle,rgba(59,130,246,.12),transparent 70%);pointer-events:none}
+.stat .label{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:6px}
+.stat .value{font-size:22px;font-weight:800;font-family:var(--mono);letter-spacing:-.02em}
+.stat .delta{font-size:12.5px;margin-top:6px;font-weight:600;font-family:var(--mono)}
+.stat.blue .value{color:#93c5fd}
+.stat.green .value{color:#4ade80}
+.stat.red .value{color:#fca5a5}
+.stat.yellow .value{color:#fcd34d}
+
+/* Grid helper */
+.grid-2{display:grid;grid-template-columns:2fr 1fr;gap:18px}
+.grid-3{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:18px}
+.grid-half{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:1000px){.grid-2,.grid-3{grid-template-columns:1fr}}
+@media(max-width:700px){.grid-half{grid-template-columns:1fr}}
+
+/* Tables */
+.table-wrap{overflow-x:auto;margin:0 -6px}
+table.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{
+  text-align:left;padding:10px 8px;font-size:11px;font-weight:700;
+  color:var(--muted);text-transform:uppercase;letter-spacing:.06em;
+  border-bottom:1px solid var(--border);white-space:nowrap;
+}
+.tbl td{padding:12px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(59,130,246,.04)}
+.tbl .num{text-align:right;font-family:var(--mono)}
+
+/* Chart container */
+.chart-box{height:380px;width:100%;position:relative}
+.chart-box.sm{height:220px}
+.tv-attribution{position:absolute;bottom:4px;right:6px;font-size:10px;color:var(--muted-2)}
+
+/* Market list toolbar */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.toolbar input{flex:1;min-width:200px;padding:10px 13px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border-2);color:var(--text);outline:none}
+.toolbar input:focus{border-color:var(--blue)}
+.chip{padding:7px 13px;border-radius:9px;font-size:12.5px;font-weight:600;background:rgba(255,255,255,.03);border:1px solid var(--border-2);color:var(--muted);cursor:pointer;transition:all .15s}
+.chip:hover{border-color:var(--blue);color:var(--text)}
+.chip.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* Order book / trade panel */
+.trade-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:18px}
+@media(max-width:900px){.trade-grid{grid-template-columns:1fr}}
+.side-toggle{display:flex;gap:6px;padding:4px;background:rgba(255,255,255,.03);border-radius:10px;margin-bottom:16px}
+.side-toggle button{flex:1;padding:10px;border-radius:8px;font-weight:700;color:var(--muted);transition:all .15s}
+.side-toggle button.buy.active{background:var(--green);color:#fff}
+.side-toggle button.sell.active{background:var(--red);color:#fff}
+
+.summary-box{background:rgba(255,255,255,.02);border:1px dashed var(--border-2);border-radius:10px;padding:12px;margin:12px 0}
+.summary-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12.5px}
+.summary-row .k{color:var(--muted)}
+.summary-row .v{font-family:var(--mono);font-weight:600}
+.summary-row.total{border-top:1px solid var(--border-2);padding-top:8px;margin-top:4px;font-weight:700;font-size:13.5px}
+
+/* Empty state */
+.empty{padding:36px 20px;text-align:center;color:var(--muted)}
+.empty svg{width:48px;height:48px;color:var(--muted-2);margin-bottom:10px}
+.empty h4{color:var(--text);margin-bottom:4px}
+.empty p{font-size:13px}
+
+/* Skeleton */
+.skel{background:linear-gradient(90deg,#131b2b,#1a2338,#131b2b);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:8px;height:14px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* News */
+.news-item{padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.news-item:last-child{border-bottom:none}
+.news-item h4{font-size:13.5px;font-weight:600;margin-bottom:4px}
+.news-item h4:hover{color:var(--blue)}
+.news-item .meta{font-size:11.5px;color:var(--muted)}
+
+/* Watchlist star */
+.star{cursor:pointer;color:var(--muted-2);transition:color .15s}
+.star.on{color:var(--yellow)}
+
+/* Mobile bottom nav */
 .mobile-nav{
-  display:none;position:fixed;bottom:0;left:0;right:0;z-index:60;
-  background:rgba(255,255,255,.95);backdrop-filter:blur(14px);
-  border-top:1px solid var(--line);
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:80;
+  background:rgba(10,14,23,.95);backdrop-filter:blur(14px);
+  border-top:1px solid var(--border);
   padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+  grid-template-columns:repeat(5,1fr);gap:2px;
 }
-.mobile-nav-inner{display:flex;justify-content:space-around;align-items:center}
-.mn-item{
-  display:flex;flex-direction:column;align-items:center;gap:3px;
-  padding:6px 10px;border-radius:10px;font-size:10px;font-weight:600;
-  color:var(--txt-3);cursor:pointer;min-width:56px;transition:color .15s;
-}
-.mn-item.active{color:#0b1220}
-.mn-item.active svg{stroke:#0b1220}
-.mn-item svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px;color:var(--muted);font-size:10.5px;font-weight:600;border-radius:8px}
+.mobile-nav button.active{color:var(--blue);background:rgba(59,130,246,.08)}
+.mobile-nav button svg{width:19px;height:19px}
+@media(max-width:900px){.mobile-nav{display:grid}.main{padding-bottom:80px}}
 
-/* ================= RESPONSIVE ================= */
-@media (max-width:960px){
-  .grid-2{grid-template-columns:1fr}
-  .grid-4{grid-template-columns:repeat(2,1fr)}
+/* Overlay for mobile sidebar */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:60;display:none}
+.overlay.show{display:block}
+
+@media(max-width:900px){
+  .sidebar{position:fixed;left:-260px;top:0;z-index:70;transition:left .25s;width:250px;box-shadow:var(--shadow)}
+  .sidebar.open{left:0}
 }
-@media (max-width:768px){
-  .header-inner{padding:12px 16px;gap:12px}
-  .nav{display:none}
-  .hamburger{display:flex}
-  .container{padding:16px;padding-bottom:96px}
-  .grid-3{grid-template-columns:1fr}
-  .grid-4{grid-template-columns:1fr 1fr}
-  .actions-row{grid-template-columns:repeat(4,1fr);gap:8px}
-  .action-btn{padding:12px 6px;font-size:11px;gap:6px}
-  .action-btn svg{width:18px;height:18px}
-  .asset-card{padding:22px;min-height:200px}
-  .ac-details{gap:22px;margin-top:16px}
-  .mini-grid{grid-template-columns:1fr 1fr}
-  .mobile-nav{display:block}
-  .chart-wrap{height:260px}
-  .chart-head{flex-direction:column;align-items:stretch}
-  .chart-price,.chart-delta{text-align:left}
-  .stock-row{grid-template-columns:48px 1fr auto;gap:10px}
-  .stock-delta{grid-column:3;grid-row:1;margin-left:auto}
-  .stock-price{display:none}
-  .stock-prev{display:none}
-  .field-row{grid-template-columns:1fr}
-  .toast-wrap{left:16px;right:16px;top:70px;max-width:none}
-  .fab{bottom:84px;right:16px}
+
+/* Risk disclaimer banner */
+.risk-banner{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:14px;border-radius:12px;margin-bottom:18px;
+  background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.25);
+  font-size:12.5px;color:#fcd34d;line-height:1.55;
 }
-@media (max-width:420px){
-  .grid-4{grid-template-columns:1fr}
-  .mini-grid{grid-template-columns:1fr 1fr}
-  .container{padding:12px;padding-bottom:96px}
-}
+.risk-banner svg{width:18px;height:18px;flex-shrink:0;margin-top:1px}
+
+/* Small util */
+.flex{display:flex}
+.between{justify-content:space-between}
+.center{align-items:center}
+.gap-8{gap:8px}
+.gap-12{gap:12px}
+.mt-12{margin-top:12px}
+.mb-12{margin-bottom:12px}
+.mb-16{margin-bottom:16px}
+.text-right{text-align:right}
+.hidden{display:none!important}
 </style>
 </head>
 <body>
 
-<!-- ============ HEADER ============ -->
-<header class="header">
-  <div class="header-inner">
-    <div class="brand">
-      <div class="brand-mark">C</div>
-      <div class="brand-name">CAZOO</div>
-    </div>
-    <nav class="nav" id="navDesktop">
-      <div class="nav-tab active" data-view="home">Beranda</div>
-      <div class="nav-tab" data-view="market">Pasar</div>
-      <div class="nav-tab" data-view="trade">Trading</div>
-      <div class="nav-tab" data-view="portfolio">Portofolio</div>
-      <div class="nav-tab" data-view="deposit">Deposit</div>
-      <div class="nav-tab" data-view="withdraw">Tarik</div>
-    </nav>
-    <button class="btn-login" id="loginBtn">
-      <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" opacity=".85"/><path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" opacity=".7"/><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" opacity=".9"/></svg>
-      Masuk
-    </button>
-    <div class="user-chip hidden" id="userChip">
-      <div class="avatar-fallback" id="avatarFallback">U</div>
-      <span id="userName">Pengguna</span>
-    </div>
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-    </button>
-  </div>
-</header>
+<!-- Toast container -->
+<div id="toasts"></div>
 
-<!-- ============ MAIN ============ -->
-<main class="container" id="main">
+<!-- Modal container -->
+<div id="modalRoot"></div>
 
-  <!-- ====== HOME ====== -->
-  <section data-section="home">
-    <div class="grid-2 section">
-      <div class="asset-card">
-        <div class="ac-row">
-          <div class="ac-brand">
-            <div class="ac-brand-mark">C</div>
-            <span>CAZOO</span>
-          </div>
-          <div class="ac-chip"><i></i><i></i></div>
+<!-- ============================================================
+     LANDING PAGE
+     ============================================================ -->
+<div id="landing">
+  <nav class="navbar">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 64 64" fill="none">
+          <path d="M14 44 L24 26 L34 34 L46 14" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="46" cy="14" r="5" fill="#10b981"/>
+        </svg>
+      </div>
+      <div class="logo-text">Cazoo<span>.</span></div>
+      <span class="logo-badge">Exchange</span>
+    </div>
+    <div class="nav-links">
+      <a href="#pasar">Pasar</a>
+      <a href="#fitur">Fitur</a>
+      <a href="#berita">Berita</a>
+      <a href="#bantuan">Bantuan</a>
+    </div>
+    <div class="nav-actions">
+      <span class="demo-flag">MODE DEMO</span>
+      <button class="btn btn-ghost btn-sm" onclick="go('auth')">Masuk</button>
+      <button class="btn btn-primary btn-sm" onclick="go('auth','register')">Daftar</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="demo-flag" style="margin-bottom:16px">SIMULASI — SALDO VIRTUAL</div>
+        <h1>Perdagangan saham <span class="accent">modern</span> dalam satu platform.</h1>
+        <p class="lead">Pantau pasar, kelola portofolio, dan lakukan transaksi saham simulasi dengan antarmuka kelas profesional. Data pasar dan transaksi pada demo ini bersifat virtual.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary" onclick="go('auth','register')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+            Mulai Sekarang
+          </button>
+          <button class="btn btn-ghost" onclick="document.getElementById('pasar').scrollIntoView({behavior:'smooth'})">Lihat Pasar</button>
         </div>
-        <div>
-          <div class="ac-label">Total Saldo</div>
-          <div class="ac-balance" id="acBalance">Rp 0</div>
-        </div>
-        <div class="ac-row" style="align-items:flex-end">
-          <div class="ac-details" style="margin-top:0">
-            <div>
-              <div class="ac-detail-label">Pemegang</div>
-              <div class="ac-detail-value" id="acHolder">TAMU CAZOO</div>
-            </div>
-            <div>
-              <div class="ac-detail-label">ID Akun</div>
-              <div class="ac-detail-value" id="acId">CAZ-•••• 0001</div>
-            </div>
-          </div>
-          <div class="ac-pl" id="acPl">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/></svg>
-            <span>+0.00%</span>
-          </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="v" id="statStocks">—</div><div class="l">Saham Demo</div></div>
+          <div class="hero-stat"><div class="v" id="statVolume">—</div><div class="l">Volume Hari Ini</div></div>
+          <div class="hero-stat"><div class="v" id="statIdx">—</div><div class="l">Indeks Cazoo</div></div>
         </div>
       </div>
-
-      <div class="mini-grid">
-        <div class="mini-card">
+      <div class="hero-visual">
+        <div class="flex between center mb-12">
           <div>
-            <div class="mini-icon"><svg viewBox="0 0 24 24"><path d="M3 7h18v13H3zM8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></div>
-            <div class="mini-label">Saldo Tersedia</div>
-            <div class="mini-value" id="miniAvail">Rp 0</div>
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700">Indeks Cazoo (Demo)</div>
+            <div style="font-size:24px;font-weight:800;font-family:var(--mono);margin-top:2px" id="idxVal">—</div>
           </div>
-          <div class="mini-delta up">Siap digunakan</div>
+          <span class="pill pill-green" id="idxChg">—</span>
         </div>
-        <div class="mini-card">
-          <div>
-            <div class="mini-icon blue"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></div>
-            <div class="mini-label">Nilai Portofolio</div>
-            <div class="mini-value" id="miniPort">Rp 0</div>
-          </div>
-          <div class="mini-delta up" id="miniPortDelta">+0.00%</div>
-        </div>
-        <div class="mini-card">
-          <div>
-            <div class="mini-icon amber"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-            <div class="mini-label">Saldo Tertahan</div>
-            <div class="mini-value" id="miniHold">Rp 0</div>
-          </div>
-          <div class="mini-delta" style="color:var(--txt-3)">Sedang diproses</div>
-        </div>
-        <div class="mini-card">
-          <div>
-            <div class="mini-icon red"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M14 7h7v7"/></svg></div>
-            <div class="mini-label">Total P/L</div>
-            <div class="mini-value" id="miniPnl">Rp 0</div>
-          </div>
-          <div class="mini-delta up" id="miniPnlDelta">Hari ini</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="actions-row section">
-      <button class="action-btn" data-action="deposit">
-        <svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
-        Deposit
-      </button>
-      <button class="action-btn danger" data-action="withdraw">
-        <svg viewBox="0 0 24 24"><path d="M12 21V9M7 14l5-5 5 5M5 3h14"/></svg>
-        Tarik
-      </button>
-      <button class="action-btn blue" data-action="trade">
-        <svg viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l3-3 4 4 5-6"/></svg>
-        Trading
-      </button>
-      <button class="action-btn" data-action="portfolio">
-        <svg viewBox="0 0 24 24"><path d="M3 7h18v13H3zM8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
-        Portofolio
-      </button>
-    </div>
-
-    <div class="section">
-      <div class="section-head">
-        <div>
-          <div class="section-title">Grafik Pasar</div>
-          <div class="section-sub" id="chartSubtitle">Data demonstrasi</div>
-        </div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-head">
-          <div>
-            <div class="chart-symbol" id="chartSym">BBCA</div>
-            <div class="chart-name" id="chartName">Bank Central Asia</div>
-          </div>
-          <div>
-            <div class="chart-price" id="chartPrice">Rp 0</div>
-            <div class="chart-delta up" id="chartDelta">+0.00%</div>
-          </div>
-        </div>
-        <div class="tf-bar" id="tfBar">
-          <button class="tf-btn" data-tf="1D">1H</button>
-          <button class="tf-btn active" data-tf="1W">1M</button>
-          <button class="tf-btn" data-tf="1M">3B</button>
-          <button class="tf-btn" data-tf="3M">6B</button>
-          <button class="tf-btn" data-tf="1Y">1T</button>
-          <button class="tf-btn" data-tf="ALL">Semua</button>
-        </div>
-        <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-head">
-        <div class="section-title">Saham Populer</div>
-        <div class="section-sub">Klik untuk lihat grafik</div>
-      </div>
-      <div class="card card-pad-0">
-        <div class="stock-list" id="homeStockList"></div>
+        <div id="heroChart"></div>
       </div>
     </div>
   </section>
 
-  <!-- ====== MARKET ====== -->
-  <section data-section="market" class="hidden">
+  <!-- Pasar -->
+  <section class="section" id="pasar">
     <div class="section-head">
       <div>
-        <div class="section-title">Pasar Saham</div>
-        <div class="section-sub">Daftar instrumen yang tersedia</div>
+        <h2>Ringkasan Pasar</h2>
+        <p>Data saham demonstrasi untuk keperluan uji coba platform.</p>
       </div>
+      <span class="demo-flag">DATA DEMO</span>
     </div>
-    <div class="card card-pad-0">
-      <div class="stock-list" id="marketStockList"></div>
-    </div>
-  </section>
-
-  <!-- ====== TRADE ====== -->
-  <section data-section="trade" class="hidden">
-    <div class="grid-2 section">
-      <div>
-        <div class="chart-card">
-          <div class="chart-head">
-            <div>
-              <div class="chart-symbol" id="tradeSym">BBCA</div>
-              <div class="chart-name" id="tradeName">Bank Central Asia</div>
-            </div>
-            <div>
-              <div class="chart-price" id="tradePrice">Rp 0</div>
-              <div class="chart-delta up" id="tradeDelta">+0.00%</div>
-            </div>
-          </div>
-          <div class="tf-bar" id="tradeTfBar">
-            <button class="tf-btn" data-tf="1D">1H</button>
-            <button class="tf-btn active" data-tf="1W">1M</button>
-            <button class="tf-btn" data-tf="1M">3B</button>
-            <button class="tf-btn" data-tf="3M">6B</button>
-            <button class="tf-btn" data-tf="1Y">1T</button>
-          </div>
-          <div class="chart-wrap"><canvas id="tradeChart"></canvas></div>
-        </div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Saham Populer</div></div>
+        <div id="landingPopular"></div>
       </div>
-      <div>
-        <div class="card">
-          <div class="switch" id="sideSwitch">
-            <div class="switch-item active buy" data-side="buy">BELI</div>
-            <div class="switch-item" data-side="sell">JUAL</div>
-          </div>
-          <div class="field">
-            <label class="field-label">Jumlah Lot (1 lot = 100 lembar)</label>
-            <input class="input" type="number" id="qtyInput" min="1" value="1">
-          </div>
-          <div class="field">
-            <label class="field-label">Harga per Saham</label>
-            <input class="input" id="priceInput" readonly>
-          </div>
-          <div style="background:#f8fafc;border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px">
-            <div style="display:flex;justify-content:space-between;padding:4px 0;color:var(--txt-2)">
-              <span>Harga</span><b id="sumPrice" style="font-family:var(--mono);color:var(--txt)">Rp 0</b>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:4px 0;color:var(--txt-2)">
-              <span>Jumlah</span><b id="sumQty" style="font-family:var(--mono);color:var(--txt)">1 lot</b>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:4px 0;color:var(--txt-2)">
-              <span>Biaya (0,15%)</span><b id="sumFee" style="font-family:var(--mono);color:var(--txt)">Rp 0</b>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:8px 0 0;margin-top:8px;border-top:1px solid var(--line);color:var(--txt)">
-              <span style="font-weight:700">Total</span><b id="sumTotal" style="font-family:var(--mono);color:var(--emerald-d);font-size:15px">Rp 0</b>
-            </div>
-          </div>
-          <button class="btn btn-emerald btn-block" id="submitOrder">Beli Sekarang</button>
-        </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title"><span class="up">↑</span> Top Gainer</div></div>
+        <div id="landingGainers"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title"><span class="down">↓</span> Top Loser</div></div>
+        <div id="landingLosers"></div>
       </div>
     </div>
   </section>
 
-  <!-- ====== PORTFOLIO ====== -->
-  <section data-section="portfolio" class="hidden">
+  <!-- Fitur -->
+  <section class="section" id="fitur">
     <div class="section-head">
+      <div><h2>Fitur Platform</h2><p>Semua komponen inti platform trading dalam satu sistem.</p></div>
+    </div>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 6-6"/></svg></div>
+        <h3>Grafik Interaktif</h3>
+        <p>Candlestick, garis, dan area dengan indikator Moving Average menggunakan TradingView Lightweight Charts.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 4v16"/></svg></div>
+        <h3>Portofolio Real-time</h3>
+        <p>Hitung otomatis nilai portofolio, P&L belum dan sudah terealisasi dari seluruh transaksi Anda.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+        <h3>Transaksi Atomik</h3>
+        <p>Validasi saldo dan kepemilikan sebelum order disetujui. Anti saldo negatif dan double-order.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+        <h3>Jam Pasar</h3>
+        <p>Status buka/tutup, hitung mundur sesi, dan zona waktu Asia/Jakarta secara otomatis.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Keamanan & Audit</h3>
+        <p>Role-based access, audit log admin, dan pemisahan mode DEMO/REAL untuk mencegah pencampuran aset.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <h3>Notifikasi</h3>
+        <p>Pemberitahuan transaksi, deposit, penarikan, dan pengumuman admin secara in-app.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Berita -->
+  <section class="section" id="berita">
+    <div class="section-head"><div><h2>Berita & Pengumuman</h2><p>Informasi terbaru seputar platform dan pasar.</p></div></div>
+    <div class="grid-half">
+      <div class="card"><div id="newsList"></div></div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Jam Perdagangan</div></div>
+        <div id="marketHours"></div>
+        <div class="mt-12" style="padding-top:14px;border-top:1px solid var(--border)">
+          <div class="card-title" style="margin-bottom:10px">Pusat Bantuan</div>
+          <p class="muted" style="font-size:13px;line-height:1.6">Butuh bantuan? Kunjungi <a href="#bantuan">pusat bantuan</a> atau hubungi tim dukungan kami. Untuk versi produksi, seluruh transaksi keuangan harus melalui backend terautentikasi.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="bantuan">
+    <div class="footer-grid">
       <div>
-        <div class="section-title">Portofolio Saya</div>
-        <div class="section-sub" id="portfolioSummary">0 aset</div>
+        <div class="logo" style="margin-bottom:12px">
+          <div class="logo-mark"><svg viewBox="0 0 64 64" fill="none"><path d="M14 44 L24 26 L34 34 L46 14" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46" cy="14" r="5" fill="#10b981"/></svg></div>
+          <div class="logo-text">Cazoo<span>.</span></div>
+        </div>
+        <p class="muted" style="font-size:13px;line-height:1.6;max-width:340px">Cazoo Stock Exchange adalah platform perdagangan saham <strong>demonstrasi</strong>. Tidak ada uang, saham, atau aset nyata yang diperdagangkan di lingkungan ini.</p>
+        <div class="demo-flag" style="margin-top:12px">MODE DEMO — SALDO VIRTUAL</div>
       </div>
-      <button class="btn btn-outline" data-action="trade" style="font-size:12.5px;padding:9px 14px">
-        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Tambah
-      </button>
-    </div>
-    <div class="pf-grid" id="portfolioGrid"></div>
-  </section>
-
-  <!-- ====== DEPOSIT ====== -->
-  <section data-section="deposit" class="hidden">
-    <div class="grid-2 section">
-      <div class="card">
-        <div class="section-title" style="margin-bottom:16px">Buat Permintaan Deposit</div>
-        <div class="field">
-          <label class="field-label">Nominal (Min. Rp 10.000)</label>
-          <input class="input" type="number" id="depAmount" placeholder="100000" min="10000">
-        </div>
-        <div class="chips" id="depChips">
-          <div class="chip" data-amt="50000">Rp 50.000</div>
-          <div class="chip" data-amt="100000">Rp 100.000</div>
-          <div class="chip" data-amt="250000">Rp 250.000</div>
-          <div class="chip" data-amt="500000">Rp 500.000</div>
-          <div class="chip" data-amt="1000000">Rp 1.000.000</div>
-        </div>
-        <button class="btn btn-emerald btn-block" id="submitDeposit">
-          <svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
-          Buat Permintaan Deposit
-        </button>
-        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px;margin-top:14px;font-size:12.5px;color:#92400e;line-height:1.6">
-          <b>Catatan:</b> QRIS bersifat statis. Setelah transfer, kirim bukti ke CS untuk verifikasi manual. Saldo akan ditambahkan setelah admin menyetujui.
-        </div>
+      <div>
+        <h4>Platform</h4>
+        <a href="#" onclick="go('auth');return false">Masuk</a>
+        <a href="#" onclick="go('auth','register');return false">Daftar</a>
+        <a href="#pasar">Pasar Saham</a>
+        <a href="#fitur">Fitur</a>
       </div>
-
-      <div class="card">
-        <div class="section-title" style="margin-bottom:16px">QRIS Pembayaran</div>
-        <div class="qris-box">
-          <div class="qris-head">
-            <span>QRIS</span>
-            <span>CAZOO</span>
-          </div>
-          <img src="https://i.ibb.co.com/PGRy3SyQ/IMG-20261012-160202.jpg" alt="QRIS CAZOO"
-               onerror="this.parentNode.innerHTML='<div style=&quot;padding:30px;color:#94a3b8;font-size:12px&quot;>QRIS belum dapat dimuat</div>'">
-          <div class="qris-amt" id="qrisAmt">Masukkan nominal</div>
-        </div>
-        <p style="text-align:center;color:var(--txt-3);font-size:12px;margin-top:14px;line-height:1.6">
-          Scan dengan aplikasi bank / e-wallet Anda
-        </p>
+      <div>
+        <h4>Legal</h4>
+        <a href="#" onclick="openLegal('tentang');return false">Tentang Cazoo</a>
+        <a href="#" onclick="openLegal('syarat');return false">Syarat & Ketentuan</a>
+        <a href="#" onclick="openLegal('privasi');return false">Kebijakan Privasi</a>
+        <a href="#" onclick="openLegal('risiko');return false">Pengungkapan Risiko</a>
+      </div>
+      <div>
+        <h4>Bantuan</h4>
+        <a href="#" onclick="openLegal('kontak');return false">Kontak Dukungan</a>
+        <a href="#" onclick="openLegal('pembayaran');return false">Kebijakan Pembayaran</a>
+        <a href="#" onclick="openLegal('penarikan');return false">Kebijakan Penarikan</a>
       </div>
     </div>
-
-    <div class="section">
-      <div class="section-head"><div class="section-title">Riwayat Deposit</div></div>
-      <div class="card card-pad-0">
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th>Tanggal</th><th>Nominal</th><th>Status</th><th>Referensi</th></tr></thead>
-            <tbody id="depHistBody"></tbody>
-          </table>
-        </div>
-      </div>
+    <div class="footer-bottom">
+      <div>© <span id="year"></span> Cazoo Stock Exchange — Demo Mode. Bukan bursa berizin.</div>
+      <div>Dibuat untuk keperluan pembelajaran dan pengembangan.</div>
     </div>
-  </section>
+  </footer>
+</div>
 
-  <!-- ====== WITHDRAW ====== -->
-  <section data-section="withdraw" class="hidden">
-    <div class="card section" style="max-width:640px;margin-left:auto;margin-right:auto">
-      <div class="section-title" style="margin-bottom:16px">Tarik Saldo</div>
-      <div class="field">
-        <label class="field-label">Saldo Tersedia</label>
-        <input class="input" id="wdAvail" readonly>
+<!-- ============================================================
+     AUTH PAGE
+     ============================================================ -->
+<div id="auth" class="hidden">
+  <div class="auth-card">
+    <div class="logo" style="margin-bottom:22px" onclick="go('landing')">
+      <div class="logo-mark"><svg viewBox="0 0 64 64" fill="none"><path d="M14 44 L24 26 L34 34 L46 14" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46" cy="14" r="5" fill="#10b981"/></svg></div>
+      <div class="logo-text">Cazoo<span>.</span></div>
+    </div>
+    <h2 id="authTitle">Masuk ke akun Anda</h2>
+    <p class="auth-sub">Gunakan akun demo untuk mengakses dashboard.</p>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchAuth('login')">Masuk</button>
+      <button class="auth-tab" id="tabRegister" onclick="switchAuth('register')">Daftar</button>
+    </div>
+
+    <form id="authForm" onsubmit="return submitAuth(event)">
+      <div class="field" id="fieldUsername" style="display:none">
+        <label>Nama Pengguna</label>
+        <input type="text" id="inUsername" placeholder="cazoo_trader" autocomplete="username" />
       </div>
       <div class="field">
-        <label class="field-label">Nominal Penarikan (Min. Rp 50.000)</label>
-        <input class="input" type="number" id="wdAmount" placeholder="50000" min="50000">
+        <label>Email</label>
+        <input type="email" id="inEmail" placeholder="nama@email.com" autocomplete="email" required />
       </div>
       <div class="field">
-        <label class="field-label">Metode</label>
-        <select class="input" id="wdMethod">
-          <option value="bank">Transfer Bank</option>
-          <option value="ewallet">E-Wallet (OVO/DANA/GoPay)</option>
-        </select>
+        <label>Kata Sandi</label>
+        <input type="password" id="inPassword" placeholder="Minimal 6 karakter" autocomplete="current-password" required />
       </div>
-      <div class="field-row">
-        <div class="field">
-          <label class="field-label">Bank / E-Wallet</label>
-          <input class="input" id="wdBank" placeholder="BCA / OVO / ...">
-        </div>
-        <div class="field">
-          <label class="field-label">Nomor Rekening</label>
-          <input class="input" id="wdAccount" placeholder="1234567890">
-        </div>
-      </div>
-      <div class="field">
-        <label class="field-label">Nama Pemilik Rekening</label>
-        <input class="input" id="wdOwner" placeholder="Sesuai buku tabungan">
-      </div>
-      <button class="btn btn-primary btn-block" id="submitWithdraw">
-        <svg viewBox="0 0 24 24"><path d="M12 21V9M7 14l5-5 5 5M5 3h14"/></svg>
-        Ajukan Penarikan
-      </button>
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:12px;margin-top:14px;font-size:12.5px;color:#1e40af;line-height:1.6">
-        Permintaan akan diproses oleh admin dalam 1×24 jam kerja. Status akan diperbarui otomatis.
-      </div>
+      <button class="btn btn-primary btn-block" type="submit" id="authSubmit">Masuk</button>
+    </form>
+
+    <div class="auth-divider">atau</div>
+    <button class="google-btn" onclick="googleSignIn()">
+      <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.1-11.3-7.6l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.6l6.2 5.2C41.4 35.4 44 30.1 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
+      Masuk dengan Google
+    </button>
+
+    <div class="auth-note">
+      <strong>⚠️ Perhatian:</strong> Ini lingkungan demonstrasi. Google Sign-In asli memerlukan konfigurasi Firebase. Saldo bersifat virtual dan tidak ada uang nyata yang terlibat.
     </div>
 
-    <div class="section">
-      <div class="section-head"><div class="section-title">Riwayat Penarikan</div></div>
-      <div class="card card-pad-0">
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr><th>Tanggal</th><th>Nominal</th><th>Metode</th><th>Status</th></tr></thead>
-            <tbody id="wdHistBody"></tbody>
-          </table>
-        </div>
-      </div>
+    <div style="text-align:center;margin-top:16px">
+      <button class="btn btn-ghost btn-sm" onclick="go('landing')">← Kembali ke Beranda</button>
     </div>
-  </section>
-
-</main>
-
-<!-- ============ MOBILE NAV ============ -->
-<nav class="mobile-nav">
-  <div class="mobile-nav-inner">
-    <div class="mn-item active" data-view="home">
-      <svg viewBox="0 0 24 24"><path d="M3 12l9-9 9 9M5 10v10h5v-6h4v6h5V10"/></svg>
-      Beranda
-    </div>
-    <div class="mn-item" data-view="market">
-      <svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/></svg>
-      Pasar
-    </div>
-    <div class="mn-item" data-view="trade">
-      <svg viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l3-3 4 4 5-6"/></svg>
-      Trading
-    </div>
-    <div class="mn-item" data-view="portfolio">
-      <svg viewBox="0 0 24 24"><path d="M3 7h18v13H3zM8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
-      Portofolio
-    </div>
-    <div class="mn-item" data-view="deposit">
-      <svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
-      Deposit
-    </div>
-  </div>
-</nav>
-
-<!-- ============ MODAL ============ -->
-<div class="modal-bg" id="modalBg">
-  <div class="modal">
-    <div class="modal-head">
-      <h3 id="modalTitle">Konfirmasi</h3>
-      <button class="modal-close" id="modalClose">
-        <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-    <div class="modal-body" id="modalBody"></div>
-    <div class="modal-foot" id="modalFoot"></div>
   </div>
 </div>
 
-<!-- ============ TOAST ============ -->
-<div class="toast-wrap" id="toastWrap"></div>
+<!-- ============================================================
+     APP SHELL
+     ============================================================ -->
+<div id="app">
+  <div class="overlay" id="overlay" onclick="toggleSidebar(false)"></div>
 
-<!-- ============ CS FAB ============ -->
-<div class="fab">
-  <button class="fab-btn" id="fabBtn" aria-label="Customer Service">
-    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-  </button>
-  <div class="fab-menu" id="fabMenu">
-    <a href="https://wa.me/6289603266259" target="_blank" rel="noopener" class="fab-item fab-wa">
-      <svg viewBox="0 0 24 24"><path d="M20.5 3.5A11 11 0 003.4 17L2 22l5.2-1.4A11 11 0 1020.5 3.5z"/></svg>
-      WhatsApp CS
-    </a>
-    <a href="mailto:hpr10712@gmail.com" class="fab-item fab-mail">
-      <svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 6l8 6 8-6"/></svg>
-      Email CS
-    </a>
-  </div>
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 64 64" fill="none"><path d="M14 44 L24 26 L34 34 L46 14" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="46" cy="14" r="5" fill="#10b981"/></svg></div>
+      <div class="logo-text">Cazoo<span>.</span></div>
+    </div>
+
+    <div class="nav-section">Utama</div>
+    <div class="nav-item" data-page="dashboard" onclick="openPage('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" data-page="market" onclick="openPage('market')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 6-6"/></svg>
+      Pasar Saham
+    </div>
+    <div class="nav-item" data-page="trading" onclick="openPage('trading')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3l4 4-4 4M21 7H9a4 4 0 0 0-4 4v1M7 21l-4-4 4-4M3 17h12a4 4 0 0 0 4-4v-1"/></svg>
+      Trading
+    </div>
+    <div class="nav-item" data-page="portfolio" onclick="openPage('portfolio')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7a2 2 0 0 0-2-2h-3V3H8v2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1"/><circle cx="17" cy="12" r="3"/></svg>
+      Portofolio
+    </div>
+    <div class="nav-item" data-page="watchlist" onclick="openPage('watchlist')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Watchlist
+    </div>
+
+    <div class="nav-section">Keuangan</div>
+    <div class="nav-item" data-page="wallet" onclick="openPage('wallet')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      Dompet
+    </div>
+    <div class="nav-item" data-page="history" onclick="openPage('history')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Riwayat
+    </div>
+
+    <div id="adminNav" class="hidden">
+      <div class="nav-section">Admin</div>
+      <div class="nav-item" data-page="admin" onclick="openPage('admin')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Admin Panel
+      </div>
+    </div>
+
+    <div style="margin-top:auto;padding-top:20px">
+      <div class="nav-item" onclick="openPage('settings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Pengaturan
+      </div>
+      <div class="nav-item" onclick="logout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Keluar
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button id="menuBtn" class="icon-btn" onclick="toggleSidebar(true)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <div class="page-title" id="pageTitle">Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <div class="market-clock" id="clock">
+          <span class="dot"></span>
+          <span id="clockText">—</span>
+        </div>
+        <button class="icon-btn" onclick="openPage('wallet')" title="Dompet">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+        </button>
+        <button class="icon-btn" onclick="toggleNotifications()" title="Notifikasi">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot" id="notifDot"></span>
+        </button>
+        <div class="avatar" id="userAvatar" onclick="openPage('settings')">?</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Dashboard -->
+      <section class="page" id="page-dashboard">
+        <div class="risk-banner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div><strong>Mode Demonstrasi aktif.</strong> Seluruh saldo, transaksi, dan harga di halaman ini bersifat virtual. Tidak ada uang atau saham nyata yang diperdagangkan.</div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat blue">
+            <div class="label">Total Portofolio</div>
+            <div class="value" id="dashTotal">Rp 0</div>
+            <div class="delta muted" id="dashTotalSub">Nilai aset + kas</div>
+          </div>
+          <div class="stat green">
+            <div class="label">Saldo Kas</div>
+            <div class="value" id="dashCash">Rp 0</div>
+            <div class="delta muted">Siap digunakan</div>
+          </div>
+          <div class="stat yellow">
+            <div class="label">Nilai Saham</div>
+            <div class="value" id="dashStockVal">Rp 0</div>
+            <div class="delta muted" id="dashStockSub">—</div>
+          </div>
+          <div class="stat" id="dashPnlCard">
+            <div class="label">Total P&L</div>
+            <div class="value" id="dashPnl">Rp 0</div>
+            <div class="delta" id="dashPnlPct">0,00%</div>
+          </div>
+        </div>
+
+        <div class="grid-2 mb-16">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Perkembangan Portofolio</div>
+              <span class="pill pill-blue">Simulasi</span>
+            </div>
+            <div class="chart-box sm" id="portfolioChart"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Aktivitas Akun</div></div>
+            <div id="dashActivity"></div>
+          </div>
+        </div>
+
+        <div class="grid-half">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Kepemilikan Saham</div>
+              <button class="btn btn-ghost btn-sm" onclick="openPage('portfolio')">Lihat Semua</button>
+            </div>
+            <div id="dashHoldings"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Transaksi Terakhir</div>
+              <button class="btn btn-ghost btn-sm" onclick="openPage('history')">Riwayat</button>
+            </div>
+            <div id="dashOrders"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Market -->
+      <section class="page" id="page-market">
+        <div class="card mb-16">
+          <div class="toolbar">
+            <input type="text" id="marketSearch" placeholder="Cari saham berdasarkan nama atau simbol..." oninput="renderMarket()" />
+            <select id="marketCat" onchange="renderMarket()" style="padding:10px 13px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border-2);color:var(--text);outline:none">
+              <option value="">Semua Kategori</option>
+            </select>
+            <select id="marketSort" onchange="renderMarket()" style="padding:10px 13px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border-2);color:var(--text);outline:none">
+              <option value="volume">Volume Tertinggi</option>
+              <option value="gain">Kenaikan Tertinggi</option>
+              <option value="loss">Penurunan Tertinggi</option>
+              <option value="az">Nama A-Z</option>
+            </select>
+          </div>
+          <div id="marketList"></div>
+        </div>
+      </section>
+
+      <!-- Stock detail -->
+      <section class="page" id="page-stock">
+        <div id="stockDetail"></div>
+      </section>
+
+      <!-- Trading -->
+      <section class="page" id="page-trading">
+        <div class="trade-grid">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Form Order</div></div>
+            <div class="field">
+              <label>Pilih Saham</label>
+              <select id="tradeSymbol" onchange="onTradeSymbolChange()"></select>
+            </div>
+            <div class="side-toggle">
+              <button class="buy active" id="btnBuy" onclick="setSide('BUY')">BELI</button>
+              <button class="sell" id="btnSell" onclick="setSide('SELL')">JUAL</button>
+            </div>
+            <div class="field">
+              <label>Jumlah Lembar</label>
+              <input type="number" id="tradeQty" min="1" step="1" value="1" oninput="updateTradeSummary()" />
+              <div class="hint" id="tradeQtyHint">—</div>
+            </div>
+            <div class="field">
+              <label>Harga (per lembar)</label>
+              <input type="text" id="tradePrice" readonly style="opacity:.7" />
+            </div>
+            <div class="summary-box">
+              <div class="summary-row"><span class="k">Harga</span><span class="v" id="sumPrice">Rp 0</span></div>
+              <div class="summary-row"><span class="k">Jumlah</span><span class="v" id="sumQty">0</span></div>
+              <div class="summary-row"><span class="k">Bruto</span><span class="v" id="sumGross">Rp 0</span></div>
+              <div class="summary-row"><span class="k">Fee (0,15%)</span><span class="v" id="sumFee">Rp 0</span></div>
+              <div class="summary-row total"><span>Total</span><span id="sumTotal">Rp 0</span></div>
+            </div>
+            <button class="btn btn-primary btn-block" id="btnSubmitOrder" onclick="confirmOrder()">Konfirmasi Order</button>
+            <div class="hint" style="margin-top:10px;text-align:center">Saldo tersedia: <span id="tradeCash" class="mono">Rp 0</span></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title" id="tradeChartTitle">Grafik Harga</div>
+              <div class="flex gap-8">
+                <button class="chip active" data-tf="1D" onclick="setTimeframe('1D')">1H</button>
+                <button class="chip" data-tf="1W" onclick="setTimeframe('1W')">1M</button>
+                <button class="chip" data-tf="1M" onclick="setTimeframe('1M')">1B</button>
+              </div>
+            </div>
+            <div class="chart-box" id="tradeChart"></div>
+          </div>
+        </div>
+
+        <div class="card mt-12">
+          <div class="card-header"><div class="card-title">Buku Order (Simulasi)</div></div>
+          <div class="grid-half">
+            <div>
+              <div style="color:var(--green);font-size:12px;font-weight:700;margin-bottom:6px">BID</div>
+              <div id="orderBookBid"></div>
+            </div>
+            <div>
+              <div style="color:var(--red);font-size:12px;font-weight:700;margin-bottom:6px">ASK</div>
+              <div id="orderBookAsk"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Portfolio -->
+      <section class="page" id="page-portfolio">
+        <div class="stat-grid">
+          <div class="stat blue"><div class="label">Total Nilai</div><div class="value" id="pfTotal">Rp 0</div></div>
+          <div class="stat green"><div class="label">P&L Belum Terealisasi</div><div class="value" id="pfUnreal">Rp 0</div></div>
+          <div class="stat yellow"><div class="label">P&L Terealisasi</div><div class="value" id="pfReal">Rp 0</div></div>
+          <div class="stat"><div class="label">Jumlah Saham</div><div class="value" id="pfCount">0</div></div>
+        </div>
+
+        <div class="card mb-16">
+          <div class="card-header">
+            <div class="card-title">Daftar Kepemilikan</div>
+            <button class="btn btn-ghost btn-sm" onclick="exportCSV()">Ekspor CSV</button>
+          </div>
+          <div id="portfolioTable"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">Grafik Perkembangan</div></div>
+          <div class="chart-box" id="pfChart"></div>
+        </div>
+      </section>
+
+      <!-- Watchlist -->
+      <section class="page" id="page-watchlist">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Watchlist Saya</div>
+            <button class="btn btn-ghost btn-sm" onclick="openPage('market')">+ Tambah Saham</button>
+          </div>
+          <div id="watchlistContent"></div>
+        </div>
+      </section>
+
+      <!-- Wallet -->
+      <section class="page" id="page-wallet">
+        <div class="grid-2 mb-16">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Dompet Saya</div><span class="demo-flag">VIRTUAL</span></div>
+            <div style="padding:14px 0 6px">
+              <div class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Saldo Kas</div>
+              <div style="font-size:34px;font-weight:800;font-family:var(--mono);margin-top:4px" id="walletCash">Rp 0</div>
+              <div class="muted" style="font-size:12.5px;margin-top:6px">Saldo demo. Bukan uang nyata.</div>
+            </div>
+            <div class="flex gap-8 mt-12">
+              <button class="btn btn-green btn-block" onclick="openDeposit()">Deposit Demo</button>
+              <button class="btn btn-ghost btn-block" onclick="openWithdraw()">Tarik Demo</button>
+            </div>
+            <div class="risk-banner" style="margin-top:14px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <div>Deposit & penarikan di halaman ini <strong>hanya simulasi</strong> untuk mengisi saldo virtual. Untuk uang sungguhan, harus menggunakan payment gateway resmi (Midtrans/Xendit) dengan verifikasi webhook di server.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Ringkasan Keuangan</div></div>
+            <div id="walletSummary"></div>
+          </div>
+        </div>
+
+        <div class="grid-half">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Riwayat Deposit</div></div>
+            <div id="depositList"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Riwayat Penarikan</div></div>
+            <div id="withdrawList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- History -->
+      <section class="page" id="page-history">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Riwayat Transaksi</div>
+            <input type="date" id="historyFilter" onchange="renderHistory()" style="padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid var(--border-2);color:var(--text)" />
+          </div>
+          <div id="historyContent"></div>
+        </div>
+      </section>
+
+      <!-- Admin -->
+      <section class="page" id="page-admin">
+        <div class="stat-grid">
+          <div class="stat blue"><div class="label">Total Pengguna</div><div class="value" id="admUsers">0</div></div>
+          <div class="stat green"><div class="label">Total Order</div><div class="value" id="admOrders">0</div></div>
+          <div class="stat yellow"><div class="label">Volume Saham</div><div class="value" id="admVolume">0</div></div>
+          <div class="stat red"><div class="label">Total Deposit Demo</div><div class="value" id="admDeposits">Rp 0</div></div>
+        </div>
+
+        <div class="grid-2 mb-16">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Pengguna Terdaftar</div></div>
+            <div id="admUserList"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Audit Log Admin</div></div>
+            <div id="admAuditLog"></div>
+          </div>
+        </div>
+
+        <div class="card mb-16">
+          <div class="card-header">
+            <div class="card-title">Manajemen Saham (Demo)</div>
+            <span class="pill pill-yellow">Harga Pasar Nyata tidak dapat diubah manual</span>
+          </div>
+          <div id="admStockMgmt"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">Pengaturan Platform</div></div>
+          <div id="admSettings"></div>
+        </div>
+      </section>
+
+      <!-- Settings -->
+      <section class="page" id="page-settings">
+        <div class="grid-half">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Profil Pengguna</div></div>
+            <div id="profileView"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Preferensi & Keamanan</div></div>
+            <div class="field">
+              <label>Mode Pasar</label>
+              <select id="prefMode" onchange="savePrefs()">
+                <option value="DEMO">Mode Demonstrasi (virtual)</option>
+                <option value="REAL" disabled>Mode Pasar Nyata (belum dikonfigurasi)</option>
+              </select>
+              <div class="hint">Mode pasar nyata memerlukan integrasi API saham resmi di backend.</div>
+            </div>
+            <div class="field">
+              <label>Notifikasi Email</label>
+              <select id="prefEmail" onchange="savePrefs()">
+                <option value="off">Nonaktif (email service belum dikonfigurasi)</option>
+                <option value="on">Aktifkan jika tersedia</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Bahasa</label>
+              <select><option>Bahasa Indonesia</option><option disabled>English (soon)</option></select>
+            </div>
+            <div class="flex gap-8 mt-12">
+              <button class="btn btn-ghost btn-block" onclick="openPage('settings')">Batal</button>
+              <button class="btn btn-primary btn-block" onclick="savePrefs(true)">Simpan</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-12">
+          <div class="card-header"><div class="card-title">Riwayat Login</div></div>
+          <div id="loginHistory"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Mobile bottom nav -->
+  <nav class="mobile-nav">
+    <button data-page="dashboard" onclick="openPage('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+      Beranda
+    </button>
+    <button data-page="market" onclick="openPage('market')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 6-6"/></svg>
+      Pasar
+    </button>
+    <button data-page="trading" onclick="openPage('trading')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3l4 4-4 4M21 7H9a4 4 0 0 0-4 4v1M7 21l-4-4 4-4M3 17h12a4 4 0 0 0 4-4v-1"/></svg>
+      Trading
+    </button>
+    <button data-page="portfolio" onclick="openPage('portfolio')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7a2 2 0 0 0-2-2h-3V3H8v2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1"/><circle cx="17" cy="12" r="3"/></svg>
+      Portofolio
+    </button>
+    <button data-page="wallet" onclick="openPage('wallet')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      Dompet
+    </button>
+  </nav>
 </div>
 
 <script>
-/* =====================================================
-   CAZOO — APP LOGIC (Vanilla JS)
-   ===================================================== */
+/* =========================================================
+   CAZOO DEMO — CLIENT-SIDE APPLICATION
+   =========================================================
+   PENTING: Seluruh state disimpan di localStorage dengan prefix
+   "cazoo_". Ini adalah arsitektur DEMO. Untuk produksi, semua
+   operasi berikut WAJIB dilakukan di backend (Node.js + PostgreSQL)
+   dengan verifikasi server-side.
+   ========================================================= */
 
-// ---------- STATE ----------
-var STATE = {
-  view: 'home',
-  symbol: 'BBCA',
-  side: 'buy',
-  tf: '1W',
-  logged: false,
-  user: { name: 'TAMU CAZOO', id: '0001' },
-  balance: 0,
-  balanceAvail: 0,
-  balanceHold: 0,
-  portfolioValue: 0,
-  pnl: 0,
-  pnlPct: 0,
-  deposits: [],
-  withdrawals: [],
-  portfolio: [],
-  chart: null,
-  tradeChart: null
+// ---------- Constants ----------
+const APP = {
+  name: 'Cazoo',
+  fullName: 'Cazoo Stock Exchange',
+  currency: 'IDR',
+  locale: 'id-ID',
+  tz: 'Asia/Jakarta',
+  feePct: 0.0015,
+  marketOpen: 9,   // 09:00 WIB
+  marketClose: 16, // 16:00 WIB
+  mode: 'DEMO',
 };
 
-// ---------- DATA SAHAM ----------
-var STOCKS = [
-  { sym:'BBCA', name:'Bank Central Asia Tbk.',   price:9875, prev:9750, logo:'BBCA', color:'b' },
-  { sym:'BBRI', name:'Bank Rakyat Indonesia',    price:4520, prev:4560, logo:'BBRI', color:'r' },
-  { sym:'TLKM', name:'Telkom Indonesia Tbk.',    price:3180, prev:3150, logo:'TLKM', color:'g' },
-  { sym:'ASII', name:'Astra International Tbk.', price:5150, prev:5045, logo:'ASII', color:'a' },
-  { sym:'GOTO', name:'GoTo Gojek Tokopedia',     price:82,   prev:83,   logo:'GOTO', color:'r' },
-  { sym:'ICBP', name:'Indofood CBP Sukses',      price:11250,prev:11100,logo:'ICBP', color:'b' }
+const LS = {
+  users: 'cazoo_users',
+  session: 'cazoo_session',
+  holdings: 'cazoo_holdings',
+  orders: 'cazoo_orders',
+  watchlist: 'cazoo_watchlist',
+  notifications: 'cazoo_notifications',
+  deposits: 'cazoo_deposits',
+  withdrawals: 'cazoo_withdrawals',
+  loginHistory: 'cazoo_login_history',
+  auditLog: 'cazoo_audit_log',
+  prefs: 'cazoo_prefs',
+  stocks: 'cazoo_stocks_seed_v1',
+};
+
+// ---------- Seed stocks (DEMO only, not real prices) ----------
+const SEED_STOCKS = [
+  { symbol:'BBCA', name:'Bank Central Asia', category:'Perbankan', base:9500, vol:1200000, chg:+1.2 },
+  { symbol:'BBRI', name:'Bank Rakyat Indonesia', category:'Perbankan', base:4500, vol:3400000, chg:-0.9 },
+  { symbol:'TLKM', name:'Telkom Indonesia', category:'Telekomunikasi', base:3200, vol:2100000, chg:+0.6 },
+  { symbol:'ASII', name:'Astra International', category:'Otomotif', base:5100, vol:1500000, chg:-1.1 },
+  { symbol:'GOTO', name:'GoTo Gojek Tokopedia', category:'Teknologi', base:78, vol:22000000, chg:+2.5 },
+  { symbol:'ANTM', name:'Aneka Tambang', category:'Pertambangan', base:1620, vol:8900000, chg:+1.8 },
+  { symbol:'BMRI', name:'Bank Mandiri', category:'Perbankan', base:6250, vol:2800000, chg:+0.4 },
+  { symbol:'UNVR', name:'Unilever Indonesia', category:'Konsumer', base:2600, vol:900000, chg:-0.7 },
+  { symbol:'ICBP', name:'Indofood CBP', category:'Konsumer', base:10800, vol:650000, chg:+0.9 },
+  { symbol:'ADRO', name:'Adaro Energy', category:'Energi', base:2380, vol:4500000, chg:+1.5 },
+  { symbol:'TPIA', name:'Chandra Asri', category:'Kimia', base:7800, vol:320000, chg:-1.4 },
+  { symbol:'KLBF', name:'Kalbe Farma', category:'Farmasi', base:1580, vol:1800000, chg:+0.3 },
 ];
 
-// ---------- HELPERS ----------
-function fmtRp(n){
-  n = Math.round(Number(n) || 0);
-  var s = Math.abs(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  return 'Rp ' + (n < 0 ? '-' : '') + s;
+// ---------- Utils ----------
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+const fmtIDR = (n) => {
+  if (!isFinite(n)) return 'Rp 0';
+  return 'Rp ' + Math.round(n).toLocaleString('id-ID');
+};
+const fmtNum = (n) => Number(n||0).toLocaleString('id-ID');
+const fmtPct = (n) => (n>=0?'+':'') + Number(n||0).toFixed(2) + '%';
+const uid = (p='') => p + Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
+const nowISO = () => new Date().toISOString();
+
+function read(key, fallback) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+  catch { return fallback; }
 }
-function fmtNum(n){
-  return (Number(n) || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
-function fmtPct(n){
-  n = Number(n) || 0;
-  return (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
-}
-function stock(sym){
-  for (var i=0;i<STOCKS.length;i++) if (STOCKS[i].sym === sym) return STOCKS[i];
-  return STOCKS[0];
+function write(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+// ---------- Toast ----------
+function toast(title, msg='', type='info', dur=3200) {
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = `<div><div class="toast-title">${title}</div>${msg?`<div class="toast-msg">${msg}</div>`:''}</div>`;
+  $('#toasts').appendChild(el);
+  setTimeout(() => { el.style.opacity='0'; el.style.transform='translateX(30px)'; el.style.transition='.25s'; setTimeout(()=>el.remove(),280); }, dur);
 }
 
-// ---------- TOAST ----------
-function toast(msg, type){
-  type = type || 'ok';
-  var el = document.createElement('div');
-  el.className = 'toast' + (type !== 'ok' ? ' ' + type : '');
-  el.textContent = msg;
-  document.getElementById('toastWrap').appendChild(el);
-  setTimeout(function(){
-    el.classList.add('out');
-    setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 250);
-  }, 3200);
-}
-
-// ---------- MODAL ----------
-var modalBg = document.getElementById('modalBg');
-var modalTitle = document.getElementById('modalTitle');
-var modalBody = document.getElementById('modalBody');
-var modalFoot = document.getElementById('modalFoot');
-
-function openModal(opts){
-  modalTitle.textContent = opts.title || 'Konfirmasi';
-  modalBody.innerHTML = opts.body || '';
-  modalFoot.innerHTML = '';
-  var actions = opts.actions || [{ label:'Tutup', class:'btn-primary', onClick: closeModal }];
-  actions.forEach(function(a){
-    var b = document.createElement('button');
-    b.className = 'btn ' + (a.class || 'btn-outline');
-    b.textContent = a.label;
-    b.onclick = function(){ if (a.onClick) a.onClick(); else closeModal(); };
-    modalFoot.appendChild(b);
+// ---------- Modal ----------
+function modal({ title, body, actions = [], width }) {
+  return new Promise(resolve => {
+    const root = $('#modalRoot');
+    const wrap = document.createElement('div');
+    wrap.className = 'modal-backdrop';
+    wrap.innerHTML = `
+      <div class="modal" ${width?`style="max-width:${width}"`:''}>
+        <h3>${title}</h3>
+        <div class="modal-body">${body}</div>
+        <div class="modal-actions">
+          ${actions.map((a,i)=>`<button class="btn ${a.cls||'btn-ghost'}" data-i="${i}">${a.label}</button>`).join('')}
+        </div>
+      </div>`;
+    root.appendChild(wrap);
+    const close = (v) => { wrap.remove(); resolve(v); };
+    wrap.addEventListener('click', e => { if (e.target === wrap) close(null); });
+    wrap.querySelectorAll('.modal-actions button').forEach(b => {
+      b.onclick = () => close(actions[+b.dataset.i].value);
+    });
   });
-  modalBg.classList.add('show');
 }
-function closeModal(){ modalBg.classList.remove('show'); }
-document.getElementById('modalClose').onclick = closeModal;
-modalBg.addEventListener('click', function(e){ if (e.target === modalBg) closeModal(); });
 
-// ---------- NAVIGATION ----------
-function navigate(view){
-  STATE.view = view;
-  var sections = document.querySelectorAll('section[data-section]');
-  for (var i=0;i<sections.length;i++){
-    sections[i].classList.toggle('hidden', sections[i].getAttribute('data-section') !== view);
-  }
-  // Update nav tabs
-  var tabs = document.querySelectorAll('.nav-tab, .mn-item');
-  for (var j=0;j<tabs.length;j++){
-    tabs[j].classList.toggle('active', tabs[j].getAttribute('data-view') === view);
-  }
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  if (view === 'trade') {
-    renderTradeView();
-  } else if (view === 'portfolio') {
-    renderPortfolio();
-  } else if (view === 'deposit') {
-    renderDepositHistory();
-  } else if (view === 'withdraw') {
-    renderWithdrawHistory();
-  } else if (view === 'home') {
-    // Redraw chart when coming back
-    setTimeout(function(){ renderChart('mainChart'); }, 50);
+// ---------- Navigation ----------
+function go(page, extra) {
+  if (page === 'landing') {
+    $('#landing').classList.remove('hidden');
+    $('#auth').classList.add('hidden');
+    $('#app').classList.remove('active');
+  } else if (page === 'auth') {
+    $('#landing').classList.add('hidden');
+    $('#auth').classList.remove('hidden');
+    $('#app').classList.remove('active');
+    if (extra === 'register') switchAuth('register'); else switchAuth('login');
+  } else if (page === 'app') {
+    $('#landing').classList.add('hidden');
+    $('#auth').classList.add('hidden');
+    $('#app').classList.add('active');
   }
 }
 
-document.addEventListener('click', function(e){
-  var t = e.target.closest('[data-view]');
-  if (t) { navigate(t.getAttribute('data-view')); }
-});
+function openPage(name) {
+  $$('.page').forEach(p => p.classList.remove('active'));
+  const target = $('#page-' + name);
+  if (target) target.classList.add('active');
+  $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === name));
+  $$('.mobile-nav button').forEach(b => b.classList.toggle('active', b.dataset.page === name));
+  const titleMap = {
+    dashboard:'Dashboard', market:'Pasar Saham', trading:'Trading',
+    portfolio:'Portofolio', watchlist:'Watchlist', wallet:'Dompet',
+    history:'Riwayat', admin:'Admin Panel', settings:'Pengaturan',
+    stock:'Detail Saham'
+  };
+  $('#pageTitle').textContent = titleMap[name] || 'Cazoo';
+  toggleSidebar(false);
 
-// Actions
-document.addEventListener('click', function(e){
-  var a = e.target.closest('[data-action]');
-  if (!a) return;
-  var act = a.getAttribute('data-action');
-  if (act === 'deposit') navigate('deposit');
-  else if (act === 'withdraw') navigate('withdraw');
-  else if (act === 'trade') navigate('trade');
-  else if (act === 'portfolio') navigate('portfolio');
-});
+  // render content when opened
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'market') renderMarket();
+  if (name === 'trading') renderTrading();
+  if (name === 'portfolio') renderPortfolio();
+  if (name === 'watchlist') renderWatchlist();
+  if (name === 'wallet') renderWallet();
+  if (name === 'history') renderHistory();
+  if (name === 'admin') renderAdmin();
+  if (name === 'settings') renderSettings();
+}
 
-// ---------- STOCK LIST RENDER ----------
-function renderStockList(containerId, list){
-  var el = document.getElementById(containerId);
-  if (!el) return;
-  if (!list.length){ el.innerHTML = '<div class="empty">Tidak ada data</div>'; return; }
-  var html = '';
-  list.forEach(function(s){
-    var chg = ((s.price - s.prev) / s.prev) * 100;
-    var cls = chg >= 0 ? 'up' : 'down';
-    html += '<div class="stock-row" data-symbol="' + s.sym + '">' +
-      '<div class="stock-logo ' + s.color + '">' + s.sym.substring(0,4) + '</div>' +
-      '<div><div class="stock-sym">' + s.sym + '</div><div class="stock-nm">' + s.name + '</div></div>' +
-      '<div><div class="stock-price">' + fmtRp(s.price) + '</div>' +
-      '<div class="stock-prev">' + fmtRp(s.prev) + '</div></div>' +
-      '<div class="stock-delta ' + cls + '">' + fmtPct(chg) + '</div>' +
-    '</div>';
-  });
-  el.innerHTML = html;
-  el.querySelectorAll('.stock-row').forEach(function(row){
-    row.onclick = function(){
-      STATE.symbol = row.getAttribute('data-symbol');
-      navigate('trade');
+function toggleSidebar(open) {
+  $('#sidebar').classList.toggle('open', open);
+  $('#overlay').classList.toggle('show', open);
+}
+
+// ---------- Auth ----------
+function switchAuth(mode) {
+  $('#tabLogin').classList.toggle('active', mode==='login');
+  $('#tabRegister').classList.toggle('active', mode==='register');
+  $('#fieldUsername').style.display = mode==='register' ? 'flex' : 'none';
+  $('#authTitle').textContent = mode==='register' ? 'Buat akun baru' : 'Masuk ke akun Anda';
+  $('#authSubmit').textContent = mode==='register' ? 'Daftar Sekarang' : 'Masuk';
+  $('#authForm').dataset.mode = mode;
+}
+
+function submitAuth(e) {
+  e.preventDefault();
+  const mode = $('#authForm').dataset.mode;
+  const email = $('#inEmail').value.trim().toLowerCase();
+  const pwd = $('#inPassword').value;
+  const username = $('#inUsername').value.trim();
+
+  if (!email || !pwd) return toast('Gagal','Email & password wajib diisi.','error'), false;
+  if (pwd.length < 6) return toast('Gagal','Password minimal 6 karakter.','error'), false;
+
+  const users = read(LS.users, []);
+
+  if (mode === 'register') {
+    if (!username) return toast('Gagal','Nama pengguna wajib diisi.','error'), false;
+    if (users.find(u => u.email === email)) return toast('Gagal','Email sudah terdaftar.','error'), false;
+    if (users.find(u => u.username === username)) return toast('Gagal','Nama pengguna sudah digunakan.','error'), false;
+
+    const user = {
+      id: uid('usr_'),
+      username, email,
+      password: pwd, // DEMO ONLY — production: bcrypt di server
+      role: 'USER',
+      cash: 100000000, // Saldo virtual awal 100 juta
+      createdAt: nowISO(),
     };
-  });
-}
-
-// ---------- CHART ----------
-function generateChartData(sym, tf){
-  var s = stock(sym);
-  var points = 60;
-  var labels = [];
-  var data = [];
-  var vol = [];
-  var now = Date.now();
-  var stepMs = 86400000;
-  if (tf === '1D') stepMs = 3600000;
-  else if (tf === '1W') stepMs = 86400000;
-  else if (tf === '1M') stepMs = 86400000 * 3;
-  else if (tf === '3M') stepMs = 86400000 * 7;
-  else if (tf === '1Y') stepMs = 86400000 * 30;
-  else stepMs = 86400000 * 30;
-
-  var v = s.prev;
-  for (var i = points - 1; i >= 0; i--){
-    labels.push(now - i * stepMs);
-    v += (Math.random() - 0.48) * s.prev * 0.02;
-    v = Math.max(s.prev * 0.75, Math.min(s.prev * 1.25, v));
-    data.push(Math.round(v));
-    vol.push(Math.round(500000 + Math.random() * 8000000));
+    users.push(user);
+    write(LS.users, users);
+    addLoginHistory(user.id, true);
+    logAudit(user.id, 'REGISTER', 'user');
+    toast('Berhasil!','Akun dibuat. Saldo virtual Rp 100.000.000 ditambahkan.','success');
+  } else {
+    const user = users.find(u => u.email === email && u.password === pwd);
+    if (!user) { addLoginHistory(null, false); return toast('Gagal','Email atau password salah.','error'), false; }
+    addLoginHistory(user.id, true);
+    setSession(user.id);
+    afterLogin();
+    return false;
   }
-  data[data.length - 1] = s.price;
-  return { labels: labels, data: data, vol: vol };
+  switchAuth('login');
+  return false;
 }
 
-function renderChart(canvasId){
-  var canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-
-  // Destroy existing if any
-  var existing = (canvasId === 'mainChart') ? STATE.chart : STATE.tradeChart;
-  if (existing) { existing.destroy(); }
-
-  var d = generateChartData(STATE.symbol, STATE.tf);
-  var ctx = canvas.getContext('2d');
-  var s = stock(STATE.symbol);
-  var chg = ((s.price - s.prev) / s.prev) * 100;
-  var lineColor = chg >= 0 ? '#10b981' : '#ef4444';
-  var grad = ctx.createLinearGradient(0, 0, 0, 320);
-  grad.addColorStop(0, chg >= 0 ? 'rgba(16,185,129,0.25)' : 'rgba(239,68,68,0.25)');
-  grad.addColorStop(1, chg >= 0 ? 'rgba(16,185,129,0)' : 'rgba(239,68,68,0)');
-
-  var fmtLabels = d.labels.map(function(t){
-    var dt = new Date(t);
-    if (STATE.tf === '1D') return dt.getHours().toString().padStart(2,'0') + ':' + dt.getMinutes().toString().padStart(2,'0');
-    return dt.getDate() + '/' + (dt.getMonth()+1);
+function googleSignIn() {
+  modal({
+    title: 'Google Sign-In',
+    body: `<p class="modal-sub">Google Sign-In asli memerlukan konfigurasi Firebase Authentication (project ID, API key, dan konfigurasi OAuth). Karena belum dikonfigurasi, tombol ini tidak mengautentikasi ke Google.</p>
+      <p class="modal-sub">Langkah integrasi:</p>
+      <ol style="font-size:13px;color:var(--muted);line-height:1.7;padding-left:18px">
+        <li>Buat Firebase project</li>
+        <li>Aktifkan Google provider di Authentication</li>
+        <li>Tambahkan konfigurasi Firebase di frontend</li>
+        <li>Verifikasi ID token di backend sebelum membuat sesi</li>
+      </ol>`,
+    actions: [{label:'Mengerti', cls:'btn-primary', value:1}]
   });
+}
 
-  var chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: fmtLabels,
-      datasets: [{
-        label: s.sym,
-        data: d.data,
-        borderColor: lineColor,
-        backgroundColor: grad,
-        borderWidth: 2.5,
-        pointRadius: 0,
-        pointHoverRadius: 5,
-        pointHoverBackgroundColor: lineColor,
-        pointHoverBorderColor: '#fff',
-        pointHoverBorderWidth: 2,
-        tension: 0.35,
-        fill: true
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: { duration: 700, easing: 'easeOutCubic' },
-      interaction: { intersect: false, mode: 'index' },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: '#0b1220',
-          titleColor: '#fff',
-          bodyColor: '#10b981',
-          padding: 12,
-          borderColor: '#e7ebf2',
-          borderWidth: 1,
-          cornerRadius: 10,
-          displayColors: false,
-          titleFont: { size: 12, weight: '600' },
-          bodyFont: { size: 13, weight: '700', family: "'JetBrains Mono', monospace" },
-          callbacks: {
-            label: function(ctx){ return fmtRp(ctx.parsed.y); }
-          }
-        }
-      },
-      scales: {
-        x: {
-          grid: { display: false },
-          ticks: {
-            color: '#94a3b8',
-            font: { size: 11 },
-            maxTicksLimit: 7,
-            autoSkip: true
-          },
-          border: { display: false }
-        },
-        y: {
-          position: 'right',
-          grid: { color: '#eef2f7', drawTicks: false },
-          ticks: {
-            color: '#94a3b8',
-            font: { size: 11, family: "'JetBrains Mono', monospace" },
-            padding: 8,
-            callback: function(v){ return fmtNum(v); }
-          },
-          border: { display: false }
-        }
-      }
+function setSession(userId) {
+  write(LS.session, { userId, createdAt: nowISO() });
+}
+function getSession() {
+  return read(LS.session, null);
+}
+function currentUser() {
+  const s = getSession();
+  if (!s) return null;
+  const users = read(LS.users, []);
+  return users.find(u => u.id === s.userId) || null;
+}
+function updateUser(patch) {
+  const u = currentUser();
+  if (!u) return;
+  const users = read(LS.users, []);
+  const i = users.findIndex(x => x.id === u.id);
+  if (i >= 0) { users[i] = {...users[i], ...patch}; write(LS.users, users); }
+}
+function addLoginHistory(userId, success) {
+  const h = read(LS.loginHistory, []);
+  h.unshift({ id: uid('h_'), userId, success, ip: '—', ua: navigator.userAgent.slice(0,80), at: nowISO() });
+  write(LS.loginHistory, h.slice(0, 50));
+}
+function logAudit(adminId, action, target, meta={}) {
+  const logs = read(LS.auditLog, []);
+  logs.unshift({ id: uid('log_'), adminId, action, target, meta, at: nowISO() });
+  write(LS.auditLog, logs.slice(0, 500));
+}
+
+function logout() {
+  modal({
+    title: 'Keluar dari akun?',
+    body: '<p class="modal-sub">Anda dapat masuk kembali kapan saja.</p>',
+    actions: [
+      {label:'Batal', cls:'btn-ghost', value:0},
+      {label:'Keluar', cls:'btn-red', value:1},
+    ]
+  }).then(ok => {
+    if (!ok) return;
+    localStorage.removeItem(LS.session);
+    toast('Berhasil','Anda telah keluar.','success');
+    go('landing');
+  });
+}
+
+function afterLogin() {
+  const u = currentUser();
+  if (!u) return;
+  if (!read(LS.prefs, null)) write(LS.prefs, { mode:'DEMO', email:'off' });
+  ensureHoldings(u.id);
+  ensureNotifications(u.id);
+  go('app');
+  $('#userAvatar').textContent = (u.username || 'U').slice(0,1).toUpperCase();
+  if (u.role === 'ADMIN' || u.role === 'SUPERADMIN') $('#adminNav').classList.remove('hidden');
+  openPage('dashboard');
+  startClock();
+}
+
+// ---------- Holdings & watchlist ----------
+function ensureHoldings(userId) {
+  const all = read(LS.holdings, {});
+  if (!all[userId]) { all[userId] = {}; write(LS.holdings, all); }
+}
+function getHoldings(userId) {
+  const all = read(LS.holdings, {});
+  return all[userId] || {};
+}
+function setHoldings(userId, h) {
+  const all = read(LS.holdings, {});
+  all[userId] = h;
+  write(LS.holdings, all);
+}
+function ensureNotifications(userId) {
+  const all = read(LS.notifications, {});
+  if (!all[userId]) { all[userId] = []; write(LS.notifications, all); }
+}
+function pushNotification(userId, type, title, body='') {
+  const all = read(LS.notifications, {});
+  if (!all[userId]) all[userId] = [];
+  all[userId].unshift({ id: uid('n_'), type, title, body, read:false, at: nowISO() });
+  all[userId] = all[userId].slice(0, 40);
+  write(LS.notifications, all);
+  updateNotifDot();
+}
+function getWatchlist(userId) {
+  const all = read(LS.watchlist, {});
+  return all[userId] || [];
+}
+function toggleWatch(userId, symbol) {
+  const all = read(LS.watchlist, {});
+  if (!all[userId]) all[userId] = [];
+  const i = all[userId].indexOf(symbol);
+  if (i >= 0) all[userId].splice(i,1); else all[userId].push(symbol);
+  write(LS.watchlist, all);
+}
+
+// ---------- Stocks & prices ----------
+function getStocks() {
+  let stocks = read(LS.stocks, null);
+  if (!stocks) {
+    stocks = SEED_STOCKS.map(s => ({
+      ...s,
+      price: s.base * (1 + (s.chg||0)/100),
+      prevClose: s.base,
+      open: s.base * 0.998,
+      high: s.base * 1.01,
+      low: s.base * 0.99,
+      updatedAt: nowISO(),
+    }));
+    write(LS.stocks, stocks);
+  }
+  return stocks;
+}
+function saveStocks(stocks) { write(LS.stocks, stocks); }
+function getStock(symbol) { return getStocks().find(s => s.symbol === symbol); }
+
+function simulateTick() {
+  const stocks = getStocks();
+  stocks.forEach(s => {
+    const drift = (Math.random() - 0.5) * 0.004; // ±0.2%
+    s.price = Math.max(1, s.price * (1 + drift));
+    if (s.price > s.high) s.high = s.price;
+    if (s.price < s.low) s.low = s.price;
+    s.volume += Math.floor(Math.random() * 5000);
+    s.updatedAt = nowISO();
+  });
+  saveStocks(stocks);
+}
+
+// ---------- P&L calculation ----------
+function calcPortfolio(userId) {
+  const user = currentUser();
+  const cash = user ? Number(user.cash || 0) : 0;
+  const holdings = getHoldings(userId);
+  const stocks = getStocks();
+  let stockValue = 0, totalCost = 0;
+  const rows = [];
+  for (const sym in holdings) {
+    const h = holdings[sym];
+    const st = stocks.find(x => x.symbol === sym);
+    if (!st) continue;
+    const value = st.price * h.qty;
+    const cost = h.avgPrice * h.qty;
+    const pnl = value - cost;
+    const pnlPct = cost ? (pnl / cost) * 100 : 0;
+    stockValue += value;
+    totalCost += cost;
+    rows.push({ symbol: sym, name: st.name, qty: h.qty, avgPrice: h.avgPrice, price: st.price, value, cost, pnl, pnlPct });
+  }
+  const realized = Number(read(LS.orders, []).filter(o => o.userId===userId && o.side==='SELL').reduce((s,o)=>s+(o.realizedPnl||0),0));
+  return {
+    cash, stockValue, totalCost, totalValue: cash + stockValue,
+    unrealized: stockValue - totalCost,
+    unrealizedPct: totalCost ? ((stockValue - totalCost)/totalCost)*100 : 0,
+    realized, rows,
+  };
+}
+
+// =========================================================
+// RENDER: LANDING
+// =========================================================
+function renderLanding() {
+  const stocks = getStocks();
+  const sorted = [...stocks].sort((a,b) => ((b.price/b.prevClose)-1) - ((a.price/a.prevClose)-1));
+
+  $('#statStocks').textContent = stocks.length;
+  $('#statVolume').textContent = fmtNum(stocks.reduce((s,x)=>s+x.volume,0));
+  const idx = stocks.reduce((s,x)=>s+x.price,0) / stocks.length;
+  const idxPrev = stocks.reduce((s,x)=>s+x.prevClose,0) / stocks.length;
+  const idxChg = ((idx - idxPrev) / idxPrev) * 100;
+  $('#idxVal').textContent = idx.toFixed(2);
+  const ic = $('#idxChg');
+  ic.textContent = fmtPct(idxChg);
+  ic.className = 'pill ' + (idxChg >= 0 ? 'pill-green' : 'pill-red');
+
+  // Populer
+  $('#landingPopular').innerHTML = stocks.slice(0,6).map(stockRowHTML).join('');
+  // Gainers
+  $('#landingGainers').innerHTML = sorted.slice(0,5).map(stockRowHTML).join('');
+  // Losers
+  $('#landingLosers').innerHTML = sorted.slice(-5).reverse().map(stockRowHTML).join('');
+
+  // News
+  const news = [
+    { t:'Cazoo merilis mode demonstrasi baru', m:'Platform • 2 jam lalu' },
+    { t:'Panduan analisis teknikal saham perbankan', m:'Edukasi • 5 jam lalu' },
+    { t:'Perubahan jam perdagangan sesi II', m:'Pengumuman • 1 hari lalu' },
+    { t:'Tips mengelola risiko portofolio', m:'Edukasi • 2 hari lalu' },
+  ];
+  $('#newsList').innerHTML = news.map(n => `<div class="news-item"><h4>${n.t}</h4><div class="meta">${n.m}</div></div>`).join('');
+
+  $('#marketHours').innerHTML = `
+    <div class="summary-row"><span class="k">Sesi 1</span><span class="v">09:00 – 12:00 WIB</span></div>
+    <div class="summary-row"><span class="k">Sesi 2</span><span class="v">13:30 – 15:50 WIB</span></div>
+    <div class="summary-row"><span class="k">Hari Bursa</span><span class="v">Senin – Jumat</span></div>
+    <div class="summary-row"><span class="k">Zona Waktu</span><span class="v">Asia/Jakarta</span></div>
+    <div class="hint" style="margin-top:8px">Simulasi demo berjalan 24/7 untuk latihan.</div>`;
+
+  // Hero chart
+  setTimeout(renderHeroChart, 60);
+}
+
+function stockRowHTML(s) {
+  const chg = ((s.price/s.prevClose)-1)*100;
+  const cls = chg >= 0 ? 'up' : 'down';
+  return `
+    <div class="stock-row" onclick="go('auth')">
+      <div class="stock-sym">${s.symbol.slice(0,3)}</div>
+      <div class="stock-info">
+        <div class="n">${s.name}</div>
+        <div class="s">${s.symbol} • ${s.category}</div>
+      </div>
+      <div class="stock-price">${fmtIDR(s.price)}</div>
+      <div class="stock-chg ${cls}">${fmtPct(chg)}</div>
+    </div>`;
+}
+
+let heroChartApi = null;
+function renderHeroChart() {
+  const el = $('#heroChart');
+  if (!el || heroChartApi) return;
+  heroChartApi = LightweightCharts.createChart(el, {
+    layout: { background:{color:'transparent'}, textColor:'#8a98b5', fontSize:11 },
+    grid: { vertLines:{color:'rgba(30,42,68,.5)'}, horzLines:{color:'rgba(30,42,68,.5)'} },
+    rightPriceScale: { borderColor:'#1e2a44' },
+    timeScale: { borderColor:'#1e2a44', timeVisible:true },
+    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+    height: 260,
+    width: el.clientWidth,
+  });
+  const series = heroChartApi.addAreaSeries({
+    lineColor:'#3b82f6', topColor:'rgba(59,130,246,.4)', bottomColor:'rgba(59,130,246,.02)',
+    lineWidth:2,
+  });
+  const data = [];
+  const now = Math.floor(Date.now()/1000);
+  let v = 1000;
+  for (let i=120; i>=0; i--) {
+    v += (Math.random()-0.48)*8;
+    data.push({ time: now - i*600, value: +v.toFixed(2) });
+  }
+  series.setData(data);
+  heroChartApi.timeScale().fitContent();
+  window.addEventListener('resize', () => {
+    if (heroChartApi) heroChartApi.applyOptions({ width: el.clientWidth });
+  });
+}
+
+// =========================================================
+// CLOCK / MARKET TIMER
+// =========================================================
+let clockInterval = null;
+function startClock() {
+  if (clockInterval) clearInterval(clockInterval);
+  const tick = () => {
+    const now = new Date();
+    const jkt = new Date(now.toLocaleString('en-US', { timeZone: APP.tz }));
+    const h = jkt.getHours(), m = jkt.getMinutes(), s = jkt.getSeconds();
+    const day = jkt.getDay();
+    const isWeekend = day === 0 || day === 6;
+    const isOpen = !isWeekend && (
+      (h > APP.marketOpen && h < 12) ||
+      (h === 12 && m === 0) ||
+      (h >= 13 && (h < APP.marketClose - 1 || (h === APP.marketClose - 1 && m <= 50)))
+    );
+    const hh = String(h).padStart(2,'0');
+    const mm = String(m).padStart(2,'0');
+    const ss = String(s).padStart(2,'0');
+    const el = $('#clock');
+    const txt = $('#clockText');
+    if (el && txt) {
+      txt.textContent = `${hh}:${mm}:${ss} WIB • ${isOpen?'BUKA':'TUTUP'}`;
+      el.classList.toggle('closed', !isOpen);
     }
+  };
+  tick();
+  clockInterval = setInterval(tick, 1000);
+}
+
+// =========================================================
+// RENDER: DASHBOARD
+// =========================================================
+function renderDashboard() {
+  const u = currentUser();
+  if (!u) return;
+  const pf = calcPortfolio(u.id);
+
+  $('#dashTotal').textContent = fmtIDR(pf.totalValue);
+  $('#dashCash').textContent = fmtIDR(pf.cash);
+  $('#dashStockVal').textContent = fmtIDR(pf.stockValue);
+  $('#dashStockSub').textContent = `${pf.rows.length} saham dipegang`;
+  $('#dashPnl').textContent = (pf.unrealized>=0?'+':'') + fmtIDR(Math.abs(pf.unrealized));
+  $('#dashPnl').style.color = pf.unrealized >= 0 ? '#4ade80' : '#fca5a5';
+  $('#dashPnlPct').textContent = fmtPct(pf.unrealizedPct);
+  $('#dashPnlPct').className = 'delta ' + (pf.unrealized >= 0 ? 'up' : 'down');
+
+  // Activity
+  const orders = read(LS.orders, []).filter(o => o.userId === u.id);
+  const recent = orders.slice(0,5);
+  $('#dashActivity').innerHTML = recent.length ? recent.map(o => `
+    <div style="padding:9px 0;border-bottom:1px solid var(--border)">
+      <div class="flex between center">
+        <div style="font-size:13px;font-weight:600">${o.side==='BUY'?'Beli':'Jual'} ${o.symbol}</div>
+        <div class="mono" style="font-size:12px;color:${o.side==='BUY'?'#fca5a5':'#4ade80'}">${o.side==='BUY'?'-':'+'}${fmtIDR(o.total)}</div>
+      </div>
+      <div class="muted" style="font-size:11px;margin-top:2px">${new Date(o.createdAt).toLocaleString('id-ID')}</div>
+    </div>
+  `).join('') : `<div class="empty"><p>Belum ada aktivitas.</p></div>`;
+
+  // Holdings
+  $('#dashHoldings').innerHTML = pf.rows.length ? pf.rows.slice(0,5).map(r => `
+    <div class="stock-row" style="grid-template-columns:1fr auto auto" onclick="openStock('${r.symbol}')">
+      <div class="stock-info"><div class="n">${r.symbol}</div><div class="s">${fmtNum(r.qty)} lembar</div></div>
+      <div class="stock-price">${fmtIDR(r.value)}</div>
+      <div class="stock-chg ${r.pnl>=0?'up':'down'}">${fmtPct(r.pnlPct)}</div>
+    </div>
+  `).join('') : `<div class="empty"><h4>Belum ada saham</h4><p>Mulai dengan membeli saham di halaman Trading.</p><button class="btn btn-primary btn-sm mt-12" onclick="openPage('trading')">Buka Trading</button></div>`;
+
+  // Recent orders
+  $('#dashOrders').innerHTML = orders.slice(0,5).length ? orders.slice(0,5).map(o => `
+    <div style="padding:9px 0;border-bottom:1px solid var(--border)">
+      <div class="flex between center">
+        <div style="font-size:13px;font-weight:600">${o.side==='BUY'?'<span class="up">BELI</span>':'<span class="down">JUAL</span>'} ${o.symbol}</div>
+        <div class="mono" style="font-size:12px">${fmtNum(o.qty)} × ${fmtIDR(o.price)}</div>
+      </div>
+      <div class="muted" style="font-size:11px;margin-top:2px">${new Date(o.createdAt).toLocaleString('id-ID')} • ${o.status}</div>
+    </div>
+  `).join('') : `<div class="empty"><p>Belum ada transaksi.</p></div>`;
+
+  // Portfolio chart (simulated series)
+  setTimeout(renderPortfolioMiniChart, 60);
+}
+
+let pfChartApi = null;
+function renderPortfolioMiniChart() {
+  const el = $('#portfolioChart');
+  if (!el) return;
+  if (pfChartApi) { pfChartApi.remove(); pfChartApi = null; }
+  pfChartApi = LightweightCharts.createChart(el, {
+    layout:{ background:{color:'transparent'}, textColor:'#8a98b5', fontSize:11 },
+    grid:{ vertLines:{color:'rgba(30,42,68,.4)'}, horzLines:{color:'rgba(30,42,68,.4)'} },
+    rightPriceScale:{ borderColor:'#1e2a44' },
+    timeScale:{ borderColor:'#1e2a44', timeVisible:true },
+    height:220,
+    width: el.clientWidth,
   });
-
-  if (canvasId === 'mainChart') STATE.chart = chart;
-  else STATE.tradeChart = chart;
-}
-
-// ---------- RENDER HOME ----------
-function renderHome(){
-  // Asset card
-  document.getElementById('acBalance').textContent = fmtRp(STATE.balance);
-  document.getElementById('acHolder').textContent = STATE.user.name.toUpperCase();
-  document.getElementById('acId').textContent = 'CAZ-•••• ' + STATE.user.id;
-
-  var plEl = document.getElementById('acPl');
-  var pct = STATE.pnlPct;
-  plEl.classList.toggle('down', pct < 0);
-  plEl.querySelector('span').textContent = fmtPct(pct);
-
-  // Mini cards
-  document.getElementById('miniAvail').textContent = fmtRp(STATE.balanceAvail);
-  document.getElementById('miniHold').textContent = fmtRp(STATE.balanceHold);
-  document.getElementById('miniPort').textContent = fmtRp(STATE.portfolioValue);
-  document.getElementById('miniPnl').textContent = fmtRp(STATE.pnl);
-
-  // Chart header
-  var s = stock(STATE.symbol);
-  var chg = ((s.price - s.prev) / s.prev) * 100;
-  document.getElementById('chartSym').textContent = s.sym;
-  document.getElementById('chartName').textContent = s.name;
-  document.getElementById('chartPrice').textContent = fmtRp(s.price);
-  var cd = document.getElementById('chartDelta');
-  cd.textContent = fmtPct(chg);
-  cd.className = 'chart-delta ' + (chg >= 0 ? 'up' : 'down');
-
-  // Stock lists
-  renderStockList('homeStockList', STOCKS);
-  renderStockList('marketStockList', STOCKS);
-
-  // Draw chart after DOM update
-  setTimeout(function(){ renderChart('mainChart'); }, 80);
-}
-
-// ---------- RENDER TRADE ----------
-function renderTradeView(){
-  var s = stock(STATE.symbol);
-  var chg = ((s.price - s.prev) / s.prev) * 100;
-  document.getElementById('tradeSym').textContent = s.sym;
-  document.getElementById('tradeName').textContent = s.name;
-  document.getElementById('tradePrice').textContent = fmtRp(s.price);
-  var td = document.getElementById('tradeDelta');
-  td.textContent = fmtPct(chg);
-  td.className = 'chart-delta ' + (chg >= 0 ? 'up' : 'down');
-  document.getElementById('priceInput').value = fmtNum(s.price) + '';
-  updateOrderSummary();
-  setTimeout(function(){ renderChart('tradeChart'); }, 80);
-}
-
-function updateOrderSummary(){
-  var s = stock(STATE.symbol);
-  var qty = Math.max(1, parseInt(document.getElementById('qtyInput').value || 1));
-  var price = s.price;
-  var subtotal = price * qty * 100;
-  var fee = Math.round(subtotal * 0.0015);
-  var total = subtotal + fee;
-  document.getElementById('sumPrice').textContent = fmtRp(price);
-  document.getElementById('sumQty').textContent = qty + ' lot (' + (qty*100) + ' lbr)';
-  document.getElementById('sumFee').textContent = fmtRp(fee);
-  document.getElementById('sumTotal').textContent = fmtRp(total);
-  return { qty: qty, price: price, fee: fee, total: total };
-}
-
-// ---------- PORTFOLIO ----------
-function renderPortfolio(){
-  var el = document.getElementById('portfolioGrid');
-  document.getElementById('portfolioSummary').textContent = STATE.portfolio.length + ' aset';
-  if (!STATE.portfolio.length){
-    el.innerHTML = '<div class="empty" style="grid-column:1/-1">Belum ada aset. Mulai trading untuk membangun portofolio Anda.</div>';
-    return;
+  const series = pfChartApi.addAreaSeries({
+    lineColor:'#10b981', topColor:'rgba(16,185,129,.35)', bottomColor:'rgba(16,185,129,.02)', lineWidth:2,
+  });
+  const u = currentUser(); if (!u) return;
+  const pf = calcPortfolio(u.id);
+  const data = [];
+  const now = Math.floor(Date.now()/1000);
+  let v = pf.totalValue * 0.9 || 100000000;
+  for (let i=60; i>=0; i--) {
+    v *= 1 + (Math.random()-0.47)*0.008;
+    data.push({ time: now - i*3600, value: +v.toFixed(2) });
   }
-  var html = '';
-  STATE.portfolio.forEach(function(p){
-    var pl = (p.price - p.avg) * p.qty * 100;
-    var plPct = ((p.price - p.avg) / p.avg) * 100;
-    var cls = pl >= 0 ? 'up' : 'down';
-    var mv = p.price * p.qty * 100;
-    html += '<div class="pf-item">' +
-      '<div class="pf-top">' +
-        '<div><div class="pf-sym">' + p.sym + '</div><div class="pf-lot">' + p.qty + ' lot · ' + (p.qty*100) + ' lbr</div></div>' +
-        '<div><div class="pf-val">' + fmtRp(mv) + '</div><div class="pf-pl ' + cls + '">' + fmtPct(plPct) + '</div></div>' +
-      '</div>' +
-      '<div class="pf-meta"><span>Avg ' + fmtRp(p.avg) + '</span><span class="' + cls + '">' + (pl>=0?'+':'') + fmtRp(pl) + '</span></div>' +
-    '</div>';
-  });
-  el.innerHTML = html;
+  series.setData(data);
+  pfChartApi.timeScale().fitContent();
+  window.addEventListener('resize', () => { if (pfChartApi) pfChartApi.applyOptions({ width: el.clientWidth }); });
 }
 
-// ---------- DEPOSIT ----------
-function renderDepositHistory(){
-  var body = document.getElementById('depHistBody');
-  if (!STATE.deposits.length){
-    body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:30px">Belum ada deposit</td></tr>';
-    return;
+// =========================================================
+// RENDER: MARKET
+// =========================================================
+function renderMarket() {
+  const stocks = getStocks();
+  const q = ($('#marketSearch').value || '').toLowerCase().trim();
+  const cat = $('#marketCat').value;
+  const sort = $('#marketSort').value;
+
+  // Populate category filter once
+  if ($('#marketCat').options.length <= 1) {
+    const cats = [...new Set(stocks.map(s => s.category))];
+    cats.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c; o.textContent = c;
+      $('#marketCat').appendChild(o);
+    });
   }
-  var html = '';
-  STATE.deposits.slice().reverse().forEach(function(d){
-    var tag = d.status === 'verified' ? 'g' : d.status === 'pending' ? 'y' : 'r';
-    var label = d.status === 'verified' ? 'Berhasil' : d.status === 'pending' ? 'Menunggu' : 'Gagal';
-    html += '<tr>' +
-      '<td>' + d.date + '</td>' +
-      '<td style="font-family:var(--mono);font-weight:700">' + fmtRp(d.amount) + '</td>' +
-      '<td><span class="tag ' + tag + '">' + label + '</span></td>' +
-      '<td style="font-family:var(--mono);color:#94a3b8;font-size:11.5px">' + d.ref + '</td>' +
-    '</tr>';
+
+  let list = stocks.filter(s => {
+    if (q && !(s.symbol.toLowerCase().includes(q) || s.name.toLowerCase().includes(q))) return false;
+    if (cat && s.category !== cat) return false;
+    return true;
   });
-  body.innerHTML = html;
+  if (sort === 'volume') list.sort((a,b) => b.volume - a.volume);
+  if (sort === 'gain') list.sort((a,b) => (b.price/b.prevClose) - (a.price/a.prevClose));
+  if (sort === 'loss') list.sort((a,b) => (a.price/a.prevClose) - (b.price/b.prevClose));
+  if (sort === 'az') list.sort((a,b) => a.name.localeCompare(b.name));
+
+  const u = currentUser();
+  const watch = u ? getWatchlist(u.id) : [];
+
+  $('#marketList').innerHTML = list.length ? `
+    <div class="table-wrap">
+      <table class="tbl">
+        <thead><tr>
+          <th></th><th>Saham</th><th>Kategori</th>
+          <th class="num">Harga</th><th class="num">Perubahan</th>
+          <th class="num">Volume</th><th></th>
+        </tr></thead>
+        <tbody>
+          ${list.map(s => {
+            const chg = ((s.price/s.prevClose)-1)*100;
+            const cls = chg >= 0 ? 'up' : 'down';
+            const watched = watch.includes(s.symbol);
+            return `<tr>
+              <td style="width:24px" onclick="event.stopPropagation();toggleWatchRow('${s.symbol}')"><span class="star ${watched?'on':''}">${watched?'★':'☆'}</span></td>
+              <td onclick="openStock('${s.symbol}')" style="cursor:pointer"><div class="n" style="font-weight:600">${s.name}</div><div class="s muted" style="font-size:11px">${s.symbol}</div></td>
+              <td class="muted">${s.category}</td>
+              <td class="num" onclick="openStock('${s.symbol}')" style="cursor:pointer">${fmtIDR(s.price)}</td>
+              <td class="num ${cls}" onclick="openStock('${s.symbol}')" style="cursor:pointer">${fmtPct(chg)}</td>
+              <td class="num muted">${fmtNum(s.volume)}</td>
+              <td><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();quickTrade('${s.symbol}')">Trading</button></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>` : `<div class="empty"><h4>Tidak ada hasil</h4><p>Coba ubah kata kunci pencarian atau filter.</p></div>`;
 }
 
-// ---------- WITHDRAW ----------
-function renderWithdrawHistory(){
-  document.getElementById('wdAvail').value = fmtRp(STATE.balanceAvail);
-  var body = document.getElementById('wdHistBody');
-  if (!STATE.withdrawals.length){
-    body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:30px">Belum ada penarikan</td></tr>';
-    return;
-  }
-  var html = '';
-  STATE.withdrawals.slice().reverse().forEach(function(w){
-    var tag = w.status === 'completed' ? 'g' : w.status === 'pending' ? 'y' : 'r';
-    var label = w.status === 'completed' ? 'Berhasil' : w.status === 'pending' ? 'Menunggu' : 'Ditolak';
-    html += '<tr>' +
-      '<td>' + w.date + '</td>' +
-      '<td style="font-family:var(--mono);font-weight:700">' + fmtRp(w.amount) + '</td>' +
-      '<td>' + w.method + '</td>' +
-      '<td><span class="tag ' + tag + '">' + label + '</span></td>' +
-    '</tr>';
-  });
-  body.innerHTML = html;
+function toggleWatchRow(symbol) {
+  const u = currentUser(); if (!u) return;
+  toggleWatch(u.id, symbol);
+  renderMarket();
+  toast('Watchlist', `${symbol} ${getWatchlist(u.id).includes(symbol)?'ditambahkan ke':'dihapus dari'} watchlist.`, 'success', 1800);
 }
 
-// ---------- LOGIN (Google) ----------
-document.getElementById('loginBtn').onclick = function(){
-  openModal({
-    title: 'Masuk ke CAZOO',
-    body:
-      '<div style="text-align:center;padding:8px 0 4px">' +
-        '<div class="brand-mark" style="margin:0 auto 14px;width:52px;height:52px;font-size:22px">C</div>' +
-        '<p style="color:#64748b;font-size:13px;margin-bottom:20px;line-height:1.6">Masuk menggunakan akun Google Anda untuk mengakses semua fitur CAZOO.</p>' +
-        '<button class="btn btn-primary btn-block" id="mockGoogleBtn" style="margin-bottom:10px">' +
-          '<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" opacity=".85"/></svg>' +
-          'Lanjutkan dengan Google' +
-        '</button>' +
-        '<p style="color:#94a3b8;font-size:11.5px;margin-top:14px;line-height:1.5">Login Google akan aktif setelah administrator mengonfigurasi Firebase Authentication.</p>' +
-      '</div>',
-    actions: [{ label:'Tutup', class:'btn-outline', onClick: closeModal }]
-  });
-
-  setTimeout(function(){
-    var btn = document.getElementById('mockGoogleBtn');
-    if (btn) btn.onclick = function(){
-      closeModal();
-      mockLogin();
-    };
+function quickTrade(symbol) {
+  openPage('trading');
+  setTimeout(() => {
+    $('#tradeSymbol').value = symbol;
+    onTradeSymbolChange();
   }, 50);
-};
-
-function mockLogin(){
-  STATE.logged = true;
-  STATE.user = { name: 'Pengguna CAZOO', id: '8241' };
-  // Demo saldo awal
-  STATE.balance = 2500000;
-  STATE.balanceAvail = 2500000;
-  STATE.portfolioValue = 1750000;
-  STATE.pnl = 125000;
-  STATE.pnlPct = 7.14;
-
-  document.getElementById('loginBtn').classList.add('hidden');
-  document.getElementById('userChip').classList.remove('hidden');
-  document.getElementById('userName').textContent = STATE.user.name;
-
-  renderHome();
-  toast('Berhasil masuk sebagai ' + STATE.user.name, 'ok');
 }
 
-// ---------- LOGOUT ----------
-document.getElementById('userChip').onclick = function(){
-  openModal({
-    title: 'Keluar dari CAZOO',
-    body: '<p style="font-size:14px;color:#475569;line-height:1.6">Anda yakin ingin keluar dari akun ini?</p>',
-    actions: [
-      { label:'Batal', class:'btn-outline', onClick: closeModal },
-      { label:'Keluar', class:'btn-red', onClick: function(){
-        closeModal();
-        STATE.logged = false;
-        STATE.balance = 0;
-        STATE.balanceAvail = 0;
-        STATE.portfolioValue = 0;
-        STATE.pnl = 0;
-        STATE.pnlPct = 0;
-        document.getElementById('loginBtn').classList.remove('hidden');
-        document.getElementById('userChip').classList.add('hidden');
-        renderHome();
-        toast('Anda telah keluar', 'info');
-      }}
-    ]
+// =========================================================
+// STOCK DETAIL
+// =========================================================
+let stockDetailChart = null;
+function openStock(symbol) {
+  const s = getStock(symbol);
+  if (!s) return;
+  const chg = ((s.price/s.prevClose)-1)*100;
+  const cls = chg >= 0 ? 'up' : 'down';
+  const u = currentUser();
+  const watch = u ? getWatchlist(u.id) : [];
+  const held = u ? (getHoldings(u.id)[symbol]?.qty || 0) : 0;
+
+  $('#stockDetail').innerHTML = `
+    <button class="btn btn-ghost btn-sm mb-16" onclick="openPage('market')">← Kembali ke Pasar</button>
+    <div class="card mb-16">
+      <div class="flex between center" style="flex-wrap:wrap;gap:12px">
+        <div class="flex center gap-12">
+          <div class="stock-sym" style="width:52px;height:52px;font-size:14px">${symbol.slice(0,3)}</div>
+          <div>
+            <div style="font-size:20px;font-weight:800">${s.name}</div>
+            <div class="muted" style="font-size:12.5px">${symbol} • ${s.category}</div>
+          </div>
+        </div>
+        <div class="text-right">
+          <div style="font-size:28px;font-weight:800;font-family:var(--mono)">${fmtIDR(s.price)}</div>
+          <div class="${cls}" style="font-size:14px;font-weight:700;font-family:var(--mono)">${fmtPct(chg)}</div>
+        </div>
+        <div class="flex gap-8">
+          <button class="btn btn-ghost btn-sm" onclick="toggleWatchRow('${symbol}');openStock('${symbol}')">
+            <span class="star ${watch.includes(symbol)?'on':''}">${watch.includes(symbol)?'★':'☆'}</span>
+            Watchlist
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="quickTrade('${symbol}')">Trading</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-3 mb-16">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Grafik Harga</div>
+          <div class="flex gap-8">
+            <button class="chip active" data-sdtf="1D" onclick="setStockTF('1D')">1H</button>
+            <button class="chip" data-sdtf="1W" onclick="setStockTF('1W')">1M</button>
+            <button class="chip" data-sdtf="1M" onclick="setStockTF('1M')">1B</button>
+          </div>
+        </div>
+        <div class="chart-box" id="stockChart"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Informasi</div></div>
+        <div class="summary-row"><span class="k">Pembukaan</span><span class="v">${fmtIDR(s.open)}</span></div>
+        <div class="summary-row"><span class="k">Tertinggi</span><span class="v">${fmtIDR(s.high)}</span></div>
+        <div class="summary-row"><span class="k">Terendah</span><span class="v">${fmtIDR(s.low)}</span></div>
+        <div class="summary-row"><span class="k">Penutupan Sebelumnya</span><span class="v">${fmtIDR(s.prevClose)}</span></div>
+        <div class="summary-row"><span class="k">Volume</span><span class="v">${fmtNum(s.volume)}</span></div>
+        <div class="summary-row"><span class="k">Kepemilikan Anda</span><span class="v">${fmtNum(held)} lembar</span></div>
+        <div class="summary-row"><span class="k">Diperbarui</span><span class="v" style="font-size:11px">${new Date(s.updatedAt).toLocaleTimeString('id-ID')}</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Tentang</div></div>
+        <p class="muted" style="font-size:13px;line-height:1.6">
+          ${s.name} (${s.symbol}) adalah saham sektor <strong>${s.category}</strong> dalam mode demonstrasi.
+          Seluruh harga dan transaksi pada halaman ini bersifat virtual dan tidak mencerminkan bursa nyata.
+        </p>
+        <div class="risk-banner" style="margin-top:14px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div>Investasi mengandung risiko. Harga dapat naik atau turun dan Anda berpotensi mengalami kerugian.</div>
+        </div>
+      </div>
+    </div>`;
+
+  openPage('stock');
+  setTimeout(() => renderStockDetailChart(symbol, '1D'), 60);
+}
+
+function setStockTF(tf) {
+  const sym = $('#stockDetail')?.querySelector('.stock-sym')?.parentElement?.nextElementSibling?.textContent?.split(' ')[0];
+  const s = getStocks().find(x => $('#stockDetail').innerHTML.includes(x.symbol));
+  // fallback: use currently selected stock stored in dataset
+  const ds = $('#page-stock').dataset.symbol;
+  if (!ds) return;
+  $$('.chip[data-sdtf]').forEach(c => c.classList.toggle('active', c.dataset.sdtf === tf));
+  renderStockDetailChart(ds, tf);
+}
+
+function renderStockDetailChart(symbol, tf) {
+  $('#page-stock').dataset.symbol = symbol;
+  const el = $('#stockChart');
+  if (!el) return;
+  if (stockDetailChart) { stockDetailChart.remove(); stockDetailChart = null; }
+  const s = getStock(symbol); if (!s) return;
+  stockDetailChart = LightweightCharts.createChart(el, {
+    layout:{ background:{color:'transparent'}, textColor:'#8a98b5', fontSize:11 },
+    grid:{ vertLines:{color:'rgba(30,42,68,.4)'}, horzLines:{color:'rgba(30,42,68,.4)'} },
+    rightPriceScale:{ borderColor:'#1e2a44' },
+    timeScale:{ borderColor:'#1e2a44', timeVisible:true },
+    crosshair:{ mode:LightweightCharts.CrosshairMode.Normal },
+    height:380,
+    width: el.clientWidth,
   });
-};
-
-// ---------- TIMEFRAME BUTTONS ----------
-document.addEventListener('click', function(e){
-  var tf = e.target.closest('.tf-btn');
-  if (!tf) return;
-  var parent = tf.parentNode;
-  parent.querySelectorAll('.tf-btn').forEach(function(b){ b.classList.remove('active'); });
-  tf.classList.add('active');
-  STATE.tf = tf.getAttribute('data-tf');
-  if (STATE.view === 'trade') renderChart('tradeChart');
-  else renderChart('mainChart');
-});
-
-// ---------- BUY/SELL SWITCH ----------
-document.getElementById('sideSwitch').addEventListener('click', function(e){
-  var item = e.target.closest('.switch-item');
-  if (!item) return;
-  var side = item.getAttribute('data-side');
-  STATE.side = side;
-  var items = this.querySelectorAll('.switch-item');
-  items.forEach(function(x){
-    x.classList.remove('active');
-    x.classList.remove('buy', 'sell');
+  const candle = stockDetailChart.addCandlestickSeries({
+    upColor:'#10b981', downColor:'#ef4444',
+    borderUpColor:'#10b981', borderDownColor:'#ef4444',
+    wickUpColor:'#10b981', wickDownColor:'#ef4444',
   });
-  item.classList.add('active', side);
+  const n = tf === '1D' ? 96 : tf === '1W' ? 7*24 : 30*24/4;
+  const step = tf === '1D' ? 15*60 : tf === '1W' ? 3600 : 4*3600;
+  const now = Math.floor(Date.now()/1000);
+  const data = [];
+  let p = s.prevClose * 0.99;
+  for (let i=n; i>=0; i--) {
+    const o = p;
+    const c = o * (1 + (Math.random()-0.5)*0.01);
+    const hi = Math.max(o,c)*(1+Math.random()*0.003);
+    const lo = Math.min(o,c)*(1-Math.random()*0.003);
+    data.push({ time: now - i*step, open:+o.toFixed(2), high:+hi.toFixed(2), low:+lo.toFixed(2), close:+c.toFixed(2) });
+    p = c;
+  }
+  candle.setData(data);
+  stockDetailChart.timeScale().fitContent();
+  window.addEventListener('resize', () => { if (stockDetailChart) stockDetailChart.applyOptions({ width: el.clientWidth }); });
+}
 
-  var btn = document.getElementById('submitOrder');
-  btn.textContent = side === 'buy' ? 'Beli Sekarang' : 'Jual Sekarang';
-  btn.className = 'btn ' + (side === 'buy' ? 'btn-emerald' : 'btn-red') + ' btn-block';
-});
+// =========================================================
+// RENDER: TRADING
+// =========================================================
+let tradeSide = 'BUY';
+let tradeTF = '1D';
+let tradeChartApi = null;
 
-// ---------- QTY INPUT ----------
-document.getElementById('qtyInput').addEventListener('input', updateOrderSummary);
+function renderTrading() {
+  const stocks = getStocks();
+  const sel = $('#tradeSymbol');
+  if (sel.options.length === 0) {
+    stocks.forEach(s => {
+      const o = document.createElement('option');
+      o.value = s.symbol; o.textContent = `${s.symbol} — ${s.name}`;
+      sel.appendChild(o);
+    });
+  }
+  onTradeSymbolChange();
+  $('#tradeCash').textContent = fmtIDR(currentUser()?.cash || 0);
+}
 
-// ---------- SUBMIT ORDER ----------
-document.getElementById('submitOrder').onclick = function(){
-  var s = stock(STATE.symbol);
-  var d = updateOrderSummary();
-  var side = STATE.side;
-  var sideLabel = side === 'buy' ? 'Beli' : 'Jual';
+function onTradeSymbolChange() {
+  const sym = $('#tradeSymbol').value;
+  const s = getStock(sym);
+  if (!s) return;
+  $('#tradePrice').value = fmtIDR(s.price);
+  $('#tradeChartTitle').textContent = `Grafik ${sym}`;
+  updateTradeSummary();
+  renderTradeChart(sym, tradeTF);
+  renderOrderBook(s);
+}
 
-  openModal({
-    title: 'Konfirmasi ' + sideLabel,
-    body:
-      '<div style="font-size:13.5px;line-height:2">' +
-        '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#64748b"><span>Instrumen</span><b style="color:#0b1220">' + s.sym + '</b></div>' +
-        '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#64748b"><span>Sisi</span><b style="color:' + (side==='buy'?'#10b981':'#ef4444') + '">' + sideLabel.toUpperCase() + '</b></div>' +
-        '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#64748b"><span>Harga</span><b style="color:#0b1220;font-family:var(--mono)">' + fmtRp(d.price) + '</b></div>' +
-        '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#64748b"><span>Jumlah</span><b style="color:#0b1220;font-family:var(--mono)">' + d.qty + ' lot</b></div>' +
-        '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#64748b"><span>Biaya</span><b style="color:#0b1220;font-family:var(--mono)">' + fmtRp(d.fee) + '</b></div>' +
-        '<div style="display:flex;justify-content:space-between;padding:12px 0 0;margin-top:8px;border-top:1px solid #e7ebf2"><span style="font-weight:700">Total</span><b style="color:#059669;font-family:var(--mono);font-size:16px">' + fmtRp(d.total) + '</b></div>' +
-      '</div>' +
-      '<p style="font-size:11.5px;color:#94a3b8;margin-top:14px;line-height:1.5">Order akan diproses setelah backend trading dikonfigurasi administrator.</p>',
-    actions: [
-      { label:'Batal', class:'btn-outline', onClick: closeModal },
-      { label:'Konfirmasi', class: side==='buy'?'btn-emerald':'btn-red', onClick: function(){
-        closeModal();
-        toast('Fitur trading belum aktif — hubungi admin untuk mengaktifkan', 'warn');
-      }}
-    ]
+function setSide(side) {
+  tradeSide = side;
+  $('#btnBuy').classList.toggle('active', side === 'BUY');
+  $('#btnSell').classList.toggle('active', side === 'SELL');
+  $('#btnSubmitOrder').className = 'btn btn-block ' + (side === 'BUY' ? 'btn-green' : 'btn-red');
+  $('#btnSubmitOrder').textContent = side === 'BUY' ? 'Konfirmasi BELI' : 'Konfirmasi JUAL';
+  updateTradeSummary();
+}
+
+function setTimeframe(tf) {
+  tradeTF = tf;
+  $$('.chip[data-tf]').forEach(c => c.classList.toggle('active', c.dataset.tf === tf));
+  const sym = $('#tradeSymbol').value;
+  renderTradeChart(sym, tf);
+}
+
+function updateTradeSummary() {
+  const sym = $('#tradeSymbol').value;
+  const s = getStock(sym); if (!s) return;
+  const qty = Math.max(0, Math.floor(Number($('#tradeQty').value) || 0));
+  const price = s.price;
+  const gross = price * qty;
+  const fee = gross * APP.feePct;
+  const total = tradeSide === 'BUY' ? gross + fee : gross - fee;
+
+  $('#sumPrice').textContent = fmtIDR(price);
+  $('#sumQty').textContent = fmtNum(qty);
+  $('#sumGross').textContent = fmtIDR(gross);
+  $('#sumFee').textContent = fmtIDR(fee);
+  $('#sumTotal').textContent = fmtIDR(total);
+
+  const u = currentUser();
+  if (tradeSide === 'SELL' && u) {
+    const held = getHoldings(u.id)[sym]?.qty || 0;
+    $('#tradeQtyHint').textContent = `Maksimal jual: ${fmtNum(held)} lembar`;
+  } else if (u) {
+    const maxQty = Math.floor(u.cash / (price * (1 + APP.feePct)));
+    $('#tradeQtyHint').textContent = `Perkiraan maksimal: ${fmtNum(maxQty)} lembar`;
+  }
+}
+
+function renderTradeChart(symbol, tf) {
+  const el = $('#tradeChart');
+  if (!el) return;
+  if (tradeChartApi) { tradeChartApi.remove(); tradeChartApi = null; }
+  const s = getStock(symbol); if (!s) return;
+  tradeChartApi = LightweightCharts.createChart(el, {
+    layout:{ background:{color:'transparent'}, textColor:'#8a98b5', fontSize:11 },
+    grid:{ vertLines:{color:'rgba(30,42,68,.4)'}, horzLines:{color:'rgba(30,42,68,.4)'} },
+    rightPriceScale:{ borderColor:'#1e2a44' },
+    timeScale:{ borderColor:'#1e2a44', timeVisible:true },
+    crosshair:{ mode:LightweightCharts.CrosshairMode.Normal },
+    height:380,
+    width: el.clientWidth,
   });
-};
+  const candle = tradeChartApi.addCandlestickSeries({
+    upColor:'#10b981', downColor:'#ef4444', borderUpColor:'#10b981', borderDownColor:'#ef4444', wickUpColor:'#10b981', wickDownColor:'#ef4444',
+  });
+  const n = tf === '1D' ? 96 : tf === '1W' ? 168 : 180;
+  const step = tf === '1D' ? 900 : tf === '1W' ? 3600 : 14400;
+  const now = Math.floor(Date.now()/1000);
+  const data = [];
+  let p = s.prevClose * 0.99;
+  for (let i=n; i>=0; i--) {
+    const o = p;
+    const c = o * (1 + (Math.random()-0.5)*0.008);
+    const hi = Math.max(o,c)*(1+Math.random()*0.002);
+    const lo = Math.min(o,c)*(1-Math.random()*0.002);
+    data.push({ time: now - i*step, open:+o.toFixed(2), high:+hi.toFixed(2), low:+lo.toFixed(2), close:+c.toFixed(2) });
+    p = c;
+  }
+  candle.setData(data);
+  tradeChartApi.timeScale().fitContent();
+  window.addEventListener('resize', () => { if (tradeChartApi) tradeChartApi.applyOptions({ width: el.clientWidth }); });
+}
 
-// ---------- DEPOSIT ----------
-document.getElementById('depChips').addEventListener('click', function(e){
-  var c = e.target.closest('.chip');
+function renderOrderBook(s) {
+  const bids = [], asks = [];
+  for (let i=0;i<6;i++) {
+    bids.push({ price: s.price * (1 - (i+1)*0.0008), qty: Math.floor(100 + Math.random()*900) });
+    asks.push({ price: s.price * (1 + (i+1)*0.0008), qty: Math.floor(100 + Math.random()*900) });
+  }
+  $('#orderBookBid').innerHTML = bids.map(b => `
+    <div class="flex between center" style="padding:5px 0;font-size:12.5px;font-family:var(--mono)">
+      <span class="up">${fmtIDR(b.price)}</span><span class="muted">${fmtNum(b.qty)}</span>
+    </div>`).join('');
+  $('#orderBookAsk').innerHTML = asks.map(a => `
+    <div class="flex between center" style="padding:5px 0;font-size:12.5px;font-family:var(--mono)">
+      <span class="down">${fmtIDR(a.price)}</span><span class="muted">${fmtNum(a.qty)}</span>
+    </div>`).join('');
+}
+
+async function confirmOrder() {
+  const u = currentUser();
+  if (!u) return;
+  const sym = $('#tradeSymbol').value;
+  const s = getStock(sym);
+  const qty = Math.floor(Number($('#tradeQty').value) || 0);
+  if (qty <= 0) return toast('Gagal','Jumlah harus lebih dari 0.','error');
+
+  const price = s.price;
+  const gross = price * qty;
+  const fee = gross * APP.feePct;
+  const total = tradeSide === 'BUY' ? gross + fee : gross - fee;
+
+  const ok = await modal({
+    title: `Konfirmasi ${tradeSide === 'BUY' ? 'Pembelian' : 'Penjualan'}`,
+    body: `
+      <p class="modal-sub">Pastikan detail berikut sudah benar.</p>
+      <div class="summary-box">
+        <div class="summary-row"><span class="k">Saham</span><span class="v">${sym} — ${s.name}</span></div>
+        <div class="summary-row"><span class="k">Sisi</span><span class="v">${tradeSide === 'BUY' ? 'BELI' : 'JUAL'}</span></div>
+        <div class="summary-row"><span class="k">Jumlah</span><span class="v">${fmtNum(qty)} lembar</span></div>
+        <div class="summary-row"><span class="k">Harga</span><span class="v">${fmtIDR(price)}</span></div>
+        <div class="summary-row"><span class="k">Fee</span><span class="v">${fmtIDR(fee)}</span></div>
+        <div class="summary-row total"><span>Total</span><span>${fmtIDR(total)}</span></div>
+      </div>
+      <div class="auth-note" style="margin-top:10px">Transaksi ini bersifat simulasi. Saldo virtual akan diperbarui.</div>`,
+    actions: [{label:'Batal', cls:'btn-ghost', value:0},{label:'Konfirmasi', cls:'btn-primary', value:1}]
+  });
+  if (!ok) return;
+
+  try {
+    executeDemoOrder(u.id, sym, tradeSide, qty, price, fee, total);
+  } catch (e) {
+    toast('Order ditolak', e.message, 'error');
+  }
+}
+
+function executeDemoOrder(userId, symbol, side, qty, price, fee, total) {
+  const users = read(LS.users, []);
+  const ui = users.findIndex(x => x.id === userId);
+  if (ui < 0) throw new Error('Pengguna tidak ditemukan');
+  const user = users[ui];
+
+  const holdingsAll = read(LS.holdings, {});
+  const holdings = holdingsAll[userId] || {};
+
+  let realizedPnl = 0;
+
+  if (side === 'BUY') {
+    if (Number(user.cash) < total) throw new Error('Saldo tidak cukup');
+    const existing = holdings[symbol];
+    if (existing) {
+      const newQty = existing.qty + qty;
+      const newAvg = (existing.qty * existing.avgPrice + qty * price) / newQty;
+      holdings[symbol] = { qty: newQty, avgPrice: newAvg };
+    } else {
+      holdings[symbol] = { qty, avgPrice: price };
+    }
+    user.cash = Number(user.cash) - total;
+  } else {
+    const existing = holdings[symbol];
+    if (!existing || existing.qty < qty) throw new Error('Kepemilikan saham tidak cukup');
+    realizedPnl = (price - existing.avgPrice) * qty - fee;
+    existing.qty -= qty;
+    if (existing.qty <= 0) delete holdings[symbol];
+    user.cash = Number(user.cash) + total;
+  }
+
+  users[ui] = user;
+  write(LS.users, users);
+  holdingsAll[userId] = holdings;
+  write(LS.holdings, holdingsAll);
+
+  const order = {
+    id: uid('ord_'),
+    userId, symbol, side, qty, price, fee, total,
+    realizedPnl, status: 'FILLED',
+    createdAt: nowISO(),
+  };
+  const orders = read(LS.orders, []);
+  orders.unshift(order);
+  write(LS.orders, orders);
+
+  pushNotification(userId, side==='BUY'?'trade_buy':'trade_sell',
+    `${side==='BUY'?'Pembelian':'Penjualan'} ${symbol} berhasil`,
+    `${fmtNum(qty)} lembar @ ${fmtIDR(price)} • Total ${fmtIDR(total)}`);
+
+  toast('Order berhasil', `${side==='BUY'?'Beli':'Jual'} ${qty} ${symbol} @ ${fmtIDR(price)}`, 'success');
+  $('#tradeCash').textContent = fmtIDR(user.cash);
+  updateTradeSummary();
+  renderDashboard();
+  if ($('#page-trading').classList.contains('active')) renderTrading();
+}
+
+// =========================================================
+// RENDER: PORTFOLIO
+// =========================================================
+function renderPortfolio() {
+  const u = currentUser(); if (!u) return;
+  const pf = calcPortfolio(u.id);
+  $('#pfTotal').textContent = fmtIDR(pf.totalValue);
+  $('#pfUnreal').textContent = (pf.unrealized>=0?'+':'') + fmtIDR(Math.abs(pf.unrealized));
+  $('#pfUnreal').style.color = pf.unrealized >= 0 ? '#4ade80' : '#fca5a5';
+  $('#pfReal').textContent = (pf.realized>=0?'+':'') + fmtIDR(Math.abs(pf.realized));
+  $('#pfReal').style.color = pf.realized >= 0 ? '#4ade80' : '#fca5a5';
+  $('#pfCount').textContent = pf.rows.length;
+
+  $('#portfolioTable').innerHTML = pf.rows.length ? `
+    <div class="table-wrap">
+      <table class="tbl">
+        <thead><tr><th>Saham</th><th class="num">Lembar</th><th class="num">Harga Rata²</th><th class="num">Harga Kini</th><th class="num">Nilai</th><th class="num">P&L</th><th></th></tr></thead>
+        <tbody>
+        ${pf.rows.map(r => `
+          <tr>
+            <td><strong>${r.symbol}</strong><div class="muted" style="font-size:11px">${r.name}</div></td>
+            <td class="num">${fmtNum(r.qty)}</td>
+            <td class="num">${fmtIDR(r.avgPrice)}</td>
+            <td class="num">${fmtIDR(r.price)}</td>
+            <td class="num">${fmtIDR(r.value)}</td>
+            <td class="num ${r.pnl>=0?'up':'down'}">${r.pnl>=0?'+':''}${fmtIDR(Math.abs(r.pnl))}<div style="font-size:11px">${fmtPct(r.pnlPct)}</div></td>
+            <td><button class="btn btn-primary btn-sm" onclick="quickTrade('${r.symbol}')">Trading</button></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>` : `<div class="empty"><h4>Belum ada kepemilikan</h4><p>Beli saham untuk memulai portofolio.</p></div>`;
+
+  setTimeout(renderPFChart, 60);
+}
+
+let pfFullChart = null;
+function renderPFChart() {
+  const el = $('#pfChart'); if (!el) return;
+  if (pfFullChart) { pfFullChart.remove(); pfFullChart = null; }
+  const u = currentUser(); if (!u) return;
+  const pf = calcPortfolio(u.id);
+  pfFullChart = LightweightCharts.createChart(el, {
+    layout:{ background:{color:'transparent'}, textColor:'#8a98b5', fontSize:11 },
+    grid:{ vertLines:{color:'rgba(30,42,68,.4)'}, horzLines:{color:'rgba(30,42,68,.4)'} },
+    rightPriceScale:{ borderColor:'#1e2a44' },
+    timeScale:{ borderColor:'#1e2a44', timeVisible:true },
+    height:380,
+    width: el.clientWidth,
+  });
+  const series = pfFullChart.addAreaSeries({
+    lineColor:'#3b82f6', topColor:'rgba(59,130,246,.35)', bottomColor:'rgba(59,130,246,.02)', lineWidth:2,
+  });
+  const now = Math.floor(Date.now()/1000);
+  const data = []; let v = pf.totalValue * 0.92 || 100000000;
+  for (let i=90; i>=0; i--) { v *= 1+(Math.random()-0.47)*0.007; data.push({ time: now - i*3600, value:+v.toFixed(2) }); }
+  series.setData(data);
+  pfFullChart.timeScale().fitContent();
+  window.addEventListener('resize', () => { if (pfFullChart) pfFullChart.applyOptions({ width: el.clientWidth }); });
+}
+
+function exportCSV() {
+  const u = currentUser(); if (!u) return;
+  const pf = calcPortfolio(u.id);
+  if (!pf.rows.length) return toast('Kosong','Belum ada data untuk diekspor.','warn');
+  const rows = [['Symbol','Name','Qty','Avg Price','Current Price','Value','P&L','P&L %']];
+  pf.rows.forEach(r => rows.push([r.symbol, r.name, r.qty, r.avgPrice.toFixed(2), r.price.toFixed(2), r.value.toFixed(2), r.pnl.toFixed(2), r.pnlPct.toFixed(2)]));
+  const csv = rows.map(r => r.map(x => `"${String(x).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `cazoo-portfolio-${Date.now()}.csv`;
+  a.click();
+  toast('Berhasil','File CSV diunduh.','success');
+}
+
+// =========================================================
+// RENDER: WATCHLIST
+// =========================================================
+function renderWatchlist() {
+  const u = currentUser(); if (!u) return;
+  const list = getWatchlist(u.id).map(sym => getStock(sym)).filter(Boolean);
+  $('#watchlistContent').innerHTML = list.length ? `
+    <div class="table-wrap"><table class="tbl">
+      <thead><tr><th>Saham</th><th class="num">Harga</th><th class="num">Perubahan</th><th class="num">Volume</th><th></th></tr></thead>
+      <tbody>${list.map(s => {
+        const chg = ((s.price/s.prevClose)-1)*100;
+        return `<tr>
+          <td onclick="openStock('${s.symbol}')" style="cursor:pointer"><strong>${s.symbol}</strong><div class="muted" style="font-size:11px">${s.name}</div></td>
+          <td class="num">${fmtIDR(s.price)}</td>
+          <td class="num ${chg>=0?'up':'down'}">${fmtPct(chg)}</td>
+          <td class="num muted">${fmtNum(s.volume)}</td>
+          <td><button class="btn btn-ghost btn-sm" onclick="toggleWatchRow('${s.symbol}');renderWatchlist()">Hapus</button></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>` : `<div class="empty"><h4>Watchlist kosong</h4><p>Tambahkan saham favorit dari halaman Pasar.</p><button class="btn btn-primary btn-sm mt-12" onclick="openPage('market')">Buka Pasar</button></div>`;
+}
+
+// =========================================================
+// RENDER: WALLET
+// =========================================================
+function renderWallet() {
+  const u = currentUser(); if (!u) return;
+  $('#walletCash').textContent = fmtIDR(u.cash);
+  const deps = read(LS.deposits, []).filter(d => d.userId === u.id);
+  const wds = read(LS.withdrawals, []).filter(w => w.userId === u.id);
+  const totalDep = deps.filter(d => d.status === 'PAID').reduce((s,d)=>s+d.amount,0);
+  const totalWd = wds.filter(w => w.status === 'COMPLETED').reduce((s,w)=>s+w.amount,0);
+  $('#walletSummary').innerHTML = `
+    <div class="summary-row"><span class="k">Saldo Saat Ini</span><span class="v">${fmtIDR(u.cash)}</span></div>
+    <div class="summary-row"><span class="k">Total Deposit (Demo)</span><span class="v">${fmtIDR(totalDep)}</span></div>
+    <div class="summary-row"><span class="k">Total Penarikan (Demo)</span><span class="v">${fmtIDR(totalWd)}</span></div>
+    <div class="summary-row"><span class="k">Jumlah Transaksi</span><span class="v">${deps.length + wds.length}</span></div>`;
+
+  $('#depositList').innerHTML = deps.length ? `<div class="table-wrap"><table class="tbl">
+    <thead><tr><th>Tanggal</th><th>Metode</th><th class="num">Jumlah</th><th>Status</th></tr></thead>
+    <tbody>${deps.map(d => `<tr>
+      <td>${new Date(d.createdAt).toLocaleString('id-ID')}</td>
+      <td>${d.method}</td>
+      <td class="num">${fmtIDR(d.amount)}</td>
+      <td><span class="pill ${d.status==='PAID'?'pill-green':'pill-yellow'}">${d.status}</span></td>
+    </tr>`).join('')}</tbody></table></div>` : `<div class="empty"><p>Belum ada deposit.</p></div>`;
+
+  $('#withdrawList').innerHTML = wds.length ? `<div class="table-wrap"><table class="tbl">
+    <thead><tr><th>Tanggal</th><th>Bank</th><th class="num">Jumlah</th><th>Status</th></tr></thead>
+    <tbody>${wds.map(w => `<tr>
+      <td>${new Date(w.createdAt).toLocaleString('id-ID')}</td>
+      <td>${w.bankName}</td>
+      <td class="num">${fmtIDR(w.amount)}</td>
+      <td><span class="pill ${w.status==='COMPLETED'?'pill-green':'pill-yellow'}">${w.status}</span></td>
+    </tr>`).join('')}</tbody></table></div>` : `<div class="empty"><p>Belum ada penarikan.</p></div>`;
+}
+
+async function openDeposit() {
+  const amounts = [1000000, 5000000, 10000000, 25000000];
+  const ok = await modal({
+    title: 'Deposit Demo',
+    body: `
+      <div class="auth-note">
+        <strong>Simulasi.</strong> Deposit ini menambah saldo virtual untuk latihan. Tidak ada uang sungguhan yang berpindah. Untuk uang nyata, gunakan payment gateway resmi dengan verifikasi webhook di server.
+      </div>
+      <div class="field" style="margin-top:12px">
+        <label>Nominal (Rp)</label>
+        <input type="number" id="depAmount" value="5000000" min="10000" step="10000" />
+      </div>
+      <div class="field">
+        <label>Metode (Demo)</label>
+        <select id="depMethod"><option>QRIS (Demo)</option><option>Transfer Bank (Demo)</option></select>
+      </div>
+      <div class="flex gap-8" style="flex-wrap:wrap;margin-top:8px">
+        ${amounts.map(a => `<button class="chip" onclick="document.getElementById('depAmount').value=${a}">${fmtIDR(a)}</button>`).join('')}
+      </div>`,
+    actions: [{label:'Batal', cls:'btn-ghost', value:0},{label:'Deposit', cls:'btn-green', value:1}]
+  });
+  if (!ok) return;
+  const amount = Number($('#depAmount').value);
+  const method = $('#depMethod').value;
+  if (!(amount > 0)) return toast('Gagal','Nominal tidak valid.','error');
+  const deps = read(LS.deposits, []);
+  const d = { id: uid('dep_'), userId: currentUser().id, amount, method, reference: 'DEMO-' + uid().toUpperCase(), status:'PAID', createdAt: nowISO() };
+  deps.unshift(d);
+  write(LS.deposits, deps);
+  updateUser({ cash: currentUser().cash + amount });
+  pushNotification(currentUser().id, 'deposit', 'Deposit Demo berhasil', `${fmtIDR(amount)} • Ref: ${d.reference}`);
+  toast('Berhasil', `Deposit demo ${fmtIDR(amount)} ditambahkan.`, 'success');
+  renderWallet();
+  renderDashboard();
+}
+
+async function openWithdraw() {
+  const u = currentUser();
+  const ok = await modal({
+    title: 'Penarikan Demo',
+    body: `
+      <div class="auth-note">
+        <strong>Simulasi.</strong> Penarikan ini mengurangi saldo virtual. Tidak ada uang nyata yang dikirim.
+      </div>
+      <div class="field" style="margin-top:12px">
+        <label>Nominal (Rp)</label>
+        <input type="number" id="wdAmount" value="1000000" min="10000" step="10000" />
+        <div class="hint">Tersedia: ${fmtIDR(u.cash)}</div>
+      </div>
+      <div class="field"><label>Bank</label><input type="text" id="wdBank" placeholder="BCA / BRI / Mandiri" value="BCA" /></div>
+      <div class="field"><label>No. Rekening</label><input type="text" id="wdAcc" placeholder="1234567890" /></div>
+      <div class="field"><label>Nama Pemilik</label><input type="text" id="wdName" value="${u.username}" /></div>`,
+    actions: [{label:'Batal', cls:'btn-ghost', value:0},{label:'Ajukan Penarikan', cls:'btn-primary', value:1}]
+  });
+  if (!ok) return;
+  const amount = Number($('#wdAmount').value);
+  const bankName = $('#wdBank').value.trim();
+  const accountNo = $('#wdAcc').value.trim();
+  const accountName = $('#wdName').value.trim();
+  if (amount <= 0) return toast('Gagal','Nominal tidak valid.','error');
+  if (amount > u.cash) return toast('Gagal','Saldo tidak cukup.','error');
+  if (!bankName || !accountNo || !accountName) return toast('Gagal','Lengkapi data rekening.','error');
+
+  const wds = read(LS.withdrawals, []);
+  const w = { id: uid('wd_'), userId: u.id, amount, bankName, accountNo, accountName,
+    reference: 'DEMO-' + uid().toUpperCase(), status: 'PENDING', createdAt: nowISO() };
+  wds.unshift(w);
+  write(LS.withdrawals, wds);
+  updateUser({ cash: u.cash - amount });
+  pushNotification(u.id, 'withdraw', 'Permintaan penarikan dibuat', `${fmtIDR(amount)} • Menunggu proses`);
+  toast('Berhasil', `Permintaan penarikan ${fmtIDR(amount)} diajukan.`, 'success');
+  renderWallet();
+}
+
+// =========================================================
+// RENDER: HISTORY
+// =========================================================
+function renderHistory() {
+  const u = currentUser(); if (!u) return;
+  const filter = $('#historyFilter').value;
+  let orders = read(LS.orders, []).filter(o => o.userId === u.id);
+  if (filter) orders = orders.filter(o => o.createdAt.startsWith(filter));
+  $('#historyContent').innerHTML = orders.length ? `
+    <div class="table-wrap"><table class="tbl">
+      <thead><tr><th>ID</th><th>Waktu</th><th>Saham</th><th>Sisi</th><th class="num">Jumlah</th><th class="num">Harga</th><th class="num">Total</th><th>Status</th></tr></thead>
+      <tbody>${orders.map(o => `<tr>
+        <td class="mono" style="font-size:11px">${o.id.slice(-8)}</td>
+        <td>${new Date(o.createdAt).toLocaleString('id-ID')}</td>
+        <td><strong>${o.symbol}</strong></td>
+        <td><span class="pill ${o.side==='BUY'?'pill-green':'pill-red'}">${o.side}</span></td>
+        <td class="num">${fmtNum(o.qty)}</td>
+        <td class="num">${fmtIDR(o.price)}</td>
+        <td class="num">${fmtIDR(o.total)}</td>
+        <td><span class="pill pill-blue">${o.status}</span></td>
+      </tr>`).join('')}</tbody>
+    </table></div>` : `<div class="empty"><h4>Belum ada transaksi</h4><p>Transaksi Anda akan muncul di sini.</p></div>`;
+}
+
+// =========================================================
+// RENDER: ADMIN
+// =========================================================
+function renderAdmin() {
+  const users = read(LS.users, []);
+  const orders = read(LS.orders, []);
+  const deposits = read(LS.deposits, []);
+  const stocks = getStocks();
+  const totalVol = stocks.reduce((s,x)=>s+x.volume,0);
+  const totalDep = deposits.filter(d => d.status === 'PAID').reduce((s,d)=>s+d.amount,0);
+
+  $('#admUsers').textContent = users.length;
+  $('#admOrders').textContent = orders.length;
+  $('#admVolume').textContent = fmtNum(totalVol);
+  $('#admDeposits').textContent = fmtIDR(totalDep);
+
+  $('#admUserList').innerHTML = users.length ? `<div class="table-wrap"><table class="tbl">
+    <thead><tr><th>Pengguna</th><th>Role</th><th class="num">Saldo</th><th>Status</th></tr></thead>
+    <tbody>${users.map(u => `<tr>
+      <td><strong>${u.username}</strong><div class="muted" style="font-size:11px">${u.email}</div></td>
+      <td><span class="pill ${u.role==='SUPERADMIN'?'pill-purple':u.role==='ADMIN'?'pill-blue':'pill-gray'}">${u.role}</span></td>
+      <td class="num">${fmtIDR(u.cash)}</td>
+      <td><span class="pill pill-green">AKTIF</span></td>
+    </tr>`).join('')}</tbody></table></div>` : `<div class="empty"><p>Belum ada pengguna.</p></div>`;
+
+  const logs = read(LS.auditLog, []).slice(0,10);
+  $('#admAuditLog').innerHTML = logs.length ? logs.map(l => `
+    <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:12.5px">
+      <div style="font-weight:600">${l.action}</div>
+      <div class="muted" style="font-size:11px">${new Date(l.at).toLocaleString('id-ID')} • target: ${l.target}</div>
+    </div>`).join('') : `<div class="empty"><p>Belum ada aktivitas.</p></div>`;
+
+  $('#admStockMgmt').innerHTML = `
+    <div class="auth-note" style="margin-bottom:12px">
+      <strong>Catatan:</strong> Untuk mode <em>Pasar Nyata</em>, admin tidak boleh mengubah harga secara manual. Harga hanya dari API resmi. Di mode <em>Demo</em>, admin dapat mengubah harga dan volatilitas simulasi.
+    </div>
+    <div class="table-wrap"><table class="tbl">
+      <thead><tr><th>Simbol</th><th>Nama</th><th class="num">Harga</th><th class="num">Volatilitas</th><th>Status</th><th></th></tr></thead>
+      <tbody>${stocks.map(s => `<tr>
+        <td><strong>${s.symbol}</strong></td>
+        <td>${s.name}</td>
+        <td class="num">${fmtIDR(s.price)}</td>
+        <td class="num">Demo</td>
+        <td><span class="pill pill-green">AKTIF</span></td>
+        <td><button class="btn btn-ghost btn-sm" onclick="editStockPrice('${s.symbol}')">Ubah (Demo)</button></td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+
+  $('#admSettings').innerHTML = `
+    <div class="summary-row"><span class="k">Mode Platform</span><span class="v"><span class="pill pill-yellow">DEMO</span></span></div>
+    <div class="summary-row"><span class="k">Fee Trading</span><span class="v">${(APP.feePct*100).toFixed(2)}%</span></div>
+    <div class="summary-row"><span class="k">Payment Gateway</span><span class="v"><span class="pill pill-red">BELUM DIKONFIGURASI</span></span></div>
+    <div class="summary-row"><span class="k">Stock Data API</span><span class="v"><span class="pill pill-red">BELUM DIKONFIGURASI</span></span></div>
+    <div class="summary-row"><span class="k">Firebase Auth</span><span class="v"><span class="pill pill-red">BELUM DIKONFIGURASI</span></span></div>
+    <div class="summary-row"><span class="k">Email Service</span><span class="v"><span class="pill pill-red">BELUM DIKONFIGURASI</span></span></div>
+    <div class="hint" style="margin-top:10px">Hubungkan layanan eksternal melalui environment variables di backend, bukan dari browser.</div>`;
+}
+
+async function editStockPrice(symbol) {
+  const s = getStock(symbol); if (!s) return;
+  const ok = await modal({
+    title: `Ubah Harga Demo — ${symbol}`,
+    body: `
+      <p class="modal-sub">Ini hanya untuk mode demonstrasi. Perubahan dicatat di audit log.</p>
+      <div class="field"><label>Harga Baru (Rp)</label><input type="number" id="edPrice" value="${Math.round(s.price)}" min="1" /></div>`,
+    actions: [{label:'Batal', cls:'btn-ghost', value:0},{label:'Simpan', cls:'btn-primary', value:1}]
+  });
+  if (!ok) return;
+  const newPrice = Number($('#edPrice').value);
+  if (!(newPrice > 0)) return toast('Gagal','Harga tidak valid.','error');
+  const stocks = getStocks();
+  const idx = stocks.findIndex(x => x.symbol === symbol);
+  stocks[idx].price = newPrice;
+  stocks[idx].updatedAt = nowISO();
+  saveStocks(stocks);
+  logAudit(currentUser().id, 'EDIT_STOCK_PRICE', symbol, { from: s.price, to: newPrice });
+  toast('Berhasil','Harga demo diperbarui.','success');
+  renderAdmin();
+}
+
+// =========================================================
+// RENDER: SETTINGS
+// =========================================================
+function renderSettings() {
+  const u = currentUser(); if (!u) return;
+  $('#profileView').innerHTML = `
+    <div class="flex center gap-12" style="margin-bottom:16px">
+      <div class="avatar" style="width:56px;height:56px;font-size:22px">${u.username.slice(0,1).toUpperCase()}</div>
+      <div>
+        <div style="font-size:17px;font-weight:700">${u.username}</div>
+        <div class="muted" style="font-size:12.5px">${u.email}</div>
+      </div>
+    </div>
+    <div class="summary-row"><span class="k">ID Pengguna</span><span class="v mono" style="font-size:11px">${u.id}</span></div>
+    <div class="summary-row"><span class="k">Role</span><span class="v"><span class="pill ${u.role==='SUPERADMIN'?'pill-purple':u.role==='ADMIN'?'pill-blue':'pill-gray'}">${u.role}</span></span></div>
+    <div class="summary-row"><span class="k">Terdaftar</span><span class="v">${new Date(u.createdAt).toLocaleString('id-ID')}</span></div>
+    <div class="summary-row"><span class="k">Saldo Virtual</span><span class="v">${fmtIDR(u.cash)}</span></div>`;
+
+  const prefs = read(LS.prefs, { mode:'DEMO', email:'off' });
+  $('#prefMode').value = prefs.mode || 'DEMO';
+  $('#prefEmail').value = prefs.email || 'off';
+
+  const hist = read(LS.loginHistory, []).filter(h => h.userId === u.id).slice(0,10);
+  $('#loginHistory').innerHTML = hist.length ? `<div class="table-wrap"><table class="tbl">
+    <thead><tr><th>Waktu</th><th>Status</th><th>Perangkat</th></tr></thead>
+    <tbody>${hist.map(h => `<tr>
+      <td>${new Date(h.at).toLocaleString('id-ID')}</td>
+      <td><span class="pill ${h.success?'pill-green':'pill-red'}">${h.success?'Berhasil':'Gagal'}</span></td>
+      <td class="muted" style="font-size:11px;max-width:280px;overflow:hidden;text-overflow:ellipsis">${h.ua}</td>
+    </tr>`).join('')}</tbody></table></div>` : `<div class="empty"><p>Belum ada riwayat login.</p></div>`;
+}
+
+function savePrefs(explicit) {
+  const prefs = { mode: $('#prefMode').value, email: $('#prefEmail').value };
+  write(LS.prefs, prefs);
+  if (explicit) toast('Berhasil','Preferensi disimpan.','success');
+}
+
+// =========================================================
+// NOTIFICATIONS DROPDOWN
+// =========================================================
+function toggleNotifications() {
+  const u = currentUser(); if (!u) return;
+  const all = read(LS.notifications, {});
+  const list = all[u.id] || [];
+  // mark all read
+  all[u.id] = list.map(n => ({...n, read:true}));
+  write(LS.notifications, all);
+  updateNotifDot();
+  modal({
+    title: 'Notifikasi',
+    body: list.length ? list.map(n => `
+      <div style="padding:10px 0;border-bottom:1px solid var(--border)">
+        <div style="font-weight:600;font-size:13.5px">${n.title}</div>
+        <div class="muted" style="font-size:12px;margin-top:2px">${n.body}</div>
+        <div class="muted" style="font-size:11px;margin-top:4px">${new Date(n.at).toLocaleString('id-ID')}</div>
+      </div>`).join('') : `<div class="empty"><p>Tidak ada notifikasi.</p></div>`,
+    actions: [{label:'Tutup', cls:'btn-primary', value:1}]
+  });
+}
+
+function updateNotifDot() {
+  const u = currentUser(); if (!u) return;
+  const all = read(LS.notifications, {});
+  const unread = (all[u.id] || []).some(n => !n.read);
+  $('#notifDot').style.display = unread ? 'block' : 'none';
+}
+
+// =========================================================
+// LEGAL PAGES
+// =========================================================
+function openLegal(type) {
+  const content = {
+    tentang: {
+      title: 'Tentang Cazoo',
+      body: `<p>Cazoo Stock Exchange adalah <strong>platform demonstrasi</strong> untuk mempelajari cara kerja sistem perdagangan saham modern. Platform ini dibuat sebagai proyek pembelajaran dan tidak memiliki izin sebagai bursa atau penyelenggara perdagangan efek di Indonesia.</p>
+        <p>Seluruh data pasar pada demo ini bersifat <strong>fiktif</strong> dan tidak mencerminkan harga bursa nyata.</p>`
+    },
+    syarat: {
+      title: 'Syarat & Ketentuan',
+      body: `<p>Dengan menggunakan platform demo ini, Anda memahami bahwa:</p>
+        <ul><li>Tidak ada transaksi keuangan nyata yang terjadi.</li>
+        <li>Saldo bersifat virtual dan tidak dapat ditarik ke rekening bank.</li>
+        <li>Data disimpan di browser lokal (localStorage) dan dapat hilang kapan saja.</li>
+        <li>Platform ini <strong>bukan bursa berizin</strong> dan tidak menyediakan jasa investasi.</li></ul>`
+    },
+    privasi: {
+      title: 'Kebijakan Privasi',
+      body: `<p>Demo ini menyimpan data akun, transaksi, dan preferensi di <strong>localStorage browser Anda</strong>. Tidak ada data yang dikirim ke server manapun.</p>
+        <p>Untuk produksi, kebijakan privasi harus mematuhi UU PDP Indonesia dan GDPR jika menyasar pengguna internasional.</p>`
+    },
+    risiko: {
+      title: 'Pengungkapan Risiko Investasi',
+      body: `<p>Investasi di pasar modal mengandung risiko. Harga saham dapat naik atau turun dan Anda berpotensi kehilangan sebagian atau seluruh modal.</p>
+        <p>Kinerja masa lalu tidak menjamin kinerja masa depan. Selalu pahami profil risiko Anda sebelum berinvestasi.</p>`
+    },
+    kontak: {
+      title: 'Kontak Dukungan',
+      body: `<p>Email: <a href="mailto:support@cazoo.demo">support@cazoo.demo</a></p>
+        <p>Untuk keperluan produksi, hubungi tim dukungan dengan kanal resmi yang terverifikasi.</p>`
+    },
+    pembayaran: {
+      title: 'Kebijakan Pembayaran',
+      body: `<p>Untuk uang sungguhan, deposit wajib melalui <strong>payment gateway resmi</strong> (Midtrans, Xendit, dll) yang diverifikasi melalui webhook dengan signature server-side. Demo ini tidak menerima pembayaran nyata.</p>`
+    },
+    penarikan: {
+      title: 'Kebijakan Penarikan',
+      body: `<p>Penarikan uang nyata harus melalui verifikasi KYC dan pengawasan admin, dengan SLA yang jelas. Demo ini hanya mensimulasikan permintaan penarikan.</p>`
+    },
+  };
+  const c = content[type];
   if (!c) return;
-  this.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('active'); });
-  c.classList.add('active');
-  var amt = c.getAttribute('data-amt');
-  document.getElementById('depAmount').value = amt;
-  document.getElementById('qrisAmt').textContent = fmtRp(amt);
-});
+  modal({ title: c.title, body: c.body, actions: [{label:'Tutup', cls:'btn-primary', value:1}] });
+}
 
-document.getElementById('depAmount').addEventListener('input', function(){
-  var v = parseInt(this.value || 0);
-  document.getElementById('qrisAmt').textContent = v > 0 ? fmtRp(v) : 'Masukkan nominal';
-});
+// =========================================================
+// BOOTSTRAP
+// =========================================================
+function boot() {
+  $('#year').textContent = new Date().getFullYear();
+  renderLanding();
 
-document.getElementById('submitDeposit').onclick = function(){
-  var amt = parseInt(document.getElementById('depAmount').value || 0);
-  if (!amt || amt < 10000){
-    toast('Nominal minimal Rp 10.000', 'err');
-    return;
+  // Seed admin if no users exist
+  const users = read(LS.users, []);
+  if (!users.length) {
+    const admin = {
+      id: uid('usr_'),
+      username: 'admin',
+      email: 'admin@cazoo.demo',
+      password: 'admin123',
+      role: 'SUPERADMIN',
+      cash: 500000000,
+      createdAt: nowISO(),
+    };
+    write(LS.users, [admin]);
+    logAudit(admin.id, 'SEED_ADMIN', 'system');
+    toast('Akun Demo','Admin default dibuat: admin@cazoo.demo / admin123', 'info', 6000);
   }
-  if (!STATE.logged){
-    toast('Silakan masuk terlebih dahulu', 'warn');
-    return;
+
+  // If a session exists, go straight to app
+  if (getSession() && currentUser()) {
+    afterLogin();
+  } else {
+    go('landing');
   }
-  var ref = 'DEP' + Date.now().toString(36).toUpperCase().slice(-6);
-  openModal({
-    title: 'Konfirmasi Deposit',
-    body:
-      '<div style="text-align:center;padding:4px 0">' +
-        '<p style="color:#475569;font-size:13.5px;line-height:1.7;margin-bottom:14px">Anda akan membuat permintaan deposit sebesar:</p>' +
-        '<div style="font-family:var(--mono);font-size:26px;font-weight:800;color:#0b1220;margin-bottom:16px">' + fmtRp(amt) + '</div>' +
-        '<div style="background:#f8fafc;border-radius:12px;padding:14px;text-align:left;font-size:12.5px;color:#475569;line-height:1.7">' +
-          '<div style="display:flex;justify-content:space-between;padding:3px 0"><span>Referensi</span><b style="font-family:var(--mono);color:#0b1220">' + ref + '</b></div>' +
-          '<div style="display:flex;justify-content:space-between;padding:3px 0"><span>Metode</span><b>QRIS</b></div>' +
-          '<div style="display:flex;justify-content:space-between;padding:3px 0"><span>Status</span><b style="color:#b45309">Menunggu Pembayaran</b></div>' +
-        '</div>' +
-      '</div>',
-    actions: [
-      { label:'Batal', class:'btn-outline', onClick: closeModal },
-      { label:'Buat Permintaan', class:'btn-emerald', onClick: function(){
-        closeModal();
-        var now = new Date();
-        STATE.deposits.push({
-          amount: amt,
-          ref: ref,
-          status: 'pending',
-          date: now.getDate().toString().padStart(2,'0') + '/' + (now.getMonth()+1).toString().padStart(2,'0') + '/' + now.getFullYear() + ' ' + now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0')
-        });
-        renderDepositHistory();
-        toast('Permintaan deposit dibuat. Silakan scan QRIS & kirim bukti ke CS.', 'ok');
-      }}
-    ]
-  });
-};
 
-// ---------- WITHDRAW ----------
-document.getElementById('submitWithdraw').onclick = function(){
-  var amt = parseInt(document.getElementById('wdAmount').value || 0);
-  var bank = document.getElementById('wdBank').value.trim();
-  var acc = document.getElementById('wdAccount').value.trim();
-  var owner = document.getElementById('wdOwner').value.trim();
-  var methodSel = document.getElementById('wdMethod');
-  var method = methodSel.options[methodSel.selectedIndex].text;
+  // Simulate market ticks every 5s
+  setInterval(() => {
+    simulateTick();
+    // Refresh relevant pages
+    if ($('#page-dashboard').classList.contains('active')) renderDashboard();
+    if ($('#page-market').classList.contains('active')) renderMarket();
+    if ($('#page-portfolio').classList.contains('active')) renderPortfolio();
+    if ($('#page-watchlist').classList.contains('active')) renderWatchlist();
+  }, 5000);
 
-  if (!STATE.logged){ toast('Silakan masuk terlebih dahulu', 'warn'); return; }
-  if (!amt || amt < 50000){ toast('Nominal minimal Rp 50.000', 'err'); return; }
-  if (amt > STATE.balanceAvail){ toast('Saldo tidak mencukupi', 'err'); return; }
-  if (!bank || !acc || !owner){ toast('Lengkapi data rekening', 'err'); return; }
+  // Hash routing
+  window.addEventListener('hashchange', handleHash);
+  handleHash();
+}
 
-  openModal({
-    title: 'Konfirmasi Penarikan',
-    body:
-      '<div style="font-size:13.5px;line-height:2">' +
-        '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#64748b"><span>Nominal</span><b style="color:#0b1220;font-family:var(--mono)">' + fmtRp(amt) + '</b></div>' +
-        '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#64748b"><span>Metode</span><b style="color:#0b1220">' + method + '</b></div>' +
-        '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#64748b"><span>Bank</span><b style="color:#0b1220">' + bank + '</b></div>' +
-        '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#64748b"><span>No. Rek</span><b style="color:#0b1220;font-family:var(--mono)">' + acc + '</b></div>' +
-        '<div style="display:flex;justify-content:space-between;padding:4px 0;color:#64748b"><span>Pemilik</span><b style="color:#0b1220">' + owner + '</b></div>' +
-      '</div>',
-    actions: [
-      { label:'Batal', class:'btn-outline', onClick: closeModal },
-      { label:'Konfirmasi', class:'btn-primary', onClick: function(){
-        closeModal();
-        var now = new Date();
-        STATE.withdrawals.push({
-          amount: amt,
-          method: method,
-          status: 'pending',
-          date: now.getDate().toString().padStart(2,'0') + '/' + (now.getMonth()+1).toString().padStart(2,'0') + '/' + now.getFullYear() + ' ' + now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0')
-        });
-        STATE.balanceAvail -= amt;
-        STATE.balanceHold += amt;
-        renderHome();
-        renderWithdrawHistory();
-        toast('Pengajuan penarikan dikirim. Menunggu verifikasi admin.', 'ok');
-        document.getElementById('wdAmount').value = '';
-        document.getElementById('wdBank').value = '';
-        document.getElementById('wdAccount').value = '';
-        document.getElementById('wdOwner').value = '';
-      }}
-    ]
-  });
-};
+function handleHash() {
+  const hash = (location.hash || '').slice(1);
+  if (hash === 'pasar' || hash === 'fitur' || hash === 'berita' || hash === 'bantuan') {
+    const el = document.getElementById(hash);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
+}
 
-// ---------- CS FAB ----------
-document.getElementById('fabBtn').onclick = function(e){
-  e.stopPropagation();
-  document.getElementById('fabMenu').classList.toggle('show');
-};
-document.addEventListener('click', function(e){
-  if (!e.target.closest('.fab')) document.getElementById('fabMenu').classList.remove('show');
-});
+// Start
+document.addEventListener('DOMContentLoaded', boot);
 
-// ---------- INIT ----------
-renderHome();
-navigate('home');
+// Expose for inline onclick handlers
+window.go = go;
+window.openPage = openPage;
+window.switchAuth = switchAuth;
+window.submitAuth = submitAuth;
+window.googleSignIn = googleSignIn;
+window.logout = logout;
+window.toggleSidebar = toggleSidebar;
+window.toggleWatchRow = toggleWatchRow;
+window.quickTrade = quickTrade;
+window.openStock = openStock;
+window.setStockTF = setStockTF;
+window.setSide = setSide;
+window.setTimeframe = setTimeframe;
+window.updateTradeSummary = updateTradeSummary;
+window.confirmOrder = confirmOrder;
+window.exportCSV = exportCSV;
+window.openDeposit = openDeposit;
+window.openWithdraw = openWithdraw;
+window.toggleNotifications = toggleNotifications;
+window.openLegal = openLegal;
+window.savePrefs = savePrefs;
+window.editStockPrice = editStockPrice;
+window.onTradeSymbolChange = onTradeSymbolChange;
+window.renderMarket = renderMarket;
+window.renderHistory = renderHistory;
 </script>
 </body>
-</html>
+  </html>
