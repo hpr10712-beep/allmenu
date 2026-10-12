@@ -18,7 +18,6 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
   <style>
-    /* ========== RESET & VARIABEL ========== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -60,15 +59,12 @@
       overflow-x: hidden;
     }
 
-    /* ========== SCROLLBAR ========== */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
-    /* ========== UTILITY ========== */
     .hidden { display: none !important; }
-    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 
     /* ========== NAVBAR ========== */
     .navbar {
@@ -91,12 +87,9 @@
     }
     .navbar-logo {
       width: 36px; height: 36px; border-radius: 10px;
-      background: linear-gradient(135deg, #111827, #374151);
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-weight: 800; font-size: 15px;
-      font-family: var(--font-display);
-      letter-spacing: -0.5px;
+      object-fit: cover; flex-shrink: 0;
       box-shadow: 0 2px 8px rgba(17,24,39,0.15);
+      background: #111827;
     }
     .navbar-brand-text { display: flex; flex-direction: column; line-height: 1.1; }
     .navbar-brand-name {
@@ -151,8 +144,10 @@
       width: 40px; height: 40px; border-radius: var(--radius-sm);
       border: 1px solid var(--border); background: var(--bg);
       cursor: pointer; transition: var(--transition); color: var(--text-primary);
+      position: relative; z-index: 101;
     }
     .mobile-menu-btn:hover { background: var(--bg-tertiary); }
+    .mobile-menu-btn:active { transform: scale(0.95); }
 
     @media (max-width: 768px) {
       .navbar-links {
@@ -167,6 +162,7 @@
         transition: transform 0.3s ease, opacity 0.3s ease;
         pointer-events: none;
         box-shadow: var(--shadow-md);
+        z-index: 99;
       }
       .navbar-links.open {
         transform: translateY(0); opacity: 1; pointer-events: auto;
@@ -185,7 +181,6 @@
       .main-content { padding: 16px 12px 48px; }
     }
 
-    /* ========== SECTION ========== */
     .section { margin-bottom: 32px; }
     .section-header {
       display: flex; align-items: center; justify-content: space-between;
@@ -213,11 +208,9 @@
     .chart-asset-info { display: flex; align-items: center; gap: 14px; }
     .chart-asset-icon {
       width: 48px; height: 48px; border-radius: 14px;
+      object-fit: cover; flex-shrink: 0;
       background: linear-gradient(135deg, #111827, #374151);
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-weight: 800; font-size: 18px;
-      font-family: var(--font-display);
-      flex-shrink: 0;
+      box-shadow: 0 2px 10px rgba(17,24,39,0.15);
     }
     .chart-asset-details { display: flex; flex-direction: column; }
     .chart-asset-name {
@@ -255,7 +248,6 @@
     .chart-change-badge.up { background: var(--up-bg); color: var(--up); }
     .chart-change-badge.down { background: var(--down-bg); color: var(--down); }
 
-    /* Range selector */
     .range-selector {
       display: flex; gap: 4px; padding: 16px 24px 0;
       overflow-x: auto; -webkit-overflow-scrolling: touch;
@@ -274,7 +266,6 @@
       background: var(--text-primary); color: #fff; border-color: var(--text-primary);
     }
 
-    /* Chart canvas wrapper */
     .chart-canvas-wrapper {
       position: relative; padding: 16px 24px 24px;
       height: 340px;
@@ -290,7 +281,6 @@
       .chart-price { font-size: 22px; }
     }
 
-    /* Chart overlay states */
     .chart-loading {
       position: absolute; inset: 0;
       display: flex; align-items: center; justify-content: center;
@@ -314,7 +304,7 @@
     .chart-empty.hidden { display: none; }
     .chart-empty svg { width: 32px; height: 32px; opacity: 0.5; }
 
-    /* ========== STATS GRID ========== */
+    /* ========== STATS ========== */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -362,9 +352,7 @@
     }
 
     /* ========== HISTORY ========== */
-    .history-list {
-      display: flex; flex-direction: column; gap: 8px;
-    }
+    .history-list { display: flex; flex-direction: column; gap: 8px; }
     .history-item {
       display: flex; align-items: center; gap: 14px;
       padding: 14px 18px; background: var(--bg);
@@ -396,6 +384,7 @@
     .history-change {
       font-weight: 700; font-variant-numeric: tabular-nums;
       padding: 2px 8px; border-radius: 6px; font-size: 12px;
+      text-align: right; line-height: 1.3;
     }
     .history-change.up { background: var(--up-bg); color: var(--up); }
     .history-change.down { background: var(--down-bg); color: var(--down); }
@@ -408,7 +397,7 @@
       .history-prices { font-size: 12.5px; }
     }
 
-    /* ========== ADMIN PANEL ========== */
+    /* ========== ADMIN PANEL (tetap ada, tanpa tombol di navbar) ========== */
     .admin-overlay {
       position: fixed; inset: 0; z-index: 200;
       background: rgba(17,24,39,0.4); backdrop-filter: blur(4px);
@@ -424,9 +413,7 @@
       display: flex; flex-direction: column; overflow: hidden;
     }
     .admin-panel.open { transform: translateX(0); }
-    @media (max-width: 480px) {
-      .admin-panel { width: 100vw; }
-    }
+    @media (max-width: 480px) { .admin-panel { width: 100vw; } }
 
     .admin-header {
       display: flex; align-items: center; justify-content: space-between;
@@ -449,7 +436,6 @@
       flex: 1; overflow-y: auto; padding: 20px;
       display: flex; flex-direction: column; gap: 24px;
     }
-
     .admin-section { display: flex; flex-direction: column; gap: 12px; }
     .admin-section-title {
       font-size: 12px; font-weight: 700; color: var(--text-muted);
@@ -459,9 +445,7 @@
     .admin-section-title svg { width: 14px; height: 14px; }
 
     .form-group { display: flex; flex-direction: column; gap: 5px; }
-    .form-label {
-      font-size: 12.5px; font-weight: 600; color: var(--text-secondary);
-    }
+    .form-label { font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
     .form-input, .form-select {
       width: 100%; padding: 10px 12px; border-radius: 10px;
       border: 1px solid var(--border); background: var(--bg);
@@ -502,17 +486,11 @@
       border: 1px solid var(--border);
     }
     .btn-outline:hover:not(:disabled) { background: var(--bg-tertiary); border-color: #D1D5DB; }
-    .btn-ghost {
-      background: transparent; color: var(--text-secondary);
-    }
-    .btn-ghost:hover:not(:disabled) { background: var(--bg-tertiary); color: var(--text-primary); }
     .btn-sm { padding: 7px 12px; font-size: 12.5px; border-radius: 8px; }
     .btn-block { width: 100%; }
-
     .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
     .btn-group .btn { flex: 1; min-width: 0; }
 
-    /* Admin login screen */
     .admin-login {
       flex: 1; display: flex; flex-direction: column;
       align-items: center; justify-content: center;
@@ -531,7 +509,6 @@
       font-size: 13.5px; color: var(--text-secondary); max-width: 280px;
     }
 
-    /* Admin connection status */
     .admin-status {
       display: flex; align-items: center; gap: 8px;
       padding: 10px 14px; border-radius: 10px; font-size: 12.5px;
@@ -542,7 +519,6 @@
     .admin-status.error { background: var(--down-bg); color: var(--down); }
     .admin-status svg { width: 15px; height: 15px; flex-shrink: 0; }
 
-    /* Admin preview chart */
     .admin-preview-wrapper {
       height: 160px; border: 1px solid var(--border);
       border-radius: var(--radius); overflow: hidden; position: relative;
@@ -550,7 +526,6 @@
     }
     .admin-preview-wrapper canvas { width: 100% !important; height: 100% !important; }
 
-    /* Admin footer */
     .admin-footer {
       padding: 16px 20px; border-top: 1px solid var(--border);
       display: flex; gap: 8px; flex-shrink: 0; background: var(--bg);
@@ -593,18 +568,6 @@
       to { opacity: 0; transform: translateY(8px) scale(0.96); }
     }
 
-    /* ========== SKELETON ========== */
-    .skeleton {
-      background: linear-gradient(90deg, var(--bg-tertiary) 25%, #E2E8F0 50%, var(--bg-tertiary) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.4s ease-in-out infinite;
-      border-radius: 6px;
-    }
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
     /* ========== DATA STATUS ========== */
     .data-status-bar {
       display: flex; align-items: center; justify-content: space-between;
@@ -618,17 +581,10 @@
       display: flex; align-items: center; gap: 5px; white-space: nowrap;
     }
     .data-status-item svg { width: 13px; height: 13px; }
-    .data-status-badge {
-      padding: 2px 8px; border-radius: 6px; font-weight: 600; font-size: 10.5px;
-      text-transform: uppercase; letter-spacing: 0.5px;
-    }
-    .data-status-badge.live { background: var(--up-bg); color: var(--up); }
-    .data-status-badge.demo { background: #FEF3C7; color: #D97706; }
 
-    /* ========== RESPONSIVE EXTRA ========== */
     @media (max-width: 360px) {
       .navbar-inner { padding: 0 10px; height: 56px; }
-      .navbar-logo { width: 30px; height: 30px; font-size: 13px; }
+      .navbar-logo { width: 30px; height: 30px; }
       .navbar-brand-name { font-size: 15px; }
       .navbar-brand-sub { font-size: 8px; letter-spacing: 2px; }
       .main-content { padding: 12px 8px 40px; }
@@ -646,8 +602,8 @@
   <!-- ========== NAVBAR ========== -->
   <nav class="navbar" id="navbar">
     <div class="navbar-inner">
-      <a href="#" class="navbar-brand" onclick="event.preventDefault(); scrollToTop();">
-        <div class="navbar-logo">CZ</div>
+      <a href="#" class="navbar-brand" id="brandHome">
+        <img class="navbar-logo" src="https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg" alt="CAZO" />
         <div class="navbar-brand-text">
           <span class="navbar-brand-name">CAZO</span>
           <span class="navbar-brand-sub">Digital Card</span>
@@ -655,17 +611,14 @@
       </a>
 
       <div class="navbar-links" id="navbarLinks">
-        <button class="navbar-link active" onclick="scrollToSection('section-home')">
+        <button class="navbar-link active" data-target="section-home">
           <i data-lucide="home"></i> Home
         </button>
-        <button class="navbar-link" onclick="scrollToSection('section-market')">
+        <button class="navbar-link" data-target="section-market">
           <i data-lucide="bar-chart-3"></i> Market
         </button>
-        <button class="navbar-link" onclick="scrollToSection('section-about')">
+        <button class="navbar-link" data-target="section-about">
           <i data-lucide="info"></i> About
-        </button>
-        <button class="navbar-link" onclick="openAdminPanel()">
-          <i data-lucide="shield"></i> Admin
         </button>
       </div>
 
@@ -675,7 +628,7 @@
           <span id="connectionText">Offline</span>
         </div>
         <div class="clock-display" id="clockDisplay">--:--:--</div>
-        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu" type="button">
           <i data-lucide="menu"></i>
         </button>
       </div>
@@ -685,14 +638,12 @@
   <!-- ========== MAIN ========== -->
   <main class="main-content">
 
-    <!-- Data status bar -->
     <div class="data-status-bar" id="dataStatusBar">
       <div class="data-status-left">
         <div class="data-status-item">
           <i data-lucide="database"></i>
           <span id="dataSourceText">Menghubungkan...</span>
         </div>
-        <span class="data-status-badge demo" id="dataModeBadge">DEMO</span>
       </div>
       <div class="data-status-item">
         <i data-lucide="clock"></i>
@@ -700,13 +651,12 @@
       </div>
     </div>
 
-    <!-- ========== SECTION HOME (CHART) ========== -->
+    <!-- SECTION HOME -->
     <section class="section" id="section-home">
       <div class="chart-card">
-        <!-- Header -->
         <div class="chart-card-header">
           <div class="chart-asset-info">
-            <div class="chart-asset-icon" id="assetIcon">CZ</div>
+            <img class="chart-asset-icon" src="https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg" alt="CAZO" />
             <div class="chart-asset-details">
               <span class="chart-asset-name" id="assetName">CAZO CARD</span>
               <span class="chart-asset-symbol" id="assetSymbol">CAZO</span>
@@ -724,7 +674,6 @@
           </div>
         </div>
 
-        <!-- Range selector -->
         <div class="range-selector" id="rangeSelector">
           <button class="range-btn" data-range="1m">1M</button>
           <button class="range-btn" data-range="5m">5M</button>
@@ -736,7 +685,6 @@
           <button class="range-btn" data-range="all">SEMUA</button>
         </div>
 
-        <!-- Canvas -->
         <div class="chart-canvas-wrapper">
           <canvas id="mainChart"></canvas>
           <div class="chart-loading hidden" id="chartLoading">
@@ -750,7 +698,7 @@
       </div>
     </section>
 
-    <!-- ========== SECTION STATS ========== -->
+    <!-- SECTION STATS -->
     <section class="section" id="section-market">
       <div class="section-header">
         <h2 class="section-title">
@@ -786,7 +734,7 @@
       </div>
     </section>
 
-    <!-- ========== SECTION HISTORY ========== -->
+    <!-- SECTION HISTORY -->
     <section class="section" id="section-about">
       <div class="section-header">
         <h2 class="section-title">
@@ -802,22 +750,20 @@
 
   </main>
 
-  <!-- ========== ADMIN OVERLAY ========== -->
-  <div class="admin-overlay" id="adminOverlay" onclick="closeAdminPanel()"></div>
+  <!-- ========== ADMIN OVERLAY & PANEL (tetap ada, tanpa tombol navbar) ========== -->
+  <div class="admin-overlay" id="adminOverlay"></div>
 
-  <!-- ========== ADMIN PANEL ========== -->
   <aside class="admin-panel" id="adminPanel">
     <div class="admin-header">
       <div class="admin-header-title">
         <i data-lucide="sliders"></i>
         Panel Admin CAZO
       </div>
-      <button class="admin-close-btn" onclick="closeAdminPanel()" aria-label="Tutup">
+      <button class="admin-close-btn" id="adminCloseBtn" aria-label="Tutup">
         <i data-lucide="x"></i>
       </button>
     </div>
 
-    <!-- Login state -->
     <div class="admin-login" id="adminLoginView">
       <div class="admin-login-icon"><i data-lucide="shield"></i></div>
       <div class="admin-login-title">Akses Admin Diperlukan</div>
@@ -828,25 +774,18 @@
         <i data-lucide="log-in"></i>
         Masuk dengan Google
       </button>
-      <div style="font-size:11.5px;color:var(--text-muted);max-width:280px;line-height:1.5;">
-        Hanya akun dengan email admin yang dapat mengakses panel ini. Pengunjung tetap dapat melihat grafik tanpa login.
-      </div>
       <div class="admin-status error hidden" id="adminAuthError" style="max-width:280px;width:100%;">
         <i data-lucide="alert-triangle"></i>
         <span id="adminAuthErrorText"></span>
       </div>
     </div>
 
-    <!-- Admin content -->
     <div class="admin-body hidden" id="adminContentView">
-
-      <!-- Status -->
       <div class="admin-status success hidden" id="adminSaveStatus">
         <i data-lucide="check-circle"></i>
         <span id="adminSaveStatusText">Tersimpan</span>
       </div>
 
-      <!-- Asset Info -->
       <div class="admin-section">
         <div class="admin-section-title"><i data-lucide="info"></i> Informasi Aset</div>
         <div class="form-row">
@@ -861,7 +800,6 @@
         </div>
       </div>
 
-      <!-- Price Settings -->
       <div class="admin-section">
         <div class="admin-section-title"><i data-lucide="dollar-sign"></i> Pengaturan Harga</div>
         <div class="form-row">
@@ -902,7 +840,6 @@
         </div>
       </div>
 
-      <!-- Movement Mode -->
       <div class="admin-section">
         <div class="admin-section-title"><i data-lucide="git-branch"></i> Mode Pergerakan</div>
         <div class="form-group">
@@ -938,7 +875,6 @@
         </div>
       </div>
 
-      <!-- Control Buttons -->
       <div class="admin-section">
         <div class="admin-section-title"><i data-lucide="play-circle"></i> Kontrol</div>
         <div class="btn-group">
@@ -966,49 +902,129 @@
         </div>
       </div>
 
-      <!-- Preview -->
       <div class="admin-section">
         <div class="admin-section-title"><i data-lucide="eye"></i> Pratinjau Grafik</div>
         <div class="admin-preview-wrapper">
           <canvas id="previewChart"></canvas>
         </div>
       </div>
-
     </div>
 
-    <!-- Footer actions -->
     <div class="admin-footer hidden" id="adminFooter">
-      <button class="btn btn-outline" onclick="closeAdminPanel()">Tutup</button>
+      <button class="btn btn-outline" id="adminCloseBtn2">Tutup</button>
       <button class="btn btn-primary" id="btnSaveSettings">
         <i data-lucide="save"></i> Simpan Perubahan
       </button>
     </div>
   </aside>
 
-  <!-- ========== TOAST ========== -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- ========== MODULE SCRIPT ========== -->
-  <script type="module">
-    // ================================================================
-    // CAZO — Digital Card Chart
-    // Firebase Realtime Database + Auth + Chart.js
-    // ================================================================
+  <!-- ============================================================
+       SCRIPT UI (NON-MODULE) — Berjalan walau Firebase gagal
+       ============================================================ -->
+  <script>
+    (function () {
+      'use strict';
 
+      // ===== Mobile menu toggle =====
+      var mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      var navbarLinks = document.getElementById('navbarLinks');
+
+      if (mobileMenuBtn && navbarLinks) {
+        mobileMenuBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          navbarLinks.classList.toggle('open');
+        });
+
+        // Tutup saat klik di luar
+        document.addEventListener('click', function (e) {
+          if (navbarLinks.classList.contains('open') &&
+              !navbarLinks.contains(e.target) &&
+              !mobileMenuBtn.contains(e.target)) {
+            navbarLinks.classList.remove('open');
+          }
+        });
+
+        // Tutup saat klik link
+        navbarLinks.querySelectorAll('.navbar-link').forEach(function (link) {
+          link.addEventListener('click', function () {
+            navbarLinks.classList.remove('open');
+          });
+        });
+      }
+
+      // ===== Scroll nav =====
+      window.scrollToSection = function (id) {
+        var el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (navbarLinks) navbarLinks.classList.remove('open');
+      };
+
+      document.querySelectorAll('.navbar-link[data-target]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var target = btn.getAttribute('data-target');
+          if (target) window.scrollToSection(target);
+
+          document.querySelectorAll('.navbar-link').forEach(function (b) {
+            b.classList.remove('active');
+          });
+          btn.classList.add('active');
+        });
+      });
+
+      // ===== Brand scroll to top =====
+      var brandHome = document.getElementById('brandHome');
+      if (brandHome) {
+        brandHome.addEventListener('click', function (e) {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
+      // ===== Clock =====
+      var clockDisplay = document.getElementById('clockDisplay');
+      function tickClock() {
+        if (!clockDisplay) return;
+        var d = new Date();
+        var hh = String(d.getHours()).padStart(2, '0');
+        var mm = String(d.getMinutes()).padStart(2, '0');
+        var ss = String(d.getSeconds()).padStart(2, '0');
+        clockDisplay.textContent = hh + ':' + mm + ':' + ss;
+      }
+      tickClock();
+      setInterval(tickClock, 1000);
+
+      // ===== Escape =====
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          if (navbarLinks) navbarLinks.classList.remove('open');
+          if (typeof window.closeAdminPanel === 'function') window.closeAdminPanel();
+        }
+      });
+
+      // ===== Render Lucide setelah DOM siap =====
+      if (window.lucide) {
+        try { window.lucide.createIcons(); } catch (e) {}
+      }
+    })();
+  </script>
+
+  <!-- ============================================================
+       SCRIPT MODULE — Firebase + Chart (logika utama)
+       ============================================================ -->
+  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getAnalytics, isSupported as analyticsSupported } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
     import {
       getDatabase, ref, onValue, push, update, set, get, query,
-      orderByChild, limitToLast, serverTimestamp, remove, off
+      orderByChild, limitToLast, serverTimestamp, remove
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
     import {
-      getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
+      getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    // ================================================================
-    // 1. KONFIGURASI
-    // ================================================================
-
+    // ============ KONFIGURASI ============
     const firebaseConfig = {
       apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
       authDomain: "mygame-68b24.firebaseapp.com",
@@ -1020,14 +1036,11 @@
       measurementId: "G-4C0MYZ19YW"
     };
 
-    // Email admin yang diizinkan (ganti sesuai kebutuhan)
-    // Untuk produksi, gunakan Firebase Custom Claims.
     const ADMIN_EMAILS = [
       "admin@cazo.app",
       "cazo.admin@gmail.com"
     ];
 
-    // Data awal default
     const DEFAULT_SETTINGS = {
       assetName: "CAZO CARD",
       symbol: "CAZO",
@@ -1053,38 +1066,24 @@
       { price: 1250, change: 30, changePercent: 2.46, timestamp: Date.now() }
     ];
 
-    // ================================================================
-    // 2. STATE
-    // ================================================================
-
+    // ============ STATE ============
     const state = {
-      app: null,
-      db: null,
-      auth: null,
-      currentUser: null,
-      isAdmin: false,
-      firebaseReady: false,
-      connected: false,
+      app: null, db: null, auth: null,
+      currentUser: null, isAdmin: false,
+      firebaseReady: false, connected: false,
       settings: { ...DEFAULT_SETTINGS },
       history: [],
-      publicData: null,
       activeRange: "7d",
       chart: null,
       previewChart: null,
       movementTimer: null,
       movementRunning: false,
       movementTarget: null,
-      adminUnsubscribe: null,
       publicUnsubscribe: null,
-      historyUnsubscribe: null,
-      clockInterval: null,
-      savePending: false
+      historyUnsubscribe: null
     };
 
-    // ================================================================
-    // 3. UTILITAS
-    // ================================================================
-
+    // ============ UTIL ============
     function formatNumber(n, decimals = 2) {
       if (n === null || n === undefined || isNaN(n)) return "—";
       return Number(n).toLocaleString("id-ID", {
@@ -1092,111 +1091,84 @@
         maximumFractionDigits: decimals
       });
     }
-
-    function formatTime(ts) {
-      if (!ts) return "—";
-      const d = new Date(ts);
-      return d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-    }
-
     function formatDateTime(ts) {
       if (!ts) return "—";
       const d = new Date(ts);
       return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short" }) + " " +
              d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
     }
-
     function timeAgo(ts) {
       if (!ts) return "—";
       const diff = Date.now() - ts;
       const sec = Math.floor(diff / 1000);
       if (sec < 5) return "baru saja";
-      if (sec < 60) return `${sec} detik lalu`;
+      if (sec < 60) return sec + " detik lalu";
       const min = Math.floor(sec / 60);
-      if (min < 60) return `${min} menit lalu`;
+      if (min < 60) return min + " menit lalu";
       const hr = Math.floor(min / 60);
-      if (hr < 24) return `${hr} jam lalu`;
-      const day = Math.floor(hr / 24);
-      return `${day} hari lalu`;
+      if (hr < 24) return hr + " jam lalu";
+      return Math.floor(hr / 24) + " hari lalu";
     }
-
-    function showNotification(message, type = "info", duration = 4000) {
-      const container = document.getElementById("toastContainer");
-      const icons = {
-        success: "check-circle",
-        error: "alert-circle",
-        warning: "alert-triangle",
-        info: "info"
-      };
-      const toast = document.createElement("div");
-      toast.className = `toast ${type}`;
-      toast.innerHTML = `
-        <i data-lucide="${icons[type] || icons.info}"></i>
-        <span>${message}</span>
-        <button class="toast-close" onclick="this.parentElement.remove()">
-          <i data-lucide="x" style="width:14px;height:14px;"></i>
-        </button>
-      `;
-      container.appendChild(toast);
-      if (window.lucide) lucide.createIcons();
-
-      setTimeout(() => {
-        toast.classList.add("removing");
-        setTimeout(() => toast.remove(), 250);
-      }, duration);
-    }
-
-    function validatePrice(value, label = "Harga") {
-      const n = Number(value);
-      if (isNaN(n) || n <= 0) {
-        showNotification(`${label} harus berupa angka positif.`, "error");
-        return null;
-      }
-      if (n > 1e12) {
-        showNotification(`${label} terlalu besar.`, "error");
-        return null;
-      }
-      return n;
-    }
-
     function safeNum(v, fallback = 0) {
       const n = Number(v);
       return isNaN(n) ? fallback : n;
     }
+    function showNotification(message, type = "info", duration = 4000) {
+      const container = document.getElementById("toastContainer");
+      if (!container) return;
+      const icons = { success: "check-circle", error: "alert-circle", warning: "alert-triangle", info: "info" };
+      const toast = document.createElement("div");
+      toast.className = "toast " + type;
+      toast.innerHTML =
+        '<i data-lucide="' + (icons[type] || icons.info) + '"></i>' +
+        '<span>' + message + '</span>' +
+        '<button class="toast-close" type="button"><i data-lucide="x" style="width:14px;height:14px;"></i></button>';
+      const closeBtn = toast.querySelector(".toast-close");
+      closeBtn.addEventListener("click", function () { toast.remove(); });
+      container.appendChild(toast);
+      if (window.lucide) { try { lucide.createIcons(); } catch(e){} }
+      setTimeout(function () {
+        toast.classList.add("removing");
+        setTimeout(function () { toast.remove(); }, 250);
+      }, duration);
+    }
+    function validatePrice(value, label = "Harga") {
+      const n = Number(value);
+      if (isNaN(n) || n <= 0) {
+        showNotification(label + " harus berupa angka positif.", "error");
+        return null;
+      }
+      if (n > 1e12) {
+        showNotification(label + " terlalu besar.", "error");
+        return null;
+      }
+      return n;
+    }
+    window.showNotification = showNotification;
 
-    // ================================================================
-    // 4. INIT FIREBASE
-    // ================================================================
-
+    // ============ FIREBASE INIT ============
     async function initFirebase() {
       try {
         state.app = initializeApp(firebaseConfig);
         state.db = getDatabase(state.app);
 
-        // Analytics kondisional
         try {
           const supported = await analyticsSupported();
-          if (supported) {
-            getAnalytics(state.app);
-          }
-        } catch (e) {
-          console.warn("Analytics tidak tersedia:", e);
-        }
+          if (supported) getAnalytics(state.app);
+        } catch (e) { console.warn("Analytics tidak tersedia:", e); }
 
-        // Auth
         state.auth = getAuth(state.app);
-        const provider = new GoogleAuthProvider();
 
-        onAuthStateChanged(state.auth, (user) => {
+        onAuthStateChanged(state.auth, function (user) {
           state.currentUser = user;
           if (user) {
             const email = (user.email || "").toLowerCase();
-            state.isAdmin = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(email);
+            state.isAdmin = ADMIN_EMAILS.map(function(e){return e.toLowerCase();}).includes(email);
             if (state.isAdmin) {
               showAdminContent();
               loadAdminSettings();
             } else {
-              showAdminLoginError("Email Anda tidak terdaftar sebagai admin. Hubungi pemilik website.");
+              showAdminLoginError("Email Anda tidak terdaftar sebagai admin.");
             }
           } else {
             state.isAdmin = false;
@@ -1204,9 +1176,8 @@
           }
         });
 
-        // Koneksi
         const connectedRef = ref(state.db, ".info/connected");
-        onValue(connectedRef, (snap) => {
+        onValue(connectedRef, function (snap) {
           state.connected = snap.val() === true;
           updateConnectionBadge();
         });
@@ -1214,7 +1185,6 @@
         state.firebaseReady = true;
         updateConnectionBadge();
 
-        // Muat data publik
         await loadPublicData();
         subscribeToChartData();
 
@@ -1222,7 +1192,7 @@
         console.error("Firebase init error:", err);
         state.firebaseReady = false;
         updateConnectionBadge();
-        showNotification("Gagal terhubung ke Firebase. Menggunakan data demo.", "error", 6000);
+        setDataSourceText("Gagal terhubung ke Firebase");
         loadDemoData();
       }
     }
@@ -1231,7 +1201,6 @@
       const badge = document.getElementById("connectionBadge");
       const text = document.getElementById("connectionText");
       if (!badge || !text) return;
-
       if (state.connected && state.firebaseReady) {
         badge.className = "connection-badge online";
         text.textContent = "Online";
@@ -1244,41 +1213,32 @@
       }
     }
 
-    // ================================================================
-    // 5. LOAD PUBLIC DATA
-    // ================================================================
+    function setDataSourceText(txt) {
+      const el = document.getElementById("dataSourceText");
+      if (el) el.textContent = txt;
+    }
 
+    // ============ LOAD PUBLIC DATA ============
     async function loadPublicData() {
       if (!state.firebaseReady) { loadDemoData(); return; }
-
       try {
         const settingsSnap = await get(ref(state.db, "cazo/settings"));
         if (settingsSnap.exists()) {
           state.settings = { ...DEFAULT_SETTINGS, ...settingsSnap.val() };
-          setDataSourceStatus("live");
         } else {
-          // Tulis data awal ke Firebase (sekali saja)
           await initializeDatabase();
           state.settings = { ...DEFAULT_SETTINGS };
-          setDataSourceStatus("live");
         }
+        setDataSourceText("Terhubung ke Firebase");
 
-        // Muat riwayat terbatas
         await loadHistory(200);
-
-        // Muat data publik
-        const publicSnap = await get(ref(state.db, "cazo/public"));
-        if (publicSnap.exists()) {
-          state.publicData = publicSnap.val();
-        }
-
         renderPublicUI();
         renderHistory();
         updateStatistics();
-
+        updateLastUpdated();
       } catch (err) {
         console.error("loadPublicData error:", err);
-        showNotification("Gagal memuat data dari Firebase.", "error");
+        setDataSourceText("Gagal memuat data");
         loadDemoData();
       }
     }
@@ -1286,10 +1246,7 @@
     async function initializeDatabase() {
       try {
         const updates = {};
-        updates["cazo/settings"] = {
-          ...DEFAULT_SETTINGS,
-          updatedAt: serverTimestamp()
-        };
+        updates["cazo/settings"] = { ...DEFAULT_SETTINGS, updatedAt: serverTimestamp() };
         updates["cazo/public"] = {
           currentPrice: DEFAULT_SETTINGS.currentPrice,
           previousPrice: DEFAULT_SETTINGS.previousPrice,
@@ -1298,22 +1255,13 @@
           updatedAt: serverTimestamp()
         };
         updates["cazo/admin/settingsUpdatedAt"] = serverTimestamp();
-
-        // Riwayat awal
         const historyBase = Date.now() - 86400000 * 6;
         for (let i = 0; i < DEFAULT_HISTORY.length; i++) {
           const h = DEFAULT_HISTORY[i];
           const key = "cazo/history/" + (historyBase + i * 86400000);
-          updates[key] = {
-            price: h.price,
-            change: h.change,
-            changePercent: h.changePercent,
-            timestamp: historyBase + i * 86400000
-          };
+          updates[key] = { price: h.price, change: h.change, changePercent: h.changePercent, timestamp: historyBase + i * 86400000 };
         }
-
         await update(ref(state.db), updates);
-        showNotification("Database diinisialisasi dengan data awal.", "success");
       } catch (err) {
         console.error("initializeDatabase error:", err);
         throw err;
@@ -1323,14 +1271,10 @@
     async function loadHistory(limit = 200) {
       if (!state.firebaseReady) return;
       try {
-        const histQuery = query(
-          ref(state.db, "cazo/history"),
-          orderByChild("timestamp"),
-          limitToLast(limit)
-        );
+        const histQuery = query(ref(state.db, "cazo/history"), orderByChild("timestamp"), limitToLast(limit));
         const snap = await get(histQuery);
         const arr = [];
-        snap.forEach(child => {
+        snap.forEach(function (child) {
           const v = child.val();
           if (v && typeof v.price === "number") {
             arr.push({
@@ -1342,75 +1286,45 @@
             });
           }
         });
-        arr.sort((a, b) => a.timestamp - b.timestamp);
+        arr.sort(function (a, b) { return a.timestamp - b.timestamp; });
         state.history = arr;
-      } catch (err) {
-        console.error("loadHistory error:", err);
-      }
+      } catch (err) { console.error("loadHistory error:", err); }
     }
 
     function loadDemoData() {
       state.settings = { ...DEFAULT_SETTINGS };
-      state.history = DEFAULT_HISTORY.map((h, i) => ({
-        key: "demo_" + i,
-        ...h
-      }));
-      setDataSourceStatus("demo");
+      state.history = DEFAULT_HISTORY.map(function (h, i) {
+        return { key: "local_" + i, ...h };
+      });
       renderPublicUI();
       renderHistory();
       updateStatistics();
+      updateLastUpdated();
     }
 
-    function setDataSourceStatus(mode) {
-      const badge = document.getElementById("dataModeBadge");
-      const sourceText = document.getElementById("dataSourceText");
-      if (mode === "live") {
-        badge.textContent = "LIVE";
-        badge.className = "data-status-badge live";
-        sourceText.textContent = "Data tersinkronisasi dari Firebase";
-      } else {
-        badge.textContent = "DEMO";
-        badge.className = "data-status-badge demo";
-        sourceText.textContent = "Pratinjau lokal — data belum tersimpan";
-      }
-    }
-
-    // ================================================================
-    // 6. SUBSCRIBE REAL-TIME
-    // ================================================================
-
+    // ============ REALTIME SUBSCRIBE ============
     function subscribeToChartData() {
       if (!state.firebaseReady) return;
-
-      // Unsubscribe lama
       if (state.publicUnsubscribe) state.publicUnsubscribe();
       if (state.historyUnsubscribe) state.historyUnsubscribe();
 
-      // Settings
       const settingsRef = ref(state.db, "cazo/settings");
-      state.publicUnsubscribe = onValue(settingsRef, (snap) => {
+      state.publicUnsubscribe = onValue(settingsRef, function (snap) {
         if (snap.exists()) {
           const old = state.settings;
           state.settings = { ...DEFAULT_SETTINGS, ...snap.val() };
-          // Jika harga berubah, perbarui UI
           if (old.currentPrice !== state.settings.currentPrice || old.updatedAt !== state.settings.updatedAt) {
             renderPublicUI();
             updateStatistics();
+            updateLastUpdated();
           }
         }
-      }, (err) => {
-        console.error("Settings listener error:", err);
-      });
+      }, function (err) { console.error("Settings listener error:", err); });
 
-      // History — gunakan limitToLast untuk performa
-      const histRef = query(
-        ref(state.db, "cazo/history"),
-        orderByChild("timestamp"),
-        limitToLast(200)
-      );
-      state.historyUnsubscribe = onValue(histRef, (snap) => {
+      const histRef = query(ref(state.db, "cazo/history"), orderByChild("timestamp"), limitToLast(200));
+      state.historyUnsubscribe = onValue(histRef, function (snap) {
         const arr = [];
-        snap.forEach(child => {
+        snap.forEach(function (child) {
           const v = child.val();
           if (v && typeof v.price === "number") {
             arr.push({
@@ -1422,51 +1336,40 @@
             });
           }
         });
-        arr.sort((a, b) => a.timestamp - b.timestamp);
+        arr.sort(function (a, b) { return a.timestamp - b.timestamp; });
         state.history = arr;
-
         if (arr.length > 0) {
           const latest = arr[arr.length - 1];
           const prev = arr.length > 1 ? arr[arr.length - 2] : null;
           state.settings.currentPrice = latest.price;
           if (prev) state.settings.previousPrice = prev.price;
         }
-
         renderPublicUI();
         updateChart();
         renderHistory();
         updateStatistics();
         updateLastUpdated();
-      }, (err) => {
-        console.error("History listener error:", err);
-      });
+      }, function (err) { console.error("History listener error:", err); });
     }
 
-    // ================================================================
-    // 7. RENDER PUBLIC UI
-    // ================================================================
-
+    // ============ RENDER PUBLIC UI ============
     function renderPublicUI() {
       const s = state.settings;
       const hist = state.history;
 
-      // Header
       document.getElementById("assetName").textContent = s.assetName || "CAZO CARD";
       document.getElementById("assetSymbol").textContent = s.symbol || "CAZO";
-      document.getElementById("assetIcon").textContent = (s.symbol || "CZ").slice(0, 2).toUpperCase();
 
       const priceEl = document.getElementById("currentPrice");
       const price = hist.length > 0 ? hist[hist.length - 1].price : s.currentPrice;
       priceEl.textContent = formatNumber(price);
 
-      // Perubahan
-      let change = 0, changePct = 0, prevPrice = s.previousPrice || price;
+      let change = 0, changePct = 0;
       if (hist.length >= 2) {
         const last = hist[hist.length - 1];
         const secondLast = hist[hist.length - 2];
         change = last.price - secondLast.price;
         changePct = secondLast.price !== 0 ? (change / secondLast.price) * 100 : 0;
-        prevPrice = secondLast.price;
       } else if (s.previousPrice && s.currentPrice) {
         change = s.currentPrice - s.previousPrice;
         changePct = s.previousPrice !== 0 ? (change / s.previousPrice) * 100 : 0;
@@ -1480,45 +1383,36 @@
       changeValEl.textContent = (isUp ? "+" : "") + formatNumber(change);
       changeValEl.className = "chart-change-value " + (isUp ? "up" : "down");
       changeBadgeEl.className = "chart-change-badge " + (isUp ? "up" : "down");
-      changeBadgeEl.querySelector("i").setAttribute("data-lucide", isUp ? "trending-up" : "trending-down");
+      const iconEl = changeBadgeEl.querySelector("i");
+      if (iconEl) iconEl.setAttribute("data-lucide", isUp ? "trending-up" : "trending-down");
       changePctEl.textContent = (isUp ? "+" : "") + formatNumber(changePct) + "%";
-
       priceEl.className = "chart-price " + (isUp ? "up" : "down");
 
-      // Update chart
       updateChart();
-      if (window.lucide) lucide.createIcons();
+      if (window.lucide) { try { lucide.createIcons(); } catch(e){} }
     }
 
     function updateLastUpdated() {
       const el = document.getElementById("lastUpdatedText");
-      const ts = state.settings.updatedAt || (state.history.length > 0 ? state.history[state.history.length - 1].timestamp : null);
+      if (!el) return;
+      const ts = state.settings.updatedAt ||
+        (state.history.length > 0 ? state.history[state.history.length - 1].timestamp : null);
       el.textContent = "Terakhir: " + (ts ? timeAgo(ts) : "—");
     }
 
-    // ================================================================
-    // 8. CHART
-    // ================================================================
-
+    // ============ CHART ============
     function getFilteredHistory(range) {
       const hist = state.history;
       if (!hist.length) return [];
-
       const now = Date.now();
       const ranges = {
-        "1m": 60 * 1000,
-        "5m": 5 * 60 * 1000,
-        "15m": 15 * 60 * 1000,
-        "1h": 60 * 60 * 1000,
-        "24h": 24 * 60 * 60 * 1000,
-        "7d": 7 * 24 * 60 * 60 * 1000,
-        "30d": 30 * 24 * 60 * 60 * 1000,
+        "1m": 60 * 1000, "5m": 5 * 60 * 1000, "15m": 15 * 60 * 1000,
+        "1h": 60 * 60 * 1000, "24h": 24 * 60 * 60 * 1000,
+        "7d": 7 * 24 * 60 * 60 * 1000, "30d": 30 * 24 * 60 * 60 * 1000,
         "all": Infinity
       };
       const cutoff = ranges[range] === Infinity ? 0 : now - ranges[range];
-      const filtered = hist.filter(h => h.timestamp >= cutoff);
-
-      // Selalu sertakan minimal beberapa titik terakhir agar grafik tidak kosong
+      const filtered = hist.filter(function (h) { return h.timestamp >= cutoff; });
       if (filtered.length < 2 && hist.length >= 2) {
         return hist.slice(-Math.min(hist.length, 10));
       }
@@ -1528,21 +1422,19 @@
     function updateChart() {
       const canvas = document.getElementById("mainChart");
       if (!canvas) return;
-
       const filtered = getFilteredHistory(state.activeRange);
       const loadingEl = document.getElementById("chartLoading");
       const emptyEl = document.getElementById("chartEmpty");
 
       if (filtered.length === 0) {
-        loadingEl.classList.add("hidden");
-        emptyEl.classList.remove("hidden");
+        if (loadingEl) loadingEl.classList.add("hidden");
+        if (emptyEl) emptyEl.classList.remove("hidden");
         if (state.chart) { state.chart.destroy(); state.chart = null; }
         return;
       }
+      if (emptyEl) emptyEl.classList.add("hidden");
 
-      emptyEl.classList.add("hidden");
-
-      const labels = filtered.map(h => {
+      const labels = filtered.map(function (h) {
         const d = new Date(h.timestamp);
         const r = state.activeRange;
         if (r === "1m" || r === "5m" || r === "15m") {
@@ -1553,8 +1445,7 @@
         }
         return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short" });
       });
-
-      const data = filtered.map(h => h.price);
+      const data = filtered.map(function (h) { return h.price; });
       const isUp = data.length >= 2 ? data[data.length - 1] >= data[0] : true;
       const lineColor = isUp ? "#16A34A" : "#DC2626";
       const fillColor = isUp ? "rgba(22,163,74,0.08)" : "rgba(220,38,38,0.08)";
@@ -1570,10 +1461,10 @@
         state.chart = new Chart(ctx, {
           type: "line",
           data: {
-            labels,
+            labels: labels,
             datasets: [{
               label: state.settings.assetName || "CAZO",
-              data,
+              data: data,
               borderColor: lineColor,
               backgroundColor: fillColor,
               borderWidth: 2,
@@ -1603,12 +1494,11 @@
                 cornerRadius: 8,
                 displayColors: false,
                 callbacks: {
-                  title: (items) => {
-                    const i = items[0].dataIndex;
-                    const h = filtered[i];
+                  title: function (items) {
+                    const h = filtered[items[0].dataIndex];
                     return h ? formatDateTime(h.timestamp) : "";
                   },
-                  label: (item) => {
+                  label: function (item) {
                     const h = filtered[item.dataIndex];
                     const chg = h ? h.change : 0;
                     const pct = h ? h.changePercent : 0;
@@ -1624,45 +1514,31 @@
             scales: {
               x: {
                 grid: { color: "rgba(229,231,235,0.5)", drawBorder: false },
-                ticks: {
-                  color: "#9CA3AF",
-                  font: { size: 10, family: "Inter" },
-                  maxTicksLimit: 6,
-                  maxRotation: 0
-                }
+                ticks: { color: "#9CA3AF", font: { size: 10, family: "Inter" }, maxTicksLimit: 6, maxRotation: 0 }
               },
               y: {
                 position: "right",
                 grid: { color: "rgba(229,231,235,0.5)", drawBorder: false },
-                ticks: {
-                  color: "#9CA3AF",
-                  font: { size: 10, family: "Inter" },
-                  callback: (v) => formatNumber(v, 0)
-                }
+                ticks: { color: "#9CA3AF", font: { size: 10, family: "Inter" }, callback: function(v){ return formatNumber(v, 0); } }
               }
             },
             animation: { duration: 300, easing: "easeOutQuart" }
           }
         });
       }
-
-      loadingEl.classList.add("hidden");
+      if (loadingEl) loadingEl.classList.add("hidden");
     }
 
-    // Range buttons
-    document.querySelectorAll(".range-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".range-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".range-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        document.querySelectorAll(".range-btn").forEach(function (b) { b.classList.remove("active"); });
         btn.classList.add("active");
         state.activeRange = btn.dataset.range;
         updateChart();
       });
     });
 
-    // ================================================================
-    // 9. STATISTIK
-    // ================================================================
-
+    // ============ STATISTIK ============
     function updateStatistics() {
       const hist = state.history;
       if (!hist.length) {
@@ -1672,13 +1548,11 @@
         document.getElementById("statPoints").textContent = "0";
         return;
       }
-
       let high = -Infinity, low = Infinity, highTs = null, lowTs = null;
-      hist.forEach(h => {
+      hist.forEach(function (h) {
         if (h.price > high) { high = h.price; highTs = h.timestamp; }
         if (h.price < low) { low = h.price; lowTs = h.timestamp; }
       });
-
       const first = hist[0].price;
       const last = hist[hist.length - 1].price;
       const totalChange = last - first;
@@ -1694,75 +1568,67 @@
       chgEl.className = "stat-value " + (totalChange >= 0 ? "up" : "down");
       document.getElementById("statChangePercent").textContent =
         (totalChangePct >= 0 ? "+" : "") + formatNumber(totalChangePct) + "%";
-
       document.getElementById("statPoints").textContent = hist.length.toLocaleString("id-ID");
     }
 
-    // ================================================================
-    // 10. RIWAYAT
-    // ================================================================
-
+    // ============ RIWAYAT ============
     function renderHistory() {
       const list = document.getElementById("historyList");
-      const hist = [...state.history].reverse().slice(0, 50);
-
-      document.getElementById("historyCount").textContent = state.history.length + " entri";
+      const hist = state.history.slice().reverse().slice(0, 50);
+      const cntEl = document.getElementById("historyCount");
+      if (cntEl) cntEl.textContent = state.history.length + " entri";
 
       if (!hist.length) {
-        list.innerHTML = `<div class="history-empty">Belum ada riwayat pergerakan.</div>`;
+        list.innerHTML = '<div class="history-empty">Belum ada riwayat pergerakan.</div>';
         return;
       }
 
-      list.innerHTML = hist.map(h => {
+      list.innerHTML = hist.map(function (h) {
         const isUp = h.change >= 0;
         const prevPrice = h.price - h.change;
-        return `
-          <div class="history-item">
-            <div class="history-icon ${isUp ? "up" : "down"}">
-              <i data-lucide="${isUp ? "arrow-up-right" : "arrow-down-right"}"></i>
-            </div>
-            <div class="history-main">
-              <div class="history-prices">
-                <span class="history-old">${formatNumber(prevPrice)}</span>
-                <span class="history-arrow">→</span>
-                <span class="history-new ${isUp ? "up" : "down"}">${formatNumber(h.price)}</span>
-              </div>
-              <div class="history-meta">
-                <span>${formatDateTime(h.timestamp)}</span>
-                <span>•</span>
-                <span>${timeAgo(h.timestamp)}</span>
-              </div>
-            </div>
-            <div class="history-change ${isUp ? "up" : "down"}">
-              ${isUp ? "+" : ""}${formatNumber(h.change)}
-              <br>
-              <span style="font-size:10px;">${isUp ? "+" : ""}${formatNumber(h.changePercent)}%</span>
-            </div>
-          </div>
-        `;
+        return '<div class="history-item">' +
+          '<div class="history-icon ' + (isUp ? "up" : "down") + '">' +
+            '<i data-lucide="' + (isUp ? "arrow-up-right" : "arrow-down-right") + '"></i>' +
+          '</div>' +
+          '<div class="history-main">' +
+            '<div class="history-prices">' +
+              '<span class="history-old">' + formatNumber(prevPrice) + '</span>' +
+              '<span class="history-arrow">→</span>' +
+              '<span class="history-new ' + (isUp ? "up" : "down") + '">' + formatNumber(h.price) + '</span>' +
+            '</div>' +
+            '<div class="history-meta">' +
+              '<span>' + formatDateTime(h.timestamp) + '</span>' +
+              '<span>•</span>' +
+              '<span>' + timeAgo(h.timestamp) + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="history-change ' + (isUp ? "up" : "down") + '">' +
+            (isUp ? "+" : "") + formatNumber(h.change) +
+            '<br><span style="font-size:10px;">' + (isUp ? "+" : "") + formatNumber(h.changePercent) + '%</span>' +
+          '</div>' +
+        '</div>';
       }).join("");
-
-      if (window.lucide) lucide.createIcons();
+      if (window.lucide) { try { lucide.createIcons(); } catch(e){} }
     }
 
-    // ================================================================
-    // 11. ADMIN — AUTH
-    // ================================================================
-
+    // ============ ADMIN: AUTH & PANEL ============
     function openAdminPanel() {
       document.getElementById("adminOverlay").classList.add("open");
       document.getElementById("adminPanel").classList.add("open");
       document.body.style.overflow = "hidden";
-      if (state.isAdmin) {
-        loadAdminSettings();
-      }
+      if (state.isAdmin) loadAdminSettings();
     }
-
     function closeAdminPanel() {
       document.getElementById("adminOverlay").classList.remove("open");
       document.getElementById("adminPanel").classList.remove("open");
       document.body.style.overflow = "";
     }
+    window.openAdminPanel = openAdminPanel;
+    window.closeAdminPanel = closeAdminPanel;
+
+    document.getElementById("adminCloseBtn").addEventListener("click", closeAdminPanel);
+    document.getElementById("adminCloseBtn2").addEventListener("click", closeAdminPanel);
+    document.getElementById("adminOverlay").addEventListener("click", closeAdminPanel);
 
     function showAdminLoginView() {
       document.getElementById("adminLoginView").classList.remove("hidden");
@@ -1770,26 +1636,20 @@
       document.getElementById("adminFooter").classList.add("hidden");
       document.getElementById("adminAuthError").classList.add("hidden");
     }
-
     function showAdminContent() {
       document.getElementById("adminLoginView").classList.add("hidden");
       document.getElementById("adminContentView").classList.remove("hidden");
       document.getElementById("adminFooter").classList.remove("hidden");
       renderPreviewChart();
     }
-
     function showAdminLoginError(msg) {
       const el = document.getElementById("adminAuthError");
       document.getElementById("adminAuthErrorText").textContent = msg;
       el.classList.remove("hidden");
     }
 
-    // Google Sign-In
-    document.getElementById("googleSignInBtn").addEventListener("click", async () => {
-      if (!state.auth) {
-        showNotification("Firebase Auth belum siap.", "error");
-        return;
-      }
+    document.getElementById("googleSignInBtn").addEventListener("click", async function () {
+      if (!state.auth) { showNotification("Firebase Auth belum siap.", "error"); return; }
       try {
         const provider = new GoogleAuthProvider();
         provider.setCustomParameters({ prompt: "select_account" });
@@ -1804,10 +1664,7 @@
       }
     });
 
-    // ================================================================
-    // 12. ADMIN — SETTINGS
-    // ================================================================
-
+    // ============ ADMIN: SETTINGS ============
     function loadAdminSettings() {
       if (!state.isAdmin) return;
       const s = state.settings;
@@ -1827,20 +1684,15 @@
 
     function updateMovementStatusText() {
       const el = document.getElementById("movementStatusText");
+      if (!el) return;
       const mode = document.getElementById("adminMovementMode").value;
-      const running = state.movementRunning;
-      const modeNames = {
-        manual: "Manual", up: "Naik Bertahap", down: "Turun Bertahap",
-        stable: "Stabil", random: "Acak"
-      };
-      el.textContent = `Mode: ${modeNames[mode] || mode} — ${running ? "Berjalan" : "Tidak berjalan"}`;
+      const modeNames = { manual: "Manual", up: "Naik Bertahap", down: "Turun Bertahap", stable: "Stabil", random: "Acak" };
+      el.textContent = "Mode: " + (modeNames[mode] || mode) + " — " + (state.movementRunning ? "Berjalan" : "Tidak berjalan");
     }
 
-    // Simpan pengaturan
-    document.getElementById("btnSaveSettings").addEventListener("click", async () => {
+    document.getElementById("btnSaveSettings").addEventListener("click", async function () {
       if (!state.isAdmin) { showNotification("Anda bukan admin.", "error"); return; }
       if (!state.firebaseReady) { showNotification("Firebase belum siap.", "error"); return; }
-
       const btn = document.getElementById("btnSaveSettings");
       btn.disabled = true;
       btn.innerHTML = '<div class="spinner" style="width:14px;height:14px;border-width:2px;"></div> Menyimpan...';
@@ -1863,25 +1715,14 @@
 
         const updates = {};
         updates["cazo/settings"] = {
-          assetName: name,
-          symbol,
-          currentPrice,
-          previousPrice,
-          highestPrice: high,
-          lowestPrice: low,
-          chartColor,
-          maxPoints,
-          movementMode,
-          updateInterval,
-          isRunning: state.movementRunning,
+          assetName: name, symbol, currentPrice, previousPrice,
+          highestPrice: high, lowestPrice: low, chartColor, maxPoints,
+          movementMode, updateInterval, isRunning: state.movementRunning,
           updatedAt: serverTimestamp()
         };
         updates["cazo/public"] = {
-          currentPrice,
-          previousPrice,
-          movementMode,
-          isRunning: state.movementRunning,
-          updatedAt: serverTimestamp()
+          currentPrice, previousPrice, movementMode,
+          isRunning: state.movementRunning, updatedAt: serverTimestamp()
         };
         updates["cazo/admin/settingsUpdatedAt"] = serverTimestamp();
 
@@ -1889,7 +1730,6 @@
 
         state.settings = { ...state.settings, assetName: name, symbol, currentPrice, previousPrice, highestPrice: high, lowestPrice: low, chartColor, maxPoints, movementMode, updateInterval };
 
-        // Catat titik harga baru jika berbeda
         const lastHist = state.history.length > 0 ? state.history[state.history.length - 1] : null;
         if (!lastHist || lastHist.price !== currentPrice) {
           await addPricePoint(currentPrice, previousPrice);
@@ -1907,28 +1747,23 @@
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<i data-lucide="save"></i> Simpan Perubahan';
-        if (window.lucide) lucide.createIcons();
+        if (window.lucide) { try { lucide.createIcons(); } catch(e){} }
       }
     });
 
     function setAdminSaveStatus(msg, type = "success") {
       const el = document.getElementById("adminSaveStatus");
-      const text = document.getElementById("adminSaveStatusText");
-      text.textContent = msg;
+      document.getElementById("adminSaveStatusText").textContent = msg;
       el.className = "admin-status " + type;
       el.classList.remove("hidden");
     }
 
-    // ================================================================
-    // 13. ADMIN — TAMBAH TITIK HARGA
-    // ================================================================
-
+    // ============ ADMIN: TAMBAH TITIK ============
     async function addPricePoint(price, prevPrice) {
       if (!state.firebaseReady) throw new Error("Firebase belum siap");
       const change = price - (prevPrice || price);
       const changePercent = prevPrice && prevPrice !== 0 ? (change / prevPrice) * 100 : 0;
       const now = Date.now();
-
       const newRef = push(ref(state.db, "cazo/history"));
       await set(newRef, {
         price: Number(price),
@@ -1936,17 +1771,12 @@
         changePercent: Number(changePercent.toFixed(2)),
         timestamp: now
       });
-
-      // Batasi jumlah titik
       await pruneHistory(state.settings.maxPoints || 100);
-
-      // Update public
       await update(ref(state.db, "cazo/public"), {
         currentPrice: Number(price),
         previousPrice: Number(prevPrice || price),
         updatedAt: serverTimestamp()
       });
-
       return newRef.key;
     }
 
@@ -1954,21 +1784,17 @@
       try {
         const snap = await get(query(ref(state.db, "cazo/history"), orderByChild("timestamp")));
         const keys = [];
-        snap.forEach(c => keys.push({ key: c.key, ts: safeNum(c.val().timestamp, 0) }));
+        snap.forEach(function (c) { keys.push({ key: c.key, ts: safeNum(c.val().timestamp, 0) }); });
         if (keys.length <= maxPoints) return;
-        keys.sort((a, b) => a.ts - b.ts);
+        keys.sort(function (a, b) { return a.ts - b.ts; });
         const toDelete = keys.slice(0, keys.length - maxPoints);
         const updates = {};
-        toDelete.forEach(k => { updates["cazo/history/" + k.key] = null; });
-        if (Object.keys(updates).length > 0) {
-          await update(ref(state.db), updates);
-        }
-      } catch (e) {
-        console.warn("pruneHistory:", e);
-      }
+        toDelete.forEach(function (k) { updates["cazo/history/" + k.key] = null; });
+        if (Object.keys(updates).length > 0) await update(ref(state.db), updates);
+      } catch (e) { console.warn("pruneHistory:", e); }
     }
 
-    document.getElementById("btnAddPoint").addEventListener("click", async () => {
+    document.getElementById("btnAddPoint").addEventListener("click", async function () {
       if (!state.isAdmin) return;
       const price = validatePrice(document.getElementById("adminCurrentPrice").value, "Harga");
       if (price === null) return;
@@ -1976,82 +1802,60 @@
         const prev = state.history.length > 0 ? state.history[state.history.length - 1].price : price;
         await addPricePoint(price, prev);
         await loadHistory(200);
-        renderPublicUI();
-        updateStatistics();
-        renderPreviewChart();
+        renderPublicUI(); updateStatistics(); renderPreviewChart();
         showNotification("Titik harga ditambahkan.", "success");
       } catch (err) {
         showNotification("Gagal menambah titik: " + err.message, "error");
       }
     });
 
-    document.getElementById("btnDeleteLast").addEventListener("click", async () => {
+    document.getElementById("btnDeleteLast").addEventListener("click", async function () {
       if (!state.isAdmin) return;
       if (!state.history.length) { showNotification("Tidak ada data untuk dihapus.", "warning"); return; }
       const last = state.history[state.history.length - 1];
-      if (!last.key || last.key.startsWith("demo_")) { showNotification("Data demo tidak dapat dihapus.", "warning"); return; }
+      if (!last.key || last.key.startsWith("local_")) { showNotification("Data lokal tidak dapat dihapus.", "warning"); return; }
       try {
         await remove(ref(state.db, "cazo/history/" + last.key));
         await loadHistory(200);
-        renderPublicUI();
-        updateStatistics();
-        renderPreviewChart();
+        renderPublicUI(); updateStatistics(); renderPreviewChart();
         showNotification("Titik terakhir dihapus.", "success");
       } catch (err) {
         showNotification("Gagal menghapus: " + err.message, "error");
       }
     });
 
-    // ================================================================
-    // 14. ADMIN — PERGERAKAN OTOMATIS
-    // ================================================================
-
+    // ============ ADMIN: MOVEMENT ============
     document.getElementById("btnStartMovement").addEventListener("click", startMovement);
     document.getElementById("btnStopMovement").addEventListener("click", stopMovement);
 
     async function startMovement() {
       if (!state.isAdmin) return;
       if (state.movementRunning) { showNotification("Pergerakan sudah berjalan.", "warning"); return; }
-
       const mode = document.getElementById("adminMovementMode").value;
       const interval = safeNum(document.getElementById("adminInterval").value, 5);
-
-      if (interval === 0) {
-        showNotification("Mode manual: gunakan tombol Tambah Titik.", "info");
-        return;
-      }
-      if (interval < 1) {
-        showNotification("Interval minimal 1 detik.", "error");
-        return;
-      }
+      if (interval === 0) { showNotification("Mode manual: gunakan tombol Tambah Titik.", "info"); return; }
+      if (interval < 1) { showNotification("Interval minimal 1 detik.", "error"); return; }
 
       state.movementRunning = true;
       state.movementTarget = null;
 
-      // Simpan status ke Firebase
       try {
         await update(ref(state.db, "cazo/settings"), { isRunning: true, movementMode: mode, updateInterval: interval, updatedAt: serverTimestamp() });
         await update(ref(state.db, "cazo/public"), { isRunning: true, movementMode: mode, updatedAt: serverTimestamp() });
-      } catch (e) {
-        console.warn("Gagal simpan status running:", e);
-      }
+      } catch (e) { console.warn("Gagal simpan status running:", e); }
 
       updateMovementStatusText();
-      showNotification(`Pergerakan ${mode} dimulai (interval ${interval}s).`, "success");
+      showNotification("Pergerakan " + mode + " dimulai (interval " + interval + "s).", "success");
 
-      // Jika mode up/down, ambil target
       if (mode === "up" || mode === "down") {
         const target = validatePrice(document.getElementById("adminTargetPrice").value, "Target harga");
         if (target !== null) state.movementTarget = target;
       }
 
-      // Manual points
       let manualPoints = [];
       if (mode === "manual") {
         const raw = document.getElementById("adminManualPoints").value.trim();
-        if (raw) {
-          manualPoints = raw.split(",").map(v => Number(v.trim())).filter(v => !isNaN(v) && v > 0);
-        }
+        if (raw) manualPoints = raw.split(",").map(function (v) { return Number(v.trim()); }).filter(function (v) { return !isNaN(v) && v > 0; });
         if (manualPoints.length === 0) {
           showNotification("Masukkan titik manual yang valid.", "error");
           state.movementRunning = false;
@@ -2062,12 +1866,11 @@
 
       let manualIndex = 0;
 
-      state.movementTimer = setInterval(async () => {
+      state.movementTimer = setInterval(async function () {
         if (!state.movementRunning) return;
         try {
           const current = state.settings.currentPrice || 1250;
           let nextPrice = current;
-
           if (mode === "up") {
             const target = state.movementTarget || current * 1.05;
             const step = Math.max((target - current) * 0.15, 0.5);
@@ -2096,15 +1899,11 @@
           state.settings.currentPrice = nextPrice;
           state.settings.previousPrice = current;
 
-          // Update form
           document.getElementById("adminCurrentPrice").value = nextPrice;
           document.getElementById("adminPreviousPrice").value = current;
 
           await loadHistory(200);
-          renderPublicUI();
-          updateStatistics();
-          renderPreviewChart();
-          updateLastUpdated();
+          renderPublicUI(); updateStatistics(); renderPreviewChart(); updateLastUpdated();
 
         } catch (err) {
           console.error("Movement tick error:", err);
@@ -2114,34 +1913,28 @@
       }, interval * 1000);
     }
 
-    async function stopMovement(silent = false) {
+    async function stopMovement(silent) {
       state.movementRunning = false;
       if (state.movementTimer) { clearInterval(state.movementTimer); state.movementTimer = null; }
       updateMovementStatusText();
-
       if (state.firebaseReady && state.isAdmin) {
         try {
           await update(ref(state.db, "cazo/settings"), { isRunning: false, updatedAt: serverTimestamp() });
           await update(ref(state.db, "cazo/public"), { isRunning: false, updatedAt: serverTimestamp() });
         } catch (e) { console.warn("stopMovement save:", e); }
       }
-
       if (!silent) showNotification("Pergerakan dihentikan.", "info");
     }
 
-    // Reset grafik
-    document.getElementById("btnResetChart").addEventListener("click", async () => {
+    document.getElementById("btnResetChart").addEventListener("click", async function () {
       if (!state.isAdmin) return;
       if (!confirm("Reset grafik ke data awal? Riwayat saat ini akan dihapus.")) return;
       try {
-        // Hapus riwayat
         await remove(ref(state.db, "cazo/history"));
-        // Tulis data awal
         const updates = {};
         const base = Date.now() - 86400000 * 6;
-        DEFAULT_HISTORY.forEach((h, i) => {
-          const key = "cazo/history/" + (base + i * 86400000);
-          updates[key] = { price: h.price, change: h.change, changePercent: h.changePercent, timestamp: base + i * 86400000 };
+        DEFAULT_HISTORY.forEach(function (h, i) {
+          updates["cazo/history/" + (base + i * 86400000)] = { price: h.price, change: h.change, changePercent: h.changePercent, timestamp: base + i * 86400000 };
         });
         updates["cazo/settings"] = { ...DEFAULT_SETTINGS, updatedAt: serverTimestamp() };
         updates["cazo/public"] = { currentPrice: DEFAULT_SETTINGS.currentPrice, previousPrice: DEFAULT_SETTINGS.previousPrice, movementMode: "manual", isRunning: false, updatedAt: serverTimestamp() };
@@ -2149,27 +1942,20 @@
 
         state.settings = { ...DEFAULT_SETTINGS };
         await loadHistory(200);
-        renderPublicUI();
-        updateStatistics();
-        loadAdminSettings();
-        renderPreviewChart();
+        renderPublicUI(); updateStatistics(); loadAdminSettings(); renderPreviewChart();
         showNotification("Grafik berhasil direset.", "success");
       } catch (err) {
         showNotification("Gagal reset: " + err.message, "error");
       }
     });
 
-    // ================================================================
-    // 15. PREVIEW CHART (ADMIN)
-    // ================================================================
-
+    // ============ ADMIN: PREVIEW CHART ============
     function renderPreviewChart() {
       const canvas = document.getElementById("previewChart");
       if (!canvas) return;
-
       const hist = state.history.slice(-30);
-      const labels = hist.map(h => formatTime(h.timestamp));
-      const data = hist.map(h => h.price);
+      const labels = hist.map(function (h) { return formatDateTime(h.timestamp).split(" ")[1] || ""; });
+      const data = hist.map(function (h) { return h.price; });
       const isUp = data.length >= 2 ? data[data.length - 1] >= data[0] : true;
       const color = isUp ? "#16A34A" : "#DC2626";
 
@@ -2182,29 +1968,18 @@
         const ctx = canvas.getContext("2d");
         state.previewChart = new Chart(ctx, {
           type: "line",
-          data: {
-            labels,
-            datasets: [{
-              data,
-              borderColor: color,
-              borderWidth: 1.5,
-              pointRadius: 0,
-              fill: true,
-              backgroundColor: isUp ? "rgba(22,163,74,0.06)" : "rgba(220,38,38,0.06)",
-              tension: 0.35
-            }]
-          },
+          data: { labels: labels, datasets: [{
+            data: data, borderColor: color, borderWidth: 1.5, pointRadius: 0,
+            fill: true, backgroundColor: isUp ? "rgba(22,163,74,0.06)" : "rgba(220,38,38,0.06)", tension: 0.35
+          }]},
           options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false,
             plugins: { legend: { display: false }, tooltip: { enabled: false } },
             scales: {
               x: { display: false },
-              y: {
-                display: true,
-                position: "right",
+              y: { display: true, position: "right",
                 grid: { color: "rgba(229,231,235,0.4)", drawBorder: false },
-                ticks: { color: "#9CA3AF", font: { size: 9 }, maxTicksLimit: 4, callback: v => formatNumber(v, 0) }
+                ticks: { color: "#9CA3AF", font: { size: 9 }, maxTicksLimit: 4, callback: function(v){ return formatNumber(v, 0); } }
               }
             },
             animation: { duration: 200 }
@@ -2213,82 +1988,22 @@
       }
     }
 
-    // ================================================================
-    // 16. JAM DIGITAL
-    // ================================================================
-
-    function startClock() {
-      const el = document.getElementById("clockDisplay");
-      function tick() {
-        const d = new Date();
-        el.textContent = d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-      }
-      tick();
-      state.clockInterval = setInterval(tick, 1000);
-    }
-
-    // ================================================================
-    // 17. NAVIGASI & MENU
-    // ================================================================
-
-    function scrollToSection(id) {
-      const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-      document.getElementById("navbarLinks").classList.remove("open");
-    }
-
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    document.getElementById("mobileMenuBtn").addEventListener("click", () => {
-      document.getElementById("navbarLinks").classList.toggle("open");
-    });
-
-    // Tutup menu saat klik di luar
-    document.addEventListener("click", (e) => {
-      const menu = document.getElementById("navbarLinks");
-      const btn = document.getElementById("mobileMenuBtn");
-      if (menu.classList.contains("open") && !menu.contains(e.target) && !btn.contains(e.target)) {
-        menu.classList.remove("open");
-      }
-    });
-
-    // Escape tutup panel
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        closeAdminPanel();
-        document.getElementById("navbarLinks").classList.remove("open");
-      }
-    });
-
-    // ================================================================
-    // 18. OFFLINE DETECTION
-    // ================================================================
-
-    window.addEventListener("offline", () => {
-      showNotification("Koneksi internet terputus. Data mungkin tidak tersinkronisasi.", "warning", 5000);
+    // ============ OFFLINE DETECTION ============
+    window.addEventListener("offline", function () {
+      showNotification("Koneksi internet terputus.", "warning", 5000);
       updateConnectionBadge();
     });
-
-    window.addEventListener("online", () => {
+    window.addEventListener("online", function () {
       showNotification("Koneksi internet kembali.", "success");
       updateConnectionBadge();
     });
 
-    // ================================================================
-    // 19. BOOTSTRAP
-    // ================================================================
-
+    // ============ BOOTSTRAP ============
     async function bootstrap() {
-      startClock();
-      if (window.lucide) lucide.createIcons();
       await initFirebase();
-      if (window.lucide) lucide.createIcons();
-      updateLastUpdated();
+      if (window.lucide) { try { lucide.createIcons(); } catch(e){} }
       setInterval(updateLastUpdated, 30000);
     }
-
     bootstrap();
 
   </script>
