@@ -2,15 +2,23 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>CAZO — Trading Platform</title>
-<meta name="description" content="CAZO — Platform trading digital premium." />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CAZO Admin — Control Panel</title>
+<meta name="robots" content="noindex, nofollow" />
 
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link rel="preconnect" href="https://www.gstatic.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+<!-- Charts + Icons -->
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<script>if (typeof LightweightCharts === 'undefined') document.write('<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"><\/script>');</script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.446.0/dist/umd/lucide.min.js"></script>
+<script>if (typeof lucide === 'undefined') document.write('<script src="https://unpkg.com/lucide@0.446.0/dist/umd/lucide.min.js"><\/script>');</script>
+
+<!-- Firebase Compat (lebih stabil) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -20,11 +28,11 @@
   --border:#E2E8F0;--border-2:#F1F5F9;
   --up:#16A34A;--up-2:#F0FDF4;--down:#DC2626;--down-2:#FEF2F2;
   --blue:#2563EB;--blue-2:#EFF6FF;--warn:#F59E0B;--warn-2:#FFFBEB;
-  --radius:16px;--radius-sm:10px;--radius-lg:24px;
-  --shadow:0 1px 3px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
+  --radius:14px;--radius-lg:20px;
+  --shadow:0 1px 3px rgba(15,23,42,.06);
   --shadow-md:0 4px 16px rgba(15,23,42,.08);
-  --shadow-lg:0 20px 40px rgba(15,23,42,.12);
-  --t:220ms cubic-bezier(.4,0,.2,1);
+  --shadow-lg:0 20px 40px rgba(15,23,42,.15);
+  --t:200ms cubic-bezier(.4,0,.2,1);
   --font:'Inter','Plus Jakarta Sans',sans-serif;
   --font-d:'Plus Jakarta Sans','Inter',sans-serif;
 }
@@ -35,131 +43,65 @@ body{font-family:var(--font);background:var(--bg-2);color:var(--txt);line-height
 .hidden{display:none!important}
 button{font-family:inherit}
 
-/* ===== TOPBAR ===== */
-.topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(16px) saturate(180%);-webkit-backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid var(--border-2)}
+/* Fallback icon */
+[data-lucide]:empty::before{content:"·";color:#94A3B8;font-size:14px;line-height:1}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid var(--border-2)}
 .topbar-in{max-width:1400px;margin:0 auto;padding:0 16px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
-.brand img{width:38px;height:38px;border-radius:11px;object-fit:cover;box-shadow:0 2px 8px rgba(15,23,42,.12)}
+.brand img{width:38px;height:38px;border-radius:11px;object-fit:cover}
 .brand-txt{line-height:1.1}
 .brand-name{font-family:var(--font-d);font-weight:800;font-size:17px;letter-spacing:-.3px}
 .brand-sub{font-size:9px;font-weight:600;color:var(--txt-3);letter-spacing:2.5px;text-transform:uppercase}
-.nav-tabs{display:flex;gap:2px;align-items:center}
-.nav-tab{padding:8px 14px;border-radius:10px;border:none;background:transparent;color:var(--txt-2);font-size:13px;font-weight:600;cursor:pointer;transition:var(--t);display:flex;align-items:center;gap:6px;white-space:nowrap}
-.nav-tab:hover{background:var(--bg-3);color:var(--txt)}
-.nav-tab.active{background:var(--txt);color:#fff}
-.nav-tab svg{width:15px;height:15px}
 .topbar-right{display:flex;align-items:center;gap:10px}
-.conn-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;background:var(--bg-3);font-size:11px;font-weight:600;color:var(--txt-2);transition:var(--t)}
-.conn-dot{width:7px;height:7px;border-radius:50%;background:var(--txt-3);transition:var(--t)}
+.conn-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;background:var(--bg-3);font-size:11px;font-weight:600;color:var(--txt-2)}
+.conn-dot{width:7px;height:7px;border-radius:50%;background:var(--txt-3)}
 .conn-pill.on .conn-dot{background:var(--up);box-shadow:0 0 0 3px rgba(22,163,74,.15)}
 .conn-pill.off .conn-dot{background:var(--down);box-shadow:0 0 0 3px rgba(220,38,38,.15)}
-.user-chip{display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border-radius:24px;background:var(--bg-3);cursor:pointer;transition:var(--t);border:1px solid transparent}
-.user-chip:hover{background:var(--border-2);border-color:var(--border)}
-.user-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;background:var(--border)}
-.user-name{font-size:12px;font-weight:600;color:var(--txt);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mobile-toggle{display:none;width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:#fff;cursor:pointer;align-items:center;justify-content:center;color:var(--txt)}
-@media (max-width:900px){
-  .nav-tabs{position:fixed;top:60px;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);flex-direction:column;padding:10px 12px 14px;gap:2px;transform:translateY(-130%);opacity:0;pointer-events:none;transition:var(--t);box-shadow:var(--shadow-md);align-items:stretch}
-  .nav-tabs.open{transform:translateY(0);opacity:1;pointer-events:auto}
-  .nav-tab{padding:12px 14px;font-size:14px}
-  .mobile-toggle{display:flex}
-  .user-name{display:none}
-}
+.btn-link{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:9px;background:var(--txt);color:#fff;text-decoration:none;font-size:12.5px;font-weight:600;transition:var(--t)}
+.btn-link:hover{background:#1E293B}
+.btn-link svg{width:14px;height:14px}
 
-/* ===== CONTAINER ===== */
+/* CONTAINER */
 .container{max-width:1400px;margin:0 auto;padding:20px 16px 80px}
 @media (max-width:480px){.container{padding:14px 10px 60px}}
-
-/* ===== PAGE ===== */
-.page{display:none}
-.page.active{display:block;animation:fadeIn .25s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.page-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px}
 .page-title{font-family:var(--font-d);font-size:22px;font-weight:800;letter-spacing:-.5px;display:flex;align-items:center;gap:8px}
 .page-title svg{width:22px;height:22px;color:var(--txt-2)}
 .page-sub{font-size:12.5px;color:var(--txt-2);margin-top:2px}
 
-/* ===== CARD ===== */
-.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden;transition:var(--t)}
-.card+.card{margin-top:16px}
-.card-h{padding:16px 20px;border-bottom:1px solid var(--border-2);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.card-h h2{font-family:var(--font-d);font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;letter-spacing:-.2px}
-.card-h h2 svg{width:16px;height:16px;color:var(--txt-2)}
-.card-b{padding:20px}
-@media (max-width:480px){.card-b{padding:14px}}
+/* STATUS BAR */
+.status-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--radius);font-size:12.5px;font-weight:500;margin-bottom:16px;transition:var(--t)}
+.status-bar.ok{background:var(--up-2);color:#166534}
+.status-bar.warn{background:var(--warn-2);color:#92400E}
+.status-bar.err{background:var(--down-2);color:#991B1B}
+.status-bar svg{width:16px;height:16px;flex-shrink:0}
 
-/* ===== GRID ===== */
-.grid-2{display:grid;grid-template-columns:1fr 380px;gap:18px;align-items:start}
-@media (max-width:1024px){.grid-2{grid-template-columns:1fr}}
-.grid-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-@media (max-width:900px){.grid-stats{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:480px){.grid-stats{grid-template-columns:1fr 1fr;gap:8px}}
-
-/* ===== STAT ===== */
-.stat{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;transition:var(--t)}
-.stat:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
-.stat-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
-.stat-icon svg{width:16px;height:16px}
-.stat-icon.up{background:var(--up-2);color:var(--up)}
-.stat-icon.down{background:var(--down-2);color:var(--down)}
-.stat-icon.blue{background:var(--blue-2);color:var(--blue)}
-.stat-icon.warn{background:var(--warn-2);color:var(--warn)}
-.stat-label{font-size:10.5px;font-weight:600;color:var(--txt-3);text-transform:uppercase;letter-spacing:.5px}
-.stat-value{font-family:var(--font-d);font-weight:700;font-size:20px;font-variant-numeric:tabular-nums;margin-top:3px;word-break:break-all}
-.stat-value.up{color:var(--up)}
-.stat-value.down{color:var(--down)}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+@media (max-width:640px){.stats{grid-template-columns:1fr 1fr}}
+.stat{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.stat-lbl{font-size:10.5px;font-weight:700;color:var(--txt-3);letter-spacing:.5px;text-transform:uppercase}
+.stat-val{font-family:var(--font-d);font-weight:700;font-size:20px;margin-top:4px;font-variant-numeric:tabular-nums}
+.stat-val.up{color:var(--up)}
+.stat-val.down{color:var(--down)}
 .stat-sub{font-size:11px;color:var(--txt-3);margin-top:2px}
-@media (max-width:480px){.stat{padding:10px 12px}.stat-value{font-size:15px}.stat-icon{width:26px;height:26px;margin-bottom:6px}.stat-icon svg{width:14px;height:14px}}
 
-/* ===== CHART ===== */
-.chart-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)}
-.chart-header{padding:16px 20px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:14px}
-.chart-asset{display:flex;align-items:center;gap:12px}
-.chart-asset-img{width:46px;height:46px;border-radius:13px;object-fit:cover;flex-shrink:0;box-shadow:0 3px 12px rgba(15,23,42,.12)}
-.chart-asset-info{display:flex;flex-direction:column}
-.chart-asset-name{font-family:var(--font-d);font-weight:700;font-size:16px;letter-spacing:-.2px}
-.chart-asset-symbol{font-size:11.5px;font-weight:600;color:var(--txt-3);letter-spacing:1px;text-transform:uppercase}
-.chart-price-block{text-align:right}
-.chart-price{font-family:var(--font-d);font-weight:800;font-size:30px;letter-spacing:-1px;line-height:1;font-variant-numeric:tabular-nums;transition:color .3s}
-.chart-price.up{color:var(--up)}
-.chart-price.down{color:var(--down)}
-.chart-change-row{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:5px;flex-wrap:wrap}
-.chart-change-val{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
-.chart-change-val.up{color:var(--up)}
-.chart-change-val.down{color:var(--down)}
-.chart-badge{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
-.chart-badge.up{background:var(--up-2);color:var(--up)}
-.chart-badge.down{background:var(--down-2);color:var(--down)}
+/* GRID */
+.layout{display:grid;grid-template-columns:1fr 400px;gap:16px;align-items:start}
+@media (max-width:1024px){.layout{grid-template-columns:1fr}}
 
-.chart-toolbar{display:flex;gap:8px;padding:14px 20px 0;flex-wrap:wrap;align-items:center;justify-content:space-between}
-.range-group{display:flex;gap:3px;overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap}
-.range-group::-webkit-scrollbar{display:none}
-.range-btn{padding:6px 13px;border-radius:18px;border:1px solid var(--border);background:#fff;color:var(--txt-2);font-size:12px;font-weight:600;cursor:pointer;transition:var(--t);white-space:nowrap;flex-shrink:0}
-.range-btn:hover{background:var(--bg-3)}
-.range-btn.active{background:var(--txt);color:#fff;border-color:var(--txt)}
-.chart-actions{display:flex;gap:6px;flex-wrap:wrap}
-.icon-btn{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);background:#fff;color:var(--txt-2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:var(--t)}
-.icon-btn:hover{background:var(--bg-3);color:var(--txt);border-color:#CBD5E1}
-.icon-btn.active{background:var(--blue-2);color:var(--blue);border-color:var(--blue)}
-.icon-btn svg{width:15px;height:15px}
+/* CARD */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)}
+.card+.card{margin-top:14px}
+.card-h{padding:14px 18px;border-bottom:1px solid var(--border-2);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card-h h2{font-family:var(--font-d);font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-h h2 svg{width:16px;height:16px;color:var(--txt-2)}
+.card-b{padding:18px}
+@media (max-width:480px){.card-b{padding:12px}}
 
-.chart-wrap{position:relative;padding:12px 12px 16px;height:420px}
-@media (max-width:768px){.chart-wrap{height:320px;padding:8px 4px 12px}.chart-header{padding:14px 14px 0}.chart-price{font-size:24px}}
-@media (max-width:480px){.chart-wrap{height:280px}.chart-price{font-size:20px}.chart-asset-img{width:40px;height:40px}}
-
-.chart-wrap.fullscreen{position:fixed;inset:0;z-index:500;background:#fff;height:100vh!important;padding:12px;border-radius:0}
-.chart-wrap.fullscreen .fs-close{display:flex!important}
-.fs-close{display:none;position:absolute;top:12px;right:12px;z-index:10;width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:#fff;cursor:pointer;align-items:center;justify-content:center;color:var(--txt)}
-.fs-close svg{width:18px;height:18px}
-
-/* ===== ORDER PANEL ===== */
-.order-tabs{display:flex;gap:4px;padding:4px;background:var(--bg-3);border-radius:12px;margin-bottom:16px}
-.order-tab{flex:1;padding:9px;border:none;background:transparent;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;transition:var(--t);color:var(--txt-2)}
-.order-tab.active{background:#fff;color:var(--txt);box-shadow:var(--shadow)}
-.order-tab.buy.active{background:var(--up);color:#fff}
-.order-tab.sell.active{background:var(--down);color:#fff}
-
-/* ===== FORM ===== */
+/* FORM */
 .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
 .fg:last-child{margin-bottom:0}
 .fg label{font-size:11.5px;font-weight:600;color:var(--txt-2);letter-spacing:.3px}
@@ -169,8 +111,8 @@ button{font-family:inherit}
 .fg-help{font-size:11px;color:var(--txt-3);margin-top:2px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
-/* ===== BUTTON ===== */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 16px;border:none;border-radius:10px;font-family:var(--font);font-size:13.5px;font-weight:700;cursor:pointer;transition:var(--t);white-space:nowrap;text-decoration:none}
+/* BUTTON */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border:none;border-radius:10px;font-family:var(--font);font-size:13.5px;font-weight:700;cursor:pointer;transition:var(--t);white-space:nowrap;text-decoration:none}
 .btn svg{width:15px;height:15px}
 .btn:active:not(:disabled){transform:scale(.97)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
@@ -185,86 +127,43 @@ button{font-family:inherit}
 .btn-blue:hover:not(:disabled){background:#1D4ED8}
 .btn-outline{background:#fff;color:var(--txt);border:1px solid var(--border)}
 .btn-outline:hover:not(:disabled){background:var(--bg-3)}
-.btn-ghost{background:transparent;color:var(--txt-2)}
-.btn-ghost:hover:not(:disabled){background:var(--bg-3);color:var(--txt)}
 .btn-sm{padding:7px 12px;font-size:12.5px;border-radius:8px}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 
-/* ===== MARKET ===== */
-.market-list{display:flex;flex-direction:column;gap:6px}
-.market-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#fff;border:1px solid var(--border);border-radius:14px;cursor:pointer;transition:var(--t)}
-.market-item:hover{border-color:#CBD5E1;box-shadow:var(--shadow-md)}
-.market-item img{width:40px;height:40px;border-radius:11px;object-fit:cover;flex-shrink:0}
-.market-info{flex:1;min-width:0}
-.market-name{font-weight:700;font-size:14px}
-.market-symbol{font-size:11.5px;color:var(--txt-3);font-weight:600;letter-spacing:.5px}
-.market-price{text-align:right}
-.market-price-val{font-family:var(--font-d);font-weight:700;font-size:14.5px;font-variant-numeric:tabular-nums}
-.market-price-chg{font-size:11.5px;font-weight:600;margin-top:2px}
-.market-price-chg.up{color:var(--up)}
-.market-price-chg.down{color:var(--down)}
+/* CHART */
+.chart-box{height:280px;background:#fff;border-radius:var(--radius);overflow:hidden;position:relative}
+@media (max-width:640px){.chart-box{height:220px}}
+.chart-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.9);z-index:30;font-size:13px;color:var(--txt-3);flex-direction:column;gap:10px}
+.chart-loading.hidden{display:none}
+.spinner-lg{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:rot .8s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
 
-/* ===== HOLDING ===== */
-.holding{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#fff;border:1px solid var(--border);border-radius:14px;margin-bottom:8px}
-.holding img{width:40px;height:40px;border-radius:11px;object-fit:cover}
-.holding-info{flex:1;min-width:0}
-.holding-name{font-weight:700;font-size:14px}
-.holding-qty{font-size:11.5px;color:var(--txt-3);margin-top:2px}
-.holding-val{text-align:right}
-.holding-val-main{font-family:var(--font-d);font-weight:700;font-size:14.5px;font-variant-numeric:tabular-nums}
-.holding-val-pl{font-size:11.5px;font-weight:600;margin-top:2px}
-.holding-val-pl.up{color:var(--up)}
-.holding-val-pl.down{color:var(--down)}
+/* STATUS ROW */
+.status-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:10px;background:var(--bg-2);font-size:12.5px;margin-top:10px}
+.status-row span{color:var(--txt-2)}
+.status-row strong{font-weight:700}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.pill.run{background:var(--up-2);color:var(--up)}
+.pill.idle{background:var(--bg-3);color:var(--txt-2)}
+.pill.run .dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* ===== HISTORY ===== */
+/* HISTORY */
 .hist-list{display:flex;flex-direction:column;gap:6px}
 .hist-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:12px;font-size:13px}
 .hist-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.hist-icon.buy{background:var(--up-2);color:var(--up)}
-.hist-icon.sell{background:var(--down-2);color:var(--down)}
-.hist-icon.dep{background:var(--blue-2);color:var(--blue)}
-.hist-icon.wd{background:var(--warn-2);color:var(--warn)}
+.hist-icon.up{background:var(--up-2);color:var(--up)}
+.hist-icon.down{background:var(--down-2);color:var(--down)}
 .hist-icon svg{width:16px;height:16px}
 .hist-main{flex:1;min-width:0}
 .hist-title{font-weight:600;font-variant-numeric:tabular-nums}
 .hist-time{font-size:11px;color:var(--txt-3);margin-top:2px}
-.hist-amount{font-weight:700;text-align:right;font-variant-numeric:tabular-nums;font-size:13.5px}
-.hist-amount.up{color:var(--up)}
-.hist-amount.down{color:var(--down)}
+.hist-chg{font-weight:700;text-align:right;font-variant-numeric:tabular-nums;font-size:12px}
+.hist-chg.up{color:var(--up)}
+.hist-chg.down{color:var(--down)}
+.empty{padding:30px 16px;text-align:center;color:var(--txt-3);font-size:13px;border:1px dashed var(--border);border-radius:var(--radius)}
 
-/* ===== MODAL ===== */
-.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:600;display:none;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease}
-.modal-bg.open{display:flex}
-.modal{background:#fff;border-radius:var(--radius-lg);max-width:460px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .3s cubic-bezier(.4,0,.2,1)}
-@keyframes slideUp{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
-.modal-h{padding:18px 20px;border-bottom:1px solid var(--border-2);display:flex;align-items:center;justify-content:space-between}
-.modal-h h3{font-family:var(--font-d);font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
-.modal-h h3 svg{width:18px;height:18px;color:var(--txt-2)}
-.modal-close{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt-2)}
-.modal-close:hover{background:var(--bg-3);color:var(--txt)}
-.modal-b{padding:20px}
-.modal-f{padding:16px 20px;border-top:1px solid var(--border-2);display:flex;gap:8px}
-.modal-f .btn{flex:1}
-
-/* ===== LOGIN PROMPT MODAL ===== */
-.login-modal{text-align:center;padding:32px 24px}
-.login-modal-icon{width:72px;height:72px;margin:0 auto 18px;border-radius:20px;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);display:flex;align-items:center;justify-content:center}
-.login-modal-icon svg{width:34px;height:34px;color:var(--blue)}
-.login-modal-title{font-family:var(--font-d);font-size:20px;font-weight:800;letter-spacing:-.4px;margin-bottom:8px}
-.login-modal-desc{font-size:13.5px;color:var(--txt-2);line-height:1.6;margin-bottom:22px}
-.login-modal-actions{display:flex;flex-direction:column;gap:10px}
-.login-google-btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 20px;border-radius:12px;border:none;background:var(--txt);color:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:var(--t);width:100%}
-.login-google-btn:hover:not(:disabled){background:#1E293B;transform:translateY(-1px);box-shadow:var(--shadow-md)}
-.login-google-btn svg{width:18px;height:18px}
-.login-features{margin-top:18px;padding-top:18px;border-top:1px solid var(--border-2);display:flex;flex-direction:column;gap:10px;text-align:left}
-.login-feature{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--txt-2);line-height:1.5}
-.login-feature svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;color:var(--up)}
-
-/* ===== QR ===== */
-.qr-box{background:#fff;border:2px dashed var(--border);border-radius:var(--radius);padding:16px;text-align:center;margin-bottom:16px}
-.qr-box img{max-width:100%;width:280px;border-radius:12px;box-shadow:var(--shadow-md)}
-.qr-hint{font-size:12px;color:var(--txt-2);margin-top:10px;line-height:1.6;text-align:left}
-
-/* ===== TOAST ===== */
+/* TOAST */
 .toasts{position:fixed;bottom:16px;right:16px;z-index:800;display:flex;flex-direction:column;gap:8px;max-width:340px;pointer-events:none}
 @media (max-width:480px){.toasts{left:12px;right:12px;max-width:none}}
 .toast{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:12px;background:var(--txt);color:#fff;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);pointer-events:auto;animation:slideIn .3s ease;border-left:3px solid var(--blue)}
@@ -272,509 +171,234 @@ button{font-family:inherit}
 .toast.error{border-left-color:var(--down)}
 .toast.warning{border-left-color:var(--warn)}
 .toast svg{width:16px;height:16px;flex-shrink:0;margin-top:1px}
-.toast-close{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;padding:0;display:flex}
+.toast-close{margin-left:auto;background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;display:flex}
 .toast-close:hover{color:#fff}
 @keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-/* ===== MISC ===== */
-.empty{padding:32px 16px;text-align:center;color:var(--txt-3);font-size:13px;border:1px dashed var(--border);border-radius:var(--radius)}
-.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
-.pill.up{background:var(--up-2);color:var(--up)}
-.pill.down{background:var(--down-2);color:var(--down)}
-.pill.blue{background:var(--blue-2);color:var(--blue)}
-.pill.warn{background:var(--warn-2);color:var(--warn)}
-.pill.gray{background:var(--bg-3);color:var(--txt-2)}
 .spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;display:inline-block}
-.spin.dark{border-color:rgba(15,23,42,.15);border-top-color:var(--txt)}
-@keyframes rot{to{transform:rotate(360deg)}}
-.divider{height:1px;background:var(--border-2);margin:14px 0}
+.divider{height:1px;background:var(--border-2);margin:12px 0}
 .text-muted{color:var(--txt-3);font-size:12px}
-.text-center{text-align:center}
+
+/* WARNING */
+.warn-block{display:flex;gap:10px;padding:12px 14px;border-radius:10px;background:var(--warn-2);color:#92400E;font-size:12.5px;line-height:1.5}
+.warn-block svg{width:16px;height:16px;flex-shrink:0;margin-top:1px}
+.info-block{display:flex;gap:10px;padding:12px 14px;border-radius:10px;background:var(--blue-2);color:#1E40AF;font-size:12.5px;line-height:1.5}
+.info-block svg{width:16px;height:16px;flex-shrink:0;margin-top:1px}
 </style>
 </head>
 <body>
 
-<!-- ===== TOPBAR ===== -->
-<header class="topbar">
+<!-- TOPBAR -->
+<div class="topbar">
   <div class="topbar-in">
-    <a href="#" class="brand" onclick="event.preventDefault();CAZO.nav('dashboard')">
+    <a href="index.html" class="brand">
       <img src="https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg" alt="CAZO" />
-      <div class="brand-txt">
-        <div class="brand-name">CAZO</div>
-        <div class="brand-sub">Trading</div>
-      </div>
+      <div class="brand-txt"><div class="brand-name">CAZO</div><div class="brand-sub">Admin</div></div>
     </a>
-    <nav class="nav-tabs" id="navTabs">
-      <button class="nav-tab active" data-page="dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</button>
-      <button class="nav-tab" data-page="market"><i data-lucide="bar-chart-3"></i> Market</button>
-      <button class="nav-tab" data-page="portfolio" data-auth="1"><i data-lucide="briefcase"></i> Portfolio</button>
-      <button class="nav-tab" data-page="deposit" data-auth="1"><i data-lucide="wallet"></i> Deposit</button>
-      <button class="nav-tab" data-page="history" data-auth="1"><i data-lucide="history"></i> Riwayat</button>
-      <button class="nav-tab" data-page="settings" data-auth="1"><i data-lucide="settings"></i> Pengaturan</button>
-    </nav>
     <div class="topbar-right">
       <div class="conn-pill off" id="connPill"><span class="conn-dot"></span><span id="connText">Offline</span></div>
-      <div class="user-chip" id="userChip">
-        <img class="user-avatar" id="userAvatar" src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="user" />
-        <span class="user-name" id="userName">Masuk</span>
-      </div>
-      <button class="mobile-toggle" id="mobileToggle"><i data-lucide="menu"></i></button>
-    </div>
-  </div>
-</header>
-
-<main class="container">
-
-  <!-- ================== DASHBOARD ================== -->
-  <section class="page active" id="page-dashboard">
-    <div class="page-head">
-      <div>
-        <h1 class="page-title"><i data-lucide="layout-dashboard"></i> Dashboard</h1>
-        <p class="page-sub" id="greeting">Pantau grafik & trading CAZO</p>
-      </div>
-    </div>
-
-    <div class="grid-stats" style="margin-bottom:18px">
-      <div class="stat">
-        <div class="stat-icon blue"><i data-lucide="wallet"></i></div>
-        <div class="stat-label">Saldo</div>
-        <div class="stat-value" id="dashBalance">—</div>
-        <div class="stat-sub">Rupiah (virtual)</div>
-      </div>
-      <div class="stat">
-        <div class="stat-icon up"><i data-lucide="trending-up"></i></div>
-        <div class="stat-label">Nilai Portfolio</div>
-        <div class="stat-value" id="dashPortfolio">—</div>
-        <div class="stat-sub">Total aset dimiliki</div>
-      </div>
-      <div class="stat">
-        <div class="stat-icon blue"><i data-lucide="pie-chart"></i></div>
-        <div class="stat-label">Total Equity</div>
-        <div class="stat-value" id="dashEquity">—</div>
-        <div class="stat-sub">Saldo + Portfolio</div>
-      </div>
-      <div class="stat">
-        <div class="stat-icon warn"><i data-lucide="activity"></i></div>
-        <div class="stat-label">P&L</div>
-        <div class="stat-value" id="dashPL">—</div>
-        <div class="stat-sub" id="dashPLPct">—</div>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div>
-        <div class="chart-card">
-          <div class="chart-header">
-            <div class="chart-asset">
-              <img class="chart-asset-img" id="dashAssetIcon" src="https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg" alt="CAZO" />
-              <div class="chart-asset-info">
-                <span class="chart-asset-name" id="dashAssetName">CAZO CARD</span>
-                <span class="chart-asset-symbol" id="dashAssetSymbol">CAZO</span>
-              </div>
-            </div>
-            <div class="chart-price-block">
-              <div class="chart-price up" id="dashPrice">—</div>
-              <div class="chart-change-row">
-                <span class="chart-change-val up" id="dashChange">—</span>
-                <span class="chart-badge up" id="dashChangeBadge"><i data-lucide="trending-up"></i><span id="dashChangePct">—</span></span>
-              </div>
-            </div>
-          </div>
-
-          <div class="chart-toolbar">
-            <div class="range-group" id="rangeGroup">
-              <button class="range-btn" data-range="1m">1M</button>
-              <button class="range-btn" data-range="5m">5M</button>
-              <button class="range-btn" data-range="15m">15M</button>
-              <button class="range-btn" data-range="1h">1J</button>
-              <button class="range-btn" data-range="24h">24J</button>
-              <button class="range-btn active" data-range="7d">7H</button>
-              <button class="range-btn" data-range="30d">30H</button>
-              <button class="range-btn" data-range="all">SEMUA</button>
-            </div>
-            <div class="chart-actions">
-              <button class="icon-btn" id="btnVolume" title="Volume"><i data-lucide="bar-chart-2"></i></button>
-              <button class="icon-btn" id="btnMA" title="Moving Average"><i data-lucide="trending-up"></i></button>
-              <button class="icon-btn" id="btnFullscreen" title="Layar penuh"><i data-lucide="maximize-2"></i></button>
-            </div>
-          </div>
-
-          <div class="chart-wrap" id="chartWrap">
-            <div id="mainChart" style="width:100%;height:100%"></div>
-            <button class="fs-close" id="fsClose"><i data-lucide="x"></i></button>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="card">
-          <div class="card-h"><h2><i data-lucide="zap"></i> Trading Cepat</h2></div>
-          <div class="card-b">
-            <div class="order-tabs">
-              <button class="order-tab buy active" data-side="buy">BUY</button>
-              <button class="order-tab sell" data-side="sell">SELL</button>
-            </div>
-            <div class="fg">
-              <label>Jumlah</label>
-              <input class="inp" id="tradeQty" type="number" step="1" min="1" placeholder="1" value="1" />
-            </div>
-            <div class="fg">
-              <label>Harga per Unit</label>
-              <input class="inp" id="tradePrice" type="number" step="0.01" readonly />
-            </div>
-            <div class="fg">
-              <label>Total</label>
-              <input class="inp" id="tradeTotal" type="number" step="0.01" readonly />
-            </div>
-            <button class="btn btn-up btn-block" id="btnQuickTrade"><i data-lucide="zap"></i> Beli Sekarang</button>
-            <div class="divider"></div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--txt-2)">
-              <span>Saldo tersedia</span>
-              <strong id="quickBalance" style="color:var(--txt)">—</strong>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-h"><h2><i data-lucide="info"></i> Status</h2></div>
-          <div class="card-b">
-            <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0">
-              <span style="color:var(--txt-2)">Pengunjung</span>
-              <span class="pill blue" id="visitorStatus">Bebas akses grafik</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0">
-              <span style="color:var(--txt-2)">Login</span>
-              <span class="pill gray" id="loginStatus">Belum login</span>
-            </div>
-            <div class="divider"></div>
-            <p class="text-muted" style="line-height:1.6">
-              Untuk bertransaksi, membuka portfolio, deposit, dan riwayat, silakan login dengan Google.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid-stats" style="margin-top:18px">
-      <div class="stat">
-        <div class="stat-icon up"><i data-lucide="arrow-up-circle"></i></div>
-        <div class="stat-label">Harga Tertinggi</div>
-        <div class="stat-value" id="statHigh">—</div>
-        <div class="stat-sub" id="statHighTime">—</div>
-      </div>
-      <div class="stat">
-        <div class="stat-icon down"><i data-lucide="arrow-down-circle"></i></div>
-        <div class="stat-label">Harga Terendah</div>
-        <div class="stat-value" id="statLow">—</div>
-        <div class="stat-sub" id="statLowTime">—</div>
-      </div>
-      <div class="stat">
-        <div class="stat-icon blue"><i data-lucide="hash"></i></div>
-        <div class="stat-label">Total Titik</div>
-        <div class="stat-value" id="statPoints">—</div>
-        <div class="stat-sub">data tersimpan</div>
-      </div>
-      <div class="stat">
-        <div class="stat-icon warn"><i data-lucide="clock"></i></div>
-        <div class="stat-label">Update Terakhir</div>
-        <div class="stat-value" id="statUpdate" style="font-size:14px">—</div>
-        <div class="stat-sub">dari Firebase</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================== MARKET ================== -->
-  <section class="page" id="page-market">
-    <div class="page-head">
-      <div>
-        <h1 class="page-title"><i data-lucide="bar-chart-3"></i> Market</h1>
-        <p class="page-sub">Daftar aset yang tersedia</p>
-      </div>
-    </div>
-    <div class="market-list" id="marketList"></div>
-  </section>
-
-  <!-- ================== PORTFOLIO ================== -->
-  <section class="page" id="page-portfolio">
-    <div class="page-head">
-      <div>
-        <h1 class="page-title"><i data-lucide="briefcase"></i> Portfolio</h1>
-        <p class="page-sub">Aset yang Anda miliki</p>
-      </div>
-    </div>
-
-    <div class="grid-stats" style="margin-bottom:18px">
-      <div class="stat">
-        <div class="stat-icon blue"><i data-lucide="wallet"></i></div>
-        <div class="stat-label">Saldo</div>
-        <div class="stat-value" id="pfBalance">—</div>
-      </div>
-      <div class="stat">
-        <div class="stat-icon up"><i data-lucide="briefcase"></i></div>
-        <div class="stat-label">Nilai Aset</div>
-        <div class="stat-value" id="pfValue">—</div>
-      </div>
-      <div class="stat">
-        <div class="stat-icon blue"><i data-lucide="pie-chart"></i></div>
-        <div class="stat-label">Equity</div>
-        <div class="stat-value" id="pfEquity">—</div>
-      </div>
-      <div class="stat">
-        <div class="stat-icon warn"><i data-lucide="trending-up"></i></div>
-        <div class="stat-label">Total P&L</div>
-        <div class="stat-value" id="pfPL">—</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-h"><h2><i data-lucide="list"></i> Holdings</h2></div>
-      <div class="card-b" id="holdingsList"></div>
-    </div>
-  </section>
-
-  <!-- ================== DEPOSIT ================== -->
-  <section class="page" id="page-deposit">
-    <div class="page-head">
-      <div>
-        <h1 class="page-title"><i data-lucide="wallet"></i> Deposit</h1>
-        <p class="page-sub">Scan QRIS & konfirmasi manual oleh admin</p>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div>
-        <div class="card">
-          <div class="card-h"><h2><i data-lucide="qr-code"></i> Scan QRIS</h2></div>
-          <div class="card-b">
-            <div class="qr-box">
-              <img src="https://i.ibb.co.com/PGRy3SyQ/IMG-20261012-160202.jpg" alt="QRIS Deposit" />
-              <div class="qr-hint">
-                <strong>Langkah Deposit:</strong><br>
-                1. Buka aplikasi e-wallet / m-banking<br>
-                2. Scan QR di atas<br>
-                3. Masukkan nominal sesuai permintaan<br>
-                4. Screenshot bukti transfer<br>
-                5. Isi form di samping → tunggu konfirmasi admin
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="card">
-          <div class="card-h"><h2><i data-lucide="send"></i> Ajukan Deposit</h2></div>
-          <div class="card-b">
-            <div class="fg">
-              <label>Nominal (Rp)</label>
-              <input class="inp" id="depAmount" type="number" step="1000" min="10000" placeholder="50000" />
-              <span class="fg-help">Minimal Rp 10.000</span>
-            </div>
-            <div class="fg">
-              <label>Nama Pengirim</label>
-              <input class="inp" id="depSender" placeholder="Nama sesuai rekening" />
-            </div>
-            <div class="fg">
-              <label>Catatan (opsional)</label>
-              <input class="inp" id="depNote" placeholder="No. referensi / keterangan" />
-            </div>
-            <button class="btn btn-blue btn-block" id="btnSubmitDeposit">
-              <i data-lucide="send"></i> Ajukan Deposit
-            </button>
-            <div class="divider"></div>
-            <p class="text-muted" style="line-height:1.6">
-              Admin akan memverifikasi pembayaran Anda secara manual. Setelah dikonfirmasi, saldo akan otomatis bertambah.
-            </p>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-h"><h2><i data-lucide="clock"></i> Pengajuan Deposit</h2></div>
-          <div class="card-b" id="depositHistory"><div class="empty">Belum ada pengajuan.</div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================== HISTORY ================== -->
-  <section class="page" id="page-history">
-    <div class="page-head">
-      <div>
-        <h1 class="page-title"><i data-lucide="history"></i> Riwayat Transaksi</h1>
-        <p class="page-sub">Pembelian, penjualan, deposit, dan perubahan harga</p>
-      </div>
-    </div>
-
-    <div class="order-tabs" style="max-width:400px">
-      <button class="order-tab active" data-hist="tx">Transaksi</button>
-      <button class="order-tab" data-hist="price">Harga</button>
-      <button class="order-tab" data-hist="deposit">Deposit</button>
-    </div>
-
-    <div class="card" style="margin-top:14px">
-      <div class="card-b" id="historyContent"><div class="empty">Memuat...</div></div>
-    </div>
-  </section>
-
-  <!-- ================== SETTINGS ================== -->
-  <section class="page" id="page-settings">
-    <div class="page-head">
-      <div>
-        <h1 class="page-title"><i data-lucide="settings"></i> Pengaturan</h1>
-        <p class="page-sub">Konfigurasi akun & tampilan</p>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div>
-        <div class="card">
-          <div class="card-h"><h2><i data-lucide="user"></i> Profil Akun</h2></div>
-          <div class="card-b">
-            <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-              <img id="settingsAvatar" src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:var(--shadow-md)" alt="avatar" />
-              <div>
-                <div style="font-weight:700;font-size:16px" id="settingsName">—</div>
-                <div style="font-size:12.5px;color:var(--txt-2)" id="settingsEmail">—</div>
-                <div style="font-size:11px;color:var(--txt-3);margin-top:3px">UID: <span id="settingsUid">—</span></div>
-              </div>
-            </div>
-            <button class="btn btn-outline btn-block" id="btnLogout">
-              <i data-lucide="log-out"></i> Keluar dari Akun
-            </button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-h"><h2><i data-lucide="palette"></i> Tampilan</h2></div>
-          <div class="card-b">
-            <div class="fg">
-              <label>Rentang Waktu Default</label>
-              <select class="sel" id="setRange">
-                <option value="1m">1 Menit</option>
-                <option value="5m">5 Menit</option>
-                <option value="15m">15 Menit</option>
-                <option value="1h">1 Jam</option>
-                <option value="24h">24 Jam</option>
-                <option value="7d" selected>7 Hari</option>
-                <option value="30d">30 Hari</option>
-                <option value="all">Semua</option>
-              </select>
-            </div>
-            <button class="btn btn-primary btn-block" id="btnSaveSettings">
-              <i data-lucide="save"></i> Simpan Pengaturan
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="card">
-          <div class="card-h"><h2><i data-lucide="shield"></i> Keamanan</h2></div>
-          <div class="card-b">
-            <p class="text-muted" style="margin-bottom:14px;line-height:1.6">
-              Akun Anda terhubung dengan Google. Untuk mengganti akun, silakan logout lalu login kembali.
-            </p>
-            <div class="divider"></div>
-            <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0">
-              <span style="color:var(--txt-2)">Metode Login</span>
-              <strong>Google OAuth</strong>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0">
-              <span style="color:var(--txt-2)">Status</span>
-              <span class="pill up">Terverifikasi</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-h"><h2><i data-lucide="info"></i> Tentang CAZO</h2></div>
-          <div class="card-b">
-            <p class="text-muted" style="line-height:1.7">
-              <strong>CAZO</strong> adalah platform trading digital untuk simulasi. Saldo bersifat virtual dan tidak dapat ditarik ke uang nyata. Semua data harga disinkronkan via Firebase Realtime Database.
-            </p>
-            <div class="divider"></div>
-            <div style="font-size:12px;color:var(--txt-3)">Versi 2.0 • Trading Platform Edition</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<!-- ===== MODAL: LOGIN PROMPT ===== -->
-<div class="modal-bg" id="modalLogin">
-  <div class="modal">
-    <div class="login-modal">
-      <div class="login-modal-icon">
-        <i data-lucide="lock"></i>
-      </div>
-      <div class="login-modal-title">Login Diperlukan</div>
-      <div class="login-modal-desc" id="loginPromptDesc">
-        Untuk mengakses fitur ini, silakan masuk dengan akun Google Anda terlebih dahulu.
-      </div>
-      <div class="login-modal-actions">
-        <button class="login-google-btn" id="btnGoogleLoginModal">
-          <svg viewBox="0 0 48 48" width="18" height="18">
-            <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/>
-            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
-            <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.1-11.3-7.9l-6.5 5C9.6 39.6 16.3 44 24 44z"/>
-            <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.6l6.2 5.2C41 35.6 44 30.2 44 24c0-1.3-.1-2.3-.4-3.5z"/>
-          </svg>
-          Masuk dengan Google
-        </button>
-        <button class="btn btn-ghost btn-block" id="btnCancelLogin">Nanti saja</button>
-      </div>
-      <div class="login-features">
-        <div class="login-feature">
-          <i data-lucide="check-circle-2"></i>
-          <span>Saldo awal <strong>Rp 100.000</strong> untuk setiap akun baru</span>
-        </div>
-        <div class="login-feature">
-          <i data-lucide="check-circle-2"></i>
-          <span>Beli & jual aset CAZO secara real-time</span>
-        </div>
-        <div class="login-feature">
-          <i data-lucide="check-circle-2"></i>
-          <span>Deposit via QRIS & konfirmasi manual admin</span>
-        </div>
-        <div class="login-feature">
-          <i data-lucide="check-circle-2"></i>
-          <span>Riwayat transaksi & portfolio lengkap</span>
-        </div>
-      </div>
+      <a href="index.html" target="_blank" class="btn-link"><i data-lucide="external-link"></i><span>Lihat Publik</span></a>
     </div>
   </div>
 </div>
 
-<!-- ===== MODAL: INFO ===== -->
-<div class="modal-bg" id="modalInfo">
-  <div class="modal">
-    <div class="modal-h">
-      <h3><i data-lucide="info"></i> <span id="modalInfoTitle">Info</span></h3>
-      <button class="modal-close" onclick="CAZO.closeModal('modalInfo')"><i data-lucide="x"></i></button>
+<!-- CONTENT -->
+<div class="container">
+
+  <div class="page-head">
+    <div>
+      <h1 class="page-title"><i data-lucide="sliders"></i><span>Control Panel</span></h1>
+      <p class="page-sub">Kelola harga, pergerakan, dan riwayat CAZO.</p>
     </div>
-    <div class="modal-b" id="modalInfoBody"></div>
-    <div class="modal-f">
-      <button class="btn btn-primary btn-block" onclick="CAZO.closeModal('modalInfo')">Tutup</button>
+    <button class="btn btn-outline" onclick="location.reload()"><i data-lucide="refresh-cw"></i><span>Muat Ulang</span></button>
+  </div>
+
+  <div class="status-bar ok" id="statusBar">
+    <i data-lucide="info"></i>
+    <span id="statusText">Memuat data...</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-lbl">Harga Saat Ini</div>
+      <div class="stat-val" id="sPrice">—</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">Perubahan</div>
+      <div class="stat-val" id="sChange">—</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">Total Titik</div>
+      <div class="stat-val" id="sPoints">—</div>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- LEFT -->
+    <div>
+      <div class="card">
+        <div class="card-h">
+          <h2><i data-lucide="line-chart"></i><span>Pratinjau Grafik</span></h2>
+          <span class="pill idle" id="runPill"><span id="runPillText">Idle</span></span>
+        </div>
+        <div class="card-b">
+          <div class="chart-box" id="previewChart">
+            <div class="chart-loading" id="chartLoading">
+              <div class="spinner-lg"></div>
+              <div>Memuat grafik...</div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:11.5px;color:var(--txt-3);flex-wrap:wrap;gap:8px">
+            <span>Update: <strong id="lastUpdate">—</strong></span>
+            <span>Mode: <strong id="curMode">up</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <h2><i data-lucide="history"></i><span>Riwayat Terakhir</span></h2>
+          <span style="font-size:11.5px;color:var(--txt-3)" id="histCount">0 entri</span>
+        </div>
+        <div class="card-b">
+          <div class="hist-list" id="histList">
+            <div class="empty">Belum ada riwayat.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+
+      <!-- MODE PERGERAKAN -->
+      <div class="card">
+        <div class="card-h"><h2><i data-lucide="activity"></i><span>Mode Pergerakan</span></h2></div>
+        <div class="card-b">
+          <div class="fg">
+            <label>Mode</label>
+            <select class="sel" id="inMode">
+              <option value="up">📈 Naik Bertahap</option>
+              <option value="down">📉 Turun Bertahap</option>
+              <option value="stable">➖ Stabil (fluktuasi kecil)</option>
+              <option value="random">🎲 Acak (rentang 2%)</option>
+              <option value="manual">✋ Manual (titik custom)</option>
+            </select>
+          </div>
+          <div class="row2">
+            <div class="fg">
+              <label>Target Harga</label>
+              <input class="inp" id="inTarget" type="number" step="0.01" placeholder="1300" />
+              <span class="fg-help">Untuk Naik/Turun</span>
+            </div>
+            <div class="fg">
+              <label>Interval</label>
+              <select class="sel" id="inInterval">
+                <option value="1">⚡ 1 detik</option>
+                <option value="5" selected>5 detik</option>
+                <option value="10">10 detik</option>
+                <option value="30">30 detik</option>
+                <option value="60">1 menit</option>
+              </select>
+            </div>
+          </div>
+          <div class="fg">
+            <label>Titik Manual (koma)</label>
+            <input class="inp" id="inManual" placeholder="1200, 1220, 1210, 1250" />
+            <span class="fg-help">Untuk mode Manual</span>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-up" id="btnStart"><i data-lucide="play"></i><span>Mulai</span></button>
+            <button class="btn btn-down" id="btnStop"><i data-lucide="square"></i><span>Stop</span></button>
+          </div>
+          <div class="status-row">
+            <span>Status</span>
+            <strong id="modeStatus">Tidak berjalan</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- ATUR HARGA -->
+      <div class="card">
+        <div class="card-h"><h2><i data-lucide="dollar-sign"></i><span>Atur Harga</span></h2></div>
+        <div class="card-b">
+          <div class="row2">
+            <div class="fg"><label>Harga Sekarang</label><input class="inp" id="inPrice" type="number" step="0.01" placeholder="1250" /></div>
+            <div class="fg"><label>Sebelumnya</label><input class="inp" id="inPrev" type="number" step="0.01" placeholder="1220" /></div>
+          </div>
+          <div class="row2">
+            <div class="fg"><label>Tertinggi</label><input class="inp" id="inHigh" type="number" step="0.01" placeholder="1280" /></div>
+            <div class="fg"><label>Terendah</label><input class="inp" id="inLow" type="number" step="0.01" placeholder="1180" /></div>
+          </div>
+          <div class="row2">
+            <div class="fg"><label>Nama Aset</label><input class="inp" id="inName" placeholder="CAZO CARD" /></div>
+            <div class="fg"><label>Simbol</label><input class="inp" id="inSymbol" placeholder="CAZO" /></div>
+          </div>
+          <div class="row2">
+            <div class="fg">
+              <label>Warna Grafik</label>
+              <select class="sel" id="inColor">
+                <option value="#16A34A">Hijau</option>
+                <option value="#2563EB">Biru</option>
+                <option value="#7C3AED">Ungu</option>
+                <option value="#111827">Hitam</option>
+              </select>
+            </div>
+            <div class="fg"><label>Maks Titik</label><input class="inp" id="inMax" type="number" min="10" max="500" placeholder="100" /></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AKSI CEPAT -->
+      <div class="card">
+        <div class="card-h"><h2><i data-lucide="zap"></i><span>Aksi Cepat</span></h2></div>
+        <div class="card-b">
+          <button class="btn btn-primary btn-block" id="btnSave"><i data-lucide="save"></i><span>Simpan Semua Pengaturan</span></button>
+          <div class="btn-row" style="margin-top:8px">
+            <button class="btn btn-outline" id="btnAdd"><i data-lucide="plus"></i><span>Tambah Titik</span></button>
+            <button class="btn btn-outline" id="btnDel"><i data-lucide="minus"></i><span>Hapus Terakhir</span></button>
+          </div>
+          <button class="btn btn-outline btn-block" id="btnReset" style="margin-top:8px;color:var(--down);border-color:#FECACA">
+            <i data-lucide="rotate-ccw"></i><span>Reset ke Data Awal</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STATUS SISTEM -->
+      <div class="card">
+        <div class="card-h"><h2><i data-lucide="wifi"></i><span>Status Sistem</span></h2></div>
+        <div class="card-b">
+          <div class="status-row">
+            <span>Firebase</span>
+            <strong id="fbStatus" style="color:var(--txt-3)">—</strong>
+          </div>
+          <div class="status-row">
+            <span>Database</span>
+            <strong id="dbStatus" style="color:var(--txt-3)">—</strong>
+          </div>
+          <div class="status-row">
+            <span>Izin Tulis</span>
+            <strong id="wStatus" style="color:var(--txt-3)">—</strong>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
 <div class="toasts" id="toasts"></div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getDatabase, ref, onValue, push, update, set, get, query,
-  orderByChild, limitToLast, serverTimestamp, remove, runTransaction
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-import {
-  getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+<!-- ============================================================
+     SCRIPT ADMIN (CLASSIC)
+     ============================================================ -->
+<script>
+(function(){
+'use strict';
 
-// ==================== KONFIG ====================
-const FIREBASE_CONFIG = {
+// ============ CONFIG ============
+var FIREBASE_CONFIG = {
   apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
   authDomain: "mygame-68b24.firebaseapp.com",
   databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
@@ -784,11 +408,7 @@ const FIREBASE_CONFIG = {
   appId: "1:1003182873390:web:aabf3248f759cbc9d678bf"
 };
 
-const ADMIN_EMAILS = ["admin@cazo.app", "cazo.admin@gmail.com"];
-const DEFAULT_BALANCE = 100000;
-const ASSET_ICON = "https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg";
-
-const DEFAULT_SETTINGS = {
+var DEFAULT_SETTINGS = {
   assetName: "CAZO CARD", symbol: "CAZO",
   currentPrice: 1250, previousPrice: 1220,
   highestPrice: 1280, lowestPrice: 1180,
@@ -799,7 +419,7 @@ const DEFAULT_SETTINGS = {
   maxPoints: 200, updatedAt: null
 };
 
-const DEFAULT_HISTORY = [
+var DEFAULT_HISTORY = [
   { price: 1180, change: 0, changePercent: 0 },
   { price: 1195, change: 15, changePercent: 1.27 },
   { price: 1210, change: 15, changePercent: 1.26 },
@@ -809,143 +429,96 @@ const DEFAULT_HISTORY = [
   { price: 1250, change: 30, changePercent: 2.46 }
 ];
 
-// ==================== STATE ====================
-const S = {
-  app: null, db: null, auth: null,
-  user: null, isAdmin: false,
-  ready: false, online: false,
-  settings: { ...DEFAULT_SETTINGS },
+// ============ STATE ============
+var S = {
+  db: null, ready: false, online: false, canWrite: false,
+  settings: Object.assign({}, DEFAULT_SETTINGS),
   history: [],
-  balance: 0,
-  portfolio: {},
-  transactions: [],
-  deposits: [],
-  chart: null, candleSeries: null, volumeSeries: null, maSeries: null,
-  showVolume: true, showMA: false,
-  activeRange: "7d",
-  chartFullscreen: false,
-  tradeSide: "buy",
-  histTab: "tx",
-  unsubs: [],
-  unsubsUser: [],
-  lastHistoryKey: "",
-  _lastChartKey: "",
-  _lastFitRange: null,
-  pendingAction: null, // untuk resume setelah login
+  chart: null, candleSeries: null,
+  timer: null, running: false,
+  target: null, manual: [], manualIdx: 0,
+  unsubSettings: null, unsubHistory: null,
+  lastHistoryKey: ""
 };
 
-const $ = (id) => document.getElementById(id);
+var $ = function(id){ return document.getElementById(id); };
 
-// ==================== UTIL ====================
-function fmt(n, dec = 2) {
+// ============ UTIL ============
+function fmt(n, dec) {
+  dec = dec == null ? 2 : dec;
   if (n == null || isNaN(n)) return "—";
   return Number(n).toLocaleString("id-ID", { minimumFractionDigits: dec, maximumFractionDigits: dec });
 }
-function fmtIDR(n) {
-  if (n == null || isNaN(n)) return "—";
-  return "Rp " + Number(n).toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-}
 function fmtTime(ts) {
   if (!ts) return "—";
-  const d = new Date(ts);
+  var d = new Date(ts);
   return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short" }) + " " +
          d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
 }
 function ago(ts) {
   if (!ts) return "—";
-  const s = Math.floor((Date.now() - ts) / 1000);
+  var s = Math.floor((Date.now() - ts) / 1000);
   if (s < 5) return "baru saja";
   if (s < 60) return s + "s lalu";
-  const m = Math.floor(s / 60);
+  var m = Math.floor(s / 60);
   if (m < 60) return m + "m lalu";
-  const h = Math.floor(m / 60);
+  var h = Math.floor(m / 60);
   if (h < 24) return h + "j lalu";
   return Math.floor(h / 24) + "h lalu";
 }
-function num(v, fb = 0) { const n = Number(v); return isNaN(n) ? fb : n; }
-
-function toast(msg, type = "info", dur = 3500) {
-  const wrap = $("toasts");
-  if (!wrap) return;
-  const icons = { success: "check-circle", error: "alert-circle", warning: "alert-triangle", info: "info" };
-  const el = document.createElement("div");
-  el.className = "toast " + type;
-  el.innerHTML = `<i data-lucide="${icons[type] || icons.info}"></i><span></span><button class="toast-close"><i data-lucide="x" style="width:14px;height:14px"></i></button>`;
-  el.querySelector("span").textContent = msg;
-  el.querySelector(".toast-close").addEventListener("click", () => el.remove());
-  wrap.appendChild(el);
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
-  setTimeout(() => { el.style.opacity = "0"; setTimeout(() => el.remove(), 250); }, dur);
-}
-
-function openModal(id) { $(id).classList.add("open"); }
-function closeModal(id) { $(id).classList.remove("open"); }
-function showInfo(title, html) {
-  $("modalInfoTitle").textContent = title;
-  $("modalInfoBody").innerHTML = html;
-  openModal("modalInfo");
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
-}
-
-// ==================== LOGIN PROMPT ====================
-function requireLogin(reason, action) {
-  if (S.user) {
-    if (typeof action === "function") action();
-    return true;
+function num(v, fb) { var n = Number(v); return isNaN(n) ? (fb || 0) : n; }
+function renderIcons() {
+  if (window.lucide && typeof window.lucide.createIcons === "function") {
+    try { window.lucide.createIcons(); } catch(e){}
   }
-  S.pendingAction = action || null;
-  const desc = {
-    profile: "Silakan masuk dengan akun Google untuk melihat profil dan pengaturan akun Anda.",
-    trade: "Untuk membeli atau menjual aset, silakan masuk dengan akun Google terlebih dahulu.",
-    portfolio: "Login untuk melihat portfolio, saldo, dan P&L Anda.",
-    deposit: "Login untuk melakukan deposit saldo virtual.",
-    history: "Login untuk melihat riwayat transaksi dan deposit Anda.",
-    default: "Fitur ini memerlukan login. Silakan masuk dengan akun Google."
-  }[reason] || "Fitur ini memerlukan login.";
-  $("loginPromptDesc").textContent = desc;
-  openModal("modalLogin");
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
-  return false;
+}
+function toast(msg, type, dur) {
+  type = type || "info"; dur = dur || 3500;
+  var wrap = $("toasts"); if (!wrap) return;
+  var icons = { success: "check-circle", error: "alert-circle", warning: "alert-triangle", info: "info" };
+  var el = document.createElement("div");
+  el.className = "toast " + type;
+  el.innerHTML = '<i data-lucide="' + (icons[type] || icons.info) + '"></i><span></span><button class="toast-close"><i data-lucide="x" style="width:14px;height:14px"></i></button>';
+  el.querySelector("span").textContent = msg;
+  el.querySelector(".toast-close").addEventListener("click", function(){ el.remove(); });
+  wrap.appendChild(el);
+  renderIcons();
+  setTimeout(function(){ el.style.opacity = "0"; setTimeout(function(){ el.remove(); }, 250); }, dur);
+}
+function setStatus(type, text) {
+  var bar = $("statusBar");
+  bar.className = "status-bar " + type;
+  var icon = bar.querySelector("svg, i");
+  if (icon) {
+    var name = type === "ok" ? "check-circle" : type === "warn" ? "alert-triangle" : "alert-circle";
+    icon.setAttribute("data-lucide", name);
+  }
+  $("statusText").textContent = text;
+  renderIcons();
+}
+function setSys(key, val, level) {
+  var el = { fb: $("fbStatus"), db: $("dbStatus"), w: $("wStatus") }[key];
+  if (!el) return;
+  el.textContent = val;
+  el.style.color = level === "up" ? "var(--up)" : level === "down" ? "var(--down)" : "var(--txt-3)";
 }
 
-// ==================== CHART ====================
+// ============ CHART ============
 function initChart() {
-  const box = $("mainChart");
-  if (!box || typeof LightweightCharts === "undefined") return;
-  if (S.chart) return;
+  var box = $("previewChart");
+  if (!box || typeof LightweightCharts === "undefined") return false;
+  if (S.chart) return true;
+  var w = box.clientWidth || 500;
+  var h = box.clientHeight || 280;
 
   S.chart = LightweightCharts.createChart(box, {
-    width: box.clientWidth,
-    height: box.clientHeight,
-    layout: {
-      background: { type: "solid", color: "#FFFFFF" },
-      textColor: "#64748B", fontFamily: "'Inter',sans-serif", fontSize: 11
-    },
-    grid: {
-      vertLines: { color: "rgba(226,232,240,0.6)", style: 0 },
-      horzLines: { color: "rgba(226,232,240,0.6)", style: 0 }
-    },
-    rightPriceScale: { borderColor: "#E2E8F0", scaleMargins: { top: 0.08, bottom: 0.25 } },
-    timeScale: { borderColor: "#E2E8F0", timeVisible: true, secondsVisible: false, rightOffset: 3, barSpacing: 8 },
-    crosshair: {
-      mode: LightweightCharts.CrosshairMode.Normal,
-      vertLine: { color: "#94A3B8", width: 1, style: 2, labelBackgroundColor: "#0F172A" },
-      horzLine: { color: "#94A3B8", width: 1, style: 2, labelBackgroundColor: "#0F172A" }
-    },
-    handleScroll: { mouseWheel: true, pressedMouseMove: true, horzTouchDrag: true, vertTouchDrag: false },
-    handleScale: { axisPressedMouseMove: true, mouseWheel: true, pinch: true },
-    localization: { priceFormatter: (p) => fmt(p, 2) }
-  });
-
-  S.volumeSeries = S.chart.addHistogramSeries({
-    priceFormat: { type: "volume" },
-    priceScaleId: "volume",
-    color: "rgba(148,163,184,0.4)"
-  });
-  S.chart.priceScale("volume").applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
-
-  S.maSeries = S.chart.addLineSeries({
-    color: "#F59E0B", lineWidth: 2, priceLineVisible: false, lastValueVisible: false
+    width: w, height: h,
+    layout: { background: { type: "solid", color: "#FFFFFF" }, textColor: "#64748B", fontFamily: "'Inter', sans-serif", fontSize: 11 },
+    grid: { vertLines: { color: "rgba(226,232,240,0.6)" }, horzLines: { color: "rgba(226,232,240,0.6)" } },
+    rightPriceScale: { borderColor: "#E2E8F0" },
+    timeScale: { borderColor: "#E2E8F0", timeVisible: true, secondsVisible: true },
+    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+    localization: { priceFormatter: function(p){ return fmt(p, 2); } }
   });
 
   S.candleSeries = S.chart.addCandlestickSeries({
@@ -955,507 +528,238 @@ function initChart() {
     priceFormat: { type: "price", precision: 2, minMove: 0.01 }
   });
 
-  new ResizeObserver(() => {
-    if (!S.chart) return;
-    S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
-  }).observe(box);
+  if (window.ResizeObserver) {
+    new ResizeObserver(function() {
+      if (S.chart) S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
+    }).observe(box);
+  }
+
+  $("chartLoading").classList.add("hidden");
+  return true;
 }
 
 function buildCandles(hist) {
-  const out = [];
-  let lastT = 0;
-  for (let i = 0; i < hist.length; i++) {
-    const h = hist[i];
-    const open = i === 0 ? h.price : hist[i - 1].price;
-    const close = h.price;
-    const body = Math.abs(close - open);
-    const wick = Math.max(body * 0.35, close * 0.0004);
-    let t = Math.floor(h.timestamp / 1000);
+  var out = [], lastT = 0;
+  for (var i = 0; i < hist.length; i++) {
+    var h = hist[i];
+    var open = i === 0 ? h.price : hist[i - 1].price;
+    var close = h.price;
+    var body = Math.abs(close - open);
+    var wick = Math.max(body * 0.35, close * 0.0004);
+    var t = Math.floor(h.timestamp / 1000);
     if (t <= lastT) t = lastT + 1;
     lastT = t;
     out.push({
-      time: t,
-      open: +open.toFixed(2),
+      time: t, open: +open.toFixed(2),
       high: +(Math.max(open, close) + wick).toFixed(2),
       low: +(Math.min(open, close) - wick).toFixed(2),
-      close: +close.toFixed(2),
-      volume: Math.round(10000 + Math.random() * 50000)
+      close: +close.toFixed(2)
     });
   }
   return out;
 }
 
-function buildMA(candles, period = 7) {
-  const out = [];
-  for (let i = period - 1; i < candles.length; i++) {
-    let sum = 0;
-    for (let j = 0; j < period; j++) sum += candles[i - j].close;
-    out.push({ time: candles[i].time, value: +(sum / period).toFixed(2) });
-  }
-  return out;
-}
-
-function getFilteredHistory(range) {
-  const hist = S.history;
-  if (!hist.length) return [];
-  const now = Date.now();
-  const ranges = {
-    "1m": 60e3, "5m": 5 * 60e3, "15m": 15 * 60e3,
-    "1h": 60 * 60e3, "24h": 24 * 60 * 60e3,
-    "7d": 7 * 24 * 60 * 60e3, "30d": 30 * 24 * 60 * 60e3, "all": Infinity
-  };
-  const cutoff = ranges[range] === Infinity ? 0 : now - ranges[range];
-  const filtered = hist.filter(h => h.timestamp >= cutoff);
-  if (filtered.length < 2 && hist.length >= 2) return hist.slice(-Math.min(hist.length, 30));
-  return filtered;
-}
-
-function updateChart() {
-  if (!S.candleSeries || !S.chart) return;
-  const filtered = getFilteredHistory(S.activeRange);
-  if (!filtered.length) {
-    S.candleSeries.setData([]);
-    if (S.volumeSeries) S.volumeSeries.setData([]);
-    if (S.maSeries) S.maSeries.setData([]);
-    return;
-  }
-
-  const key = S.activeRange + "_" + filtered.length + "_" + (filtered[filtered.length - 1]?.timestamp || 0);
-  if (key === S._lastChartKey) return;
-  S._lastChartKey = key;
-
-  const candles = buildCandles(filtered);
-  const isUp = candles.length >= 2 ? candles[candles.length - 1].close >= candles[0].open : true;
-  const upColor = S.settings.chartColor || "#16A34A";
-
-  S.candleSeries.applyOptions({
-    upColor, borderUpColor: upColor, wickUpColor: upColor,
-    downColor: "#DC2626", borderDownColor: "#DC2626", wickDownColor: "#DC2626"
-  });
+function renderChart() {
+  if (!S.candleSeries) return;
+  var hist = S.history.slice(-80);
+  if (!hist.length) { S.candleSeries.setData([]); return; }
+  var candles = buildCandles(hist);
   S.candleSeries.setData(candles);
-
-  if (S.volumeSeries) {
-    if (S.showVolume) {
-      S.volumeSeries.setData(candles.map(c => ({
-        time: c.time, value: c.volume,
-        color: c.close >= c.open ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)"
-      })));
-    } else {
-      S.volumeSeries.setData([]);
-    }
-  }
-
-  if (S.maSeries) {
-    if (S.showMA) S.maSeries.setData(buildMA(candles, 7));
-    else S.maSeries.setData([]);
-  }
-
-  if (S._lastFitRange !== S.activeRange) {
-    S.chart.timeScale().fitContent();
-    S._lastFitRange = S.activeRange;
-  }
+  S.chart.timeScale().fitContent();
 }
 
-// ==================== RENDER PRICE ====================
-function renderPriceUI() {
-  const s = S.settings;
-  const hist = S.history;
-
-  $("dashAssetName").textContent = s.assetName || "CAZO CARD";
-  $("dashAssetSymbol").textContent = s.symbol || "CAZO";
-
-  const price = hist.length > 0 ? hist[hist.length - 1].price : s.currentPrice;
-  const priceEl = $("dashPrice");
-  priceEl.textContent = fmt(price);
-
-  let change = 0, pct = 0;
-  if (hist.length >= 2) {
-    const last = hist[hist.length - 1];
-    const prev = hist[hist.length - 2];
-    change = last.price - prev.price;
-    pct = prev.price !== 0 ? (change / prev.price) * 100 : 0;
-  }
-  const isUp = change >= 0;
-  priceEl.className = "chart-price " + (isUp ? "up" : "down");
-  $("dashChange").textContent = (isUp ? "+" : "") + fmt(change);
-  $("dashChange").className = "chart-change-val " + (isUp ? "up" : "down");
-  $("dashChangePct").textContent = (isUp ? "+" : "") + fmt(pct) + "%";
-  $("dashChangeBadge").className = "chart-badge " + (isUp ? "up" : "down");
-  const icon = $("dashChangeBadge").querySelector("i");
-  if (icon) icon.setAttribute("data-lucide", isUp ? "trending-up" : "trending-down");
-
-  let high = -Infinity, low = Infinity, highTs = null, lowTs = null;
-  hist.forEach(h => {
-    if (h.price > high) { high = h.price; highTs = h.timestamp; }
-    if (h.price < low) { low = h.price; lowTs = h.timestamp; }
-  });
-  $("statHigh").textContent = hist.length ? fmt(high) : "—";
-  $("statHighTime").textContent = hist.length ? fmtTime(highTs) : "—";
-  $("statLow").textContent = hist.length ? fmt(low) : "—";
-  $("statLowTime").textContent = hist.length ? fmtTime(lowTs) : "—";
-  $("statPoints").textContent = hist.length;
-  const lastTs = hist.length ? hist[hist.length - 1].timestamp : null;
-  $("statUpdate").textContent = lastTs ? ago(lastTs) : "—";
-
-  const last = hist.length ? hist[hist.length - 1].price : s.currentPrice;
-  $("tradePrice").value = last.toFixed(2);
-  updateTradeTotal();
-  renderMarketList();
-
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
-}
-
-function renderMarketList() {
-  const list = $("marketList");
-  if (!list) return;
-  const s = S.settings;
-  const hist = S.history;
-  const last = hist.length ? hist[hist.length - 1].price : s.currentPrice;
-  const prev = hist.length >= 2 ? hist[hist.length - 2].price : last;
-  const chg = last - prev;
-  const pct = prev !== 0 ? (chg / prev) * 100 : 0;
-  const up = chg >= 0;
-  list.innerHTML = `
-    <div class="market-item">
-      <img src="${ASSET_ICON}" alt="CAZO" />
-      <div class="market-info">
-        <div class="market-name">${s.assetName || "CAZO CARD"}</div>
-        <div class="market-symbol">${s.symbol || "CAZO"}</div>
-      </div>
-      <div class="market-price">
-        <div class="market-price-val">${fmt(last)}</div>
-        <div class="market-price-chg ${up ? "up" : "down"}">${up ? "+" : ""}${fmt(pct)}%</div>
-      </div>
-    </div>
-  `;
-}
-
-// ==================== RENDER USER ====================
-function calcPortfolioValue() {
-  const price = S.history.length ? S.history[S.history.length - 1].price : S.settings.currentPrice;
-  let total = 0, cost = 0;
-  for (const id in S.portfolio) {
-    const p = S.portfolio[id];
-    total += p.qty * price;
-    cost += p.qty * p.avgPrice;
-  }
-  return { value: total, cost, pl: total - cost, plPct: cost > 0 ? ((total - cost) / cost) * 100 : 0 };
-}
-
-function renderUserUI() {
-  const u = S.user;
-  if (u) {
-    const name = u.displayName || u.email?.split("@")[0] || "Trader";
-    $("greeting").textContent = "Halo, " + name;
-    $("userName").textContent = name;
-    if (u.photoURL) $("userAvatar").src = u.photoURL;
-    $("settingsAvatar").src = u.photoURL || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
-    $("settingsName").textContent = name;
-    $("settingsEmail").textContent = u.email || "—";
-    $("settingsUid").textContent = (u.uid || "").slice(0, 16) + "…";
-    $("loginStatus").textContent = "Login sebagai " + (u.displayName || u.email);
-    $("loginStatus").className = "pill up";
-  } else {
-    $("greeting").textContent = "Pantau grafik & trading CAZO";
-    $("userName").textContent = "Masuk";
-    $("userAvatar").src = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
-    $("settingsAvatar").src = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
-    $("settingsName").textContent = "—";
-    $("settingsEmail").textContent = "—";
-    $("settingsUid").textContent = "—";
-    $("loginStatus").textContent = "Belum login";
-    $("loginStatus").className = "pill gray";
-  }
-
-  const pv = calcPortfolioValue();
-  const bal = S.balance || 0;
-
-  // Dashboard
-  $("dashBalance").textContent = S.user ? fmtIDR(bal) : "Login dulu";
-  $("dashBalance").style.fontSize = S.user ? "" : "14px";
-  $("dashPortfolio").textContent = S.user ? fmtIDR(pv.value) : "—";
-  $("dashEquity").textContent = S.user ? fmtIDR(bal + pv.value) : "—";
-  const plEl = $("dashPL");
-  if (S.user) {
-    plEl.textContent = (pv.pl >= 0 ? "+" : "") + fmtIDR(pv.pl);
-    plEl.className = "stat-value " + (pv.pl >= 0 ? "up" : "down");
-    $("dashPLPct").textContent = (pv.plPct >= 0 ? "+" : "") + fmt(pv.plPct) + "%";
-  } else {
-    plEl.textContent = "—";
-    plEl.className = "stat-value";
-    $("dashPLPct").textContent = "—";
-  }
-
-  $("quickBalance").textContent = S.user ? fmtIDR(bal) : "—";
-
-  // Portfolio
-  $("pfBalance").textContent = S.user ? fmtIDR(bal) : "—";
-  $("pfValue").textContent = S.user ? fmtIDR(pv.value) : "—";
-  $("pfEquity").textContent = S.user ? fmtIDR(bal + pv.value) : "—";
-  const pfPL = $("pfPL");
-  if (S.user) {
-    pfPL.textContent = (pv.pl >= 0 ? "+" : "") + fmtIDR(pv.pl);
-    pfPL.className = "stat-value " + (pv.pl >= 0 ? "up" : "down");
-  } else {
-    pfPL.textContent = "—";
-    pfPL.className = "stat-value";
-  }
-
-  // Holdings
-  const holdings = $("holdingsList");
-  const ids = Object.keys(S.portfolio).filter(id => S.portfolio[id].qty > 0);
-  if (!S.user) {
-    holdings.innerHTML = '<div class="empty">Login untuk melihat portfolio Anda.</div>';
-  } else if (!ids.length) {
-    holdings.innerHTML = '<div class="empty">Belum ada aset. Beli di halaman Dashboard atau Market.</div>';
-  } else {
-    const price = S.history.length ? S.history[S.history.length - 1].price : S.settings.currentPrice;
-    holdings.innerHTML = ids.map(id => {
-      const p = S.portfolio[id];
-      const val = p.qty * price;
-      const pl = val - p.qty * p.avgPrice;
-      const plPct = p.avgPrice > 0 ? (pl / (p.qty * p.avgPrice)) * 100 : 0;
-      const up = pl >= 0;
-      return `<div class="holding">
-        <img src="${ASSET_ICON}" alt="asset" />
-        <div class="holding-info">
-          <div class="holding-name">${S.settings.assetName || "CAZO CARD"}</div>
-          <div class="holding-qty">${p.qty} unit • avg ${fmt(p.avgPrice)}</div>
-        </div>
-        <div class="holding-val">
-          <div class="holding-val-main">${fmtIDR(val)}</div>
-          <div class="holding-val-pl ${up ? "up" : "down"}">${up ? "+" : ""}${fmt(plPct)}%</div>
-        </div>
-      </div>`;
-    }).join("");
-  }
-}
-
-// ==================== HISTORY RENDER ====================
-function renderHistoryTab() {
-  const wrap = $("historyContent");
-  if (!wrap) return;
-  if (!S.user) {
-    wrap.innerHTML = '<div class="empty">Login untuk melihat riwayat Anda.</div>';
+// ============ STATS ============
+function renderStats() {
+  var h = S.history;
+  if (!h.length) {
+    $("sPrice").textContent = "—";
+    $("sChange").textContent = "—";
+    $("sPoints").textContent = "0";
     return;
   }
-  if (S.histTab === "price") renderPriceHistory(wrap);
-  else if (S.histTab === "deposit") renderDepositHistory(wrap);
-  else renderTransactionHistory(wrap);
+  var last = h[h.length - 1];
+  var prev = h.length > 1 ? h[h.length - 2] : null;
+  $("sPrice").textContent = fmt(last.price);
+
+  var chg = 0, pct = 0;
+  if (prev && prev.price !== 0) {
+    chg = last.price - prev.price;
+    pct = (chg / prev.price) * 100;
+  } else {
+    chg = last.change || 0;
+    pct = last.changePercent || 0;
+  }
+  var el = $("sChange");
+  el.textContent = (chg >= 0 ? "+" : "") + fmt(chg) + " (" + (pct >= 0 ? "+" : "") + fmt(pct) + "%)";
+  el.className = "stat-val " + (chg >= 0 ? "up" : "down");
+  $("sPoints").textContent = h.length;
 }
 
-function renderTransactionHistory(wrap) {
-  const list = S.transactions.slice().reverse().slice(0, 50);
-  if (!list.length) {
-    wrap.innerHTML = '<div class="empty">Belum ada transaksi.</div>';
+// ============ HISTORY ============
+function renderHistory() {
+  var list = $("histList");
+  var items = S.history.slice().reverse().slice(0, 8);
+  $("histCount").textContent = S.history.length + " entri";
+
+  var key = items.map(function(x){ return x.key || x.timestamp; }).join("|");
+  if (key === S.lastHistoryKey) return;
+  S.lastHistoryKey = key;
+
+  if (!items.length) {
+    list.innerHTML = '<div class="empty">Belum ada riwayat.</div>';
     return;
   }
-  wrap.innerHTML = '<div class="hist-list">' + list.map(t => {
-    const isBuy = t.type === "buy";
-    const cls = isBuy ? "buy" : "sell";
-    const icon = isBuy ? "arrow-down-left" : "arrow-up-right";
-    return `<div class="hist-item">
-      <div class="hist-icon ${cls}"><i data-lucide="${icon}"></i></div>
-      <div class="hist-main">
-        <div class="hist-title">${isBuy ? "Beli" : "Jual"} ${t.qty} ${S.settings.symbol || "CAZO"}</div>
-        <div class="hist-time">${fmtTime(t.timestamp)} • ${ago(t.timestamp)}</div>
-      </div>
-      <div class="hist-amount ${isBuy ? "down" : "up"}">
-        ${isBuy ? "-" : "+"}${fmtIDR(t.total)}
-        <div style="font-size:11px;color:var(--txt-3);font-weight:500">@${fmt(t.price)}</div>
-      </div>
-    </div>`;
-  }).join("") + '</div>';
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+  list.innerHTML = items.map(function(h){
+    var up = h.change >= 0;
+    var oldPrice = h.price - h.change;
+    return '<div class="hist-item">' +
+      '<div class="hist-icon ' + (up ? "up" : "down") + '"><i data-lucide="' + (up ? "arrow-up-right" : "arrow-down-right") + '"></i></div>' +
+      '<div class="hist-main">' +
+        '<div class="hist-title">' + fmt(oldPrice) + ' → ' + fmt(h.price) + '</div>' +
+        '<div class="hist-time">' + fmtTime(h.timestamp) + ' • ' + ago(h.timestamp) + '</div>' +
+      '</div>' +
+      '<div class="hist-chg ' + (up ? "up" : "down") + '">' + (up ? "+" : "") + fmt(h.change) + '<br>' + (up ? "+" : "") + fmt(h.changePercent) + '%</div>' +
+    '</div>';
+  }).join("");
+  renderIcons();
 }
 
-function renderPriceHistory(wrap) {
-  const list = S.history.slice().reverse().slice(0, 50);
-  if (!list.length) {
-    wrap.innerHTML = '<div class="empty">Belum ada riwayat harga.</div>';
+// ============ FORM ============
+function fillForms() {
+  var s = S.settings;
+  $("inPrice").value = s.currentPrice || "";
+  $("inPrev").value = s.previousPrice || "";
+  $("inHigh").value = s.highestPrice || "";
+  $("inLow").value = s.lowestPrice || "";
+  $("inName").value = s.assetName || "";
+  $("inSymbol").value = s.symbol || "";
+  $("inColor").value = s.chartColor || "#16A34A";
+  $("inMax").value = s.maxPoints || 100;
+  $("inMode").value = s.movementMode || "up";
+  $("inInterval").value = String(s.updateInterval || 5);
+  $("curMode").textContent = s.movementMode || "up";
+}
+
+function updateRunUI() {
+  var pill = $("runPill");
+  if (S.running) {
+    pill.className = "pill run";
+    pill.innerHTML = '<span class="dot"></span><span>Running</span>';
+    $("modeStatus").textContent = "Berjalan — " + S.settings.movementMode;
+    $("modeStatus").style.color = "var(--up)";
+  } else {
+    pill.className = "pill idle";
+    pill.innerHTML = '<span>Idle</span>';
+    $("modeStatus").textContent = "Tidak berjalan";
+    $("modeStatus").style.color = "var(--txt-2)";
+  }
+}
+
+function updateLastUpdate() {
+  var last = S.history[S.history.length - 1];
+  $("lastUpdate").textContent = last ? ago(last.timestamp) : "—";
+}
+
+// ============ FIREBASE ============
+function initFirebase() {
+  try {
+    if (typeof firebase === "undefined") throw new Error("Firebase SDK belum termuat");
+    firebase.initializeApp(FIREBASE_CONFIG);
+    S.db = firebase.database();
+    setSys("fb", "OK", "up");
+    setSys("db", "Terhubung", "up");
+  } catch (err) {
+    console.error("Firebase error:", err);
+    setSys("fb", "GAGAL", "down");
+    setSys("db", "GAGAL", "down");
+    setStatus("err", "Gagal terhubung ke Firebase: " + err.message);
     return;
   }
-  wrap.innerHTML = '<div class="hist-list">' + list.map((h, i) => {
-    const idx = S.history.length - 1 - i;
-    const prev = idx > 0 ? S.history[idx - 1].price : h.price;
-    const chg = h.price - prev;
-    const pct = prev !== 0 ? (chg / prev) * 100 : 0;
-    const up = chg >= 0;
-    return `<div class="hist-item">
-      <div class="hist-icon ${up ? "buy" : "sell"}"><i data-lucide="${up ? "trending-up" : "trending-down"}"></i></div>
-      <div class="hist-main">
-        <div class="hist-title">${fmt(prev)} → ${fmt(h.price)}</div>
-        <div class="hist-time">${fmtTime(h.timestamp)} • ${ago(h.timestamp)}</div>
-      </div>
-      <div class="hist-amount ${up ? "up" : "down"}">
-        ${up ? "+" : ""}${fmt(chg)}
-        <div style="font-size:11px">${up ? "+" : ""}${fmt(pct)}%</div>
-      </div>
-    </div>`;
-  }).join("") + '</div>';
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
-}
 
-function renderDepositHistory(wrap) {
-  const list = S.deposits.slice().reverse().slice(0, 30);
-  const pending = list.filter(d => d.status === "pending").length;
-  let html = '';
-  if (pending > 0) {
-    html += `<div style="padding:12px 14px;background:var(--warn-2);border:1px solid #FDE68A;border-radius:12px;font-size:12.5px;color:#92400E;margin-bottom:12px;display:flex;gap:8px;align-items:flex-start">
-      <i data-lucide="alert-triangle" style="width:16px;height:16px;flex-shrink:0;margin-top:1px"></i>
-      <span>${pending} pengajuan deposit menunggu konfirmasi admin.</span>
-    </div>`;
-  }
-  if (!list.length) {
-    wrap.innerHTML = html + '<div class="empty">Belum ada pengajuan deposit.</div>';
-    if (window.lucide) try { lucide.createIcons(); } catch (e) {}
-    return;
-  }
-  html += '<div class="hist-list">' + list.map(d => {
-    const statusMap = {
-      pending: { cls: "warn", txt: "Menunggu" },
-      approved: { cls: "up", txt: "Disetujui" },
-      rejected: { cls: "down", txt: "Ditolak" }
-    };
-    const st = statusMap[d.status] || statusMap.pending;
-    return `<div class="hist-item">
-      <div class="hist-icon dep"><i data-lucide="wallet"></i></div>
-      <div class="hist-main">
-        <div class="hist-title">${fmtIDR(d.amount)}</div>
-        <div class="hist-time">${fmtTime(d.timestamp)} • <span class="pill ${st.cls}" style="padding:1px 6px;font-size:10px">${st.txt}</span></div>
-      </div>
-      <div class="hist-amount">${d.sender || "—"}</div>
-    </div>`;
-  }).join("") + '</div>';
-  wrap.innerHTML = html;
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
-}
-
-// ==================== FIREBASE INIT ====================
-async function initFirebase() {
-  S.app = initializeApp(FIREBASE_CONFIG);
-  S.db = getDatabase(S.app);
-  S.auth = getAuth(S.app);
-
-  onValue(ref(S.db, ".info/connected"), (snap) => {
+  // Connection listener
+  S.db.ref(".info/connected").on("value", function(snap) {
     S.online = snap.val() === true;
     updateConnPill();
   });
 
-  onAuthStateChanged(S.auth, async (user) => {
-    const wasLoggedOut = !S.user;
-    S.user = user;
-    if (user) {
-      S.isAdmin = ADMIN_EMAILS.map(e => e.toLowerCase()).includes((user.email || "").toLowerCase());
-      closeModal("modalLogin");
-      await ensureUserProfile(user);
-      subscribeUserData(user.uid);
-      renderUserUI();
-      toast("Berhasil masuk sebagai " + (user.displayName || user.email), "success");
-      // Resume pending action
-      const action = S.pendingAction;
-      S.pendingAction = null;
-      if (typeof action === "function") setTimeout(action, 500);
-    } else {
-      // cleanup user data
-      S.balance = 0;
-      S.portfolio = {};
-      S.transactions = [];
-      S.deposits = [];
-      S.unsubsUser.forEach(fn => { try { fn(); } catch (e) {} });
-      S.unsubsUser = [];
-      renderUserUI();
-      renderHistoryTab();
-      renderDepositHistory($("depositHistory"));
-      if (!wasLoggedOut) toast("Anda telah keluar", "info");
-    }
-    if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+  // Test write access
+  var testRef = S.db.ref("cazo/_test");
+  testRef.set({ ts: Date.now() }).then(function() {
+    return testRef.remove();
+  }).then(function() {
+    S.canWrite = true;
+    setSys("w", "Diizinkan", "up");
+    setStatus("ok", "Siap. Semua tombol berfungsi.");
+  }).catch(function(err) {
+    S.canWrite = false;
+    setSys("w", "DITOLAK", "down");
+    setStatus("err", "Write ditolak! Ubah Firebase Rules ke '.write: true' untuk cazo/*");
   });
 
-  // Subscribe public data (tanpa login)
-  subscribePublicData();
   S.ready = true;
+  loadData();
+  subscribe();
 }
 
-async function ensureUserProfile(user) {
-  const uref = ref(S.db, "cazo/users/" + user.uid);
-  try {
-    const snap = await get(uref);
-    if (!snap.exists()) {
-      await set(uref, {
-        displayName: user.displayName || "Trader",
-        email: user.email || "",
-        photoURL: user.photoURL || "",
-        balance: DEFAULT_BALANCE,
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      });
-      toast(`Selamat datang! Saldo awal ${fmtIDR(DEFAULT_BALANCE)} diberikan.`, "success", 5000);
-    } else {
-      await update(uref, {
-        displayName: user.displayName || "Trader",
-        photoURL: user.photoURL || "",
-        updatedAt: Date.now()
-      });
-    }
-  } catch (err) {
-    console.error("ensureUserProfile error:", err);
-  }
+function updateConnPill() {
+  var pill = $("connPill");
+  if (S.online) { pill.className = "conn-pill on"; $("connText").textContent = "Online"; }
+  else { pill.className = "conn-pill off"; $("connText").textContent = "Offline"; }
 }
 
-function subscribeUserData(uid) {
-  S.unsubsUser.forEach(fn => { try { fn(); } catch (e) {} });
-  S.unsubsUser = [];
-
-  const uref = ref(S.db, "cazo/users/" + uid);
-  const u1 = onValue(uref, (snap) => {
+function loadData() {
+  var sref = S.db.ref("cazo/settings");
+  sref.once("value").then(function(snap) {
     if (snap.exists()) {
-      const v = snap.val();
-      S.balance = num(v.balance, 0);
-      S.portfolio = v.portfolio || {};
-      renderUserUI();
+      S.settings = Object.assign({}, DEFAULT_SETTINGS, snap.val());
+    } else if (S.canWrite) {
+      return initDatabase().then(function() { S.settings = Object.assign({}, DEFAULT_SETTINGS); });
     }
+  }).then(function() {
+    return loadHistory();
+  }).then(function() {
+    fillForms();
+    renderChart();
+    renderStats();
+    renderHistory();
+    updateLastUpdate();
+    updateRunUI();
+    renderIcons();
+  }).catch(function(err) {
+    console.error("loadData:", err);
+    toast("Gagal memuat data: " + err.message, "error");
   });
-  S.unsubsUser.push(() => u1());
-
-  const tref = query(ref(S.db, `cazo/users/${uid}/transactions`), orderByChild("timestamp"), limitToLast(100));
-  const u2 = onValue(tref, (snap) => {
-    const arr = [];
-    snap.forEach(c => arr.push({ key: c.key, ...c.val() }));
-    arr.sort((a, b) => a.timestamp - b.timestamp);
-    S.transactions = arr;
-    if (S.histTab === "tx") renderHistoryTab();
-  });
-  S.unsubsUser.push(() => u2());
-
-  const dref = query(ref(S.db, `cazo/users/${uid}/deposits`), orderByChild("timestamp"), limitToLast(50));
-  const u3 = onValue(dref, (snap) => {
-    const arr = [];
-    snap.forEach(c => arr.push({ key: c.key, ...c.val() }));
-    arr.sort((a, b) => a.timestamp - b.timestamp);
-    S.deposits = arr;
-    if (S.histTab === "deposit") renderHistoryTab();
-    renderDepositHistory($("depositHistory"));
-  });
-  S.unsubsUser.push(() => u3());
 }
 
-function subscribePublicData() {
-  const sref = ref(S.db, "cazo/settings");
-  const u1 = onValue(sref, (snap) => {
-    if (snap.exists()) {
-      S.settings = { ...DEFAULT_SETTINGS, ...snap.val() };
-      renderPriceUI();
-      updateChart();
-    }
+function initDatabase() {
+  var updates = {};
+  updates["cazo/settings"] = Object.assign({}, DEFAULT_SETTINGS, { updatedAt: Date.now() });
+  updates["cazo/public"] = {
+    currentPrice: DEFAULT_SETTINGS.currentPrice,
+    previousPrice: DEFAULT_SETTINGS.previousPrice,
+    movementMode: DEFAULT_SETTINGS.movementMode,
+    isRunning: false,
+    updatedAt: Date.now()
+  };
+  var base = Date.now() - 86400000 * 6;
+  DEFAULT_HISTORY.forEach(function(h, i){
+    updates["cazo/history/" + (base + i * 86400000)] = {
+      price: h.price, change: h.change,
+      changePercent: h.changePercent,
+      timestamp: base + i * 86400000
+    };
   });
-  S.unsubs.push(() => u1());
+  return S.db.ref().update(updates).then(function() {
+    toast("Database diinisialisasi.", "success");
+  });
+}
 
-  const href = query(ref(S.db, "cazo/history"), orderByChild("timestamp"), limitToLast(300));
-  const u2 = onValue(href, (snap) => {
-    const arr = [];
-    snap.forEach(c => {
-      const v = c.val();
+function loadHistory() {
+  var q = S.db.ref("cazo/history").orderByChild("timestamp").limitToLast(200);
+  return q.once("value").then(function(snap) {
+    var arr = [];
+    snap.forEach(function(c) {
+      var v = c.val();
       if (v && typeof v.price === "number") {
         arr.push({
           key: c.key, price: v.price,
@@ -1465,332 +769,381 @@ function subscribePublicData() {
         });
       }
     });
-    arr.sort((a, b) => a.timestamp - b.timestamp);
+    arr.sort(function(a, b){ return a.timestamp - b.timestamp; });
     S.history = arr;
-    S._lastChartKey = "";
-    renderPriceUI();
-    updateChart();
-    renderUserUI();
-    if (S.histTab === "price") renderHistoryTab();
   });
-  S.unsubs.push(() => u2());
 }
 
-function updateConnPill() {
-  const pill = $("connPill");
-  if (!pill) return;
-  if (S.online) { pill.className = "conn-pill on"; $("connText").textContent = "Online"; }
-  else { pill.className = "conn-pill off"; $("connText").textContent = "Offline"; }
-}
-
-// ==================== TRADING ====================
-function updateTradeTotal() {
-  const qty = num($("tradeQty").value, 0);
-  const price = num($("tradePrice").value, 0);
-  $("tradeTotal").value = (qty * price).toFixed(2);
-}
-
-async function doTrade(side) {
-  if (!requireLogin("trade", () => doTrade(side))) return;
-
-  const qty = num($("tradeQty").value, 0);
-  const price = num($("tradePrice").value, 0);
-  if (qty <= 0) return toast("Jumlah harus > 0", "error");
-  if (price <= 0) return toast("Harga tidak valid", "error");
-
-  const total = qty * price;
-  const uid = S.user.uid;
-
-  try {
-    if (side === "buy") {
-      if (S.balance < total) return toast("Saldo tidak cukup. Deposit dulu.", "error", 5000);
-
-      await runTransaction(ref(S.db, `cazo/users/${uid}/balance`), (bal) => {
-        bal = num(bal, 0);
-        if (bal < total) return;
-        return bal - total;
-      });
-
-      const pref = ref(S.db, `cazo/users/${uid}/portfolio/CAZO`);
-      const snap = await get(pref);
-      const cur = snap.val() || { qty: 0, avgPrice: 0 };
-      const newQty = cur.qty + qty;
-      const newAvg = (cur.qty * cur.avgPrice + qty * price) / newQty;
-      await set(pref, { qty: newQty, avgPrice: newAvg, updatedAt: Date.now() });
-
-      await push(ref(S.db, `cazo/users/${uid}/transactions`), {
-        type: "buy", qty, price, total, timestamp: Date.now()
-      });
-      toast(`Beli ${qty} ${S.settings.symbol || "CAZO"} berhasil!`, "success");
-    } else {
-      const pref = ref(S.db, `cazo/users/${uid}/portfolio/CAZO`);
-      const snap = await get(pref);
-      const cur = snap.val() || { qty: 0, avgPrice: 0 };
-      if (cur.qty < qty) return toast("Unit tidak cukup untuk dijual", "error");
-
-      const newQty = cur.qty - qty;
-      if (newQty <= 0) await remove(pref);
-      else await set(pref, { qty: newQty, avgPrice: cur.avgPrice, updatedAt: Date.now() });
-
-      await runTransaction(ref(S.db, `cazo/users/${uid}/balance`), (bal) => num(bal, 0) + total);
-      await push(ref(S.db, `cazo/users/${uid}/transactions`), {
-        type: "sell", qty, price, total, timestamp: Date.now()
-      });
-      toast(`Jual ${qty} ${S.settings.symbol || "CAZO"} berhasil!`, "success");
-    }
-  } catch (err) {
-    console.error("Trade error:", err);
-    toast("Transaksi gagal: " + err.message, "error", 5000);
-  }
-}
-
-// ==================== DEPOSIT ====================
-async function submitDeposit() {
-  if (!requireLogin("deposit", submitDeposit)) return;
-
-  const amount = num($("depAmount").value, 0);
-  const sender = $("depSender").value.trim();
-  const note = $("depNote").value.trim();
-
-  if (amount < 10000) return toast("Minimal deposit Rp 10.000", "error");
-  if (!sender) return toast("Isi nama pengirim", "error");
-
-  const uid = S.user.uid;
-  try {
-    await push(ref(S.db, `cazo/users/${uid}/deposits`), {
-      amount, sender, note,
-      status: "pending",
-      timestamp: Date.now()
-    });
-    await push(ref(S.db, "cazo/depositQueue"), {
-      uid, email: S.user.email, amount, sender, note,
-      status: "pending",
-      timestamp: Date.now()
-    });
-    $("depAmount").value = "";
-    $("depSender").value = "";
-    $("depNote").value = "";
-    toast("Pengajuan deposit terkirim. Tunggu konfirmasi admin.", "success", 5000);
-  } catch (err) {
-    console.error("Deposit error:", err);
-    toast("Gagal ajukan deposit: " + err.message, "error");
-  }
-}
-
-// ==================== GOOGLE LOGIN ====================
-async function doGoogleLogin(btn) {
-  const orig = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></span> Menghubungkan...';
-  try {
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
-    await signInWithPopup(S.auth, provider);
-  } catch (err) {
-    console.error("Login error:", err);
-    let msg = "Gagal login. Coba lagi.";
-    if (err.code === "auth/popup-closed-by-user") msg = "Pop-up ditutup sebelum selesai.";
-    if (err.code === "auth/popup-blocked") msg = "Pop-up diblokir browser. Izinkan pop-up.";
-    if (err.code === "auth/unauthorized-domain") msg = "Domain belum diizinkan di Firebase Auth.";
-    toast(msg, "error", 6000);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = orig;
-    if (window.lucide) try { lucide.createIcons(); } catch (e) {}
-  }
-}
-
-// ==================== EVENT BINDING ====================
-function bindEvents() {
-  // Google login (modal)
-  $("btnGoogleLoginModal").addEventListener("click", function () { doGoogleLogin(this); });
-  $("btnCancelLogin").addEventListener("click", () => {
-    S.pendingAction = null;
-    closeModal("modalLogin");
-  });
-
-  // Logout
-  $("btnLogout").addEventListener("click", async () => {
-    if (!confirm("Keluar dari akun?")) return;
-    try { await signOut(S.auth); toast("Berhasil keluar", "info"); } catch (e) {}
-  });
-
-  // User chip → show profile or prompt login
-  $("userChip").addEventListener("click", () => {
-    if (S.user) {
-      // Switch to settings (profil)
-      CAZO.nav("settings");
-    } else {
-      requireLogin("profile", () => CAZO.nav("settings"));
+function subscribe() {
+  // Settings
+  var sref = S.db.ref("cazo/settings");
+  sref.on("value", function(snap) {
+    if (snap.exists()) {
+      S.settings = Object.assign({}, DEFAULT_SETTINGS, snap.val());
+      $("curMode").textContent = S.settings.movementMode || "up";
     }
   });
+  S.unsubSettings = function(){ sref.off(); };
 
-  // Nav tabs
-  document.querySelectorAll(".nav-tab").forEach(tab => {
-    tab.addEventListener("click", () => {
-      const page = tab.dataset.page;
-      const needsAuth = tab.dataset.auth === "1";
-      if (needsAuth && !S.user) {
-        const reasonMap = { portfolio: "portfolio", deposit: "deposit", history: "history", settings: "profile" };
-        requireLogin(reasonMap[page] || "default", () => activatePage(page));
-        return;
+  // History
+  var href = S.db.ref("cazo/history").orderByChild("timestamp").limitToLast(200);
+  href.on("value", function(snap) {
+    var arr = [];
+    snap.forEach(function(c) {
+      var v = c.val();
+      if (v && typeof v.price === "number") {
+        arr.push({
+          key: c.key, price: v.price,
+          change: num(v.change, 0),
+          changePercent: num(v.changePercent, 0),
+          timestamp: num(v.timestamp, Date.now())
+        });
       }
-      activatePage(page);
+    });
+    arr.sort(function(a, b){ return a.timestamp - b.timestamp; });
+    S.history = arr;
+    renderChart();
+    renderStats();
+    renderHistory();
+    updateLastUpdate();
+  });
+  S.unsubHistory = function(){ href.off(); };
+}
+
+// ============ SAVE ============
+function saveSettings() {
+  if (!S.ready) return toast("Firebase belum siap", "error");
+  if (!S.canWrite) return toast("Write ditolak. Ubah Firebase Rules.", "error", 6000);
+
+  var btn = $("btnSave");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Menyimpan...';
+
+  try {
+    var price = num($("inPrice").value);
+    var prev = num($("inPrev").value);
+    var high = num($("inHigh").value);
+    var low = num($("inLow").value);
+
+    if (price <= 0 || prev <= 0 || high <= 0 || low <= 0) throw new Error("Harga harus > 0");
+    if (low > high) throw new Error("Terendah > Tertinggi");
+
+    var target = num($("inTarget").value);
+    var mode = $("inMode").value;
+
+    var updates = {};
+    updates["cazo/settings"] = {
+      assetName: $("inName").value.trim() || "CAZO CARD",
+      symbol: $("inSymbol").value.trim() || "CAZO",
+      currentPrice: price, previousPrice: prev,
+      highestPrice: high, lowestPrice: low,
+      chartColor: $("inColor").value,
+      maxPoints: Math.max(10, Math.min(500, num($("inMax").value, 100))),
+      movementMode: mode,
+      updateInterval: num($("inInterval").value, 5),
+      isRunning: S.running,
+      targetPrice: target || null,
+      updatedAt: Date.now()
+    };
+    updates["cazo/public"] = {
+      currentPrice: price, previousPrice: prev,
+      movementMode: mode, isRunning: S.running,
+      updatedAt: Date.now()
+    };
+
+    S.db.ref().update(updates).then(function() {
+      toast("Pengaturan disimpan!", "success");
+      var last = S.history[S.history.length - 1];
+      if (!last || last.price !== price) {
+        return addPoint(price, prev);
+      }
+    }).catch(function(err) {
+      console.error(err);
+      toast("Gagal: " + err.message, "error", 5000);
+    }).then(function() {
+      btn.disabled = false;
+      btn.innerHTML = '<i data-lucide="save"></i><span>Simpan Semua Pengaturan</span>';
+      renderIcons();
+    });
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = '<i data-lucide="save"></i><span>Simpan Semua Pengaturan</span>';
+    renderIcons();
+    toast("Gagal: " + err.message, "error", 5000);
+  }
+}
+
+function addPoint(price, prevPrice) {
+  var change = price - (prevPrice || price);
+  var pct = prevPrice && prevPrice !== 0 ? (change / prevPrice) * 100 : 0;
+  var newRef = S.db.ref("cazo/history").push();
+  return newRef.set({
+    price: Number(price),
+    change: Number(change.toFixed(2)),
+    changePercent: Number(pct.toFixed(2)),
+    timestamp: Date.now()
+  }).then(function() {
+    return pruneHistory(S.settings.maxPoints || 100);
+  }).then(function() {
+    return S.db.ref("cazo/public").update({
+      currentPrice: Number(price),
+      previousPrice: Number(prevPrice || price),
+      updatedAt: Date.now()
     });
   });
+}
 
-  function activatePage(page) {
-    document.querySelectorAll(".nav-tab").forEach(t => t.classList.toggle("active", t.dataset.page === page));
-    document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id === "page-" + page));
-    $("navTabs").classList.remove("open");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    if (page === "history") renderHistoryTab();
+function pruneHistory(maxPoints) {
+  var q = S.db.ref("cazo/history").orderByChild("timestamp");
+  return q.once("value").then(function(snap) {
+    var keys = [];
+    snap.forEach(function(c){ keys.push({ key: c.key, ts: num(c.val().timestamp, 0) }); });
+    if (keys.length <= maxPoints) return;
+    keys.sort(function(a, b){ return a.ts - b.ts; });
+    var del = {};
+    keys.slice(0, keys.length - maxPoints).forEach(function(k){ del["cazo/history/" + k.key] = null; });
+    return S.db.ref().update(del);
+  }).catch(function(e){ console.warn("pruneHistory:", e); });
+}
+
+// ============ MOVEMENT ============
+function startMovement() {
+  if (!S.canWrite) return toast("Write ditolak.", "error", 6000);
+  if (S.running) return toast("Sudah berjalan", "warning");
+
+  var mode = $("inMode").value;
+  var interval = num($("inInterval").value, 5);
+  if (interval < 1) return toast("Interval minimal 1 detik", "error");
+
+  S.running = true;
+  S.target = null;
+  S.manual = [];
+  S.manualIdx = 0;
+
+  if (mode === "up" || mode === "down") {
+    var t = num($("inTarget").value);
+    if (!t || t <= 0) { S.running = false; return toast("Isi Target Harga", "error"); }
+    S.target = t;
   }
 
-  // Mobile toggle
-  $("mobileToggle").addEventListener("click", (e) => {
-    e.stopPropagation();
-    $("navTabs").classList.toggle("open");
-  });
-
-  // Range buttons
-  document.querySelectorAll("#rangeGroup .range-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll("#rangeGroup .range-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      S.activeRange = btn.dataset.range;
-      S._lastChartKey = "";
-      S._lastFitRange = null;
-      updateChart();
-    });
-  });
-
-  // Chart tools
-  $("btnVolume").addEventListener("click", function () {
-    S.showVolume = !S.showVolume;
-    this.classList.toggle("active", S.showVolume);
-    S._lastChartKey = "";
-    updateChart();
-  });
-  $("btnMA").addEventListener("click", function () {
-    S.showMA = !S.showMA;
-    this.classList.toggle("active", S.showMA);
-    S._lastChartKey = "";
-    updateChart();
-  });
-  $("btnFullscreen").addEventListener("click", () => {
-    const wrap = $("chartWrap");
-    wrap.classList.toggle("fullscreen");
-    S.chartFullscreen = wrap.classList.contains("fullscreen");
-    if (S.chart) {
-      setTimeout(() => {
-        const box = $("mainChart");
-        S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
-        S.chart.timeScale().fitContent();
-      }, 250);
+  if (mode === "manual") {
+    var raw = $("inManual").value.trim();
+    if (raw) S.manual = raw.split(",").map(function(v){ return Number(v.trim()); }).filter(function(v){ return !isNaN(v) && v > 0; });
+    if (!S.manual.length) {
+      S.running = false;
+      return toast("Isi titik manual (contoh: 1200, 1220, 1250)", "error");
     }
-    if (window.lucide) try { lucide.createIcons(); } catch (e) {}
-  });
-  $("fsClose").addEventListener("click", () => {
-    $("chartWrap").classList.remove("fullscreen");
-    S.chartFullscreen = false;
-    if (S.chart) {
-      setTimeout(() => {
-        const box = $("mainChart");
-        S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
-      }, 250);
-    }
-  });
+  }
 
-  // Trade side
-  document.querySelectorAll(".order-tab[data-side]").forEach(tab => {
-    tab.addEventListener("click", () => {
-      document.querySelectorAll(".order-tab[data-side]").forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      S.tradeSide = tab.dataset.side;
-      const btn = $("btnQuickTrade");
-      btn.className = "btn btn-block " + (S.tradeSide === "buy" ? "btn-up" : "btn-down");
-      btn.innerHTML = `<i data-lucide="zap"></i> ${S.tradeSide === "buy" ? "Beli Sekarang" : "Jual Sekarang"}`;
-      if (window.lucide) try { lucide.createIcons(); } catch (e) {}
-    });
-  });
+  S.settings.movementMode = mode;
+  S.settings.updateInterval = interval;
+  updateRunUI();
 
-  $("tradeQty").addEventListener("input", updateTradeTotal);
-  $("btnQuickTrade").addEventListener("click", () => doTrade(S.tradeSide));
+  S.db.ref("cazo/settings").update({ movementMode: mode, updateInterval: interval, isRunning: true, updatedAt: Date.now() });
+  S.db.ref("cazo/public").update({ movementMode: mode, isRunning: true, updatedAt: Date.now() });
 
-  // Deposit
-  $("btnSubmitDeposit").addEventListener("click", submitDeposit);
+  toast("Pergerakan " + mode + " dimulai (" + interval + "s)", "success");
 
-  // History tabs
-  document.querySelectorAll(".order-tab[data-hist]").forEach(tab => {
-    tab.addEventListener("click", () => {
-      document.querySelectorAll(".order-tab[data-hist]").forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-      S.histTab = tab.dataset.hist;
-      renderHistoryTab();
-    });
-  });
-
-  // Save settings
-  $("btnSaveSettings").addEventListener("click", () => {
-    S.activeRange = $("setRange").value;
-    document.querySelectorAll("#rangeGroup .range-btn").forEach(b => {
-      b.classList.toggle("active", b.dataset.range === S.activeRange);
-    });
-    S._lastChartKey = "";
-    S._lastFitRange = null;
-    updateChart();
-    toast("Pengaturan disimpan", "success");
-  });
-
-  // Modal backdrop close
-  $("modalInfo").addEventListener("click", (e) => { if (e.target === $("modalInfo")) closeModal("modalInfo"); });
-  $("modalLogin").addEventListener("click", (e) => { if (e.target === $("modalLogin")) { S.pendingAction = null; closeModal("modalLogin"); } });
-
-  // Esc
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      if (S.chartFullscreen) $("fsClose").click();
-      closeModal("modalInfo");
-      closeModal("modalLogin");
-      $("navTabs").classList.remove("open");
-    }
-  });
-
-  // Outside nav click
-  document.addEventListener("click", (e) => {
-    const nav = $("navTabs"), tog = $("mobileToggle");
-    if (nav.classList.contains("open") && !nav.contains(e.target) && !tog.contains(e.target)) {
-      nav.classList.remove("open");
-    }
-  });
-
-  window.addEventListener("offline", () => { updateConnPill(); toast("Koneksi terputus", "warning"); });
-  window.addEventListener("online", () => { updateConnPill(); toast("Koneksi kembali", "success"); });
+  if (S.timer) clearInterval(S.timer);
+  S.timer = setInterval(function() {
+    if (!S.running) return;
+    tick(mode);
+  }, interval * 1000);
 }
 
-// ==================== BOOT ====================
-async function boot() {
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+function tick(mode) {
+  var cur = S.settings.currentPrice || 1250;
+  var next = cur;
+
+  if (mode === "up") {
+    var step = Math.max((S.target - cur) * 0.15, 0.5);
+    next = cur + step;
+    if (next >= S.target) { next = S.target; setTimeout(function(){ stopMovement(true); }, 200); }
+  } else if (mode === "down") {
+    var step2 = Math.max((cur - S.target) * 0.15, 0.5);
+    next = cur - step2;
+    if (next <= S.target) { next = S.target; setTimeout(function(){ stopMovement(true); }, 200); }
+  } else if (mode === "stable") {
+    next = cur + (Math.random() - 0.5) * cur * 0.01;
+  } else if (mode === "random") {
+    next = cur + (Math.random() - 0.5) * cur * 0.04;
+  } else if (mode === "manual") {
+    if (S.manualIdx >= S.manual.length) { stopMovement(true); return; }
+    next = S.manual[S.manualIdx++];
+  }
+
+  if (next <= 0) next = 0.01;
+  next = Number(next.toFixed(2));
+
+  addPoint(next, cur).then(function() {
+    S.settings.currentPrice = next;
+    S.settings.previousPrice = cur;
+    $("inPrice").value = next;
+    $("inPrev").value = cur;
+  }).catch(function(err) {
+    console.error("Tick error:", err);
+    stopMovement(true);
+  });
+}
+
+function stopMovement(silent) {
+  S.running = false;
+  if (S.timer) { clearInterval(S.timer); S.timer = null; }
+  updateRunUI();
+  if (S.canWrite) {
+    S.db.ref("cazo/settings").update({ isRunning: false, updatedAt: Date.now() });
+    S.db.ref("cazo/public").update({ isRunning: false, updatedAt: Date.now() });
+  }
+  if (!silent) toast("Pergerakan dihentikan", "info");
+}
+
+// ============ RESET ============
+function resetAll() {
+  if (!S.canWrite) return toast("Write ditolak", "error");
+  if (!confirm("Reset semua data ke awal? Riwayat akan dihapus.")) return;
+
+  stopMovement(true);
+  S.db.ref("cazo/history").remove().then(function() {
+    var updates = {};
+    var base = Date.now() - 86400000 * 6;
+    DEFAULT_HISTORY.forEach(function(h, i){
+      updates["cazo/history/" + (base + i * 86400000)] = {
+        price: h.price, change: h.change,
+        changePercent: h.changePercent,
+        timestamp: base + i * 86400000
+      };
+    });
+    updates["cazo/settings"] = Object.assign({}, DEFAULT_SETTINGS, { updatedAt: Date.now() });
+    updates["cazo/public"] = {
+      currentPrice: DEFAULT_SETTINGS.currentPrice,
+      previousPrice: DEFAULT_SETTINGS.previousPrice,
+      movementMode: DEFAULT_SETTINGS.movementMode,
+      isRunning: false,
+      updatedAt: Date.now()
+    };
+    return S.db.ref().update(updates);
+  }).then(function() {
+    S.settings = Object.assign({}, DEFAULT_SETTINGS);
+    return loadHistory();
+  }).then(function() {
+    fillForms();
+    renderChart();
+    renderStats();
+    renderHistory();
+    updateRunUI();
+    toast("Reset selesai!", "success");
+  }).catch(function(err) {
+    toast("Reset gagal: " + err.message, "error");
+  });
+}
+
+// ============ EVENTS ============
+function bindEvents() {
+  $("btnSave").addEventListener("click", saveSettings);
+  $("btnStart").addEventListener("click", startMovement);
+  $("btnStop").addEventListener("click", function(){ stopMovement(false); });
+
+  $("btnAdd").addEventListener("click", function() {
+    var p = num($("inPrice").value);
+    if (!p || p <= 0) return toast("Isi harga yang valid", "error");
+    var prev = S.history.length ? S.history[S.history.length - 1].price : p;
+    addPoint(p, prev).then(function() {
+      toast("Titik ditambahkan", "success");
+    }).catch(function(e) {
+      toast("Gagal: " + e.message, "error");
+    });
+  });
+
+  $("btnDel").addEventListener("click", function() {
+    if (!S.history.length) return toast("Tidak ada data", "warning");
+    var last = S.history[S.history.length - 1];
+    if (!last.key) return toast("Tidak bisa hapus data lokal", "warning");
+    if (!confirm("Hapus titik terakhir?")) return;
+    S.db.ref("cazo/history/" + last.key).remove().then(function() {
+      toast("Terhapus", "success");
+    }).catch(function(e) {
+      toast("Gagal: " + e.message, "error");
+    });
+  });
+
+  $("btnReset").addEventListener("click", resetAll);
+
+  $("inMode").addEventListener("change", function() {
+    $("curMode").textContent = $("inMode").value;
+  });
+
+  window.addEventListener("offline", function() {
+    updateConnPill();
+    toast("Koneksi terputus", "warning");
+  });
+  window.addEventListener("online", function() {
+    updateConnPill();
+    toast("Koneksi kembali", "success");
+  });
+}
+
+// ============ ICON RENDERER ============
+function startIconRenderer() {
+  var tries = 0, maxTries = 30;
+  function tryRender() {
+    tries++;
+    if (window.lucide && typeof window.lucide.createIcons === "function") {
+      try { window.lucide.createIcons(); } catch(e){}
+    } else if (tries < maxTries) {
+      setTimeout(tryRender, 200);
+    } else {
+      console.warn("Lucide gagal dimuat setelah 6 detik");
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tryRender);
+  else tryRender();
+
+  if (window.MutationObserver) {
+    var t = null;
+    new MutationObserver(function(){
+      if (t) clearTimeout(t);
+      t = setTimeout(function(){ if (window.lucide) try { window.lucide.createIcons(); } catch(e){} }, 120);
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+}
+
+// ============ BOOT ============
+function boot() {
+  startIconRenderer();
   bindEvents();
-  initChart();
-  try { await initFirebase(); }
-  catch (err) { console.error("Boot error:", err); toast("Gagal inisialisasi. Cek koneksi.", "error", 6000); }
-  if (window.lucide) try { lucide.createIcons(); } catch (e) {}
-  renderUserUI();
-  renderDepositHistory($("depositHistory"));
+
+  // Tunggu chart siap
+  var chartTries = 0;
+  function tryInitChart() {
+    chartTries++;
+    var ok = initChart();
+    if (ok) { console.log("[CAZO Admin] Chart initialized"); return; }
+    if (chartTries < 25) {
+      setTimeout(tryInitChart, 200);
+    } else {
+      console.error("[CAZO Admin] Lightweight Charts gagal dimuat");
+      var l = $("chartLoading");
+      if (l) l.innerHTML = '<div style="font-size:28px">📉</div><div>Grafik tidak dapat dimuat</div><div style="font-size:11px">Periksa koneksi internet</div>';
+    }
+  }
+  tryInitChart();
+
+  // Firebase
+  if (typeof firebase !== "undefined") {
+    initFirebase();
+  } else {
+    console.error("[CAZO Admin] Firebase SDK tidak tersedia");
+    setStatus("err", "Firebase SDK tidak tersedia. Periksa koneksi internet.");
+  }
+
+  setInterval(updateLastUpdate, 15000);
+  renderIcons();
 }
 
-window.CAZO = {
-  nav: (p) => {
-    const tab = document.querySelector(`.nav-tab[data-page="${p}"]`);
-    if (tab) tab.click();
-  },
-  closeModal,
-  showInfo
-};
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+else boot();
 
-boot();
+})();
 </script>
 </body>
 </html>
