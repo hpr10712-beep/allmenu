@@ -63,7 +63,7 @@ button{font-family:inherit}
 .user-name{font-size:12px;font-weight:600;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mobile-toggle{display:none;width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:#fff;cursor:pointer;align-items:center;justify-content:center;color:var(--txt)}
 @media (max-width:900px){
-  .nav-tabs{position:fixed;top:60px;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);flex-direction:column;padding:10px 12px 14px;gap:2px;transform:translateY(-130%);opacity:0;pointer-events:none;transition:var(--t);box-shadow:var(--shadow-md);align-items:stretch}
+  .nav-tabs{position:fixed;top:60px;left:0;right:0;background:#fff;border-bottom:1px solid var(--border);flex-direction:column;padding:10px 12px 14px;gap:2px;transform:translateY(-130%);opacity:0;pointer-events:none;transition:var(--t);box-shadow:var(--shadow-md);align-items:stretch;z-index:99}
   .nav-tabs.open{transform:translateY(0);opacity:1;pointer-events:auto}
   .nav-tab{padding:12px 14px;font-size:14px}
   .mobile-toggle{display:flex}
@@ -302,15 +302,6 @@ button{font-family:inherit}
 .login-features{margin-top:18px;padding-top:18px;border-top:1px solid var(--border-2);display:flex;flex-direction:column;gap:9px;text-align:left}
 .login-feature{display:flex;gap:10px;font-size:12.5px;color:var(--txt-2);line-height:1.5}
 .login-feature svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;color:var(--up)}
-
-/* ====== TRADING DISABLED ====== */
-.trade-disabled{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 20px;gap:14px}
-.trade-disabled-icon{width:64px;height:64px;border-radius:20px;background:var(--warn-2);display:flex;align-items:center;justify-content:center}
-.trade-disabled-icon svg{width:30px;height:30px;color:var(--warn)}
-.trade-disabled-title{font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--txt)}
-.trade-disabled-desc{font-size:12.5px;color:var(--txt-2);line-height:1.6;max-width:280px}
-
-/* ====== CUSTOMER SERVICE ====== */
 .cs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media (max-width:400px){.cs-grid{grid-template-columns:1fr}}
 .cs-btn{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;text-decoration:none;color:inherit;border:1px solid var(--border);background:#fff;transition:var(--t);cursor:pointer}
@@ -324,8 +315,6 @@ button{font-family:inherit}
 .cs-value{font-family:var(--font-d);font-weight:700;font-size:13.5px;color:var(--txt);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cs-arrow{color:var(--txt-3);flex-shrink:0}
 .cs-arrow svg{width:16px;height:16px}
-
-/* ====== PAYMENT TABS ====== */
 .pay-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px;background:var(--bg-3);border-radius:14px;margin-bottom:16px}
 .pay-tab{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border:none;background:transparent;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer;transition:var(--t);color:var(--txt-2)}
 .pay-tab.active{background:#fff;color:var(--txt);box-shadow:var(--shadow)}
@@ -363,7 +352,6 @@ button{font-family:inherit}
 
 <main class="container">
 
-  <!-- DASHBOARD -->
   <section class="page active" id="page-dashboard">
     <div class="page-head">
       <div>
@@ -439,14 +427,20 @@ button{font-family:inherit}
         </div>
       </div>
       <div>
-        <!-- TRADING DISABLED -->
         <div class="card">
-          <div class="card-h"><h2><i data-lucide="ban"></i><span>Trading</span></h2></div>
-          <div class="card-b" style="padding:0">
-            <div class="trade-disabled">
-              <div class="trade-disabled-icon"><i data-lucide="ban"></i></div>
-              <div class="trade-disabled-title">Fitur Trading Dinonaktifkan</div>
-              <div class="trade-disabled-desc">Beli dan jual aset untuk saat ini tidak tersedia. Silakan hubungi Customer Service untuk info lebih lanjut.</div>
+          <div class="card-h"><h2><i data-lucide="zap"></i><span>Trading Cepat</span></h2></div>
+          <div class="card-b">
+            <div class="order-tabs">
+              <button class="order-tab buy active" data-side="buy" type="button">BUY</button>
+              <button class="order-tab sell" data-side="sell" type="button">SELL</button>
+            </div>
+            <div class="fg"><label>Jumlah</label><input class="inp" id="tradeQty" type="number" step="1" min="1" value="1" /></div>
+            <div class="fg"><label>Harga per Unit</label><input class="inp" id="tradePrice" type="number" step="0.01" readonly /></div>
+            <div class="fg"><label>Total</label><input class="inp" id="tradeTotal" type="number" step="0.01" readonly /></div>
+            <button class="btn btn-up btn-block" id="btnQuickTrade" type="button"><i data-lucide="zap"></i><span>Beli Sekarang</span></button>
+            <div class="divider"></div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--txt-2)">
+              <span>Saldo tersedia</span><strong id="quickBalance" style="color:var(--txt)">—</strong>
             </div>
           </div>
         </div>
@@ -461,23 +455,21 @@ button{font-family:inherit}
               <span style="color:var(--txt-2)">Login</span><span class="pill gray" id="loginStatus">Belum login</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0">
-              <span style="color:var(--txt-2)">Trading</span><span class="pill down">Dinonaktifkan</span>
+              <span style="color:var(--txt-2)">Trading</span><span class="pill up">Aktif</span>
             </div>
             <div class="divider"></div>
-            <p class="text-muted" style="line-height:1.6">Untuk deposit, withdraw, portfolio, dan riwayat, silakan login dengan Google.</p>
+            <p class="text-muted" style="line-height:1.6">Untuk membeli/menjual aset, deposit, withdraw, portfolio, dan riwayat, silakan login dengan Google.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- MARKET -->
   <section class="page" id="page-market">
     <div class="page-head"><div><h1 class="page-title"><i data-lucide="bar-chart-3"></i><span>Market</span></h1><p class="page-sub">Daftar aset yang tersedia</p></div></div>
     <div class="market-list" id="marketList"></div>
   </section>
 
-  <!-- PORTFOLIO -->
   <section class="page" id="page-portfolio">
     <div class="page-head"><div><h1 class="page-title"><i data-lucide="briefcase"></i><span>Portfolio</span></h1><p class="page-sub">Aset yang Anda miliki</p></div></div>
     <div class="stats-slider">
@@ -489,17 +481,14 @@ button{font-family:inherit}
     <div class="card"><div class="card-h"><h2><i data-lucide="list"></i><span>Holdings</span></h2></div><div class="card-b" id="holdingsList"></div></div>
   </section>
 
-  <!-- PAYMENT (DEPOSIT + WITHDRAW) -->
   <section class="page" id="page-payment">
     <div class="page-head"><div><h1 class="page-title"><i data-lucide="credit-card"></i><span>Payment</span></h1><p class="page-sub">Deposit & withdraw — diproses manual oleh admin</p></div></div>
 
-    <!-- Tabs -->
     <div class="pay-tabs">
-      <button class="pay-tab deposit active" data-pay="deposit"><i data-lucide="arrow-down-circle"></i><span>Deposit</span></button>
-      <button class="pay-tab withdraw" data-pay="withdraw"><i data-lucide="arrow-up-circle"></i><span>Withdraw</span></button>
+      <button class="pay-tab deposit active" data-pay="deposit" type="button"><i data-lucide="arrow-down-circle"></i><span>Deposit</span></button>
+      <button class="pay-tab withdraw" data-pay="withdraw" type="button"><i data-lucide="arrow-up-circle"></i><span>Withdraw</span></button>
     </div>
 
-    <!-- DEPOSIT TAB -->
     <div id="payTabDeposit">
       <div class="grid-2">
         <div>
@@ -520,7 +509,7 @@ button{font-family:inherit}
               <div class="fg"><label>Nominal (Rp)</label><input class="inp" id="depAmount" type="number" step="1000" min="10000" placeholder="50000" /><span class="text-muted" style="font-size:11px">Minimal Rp 10.000</span></div>
               <div class="fg"><label>Nama Pengirim</label><input class="inp" id="depSender" placeholder="Nama sesuai rekening" /></div>
               <div class="fg"><label>Catatan (opsional)</label><input class="inp" id="depNote" placeholder="No. referensi" /></div>
-              <button class="btn btn-blue btn-block" id="btnSubmitDeposit"><i data-lucide="send"></i><span>Ajukan Deposit</span></button>
+              <button class="btn btn-blue btn-block" id="btnSubmitDeposit" type="button"><i data-lucide="send"></i><span>Ajukan Deposit</span></button>
               <div class="divider"></div>
               <p class="text-muted" style="line-height:1.6">Admin akan memverifikasi pembayaran Anda. Setelah dikonfirmasi, saldo akan otomatis bertambah.</p>
             </div>
@@ -533,7 +522,6 @@ button{font-family:inherit}
       </div>
     </div>
 
-    <!-- WITHDRAW TAB -->
     <div id="payTabWithdraw" class="hidden">
       <div class="grid-2">
         <div>
@@ -574,7 +562,7 @@ button{font-family:inherit}
               <div class="fg"><label>Nomor Rekening / HP</label><input class="inp" id="wdAccount" placeholder="1234567890" /></div>
               <div class="fg"><label>Nama Pemilik</label><input class="inp" id="wdName" placeholder="Nama sesuai rekening" /></div>
               <div class="fg"><label>Catatan (opsional)</label><input class="inp" id="wdNote" placeholder="Keterangan tambahan" /></div>
-              <button class="btn btn-down btn-block" id="btnSubmitWithdraw"><i data-lucide="send"></i><span>Ajukan Withdraw</span></button>
+              <button class="btn btn-down btn-block" id="btnSubmitWithdraw" type="button"><i data-lucide="send"></i><span>Ajukan Withdraw</span></button>
               <div class="divider"></div>
               <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--txt-2);padding:4px 0">
                 <span>Saldo tersedia</span><strong id="wdBalance" style="color:var(--txt)">—</strong>
@@ -590,17 +578,15 @@ button{font-family:inherit}
     </div>
   </section>
 
-  <!-- HISTORY -->
   <section class="page" id="page-history">
     <div class="page-head"><div><h1 class="page-title"><i data-lucide="history"></i><span>Riwayat Transaksi</span></h1><p class="page-sub">Deposit, withdraw, dan perubahan harga</p></div></div>
     <div class="order-tabs" style="max-width:400px">
-      <button class="order-tab active" data-hist="payment">Payment</button>
-      <button class="order-tab" data-hist="price">Harga</button>
+      <button class="order-tab active" data-hist="payment" type="button">Payment</button>
+      <button class="order-tab" data-hist="price" type="button">Harga</button>
     </div>
     <div class="card" style="margin-top:12px"><div class="card-b" id="historyContent"><div class="empty">Memuat...</div></div></div>
   </section>
 
-  <!-- SETTINGS -->
   <section class="page" id="page-settings">
     <div class="page-head"><div><h1 class="page-title"><i data-lucide="settings"></i><span>Pengaturan</span></h1><p class="page-sub">Konfigurasi akun & tampilan</p></div></div>
     <div class="grid-2">
@@ -616,11 +602,10 @@ button{font-family:inherit}
                 <div style="font-size:11px;color:var(--txt-3);margin-top:2px">UID: <span id="settingsUid">—</span></div>
               </div>
             </div>
-            <button class="btn btn-outline btn-block" id="btnLogout"><i data-lucide="log-out"></i><span>Keluar dari Akun</span></button>
+            <button class="btn btn-outline btn-block" id="btnLogout" type="button"><i data-lucide="log-out"></i><span>Keluar dari Akun</span></button>
           </div>
         </div>
 
-        <!-- CUSTOMER SERVICE -->
         <div class="card">
           <div class="card-h"><h2><i data-lucide="headphones"></i><span>Customer Service</span></h2></div>
           <div class="card-b">
@@ -658,7 +643,7 @@ button{font-family:inherit}
                 <option value="30d">30 Hari</option><option value="all">Semua</option>
               </select>
             </div>
-            <button class="btn btn-primary btn-block" id="btnSaveSettings"><i data-lucide="save"></i><span>Simpan</span></button>
+            <button class="btn btn-primary btn-block" id="btnSaveSettings" type="button"><i data-lucide="save"></i><span>Simpan</span></button>
           </div>
         </div>
       </div>
@@ -674,27 +659,27 @@ button{font-family:inherit}
         </div>
         <div class="card">
           <div class="card-h"><h2><i data-lucide="info"></i><span>Tentang CAZO</span></h2></div>
-          <div class="card-b"><p class="text-muted" style="line-height:1.7"><strong>CAZO</strong> adalah platform trading digital simulasi. Deposit & withdraw diproses manual oleh admin. Data harga real-time via Firebase.</p><div class="divider"></div><div style="font-size:12px;color:var(--txt-3)">Versi 2.3 • Trading Platform</div></div>
+          <div class="card-b"><p class="text-muted" style="line-height:1.7"><strong>CAZO</strong> adalah platform trading digital simulasi. Deposit & withdraw diproses manual oleh admin. Data harga real-time via Firebase.</p><div class="divider"></div><div style="font-size:12px;color:var(--txt-3)">Versi 2.4 • Trading Platform</div></div>
         </div>
       </div>
     </div>
   </section>
 </main>
 
-<!-- LOGIN MODAL -->
 <div class="modal-bg" id="modalLogin">
   <div class="modal" style="max-width:440px">
     <div class="login-modal">
       <div class="login-modal-icon"><i data-lucide="lock"></i></div>
       <div class="login-modal-title">Login Diperlukan</div>
       <div class="login-modal-desc" id="loginPromptDesc">Fitur ini memerlukan login.</div>
-      <button class="login-google-btn" id="btnGoogleLoginModal">
+      <button class="login-google-btn" id="btnGoogleLoginModal" type="button">
         <svg viewBox="0 0 48 48" width="18" height="18"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.1-11.3-7.9l-6.5 5C9.6 39.6 16.3 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.6l6.2 5.2C41 35.6 44 30.2 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
         Masuk dengan Google
       </button>
-      <button class="btn btn-ghost btn-block" style="margin-top:8px" id="btnCancelLogin">Nanti saja</button>
+      <button class="btn btn-ghost btn-block" style="margin-top:8px" id="btnCancelLogin" type="button">Nanti saja</button>
       <div class="login-features">
         <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Saldo awal <strong>Rp 100.000</strong></span></div>
+        <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Beli & jual aset CAZO</span></div>
         <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Deposit & withdraw via admin</span></div>
         <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Riwayat & portfolio lengkap</span></div>
       </div>
@@ -702,42 +687,39 @@ button{font-family:inherit}
   </div>
 </div>
 
-<!-- DRAWING MODAL -->
 <div class="modal-bg" id="modalDrawing">
   <div class="modal">
-    <div class="modal-h"><h3><i data-lucide="pencil-ruler"></i><span>Alat Gambar</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalDrawing')"><i data-lucide="x"></i></button></div>
+    <div class="modal-h"><h3><i data-lucide="pencil-ruler"></i><span>Alat Gambar</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalDrawing')" type="button"><i data-lucide="x"></i></button></div>
     <div class="drawing-tip"><i data-lucide="star"></i><span>Tap alat untuk mengaktifkan. Setelah aktif, tap & drag pada chart untuk menggambar.</span></div>
     <div class="drawing-quick">
-      <button class="dq-btn" data-dq="measure"><i data-lucide="ruler"></i> Pengukuran</button>
-      <button class="dq-btn" data-dq="delete"><i data-lucide="trash-2"></i> Hapus</button>
-      <button class="dq-btn" data-dq="lock"><i data-lucide="lock"></i> Kunci</button>
+      <button class="dq-btn" data-dq="measure" type="button"><i data-lucide="ruler"></i> Pengukuran</button>
+      <button class="dq-btn" data-dq="delete" type="button"><i data-lucide="trash-2"></i> Hapus</button>
+      <button class="dq-btn" data-dq="lock" type="button"><i data-lucide="lock"></i> Kunci</button>
     </div>
     <div id="drawingCategories"></div>
     <div class="modal-f">
-      <button class="btn btn-outline" id="btnClearDrawings"><i data-lucide="trash-2"></i><span>Hapus Semua</span></button>
-      <button class="btn btn-primary" onclick="CAZO.closeModal('modalDrawing')">Selesai</button>
+      <button class="btn btn-outline" id="btnClearDrawings" type="button"><i data-lucide="trash-2"></i><span>Hapus Semua</span></button>
+      <button class="btn btn-primary" onclick="CAZO.closeModal('modalDrawing')" type="button">Selesai</button>
     </div>
   </div>
 </div>
 
-<!-- INDICATORS MODAL -->
 <div class="modal-bg" id="modalIndicators">
   <div class="modal">
-    <div class="modal-h"><h3><i data-lucide="activity"></i><span>Indikator</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalIndicators')"><i data-lucide="x"></i></button></div>
+    <div class="modal-h"><h3><i data-lucide="activity"></i><span>Indikator</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalIndicators')" type="button"><i data-lucide="x"></i></button></div>
     <div style="padding:12px 16px 6px;display:flex;justify-content:space-between;align-items:center">
-      <button class="btn btn-outline btn-sm" id="btnClearIndicators"><i data-lucide="trash-2"></i><span>Hapus semua</span></button>
+      <button class="btn btn-outline btn-sm" id="btnClearIndicators" type="button"><i data-lucide="trash-2"></i><span>Hapus semua</span></button>
     </div>
     <div class="ind-active-chips" id="indActiveChips"></div>
     <div class="ind-search"><i data-lucide="search"></i><input type="text" id="indSearch" placeholder="Cari indikator..." /></div>
     <div class="ind-list" id="indList"></div>
-    <div class="modal-f"><button class="btn btn-primary btn-block" onclick="CAZO.closeModal('modalIndicators')">Selesai</button></div>
+    <div class="modal-f"><button class="btn btn-primary btn-block" onclick="CAZO.closeModal('modalIndicators')" type="button">Selesai</button></div>
   </div>
 </div>
 
-<!-- SL/TP MODAL -->
 <div class="modal-bg" id="modalSLTP">
   <div class="modal" style="max-width:440px">
-    <div class="modal-h"><h3><i data-lucide="shield-alert"></i><span>Stop Loss / Take Profit</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalSLTP')"><i data-lucide="x"></i></button></div>
+    <div class="modal-h"><h3><i data-lucide="shield-alert"></i><span>Stop Loss / Take Profit</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalSLTP')" type="button"><i data-lucide="x"></i></button></div>
     <div class="modal-b">
       <p class="text-muted" style="margin-bottom:14px;line-height:1.6">Tetapkan level otomatis. Ketika harga menyentuh level, Anda akan diberi notifikasi.</p>
       <div class="sltp-row">
@@ -749,18 +731,17 @@ button{font-family:inherit}
       <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:4px 0"><span style="color:var(--txt-2)">Status</span><span class="pill gray" id="sltpStatus">Tidak aktif</span></div>
     </div>
     <div class="modal-f">
-      <button class="btn btn-outline" id="btnClearSLTP">Hapus</button>
-      <button class="btn btn-primary" id="btnSaveSLTP">Simpan</button>
+      <button class="btn btn-outline" id="btnClearSLTP" type="button">Hapus</button>
+      <button class="btn btn-primary" id="btnSaveSLTP" type="button">Simpan</button>
     </div>
   </div>
 </div>
 
-<!-- INFO MODAL -->
 <div class="modal-bg" id="modalInfo">
   <div class="modal">
-    <div class="modal-h"><h3><i data-lucide="info"></i><span id="modalInfoTitle">Info</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalInfo')"><i data-lucide="x"></i></button></div>
+    <div class="modal-h"><h3><i data-lucide="info"></i><span id="modalInfoTitle">Info</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalInfo')" type="button"><i data-lucide="x"></i></button></div>
     <div class="modal-b" id="modalInfoBody"></div>
-    <div class="modal-f"><button class="btn btn-primary btn-block" onclick="CAZO.closeModal('modalInfo')">Tutup</button></div>
+    <div class="modal-f"><button class="btn btn-primary btn-block" onclick="CAZO.closeModal('modalInfo')" type="button">Tutup</button></div>
   </div>
 </div>
 
@@ -882,16 +863,17 @@ var S = {
   settings: Object.assign({}, DEFAULT_SETTINGS),
   history: [],
   balance: 0, portfolio: {},
-  transactions: [], payments: [],
+  payments: [],
   chart: null, candleSeries: null, volumeSeries: null,
   activeRange: "7d", showVolume: true, chartFullscreen: false,
   payTab: "deposit", histTab: "payment",
   unsubs: [], unsubsUser: [],
   _lastChartKey: "", _lastFitRange: null,
-  pendingAction: null,
   drawings: [], activeTool: null, drawing: null,
   activeIndicators: {}, indicatorSeries: {},
-  stopLoss: null, takeProfit: null
+  stopLoss: null, takeProfit: null,
+  tradeSide: "buy",
+  _depositing: false, _withdrawing: false, _trading: false
 };
 
 function $(id) { return document.getElementById(id); }
@@ -930,14 +912,13 @@ function toast(msg, type, dur) {
   var icons = { success: "check-circle", error: "alert-circle", warning: "alert-triangle", info: "info" };
   var el = document.createElement("div");
   el.className = "toast " + type;
-  el.innerHTML = '<i data-lucide="' + (icons[type] || icons.info) + '"></i><span></span><button class="toast-close"><i data-lucide="x" style="width:14px;height:14px"></i></button>';
+  el.innerHTML = '<i data-lucide="' + (icons[type] || icons.info) + '"></i><span></span><button class="toast-close" type="button"><i data-lucide="x" style="width:14px;height:14px"></i></button>';
   el.querySelector("span").textContent = msg;
   el.querySelector(".toast-close").addEventListener("click", function(){ el.remove(); });
   wrap.appendChild(el);
   renderIcons();
   setTimeout(function(){ el.style.opacity = "0"; setTimeout(function(){ el.remove(); }, 250); }, dur);
 }
-
 function renderIcons() {
   if (window.lucide && typeof window.lucide.createIcons === "function") {
     try { window.lucide.createIcons(); } catch (e) {}
@@ -946,11 +927,12 @@ function renderIcons() {
 function openModal(id) { var el = $(id); if (el) el.classList.add("open"); }
 function closeModal(id) { var el = $(id); if (el) el.classList.remove("open"); }
 
-function requireLogin(reason, action) {
-  if (S.user) { if (typeof action === "function") action(); return true; }
-  S.pendingAction = action || null;
+// FIX: requireLogin tidak auto-execute action, mencegah double-execution
+function requireLogin(reason) {
+  if (S.user) return true;
   var desc = {
     profile: "Silakan masuk dengan Google untuk melihat profil akun Anda.",
+    trade: "Untuk membeli atau menjual aset, silakan masuk dengan Google terlebih dahulu.",
     portfolio: "Login untuk melihat portfolio, saldo, dan P&L.",
     payment: "Login untuk melakukan deposit atau withdraw.",
     history: "Login untuk melihat riwayat transaksi.",
@@ -1005,7 +987,6 @@ function initChart() {
   $("chartLoading").classList.add("hidden");
   return true;
 }
-
 function buildCandles(hist) {
   var out = [], lastT = 0;
   for (var i = 0; i < hist.length; i++) {
@@ -1027,7 +1008,6 @@ function buildCandles(hist) {
   }
   return out;
 }
-
 function getFilteredHistory(range) {
   var hist = S.history; if (!hist.length) return [];
   var now = Date.now();
@@ -1037,7 +1017,6 @@ function getFilteredHistory(range) {
   if (filtered.length < 2 && hist.length >= 2) return hist.slice(-Math.min(hist.length, 30));
   return filtered;
 }
-
 function updateChart() {
   if (!S.candleSeries || !S.chart) return;
   var filtered = getFilteredHistory(S.activeRange);
@@ -1422,7 +1401,7 @@ function renderIndicatorChips() {
   if (!ids.length) { w.innerHTML = ''; return; }
   w.innerHTML = ids.map(function(id){
     var nm = id; for (var i = 0; i < INDICATORS.length; i++) if (INDICATORS[i].id === id) nm = INDICATORS[i].name;
-    return '<span class="ind-chip">' + nm + '<button data-remove="' + id + '">×</button></span>';
+    return '<span class="ind-chip">' + nm + '<button data-remove="' + id + '" type="button">×</button></span>';
   }).join('');
   w.querySelectorAll('[data-remove]').forEach(function(b){
     b.addEventListener('click', function(){ removeIndicator(b.dataset.remove); });
@@ -1453,7 +1432,7 @@ function renderDrawingCategories() {
   w.innerHTML = DRAWING_CATEGORIES.map(function(cat){
     return '<div class="tool-cat">' + cat.name + '</div><div class="tool-grid">' +
       cat.tools.map(function(t){
-        return '<button class="tool-item" data-tool="' + t.id + '"><i data-lucide="' + t.icon + '"></i><span>' + t.name + '</span></button>';
+        return '<button class="tool-item" data-tool="' + t.id + '" type="button"><i data-lucide="' + t.icon + '"></i><span>' + t.name + '</span></button>';
       }).join('') + '</div>';
   }).join('');
   renderIcons();
@@ -1474,10 +1453,7 @@ function renderDrawingCategories() {
 
 // ============ SL/TP ============
 function openSLTP() {
-  if (!S.user) {
-    requireLogin("trade", openSLTP);
-    return;
-  }
+  if (!requireLogin("trade")) return;
   var cur = S.history.length ? S.history[S.history.length-1].price : S.settings.currentPrice;
   $("sltpCurrentPrice").textContent = fmt(cur, 2);
   $("sltpSL").value = S.stopLoss || "";
@@ -1554,6 +1530,13 @@ function renderPriceUI() {
   var lastTs = hist.length ? hist[hist.length-1].timestamp : null;
   $("dashUpdate").textContent = lastTs ? ago(lastTs) : "—";
 
+  // FIX: Update trading panel
+  var tpEl = $("tradePrice");
+  if (tpEl) {
+    tpEl.value = price.toFixed(2);
+    updateTradeTotal();
+  }
+
   renderMarketList();
   checkSLTP(price);
   renderIcons();
@@ -1608,6 +1591,7 @@ function renderUserUI() {
   } else {
     plEl.textContent = "—"; plEl.className = "stat-mini-val"; $("dashPLPct").textContent = "—";
   }
+  $("quickBalance").textContent = S.user ? fmtIDR(bal) : "—";
   $("pfBalance").textContent = S.user ? fmtIDR(bal) : "—";
   $("pfValue").textContent = S.user ? fmtIDR(pv.value) : "—";
   $("pfEquity").textContent = S.user ? fmtIDR(bal + pv.value) : "—";
@@ -1672,17 +1656,13 @@ function renderPriceHistory(w) {
   renderIcons();
 }
 function renderPaymentQueue(w) {
-  if (!w) w = $("depositHistory");
   if (!w) return;
   var filter = w.id === "withdrawHistory" ? "withdraw" : "deposit";
   var list = S.payments.filter(function(p){ return p.type === filter; }).slice().reverse().slice(0, 30);
   var pending = list.filter(function(d){ return d.status === "pending"; }).length;
   var html = '';
   if (pending > 0) html += '<div style="padding:12px 14px;background:var(--warn-2);border:1px solid #FDE68A;border-radius:12px;font-size:12.5px;color:#92400E;margin-bottom:12px">' + pending + ' pengajuan menunggu konfirmasi admin.</div>';
-  if (!list.length) {
-    w.innerHTML = html + '<div class="empty">Belum ada pengajuan.</div>';
-    return;
-  }
+  if (!list.length) { w.innerHTML = html + '<div class="empty">Belum ada pengajuan.</div>'; return; }
   var statusMap = { pending: { cls: "warn", txt: "Menunggu" }, approved: { cls: "up", txt: "Disetujui" }, rejected: { cls: "down", txt: "Ditolak" } };
   html += '<div class="hist-list">' + list.map(function(d){
     var st = statusMap[d.status] || statusMap.pending;
@@ -1735,10 +1715,8 @@ function initFirebase() {
       subscribeUserData(user.uid);
       renderUserUI();
       toast("Berhasil masuk: " + (user.displayName || user.email), "success");
-      var action = S.pendingAction; S.pendingAction = null;
-      if (typeof action === "function") setTimeout(action, 500);
     } else {
-      S.balance = 0; S.portfolio = {}; S.transactions = []; S.payments = [];
+      S.balance = 0; S.portfolio = {}; S.payments = [];
       S.unsubsUser.forEach(function(fn){ try { fn(); } catch(e){} });
       S.unsubsUser = [];
       renderUserUI();
@@ -1753,7 +1731,6 @@ function initFirebase() {
   subscribePublicData();
   S.ready = true;
 }
-
 function ensureUserProfile(user) {
   var uref = S.db.ref("cazo/users/" + user.uid);
   return uref.once("value").then(function(snap) {
@@ -1777,7 +1754,6 @@ function ensureUserProfile(user) {
     }
   });
 }
-
 function subscribeUserData(uid) {
   S.unsubsUser.forEach(function(fn){ try { fn(); } catch(e){} });
   S.unsubsUser = [];
@@ -1806,7 +1782,6 @@ function subscribeUserData(uid) {
   });
   S.unsubsUser.push(function(){ pref.off(); });
 }
-
 function subscribePublicData() {
   var sref = S.db.ref("cazo/settings");
   sref.on("value", function(snap) {
@@ -1837,7 +1812,6 @@ function subscribePublicData() {
   });
   S.unsubs.push(function(){ href.off(); });
 }
-
 function loadDemoMode() {
   S.settings = Object.assign({}, DEFAULT_SETTINGS);
   S.history = DEMO_HISTORY.map(function(h, i){ return Object.assign({ key: 'demo_' + i }, h, { timestamp: Date.now() - (7 - i) * 86400000 }); });
@@ -1854,20 +1828,98 @@ function updateConnPill() {
   else { pill.className = "conn-pill off"; $("connText").textContent = "Offline"; }
 }
 
+// ============ TRADING ============
+function updateTradeTotal() {
+  var qty = num($("tradeQty").value, 0), price = num($("tradePrice").value, 0);
+  $("tradeTotal").value = (qty * price).toFixed(2);
+}
+function doTrade(side) {
+  if (!requireLogin("trade")) return;
+  if (S._trading) return toast("Transaksi sedang diproses...", "warning");
+  var qty = num($("tradeQty").value, 0), price = num($("tradePrice").value, 0);
+  if (qty <= 0) return toast("Jumlah harus > 0", "error");
+  if (price <= 0) return toast("Harga tidak valid", "error");
+  var total = qty * price, uid = S.user.uid;
+
+  S._trading = true;
+  var btn = $("btnQuickTrade");
+  var origHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></span> Memproses...';
+
+  if (side === "buy") {
+    if (S.balance < total) {
+      S._trading = false; btn.disabled = false; btn.innerHTML = origHtml; renderIcons();
+      return toast("Saldo tidak cukup.", "error", 5000);
+    }
+    S.db.ref("cazo/users/" + uid + "/balance").transaction(function(bal) {
+      bal = num(bal, 0);
+      if (bal < total) return;
+      return bal - total;
+    }).then(function(result) {
+      if (!result.committed) throw new Error("Saldo tidak cukup");
+      var pref = S.db.ref("cazo/users/" + uid + "/portfolio/CAZO");
+      return pref.once("value").then(function(snap) {
+        var cur = snap.val() || { qty: 0, avgPrice: 0 };
+        var newQty = cur.qty + qty;
+        var newAvg = newQty > 0 ? (cur.qty * cur.avgPrice + qty * price) / newQty : price;
+        return pref.set({ qty: newQty, avgPrice: newAvg, updatedAt: Date.now() });
+      });
+    }).then(function() {
+      return S.db.ref("cazo/users/" + uid + "/transactions").push({ type: "buy", qty: qty, price: price, total: total, timestamp: Date.now() });
+    }).then(function() {
+      toast("Beli " + qty + " " + (S.settings.symbol || "CAZO") + " berhasil!", "success");
+    }).catch(function(err) {
+      console.error(err); toast("Transaksi gagal: " + err.message, "error", 5000);
+    }).then(function() {
+      S._trading = false; btn.disabled = false; btn.innerHTML = origHtml; renderIcons();
+    });
+  } else {
+    var pref = S.db.ref("cazo/users/" + uid + "/portfolio/CAZO");
+    pref.once("value").then(function(snap) {
+      var cur = snap.val() || { qty: 0, avgPrice: 0 };
+      if (cur.qty < qty) throw new Error("Unit tidak cukup");
+      var newQty = cur.qty - qty;
+      if (newQty <= 0) return pref.remove();
+      return pref.set({ qty: newQty, avgPrice: cur.avgPrice, updatedAt: Date.now() });
+    }).then(function() {
+      return S.db.ref("cazo/users/" + uid + "/balance").transaction(function(bal) { return num(bal, 0) + total; });
+    }).then(function() {
+      return S.db.ref("cazo/users/" + uid + "/transactions").push({ type: "sell", qty: qty, price: price, total: total, timestamp: Date.now() });
+    }).then(function() {
+      toast("Jual " + qty + " " + (S.settings.symbol || "CAZO") + " berhasil!", "success");
+    }).catch(function(err) {
+      console.error(err); toast("Transaksi gagal: " + err.message, "error", 5000);
+    }).then(function() {
+      S._trading = false; btn.disabled = false; btn.innerHTML = origHtml; renderIcons();
+    });
+  }
+}
+
 // ============ PAYMENT SUBMIT ============
 function submitDeposit() {
-  if (!requireLogin("payment", submitDeposit)) return;
+  if (!requireLogin("payment")) return;
+  if (S._depositing) return toast("Sedang diproses...", "warning");
+
   var amount = num($("depAmount").value, 0);
   var sender = $("depSender").value.trim();
   var note = $("depNote").value.trim();
   if (amount < 10000) return toast("Minimal deposit Rp 10.000", "error");
   if (!sender) return toast("Isi nama pengirim", "error");
+
+  S._depositing = true;
+  var btn = $("btnSubmitDeposit");
+  var origHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></span> Mengirim...';
+
   var uid = S.user.uid;
   var payload = {
     type: "deposit",
     amount: amount, sender: sender, note: note,
     status: "pending", timestamp: Date.now()
   };
+
   S.db.ref("cazo/users/" + uid + "/payments").push(payload)
     .then(function() {
       return S.db.ref("cazo/paymentQueue").push(Object.assign({}, payload, { uid: uid, email: S.user.email }));
@@ -1876,11 +1928,22 @@ function submitDeposit() {
       $("depAmount").value = ""; $("depSender").value = ""; $("depNote").value = "";
       toast("Pengajuan deposit terkirim. Menunggu konfirmasi admin.", "success", 5000);
     })
-    .catch(function(err) { console.error(err); toast("Gagal: " + err.message, "error"); });
+    .catch(function(err) {
+      console.error(err);
+      toast("Gagal: " + err.message, "error");
+    })
+    .then(function() {
+      S._depositing = false;
+      btn.disabled = false;
+      btn.innerHTML = origHtml;
+      renderIcons();
+    });
 }
 
 function submitWithdraw() {
-  if (!requireLogin("payment", submitWithdraw)) return;
+  if (!requireLogin("payment")) return;
+  if (S._withdrawing) return toast("Sedang diproses...", "warning");
+
   var amount = num($("wdAmount").value, 0);
   var method = $("wdMethod").value;
   var account = $("wdAccount").value.trim();
@@ -1891,6 +1954,12 @@ function submitWithdraw() {
   if (!account) return toast("Isi nomor rekening / HP", "error");
   if (!name) return toast("Isi nama pemilik rekening", "error");
 
+  S._withdrawing = true;
+  var btn = $("btnSubmitWithdraw");
+  var origHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></span> Mengirim...';
+
   var uid = S.user.uid;
   var payload = {
     type: "withdraw",
@@ -1898,10 +1967,10 @@ function submitWithdraw() {
     status: "pending", timestamp: Date.now()
   };
 
-  // Cek saldo & tahan (hold)
+  // Transactional hold: kurangi saldo dulu
   S.db.ref("cazo/users/" + uid + "/balance").transaction(function(bal) {
     bal = num(bal, 0);
-    if (bal < amount) return;
+    if (bal < amount) return; // abort
     return bal - amount;
   }).then(function(result) {
     if (!result.committed) throw new Error("Saldo tidak cukup");
@@ -1912,7 +1981,13 @@ function submitWithdraw() {
     $("wdAmount").value = ""; $("wdAccount").value = ""; $("wdName").value = ""; $("wdNote").value = "";
     toast("Pengajuan withdraw terkirim. Saldo ditahan hingga diproses admin.", "success", 6000);
   }).catch(function(err) {
-    console.error(err); toast("Gagal: " + err.message, "error");
+    console.error(err);
+    toast("Gagal: " + err.message, "error");
+  }).then(function() {
+    S._withdrawing = false;
+    btn.disabled = false;
+    btn.innerHTML = origHtml;
+    renderIcons();
   });
 }
 
@@ -1932,15 +2007,14 @@ function doGoogleLogin(btn) {
       toast(msg, "error", 6000);
     })
     .then(function() {
-      btn.disabled = false; btn.innerHTML = orig;
-      renderIcons();
+      btn.disabled = false; btn.innerHTML = orig; renderIcons();
     });
 }
 
 // ============ EVENTS ============
 function bindEvents() {
   $("btnGoogleLoginModal").addEventListener("click", function(){ doGoogleLogin(this); });
-  $("btnCancelLogin").addEventListener("click", function(){ S.pendingAction = null; closeModal("modalLogin"); });
+  $("btnCancelLogin").addEventListener("click", function(){ closeModal("modalLogin"); });
   $("btnLogout").addEventListener("click", function(){
     if (!confirm("Keluar?")) return;
     S.auth.signOut().then(function(){ toast("Berhasil keluar", "info"); });
@@ -1948,7 +2022,7 @@ function bindEvents() {
 
   $("userChip").addEventListener("click", function(){
     if (S.user) CAZO.nav("settings");
-    else requireLogin("profile", function(){ CAZO.nav("settings"); });
+    else requireLogin("profile");
   });
 
   document.querySelectorAll(".nav-tab").forEach(function(tab){
@@ -1957,7 +2031,7 @@ function bindEvents() {
       var needsAuth = tab.dataset.auth === "1";
       if (needsAuth && !S.user) {
         var reasonMap = { portfolio: "portfolio", payment: "payment", history: "history", settings: "profile" };
-        requireLogin(reasonMap[page] || "default", function(){ activatePage(page); });
+        requireLogin(reasonMap[page] || "default");
         return;
       }
       activatePage(page);
@@ -2032,6 +2106,25 @@ function bindEvents() {
   $("sltpSL").addEventListener("input", updateSLTPHints);
   $("sltpTP").addEventListener("input", updateSLTPHints);
 
+  // Trading side tabs
+  document.querySelectorAll(".order-tab[data-side]").forEach(function(tab){
+    tab.addEventListener("click", function(){
+      document.querySelectorAll(".order-tab[data-side]").forEach(function(t){ t.classList.remove("active"); });
+      tab.classList.add("active");
+      S.tradeSide = tab.dataset.side;
+      var btn = $("btnQuickTrade");
+      if (btn) {
+        btn.className = "btn btn-block " + (S.tradeSide === "buy" ? "btn-up" : "btn-down");
+        btn.innerHTML = '<i data-lucide="zap"></i><span>' + (S.tradeSide === "buy" ? "Beli Sekarang" : "Jual Sekarang") + '</span>';
+      }
+      renderIcons();
+    });
+  });
+  var tradeQtyEl = $("tradeQty");
+  if (tradeQtyEl) tradeQtyEl.addEventListener("input", updateTradeTotal);
+  var quickTradeBtn = $("btnQuickTrade");
+  if (quickTradeBtn) quickTradeBtn.addEventListener("click", function(){ doTrade(S.tradeSide); });
+
   // Payment tabs
   document.querySelectorAll(".pay-tab").forEach(function(tab){
     tab.addEventListener("click", function(){
@@ -2065,7 +2158,7 @@ function bindEvents() {
   });
 
   $("modalInfo").addEventListener("click", function(e){ if (e.target === this) closeModal("modalInfo"); });
-  $("modalLogin").addEventListener("click", function(e){ if (e.target === this) { S.pendingAction = null; closeModal("modalLogin"); } });
+  $("modalLogin").addEventListener("click", function(e){ if (e.target === this) closeModal("modalLogin"); });
 
   document.addEventListener("keydown", function(e){
     if (e.key === "Escape") {
