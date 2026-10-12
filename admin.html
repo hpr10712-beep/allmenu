@@ -2,14 +2,14 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>CAZO Admin — Control Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAZO Admin</title>
   <meta name="robots" content="noindex, nofollow" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
   <style>
@@ -17,932 +17,587 @@
 
     :root {
       --bg: #FFFFFF;
-      --bg-secondary: #F8FAFC;
-      --bg-tertiary: #F1F5F9;
-      --text-primary: #111827;
-      --text-secondary: #6B7280;
-      --text-muted: #9CA3AF;
+      --bg-sec: #F8FAFC;
+      --bg-ter: #F1F5F9;
+      --txt: #111827;
+      --txt-sec: #6B7280;
+      --txt-muted: #9CA3AF;
       --border: #E5E7EB;
-      --border-light: #F3F4F6;
       --up: #16A34A;
       --up-bg: #F0FDF4;
       --down: #DC2626;
       --down-bg: #FEF2F2;
       --accent: #2563EB;
-      --accent-bg: #EFF6FF;
       --warn: #F59E0B;
-      --warn-bg: #FEF3C7;
-      --radius-sm: 8px;
       --radius: 14px;
       --radius-lg: 20px;
       --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+      --shadow: 0 4px 12px rgba(0,0,0,0.06);
       --shadow-lg: 0 12px 32px rgba(0,0,0,0.08);
-      --transition: 240ms cubic-bezier(0.4, 0, 0.2, 1);
-      --font: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      --t: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      --font: 'Inter', 'Plus Jakarta Sans', sans-serif;
+      --font-d: 'Plus Jakarta Sans', 'Inter', sans-serif;
     }
-
-    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
 
     body {
       font-family: var(--font);
-      background: var(--bg-secondary);
-      color: var(--text-primary);
+      background: var(--bg-sec);
+      color: var(--txt);
       line-height: 1.6;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
     }
 
     ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
     .hidden { display: none !important; }
 
-    /* ============ LOGIN SCREEN ============ */
-    .login-screen {
-      min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      padding: 24px;
-      background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
-    }
-    .login-card {
-      width: 100%; max-width: 400px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-lg);
-      padding: 40px 32px;
-      display: flex; flex-direction: column;
-      align-items: center; text-align: center; gap: 20px;
-      animation: fadeInUp 0.4s ease;
-    }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .login-logo {
-      width: 72px; height: 72px;
-      border-radius: 20px; object-fit: cover;
-      box-shadow: 0 8px 24px rgba(17,24,39,0.15);
-      background: #111827;
-    }
-    .login-title {
-      font-family: var(--font-display);
-      font-weight: 800; font-size: 24px;
-      letter-spacing: -0.5px;
-    }
-    .login-sub {
-      font-size: 12px; font-weight: 600; color: var(--text-muted);
-      letter-spacing: 3px; text-transform: uppercase;
-      margin-top: -14px;
-    }
-    .login-desc {
-      font-size: 13.5px; color: var(--text-secondary);
-      line-height: 1.5;
-    }
-    .login-btn {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      width: 100%; padding: 13px 20px;
-      border-radius: 12px; border: none;
-      background: var(--text-primary); color: #fff;
-      font-family: var(--font); font-size: 14px; font-weight: 600;
-      cursor: pointer; transition: var(--transition);
-    }
-    .login-btn:hover:not(:disabled) { background: #1F2937; transform: translateY(-1px); box-shadow: var(--shadow-md); }
-    .login-btn:active { transform: translateY(0); }
-    .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .login-btn svg { width: 18px; height: 18px; }
-
-    .login-info {
-      font-size: 11.5px; color: var(--text-muted);
-      line-height: 1.6; padding-top: 8px;
-      border-top: 1px solid var(--border-light);
-      width: 100%;
-    }
-    .login-error {
-      display: flex; align-items: flex-start; gap: 8px;
-      padding: 10px 14px; border-radius: 10px;
-      background: var(--down-bg); color: var(--down);
-      font-size: 12.5px; font-weight: 500;
-      width: 100%; text-align: left; line-height: 1.5;
-    }
-    .login-error svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; }
-
-    /* ============ ADMIN LAYOUT ============ */
-    .admin-app { min-height: 100vh; display: flex; flex-direction: column; }
-
-    /* Topbar */
+    /* ===== TOPBAR ===== */
     .topbar {
       position: sticky; top: 0; z-index: 50;
-      background: rgba(255,255,255,0.85);
-      backdrop-filter: blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
-      border-bottom: 1px solid var(--border-light);
+      background: #fff; border-bottom: 1px solid var(--border);
     }
-    .topbar-inner {
-      max-width: 1400px; margin: 0 auto;
-      padding: 0 20px; height: 64px;
+    .topbar-in {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 16px; height: 60px;
       display: flex; align-items: center; justify-content: space-between;
       gap: 12px;
     }
-    .topbar-brand {
-      display: flex; align-items: center; gap: 10px;
-      text-decoration: none; color: inherit;
-    }
-    .topbar-logo {
-      width: 36px; height: 36px;
-      border-radius: 10px; object-fit: cover;
-      box-shadow: 0 2px 8px rgba(17,24,39,0.15);
-      background: #111827;
-    }
-    .topbar-text { display: flex; flex-direction: column; line-height: 1.1; }
-    .topbar-name {
-      font-family: var(--font-display); font-weight: 800;
-      font-size: 17px; letter-spacing: -0.4px;
-    }
-    .topbar-sub {
-      font-size: 9px; font-weight: 600; color: var(--text-muted);
-      letter-spacing: 2.5px; text-transform: uppercase;
-    }
-    .topbar-right {
-      display: flex; align-items: center; gap: 10px;
-    }
-    .badge-conn {
-      display: flex; align-items: center; gap: 6px;
+    .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+    .brand img { width: 34px; height: 34px; border-radius: 9px; object-fit: cover; }
+    .brand-txt { line-height: 1.1; }
+    .brand-name { font-family: var(--font-d); font-weight: 800; font-size: 16px; letter-spacing: -0.3px; }
+    .brand-sub { font-size: 9px; font-weight: 600; color: var(--txt-muted); letter-spacing: 2px; text-transform: uppercase; }
+
+    .conn-pill {
+      display: inline-flex; align-items: center; gap: 6px;
       padding: 5px 10px; border-radius: 20px;
-      font-size: 11px; font-weight: 600;
-      background: var(--bg-tertiary); color: var(--text-secondary);
-      transition: var(--transition);
+      background: var(--bg-ter);
+      font-size: 11px; font-weight: 600; color: var(--txt-sec);
     }
-    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-muted); transition: var(--transition); }
-    .badge-conn.online .badge-dot { background: var(--up); box-shadow: 0 0 0 3px rgba(22,163,74,0.15); }
-    .badge-conn.offline .badge-dot { background: var(--down); box-shadow: 0 0 0 3px rgba(220,38,38,0.15); }
+    .conn-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--txt-muted); }
+    .conn-pill.on .conn-dot { background: var(--up); box-shadow: 0 0 0 3px rgba(22,163,74,0.15); }
+    .conn-pill.off .conn-dot { background: var(--down); box-shadow: 0 0 0 3px rgba(220,38,38,0.15); }
 
-    .user-chip {
-      display: flex; align-items: center; gap: 8px;
-      padding: 5px 5px 5px 12px; border-radius: 24px;
-      background: var(--bg-tertiary); font-size: 12.5px; font-weight: 500;
-      max-width: 220px;
+    .btn-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 12px; border-radius: 9px;
+      background: var(--txt); color: #fff; text-decoration: none;
+      font-size: 12.5px; font-weight: 600; transition: var(--t);
     }
-    .user-avatar {
-      width: 28px; height: 28px; border-radius: 50%;
-      object-fit: cover; flex-shrink: 0;
-      border: 2px solid #fff;
-    }
-    .user-name {
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-    @media (max-width: 640px) {
-      .user-name { display: none; }
-      .user-chip { padding: 4px; }
-    }
+    .btn-link:hover { background: #1F2937; }
+    .btn-link svg { width: 14px; height: 14px; }
 
-    .icon-btn {
-      width: 36px; height: 36px;
-      border-radius: 10px; border: 1px solid var(--border);
-      background: var(--bg); cursor: pointer;
-      display: inline-flex; align-items: center; justify-content: center;
-      color: var(--text-secondary); transition: var(--transition);
-    }
-    .icon-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-    .icon-btn svg { width: 16px; height: 16px; }
+    /* ===== CONTAINER ===== */
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px 16px 80px; }
 
-    /* Main */
-    .admin-main {
-      flex: 1;
-      max-width: 1400px; width: 100%;
-      margin: 0 auto;
-      padding: 24px 20px 80px;
-    }
-
-    .page-head {
-      margin-bottom: 24px;
+    .head {
       display: flex; align-items: flex-end; justify-content: space-between;
-      flex-wrap: wrap; gap: 12px;
+      flex-wrap: wrap; gap: 12px; margin-bottom: 20px;
     }
-    .page-title {
-      font-family: var(--font-display);
-      font-size: 26px; font-weight: 800;
-      letter-spacing: -0.8px;
-      display: flex; align-items: center; gap: 10px;
+    .head h1 {
+      font-family: var(--font-d); font-size: 22px; font-weight: 800;
+      letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px;
     }
-    .page-title svg { width: 24px; height: 24px; color: var(--text-secondary); }
-    .page-sub {
-      font-size: 13px; color: var(--text-secondary); margin-top: 4px;
-    }
+    .head h1 svg { width: 22px; height: 22px; color: var(--txt-sec); }
+    .head p { font-size: 12.5px; color: var(--txt-sec); margin-top: 2px; }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 20px;
-      align-items: start;
+    .status-bar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px; border-radius: var(--radius);
+      font-size: 12.5px; font-weight: 500; margin-bottom: 20px;
+      transition: var(--t);
     }
-    @media (max-width: 1100px) { .grid { grid-template-columns: 1fr; } }
+    .status-bar.ok { background: var(--up-bg); color: #166534; }
+    .status-bar.warn { background: #FEF3C7; color: #92400E; }
+    .status-bar.err { background: var(--down-bg); color: #991B1B; }
+    .status-bar svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    @media (max-width: 640px) { .stats { grid-template-columns: 1fr 1fr; } }
+    .stat {
+      background: #fff; border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px 16px;
+    }
+    .stat-lbl { font-size: 10.5px; font-weight: 600; color: var(--txt-muted); letter-spacing: 0.5px; text-transform: uppercase; }
+    .stat-val { font-family: var(--font-d); font-weight: 700; font-size: 20px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+    .stat-val.up { color: var(--up); }
+    .stat-val.down { color: var(--down); }
+
+    .layout { display: grid; grid-template-columns: 1fr 400px; gap: 20px; align-items: start; }
+    @media (max-width: 1000px) { .layout { grid-template-columns: 1fr; } }
 
     .card {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
+      background: #fff; border: 1px solid var(--border);
+      border-radius: var(--radius-lg); overflow: hidden;
       box-shadow: var(--shadow-sm);
-      overflow: hidden;
-      transition: var(--transition);
     }
-    .card + .card { margin-top: 20px; }
-    .card-header {
-      padding: 18px 22px;
-      border-bottom: 1px solid var(--border-light);
+    .card + .card { margin-top: 16px; }
+    .card-h {
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; flex-wrap: wrap;
+      gap: 10px;
     }
-    .card-title {
-      font-family: var(--font-display);
-      font-size: 15px; font-weight: 700;
-      letter-spacing: -0.2px;
+    .card-h h2 {
+      font-family: var(--font-d); font-size: 15px; font-weight: 700;
       display: flex; align-items: center; gap: 8px;
     }
-    .card-title svg { width: 17px; height: 17px; color: var(--text-secondary); }
-    .card-body { padding: 22px; }
+    .card-h h2 svg { width: 16px; height: 16px; color: var(--txt-sec); }
+    .card-b { padding: 20px; }
 
-    /* ============ FORM ============ */
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-label {
-      font-size: 12px; font-weight: 600; color: var(--text-secondary);
-      text-transform: uppercase; letter-spacing: 0.5px;
-    }
-    .form-input, .form-select {
+    .fg { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .fg:last-child { margin-bottom: 0; }
+    .fg label { font-size: 11.5px; font-weight: 600; color: var(--txt-sec); letter-spacing: 0.3px; }
+    .inp, .sel {
       width: 100%; padding: 11px 13px;
-      border-radius: 10px; border: 1px solid var(--border);
-      background: var(--bg); font-family: var(--font);
-      font-size: 14px; color: var(--text-primary);
-      transition: var(--transition); outline: none;
-      -webkit-appearance: none; appearance: none;
+      border: 1px solid var(--border); border-radius: 10px;
+      background: #fff; font-family: var(--font); font-size: 14px;
+      color: var(--txt); outline: none; transition: var(--t);
+      -webkit-appearance: none;
     }
-    .form-input:focus, .form-select:focus {
-      border-color: var(--text-primary);
-      box-shadow: 0 0 0 3px rgba(17,24,39,0.08);
-    }
-    .form-input::placeholder { color: var(--text-muted); }
-    .form-input[type="number"] { font-variant-numeric: tabular-nums; }
-    .form-select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    .inp:focus, .sel:focus { border-color: var(--txt); box-shadow: 0 0 0 3px rgba(17,24,39,0.08); }
+    .sel {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 12px center;
       padding-right: 34px;
     }
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+    .fg-help { font-size: 11px; color: var(--txt-muted); margin-top: 2px; }
 
-    .form-help {
-      font-size: 11px; color: var(--text-muted);
-      line-height: 1.5; margin-top: 2px;
-    }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 480px) { .row2 { grid-template-columns: 1fr; } }
 
-    .form-section + .form-section {
-      margin-top: 22px; padding-top: 22px;
-      border-top: 1px dashed var(--border);
-    }
-
-    /* ============ BUTTONS ============ */
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-      padding: 11px 18px;
-      border-radius: 10px; border: none;
+      padding: 11px 16px; border: none; border-radius: 10px;
       font-family: var(--font); font-size: 13.5px; font-weight: 600;
-      cursor: pointer; transition: var(--transition);
-      white-space: nowrap; text-decoration: none;
+      cursor: pointer; transition: var(--t); white-space: nowrap;
+      text-decoration: none;
     }
     .btn svg { width: 15px; height: 15px; }
     .btn:active:not(:disabled) { transform: scale(0.97); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-primary { background: var(--text-primary); color: #fff; }
+    .btn-block { width: 100%; }
+    .btn-primary { background: var(--txt); color: #fff; }
     .btn-primary:hover:not(:disabled) { background: #1F2937; }
     .btn-success { background: var(--up); color: #fff; }
     .btn-success:hover:not(:disabled) { background: #15803D; }
     .btn-danger { background: var(--down); color: #fff; }
     .btn-danger:hover:not(:disabled) { background: #B91C1C; }
-    .btn-warn { background: var(--warn); color: #fff; }
-    .btn-warn:hover:not(:disabled) { background: #D97706; }
-    .btn-outline {
-      background: var(--bg); color: var(--text-primary);
-      border: 1px solid var(--border);
+    .btn-outline { background: #fff; color: var(--txt); border: 1px solid var(--border); }
+    .btn-outline:hover:not(:disabled) { background: var(--bg-ter); }
+    .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .chart-box {
+      height: 260px; background: #fff;
+      border-radius: var(--radius); overflow: hidden; position: relative;
     }
-    .btn-outline:hover:not(:disabled) { background: var(--bg-tertiary); }
-    .btn-block { width: 100%; }
-    .btn-sm { padding: 8px 14px; font-size: 12.5px; border-radius: 8px; }
+    @media (max-width: 640px) { .chart-box { height: 220px; } }
 
-    .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
-    .btn-group .btn { flex: 1; min-width: 0; }
+    .status-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 14px; border-radius: 10px;
+      background: var(--bg-sec); font-size: 12.5px; margin-top: 12px;
+    }
+    .status-row span { color: var(--txt-sec); }
+    .status-row strong { font-weight: 700; }
 
-    /* ============ STATUS PILLS ============ */
-    .status-pill {
+    .pill {
       display: inline-flex; align-items: center; gap: 6px;
-      padding: 5px 12px; border-radius: 20px;
-      font-size: 11.5px; font-weight: 600;
-      letter-spacing: 0.3px;
+      padding: 4px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
     }
-    .status-pill.running { background: var(--up-bg); color: var(--up); }
-    .status-pill.stopped { background: var(--bg-tertiary); color: var(--text-secondary); }
-    .status-pill.demo { background: var(--warn-bg); color: var(--warn); }
-    .status-pill.live { background: var(--up-bg); color: var(--up); }
-    .status-pill.error { background: var(--down-bg); color: var(--down); }
-    .status-pill .pulse-dot {
+    .pill.run { background: var(--up-bg); color: var(--up); }
+    .pill.idle { background: var(--bg-ter); color: var(--txt-sec); }
+    .pill.run .dot {
       width: 6px; height: 6px; border-radius: 50%;
       background: currentColor; animation: pulse 1.5s infinite;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+    .hist-list { display: flex; flex-direction: column; gap: 6px; }
+    .hist-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; border: 1px solid var(--border);
+      border-radius: 12px; background: #fff; font-size: 13px;
+      transition: var(--t);
+    }
+    .hist-item:hover { border-color: #D1D5DB; }
+    .hist-icon {
+      width: 34px; height: 34px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .hist-icon.up { background: var(--up-bg); color: var(--up); }
+    .hist-icon.down { background: var(--down-bg); color: var(--down); }
+    .hist-icon svg { width: 16px; height: 16px; }
+    .hist-main { flex: 1; min-width: 0; }
+    .hist-prices { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .hist-old { color: var(--txt-muted); text-decoration: line-through; font-weight: 400; }
+    .hist-new.up { color: var(--up); font-weight: 700; }
+    .hist-new.down { color: var(--down); font-weight: 700; }
+    .hist-time { font-size: 11px; color: var(--txt-muted); margin-top: 2px; }
+    .hist-chg { font-size: 12px; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+    .hist-chg.up { color: var(--up); }
+    .hist-chg.down { color: var(--down); }
+
+    .empty {
+      padding: 30px 16px; text-align: center;
+      color: var(--txt-muted); font-size: 13px;
+      border: 1px dashed var(--border); border-radius: var(--radius);
     }
 
-    /* ============ STATS MINI ============ */
-    .mini-stats {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 12px; margin-bottom: 20px;
+    .toasts {
+      position: fixed; bottom: 16px; right: 16px;
+      z-index: 500; display: flex; flex-direction: column; gap: 8px;
+      max-width: 340px;
     }
-    @media (max-width: 640px) { .mini-stats { grid-template-columns: 1fr 1fr; } }
-    .mini-stat {
-      padding: 14px 16px; border-radius: var(--radius);
-      border: 1px solid var(--border); background: var(--bg);
-    }
-    .mini-stat-label {
-      font-size: 10.5px; font-weight: 600; color: var(--text-muted);
-      text-transform: uppercase; letter-spacing: 0.8px;
-    }
-    .mini-stat-value {
-      font-family: var(--font-display); font-weight: 700;
-      font-size: 17px; letter-spacing: -0.3px;
-      font-variant-numeric: tabular-nums; margin-top: 4px;
-      word-break: break-all;
-    }
-    .mini-stat-value.up { color: var(--up); }
-    .mini-stat-value.down { color: var(--down); }
-
-    /* ============ CHART PREVIEW ============ */
-    .preview-wrap {
-      height: 260px; position: relative;
-      background: var(--bg-secondary);
-      border-radius: var(--radius);
-      padding: 8px;
-    }
-    @media (max-width: 640px) { .preview-wrap { height: 220px; } }
-
-    /* ============ HISTORY TABLE ============ */
-    .history-table {
-      width: 100%; border-collapse: collapse;
-      font-size: 13px;
-    }
-    .history-table thead th {
-      text-align: left; padding: 10px 12px;
-      font-size: 11px; font-weight: 700;
-      color: var(--text-muted); text-transform: uppercase;
-      letter-spacing: 0.5px;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-secondary);
-      white-space: nowrap;
-    }
-    .history-table tbody td {
-      padding: 11px 12px;
-      border-bottom: 1px solid var(--border-light);
-      font-variant-numeric: tabular-nums;
-      color: var(--text-primary);
-    }
-    .history-table tbody tr:hover { background: var(--bg-secondary); }
-    .history-table .up { color: var(--up); font-weight: 600; }
-    .history-table .down { color: var(--down); font-weight: 600; }
-    .history-table .muted { color: var(--text-muted); font-size: 12px; }
-
-    .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    @media (max-width: 640px) {
-      .history-table thead { display: none; }
-      .history-table tbody tr {
-        display: block; padding: 12px;
-        border-bottom: 1px solid var(--border);
-      }
-      .history-table tbody td {
-        display: flex; justify-content: space-between; gap: 10px;
-        padding: 4px 0; border: none;
-        font-size: 13px;
-      }
-      .history-table tbody td::before {
-        content: attr(data-label);
-        font-size: 11px; font-weight: 600;
-        color: var(--text-muted); text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-    }
-
-    /* ============ TOAST ============ */
-    .toast-container {
-      position: fixed; bottom: 20px; right: 20px; z-index: 300;
-      display: flex; flex-direction: column; gap: 8px;
-      pointer-events: none; max-width: 360px;
-    }
-    @media (max-width: 480px) {
-      .toast-container { left: 12px; right: 12px; bottom: 12px; max-width: none; }
-    }
+    @media (max-width: 480px) { .toasts { left: 12px; right: 12px; max-width: none; } }
     .toast {
       display: flex; align-items: flex-start; gap: 10px;
-      padding: 12px 16px; border-radius: 12px;
-      background: var(--text-primary); color: #fff;
+      padding: 12px 14px; border-radius: 12px;
+      background: var(--txt); color: #fff;
       font-size: 13px; font-weight: 500; line-height: 1.4;
-      box-shadow: var(--shadow-lg); pointer-events: auto;
-      animation: toastIn 0.3s ease forwards;
+      box-shadow: var(--shadow-lg);
+      animation: slideIn 0.3s ease;
       border-left: 3px solid var(--accent);
     }
     .toast.success { border-left-color: var(--up); }
     .toast.error { border-left-color: var(--down); }
     .toast.warning { border-left-color: var(--warn); }
     .toast svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
-    .toast-close {
-      margin-left: auto; background: none; border: none;
-      color: rgba(255,255,255,0.6); cursor: pointer;
-      padding: 0; display: flex;
-    }
-    .toast-close:hover { color: #fff; }
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateY(12px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .toast.removing { animation: toastOut 0.25s ease forwards; }
-    @keyframes toastOut { to { opacity: 0; transform: translateY(8px) scale(0.96); } }
+    @keyframes slideIn { from{opacity:0; transform: translateY(10px);} to{opacity:1; transform: translateY(0);} }
 
-    /* ============ MISC ============ */
     .spin {
       width: 14px; height: 14px;
       border: 2px solid rgba(255,255,255,0.3);
       border-top-color: #fff; border-radius: 50%;
-      animation: spin 0.7s linear infinite;
+      animation: rot 0.7s linear infinite;
       display: inline-block;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes rot { to { transform: rotate(360deg); } }
 
-    .empty-block {
-      padding: 32px 16px; text-align: center;
-      color: var(--text-muted); font-size: 13px;
-      border: 1px dashed var(--border);
-      border-radius: var(--radius);
+    /* Toggle switch */
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 12px 14px;
+      background: var(--bg-sec); border-radius: 10px;
+      margin-bottom: 14px;
     }
-
-    .warn-block {
-      display: flex; gap: 10px; padding: 12px 14px;
-      border-radius: 10px; background: var(--warn-bg); color: #92400E;
-      font-size: 12.5px; line-height: 1.55;
-      align-items: flex-start;
+    .toggle-info { flex: 1; }
+    .toggle-info strong { font-size: 13px; font-weight: 600; display: block; }
+    .toggle-info span { font-size: 11px; color: var(--txt-muted); }
+    .switch {
+      position: relative; display: inline-block;
+      width: 44px; height: 24px; flex-shrink: 0;
     }
-    .warn-block svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
-
-    a.link { color: var(--accent); text-decoration: none; font-weight: 600; }
-    a.link:hover { text-decoration: underline; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--border); border-radius: 24px;
+      transition: 0.25s;
+    }
+    .slider:before {
+      position: absolute; content: "";
+      height: 18px; width: 18px; left: 3px; bottom: 3px;
+      background: #fff; border-radius: 50%;
+      transition: 0.25s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .switch input:checked + .slider { background: var(--up); }
+    .switch input:checked + .slider:before { transform: translateX(20px); }
   </style>
 </head>
 <body>
 
-<!-- ============================================================
-     LOGIN SCREEN
-     ============================================================ -->
-<div class="login-screen" id="loginScreen">
-  <div class="login-card">
-    <img class="login-logo" src="https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg" alt="CAZO" />
-    <div>
-      <div class="login-title">CAZO Admin</div>
-      <div class="login-sub">Control Panel</div>
-    </div>
-    <div class="login-desc">
-      Masuk dengan akun Google admin untuk mengelola pergerakan harga, grafik, dan riwayat CAZO.
-    </div>
-
-    <button class="login-btn" id="googleSignInBtn">
-      <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
-        <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/>
-        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
-        <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.1-11.3-7.9l-6.5 5C9.6 39.6 16.3 44 24 44z"/>
-        <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.6l6.2 5.2C41 35.6 44 30.2 44 24c0-1.3-.1-2.3-.4-3.5z"/>
-      </svg>
-      Masuk dengan Google
-    </button>
-
-    <div class="login-error hidden" id="loginError">
-      <i data-lucide="alert-triangle"></i>
-      <span id="loginErrorText">Terjadi kesalahan.</span>
-    </div>
-
-    <div class="login-info">
-      Hanya akun yang terdaftar sebagai admin yang dapat mengakses panel ini. Pengunjung publik tidak terpengaruh dan tetap dapat melihat grafik.
-    </div>
-  </div>
-</div>
-
-<!-- ============================================================
-     ADMIN APP
-     ============================================================ -->
-<div class="admin-app hidden" id="adminApp">
-
-  <!-- Topbar -->
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a href="index.html" class="topbar-brand">
-        <img class="topbar-logo" src="https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg" alt="CAZO" />
-        <div class="topbar-text">
-          <span class="topbar-name">CAZO</span>
-          <span class="topbar-sub">Admin</span>
+  <div class="topbar">
+    <div class="topbar-in">
+      <a href="index.html" class="brand">
+        <img src="https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg" alt="CAZO" />
+        <div class="brand-txt">
+          <div class="brand-name">CAZO</div>
+          <div class="brand-sub">Admin</div>
         </div>
       </a>
-
-      <div class="topbar-right">
-        <div class="badge-conn offline" id="connBadge">
-          <span class="badge-dot"></span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="conn-pill off" id="connPill">
+          <span class="conn-dot"></span>
           <span id="connText">Offline</span>
         </div>
-
-        <div class="user-chip" id="userChip">
-          <span class="user-name" id="userName">Admin</span>
-          <img class="user-avatar" id="userAvatar" src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="avatar" />
-        </div>
-
-        <button class="icon-btn" id="signOutBtn" title="Keluar">
-          <i data-lucide="log-out"></i>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main -->
-  <main class="admin-main">
-
-    <div class="page-head">
-      <div>
-        <h1 class="page-title">
-          <i data-lucide="layout-dashboard"></i>
-          Control Panel
-        </h1>
-        <p class="page-sub">Kelola harga, pergerakan grafik, dan riwayat CAZO secara real-time.</p>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <a href="index.html" class="btn btn-outline btn-sm" target="_blank">
+        <a href="index.html" target="_blank" class="btn-link">
           <i data-lucide="external-link"></i> Lihat Publik
         </a>
       </div>
     </div>
+  </div>
 
-    <!-- Mini stats -->
-    <div class="mini-stats">
-      <div class="mini-stat">
-        <div class="mini-stat-label">Harga Saat Ini</div>
-        <div class="mini-stat-value" id="miniPrice">—</div>
+  <div class="container">
+
+    <div class="head">
+      <div>
+        <h1><i data-lucide="sliders"></i> Control Panel</h1>
+        <p>Kelola harga & pergerakan grafik CAZO secara langsung.</p>
       </div>
-      <div class="mini-stat">
-        <div class="mini-stat-label">Perubahan</div>
-        <div class="mini-stat-value" id="miniChange">—</div>
+      <button class="btn btn-outline" onclick="location.reload()">
+        <i data-lucide="refresh-cw"></i> Muat Ulang
+      </button>
+    </div>
+
+    <div class="status-bar ok" id="statusBar">
+      <i data-lucide="info"></i>
+      <span id="statusText">Memuat data...</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-lbl">Harga Saat Ini</div>
+        <div class="stat-val" id="sPrice">—</div>
       </div>
-      <div class="mini-stat">
-        <div class="mini-stat-label">Total Titik</div>
-        <div class="mini-stat-value" id="miniPoints">—</div>
+      <div class="stat">
+        <div class="stat-lbl">Perubahan</div>
+        <div class="stat-val" id="sChange">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-lbl">Total Titik</div>
+        <div class="stat-val" id="sPoints">—</div>
       </div>
     </div>
 
-    <div class="grid">
+    <div class="layout">
 
-      <!-- ============ LEFT COLUMN ============ -->
+      <!-- KIRI -->
       <div>
-
-        <!-- Preview Chart -->
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">
-              <i data-lucide="line-chart"></i>
-              Pratinjau Grafik Langsung
-            </div>
-            <div class="status-pill stopped" id="movementPill">
-              <span class="pulse-dot" style="display:none;"></span>
-              <span id="movementPillText">Idle</span>
-            </div>
+          <div class="card-h">
+            <h2><i data-lucide="line-chart"></i> Pratinjau Grafik</h2>
+            <span class="pill idle" id="runPill">
+              <span id="runPillText">Idle</span>
+            </span>
           </div>
-          <div class="card-body">
-            <div class="preview-wrap">
-              <canvas id="previewChart"></canvas>
-            </div>
-            <div style="display:flex;justify-content:space-between;margin-top:14px;font-size:12px;color:var(--text-muted);flex-wrap:wrap;gap:6px;">
-              <span>Terakhir diperbarui: <strong id="lastUpdated">—</strong></span>
-              <span>Mode: <strong id="activeMode">manual</strong></span>
+          <div class="card-b">
+            <div class="chart-box" id="previewChart"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:11.5px;color:var(--txt-muted);">
+              <span>Update: <strong id="lastUpdate">—</strong></span>
+              <span>Mode: <strong id="curMode">up</strong></span>
             </div>
           </div>
         </div>
 
-        <!-- Asset Info -->
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">
-              <i data-lucide="info"></i>
-              Informasi Aset
-            </div>
+          <div class="card-h">
+            <h2><i data-lucide="history"></i> Riwayat Terakhir</h2>
+            <span style="font-size:11.5px;color:var(--txt-muted);" id="histCount">0 entri</span>
           </div>
-          <div class="card-body">
-            <div class="form-section">
-              <div class="form-row">
-                <div class="form-group">
-                  <label class="form-label">Nama Aset</label>
-                  <input class="form-input" id="inAssetName" placeholder="CAZO CARD" />
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Simbol</label>
-                  <input class="form-input" id="inAssetSymbol" placeholder="CAZO" />
-                </div>
-              </div>
+          <div class="card-b">
+            <div class="hist-list" id="histList">
+              <div class="empty">Belum ada riwayat.</div>
             </div>
           </div>
         </div>
-
-        <!-- Price Settings -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">
-              <i data-lucide="dollar-sign"></i>
-              Pengaturan Harga
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="form-section">
-              <div class="form-row">
-                <div class="form-group">
-                  <label class="form-label">Harga Saat Ini</label>
-                  <input class="form-input" id="inCurrentPrice" type="number" step="0.01" placeholder="1250" />
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Harga Sebelumnya</label>
-                  <input class="form-input" id="inPreviousPrice" type="number" step="0.01" placeholder="1220" />
-                </div>
-              </div>
-
-              <div class="form-row" style="margin-top:12px;">
-                <div class="form-group">
-                  <label class="form-label">Harga Tertinggi</label>
-                  <input class="form-input" id="inHigh" type="number" step="0.01" placeholder="1280" />
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Harga Terendah</label>
-                  <input class="form-input" id="inLow" type="number" step="0.01" placeholder="1180" />
-                </div>
-              </div>
-
-              <div class="form-row" style="margin-top:12px;">
-                <div class="form-group">
-                  <label class="form-label">Warna Grafik</label>
-                  <select class="form-select" id="inChartColor">
-                    <option value="#16A34A">Hijau (Naik)</option>
-                    <option value="#DC2626">Merah (Turun)</option>
-                    <option value="#2563EB">Biru (Aksen)</option>
-                    <option value="#7C3AED">Ungu</option>
-                    <option value="#111827">Hitam</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Jumlah Titik Maks</label>
-                  <input class="form-input" id="inMaxPoints" type="number" min="10" max="500" placeholder="100" />
-                  <div class="form-help">Rentang 10–500 titik.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Movement Mode -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">
-              <i data-lucide="git-branch"></i>
-              Mode Pergerakan
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="form-section">
-              <div class="form-row">
-                <div class="form-group">
-                  <label class="form-label">Mode</label>
-                  <select class="form-select" id="inMovementMode">
-                    <option value="manual">Manual</option>
-                    <option value="up">Naik Bertahap</option>
-                    <option value="down">Turun Bertahap</option>
-                    <option value="stable">Stabil</option>
-                    <option value="random">Acak</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">Interval Pembaruan</label>
-                  <select class="form-select" id="inInterval">
-                    <option value="1">1 detik</option>
-                    <option value="5" selected>5 detik</option>
-                    <option value="10">10 detik</option>
-                    <option value="30">30 detik</option>
-                    <option value="60">1 menit</option>
-                    <option value="0">Manual (tanpa timer)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-group" style="margin-top:12px;">
-                <label class="form-label">Target / Perubahan Harga</label>
-                <input class="form-input" id="inTargetPrice" type="number" step="0.01" placeholder="1300" />
-                <div class="form-help">Digunakan untuk mode "Naik" dan "Turun" sebagai harga tujuan.</div>
-              </div>
-
-              <div class="form-group" style="margin-top:12px;">
-                <label class="form-label">Titik Manual (pisahkan dengan koma)</label>
-                <input class="form-input" id="inManualPoints" placeholder="1200, 1220, 1210, 1250" />
-                <div class="form-help">Digunakan hanya pada mode "Manual" + interval "Manual (tanpa timer)".</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- History Table -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">
-              <i data-lucide="history"></i>
-              Riwayat Pergerakan
-            </div>
-            <div style="display:flex;gap:8px;align-items:center;">
-              <span style="font-size:12px;color:var(--text-muted);" id="historyCount">0 entri</span>
-              <button class="btn btn-outline btn-sm" id="btnRefreshHistory" title="Muat ulang">
-                <i data-lucide="refresh-cw"></i>
-              </button>
-            </div>
-          </div>
-          <div class="card-body" style="padding:0;">
-            <div class="table-scroll">
-              <table class="history-table" id="historyTable">
-                <thead>
-                  <tr>
-                    <th>Waktu</th>
-                    <th>Harga Lama</th>
-                    <th>Harga Baru</th>
-                    <th>Selisih</th>
-                    <th>%</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody id="historyBody">
-                  <tr><td colspan="6"><div class="empty-block">Belum ada riwayat.</div></td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- ============ RIGHT COLUMN ============ -->
+      <!-- KANAN -->
       <div>
 
-        <!-- Save Action -->
+        <!-- PERGERAKAN -->
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">
-              <i data-lucide="save"></i>
-              Simpan & Terapkan
+          <div class="card-h">
+            <h2><i data-lucide="activity"></i> Mode Pergerakan</h2>
+          </div>
+          <div class="card-b">
+
+            <!-- TOGGLE LOOP -->
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <strong>Jalan Terus (Loop)</strong>
+                <span>Naik/Turun otomatis balik arah di target</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="inLoop" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="fg">
+              <label>Pilih Mode</label>
+              <select class="sel" id="inMode">
+                <option value="up">📈 Naik Bertahap</option>
+                <option value="down">📉 Turun Bertahap</option>
+                <option value="stable">➖ Stabil (fluktuasi kecil)</option>
+                <option value="random">🎲 Acak (rentang 2%)</option>
+                <option value="manual">✋ Manual (titik custom)</option>
+              </select>
+            </div>
+
+            <div class="row2">
+              <div class="fg">
+                <label>Target Harga</label>
+                <input class="inp" id="inTarget" type="number" step="0.01" placeholder="1300" />
+                <span class="fg-help" id="targetHelp">Titik balik arah (mode Loop)</span>
+              </div>
+              <div class="fg">
+                <label>Interval</label>
+                <select class="sel" id="inInterval">
+                  <option value="1">1 detik</option>
+                  <option value="10">10 detik</option>
+                  <option value="30">30 detik</option>
+                  <option value="60">1 menit</option>
+                </select>
+                <span class="fg-help">Jeda tiap update</span>
+              </div>
+            </div>
+
+            <div class="fg">
+              <label>Titik Manual (koma)</label>
+              <input class="inp" id="inManual" placeholder="1200, 1220, 1210, 1250" />
+              <span class="fg-help">Untuk mode Manual</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
+              <button class="btn btn-success" id="btnStart">
+                <i data-lucide="play"></i> Mulai
+              </button>
+              <button class="btn btn-danger" id="btnStop">
+                <i data-lucide="square"></i> Stop
+              </button>
+            </div>
+
+            <div class="status-row">
+              <span>Status</span>
+              <strong id="modeStatus">Tidak berjalan</strong>
+            </div>
+            <div class="status-row" id="dirRow" style="display:none;">
+              <span>Arah</span>
+              <strong id="dirStatus">—</strong>
             </div>
           </div>
-          <div class="card-body">
-            <div class="warn-block" style="margin-bottom:14px;">
-              <i data-lucide="info"></i>
-              <span>Perubahan akan langsung tersinkronisasi ke halaman publik dalam beberapa detik.</span>
+        </div>
+
+        <!-- HARGA -->
+        <div class="card">
+          <div class="card-h">
+            <h2><i data-lucide="dollar-sign"></i> Atur Harga</h2>
+          </div>
+          <div class="card-b">
+            <div class="row2">
+              <div class="fg">
+                <label>Harga Sekarang</label>
+                <input class="inp" id="inPrice" type="number" step="0.01" placeholder="1250" />
+              </div>
+              <div class="fg">
+                <label>Harga Sebelumnya</label>
+                <input class="inp" id="inPrev" type="number" step="0.01" placeholder="1220" />
+              </div>
             </div>
-            <button class="btn btn-primary btn-block" id="btnSaveSettings">
-              <i data-lucide="check"></i> Simpan Perubahan
+            <div class="row2">
+              <div class="fg">
+                <label>Tertinggi</label>
+                <input class="inp" id="inHigh" type="number" step="0.01" placeholder="1280" />
+              </div>
+              <div class="fg">
+                <label>Terendah</label>
+                <input class="inp" id="inLow" type="number" step="0.01" placeholder="1180" />
+              </div>
+            </div>
+            <div class="row2">
+              <div class="fg">
+                <label>Nama Aset</label>
+                <input class="inp" id="inName" placeholder="CAZO CARD" />
+              </div>
+              <div class="fg">
+                <label>Simbol</label>
+                <input class="inp" id="inSymbol" placeholder="CAZO" />
+              </div>
+            </div>
+            <div class="row2">
+              <div class="fg">
+                <label>Warna Naik</label>
+                <select class="sel" id="inColor">
+                  <option value="#16A34A">Hijau</option>
+                  <option value="#2563EB">Biru</option>
+                  <option value="#7C3AED">Ungu</option>
+                  <option value="#111827">Hitam</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label>Maks Titik</label>
+                <input class="inp" id="inMax" type="number" min="10" max="500" placeholder="100" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AKSI -->
+        <div class="card">
+          <div class="card-h">
+            <h2><i data-lucide="zap"></i> Aksi Cepat</h2>
+          </div>
+          <div class="card-b">
+            <button class="btn btn-primary btn-block" id="btnSave">
+              <i data-lucide="save"></i> Simpan Semua Pengaturan
             </button>
-            <div style="display:flex;gap:8px;margin-top:10px;">
-              <button class="btn btn-outline btn-sm" id="btnReload" style="flex:1;">
-                <i data-lucide="rotate-cw"></i> Muat Ulang
+            <div class="btn-row" style="margin-top:8px;">
+              <button class="btn btn-outline" id="btnAdd">
+                <i data-lucide="plus"></i> Tambah Titik
               </button>
-              <button class="btn btn-outline btn-sm" id="btnResetChart" style="flex:1;">
-                <i data-lucide="trash-2"></i> Reset
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Movement Control -->
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">
-              <i data-lucide="play-circle"></i>
-              Kontrol Pergerakan
-            </div>
-          </div>
-          <div class="card-body">
-            <div style="display:flex;flex-direction:column;gap:10px;">
-              <button class="btn btn-success btn-block" id="btnStart">
-                <i data-lucide="play"></i> Mulai Pergerakan Otomatis
-              </button>
-              <button class="btn btn-danger btn-block" id="btnStop">
-                <i data-lucide="square"></i> Hentikan Pergerakan
-              </button>
-
-              <div style="height:1px;background:var(--border-light);margin:6px 0;"></div>
-
-              <button class="btn btn-outline btn-block" id="btnAddPoint">
-                <i data-lucide="plus-circle"></i> Tambah 1 Titik Harga
-              </button>
-              <button class="btn btn-outline btn-block" id="btnDeleteLast">
-                <i data-lucide="minus-circle"></i> Hapus Titik Terakhir
+              <button class="btn btn-outline" id="btnDel">
+                <i data-lucide="minus"></i> Hapus Terakhir
               </button>
             </div>
-
-            <div class="status-pill stopped" id="autoStatus" style="margin-top:14px;width:100%;justify-content:center;">
-              <span id="autoStatusText">Tidak berjalan</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Danger Zone -->
-        <div class="card" style="border-color:#FEE2E2;">
-          <div class="card-header" style="border-color:#FEE2E2;">
-            <div class="card-title" style="color:var(--down);">
-              <i data-lucide="alert-octagon"></i>
-              Zona Berbahaya
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="form-help" style="margin-bottom:10px;">
-              Reset akan menghapus seluruh riwayat dan mengembalikan data ke nilai awal. Tindakan ini tidak dapat dibatalkan.
-            </div>
-            <button class="btn btn-danger btn-block" id="btnHardReset">
-              <i data-lucide="alert-triangle"></i> Reset Total ke Data Awal
+            <button class="btn btn-outline btn-block" id="btnReset" style="margin-top:8px;color:var(--down);border-color:#FECACA;">
+              <i data-lucide="rotate-ccw"></i> Reset ke Data Awal
             </button>
           </div>
         </div>
 
-        <!-- Firebase Info -->
+        <!-- INFO -->
         <div class="card">
-          <div class="card-header">
-            <div class="card-title">
-              <i data-lucide="database"></i>
-              Status Koneksi
-            </div>
+          <div class="card-h">
+            <h2><i data-lucide="wifi"></i> Status Sistem</h2>
           </div>
-          <div class="card-body" style="font-size:12.5px;color:var(--text-secondary);line-height:1.7;">
-            <div style="display:flex;justify-content:space-between;gap:10px;">
+          <div class="card-b">
+            <div class="status-row">
               <span>Firebase</span>
-              <strong id="fbStatus" style="color:var(--text-muted);">—</strong>
+              <strong id="fbStatus" style="color:var(--txt-muted);">—</strong>
             </div>
-            <div style="display:flex;justify-content:space-between;gap:10px;">
+            <div class="status-row">
               <span>Database</span>
-              <strong id="dbStatus" style="color:var(--text-muted);">—</strong>
+              <strong id="dbStatus" style="color:var(--txt-muted);">—</strong>
             </div>
-            <div style="display:flex;justify-content:space-between;gap:10px;">
-              <span>Auth</span>
-              <strong id="authStatus" style="color:var(--text-muted);">—</strong>
+            <div class="status-row">
+              <span>Izin Tulis</span>
+              <strong id="wStatus" style="color:var(--txt-muted);">—</strong>
+            </div>
+            <div class="status-row">
+              <span>Heartbeat</span>
+              <strong id="hbStatus" style="color:var(--txt-muted);">—</strong>
             </div>
           </div>
         </div>
 
       </div>
-
     </div>
-  </main>
-</div>
+  </div>
 
-<div class="toast-container" id="toastContainer"></div>
+  <div class="toasts" id="toasts"></div>
 
-<!-- ============================================================
-     MODULE SCRIPT
-     ============================================================ -->
 <script type="module">
-  // ============ Firebase SDK ============
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAnalytics, isSupported as analyticsSupported } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
   import {
     getDatabase, ref, onValue, push, update, set, get, query,
     orderByChild, limitToLast, serverTimestamp, remove
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-  import {
-    getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
-  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  // ============ KONFIGURASI ============
-  const firebaseConfig = {
+  // ============ KONFIG ============
+  const FIREBASE_CONFIG = {
     apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
     authDomain: "mygame-68b24.firebaseapp.com",
     databaseURL: "https://mygame-68b24-default-rtdb.firebaseio.com",
     projectId: "mygame-68b24",
     storageBucket: "mygame-68b24.firebasestorage.app",
     messagingSenderId: "1003182873390",
-    appId: "1:1003182873390:web:aabf3248f759cbc9d678bf",
-    measurementId: "G-4C0MYZ19YW"
+    appId: "1:1003182873390:web:aabf3248f759cbc9d678bf"
   };
-
-  // ==== DAFTAR EMAIL ADMIN — WAJIB SAMA dengan yang di Security Rules ====
-  const ADMIN_EMAILS = [
-    "admin@cazo.app",
-    "cazo.admin@gmail.com"
-  ];
 
   const DEFAULT_SETTINGS = {
     assetName: "CAZO CARD",
@@ -953,8 +608,12 @@
     lowestPrice: 1180,
     chartColor: "#16A34A",
     updateInterval: 5,
-    movementMode: "manual",
+    movementMode: "up",
     isRunning: false,
+    loopMode: true,
+    direction: "up",
+    targetPrice: 1300,
+    basePrice: 1200,      // titik tengah untuk loop
     maxPoints: 100,
     updatedAt: null
   };
@@ -970,842 +629,835 @@
   ];
 
   // ============ STATE ============
-  const state = {
-    app: null, db: null, auth: null,
-    currentUser: null, isAdmin: false,
-    firebaseReady: false, connected: false,
+  const S = {
+    db: null,
+    ready: false,
+    online: false,
+    canWrite: false,
     settings: { ...DEFAULT_SETTINGS },
     history: [],
-    previewChart: null,
-    movementTimer: null,
-    movementRunning: false,
-    movementTarget: null,
-    manualPoints: [],
-    manualIndex: 0,
-    listeners: [],
+    chart: null,
+    candleSeries: null,
+    timer: null,
+    hbTimer: null,
+    running: false,
+    direction: "up",
+    target: null,
+    manual: [],
+    manualIdx: 0,
     unsubSettings: null,
     unsubHistory: null,
-    unsubConn: null
+    lastHistoryKey: "",
+    resuming: false
   };
 
-  // ============ UTIL ============
   const $ = (id) => document.getElementById(id);
+  const TICKER_ID = "admin-" + Math.random().toString(36).slice(2, 10);
 
-  function formatNumber(n, decimals = 2) {
-    if (n === null || n === undefined || isNaN(n)) return "—";
-    return Number(n).toLocaleString("id-ID", {
-      minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals
-    });
+  // ============ UTIL ============
+  function fmt(n, dec = 2) {
+    if (n == null || isNaN(n)) return "—";
+    return Number(n).toLocaleString("id-ID", { minimumFractionDigits: dec, maximumFractionDigits: dec });
   }
-  function formatDateTime(ts) {
+  function fmtTime(ts) {
     if (!ts) return "—";
     const d = new Date(ts);
-    return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }) +
-           " " + d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short" }) + " " +
+           d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
   }
-  function timeAgo(ts) {
+  function ago(ts) {
     if (!ts) return "—";
-    const diff = Date.now() - ts;
-    const sec = Math.floor(diff / 1000);
-    if (sec < 5) return "baru saja";
-    if (sec < 60) return sec + " detik lalu";
-    const min = Math.floor(sec / 60);
-    if (min < 60) return min + " menit lalu";
-    const hr = Math.floor(min / 60);
-    if (hr < 24) return hr + " jam lalu";
-    return Math.floor(hr / 24) + " hari lalu";
+    const s = Math.floor((Date.now() - ts) / 1000);
+    if (s < 5) return "baru saja";
+    if (s < 60) return s + "s lalu";
+    const m = Math.floor(s / 60);
+    if (m < 60) return m + "m lalu";
+    const h = Math.floor(m / 60);
+    if (h < 24) return h + "j lalu";
+    return Math.floor(h / 24) + "h lalu";
   }
-  function safeNum(v, fb = 0) { const n = Number(v); return isNaN(n) ? fb : n; }
-  function validatePrice(value, label = "Harga") {
-    const n = Number(value);
-    if (isNaN(n) || n <= 0) { showNotification(label + " harus angka positif.", "error"); return null; }
-    if (n > 1e12) { showNotification(label + " terlalu besar.", "error"); return null; }
-    return n;
-  }
-  function validateInterval(v, label = "Interval") {
-    const n = Number(v);
-    if (isNaN(n) || n < 1) { showNotification(label + " minimal 1 detik.", "error"); return null; }
-    if (n > 3600) { showNotification(label + " maksimal 3600 detik.", "error"); return null; }
-    return n;
-  }
+  function num(v, fb = 0) { const n = Number(v); return isNaN(n) ? fb : n; }
 
-  function showNotification(message, type = "info", duration = 4000) {
-    const container = $("toastContainer");
-    if (!container) return;
+  function toast(msg, type = "info", dur = 3500) {
+    const wrap = $("toasts");
     const icons = { success: "check-circle", error: "alert-circle", warning: "alert-triangle", info: "info" };
-    const toast = document.createElement("div");
-    toast.className = "toast " + type;
-    toast.innerHTML =
-      '<i data-lucide="' + (icons[type] || icons.info) + '"></i>' +
-      '<span></span>' +
-      '<button class="toast-close" type="button"><i data-lucide="x" style="width:14px;height:14px;"></i></button>';
-    toast.querySelector("span").textContent = message;
-    toast.querySelector(".toast-close").addEventListener("click", () => toast.remove());
-    container.appendChild(toast);
-    if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
-    setTimeout(() => {
-      toast.classList.add("removing");
-      setTimeout(() => toast.remove(), 250);
-    }, duration);
+    const el = document.createElement("div");
+    el.className = "toast " + type;
+    el.innerHTML = `<i data-lucide="${icons[type] || icons.info}"></i><span></span>`;
+    el.querySelector("span").textContent = msg;
+    wrap.appendChild(el);
+    if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+    setTimeout(() => { el.style.opacity = "0"; setTimeout(() => el.remove(), 200); }, dur);
   }
 
-  function setStatusPill(el, stateCls, text) {
-    el.className = "status-pill " + stateCls;
-    el.innerHTML = (stateCls === "running" ? '<span class="pulse-dot"></span>' : '') + '<span>' + text + '</span>';
+  function setStatus(type, text) {
+    const bar = $("statusBar");
+    bar.className = "status-bar " + type;
+    const icon = bar.querySelector("svg, i");
+    if (icon) {
+      const name = type === "ok" ? "check-circle" : type === "warn" ? "alert-triangle" : "alert-circle";
+      icon.setAttribute("data-lucide", name);
+    }
+    $("statusText").textContent = text;
+    if (window.lucide) try { lucide.createIcons(); } catch (e) {}
   }
 
-  // ============ FIREBASE INIT ============
+  function setSys(key, val, level) {
+    const el = { fb: $("fbStatus"), db: $("dbStatus"), w: $("wStatus"), hb: $("hbStatus") }[key];
+    if (!el) return;
+    el.textContent = val;
+    el.style.color = level === "up" ? "var(--up)" : level === "down" ? "var(--down)" : "var(--txt-muted)";
+  }
+
+  // ============ CHART ============
+  function initChart() {
+    const box = $("previewChart");
+    if (!box || typeof LightweightCharts === "undefined") return;
+
+    S.chart = LightweightCharts.createChart(box, {
+      width: box.clientWidth, height: box.clientHeight,
+      layout: { background: { type: "solid", color: "#FFFFFF" }, textColor: "#6B7280", fontFamily: "'Inter', sans-serif", fontSize: 11 },
+      grid: { vertLines: { color: "rgba(229,231,235,0.5)", style: 0 }, horzLines: { color: "rgba(229,231,235,0.5)", style: 0 } },
+      rightPriceScale: { borderColor: "#E5E7EB" },
+      timeScale: { borderColor: "#E5E7EB", timeVisible: true, secondsVisible: true },
+      crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+      localization: { priceFormatter: (p) => fmt(p, 2) }
+    });
+
+    S.candleSeries = S.chart.addCandlestickSeries({
+      upColor: "#16A34A", downColor: "#DC2626",
+      borderUpColor: "#16A34A", borderDownColor: "#DC2626",
+      wickUpColor: "#16A34A", wickDownColor: "#DC2626",
+      priceFormat: { type: "price", precision: 2, minMove: 0.01 }
+    });
+
+    new ResizeObserver(() => {
+      if (S.chart) S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
+    }).observe(box);
+  }
+
+  function buildCandles(hist) {
+    const out = [];
+    let lastT = 0;
+    for (let i = 0; i < hist.length; i++) {
+      const h = hist[i];
+      const open = i === 0 ? h.price : hist[i - 1].price;
+      const close = h.price;
+      const body = Math.abs(close - open);
+      const wick = Math.max(body * 0.35, close * 0.0004);
+      let t = Math.floor(h.timestamp / 1000);
+      if (t <= lastT) t = lastT + 1;
+      lastT = t;
+      out.push({
+        time: t,
+        open: +open.toFixed(2),
+        high: +(Math.max(open, close) + wick).toFixed(2),
+        low: +(Math.min(open, close) - wick).toFixed(2),
+        close: +close.toFixed(2)
+      });
+    }
+    return out;
+  }
+
+  function renderChart() {
+    if (!S.candleSeries) return;
+    const hist = S.history.slice(-80);
+    if (!hist.length) { S.candleSeries.setData([]); return; }
+    S.candleSeries.setData(buildCandles(hist));
+    S.chart.timeScale().fitContent();
+  }
+
+  // ============ STATS ============
+  function renderStats() {
+    const h = S.history;
+    if (!h.length) {
+      $("sPrice").textContent = "—";
+      $("sChange").textContent = "—";
+      $("sPoints").textContent = "0";
+      return;
+    }
+    const last = h[h.length - 1];
+    const prev = h.length > 1 ? h[h.length - 2] : null;
+    $("sPrice").textContent = fmt(last.price);
+    let chg = 0, pct = 0;
+    if (prev && prev.price !== 0) { chg = last.price - prev.price; pct = (chg / prev.price) * 100; }
+    const el = $("sChange");
+    el.textContent = (chg >= 0 ? "+" : "") + fmt(chg) + " (" + (pct >= 0 ? "+" : "") + fmt(pct) + "%)";
+    el.className = "stat-val " + (chg >= 0 ? "up" : "down");
+    $("sPoints").textContent = h.length;
+  }
+
+  // ============ HISTORY ============
+  function renderHistory() {
+    const list = $("histList");
+    const items = S.history.slice().reverse().slice(0, 5);
+    $("histCount").textContent = S.history.length + " entri";
+    const key = items.map(x => x.key || x.timestamp).join("|");
+    if (key === S.lastHistoryKey) return;
+    S.lastHistoryKey = key;
+
+    if (!items.length) { list.innerHTML = '<div class="empty">Belum ada riwayat.</div>'; return; }
+
+    list.innerHTML = items.map(h => {
+      const up = h.change >= 0;
+      const oldPrice = h.price - h.change;
+      return `<div class="hist-item">
+        <div class="hist-icon ${up ? "up" : "down"}">
+          <i data-lucide="${up ? "arrow-up-right" : "arrow-down-right"}"></i>
+        </div>
+        <div class="hist-main">
+          <div class="hist-prices">
+            <span class="hist-old">${fmt(oldPrice)}</span> →
+            <span class="hist-new ${up ? "up" : "down"}">${fmt(h.price)}</span>
+          </div>
+          <div class="hist-time">${fmtTime(h.timestamp)} • ${ago(h.timestamp)}</div>
+        </div>
+        <div class="hist-chg ${up ? "up" : "down"}">
+          ${up ? "+" : ""}${fmt(h.change)}<br>
+          <span style="font-size:10px;">${up ? "+" : ""}${fmt(h.changePercent)}%</span>
+        </div>
+      </div>`;
+    }).join("");
+    if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+  }
+
+  // ============ FILL FORMS ============
+  function fillForms() {
+    const s = S.settings;
+    $("inPrice").value = s.currentPrice || "";
+    $("inPrev").value = s.previousPrice || "";
+    $("inHigh").value = s.highestPrice || "";
+    $("inLow").value = s.lowestPrice || "";
+    $("inName").value = s.assetName || "";
+    $("inSymbol").value = s.symbol || "";
+    $("inColor").value = s.chartColor || "#16A34A";
+    $("inMax").value = s.maxPoints || 100;
+    $("inMode").value = s.movementMode || "up";
+    $("inInterval").value = String(s.updateInterval || 5);
+    $("inLoop").checked = s.loopMode !== false;
+    if (s.targetPrice) $("inTarget").value = s.targetPrice;
+    $("curMode").textContent = s.movementMode || "up";
+  }
+
+  function updateRunUI() {
+    const pill = $("runPill");
+    if (S.running) {
+      pill.className = "pill run";
+      pill.innerHTML = '<span class="dot"></span><span>Running</span>';
+      $("modeStatus").textContent = "Berjalan — " + S.settings.movementMode;
+      $("modeStatus").style.color = "var(--up)";
+    } else {
+      pill.className = "pill idle";
+      pill.innerHTML = '<span>Idle</span>';
+      $("modeStatus").textContent = "Tidak berjalan";
+      $("modeStatus").style.color = "var(--txt-sec)";
+    }
+    // Direction
+    if (S.running && (S.settings.movementMode === "up" || S.settings.movementMode === "down")) {
+      $("dirRow").style.display = "flex";
+      $("dirStatus").textContent = S.direction === "up" ? "📈 Naik" : "📉 Turun";
+      $("dirStatus").style.color = S.direction === "up" ? "var(--up)" : "var(--down)";
+    } else {
+      $("dirRow").style.display = "none";
+    }
+  }
+
+  function updateLastUpdate() {
+    const last = S.history[S.history.length - 1];
+    $("lastUpdate").textContent = last ? ago(last.timestamp) : "—";
+  }
+
+  // ============ FIREBASE ============
   async function initFirebase() {
     try {
-      state.app = initializeApp(firebaseConfig);
-      state.db = getDatabase(state.app);
+      const app = initializeApp(FIREBASE_CONFIG);
+      S.db = getDatabase(app);
+      setSys("fb", "OK", "up");
+      setSys("db", "Terhubung", "up");
 
       try {
-        const ok = await analyticsSupported();
-        if (ok) getAnalytics(state.app);
-      } catch (e) {}
+        const testRef = ref(S.db, "cazo/_test");
+        await set(testRef, { ts: Date.now() });
+        await remove(testRef);
+        S.canWrite = true;
+        setSys("w", "Diizinkan", "up");
+      } catch (e) {
+        S.canWrite = false;
+        setSys("w", "DITOLAK", "down");
+        setStatus("err", "Write ditolak! Ubah Firebase Rules ke '.write: true' untuk cazo/*");
+      }
 
-      state.auth = getAuth(state.app);
-
-      onAuthStateChanged(state.auth, (user) => {
-        state.currentUser = user;
-        if (user) {
-          const email = (user.email || "").toLowerCase();
-          state.isAdmin = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(email);
-          if (state.isAdmin) {
-            $("loginScreen").classList.add("hidden");
-            $("adminApp").classList.remove("hidden");
-            $("userName").textContent = user.displayName || user.email || "Admin";
-            if (user.photoURL) $("userAvatar").src = user.photoURL;
-            setConnStatus("auth", "OK", "up");
-            loadAllData();
-            subscribeRealtime();
-          } else {
-            $("loginError").classList.remove("hidden");
-            $("loginErrorText").textContent = "Email Anda (" + email + ") tidak terdaftar sebagai admin. Hubungi pemilik.";
-            try { await signOut(state.auth); } catch (e) {}
-          }
-        } else {
-          state.isAdmin = false;
-          $("loginScreen").classList.remove("hidden");
-          $("adminApp").classList.add("hidden");
-        }
+      onValue(ref(S.db, ".info/connected"), (snap) => {
+        S.online = snap.val() === true;
+        updateConnPill();
       });
 
-      const connRef = ref(state.db, ".info/connected");
-      state.unsubConn = onValue(connRef, (snap) => {
-        state.connected = snap.val() === true;
-        updateConnBadge();
-      });
+      S.ready = true;
+      await loadData();
+      subscribe();
 
-      state.firebaseReady = true;
-      setConnStatus("firebase", "OK", "up");
-      setConnStatus("db", "Terhubung", "up");
-      updateConnBadge();
+      // AUTO-RESUME setelah load
+      await tryAutoResume();
+
     } catch (err) {
-      console.error("Firebase init error:", err);
-      state.firebaseReady = false;
-      setConnStatus("firebase", "Gagal", "down");
-      setConnStatus("db", "Gagal", "down");
-      updateConnBadge();
-      showNotification("Gagal terhubung ke Firebase: " + err.message, "error", 6000);
+      console.error("Firebase error:", err);
+      setSys("fb", "GAGAL", "down");
+      setSys("db", "GAGAL", "down");
+      setStatus("err", "Gagal terhubung ke Firebase: " + err.message);
     }
   }
 
-  function updateConnBadge() {
-    const badge = $("connBadge");
-    const text = $("connText");
-    if (!badge || !text) return;
-    if (state.connected && state.firebaseReady) {
-      badge.className = "badge-conn online";
-      text.textContent = "Online";
-    } else if (state.firebaseReady) {
-      badge.className = "badge-conn offline";
-      text.textContent = "Menghubungkan...";
-    } else {
-      badge.className = "badge-conn offline";
-      text.textContent = "Offline";
-    }
+  function updateConnPill() {
+    const pill = $("connPill");
+    if (S.online) { pill.className = "conn-pill on"; $("connText").textContent = "Online"; }
+    else { pill.className = "conn-pill off"; $("connText").textContent = "Offline"; }
   }
 
-  function setConnStatus(key, value, level) {
-    const el = { firebase: $("fbStatus"), db: $("dbStatus"), auth: $("authStatus") }[key];
-    if (!el) return;
-    el.textContent = value;
-    el.style.color = level === "up" ? "var(--up)" : level === "down" ? "var(--down)" : "var(--text-muted)";
-  }
-
-  // ============ DATA LOADING ============
-  async function loadAllData() {
-    if (!state.firebaseReady) return;
+  async function loadData() {
     try {
-      const settingsSnap = await get(ref(state.db, "cazo/settings"));
-      if (settingsSnap.exists()) {
-        state.settings = { ...DEFAULT_SETTINGS, ...settingsSnap.val() };
-      } else {
-        await initializeDatabase();
-        state.settings = { ...DEFAULT_SETTINGS };
+      const snap = await get(ref(S.db, "cazo/settings"));
+      if (snap.exists()) {
+        S.settings = { ...DEFAULT_SETTINGS, ...snap.val() };
+      } else if (S.canWrite) {
+        await initDatabase();
+        S.settings = { ...DEFAULT_SETTINGS };
       }
       await loadHistory();
       fillForms();
-      renderPreview();
-      renderHistoryTable();
-      updateMiniStats();
+      renderChart();
+      renderStats();
+      renderHistory();
+      updateLastUpdate();
+      updateRunUI();
     } catch (err) {
-      console.error("loadAllData error:", err);
-      showNotification("Gagal memuat data: " + err.message, "error");
+      console.error("Load error:", err);
+      toast("Gagal memuat data", "error");
     }
   }
 
-  async function initializeDatabase() {
+  async function initDatabase() {
     const updates = {};
     updates["cazo/settings"] = { ...DEFAULT_SETTINGS, updatedAt: serverTimestamp() };
     updates["cazo/public"] = {
       currentPrice: DEFAULT_SETTINGS.currentPrice,
       previousPrice: DEFAULT_SETTINGS.previousPrice,
-      movementMode: "manual",
+      movementMode: DEFAULT_SETTINGS.movementMode,
       isRunning: false,
       updatedAt: serverTimestamp()
     };
-    updates["cazo/admin/settingsUpdatedAt"] = serverTimestamp();
     const base = Date.now() - 86400000 * 6;
     DEFAULT_HISTORY.forEach((h, i) => {
-      const key = "cazo/history/" + (base + i * 86400000);
-      updates[key] = {
-        price: h.price,
-        change: h.change,
-        changePercent: h.changePercent,
-        timestamp: base + i * 86400000
+      updates["cazo/history/" + (base + i * 86400000)] = {
+        price: h.price, change: h.change,
+        changePercent: h.changePercent, timestamp: base + i * 86400000
       };
     });
-    await update(ref(state.db), updates);
-    showNotification("Database diinisialisasi dengan data awal.", "success");
+    await update(ref(S.db), updates);
+    toast("Database diinisialisasi.", "success");
   }
 
-  async function loadHistory(limit = 200) {
+  async function loadHistory() {
     try {
-      const q = query(ref(state.db, "cazo/history"), orderByChild("timestamp"), limitToLast(limit));
+      const q = query(ref(S.db, "cazo/history"), orderByChild("timestamp"), limitToLast(200));
       const snap = await get(q);
       const arr = [];
-      snap.forEach((child) => {
-        const v = child.val();
+      snap.forEach((c) => {
+        const v = c.val();
         if (v && typeof v.price === "number") {
           arr.push({
-            key: child.key,
-            price: v.price,
-            change: safeNum(v.change, 0),
-            changePercent: safeNum(v.changePercent, 0),
-            timestamp: safeNum(v.timestamp, Date.now())
+            key: c.key, price: v.price,
+            change: num(v.change, 0),
+            changePercent: num(v.changePercent, 0),
+            timestamp: num(v.timestamp, Date.now())
           });
         }
       });
       arr.sort((a, b) => a.timestamp - b.timestamp);
-      state.history = arr;
-    } catch (err) {
-      console.error("loadHistory error:", err);
-    }
+      S.history = arr;
+    } catch (err) { console.error("loadHistory:", err); }
   }
 
-  // ============ REALTIME SUBSCRIBE ============
-  function subscribeRealtime() {
-    if (!state.firebaseReady) return;
+  function subscribe() {
+    if (S.unsubSettings) S.unsubSettings();
+    if (S.unsubHistory) S.unsubHistory();
 
-    if (state.unsubSettings) state.unsubSettings();
-    if (state.unsubHistory) state.unsubHistory();
-
-    state.unsubSettings = onValue(ref(state.db, "cazo/settings"), (snap) => {
+    S.unsubSettings = onValue(ref(S.db, "cazo/settings"), (snap) => {
       if (snap.exists()) {
-        state.settings = { ...DEFAULT_SETTINGS, ...snap.val() };
-        updateMiniStats();
-        $("lastUpdated").textContent = timeAgo(state.settings.updatedAt);
-        $("activeMode").textContent = state.settings.movementMode || "manual";
-      }
-    }, (err) => console.error("Settings listener:", err));
+        const oldRunning = S.settings.isRunning;
+        const oldLoop = S.settings.loopMode;
+        S.settings = { ...DEFAULT_SETTINGS, ...snap.val() };
+        $("curMode").textContent = S.settings.movementMode || "up";
 
-    const q = query(ref(state.db, "cazo/history"), orderByChild("timestamp"), limitToLast(200));
-    state.unsubHistory = onValue(q, (snap) => {
+        // Sinkron status running dari database (kalau diubah dari tab lain)
+        if (oldRunning !== S.settings.isRunning && !S.resuming) {
+          if (S.settings.isRunning && !S.running) {
+            // Ada yang set running=true dari tab lain → ikut jalankan
+            console.log("[CAZO] Deteksi running=true dari sumber lain, sinkron...");
+            setTimeout(() => startMovement(true), 100);
+          } else if (!S.settings.isRunning && S.running) {
+            // Ada yang stop dari tab lain
+            stopMovement(true);
+          }
+        }
+      }
+    });
+
+    const q = query(ref(S.db, "cazo/history"), orderByChild("timestamp"), limitToLast(200));
+    S.unsubHistory = onValue(q, (snap) => {
       const arr = [];
-      snap.forEach((child) => {
-        const v = child.val();
+      snap.forEach((c) => {
+        const v = c.val();
         if (v && typeof v.price === "number") {
           arr.push({
-            key: child.key,
-            price: v.price,
-            change: safeNum(v.change, 0),
-            changePercent: safeNum(v.changePercent, 0),
-            timestamp: safeNum(v.timestamp, Date.now())
+            key: c.key, price: v.price,
+            change: num(v.change, 0),
+            changePercent: num(v.changePercent, 0),
+            timestamp: num(v.timestamp, Date.now())
           });
         }
       });
       arr.sort((a, b) => a.timestamp - b.timestamp);
-      state.history = arr;
-      updateMiniStats();
-      renderPreview();
-      renderHistoryTable();
-      $("lastUpdated").textContent = timeAgo(arr.length ? arr[arr.length - 1].timestamp : null);
-    }, (err) => console.error("History listener:", err));
-  }
-
-  // ============ FORM FILL ============
-  function fillForms() {
-    const s = state.settings;
-    $("inAssetName").value = s.assetName || "";
-    $("inAssetSymbol").value = s.symbol || "";
-    $("inCurrentPrice").value = s.currentPrice || "";
-    $("inPreviousPrice").value = s.previousPrice || "";
-    $("inHigh").value = s.highestPrice || "";
-    $("inLow").value = s.lowestPrice || "";
-    $("inChartColor").value = s.chartColor || "#16A34A";
-    $("inMaxPoints").value = s.maxPoints || 100;
-    $("inMovementMode").value = s.movementMode || "manual";
-    $("inInterval").value = String(s.updateInterval || 5);
-    $("activeMode").textContent = s.movementMode || "manual";
-  }
-
-  function updateMiniStats() {
-    const hist = state.history;
-    if (!hist.length) {
-      $("miniPrice").textContent = "—";
-      $("miniChange").textContent = "—";
-      $("miniPoints").textContent = "0";
-      return;
-    }
-    const last = hist[hist.length - 1];
-    const prev = hist.length > 1 ? hist[hist.length - 2] : null;
-    $("miniPrice").textContent = formatNumber(last.price);
-    $("miniPrice").className = "mini-stat-value";
-
-    let change = 0;
-    if (prev) change = last.price - prev.price;
-    else change = last.change || 0;
-    const pct = prev && prev.price !== 0 ? (change / prev.price) * 100 : (last.changePercent || 0);
-    const el = $("miniChange");
-    el.textContent = (change >= 0 ? "+" : "") + formatNumber(change) + " (" + (pct >= 0 ? "+" : "") + formatNumber(pct) + "%)";
-    el.className = "mini-stat-value " + (change >= 0 ? "up" : "down");
-
-    $("miniPoints").textContent = hist.length.toLocaleString("id-ID");
-  }
-
-  // ============ PREVIEW CHART ============
-  function renderPreview() {
-    const canvas = $("previewChart");
-    if (!canvas) return;
-    const hist = state.history.slice(-60);
-    const labels = hist.map(h => {
-      const d = new Date(h.timestamp);
-      return d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
-    });
-    const data = hist.map(h => h.price);
-    const isUp = data.length >= 2 ? data[data.length - 1] >= data[0] : true;
-    const color = state.settings.chartColor && state.settings.chartColor !== "#16A34A" && state.settings.chartColor !== "#DC2626"
-      ? state.settings.chartColor
-      : (isUp ? "#16A34A" : "#DC2626");
-    const bg = isUp ? "rgba(22,163,74,0.08)" : "rgba(220,38,38,0.08)";
-
-    if (state.previewChart) {
-      state.previewChart.data.labels = labels;
-      state.previewChart.data.datasets[0].data = data;
-      state.previewChart.data.datasets[0].borderColor = color;
-      state.previewChart.data.datasets[0].backgroundColor = bg;
-      state.previewChart.update("none");
-    } else {
-      const ctx = canvas.getContext("2d");
-      state.previewChart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels,
-          datasets: [{
-            label: state.settings.assetName || "CAZO",
-            data,
-            borderColor: color,
-            backgroundColor: bg,
-            borderWidth: 2,
-            pointRadius: 0,
-            pointHoverRadius: 4,
-            fill: true,
-            tension: 0.35,
-            spanGaps: true
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { intersect: false, mode: "index" },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: "#111827",
-              titleColor: "#fff",
-              bodyColor: "#D1D5DB",
-              padding: 10,
-              cornerRadius: 8,
-              displayColors: false,
-              callbacks: {
-                title: (items) => {
-                  const h = hist[items[0].dataIndex];
-                  return h ? formatDateTime(h.timestamp) : "";
-                },
-                label: (item) => "Harga: " + formatNumber(item.parsed.y)
-              }
-            }
-          },
-          scales: {
-            x: {
-              grid: { color: "rgba(229,231,235,0.4)", drawBorder: false },
-              ticks: { color: "#9CA3AF", font: { size: 10 }, maxTicksLimit: 5, maxRotation: 0 }
-            },
-            y: {
-              position: "right",
-              grid: { color: "rgba(229,231,235,0.4)", drawBorder: false },
-              ticks: { color: "#9CA3AF", font: { size: 10 }, callback: v => formatNumber(v, 0) }
-            }
-          },
-          animation: { duration: 260 }
-        }
-      });
-    }
-  }
-
-  // ============ HISTORY TABLE ============
-  function renderHistoryTable() {
-    const tbody = $("historyBody");
-    const hist = state.history.slice().reverse().slice(0, 50);
-    $("historyCount").textContent = state.history.length + " entri";
-
-    if (!hist.length) {
-      tbody.innerHTML = '<tr><td colspan="6"><div class="empty-block">Belum ada riwayat.</div></td></tr>';
-      return;
-    }
-    tbody.innerHTML = hist.map(h => {
-      const isUp = h.change >= 0;
-      const prev = h.price - h.change;
-      const cls = isUp ? "up" : "down";
-      const sign = isUp ? "+" : "";
-      const key = h.key || "";
-      const canDelete = key && !key.startsWith("local_");
-      return '<tr>' +
-        '<td data-label="Waktu" class="muted">' + formatDateTime(h.timestamp) + '<br><span style="font-size:11px;">' + timeAgo(h.timestamp) + '</span></td>' +
-        '<td data-label="Harga Lama">' + formatNumber(prev) + '</td>' +
-        '<td data-label="Harga Baru" class="' + cls + '">' + formatNumber(h.price) + '</td>' +
-        '<td data-label="Selisih" class="' + cls + '">' + sign + formatNumber(h.change) + '</td>' +
-        '<td data-label="%" class="' + cls + '">' + sign + formatNumber(h.changePercent) + '%</td>' +
-        '<td data-label="Aksi">' +
-          (canDelete
-            ? '<button class="btn btn-outline btn-sm" data-del="' + key + '" title="Hapus"><i data-lucide="trash-2" style="width:13px;height:13px;"></i></button>'
-            : '<span class="muted" style="font-size:11px;">—</span>') +
-        '</td>' +
-      '</tr>';
-    }).join("");
-    if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
-
-    tbody.querySelectorAll("[data-del]").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const key = btn.getAttribute("data-del");
-        if (!confirm("Hapus titik riwayat ini?")) return;
-        try {
-          await remove(ref(state.db, "cazo/history/" + key));
-          showNotification("Titik riwayat dihapus.", "success");
-        } catch (err) {
-          showNotification("Gagal menghapus: " + err.message, "error");
-        }
-      });
+      S.history = arr;
+      renderChart();
+      renderStats();
+      renderHistory();
+      updateLastUpdate();
     });
   }
 
-  // ============ SAVE SETTINGS ============
-  async function saveAdminSettings() {
-    if (!state.isAdmin) { showNotification("Anda bukan admin.", "error"); return; }
-    if (!state.firebaseReady) { showNotification("Firebase belum siap.", "error"); return; }
+  // ============ AUTO RESUME ============
+  async function tryAutoResume() {
+    S.resuming = true;
+    try {
+      // Cek settings terbaru langsung
+      const snap = await get(ref(S.db, "cazo/settings"));
+      if (!snap.exists()) { S.resuming = false; return; }
+      const latest = { ...DEFAULT_SETTINGS, ...snap.val() };
 
-    const btn = $("btnSaveSettings");
-    const originalHtml = btn.innerHTML;
+      // Cek heartbeat & lock
+      const lockSnap = await get(ref(S.db, "cazo/ticker"));
+      const ticker = lockSnap.exists() ? lockSnap.val() : null;
+      const now = Date.now();
+      const lockAge = ticker && ticker.lastTick ? now - ticker.lastTick : Infinity;
+      const intervalMs = (latest.updateInterval || 5) * 1000;
+      const staleThreshold = intervalMs * 3; // 3x interval = dianggap mati
+
+      if (latest.isRunning) {
+        if (lockAge < staleThreshold && ticker && ticker.id !== TICKER_ID) {
+          // Ada ticker lain yang aktif → jangan bentrok
+          setSys("hb", "Ticker lain aktif", "up");
+          setStatus("warn", "Pergerakan sedang dijalankan oleh sesi lain. Buka di sini untuk memantau.");
+          S.resuming = false;
+          return;
+        }
+        // Tidak ada ticker aktif → kita ambil alih
+        setStatus("ok", "Melanjutkan pergerakan dari sesi sebelumnya...");
+        S.settings = latest;
+        S.direction = latest.direction || (latest.movementMode === "down" ? "down" : "up");
+        S.target = latest.targetPrice || null;
+        await startMovement(false, true);
+        toast("Pergerakan dilanjutkan otomatis", "success");
+      } else {
+        setStatus("ok", "Siap. Semua tombol berfungsi.");
+      }
+    } catch (e) {
+      console.warn("Auto-resume:", e);
+    }
+    S.resuming = false;
+    // Update status bar default kalau tidak running
+    if (!S.running) setStatus("ok", "Siap. Semua tombol berfungsi.");
+  }
+
+  // ============ SAVE ============
+  async function saveSettings() {
+    if (!S.ready) return toast("Firebase belum siap", "error");
+    if (!S.canWrite) return toast("Write ditolak. Ubah Firebase Rules.", "error", 6000);
+
+    const btn = $("btnSave");
     btn.disabled = true;
     btn.innerHTML = '<span class="spin"></span> Menyimpan...';
 
     try {
-      const name = $("inAssetName").value.trim() || "CAZO CARD";
-      const symbol = $("inAssetSymbol").value.trim() || "CAZO";
-      const currentPrice = validatePrice($("inCurrentPrice").value, "Harga saat ini");
-      if (currentPrice === null) throw new Error("Harga tidak valid");
-      const previousPrice = validatePrice($("inPreviousPrice").value, "Harga sebelumnya");
-      if (previousPrice === null) throw new Error("Harga tidak valid");
-      const high = validatePrice($("inHigh").value, "Harga tertinggi");
-      if (high === null) throw new Error("Harga tidak valid");
-      const low = validatePrice($("inLow").value, "Harga terendah");
-      if (low === null) throw new Error("Harga tidak valid");
-      if (low > high) throw new Error("Harga terendah tidak boleh lebih besar dari tertinggi.");
+      const price = num($("inPrice").value);
+      const prev = num($("inPrev").value);
+      const high = num($("inHigh").value);
+      const low = num($("inLow").value);
 
-      const chartColor = $("inChartColor").value;
-      const maxPoints = Math.max(10, Math.min(500, safeNum($("inMaxPoints").value, 100)));
-      const movementMode = $("inMovementMode").value;
-      const intervalRaw = safeNum($("inInterval").value, 5);
-      const updateInterval = intervalRaw === 0 ? 0 : validateInterval(intervalRaw, "Interval");
-      if (updateInterval === null) throw new Error("Interval tidak valid");
+      if (price <= 0 || prev <= 0 || high <= 0 || low <= 0) throw new Error("Harga harus > 0");
+      if (low > high) throw new Error("Terendah > Tertinggi");
+
+      const target = num($("inTarget").value);
+      const loop = $("inLoop").checked;
+      const mode = $("inMode").value;
 
       const updates = {};
       updates["cazo/settings"] = {
-        assetName: name, symbol, currentPrice, previousPrice,
-        highestPrice: high, lowestPrice: low, chartColor, maxPoints,
-        movementMode, updateInterval, isRunning: state.movementRunning,
+        assetName: $("inName").value.trim() || "CAZO CARD",
+        symbol: $("inSymbol").value.trim() || "CAZO",
+        currentPrice: price, previousPrice: prev,
+        highestPrice: high, lowestPrice: low,
+        chartColor: $("inColor").value,
+        maxPoints: Math.max(10, Math.min(500, num($("inMax").value, 100))),
+        movementMode: mode,
+        updateInterval: num($("inInterval").value, 5),
+        isRunning: S.running,
+        loopMode: loop,
+        direction: S.direction,
+        targetPrice: target || null,
+        basePrice: S.settings.basePrice || price,
         updatedAt: serverTimestamp()
       };
       updates["cazo/public"] = {
-        currentPrice, previousPrice, movementMode,
-        isRunning: state.movementRunning, updatedAt: serverTimestamp()
+        currentPrice: price, previousPrice: prev,
+        movementMode: mode, isRunning: S.running,
+        updatedAt: serverTimestamp()
       };
-      updates["cazo/admin/settingsUpdatedAt"] = serverTimestamp();
 
-      await update(ref(state.db), updates);
+      await update(ref(S.db), updates);
 
-      state.settings = { ...state.settings, assetName: name, symbol, currentPrice, previousPrice, highestPrice: high, lowestPrice: low, chartColor, maxPoints, movementMode, updateInterval };
+      const last = S.history[S.history.length - 1];
+      if (!last || last.price !== price) await addPoint(price, prev);
 
-      const lastHist = state.history.length ? state.history[state.history.length - 1] : null;
-      if (!lastHist || lastHist.price !== currentPrice) {
-        await addPricePoint(currentPrice, previousPrice);
-      }
-
-      renderPreview();
-      updateMiniStats();
-      showNotification("Pengaturan berhasil disimpan & tersinkronisasi.", "success");
+      toast("Pengaturan disimpan!", "success");
     } catch (err) {
-      console.error("saveAdminSettings error:", err);
-      showNotification("Gagal menyimpan: " + err.message, "error", 6000);
+      console.error(err);
+      toast("Gagal: " + err.message, "error", 5000);
     } finally {
       btn.disabled = false;
-      btn.innerHTML = originalHtml;
-      if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
+      btn.innerHTML = '<i data-lucide="save"></i> Simpan Semua Pengaturan';
+      if (window.lucide) try { lucide.createIcons(); } catch (e) {}
     }
   }
 
-  // ============ ADD PRICE POINT ============
-  async function addPricePoint(price, prevPrice) {
-    if (!state.firebaseReady) throw new Error("Firebase belum siap");
+  async function addPoint(price, prevPrice) {
     const change = price - (prevPrice || price);
-    const changePercent = prevPrice && prevPrice !== 0 ? (change / prevPrice) * 100 : 0;
-    const now = Date.now();
-    const newRef = push(ref(state.db, "cazo/history"));
+    const pct = prevPrice && prevPrice !== 0 ? (change / prevPrice) * 100 : 0;
+    const newRef = push(ref(S.db, "cazo/history"));
     await set(newRef, {
       price: Number(price),
       change: Number(change.toFixed(2)),
-      changePercent: Number(changePercent.toFixed(2)),
-      timestamp: now
+      changePercent: Number(pct.toFixed(2)),
+      timestamp: Date.now()
     });
-    await pruneHistory(state.settings.maxPoints || 100);
-    await update(ref(state.db, "cazo/public"), {
+    // Trim
+    const maxP = S.settings.maxPoints || 100;
+    const snap = await get(query(ref(S.db, "cazo/history"), orderByChild("timestamp")));
+    const keys = [];
+    snap.forEach(c => keys.push({ key: c.key, ts: num(c.val().timestamp, 0) }));
+    if (keys.length > maxP) {
+      keys.sort((a, b) => a.ts - b.ts);
+      const del = {};
+      keys.slice(0, keys.length - maxP).forEach(k => { del["cazo/history/" + k.key] = null; });
+      await update(ref(S.db), del);
+    }
+    await update(ref(S.db, "cazo/public"), {
       currentPrice: Number(price),
       previousPrice: Number(prevPrice || price),
       updatedAt: serverTimestamp()
     });
-    return newRef.key;
   }
 
-  async function pruneHistory(maxPoints) {
-    try {
-      const snap = await get(query(ref(state.db, "cazo/history"), orderByChild("timestamp")));
-      const keys = [];
-      snap.forEach(c => keys.push({ key: c.key, ts: safeNum(c.val().timestamp, 0) }));
-      if (keys.length <= maxPoints) return;
-      keys.sort((a, b) => a.ts - b.ts);
-      const toDelete = keys.slice(0, keys.length - maxPoints);
-      const updates = {};
-      toDelete.forEach(k => { updates["cazo/history/" + k.key] = null; });
-      if (Object.keys(updates).length) await update(ref(state.db), updates);
-    } catch (e) { console.warn("pruneHistory:", e); }
+  // ============ HEARTBEAT ============
+  function startHeartbeat() {
+    if (S.hbTimer) clearInterval(S.hbTimer);
+    const beat = async () => {
+      if (!S.running || !S.canWrite) return;
+      try {
+        await update(ref(S.db, "cazo/ticker"), {
+          id: TICKER_ID,
+          lastTick: Date.now(),
+          mode: S.settings.movementMode,
+          direction: S.direction
+        });
+        setSys("hb", "Aktif (" + TICKER_ID.slice(0, 12) + ")", "up");
+      } catch (e) {
+        setSys("hb", "Error", "down");
+      }
+    };
+    beat();
+    S.hbTimer = setInterval(beat, 5000);
+  }
+
+  function stopHeartbeat() {
+    if (S.hbTimer) { clearInterval(S.hbTimer); S.hbTimer = null; }
+    setSys("hb", "Berhenti", "down");
   }
 
   // ============ MOVEMENT ============
-  function updateAutoStatus() {
-    const pill = $("autoStatus");
-    const txt = $("autoStatusText");
-    if (state.movementRunning) {
-      setStatusPill(pill, "running", "Berjalan");
-      txt.textContent = "Berjalan — mode " + state.settings.movementMode;
-    } else {
-      setStatusPill(pill, "stopped", "Tidak berjalan");
-      txt.textContent = "Tidak berjalan";
-    }
-    const mp = $("movementPill");
-    const mpt = $("movementPillText");
-    if (state.movementRunning) {
-      mp.className = "status-pill running";
-      mp.innerHTML = '<span class="pulse-dot"></span><span>Running</span>';
-    } else {
-      mp.className = "status-pill stopped";
-      mp.innerHTML = '<span>Idle</span>';
-    }
-  }
+  async function startMovement(silent, isResume) {
+    if (!S.canWrite) return toast("Write ditolak.", "error", 6000);
+    if (S.running && !isResume) return toast("Sudah berjalan", "warning");
 
-  async function startMovement() {
-    if (!state.isAdmin) { showNotification("Anda bukan admin.", "error"); return; }
-    if (!state.firebaseReady) { showNotification("Firebase belum siap.", "error"); return; }
-    if (state.movementRunning) { showNotification("Pergerakan sudah berjalan.", "warning"); return; }
+    const mode = $("inMode").value;
+    const interval = num($("inInterval").value, 5);
+    const loop = $("inLoop").checked;
+    if (interval < 1) return toast("Interval minimal 1 detik", "error");
 
-    const mode = $("inMovementMode").value;
-    const intervalRaw = safeNum($("inInterval").value, 5);
-
-    if (intervalRaw === 0) {
-      showNotification("Interval 0 = manual. Gunakan tombol 'Tambah 1 Titik Harga'.", "info");
-      return;
-    }
-    const interval = validateInterval(intervalRaw, "Interval");
-    if (interval === null) return;
-
-    state.movementRunning = true;
-    state.movementTarget = null;
-    state.manualPoints = [];
-    state.manualIndex = 0;
+    S.running = true;
+    S.manualIdx = 0;
 
     if (mode === "up" || mode === "down") {
-      const target = validatePrice($("inTargetPrice").value, "Target harga");
-      if (target === null) { state.movementRunning = false; return; }
-      state.movementTarget = target;
+      const t = num($("inTarget").value);
+      if (!t || t <= 0) {
+        if (!isResume) { S.running = false; return toast("Isi Target Harga", "error"); }
+      } else {
+        S.target = t;
+      }
+      S.direction = S.direction || (mode === "down" ? "down" : "up");
     }
 
     if (mode === "manual") {
-      const raw = $("inManualPoints").value.trim();
-      if (raw) {
-        state.manualPoints = raw.split(",").map(v => Number(v.trim())).filter(v => !isNaN(v) && v > 0);
-      }
-      if (!state.manualPoints.length) {
-        showNotification("Masukkan titik manual yang valid (contoh: 1200, 1220, 1250).", "error");
-        state.movementRunning = false;
-        return;
+      if (!isResume) {
+        const raw = $("inManual").value.trim();
+        if (raw) S.manual = raw.split(",").map(v => Number(v.trim())).filter(v => !isNaN(v) && v > 0);
+        if (!S.manual.length) {
+          S.running = false;
+          return toast("Isi titik manual", "error");
+        }
       }
     }
 
+    S.settings.movementMode = mode;
+    S.settings.updateInterval = interval;
+    S.settings.loopMode = loop;
+    S.settings.isRunning = true;
+    updateRunUI();
+
+    // Simpan state ke Firebase
     try {
-      await update(ref(state.db, "cazo/settings"), {
-        isRunning: true, movementMode: mode, updateInterval: interval,
+      await update(ref(S.db, "cazo/settings"), {
+        movementMode: mode, updateInterval: interval,
+        isRunning: true, loopMode: loop,
+        direction: S.direction,
+        targetPrice: S.target || null,
         updatedAt: serverTimestamp()
       });
-      await update(ref(state.db, "cazo/public"), {
-        isRunning: true, movementMode: mode, updatedAt: serverTimestamp()
+      await update(ref(S.db, "cazo/public"), {
+        movementMode: mode, isRunning: true, updatedAt: serverTimestamp()
       });
-    } catch (e) { console.warn("Gagal set running:", e); }
+    } catch (e) {}
 
-    state.settings.movementMode = mode;
-    state.settings.updateInterval = interval;
-    updateAutoStatus();
-    $("activeMode").textContent = mode;
+    startHeartbeat();
 
-    showNotification("Pergerakan '" + mode + "' dimulai (interval " + interval + "s).", "success");
+    if (!silent) toast("Pergerakan " + mode + " dimulai" + (loop ? " (Loop ON)" : ""), "success");
 
-    state.movementTimer = setInterval(async () => {
-      if (!state.movementRunning) return;
-      try {
-        const current = state.settings.currentPrice || 1250;
-        let nextPrice = current;
-
-        if (mode === "up") {
-          const target = state.movementTarget;
-          const step = Math.max((target - current) * 0.15, 0.5);
-          nextPrice = current + step;
-          if (nextPrice >= target) { nextPrice = target; setTimeout(() => stopMovement(true), 100); }
-        } else if (mode === "down") {
-          const target = state.movementTarget;
-          const step = Math.max((current - target) * 0.15, 0.5);
-          nextPrice = current - step;
-          if (nextPrice <= target) { nextPrice = target; setTimeout(() => stopMovement(true), 100); }
-        } else if (mode === "stable") {
-          const vol = current * 0.005;
-          nextPrice = current + (Math.random() - 0.5) * vol * 2;
-        } else if (mode === "random") {
-          const range = current * 0.02;
-          nextPrice = current + (Math.random() - 0.5) * range * 2;
-        } else if (mode === "manual") {
-          if (state.manualIndex >= state.manualPoints.length) {
-            setTimeout(() => stopMovement(true), 100);
-            return;
-          }
-          nextPrice = state.manualPoints[state.manualIndex++];
-        }
-
-        if (nextPrice <= 0) nextPrice = 0.01;
-        nextPrice = Number(nextPrice.toFixed(2));
-
-        await addPricePoint(nextPrice, current);
-        state.settings.currentPrice = nextPrice;
-        state.settings.previousPrice = current;
-
-        $("inCurrentPrice").value = nextPrice;
-        $("inPreviousPrice").value = current;
-      } catch (err) {
-        console.error("Movement tick error:", err);
-        showNotification("Error pergerakan: " + err.message, "error");
-        stopMovement(true);
-      }
+    if (S.timer) clearInterval(S.timer);
+    S.timer = setInterval(async () => {
+      if (!S.running) return;
+      await tick(mode);
     }, interval * 1000);
   }
 
-  async function stopMovement(silent) {
-    state.movementRunning = false;
-    if (state.movementTimer) { clearInterval(state.movementTimer); state.movementTimer = null; }
-    updateAutoStatus();
-    if (state.firebaseReady && state.isAdmin) {
-      try {
-        await update(ref(state.db, "cazo/settings"), { isRunning: false, updatedAt: serverTimestamp() });
-        await update(ref(state.db, "cazo/public"), { isRunning: false, updatedAt: serverTimestamp() });
-      } catch (e) { console.warn("stopMovement save:", e); }
+  async function tick(mode) {
+    try {
+      const cur = S.settings.currentPrice || 1250;
+      let next = cur;
+      let reverse = false;
+
+      if (mode === "up") {
+        const step = Math.max((S.target - cur) * 0.15, 0.5);
+        next = cur + step;
+        if (next >= S.target) {
+          if (S.settings.loopMode) {
+            // Balik arah
+            next = S.target;
+            reverse = true;
+          } else {
+            next = S.target;
+            setTimeout(() => stopMovement(true), 200);
+          }
+        }
+      } else if (mode === "down") {
+        const step = Math.max((cur - S.target) * 0.15, 0.5);
+        next = cur - step;
+        if (next <= S.target) {
+          if (S.settings.loopMode) {
+            next = S.target;
+            reverse = true;
+          } else {
+            next = S.target;
+            setTimeout(() => stopMovement(true), 200);
+          }
+        }
+      } else if (mode === "stable") {
+        next = cur + (Math.random() - 0.5) * cur * 0.01;
+      } else if (mode === "random") {
+        next = cur + (Math.random() - 0.5) * cur * 0.04;
+      } else if (mode === "manual") {
+        if (S.manualIdx >= S.manual.length) {
+          if (S.settings.loopMode && S.manual.length > 0) {
+            S.manualIdx = 0; // loop dari awal
+          } else {
+            stopMovement(true); return;
+          }
+        }
+        next = S.manual[S.manualIdx++];
+      }
+
+      if (next <= 0) next = 0.01;
+      next = Number(next.toFixed(2));
+
+      await addPoint(next, cur);
+      S.settings.currentPrice = next;
+      S.settings.previousPrice = cur;
+      $("inPrice").value = next;
+      $("inPrev").value = cur;
+
+      // Handle reverse (loop)
+      if (reverse) {
+        if (S.direction === "up") {
+          S.direction = "down";
+          S.target = S.settings.basePrice || (cur * 0.9);
+        } else {
+          S.direction = "up";
+          S.target = S.settings.basePrice ? S.settings.basePrice * 1.1 : cur * 1.1;
+        }
+        // Update settings di Firebase
+        const newMode = S.direction === "up" ? "up" : "down";
+        S.settings.movementMode = newMode;
+        try {
+          await update(ref(S.db, "cazo/settings"), {
+            movementMode: newMode,
+            direction: S.direction,
+            targetPrice: S.target,
+            updatedAt: serverTimestamp()
+          });
+        } catch (e) {}
+        // Update UI form
+        $("inMode").value = newMode;
+        $("inTarget").value = S.target.toFixed(2);
+        updateRunUI();
+        toast("Balik arah → " + (S.direction === "up" ? "Naik" : "Turun") + " (target " + fmt(S.target) + ")", "info", 2500);
+      }
+
+      updateRunUI();
+
+      // Heartbeat setiap tick
+      if (S.canWrite) {
+        update(ref(S.db, "cazo/ticker"), {
+          id: TICKER_ID, lastTick: Date.now(),
+          mode: S.settings.movementMode, direction: S.direction
+        }).catch(() => {});
+      }
+    } catch (err) {
+      console.error("Tick error:", err);
+      stopMovement(true);
     }
-    if (!silent) showNotification("Pergerakan dihentikan.", "info");
+  }
+
+  async function stopMovement(silent) {
+    S.running = false;
+    if (S.timer) { clearInterval(S.timer); S.timer = null; }
+    stopHeartbeat();
+    updateRunUI();
+    if (S.canWrite) {
+      try {
+        await update(ref(S.db, "cazo/settings"), { isRunning: false, updatedAt: serverTimestamp() });
+        await update(ref(S.db, "cazo/public"), { isRunning: false, updatedAt: serverTimestamp() });
+        await update(ref(S.db, "cazo/ticker"), { id: null, lastTick: 0 });
+      } catch (e) {}
+    }
+    if (!silent) toast("Pergerakan dihentikan", "info");
   }
 
   // ============ RESET ============
-  async function resetChart(hard) {
-    if (!state.isAdmin) return;
-    const msg = hard
-      ? "Reset TOTAL? Semua riwayat akan dihapus dan data kembali ke nilai awal."
-      : "Reset grafik ke data awal? Riwayat akan diganti dengan data default.";
-    if (!confirm(msg)) return;
+  async function resetAll() {
+    if (!S.canWrite) return toast("Write ditolak", "error");
+    if (!confirm("Reset semua data ke awal? Riwayat akan dihapus.")) return;
 
     try {
       await stopMovement(true);
-      await remove(ref(state.db, "cazo/history"));
+      await remove(ref(S.db, "cazo/history"));
+      await remove(ref(S.db, "cazo/ticker"));
+
       const updates = {};
       const base = Date.now() - 86400000 * 6;
       DEFAULT_HISTORY.forEach((h, i) => {
         updates["cazo/history/" + (base + i * 86400000)] = {
           price: h.price, change: h.change,
-          changePercent: h.changePercent,
-          timestamp: base + i * 86400000
+          changePercent: h.changePercent, timestamp: base + i * 86400000
         };
       });
       updates["cazo/settings"] = { ...DEFAULT_SETTINGS, updatedAt: serverTimestamp() };
       updates["cazo/public"] = {
         currentPrice: DEFAULT_SETTINGS.currentPrice,
         previousPrice: DEFAULT_SETTINGS.previousPrice,
-        movementMode: "manual", isRunning: false,
-        updatedAt: serverTimestamp()
+        movementMode: DEFAULT_SETTINGS.movementMode,
+        isRunning: false, updatedAt: serverTimestamp()
       };
-      await update(ref(state.db), updates);
+      await update(ref(S.db), updates);
 
-      state.settings = { ...DEFAULT_SETTINGS };
+      S.settings = { ...DEFAULT_SETTINGS };
+      S.direction = "up";
+      S.target = null;
       await loadHistory();
       fillForms();
-      renderPreview();
-      renderHistoryTable();
-      updateMiniStats();
-      showNotification("Grafik berhasil direset.", "success");
+      renderChart();
+      renderStats();
+      renderHistory();
+      updateRunUI();
+      toast("Reset selesai!", "success");
     } catch (err) {
-      console.error("resetChart error:", err);
-      showNotification("Gagal reset: " + err.message, "error");
+      toast("Reset gagal: " + err.message, "error");
     }
   }
 
-  // ============ EVENT LISTENERS ============
-  function bindEvents() {
-    $("googleSignInBtn").addEventListener("click", async () => {
-      if (!state.auth) { showNotification("Firebase Auth belum siap.", "error"); return; }
-      const btn = $("googleSignInBtn");
-      btn.disabled = true;
-      try {
-        const provider = new GoogleAuthProvider();
-        provider.setCustomParameters({ prompt: "select_account" });
-        await signInWithPopup(state.auth, provider);
-        $("loginError").classList.add("hidden");
-      } catch (err) {
-        console.error("Sign-in error:", err);
-        let msg = "Gagal masuk. Coba lagi.";
-        if (err.code === "auth/popup-closed-by-user") msg = "Pop-up ditutup sebelum selesai.";
-        if (err.code === "auth/unauthorized-domain") msg = "Domain belum diizinkan di Firebase Auth.";
-        if (err.code === "auth/popup-blocked") msg = "Pop-up diblokir browser. Izinkan pop-up.";
-        $("loginError").classList.remove("hidden");
-        $("loginErrorText").textContent = msg;
-        showNotification(msg, "error");
-      } finally {
-        btn.disabled = false;
-      }
-    });
-
-    $("signOutBtn").addEventListener("click", async () => {
-      if (!confirm("Keluar dari panel admin?")) return;
-      try { await signOut(state.auth); } catch (e) {}
-      showNotification("Berhasil keluar.", "info");
-    });
-
-    $("btnSaveSettings").addEventListener("click", saveAdminSettings);
-
-    $("btnStart").addEventListener("click", startMovement);
+  // ============ EVENTS ============
+  function bind() {
+    $("btnSave").addEventListener("click", saveSettings);
+    $("btnStart").addEventListener("click", () => startMovement(false, false));
     $("btnStop").addEventListener("click", () => stopMovement(false));
 
-    $("btnAddPoint").addEventListener("click", async () => {
-      if (!state.isAdmin) return;
-      const price = validatePrice($("inCurrentPrice").value, "Harga");
-      if (price === null) return;
+    $("btnAdd").addEventListener("click", async () => {
+      const p = num($("inPrice").value);
+      if (!p || p <= 0) return toast("Isi harga yang valid", "error");
       try {
-        const prev = state.history.length ? state.history[state.history.length - 1].price : price;
-        await addPricePoint(price, prev);
-        showNotification("Titik harga ditambahkan.", "success");
-      } catch (err) {
-        showNotification("Gagal menambah titik: " + err.message, "error");
-      }
+        const prev = S.history.length ? S.history[S.history.length - 1].price : p;
+        await addPoint(p, prev);
+        toast("Titik ditambahkan", "success");
+      } catch (e) { toast("Gagal: " + e.message, "error"); }
     });
 
-    $("btnDeleteLast").addEventListener("click", async () => {
-      if (!state.isAdmin) return;
-      if (!state.history.length) { showNotification("Tidak ada data.", "warning"); return; }
-      const last = state.history[state.history.length - 1];
-      if (!last.key || last.key.startsWith("local_")) { showNotification("Data lokal tidak dapat dihapus.", "warning"); return; }
+    $("btnDel").addEventListener("click", async () => {
+      if (!S.history.length) return toast("Tidak ada data", "warning");
+      const last = S.history[S.history.length - 1];
+      if (!last.key) return toast("Tidak bisa hapus data lokal", "warning");
       if (!confirm("Hapus titik terakhir?")) return;
       try {
-        await remove(ref(state.db, "cazo/history/" + last.key));
-        showNotification("Titik terakhir dihapus.", "success");
-      } catch (err) {
-        showNotification("Gagal menghapus: " + err.message, "error");
+        await remove(ref(S.db, "cazo/history/" + last.key));
+        toast("Terhapus", "success");
+      } catch (e) { toast("Gagal: " + e.message, "error"); }
+    });
+
+    $("btnReset").addEventListener("click", resetAll);
+
+    $("inMode").addEventListener("change", () => {
+      $("curMode").textContent = $("inMode").value;
+      if ($("inMode").value === "down") S.direction = "down";
+      if ($("inMode").value === "up") S.direction = "up";
+    });
+
+    // Warning saat close (biar user tahu)
+    window.addEventListener("beforeunload", (e) => {
+      if (S.running) {
+        // Biarkan user tahu — pergerakan akan berhenti karena tidak ada backend
+        // (Kecuali pakai Cloud Function)
       }
     });
 
-    $("btnResetChart").addEventListener("click", () => resetChart(false));
-    $("btnHardReset").addEventListener("click", () => resetChart(true));
-
-    $("btnReload").addEventListener("click", async () => {
-      showNotification("Memuat ulang data...", "info", 2000);
-      await loadAllData();
-      showNotification("Data berhasil dimuat ulang.", "success");
-    });
-
-    $("btnRefreshHistory").addEventListener("click", async () => {
-      await loadHistory();
-      renderHistoryTable();
-      showNotification("Riwayat diperbarui.", "info", 2000);
-    });
-
-    // Update status pill saat mode diubah
-    $("inMovementMode").addEventListener("change", () => {
-      $("activeMode").textContent = $("inMovementMode").value;
-    });
-
-    // Realtime pergerakan dari admin lain (multi-tab)
-    window.addEventListener("beforeunload", () => {
-      if (state.movementRunning) {
-        // Jangan hentikan otomatis, biarkan admin memutuskan
-      }
-    });
-
-    window.addEventListener("offline", () => {
-      showNotification("Koneksi internet terputus.", "warning", 5000);
-      updateConnBadge();
-    });
-    window.addEventListener("online", () => {
-      showNotification("Koneksi internet kembali.", "success");
-      updateConnBadge();
-    });
+    window.addEventListener("offline", () => { updateConnPill(); toast("Koneksi terputus", "warning"); });
+    window.addEventListener("online", () => { updateConnPill(); toast("Koneksi kembali", "success"); });
   }
 
   // ============ BOOT ============
   async function boot() {
-    if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
-    bindEvents();
+    if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+    bind();
+    initChart();
     await initFirebase();
-    if (window.lucide) { try { lucide.createIcons(); } catch (e) {} }
-    setInterval(() => {
-      if (state.history.length) {
-        $("lastUpdated").textContent = timeAgo(state.history[state.history.length - 1].timestamp);
-      }
-    }, 10000);
+    if (window.lucide) try { lucide.createIcons(); } catch (e) {}
+    setInterval(updateLastUpdate, 15000);
   }
-
   boot();
 </script>
 
