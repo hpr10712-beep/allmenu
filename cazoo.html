@@ -7,24 +7,10 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 <link rel="preconnect" href="https://www.gstatic.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
-
-<!-- ========== LIGHTWEIGHT CHARTS (jsDelivr + fallback) ========== -->
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
-<script>
-if (typeof LightweightCharts === 'undefined') {
-  document.write('<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"><\/script>');
-}
-</script>
-
-<!-- ========== LUCIDE ICONS (jsDelivr + fallback) ========== -->
+<script>if(typeof LightweightCharts==='undefined')document.write('<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"><\/script>');</script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.446.0/dist/umd/lucide.min.js"></script>
-<script>
-if (typeof lucide === 'undefined') {
-  document.write('<script src="https://unpkg.com/lucide@0.446.0/dist/umd/lucide.min.js"><\/script>');
-}
-</script>
-
-<!-- ========== FIREBASE COMPAT (Google CDN — jarang diblokir) ========== -->
+<script>if(typeof lucide==='undefined')document.write('<script src="https://unpkg.com/lucide@0.446.0/dist/umd/lucide.min.js"><\/script>');</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -37,6 +23,7 @@ if (typeof lucide === 'undefined') {
   --border:#E2E8F0;--border-2:#F1F5F9;
   --up:#16A34A;--up-2:#F0FDF4;--down:#DC2626;--down-2:#FEF2F2;
   --blue:#2563EB;--blue-2:#EFF6FF;--warn:#F59E0B;--warn-2:#FFFBEB;
+  --wa:#25D366;--wa-2:#DCFCE7;
   --radius:14px;--radius-lg:20px;
   --shadow:0 1px 3px rgba(15,23,42,.06);
   --shadow-md:0 4px 16px rgba(15,23,42,.08);
@@ -51,11 +38,8 @@ body{font-family:var(--font);background:var(--bg-2);color:var(--txt);line-height
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 .hidden{display:none!important}
 button{font-family:inherit}
-
-/* Inline SVG fallback kalau Lucide gagal — sembunyikan [data-lucide] kosong */
 [data-lucide]:empty::before{content:"·";color:#94A3B8;font-size:14px;line-height:1}
 
-/* TOPBAR */
 .topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid var(--border-2)}
 .topbar-in{max-width:1400px;margin:0 auto;padding:0 16px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
@@ -104,11 +88,9 @@ button{font-family:inherit}
 .grid-2{display:grid;grid-template-columns:1fr 360px;gap:16px;align-items:start}
 @media (max-width:1024px){.grid-2{grid-template-columns:1fr}}
 
-/* Stats slider */
 .stats-slider{display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:6px;scrollbar-width:none;margin-bottom:16px}
 .stats-slider::-webkit-scrollbar{display:none}
 .stat-mini{flex:0 0 auto;min-width:150px;padding:11px 14px;background:#fff;border:1px solid var(--border);border-radius:14px;scroll-snap-align:start;box-shadow:var(--shadow);transition:var(--t)}
-.stat-mini:active{transform:scale(.98)}
 @media (max-width:480px){.stat-mini{min-width:135px;padding:10px 12px}}
 .stat-mini-icon{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
 .stat-mini-icon svg{width:13px;height:13px}
@@ -164,6 +146,7 @@ button{font-family:inherit}
 .chart-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.9);z-index:30;font-size:13px;color:var(--txt-3);flex-direction:column;gap:10px}
 .chart-loading.hidden{display:none}
 .spinner-lg{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:rot .8s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
 .chart-fab-group{position:absolute;right:10px;bottom:10px;z-index:15;display:flex;flex-direction:column;gap:8px}
 .fab{width:42px;height:42px;border-radius:12px;border:1px solid var(--border);background:#fff;color:var(--txt);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);transition:var(--t)}
 .fab:hover{background:var(--bg-3);transform:translateY(-2px)}
@@ -278,6 +261,7 @@ button{font-family:inherit}
 .hist-icon.buy{background:var(--up-2);color:var(--up)}
 .hist-icon.sell{background:var(--down-2);color:var(--down)}
 .hist-icon.dep{background:var(--blue-2);color:var(--blue)}
+.hist-icon.wd{background:var(--warn-2);color:var(--warn)}
 .hist-icon svg{width:16px;height:16px}
 .hist-main{flex:1}
 .hist-title{font-weight:600;font-variant-numeric:tabular-nums}
@@ -305,7 +289,6 @@ button{font-family:inherit}
 .pill.warn{background:var(--warn-2);color:var(--warn)}
 .pill.gray{background:var(--bg-3);color:var(--txt-2)}
 .spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite;display:inline-block}
-@keyframes rot{to{transform:rotate(360deg)}}
 .divider{height:1px;background:var(--border-2);margin:12px 0}
 .text-muted{color:var(--txt-3);font-size:12px}
 .login-modal{text-align:center;padding:32px 24px}
@@ -319,6 +302,36 @@ button{font-family:inherit}
 .login-features{margin-top:18px;padding-top:18px;border-top:1px solid var(--border-2);display:flex;flex-direction:column;gap:9px;text-align:left}
 .login-feature{display:flex;gap:10px;font-size:12.5px;color:var(--txt-2);line-height:1.5}
 .login-feature svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;color:var(--up)}
+
+/* ====== TRADING DISABLED ====== */
+.trade-disabled{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 20px;gap:14px}
+.trade-disabled-icon{width:64px;height:64px;border-radius:20px;background:var(--warn-2);display:flex;align-items:center;justify-content:center}
+.trade-disabled-icon svg{width:30px;height:30px;color:var(--warn)}
+.trade-disabled-title{font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--txt)}
+.trade-disabled-desc{font-size:12.5px;color:var(--txt-2);line-height:1.6;max-width:280px}
+
+/* ====== CUSTOMER SERVICE ====== */
+.cs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:400px){.cs-grid{grid-template-columns:1fr}}
+.cs-btn{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;text-decoration:none;color:inherit;border:1px solid var(--border);background:#fff;transition:var(--t);cursor:pointer}
+.cs-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:#CBD5E1}
+.cs-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cs-icon.wa{background:var(--wa-2);color:var(--wa)}
+.cs-icon.em{background:var(--blue-2);color:var(--blue)}
+.cs-icon svg{width:22px;height:22px}
+.cs-info{flex:1;min-width:0}
+.cs-label{font-size:10.5px;font-weight:700;color:var(--txt-3);text-transform:uppercase;letter-spacing:.5px}
+.cs-value{font-family:var(--font-d);font-weight:700;font-size:13.5px;color:var(--txt);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cs-arrow{color:var(--txt-3);flex-shrink:0}
+.cs-arrow svg{width:16px;height:16px}
+
+/* ====== PAYMENT TABS ====== */
+.pay-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px;background:var(--bg-3);border-radius:14px;margin-bottom:16px}
+.pay-tab{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border:none;background:transparent;border-radius:10px;font-size:13.5px;font-weight:700;cursor:pointer;transition:var(--t);color:var(--txt-2)}
+.pay-tab.active{background:#fff;color:var(--txt);box-shadow:var(--shadow)}
+.pay-tab.deposit.active{background:var(--blue);color:#fff}
+.pay-tab.withdraw.active{background:var(--warn);color:#fff}
+.pay-tab svg{width:16px;height:16px}
 </style>
 </head>
 <body>
@@ -333,7 +346,7 @@ button{font-family:inherit}
       <button class="nav-tab active" data-page="dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></button>
       <button class="nav-tab" data-page="market"><i data-lucide="bar-chart-3"></i><span>Market</span></button>
       <button class="nav-tab" data-page="portfolio" data-auth="1"><i data-lucide="briefcase"></i><span>Portfolio</span></button>
-      <button class="nav-tab" data-page="deposit" data-auth="1"><i data-lucide="wallet"></i><span>Deposit</span></button>
+      <button class="nav-tab" data-page="payment" data-auth="1"><i data-lucide="credit-card"></i><span>Payment</span></button>
       <button class="nav-tab" data-page="history" data-auth="1"><i data-lucide="history"></i><span>Riwayat</span></button>
       <button class="nav-tab" data-page="settings" data-auth="1"><i data-lucide="settings"></i><span>Pengaturan</span></button>
     </nav>
@@ -349,6 +362,8 @@ button{font-family:inherit}
 </header>
 
 <main class="container">
+
+  <!-- DASHBOARD -->
   <section class="page active" id="page-dashboard">
     <div class="page-head">
       <div>
@@ -424,23 +439,18 @@ button{font-family:inherit}
         </div>
       </div>
       <div>
+        <!-- TRADING DISABLED -->
         <div class="card">
-          <div class="card-h"><h2><i data-lucide="zap"></i><span>Trading Cepat</span></h2></div>
-          <div class="card-b">
-            <div class="order-tabs">
-              <button class="order-tab buy active" data-side="buy">BUY</button>
-              <button class="order-tab sell" data-side="sell">SELL</button>
-            </div>
-            <div class="fg"><label>Jumlah</label><input class="inp" id="tradeQty" type="number" step="1" min="1" value="1" /></div>
-            <div class="fg"><label>Harga per Unit</label><input class="inp" id="tradePrice" type="number" step="0.01" readonly /></div>
-            <div class="fg"><label>Total</label><input class="inp" id="tradeTotal" type="number" step="0.01" readonly /></div>
-            <button class="btn btn-up btn-block" id="btnQuickTrade"><i data-lucide="zap"></i><span>Beli Sekarang</span></button>
-            <div class="divider"></div>
-            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--txt-2)">
-              <span>Saldo tersedia</span><strong id="quickBalance" style="color:var(--txt)">—</strong>
+          <div class="card-h"><h2><i data-lucide="ban"></i><span>Trading</span></h2></div>
+          <div class="card-b" style="padding:0">
+            <div class="trade-disabled">
+              <div class="trade-disabled-icon"><i data-lucide="ban"></i></div>
+              <div class="trade-disabled-title">Fitur Trading Dinonaktifkan</div>
+              <div class="trade-disabled-desc">Beli dan jual aset untuk saat ini tidak tersedia. Silakan hubungi Customer Service untuk info lebih lanjut.</div>
             </div>
           </div>
         </div>
+
         <div class="card">
           <div class="card-h"><h2><i data-lucide="info"></i><span>Status</span></h2></div>
           <div class="card-b">
@@ -450,19 +460,24 @@ button{font-family:inherit}
             <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0">
               <span style="color:var(--txt-2)">Login</span><span class="pill gray" id="loginStatus">Belum login</span>
             </div>
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0">
+              <span style="color:var(--txt-2)">Trading</span><span class="pill down">Dinonaktifkan</span>
+            </div>
             <div class="divider"></div>
-            <p class="text-muted" style="line-height:1.6">Untuk bertransaksi, portfolio, deposit, dan riwayat, silakan login dengan Google.</p>
+            <p class="text-muted" style="line-height:1.6">Untuk deposit, withdraw, portfolio, dan riwayat, silakan login dengan Google.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- MARKET -->
   <section class="page" id="page-market">
     <div class="page-head"><div><h1 class="page-title"><i data-lucide="bar-chart-3"></i><span>Market</span></h1><p class="page-sub">Daftar aset yang tersedia</p></div></div>
     <div class="market-list" id="marketList"></div>
   </section>
 
+  <!-- PORTFOLIO -->
   <section class="page" id="page-portfolio">
     <div class="page-head"><div><h1 class="page-title"><i data-lucide="briefcase"></i><span>Portfolio</span></h1><p class="page-sub">Aset yang Anda miliki</p></div></div>
     <div class="stats-slider">
@@ -474,48 +489,118 @@ button{font-family:inherit}
     <div class="card"><div class="card-h"><h2><i data-lucide="list"></i><span>Holdings</span></h2></div><div class="card-b" id="holdingsList"></div></div>
   </section>
 
-  <section class="page" id="page-deposit">
-    <div class="page-head"><div><h1 class="page-title"><i data-lucide="wallet"></i><span>Deposit</span></h1><p class="page-sub">Scan QRIS & konfirmasi manual oleh admin</p></div></div>
-    <div class="grid-2">
-      <div>
-        <div class="card">
-          <div class="card-h"><h2><i data-lucide="qr-code"></i><span>Scan QRIS</span></h2></div>
-          <div class="card-b">
-            <div class="qr-box">
-              <img src="https://i.ibb.co.com/PGRy3SyQ/IMG-20261012-160202.jpg" alt="QRIS Deposit" />
-              <div class="qr-hint"><strong>Langkah Deposit:</strong><br>1. Buka e-wallet / m-banking<br>2. Scan QR di atas<br>3. Masukkan nominal<br>4. Screenshot bukti<br>5. Isi form → tunggu admin</div>
+  <!-- PAYMENT (DEPOSIT + WITHDRAW) -->
+  <section class="page" id="page-payment">
+    <div class="page-head"><div><h1 class="page-title"><i data-lucide="credit-card"></i><span>Payment</span></h1><p class="page-sub">Deposit & withdraw — diproses manual oleh admin</p></div></div>
+
+    <!-- Tabs -->
+    <div class="pay-tabs">
+      <button class="pay-tab deposit active" data-pay="deposit"><i data-lucide="arrow-down-circle"></i><span>Deposit</span></button>
+      <button class="pay-tab withdraw" data-pay="withdraw"><i data-lucide="arrow-up-circle"></i><span>Withdraw</span></button>
+    </div>
+
+    <!-- DEPOSIT TAB -->
+    <div id="payTabDeposit">
+      <div class="grid-2">
+        <div>
+          <div class="card">
+            <div class="card-h"><h2><i data-lucide="qr-code"></i><span>Scan QRIS</span></h2></div>
+            <div class="card-b">
+              <div class="qr-box">
+                <img src="https://i.ibb.co.com/PGRy3SyQ/IMG-20261012-160202.jpg" alt="QRIS Deposit" />
+                <div class="qr-hint"><strong>Langkah Deposit:</strong><br>1. Buka e-wallet / m-banking<br>2. Scan QR di atas<br>3. Masukkan nominal<br>4. Screenshot bukti<br>5. Isi form → tunggu konfirmasi admin</div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div>
-        <div class="card">
-          <div class="card-h"><h2><i data-lucide="send"></i><span>Ajukan Deposit</span></h2></div>
-          <div class="card-b">
-            <div class="fg"><label>Nominal (Rp)</label><input class="inp" id="depAmount" type="number" step="1000" min="10000" placeholder="50000" /><span class="text-muted" style="font-size:11px">Minimal Rp 10.000</span></div>
-            <div class="fg"><label>Nama Pengirim</label><input class="inp" id="depSender" placeholder="Nama sesuai rekening" /></div>
-            <div class="fg"><label>Catatan (opsional)</label><input class="inp" id="depNote" placeholder="No. referensi" /></div>
-            <button class="btn btn-blue btn-block" id="btnSubmitDeposit"><i data-lucide="send"></i><span>Ajukan Deposit</span></button>
+        <div>
+          <div class="card">
+            <div class="card-h"><h2><i data-lucide="send"></i><span>Ajukan Deposit</span></h2></div>
+            <div class="card-b">
+              <div class="fg"><label>Nominal (Rp)</label><input class="inp" id="depAmount" type="number" step="1000" min="10000" placeholder="50000" /><span class="text-muted" style="font-size:11px">Minimal Rp 10.000</span></div>
+              <div class="fg"><label>Nama Pengirim</label><input class="inp" id="depSender" placeholder="Nama sesuai rekening" /></div>
+              <div class="fg"><label>Catatan (opsional)</label><input class="inp" id="depNote" placeholder="No. referensi" /></div>
+              <button class="btn btn-blue btn-block" id="btnSubmitDeposit"><i data-lucide="send"></i><span>Ajukan Deposit</span></button>
+              <div class="divider"></div>
+              <p class="text-muted" style="line-height:1.6">Admin akan memverifikasi pembayaran Anda. Setelah dikonfirmasi, saldo akan otomatis bertambah.</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h2><i data-lucide="clock"></i><span>Pengajuan Deposit</span></h2></div>
+            <div class="card-b" id="depositHistory"><div class="empty">Belum ada pengajuan.</div></div>
           </div>
         </div>
-        <div class="card">
-          <div class="card-h"><h2><i data-lucide="clock"></i><span>Pengajuan Deposit</span></h2></div>
-          <div class="card-b" id="depositHistory"><div class="empty">Belum ada pengajuan.</div></div>
+      </div>
+    </div>
+
+    <!-- WITHDRAW TAB -->
+    <div id="payTabWithdraw" class="hidden">
+      <div class="grid-2">
+        <div>
+          <div class="card">
+            <div class="card-h"><h2><i data-lucide="info"></i><span>Informasi Withdraw</span></h2></div>
+            <div class="card-b">
+              <div style="display:flex;gap:10px;padding:14px;background:var(--warn-2);color:#92400E;border-radius:12px;font-size:12.5px;line-height:1.6;margin-bottom:14px">
+                <i data-lucide="alert-triangle" style="width:16px;height:16px;flex-shrink:0;margin-top:2px"></i>
+                <span><strong>Perhatian:</strong> Withdraw akan diproses manual oleh admin dalam 1×24 jam kerja.</span>
+              </div>
+              <div style="font-size:13px;color:var(--txt-2);line-height:1.7">
+                <strong style="color:var(--txt)">Syarat Withdraw:</strong>
+                <div style="display:flex;gap:8px;margin-top:10px"><span>•</span><span>Minimal withdraw <strong>Rp 50.000</strong></span></div>
+                <div style="display:flex;gap:8px;margin-top:6px"><span>•</span><span>Saldo mencukupi</span></div>
+                <div style="display:flex;gap:8px;margin-top:6px"><span>•</span><span>Rekening atas nama sendiri</span></div>
+                <div style="display:flex;gap:8px;margin-top:6px"><span>•</span><span>Proses 1×24 jam kerja</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-h"><h2><i data-lucide="arrow-up-circle"></i><span>Ajukan Withdraw</span></h2></div>
+            <div class="card-b">
+              <div class="fg"><label>Nominal (Rp)</label><input class="inp" id="wdAmount" type="number" step="1000" min="50000" placeholder="100000" /><span class="text-muted" style="font-size:11px">Minimal Rp 50.000</span></div>
+              <div class="fg"><label>Metode</label>
+                <select class="sel" id="wdMethod">
+                  <option value="BCA">Bank BCA</option>
+                  <option value="BRI">Bank BRI</option>
+                  <option value="BNI">Bank BNI</option>
+                  <option value="Mandiri">Bank Mandiri</option>
+                  <option value="DANA">DANA</option>
+                  <option value="OVO">OVO</option>
+                  <option value="GoPay">GoPay</option>
+                  <option value="ShopeePay">ShopeePay</option>
+                </select>
+              </div>
+              <div class="fg"><label>Nomor Rekening / HP</label><input class="inp" id="wdAccount" placeholder="1234567890" /></div>
+              <div class="fg"><label>Nama Pemilik</label><input class="inp" id="wdName" placeholder="Nama sesuai rekening" /></div>
+              <div class="fg"><label>Catatan (opsional)</label><input class="inp" id="wdNote" placeholder="Keterangan tambahan" /></div>
+              <button class="btn btn-down btn-block" id="btnSubmitWithdraw"><i data-lucide="send"></i><span>Ajukan Withdraw</span></button>
+              <div class="divider"></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--txt-2);padding:4px 0">
+                <span>Saldo tersedia</span><strong id="wdBalance" style="color:var(--txt)">—</strong>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h2><i data-lucide="clock"></i><span>Pengajuan Withdraw</span></h2></div>
+            <div class="card-b" id="withdrawHistory"><div class="empty">Belum ada pengajuan.</div></div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- HISTORY -->
   <section class="page" id="page-history">
-    <div class="page-head"><div><h1 class="page-title"><i data-lucide="history"></i><span>Riwayat Transaksi</span></h1><p class="page-sub">Pembelian, penjualan, deposit, harga</p></div></div>
+    <div class="page-head"><div><h1 class="page-title"><i data-lucide="history"></i><span>Riwayat Transaksi</span></h1><p class="page-sub">Deposit, withdraw, dan perubahan harga</p></div></div>
     <div class="order-tabs" style="max-width:400px">
-      <button class="order-tab active" data-hist="tx">Transaksi</button>
+      <button class="order-tab active" data-hist="payment">Payment</button>
       <button class="order-tab" data-hist="price">Harga</button>
-      <button class="order-tab" data-hist="deposit">Deposit</button>
     </div>
     <div class="card" style="margin-top:12px"><div class="card-b" id="historyContent"><div class="empty">Memuat...</div></div></div>
   </section>
 
+  <!-- SETTINGS -->
   <section class="page" id="page-settings">
     <div class="page-head"><div><h1 class="page-title"><i data-lucide="settings"></i><span>Pengaturan</span></h1><p class="page-sub">Konfigurasi akun & tampilan</p></div></div>
     <div class="grid-2">
@@ -534,6 +619,35 @@ button{font-family:inherit}
             <button class="btn btn-outline btn-block" id="btnLogout"><i data-lucide="log-out"></i><span>Keluar dari Akun</span></button>
           </div>
         </div>
+
+        <!-- CUSTOMER SERVICE -->
+        <div class="card">
+          <div class="card-h"><h2><i data-lucide="headphones"></i><span>Customer Service</span></h2></div>
+          <div class="card-b">
+            <p class="text-muted" style="margin-bottom:14px;line-height:1.6">Butuh bantuan? Hubungi tim CS kami melalui kontak di bawah ini.</p>
+            <div class="cs-grid">
+              <a class="cs-btn" href="https://wa.me/628993360673?text=Halo%20Admin%20CAZO%2C%20saya%20butuh%20bantuan" target="_blank" rel="noopener">
+                <div class="cs-icon wa">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                </div>
+                <div class="cs-info">
+                  <div class="cs-label">WhatsApp</div>
+                  <div class="cs-value">0899-3360-673</div>
+                </div>
+                <div class="cs-arrow"><i data-lucide="chevron-right"></i></div>
+              </a>
+              <a class="cs-btn" href="mailto:hpr10712@gmail.com?subject=Bantuan%20CAZO" target="_blank" rel="noopener">
+                <div class="cs-icon em"><i data-lucide="mail"></i></div>
+                <div class="cs-info">
+                  <div class="cs-label">Email</div>
+                  <div class="cs-value">hpr10712@gmail.com</div>
+                </div>
+                <div class="cs-arrow"><i data-lucide="chevron-right"></i></div>
+              </a>
+            </div>
+          </div>
+        </div>
+
         <div class="card">
           <div class="card-h"><h2><i data-lucide="palette"></i><span>Tampilan</span></h2></div>
           <div class="card-b">
@@ -560,14 +674,14 @@ button{font-family:inherit}
         </div>
         <div class="card">
           <div class="card-h"><h2><i data-lucide="info"></i><span>Tentang CAZO</span></h2></div>
-          <div class="card-b"><p class="text-muted" style="line-height:1.7"><strong>CAZO</strong> adalah platform trading digital simulasi. Saldo virtual. Data real-time via Firebase.</p><div class="divider"></div><div style="font-size:12px;color:var(--txt-3)">Versi 2.2 • Trading Platform</div></div>
+          <div class="card-b"><p class="text-muted" style="line-height:1.7"><strong>CAZO</strong> adalah platform trading digital simulasi. Deposit & withdraw diproses manual oleh admin. Data harga real-time via Firebase.</p><div class="divider"></div><div style="font-size:12px;color:var(--txt-3)">Versi 2.3 • Trading Platform</div></div>
         </div>
       </div>
     </div>
   </section>
 </main>
 
-<!-- MODAL: LOGIN PROMPT -->
+<!-- LOGIN MODAL -->
 <div class="modal-bg" id="modalLogin">
   <div class="modal" style="max-width:440px">
     <div class="login-modal">
@@ -581,15 +695,14 @@ button{font-family:inherit}
       <button class="btn btn-ghost btn-block" style="margin-top:8px" id="btnCancelLogin">Nanti saja</button>
       <div class="login-features">
         <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Saldo awal <strong>Rp 100.000</strong></span></div>
-        <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Beli & jual aset CAZO real-time</span></div>
-        <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Deposit via QRIS</span></div>
+        <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Deposit & withdraw via admin</span></div>
         <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Riwayat & portfolio lengkap</span></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL: ALAT GAMBAR -->
+<!-- DRAWING MODAL -->
 <div class="modal-bg" id="modalDrawing">
   <div class="modal">
     <div class="modal-h"><h3><i data-lucide="pencil-ruler"></i><span>Alat Gambar</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalDrawing')"><i data-lucide="x"></i></button></div>
@@ -607,7 +720,7 @@ button{font-family:inherit}
   </div>
 </div>
 
-<!-- MODAL: INDIKATOR -->
+<!-- INDICATORS MODAL -->
 <div class="modal-bg" id="modalIndicators">
   <div class="modal">
     <div class="modal-h"><h3><i data-lucide="activity"></i><span>Indikator</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalIndicators')"><i data-lucide="x"></i></button></div>
@@ -621,7 +734,7 @@ button{font-family:inherit}
   </div>
 </div>
 
-<!-- MODAL: SL/TP -->
+<!-- SL/TP MODAL -->
 <div class="modal-bg" id="modalSLTP">
   <div class="modal" style="max-width:440px">
     <div class="modal-h"><h3><i data-lucide="shield-alert"></i><span>Stop Loss / Take Profit</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalSLTP')"><i data-lucide="x"></i></button></div>
@@ -642,7 +755,7 @@ button{font-family:inherit}
   </div>
 </div>
 
-<!-- MODAL: INFO -->
+<!-- INFO MODAL -->
 <div class="modal-bg" id="modalInfo">
   <div class="modal">
     <div class="modal-h"><h3><i data-lucide="info"></i><span id="modalInfoTitle">Info</span></h3><button class="modal-close" onclick="CAZO.closeModal('modalInfo')"><i data-lucide="x"></i></button></div>
@@ -653,14 +766,10 @@ button{font-family:inherit}
 
 <div class="toasts" id="toasts"></div>
 
-<!-- ============================================================
-     SCRIPT UTAMA (CLASSIC, BUKAN MODULE)
-     ============================================================ -->
 <script>
 (function(){
 'use strict';
 
-// ============ CONFIG ============
 var FIREBASE_CONFIG = {
   apiKey: "AIzaSyBEPzUM9EresZ-yvphzDusVs7AUqdLuCNQ",
   authDomain: "mygame-68b24.firebaseapp.com",
@@ -694,7 +803,6 @@ var DEMO_HISTORY = [
   { price: 1250, change: 30, changePercent: 2.46 }
 ];
 
-// ============ DRAWING TOOLS ============
 var DRAWING_CATEGORIES = [
   { name: "Garis Tren", tools: [
     { id: "trendline", name: "Garis Tren", icon: "trending-up" },
@@ -746,7 +854,6 @@ var DRAWING_CATEGORIES = [
   ]}
 ];
 
-// ============ INDIKATORS ============
 var INDICATORS = [
   { id: "ma", name: "Moving Average", desc: "Rata-rata harga bergerak" },
   { id: "ema", name: "EMA (Exponential MA)", desc: "MA dengan bobot eksponensial" },
@@ -768,7 +875,6 @@ var INDICATORS = [
   { id: "bbp", name: "Bollinger Bands %B", desc: "%B" }
 ];
 
-// ============ STATE ============
 var S = {
   app: null, db: null, auth: null,
   user: null, isAdmin: false,
@@ -776,10 +882,10 @@ var S = {
   settings: Object.assign({}, DEFAULT_SETTINGS),
   history: [],
   balance: 0, portfolio: {},
-  transactions: [], deposits: [],
+  transactions: [], payments: [],
   chart: null, candleSeries: null, volumeSeries: null,
   activeRange: "7d", showVolume: true, chartFullscreen: false,
-  tradeSide: "buy", histTab: "tx",
+  payTab: "deposit", histTab: "payment",
   unsubs: [], unsubsUser: [],
   _lastChartKey: "", _lastFitRange: null,
   pendingAction: null,
@@ -790,7 +896,6 @@ var S = {
 
 function $(id) { return document.getElementById(id); }
 
-// ============ UTIL ============
 function fmt(n, dec) {
   dec = dec == null ? 2 : dec;
   if (n == null || isNaN(n)) return "—";
@@ -838,7 +943,6 @@ function renderIcons() {
     try { window.lucide.createIcons(); } catch (e) {}
   }
 }
-
 function openModal(id) { var el = $(id); if (el) el.classList.add("open"); }
 function closeModal(id) { var el = $(id); if (el) el.classList.remove("open"); }
 
@@ -847,9 +951,8 @@ function requireLogin(reason, action) {
   S.pendingAction = action || null;
   var desc = {
     profile: "Silakan masuk dengan Google untuk melihat profil akun Anda.",
-    trade: "Untuk membeli atau menjual aset, silakan masuk dengan Google.",
     portfolio: "Login untuk melihat portfolio, saldo, dan P&L.",
-    deposit: "Login untuk melakukan deposit saldo virtual.",
+    payment: "Login untuk melakukan deposit atau withdraw.",
     history: "Login untuk melihat riwayat transaksi.",
     default: "Fitur ini memerlukan login."
   }[reason] || "Fitur ini memerlukan login.";
@@ -865,7 +968,6 @@ function initChart() {
   if (!box) return false;
   if (typeof LightweightCharts === "undefined") return false;
   if (S.chart) return true;
-
   var w = box.clientWidth || 600;
   var h = box.clientHeight || 400;
 
@@ -897,12 +999,6 @@ function initChart() {
       S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
       resizeDrawLayer(); redrawAll();
     }).observe(box);
-  } else {
-    window.addEventListener("resize", function(){
-      if (!S.chart) return;
-      S.chart.applyOptions({ width: box.clientWidth, height: box.clientHeight });
-      resizeDrawLayer(); redrawAll();
-    });
   }
 
   setupDrawingCanvas();
@@ -956,9 +1052,7 @@ function updateChart() {
 
   var candles = buildCandles(filtered);
   var upColor = S.settings.chartColor || "#16A34A";
-  S.candleSeries.applyOptions({
-    upColor: upColor, borderUpColor: upColor, wickUpColor: upColor
-  });
+  S.candleSeries.applyOptions({ upColor: upColor, borderUpColor: upColor, wickUpColor: upColor });
   S.candleSeries.setData(candles);
 
   if (S.volumeSeries) {
@@ -1007,7 +1101,6 @@ function chartToCanvasPoint(time, price) {
   var y = S.candleSeries.priceToCoordinate(price);
   return { x: x, y: y };
 }
-
 var drawPointerDown = false;
 function onCanvasDown(e) {
   if (!S.activeTool) return;
@@ -1045,7 +1138,6 @@ function onCanvasUp(e) {
   }
   setActiveTool(null);
 }
-
 function redrawAll() {
   var c = $("drawLayer"); if (!c || !S.chart || !S.candleSeries) return;
   var ctx = c.getContext("2d");
@@ -1056,7 +1148,6 @@ function redrawAll() {
   if (S.drawing) drawShape(ctx, Object.assign({}, S.drawing, { preview: true }));
   drawSLTP(ctx);
 }
-
 function drawShape(ctx, d) {
   var start = d.start ? chartToCanvasPoint(d.start.time, d.start.price) : null;
   var end = d.end ? chartToCanvasPoint(d.end.time, d.end.price) : null;
@@ -1131,7 +1222,6 @@ function drawShape(ctx, d) {
   }
   ctx.restore();
 }
-
 function drawSLTP(ctx) {
   if (!S.candleSeries) return;
   if (S.stopLoss) {
@@ -1155,7 +1245,6 @@ function drawSLTP(ctx) {
     }
   }
 }
-
 function setActiveTool(toolId) {
   S.activeTool = toolId;
   var c = $("drawLayer"), b = $("drawBadge");
@@ -1163,7 +1252,7 @@ function setActiveTool(toolId) {
     c.style.pointerEvents = "auto"; c.style.cursor = "crosshair";
     b.classList.add("on");
     var all = DRAWING_CATEGORIES.reduce(function(a, x){ return a.concat(x.tools); }, []);
-    var t = all.find(function(x){ return x.id === toolId; });
+    var t = all.filter(function(x){ return x.id === toolId; })[0];
     $("drawBadgeText").textContent = t ? t.name : toolId;
   } else {
     c.style.pointerEvents = "none"; c.style.cursor = "default";
@@ -1224,14 +1313,12 @@ function addIndicator(id) {
   renderIndicatorChips(); renderIndicatorList();
   toast("Indikator ditambahkan", "success", 2000);
 }
-
 function removeIndicator(id) {
   var series = S.indicatorSeries[id]; if (!series) return;
   series.forEach(function(s){ try { S.chart.removeSeries(s); } catch (e) {} });
   delete S.indicatorSeries[id]; delete S.activeIndicators[id];
   renderIndicatorChips(); renderIndicatorList();
 }
-
 function updateIndicators(candles) {
   Object.keys(S.activeIndicators).forEach(function(id){
     var s = S.indicatorSeries[id]; if (!s) return;
@@ -1246,7 +1333,6 @@ function updateIndicators(candles) {
     } catch (e) {}
   });
 }
-
 function calcMA(candles, p) {
   var out = [];
   for (var i = p-1; i < candles.length; i++) {
@@ -1330,7 +1416,6 @@ function calcStoch(candles, kp, dp) {
   }
   return { k: k, d: d };
 }
-
 function renderIndicatorChips() {
   var w = $("indActiveChips"); if (!w) return;
   var ids = Object.keys(S.activeIndicators);
@@ -1343,7 +1428,6 @@ function renderIndicatorChips() {
     b.addEventListener('click', function(){ removeIndicator(b.dataset.remove); });
   });
 }
-
 function renderIndicatorList(filter) {
   var list = $("indList"); if (!list) return;
   var f = (filter || "").toLowerCase().trim();
@@ -1364,7 +1448,6 @@ function renderIndicatorList(filter) {
     });
   });
 }
-
 function renderDrawingCategories() {
   var w = $("drawingCategories"); if (!w) return;
   w.innerHTML = DRAWING_CATEGORIES.map(function(cat){
@@ -1391,7 +1474,10 @@ function renderDrawingCategories() {
 
 // ============ SL/TP ============
 function openSLTP() {
-  if (!requireLogin("trade", openSLTP)) return;
+  if (!S.user) {
+    requireLogin("trade", openSLTP);
+    return;
+  }
   var cur = S.history.length ? S.history[S.history.length-1].price : S.settings.currentPrice;
   $("sltpCurrentPrice").textContent = fmt(cur, 2);
   $("sltpSL").value = S.stopLoss || "";
@@ -1402,7 +1488,6 @@ function openSLTP() {
   $("sltpStatus").className = "pill " + (active ? "up" : "gray");
   openModal("modalSLTP");
 }
-
 function updateSLTPHints() {
   var cur = S.history.length ? S.history[S.history.length-1].price : S.settings.currentPrice;
   var sl = num($("sltpSL").value, 0), tp = num($("sltpTP").value, 0);
@@ -1415,7 +1500,6 @@ function updateSLTPHints() {
     $("sltpHintTP").textContent = (pct2 >= 0 ? "+" : "") + fmt(pct2, 2) + "% dari harga";
   } else $("sltpHintTP").textContent = "Belum diisi";
 }
-
 function saveSLTP() {
   var sl = num($("sltpSL").value, 0), tp = num($("sltpTP").value, 0);
   var cur = S.history.length ? S.history[S.history.length-1].price : S.settings.currentPrice;
@@ -1426,14 +1510,12 @@ function saveSLTP() {
   closeModal("modalSLTP"); redrawAll();
   toast((S.stopLoss || S.takeProfit) ? "SL/TP disimpan" : "SL/TP dihapus", "success");
 }
-
 function clearSLTP() {
   S.stopLoss = null; S.takeProfit = null;
   $("sltpSL").value = ""; $("sltpTP").value = "";
   redrawAll(); closeModal("modalSLTP");
   toast("SL/TP dihapus", "info");
 }
-
 function checkSLTP(price) {
   if (!S.user) return;
   if (S.stopLoss && price <= S.stopLoss) { toast("🛑 STOP LOSS tersentuh!", "error", 8000); S.stopLoss = null; redrawAll(); }
@@ -1472,13 +1554,10 @@ function renderPriceUI() {
   var lastTs = hist.length ? hist[hist.length-1].timestamp : null;
   $("dashUpdate").textContent = lastTs ? ago(lastTs) : "—";
 
-  $("tradePrice").value = price.toFixed(2);
-  updateTradeTotal();
   renderMarketList();
   checkSLTP(price);
   renderIcons();
 }
-
 function renderMarketList() {
   var list = $("marketList"); if (!list) return;
   var s = S.settings, hist = S.history;
@@ -1487,14 +1566,12 @@ function renderMarketList() {
   var chg = last - prev, pct = prev !== 0 ? (chg/prev)*100 : 0, up = chg >= 0;
   list.innerHTML = '<div class="market-item"><img src="' + ASSET_ICON + '" /><div class="market-info"><div class="market-name">' + (s.assetName || "CAZO CARD") + '</div><div class="market-symbol">' + (s.symbol || "CAZO") + '</div></div><div class="market-price"><div class="market-price-val">' + fmt(last) + '</div><div class="market-price-chg ' + (up ? "up" : "down") + '">' + (up ? "+" : "") + fmt(pct) + '%</div></div></div>';
 }
-
 function calcPortfolioValue() {
   var price = S.history.length ? S.history[S.history.length-1].price : S.settings.currentPrice;
   var total = 0, cost = 0;
   for (var id in S.portfolio) { var p = S.portfolio[id]; total += p.qty * price; cost += p.qty * p.avgPrice; }
   return { value: total, cost: cost, pl: total - cost, plPct: cost > 0 ? ((total-cost)/cost)*100 : 0 };
 }
-
 function renderUserUI() {
   var u = S.user;
   if (u) {
@@ -1531,7 +1608,6 @@ function renderUserUI() {
   } else {
     plEl.textContent = "—"; plEl.className = "stat-mini-val"; $("dashPLPct").textContent = "—";
   }
-  $("quickBalance").textContent = S.user ? fmtIDR(bal) : "—";
   $("pfBalance").textContent = S.user ? fmtIDR(bal) : "—";
   $("pfValue").textContent = S.user ? fmtIDR(pv.value) : "—";
   $("pfEquity").textContent = S.user ? fmtIDR(bal + pv.value) : "—";
@@ -1540,6 +1616,7 @@ function renderUserUI() {
     pfPL.textContent = (pv.pl >= 0 ? "+" : "") + fmtIDR(pv.pl);
     pfPL.className = "stat-mini-val " + (pv.pl >= 0 ? "up" : "down");
   } else { pfPL.textContent = "—"; pfPL.className = "stat-mini-val"; }
+  $("wdBalance").textContent = S.user ? fmtIDR(bal) : "—";
 
   var holdings = $("holdingsList");
   var ids = [];
@@ -1558,24 +1635,31 @@ function renderUserUI() {
   }
 }
 
+// ============ HISTORY ============
 function renderHistoryTab() {
   var w = $("historyContent"); if (!w) return;
   if (!S.user) { w.innerHTML = '<div class="empty">Login untuk melihat riwayat.</div>'; return; }
   if (S.histTab === "price") renderPriceHistory(w);
-  else if (S.histTab === "deposit") renderDepositHistory(w);
-  else renderTransactionHistory(w);
+  else renderPaymentHistory(w);
 }
-
-function renderTransactionHistory(w) {
-  var list = S.transactions.slice().reverse().slice(0, 50);
-  if (!list.length) { w.innerHTML = '<div class="empty">Belum ada transaksi.</div>'; return; }
-  w.innerHTML = '<div class="hist-list">' + list.map(function(t){
-    var isBuy = t.type === "buy";
-    return '<div class="hist-item"><div class="hist-icon ' + (isBuy ? "buy" : "sell") + '"><i data-lucide="' + (isBuy ? "arrow-down-left" : "arrow-up-right") + '"></i></div><div class="hist-main"><div class="hist-title">' + (isBuy ? "Beli" : "Jual") + ' ' + t.qty + ' ' + (S.settings.symbol || "CAZO") + '</div><div class="hist-time">' + fmtTime(t.timestamp) + ' • ' + ago(t.timestamp) + '</div></div><div class="hist-amount ' + (isBuy ? "down" : "up") + '">' + (isBuy ? "-" : "+") + fmtIDR(t.total) + '</div></div>';
+function renderPaymentHistory(w) {
+  var list = S.payments.slice().reverse().slice(0, 50);
+  if (!list.length) { w.innerHTML = '<div class="empty">Belum ada transaksi payment.</div>'; return; }
+  var statusMap = { pending: { cls: "warn", txt: "Menunggu" }, approved: { cls: "up", txt: "Disetujui" }, rejected: { cls: "down", txt: "Ditolak" } };
+  w.innerHTML = '<div class="hist-list">' + list.map(function(p){
+    var isDep = p.type === "deposit";
+    var st = statusMap[p.status] || statusMap.pending;
+    return '<div class="hist-item">' +
+      '<div class="hist-icon ' + (isDep ? "dep" : "wd") + '"><i data-lucide="' + (isDep ? "arrow-down-circle" : "arrow-up-circle") + '"></i></div>' +
+      '<div class="hist-main">' +
+        '<div class="hist-title">' + (isDep ? "Deposit" : "Withdraw") + ' ' + fmtIDR(p.amount) + '</div>' +
+        '<div class="hist-time">' + fmtTime(p.timestamp) + ' • <span class="pill ' + st.cls + '" style="padding:1px 6px;font-size:10px">' + st.txt + '</span></div>' +
+      '</div>' +
+      '<div class="hist-amount">' + (p.sender || p.account || "—") + '</div>' +
+    '</div>';
   }).join('') + '</div>';
   renderIcons();
 }
-
 function renderPriceHistory(w) {
   var list = S.history.slice().reverse().slice(0, 50);
   if (!list.length) { w.innerHTML = '<div class="empty">Belum ada riwayat harga.</div>'; return; }
@@ -1587,19 +1671,30 @@ function renderPriceHistory(w) {
   }).join('') + '</div>';
   renderIcons();
 }
-
-function renderDepositHistory(w) {
+function renderPaymentQueue(w) {
   if (!w) w = $("depositHistory");
   if (!w) return;
-  var list = S.deposits.slice().reverse().slice(0, 30);
+  var filter = w.id === "withdrawHistory" ? "withdraw" : "deposit";
+  var list = S.payments.filter(function(p){ return p.type === filter; }).slice().reverse().slice(0, 30);
   var pending = list.filter(function(d){ return d.status === "pending"; }).length;
   var html = '';
-  if (pending > 0) html += '<div style="padding:12px 14px;background:var(--warn-2);border:1px solid #FDE68A;border-radius:12px;font-size:12.5px;color:#92400E;margin-bottom:12px">' + pending + ' pengajuan deposit menunggu konfirmasi admin.</div>';
-  if (!list.length) { w.innerHTML = html + '<div class="empty">Belum ada pengajuan deposit.</div>'; return; }
+  if (pending > 0) html += '<div style="padding:12px 14px;background:var(--warn-2);border:1px solid #FDE68A;border-radius:12px;font-size:12.5px;color:#92400E;margin-bottom:12px">' + pending + ' pengajuan menunggu konfirmasi admin.</div>';
+  if (!list.length) {
+    w.innerHTML = html + '<div class="empty">Belum ada pengajuan.</div>';
+    return;
+  }
   var statusMap = { pending: { cls: "warn", txt: "Menunggu" }, approved: { cls: "up", txt: "Disetujui" }, rejected: { cls: "down", txt: "Ditolak" } };
   html += '<div class="hist-list">' + list.map(function(d){
     var st = statusMap[d.status] || statusMap.pending;
-    return '<div class="hist-item"><div class="hist-icon dep"><i data-lucide="wallet"></i></div><div class="hist-main"><div class="hist-title">' + fmtIDR(d.amount) + '</div><div class="hist-time">' + fmtTime(d.timestamp) + ' • <span class="pill ' + st.cls + '" style="padding:1px 6px;font-size:10px">' + st.txt + '</span></div></div><div class="hist-amount">' + (d.sender || "—") + '</div></div>';
+    var isDep = d.type === "deposit";
+    return '<div class="hist-item">' +
+      '<div class="hist-icon ' + (isDep ? "dep" : "wd") + '"><i data-lucide="' + (isDep ? "arrow-down-circle" : "arrow-up-circle") + '"></i></div>' +
+      '<div class="hist-main">' +
+        '<div class="hist-title">' + fmtIDR(d.amount) + '</div>' +
+        '<div class="hist-time">' + fmtTime(d.timestamp) + ' • <span class="pill ' + st.cls + '" style="padding:1px 6px;font-size:10px">' + st.txt + '</span></div>' +
+      '</div>' +
+      '<div class="hist-amount">' + (d.sender || d.account || "—") + '</div>' +
+    '</div>';
   }).join('') + '</div>';
   w.innerHTML = html;
   renderIcons();
@@ -1614,28 +1709,23 @@ function initFirebase() {
     S.auth = firebase.auth();
   } catch (err) {
     console.error("[CAZO] Firebase init error:", err);
-    toast("Firebase tidak dapat diinisialisasi. Menampilkan data demo.", "error", 6000);
+    toast("Firebase tidak dapat diinisialisasi. Mode demo.", "error", 6000);
     loadDemoMode();
     return;
   }
 
-  // Connection listener
-  var connectedRef = S.db.ref(".info/connected");
-  connectedRef.on("value", function(snap) {
+  S.db.ref(".info/connected").on("value", function(snap) {
     S.online = snap.val() === true;
     updateConnPill();
   });
 
-  // Timeout fallback
   setTimeout(function() {
     if (!S.online && !S.history.length) {
-      console.warn("[CAZO] Firebase timeout — fallback ke demo");
       loadDemoMode();
-      toast("Koneksi Firebase lambat. Menampilkan data demo.", "warning", 6000);
+      toast("Koneksi Firebase lambat. Mode demo.", "warning", 6000);
     }
   }, 8000);
 
-  // Auth state
   S.auth.onAuthStateChanged(async function(user) {
     var wasLoggedOut = !S.user;
     S.user = user;
@@ -1648,12 +1738,13 @@ function initFirebase() {
       var action = S.pendingAction; S.pendingAction = null;
       if (typeof action === "function") setTimeout(action, 500);
     } else {
-      S.balance = 0; S.portfolio = {}; S.transactions = []; S.deposits = [];
+      S.balance = 0; S.portfolio = {}; S.transactions = []; S.payments = [];
       S.unsubsUser.forEach(function(fn){ try { fn(); } catch(e){} });
       S.unsubsUser = [];
       renderUserUI();
       renderHistoryTab();
-      renderDepositHistory($("depositHistory"));
+      renderPaymentQueue($("depositHistory"));
+      renderPaymentQueue($("withdrawHistory"));
       if (!wasLoggedOut) toast("Anda telah keluar", "info");
     }
     renderIcons();
@@ -1702,26 +1793,18 @@ function subscribeUserData(uid) {
   });
   S.unsubsUser.push(function(){ uref.off(); });
 
-  var tref = S.db.ref("cazo/users/" + uid + "/transactions").orderByChild("timestamp").limitToLast(100);
-  tref.on("value", function(snap) {
+  // Payments (deposit + withdraw)
+  var pref = S.db.ref("cazo/users/" + uid + "/payments").orderByChild("timestamp").limitToLast(100);
+  pref.on("value", function(snap) {
     var arr = [];
     snap.forEach(function(c){ arr.push(Object.assign({ key: c.key }, c.val())); });
     arr.sort(function(a, b){ return a.timestamp - b.timestamp; });
-    S.transactions = arr;
-    if (S.histTab === "tx") renderHistoryTab();
+    S.payments = arr;
+    if (S.histTab === "payment") renderHistoryTab();
+    renderPaymentQueue($("depositHistory"));
+    renderPaymentQueue($("withdrawHistory"));
   });
-  S.unsubsUser.push(function(){ tref.off(); });
-
-  var dref = S.db.ref("cazo/users/" + uid + "/deposits").orderByChild("timestamp").limitToLast(50);
-  dref.on("value", function(snap) {
-    var arr = [];
-    snap.forEach(function(c){ arr.push(Object.assign({ key: c.key }, c.val())); });
-    arr.sort(function(a, b){ return a.timestamp - b.timestamp; });
-    S.deposits = arr;
-    if (S.histTab === "deposit") renderHistoryTab();
-    renderDepositHistory($("depositHistory"));
-  });
-  S.unsubsUser.push(function(){ dref.off(); });
+  S.unsubsUser.push(function(){ pref.off(); });
 }
 
 function subscribePublicData() {
@@ -1756,7 +1839,6 @@ function subscribePublicData() {
 }
 
 function loadDemoMode() {
-  console.log("[CAZO] Loading demo mode");
   S.settings = Object.assign({}, DEFAULT_SETTINGS);
   S.history = DEMO_HISTORY.map(function(h, i){ return Object.assign({ key: 'demo_' + i }, h, { timestamp: Date.now() - (7 - i) * 86400000 }); });
   S._lastChartKey = "";
@@ -1766,84 +1848,72 @@ function loadDemoMode() {
   renderMarketList();
   renderIcons();
 }
-
 function updateConnPill() {
   var pill = $("connPill"); if (!pill) return;
   if (S.online) { pill.className = "conn-pill on"; $("connText").textContent = "Online"; }
   else { pill.className = "conn-pill off"; $("connText").textContent = "Offline"; }
 }
 
-// ============ TRADING ============
-function updateTradeTotal() {
-  var qty = num($("tradeQty").value, 0), price = num($("tradePrice").value, 0);
-  $("tradeTotal").value = (qty * price).toFixed(2);
-}
-
-function doTrade(side) {
-  if (!requireLogin("trade", function(){ doTrade(side); })) return;
-  var qty = num($("tradeQty").value, 0), price = num($("tradePrice").value, 0);
-  if (qty <= 0) return toast("Jumlah harus > 0", "error");
-  if (price <= 0) return toast("Harga tidak valid", "error");
-  var total = qty * price, uid = S.user.uid;
-
-  if (side === "buy") {
-    if (S.balance < total) return toast("Saldo tidak cukup.", "error", 5000);
-    S.db.ref("cazo/users/" + uid + "/balance").transaction(function(bal) {
-      bal = num(bal, 0);
-      if (bal < total) return;
-      return bal - total;
-    }).then(function() {
-      var pref = S.db.ref("cazo/users/" + uid + "/portfolio/CAZO");
-      return pref.once("value").then(function(snap) {
-        var cur = snap.val() || { qty: 0, avgPrice: 0 };
-        var newQty = cur.qty + qty;
-        var newAvg = (cur.qty * cur.avgPrice + qty * price) / newQty;
-        return pref.set({ qty: newQty, avgPrice: newAvg, updatedAt: Date.now() });
-      });
-    }).then(function() {
-      return S.db.ref("cazo/users/" + uid + "/transactions").push({ type: "buy", qty: qty, price: price, total: total, timestamp: Date.now() });
-    }).then(function() {
-      toast("Beli " + qty + " " + (S.settings.symbol || "CAZO") + " berhasil!", "success");
-    }).catch(function(err) {
-      console.error(err); toast("Transaksi gagal: " + err.message, "error", 5000);
-    });
-  } else {
-    var pref = S.db.ref("cazo/users/" + uid + "/portfolio/CAZO");
-    pref.once("value").then(function(snap) {
-      var cur = snap.val() || { qty: 0, avgPrice: 0 };
-      if (cur.qty < qty) throw new Error("Unit tidak cukup");
-      var newQty = cur.qty - qty;
-      if (newQty <= 0) return pref.remove();
-      return pref.set({ qty: newQty, avgPrice: cur.avgPrice, updatedAt: Date.now() });
-    }).then(function() {
-      return S.db.ref("cazo/users/" + uid + "/balance").transaction(function(bal) { return num(bal, 0) + total; });
-    }).then(function() {
-      return S.db.ref("cazo/users/" + uid + "/transactions").push({ type: "sell", qty: qty, price: price, total: total, timestamp: Date.now() });
-    }).then(function() {
-      toast("Jual " + qty + " " + (S.settings.symbol || "CAZO") + " berhasil!", "success");
-    }).catch(function(err) {
-      console.error(err); toast("Transaksi gagal: " + err.message, "error", 5000);
-    });
-  }
-}
-
+// ============ PAYMENT SUBMIT ============
 function submitDeposit() {
-  if (!requireLogin("deposit", submitDeposit)) return;
+  if (!requireLogin("payment", submitDeposit)) return;
   var amount = num($("depAmount").value, 0);
   var sender = $("depSender").value.trim();
   var note = $("depNote").value.trim();
   if (amount < 10000) return toast("Minimal deposit Rp 10.000", "error");
   if (!sender) return toast("Isi nama pengirim", "error");
   var uid = S.user.uid;
-  S.db.ref("cazo/users/" + uid + "/deposits").push({ amount: amount, sender: sender, note: note, status: "pending", timestamp: Date.now() })
+  var payload = {
+    type: "deposit",
+    amount: amount, sender: sender, note: note,
+    status: "pending", timestamp: Date.now()
+  };
+  S.db.ref("cazo/users/" + uid + "/payments").push(payload)
     .then(function() {
-      return S.db.ref("cazo/depositQueue").push({ uid: uid, email: S.user.email, amount: amount, sender: sender, note: note, status: "pending", timestamp: Date.now() });
+      return S.db.ref("cazo/paymentQueue").push(Object.assign({}, payload, { uid: uid, email: S.user.email }));
     })
     .then(function() {
       $("depAmount").value = ""; $("depSender").value = ""; $("depNote").value = "";
-      toast("Pengajuan deposit terkirim.", "success", 5000);
+      toast("Pengajuan deposit terkirim. Menunggu konfirmasi admin.", "success", 5000);
     })
     .catch(function(err) { console.error(err); toast("Gagal: " + err.message, "error"); });
+}
+
+function submitWithdraw() {
+  if (!requireLogin("payment", submitWithdraw)) return;
+  var amount = num($("wdAmount").value, 0);
+  var method = $("wdMethod").value;
+  var account = $("wdAccount").value.trim();
+  var name = $("wdName").value.trim();
+  var note = $("wdNote").value.trim();
+  if (amount < 50000) return toast("Minimal withdraw Rp 50.000", "error");
+  if (amount > S.balance) return toast("Saldo tidak cukup", "error");
+  if (!account) return toast("Isi nomor rekening / HP", "error");
+  if (!name) return toast("Isi nama pemilik rekening", "error");
+
+  var uid = S.user.uid;
+  var payload = {
+    type: "withdraw",
+    amount: amount, method: method, account: account, name: name, note: note,
+    status: "pending", timestamp: Date.now()
+  };
+
+  // Cek saldo & tahan (hold)
+  S.db.ref("cazo/users/" + uid + "/balance").transaction(function(bal) {
+    bal = num(bal, 0);
+    if (bal < amount) return;
+    return bal - amount;
+  }).then(function(result) {
+    if (!result.committed) throw new Error("Saldo tidak cukup");
+    return S.db.ref("cazo/users/" + uid + "/payments").push(payload);
+  }).then(function() {
+    return S.db.ref("cazo/paymentQueue").push(Object.assign({}, payload, { uid: uid, email: S.user.email }));
+  }).then(function() {
+    $("wdAmount").value = ""; $("wdAccount").value = ""; $("wdName").value = ""; $("wdNote").value = "";
+    toast("Pengajuan withdraw terkirim. Saldo ditahan hingga diproses admin.", "success", 6000);
+  }).catch(function(err) {
+    console.error(err); toast("Gagal: " + err.message, "error");
+  });
 }
 
 function doGoogleLogin(btn) {
@@ -1886,7 +1956,7 @@ function bindEvents() {
       var page = tab.dataset.page;
       var needsAuth = tab.dataset.auth === "1";
       if (needsAuth && !S.user) {
-        var reasonMap = { portfolio: "portfolio", deposit: "deposit", history: "history", settings: "profile" };
+        var reasonMap = { portfolio: "portfolio", payment: "payment", history: "history", settings: "profile" };
         requireLogin(reasonMap[page] || "default", function(){ activatePage(page); });
         return;
       }
@@ -1962,21 +2032,20 @@ function bindEvents() {
   $("sltpSL").addEventListener("input", updateSLTPHints);
   $("sltpTP").addEventListener("input", updateSLTPHints);
 
-  document.querySelectorAll(".order-tab[data-side]").forEach(function(tab){
+  // Payment tabs
+  document.querySelectorAll(".pay-tab").forEach(function(tab){
     tab.addEventListener("click", function(){
-      document.querySelectorAll(".order-tab[data-side]").forEach(function(t){ t.classList.remove("active"); });
+      document.querySelectorAll(".pay-tab").forEach(function(t){ t.classList.remove("active"); });
       tab.classList.add("active");
-      S.tradeSide = tab.dataset.side;
-      var btn = $("btnQuickTrade");
-      btn.className = "btn btn-block " + (S.tradeSide === "buy" ? "btn-up" : "btn-down");
-      btn.innerHTML = '<i data-lucide="zap"></i><span>' + (S.tradeSide === "buy" ? "Beli Sekarang" : "Jual Sekarang") + '</span>';
+      S.payTab = tab.dataset.pay;
+      $("payTabDeposit").classList.toggle("hidden", S.payTab !== "deposit");
+      $("payTabWithdraw").classList.toggle("hidden", S.payTab !== "withdraw");
       renderIcons();
     });
   });
 
-  $("tradeQty").addEventListener("input", updateTradeTotal);
-  $("btnQuickTrade").addEventListener("click", function(){ doTrade(S.tradeSide); });
   $("btnSubmitDeposit").addEventListener("click", submitDeposit);
+  $("btnSubmitWithdraw").addEventListener("click", submitWithdraw);
 
   document.querySelectorAll(".order-tab[data-hist]").forEach(function(tab){
     tab.addEventListener("click", function(){
@@ -2016,7 +2085,7 @@ function bindEvents() {
   window.addEventListener("online", function(){ updateConnPill(); toast("Koneksi kembali", "success"); });
 }
 
-// ============ ICON RENDERER ROBUST ============
+// ============ ICON RENDERER ============
 function startIconRenderer() {
   var tries = 0, maxTries = 30;
   function tryRender() {
@@ -2026,12 +2095,11 @@ function startIconRenderer() {
     } else if (tries < maxTries) {
       setTimeout(tryRender, 200);
     } else {
-      console.warn("[CAZO] Lucide gagal dimuat. Menampilkan fallback.");
+      console.warn("[CAZO] Lucide gagal dimuat");
     }
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tryRender);
   else tryRender();
-
   if (window.MutationObserver) {
     var t = null;
     new MutationObserver(function(){
@@ -2046,42 +2114,33 @@ function boot() {
   startIconRenderer();
   bindEvents();
 
-  // Tunggu library chart siap (max 5 detik)
   var chartTries = 0;
   function tryInitChart() {
     chartTries++;
     var ok = initChart();
     if (ok) {
       console.log("[CAZO] Chart initialized");
-      setTimeout(function(){
-        renderPriceUI();
-        updateChart();
-      }, 300);
+      setTimeout(function(){ renderPriceUI(); updateChart(); }, 300);
       return;
     }
-    if (chartTries < 25) {
-      setTimeout(tryInitChart, 200);
-    } else {
-      console.error("[CAZO] Lightweight Charts gagal dimuat.");
-      var loading = $("chartLoading");
-      if (loading) {
-        loading.innerHTML = '<div style="font-size:32px">📉</div><div>Grafik tidak dapat dimuat</div><div style="font-size:11px">Periksa koneksi internet</div>';
-      }
+    if (chartTries < 25) setTimeout(tryInitChart, 200);
+    else {
+      var l = $("chartLoading");
+      if (l) l.innerHTML = '<div style="font-size:32px">📉</div><div>Grafik tidak dapat dimuat</div><div style="font-size:11px">Periksa koneksi internet</div>';
     }
   }
   tryInitChart();
 
-  // Firebase
   if (typeof firebase !== "undefined") {
     initFirebase();
   } else {
-    console.error("[CAZO] Firebase SDK tidak tersedia");
-    toast("Firebase tidak tersedia. Mode demo.", "error", 6000);
+    console.error("[CAZO] Firebase tidak tersedia");
     setTimeout(function(){ loadDemoMode(); }, 500);
   }
 
   renderUserUI();
-  renderDepositHistory($("depositHistory"));
+  renderPaymentQueue($("depositHistory"));
+  renderPaymentQueue($("withdrawHistory"));
   $("btnVolume").classList.toggle("active", S.showVolume);
   renderIcons();
 }
