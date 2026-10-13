@@ -32,15 +32,15 @@
   --font:'Inter','Plus Jakarta Sans',sans-serif;
   --font-d:'Plus Jakarta Sans','Inter',sans-serif;
 }
-html{font-size:16px;-webkit-text-size-adjust:100%}
-body{font-family:var(--font);background:var(--bg-2);color:var(--txt);line-height:1.55;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html{font-size:16px;-webkit-text-size-adjust:100%;overflow-x:hidden;width:100%;max-width:100vw}
+body{font-family:var(--font);background:var(--bg-2);color:var(--txt);line-height:1.55;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;width:100%;max-width:100vw}
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
 .hidden{display:none!important}
 button{font-family:inherit}
 [data-lucide]:empty::before{content:"·";color:#94A3B8;font-size:14px;line-height:1}
 
-.topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid var(--border-2)}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid var(--border-2);width:100%;max-width:100vw}
 .topbar-in{max-width:1400px;margin:0 auto;padding:0 16px;height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
 .brand img{width:38px;height:38px;border-radius:11px;object-fit:cover}
@@ -69,26 +69,27 @@ button{font-family:inherit}
   .mobile-toggle{display:flex}
   .user-name{display:none}
 }
-.container{max-width:1400px;margin:0 auto;padding:20px 16px 80px}
+.container{max-width:1400px;width:100%;margin:0 auto;padding:20px 16px 80px;box-sizing:border-box;overflow-x:hidden}
 @media (max-width:480px){.container{padding:14px 10px 60px}}
-.page{display:none}
+.page{display:none;width:100%;max-width:100%;box-sizing:border-box}
 .page.active{display:block;animation:fadeIn .25s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .page-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px}
 .page-title{font-family:var(--font-d);font-size:20px;font-weight:800;letter-spacing:-.5px;display:flex;align-items:center;gap:8px}
 .page-title svg{width:20px;height:20px;color:var(--txt-2)}
 .page-sub{font-size:12.5px;color:var(--txt-2);margin-top:2px}
-.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden;width:100%;box-sizing:border-box;max-width:100%}
 .card+.card{margin-top:14px}
 .card-h{padding:14px 18px;border-bottom:1px solid var(--border-2);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .card-h h2{font-family:var(--font-d);font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:8px}
 .card-h h2 svg{width:16px;height:16px;color:var(--txt-2)}
 .card-b{padding:18px}
 @media (max-width:480px){.card-b{padding:12px}}
-.grid-2{display:grid;grid-template-columns:1fr 360px;gap:16px;align-items:start}
+.grid-2{display:grid;grid-template-columns:1fr 360px;gap:16px;align-items:start;width:100%;box-sizing:border-box}
+.grid-2>div{min-width:0;width:100%;box-sizing:border-box}
 @media (max-width:1024px){.grid-2{grid-template-columns:1fr}}
 
-.stats-slider{display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:6px;scrollbar-width:none;margin-bottom:16px}
+.stats-slider{display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:6px;scrollbar-width:none;margin-bottom:16px;width:100%}
 .stats-slider::-webkit-scrollbar{display:none}
 .stat-mini{flex:0 0 auto;min-width:150px;padding:11px 14px;background:#fff;border:1px solid var(--border);border-radius:14px;scroll-snap-align:start;box-shadow:var(--shadow);transition:var(--t)}
 @media (max-width:480px){.stat-mini{min-width:135px;padding:10px 12px}}
@@ -106,7 +107,7 @@ button{font-family:inherit}
 .stats-hint{font-size:10.5px;color:var(--txt-3);text-align:right;margin-top:-6px;margin-bottom:12px;display:flex;align-items:center;justify-content:flex-end;gap:4px}
 .stats-hint svg{width:12px;height:12px}
 
-.chart-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)}
+.chart-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);width:100%;box-sizing:border-box}
 .chart-header{padding:14px 18px 0;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .chart-asset{display:flex;align-items:center;gap:10px}
 .chart-asset-img{width:42px;height:42px;border-radius:12px;object-fit:cover;box-shadow:0 3px 12px rgba(15,23,42,.12)}
@@ -136,7 +137,7 @@ button{font-family:inherit}
 .icon-btn:hover{background:var(--bg-3);color:var(--txt)}
 .icon-btn.active{background:var(--blue-2);color:var(--blue);border-color:var(--blue)}
 .icon-btn svg{width:14px;height:14px}
-.chart-wrap{position:relative;padding:8px 4px 12px;height:440px}
+.chart-wrap{position:relative;padding:8px 4px 12px;height:440px;width:100%;box-sizing:border-box;overflow:hidden}
 @media (max-width:768px){.chart-wrap{height:340px}}
 @media (max-width:480px){.chart-wrap{height:300px}}
 .chart-wrap.fullscreen{position:fixed;inset:0;z-index:500;background:#fff;height:100vh!important;padding:12px;border-radius:0}
@@ -161,7 +162,7 @@ button{font-family:inherit}
 
 .modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(8px);z-index:600;display:none;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease}
 .modal-bg.open{display:flex}
-.modal{background:#fff;border-radius:var(--radius-lg);max-width:520px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .3s cubic-bezier(.4,0,.2,1)}
+.modal{background:#fff;border-radius:var(--radius-lg);max-width:520px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .3s cubic-bezier(.4,0,.2,1);box-sizing:border-box}
 @keyframes slideUp{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
 .modal-h{padding:16px 20px;border-bottom:1px solid var(--border-2);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:2}
 .modal-h h3{font-family:var(--font-d);font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
@@ -228,7 +229,7 @@ button{font-family:inherit}
 .btn-sm{padding:7px 12px;font-size:12.5px;border-radius:8px}
 .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
 .fg label{font-size:11.5px;font-weight:600;color:var(--txt-2);letter-spacing:.3px}
-.inp,.sel{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;background:#fff;font-family:var(--font);font-size:14px;color:var(--txt);outline:none;transition:var(--t);-webkit-appearance:none}
+.inp,.sel{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;background:#fff;font-family:var(--font);font-size:14px;color:var(--txt);outline:none;transition:var(--t);-webkit-appearance:none;box-sizing:border-box}
 .inp:focus,.sel:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
 .sel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
 .order-tabs{display:flex;gap:4px;padding:4px;background:var(--bg-3);border-radius:12px;margin-bottom:14px}
@@ -306,7 +307,7 @@ button{font-family:inherit}
 .login-feature svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;color:var(--up)}
 .cs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media (max-width:400px){.cs-grid{grid-template-columns:1fr}}
-.cs-btn{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;text-decoration:none;color:inherit;border:1px solid var(--border);background:#fff;transition:var(--t);cursor:pointer}
+.cs-btn{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;text-decoration:none;color:inherit;border:1px solid var(--border);background:#fff;transition:var(--t);cursor:pointer;box-sizing:border-box}
 .cs-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:#CBD5E1}
 .cs-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .cs-icon.wa{background:var(--wa-2);color:var(--wa)}
@@ -323,6 +324,10 @@ button{font-family:inherit}
 .pay-tab.deposit.active{background:var(--blue);color:#fff}
 .pay-tab.withdraw.active{background:var(--warn);color:#fff}
 .pay-tab svg{width:16px;height:16px}
+
+/* ===== FINAL OVERFLOW FIX ===== */
+#page-settings, #page-settings .grid-2, #page-settings .card { max-width:100%; overflow-x:hidden; }
+#page-settings .card-b { overflow-x:hidden; }
 </style>
 </head>
 <body>
@@ -661,7 +666,7 @@ button{font-family:inherit}
         </div>
         <div class="card">
           <div class="card-h"><h2><i data-lucide="info"></i><span>Tentang CAZO</span></h2></div>
-          <div class="card-b"><p class="text-muted" style="line-height:1.7"><strong>CAZO</strong> adalah platform trading digital simulasi. Deposit & withdraw diproses manual oleh admin. Data harga real-time via Firebase.</p><div class="divider"></div><div style="font-size:12px;color:var(--txt-3)">Versi 2.5 • Smooth Trading</div></div>
+          <div class="card-b"><p class="text-muted" style="line-height:1.7"><strong>CAZO</strong> adalah platform trading digital simulasi. Deposit & withdraw diproses manual oleh admin. Data harga real-time via Firebase.</p><div class="divider"></div><div style="font-size:12px;color:var(--txt-3)">Versi 2.6 • Smooth Trading</div></div>
         </div>
       </div>
     </div>
@@ -1019,17 +1024,18 @@ function getFilteredHistory(range) {
   return filtered;
 }
 
-// ===== SMOOTH CHART ENGINE =====
+// ===== SMOOTH CHART ENGINE (diperhalus) =====
 var _pendingChartUpdate = null;
 var _lastRenderedCount = 0;
 var _lastRenderedTime = 0;
 var _lastTickMs = 0;
-var MIN_TICK_GAP = 400; // throttle minimum antar render (ms) — lebih lambat, lebih halus
+var MIN_TICK_GAP = 250; // throttle lebih pendek agar reaksi cepat tapi tetap halus
+var SMOOTH_FRAMES = 6;  // frame interpolasi untuk candle tumbuh halus
+var _lastCandleData = null;
 
 function updateChart(force) {
   if (!S.candleSeries || !S.chart) return;
   if (force) { _doUpdateChart(); return; }
-
   var now = Date.now();
   var elapsed = now - _lastTickMs;
   if (elapsed < MIN_TICK_GAP) {
@@ -1052,6 +1058,7 @@ function _doUpdateChart() {
     S.candleSeries.setData([]);
     if (S.volumeSeries) S.volumeSeries.setData([]);
     _lastRenderedCount = 0;
+    _lastCandleData = null;
     return;
   }
 
@@ -1071,27 +1078,8 @@ function _doUpdateChart() {
   var canSmooth = (isAppend || isUpdateLast || isReplaceLast) && _lastRenderedCount > 0;
 
   if (canSmooth) {
-    // Update hanya candle terakhir → candle "tumbuh" halus
-    var lastCandle = candles[newCount - 1];
-    try {
-      S.candleSeries.update(lastCandle);
-      if (S.volumeSeries && S.showVolume) {
-        S.volumeSeries.update({
-          time: lastCandle.time,
-          value: lastCandle.volume,
-          color: lastCandle.close >= lastCandle.open
-            ? "rgba(22,163,74,0.35)"
-            : "rgba(220,38,38,0.35)"
-        });
-      }
-    } catch (e) {
-      S.candleSeries.setData(candles);
-      if (S.volumeSeries) {
-        S.volumeSeries.setData(S.showVolume ? candles.map(function(c){
-          return { time: c.time, value: c.volume, color: c.close >= c.open ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)" };
-        }) : []);
-      }
-    }
+    // Animasi candle terakhir tumbuh halus
+    _smoothUpdateLastCandle(candles[newCount - 1]);
   } else {
     S.candleSeries.setData(candles);
     if (S.volumeSeries) {
@@ -1105,13 +1093,86 @@ function _doUpdateChart() {
       S.chart.timeScale().fitContent();
       S._lastFitRange = S.activeRange;
     }
+    _lastCandleData = candles[newCount - 1];
   }
 
   _lastRenderedCount = newCount;
   _lastRenderedTime = candles[newCount-1].time;
 
   updateIndicators(candles);
-  setTimeout(redrawAll, 80);
+  setTimeout(redrawAll, 60);
+}
+
+// Candle tumbuh halus dengan interpolasi 6 frame
+function _smoothUpdateLastCandle(target) {
+  if (!_lastCandleData) {
+    // Belum ada data sebelumnya, langsung update
+    S.candleSeries.update(target);
+    if (S.volumeSeries && S.showVolume) {
+      S.volumeSeries.update({
+        time: target.time, value: target.volume,
+        color: target.close >= target.open ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)"
+      });
+    }
+    _lastCandleData = Object.assign({}, target);
+    return;
+  }
+
+  // Kalau time berubah, langsung update (candle baru)
+  if (target.time !== _lastCandleData.time) {
+    S.candleSeries.update(target);
+    if (S.volumeSeries && S.showVolume) {
+      S.volumeSeries.update({
+        time: target.time, value: target.volume,
+        color: target.close >= target.open ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)"
+      });
+    }
+    _lastCandleData = Object.assign({}, target);
+    return;
+  }
+
+  // Interpolasi antara data lama dan data baru
+  var start = Object.assign({}, _lastCandleData);
+  var end = Object.assign({}, target);
+  var frame = 0;
+  var stepMs = 40; // 40ms × 6 frame = 240ms total
+
+  function nextFrame() {
+    frame++;
+    var t = frame / SMOOTH_FRAMES;
+    var e = 1 - Math.pow(1 - t, 2); // easeOutQuad
+
+    var mid = {
+      time: end.time,
+      open: +(start.open + (end.open - start.open) * e).toFixed(2),
+      high: +(start.high + (end.high - start.high) * e).toFixed(2),
+      low: +(start.low + (end.low - start.low) * e).toFixed(2),
+      close: +(start.close + (end.close - start.close) * e).toFixed(2)
+    };
+
+    try {
+      S.candleSeries.update(mid);
+      if (S.volumeSeries && S.showVolume) {
+        S.volumeSeries.update({
+          time: end.time,
+          value: end.volume,
+          color: mid.close >= mid.open ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)"
+        });
+      }
+    } catch (e) {
+      // Fallback
+      S.candleSeries.setData([]);
+      _lastCandleData = null;
+      return;
+    }
+
+    if (frame < SMOOTH_FRAMES) {
+      setTimeout(nextFrame, stepMs);
+    } else {
+      _lastCandleData = Object.assign({}, end);
+    }
+  }
+  nextFrame();
 }
 
 // ===== SMOOTH NUMBER COUNTER =====
@@ -1140,9 +1201,9 @@ function animatePrice(el, to) {
   }
 }
 function _tickPrice(ts) {
-  var dur = 900; // ms — makin besar, makin lambat & halus
+  var dur = 800;
   var t = Math.min(1, (ts - _animPrice.startTs) / dur);
-  var e = 1 - Math.pow(1 - t, 4); // easeOutQuart
+  var e = 1 - Math.pow(1 - t, 4);
   var val = _animPrice.start + (_animPrice.end - _animPrice.start) * e;
   if (_animPrice.el) _animPrice.el.textContent = fmt(val);
   if (t < 1) {
@@ -1608,7 +1669,6 @@ function renderPriceUI() {
   $("dashAssetName").textContent = s.assetName || "CAZO CARD";
   $("dashAssetSymbol").textContent = s.symbol || "CAZO";
   var price = hist.length > 0 ? hist[hist.length-1].price : s.currentPrice;
-  // Animasi harga smooth
   animatePrice($("dashPrice"), price);
 
   var change = 0, pct = 0;
@@ -1619,7 +1679,6 @@ function renderPriceUI() {
   }
   var isUp = change >= 0;
   $("dashPrice").className = "chart-price " + (isUp ? "up" : "down");
-  // Pulse effect kalau harga berubah signifikan
   if (Math.abs(pct) > 0.1) {
     $("dashPrice").classList.add("pulse");
     setTimeout(function(){ $("dashPrice").classList.remove("pulse"); }, 1200);
@@ -1912,9 +1971,8 @@ function subscribePublicData() {
     });
     arr.sort(function(a, b){ return a.timestamp - b.timestamp; });
     S.history = arr;
-    // Jangan reset _lastChartKey — biar update() smooth dipakai
     renderPriceUI();
-    updateChart(); // throttle otomatis
+    updateChart();
     renderUserUI();
     if (S.histTab === "price") renderHistoryTab();
   });
@@ -2160,7 +2218,7 @@ function bindEvents() {
       btn.classList.add("active");
       S.activeRange = btn.dataset.range;
       S._lastChartKey = ""; S._lastFitRange = null;
-      _lastRenderedCount = 0; _lastRenderedTime = 0;
+      _lastRenderedCount = 0; _lastRenderedTime = 0; _lastCandleData = null;
       updateChart(true);
     });
   });
@@ -2259,7 +2317,7 @@ function bindEvents() {
     S.activeRange = $("setRange").value;
     document.querySelectorAll("#rangeGroup .range-btn").forEach(function(b){ b.classList.toggle("active", b.dataset.range === S.activeRange); });
     S._lastChartKey = ""; S._lastFitRange = null;
-    _lastRenderedCount = 0; _lastRenderedTime = 0;
+    _lastRenderedCount = 0; _lastRenderedTime = 0; _lastCandleData = null;
     updateChart(true);
     toast("Pengaturan disimpan", "success");
   });
@@ -2294,8 +2352,6 @@ function startIconRenderer() {
       try { window.lucide.createIcons(); } catch(e){}
     } else if (tries < maxTries) {
       setTimeout(tryRender, 200);
-    } else {
-      console.warn("[CAZO] Lucide gagal dimuat");
     }
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tryRender);
