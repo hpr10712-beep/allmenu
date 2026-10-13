@@ -113,14 +113,16 @@ button{font-family:inherit}
 .chart-asset-name{font-family:var(--font-d);font-weight:700;font-size:15px;letter-spacing:-.2px}
 .chart-asset-symbol{font-size:11px;font-weight:600;color:var(--txt-3);letter-spacing:1px;text-transform:uppercase}
 .chart-price-block{text-align:right}
-.chart-price{font-family:var(--font-d);font-weight:800;font-size:26px;letter-spacing:-.8px;line-height:1;font-variant-numeric:tabular-nums;transition:color .3s}
+.chart-price{font-family:var(--font-d);font-weight:800;font-size:26px;letter-spacing:-.8px;line-height:1;font-variant-numeric:tabular-nums;transition:color .6s ease, transform .4s ease;will-change:transform}
 .chart-price.up{color:var(--up)}
 .chart-price.down{color:var(--down)}
+.chart-price.pulse{animation:pricePulse 1.2s ease}
+@keyframes pricePulse{0%{transform:scale(1)}30%{transform:scale(1.04)}100%{transform:scale(1)}}
 .chart-change-row{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-top:4px;flex-wrap:wrap}
-.chart-change-val{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.chart-change-val{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;transition:color .5s ease}
 .chart-change-val.up{color:var(--up)}
 .chart-change-val.down{color:var(--down)}
-.chart-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:6px;font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.chart-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:6px;font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums;transition:all .5s ease}
 .chart-badge.up{background:var(--up-2);color:var(--up)}
 .chart-badge.down{background:var(--down-2);color:var(--down)}
 .chart-toolbar{display:flex;gap:8px;padding:12px 18px 0;flex-wrap:wrap;align-items:center;justify-content:space-between}
@@ -141,7 +143,7 @@ button{font-family:inherit}
 .chart-wrap.fullscreen .fs-close{display:flex!important}
 .fs-close{display:none;position:absolute;top:12px;right:12px;z-index:20;width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:#fff;cursor:pointer;align-items:center;justify-content:center;color:var(--txt)}
 .fs-close svg{width:18px;height:18px}
-#mainChart{width:100%;height:100%;position:relative;z-index:2}
+#mainChart{width:100%;height:100%;position:relative;z-index:2;transition:opacity .4s ease}
 #drawLayer{position:absolute;inset:0;z-index:10;pointer-events:none;touch-action:none}
 .chart-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.9);z-index:30;font-size:13px;color:var(--txt-3);flex-direction:column;gap:10px}
 .chart-loading.hidden{display:none}
@@ -383,7 +385,7 @@ button{font-family:inherit}
               </div>
             </div>
             <div class="chart-price-block">
-              <div class="chart-price up" id="dashPrice">—</div>
+              <div class="chart-price up" id="dashPrice" data-val="0">—</div>
               <div class="chart-change-row">
                 <span class="chart-change-val up" id="dashChange">—</span>
                 <span class="chart-badge up" id="dashChangeBadge"><i data-lucide="trending-up"></i><span id="dashChangePct">—</span></span>
@@ -659,7 +661,7 @@ button{font-family:inherit}
         </div>
         <div class="card">
           <div class="card-h"><h2><i data-lucide="info"></i><span>Tentang CAZO</span></h2></div>
-          <div class="card-b"><p class="text-muted" style="line-height:1.7"><strong>CAZO</strong> adalah platform trading digital simulasi. Deposit & withdraw diproses manual oleh admin. Data harga real-time via Firebase.</p><div class="divider"></div><div style="font-size:12px;color:var(--txt-3)">Versi 2.4 • Trading Platform</div></div>
+          <div class="card-b"><p class="text-muted" style="line-height:1.7"><strong>CAZO</strong> adalah platform trading digital simulasi. Deposit & withdraw diproses manual oleh admin. Data harga real-time via Firebase.</p><div class="divider"></div><div style="font-size:12px;color:var(--txt-3)">Versi 2.5 • Smooth Trading</div></div>
         </div>
       </div>
     </div>
@@ -927,7 +929,6 @@ function renderIcons() {
 function openModal(id) { var el = $(id); if (el) el.classList.add("open"); }
 function closeModal(id) { var el = $(id); if (el) el.classList.remove("open"); }
 
-// FIX: requireLogin tidak auto-execute action, mencegah double-execution
 function requireLogin(reason) {
   if (S.user) return true;
   var desc = {
@@ -1017,14 +1018,43 @@ function getFilteredHistory(range) {
   if (filtered.length < 2 && hist.length >= 2) return hist.slice(-Math.min(hist.length, 30));
   return filtered;
 }
-function updateChart() {
+
+// ===== SMOOTH CHART ENGINE =====
+var _pendingChartUpdate = null;
+var _lastRenderedCount = 0;
+var _lastRenderedTime = 0;
+var _lastTickMs = 0;
+var MIN_TICK_GAP = 400; // throttle minimum antar render (ms) — lebih lambat, lebih halus
+
+function updateChart(force) {
   if (!S.candleSeries || !S.chart) return;
+  if (force) { _doUpdateChart(); return; }
+
+  var now = Date.now();
+  var elapsed = now - _lastTickMs;
+  if (elapsed < MIN_TICK_GAP) {
+    if (_pendingChartUpdate) clearTimeout(_pendingChartUpdate);
+    _pendingChartUpdate = setTimeout(function(){
+      _pendingChartUpdate = null;
+      _doUpdateChart();
+    }, MIN_TICK_GAP - elapsed);
+    return;
+  }
+  _doUpdateChart();
+}
+
+function _doUpdateChart() {
+  if (!S.candleSeries || !S.chart) return;
+  _lastTickMs = Date.now();
+
   var filtered = getFilteredHistory(S.activeRange);
   if (!filtered.length) {
     S.candleSeries.setData([]);
     if (S.volumeSeries) S.volumeSeries.setData([]);
+    _lastRenderedCount = 0;
     return;
   }
+
   var key = S.activeRange + "_" + filtered.length + "_" + (filtered[filtered.length-1].timestamp || 0);
   if (key === S._lastChartKey) return;
   S._lastChartKey = key;
@@ -1032,21 +1062,95 @@ function updateChart() {
   var candles = buildCandles(filtered);
   var upColor = S.settings.chartColor || "#16A34A";
   S.candleSeries.applyOptions({ upColor: upColor, borderUpColor: upColor, wickUpColor: upColor });
-  S.candleSeries.setData(candles);
 
-  if (S.volumeSeries) {
-    if (S.showVolume) {
-      S.volumeSeries.setData(candles.map(function(c){
-        return { time: c.time, value: c.volume, color: c.close >= c.open ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)" };
-      }));
-    } else S.volumeSeries.setData([]);
+  var newCount = candles.length;
+  var isSameLastTime = (candles[newCount-1].time === _lastRenderedTime);
+  var isAppend = (newCount === _lastRenderedCount + 1);
+  var isUpdateLast = (newCount === _lastRenderedCount) && isSameLastTime;
+  var isReplaceLast = (newCount === _lastRenderedCount) && !isSameLastTime;
+  var canSmooth = (isAppend || isUpdateLast || isReplaceLast) && _lastRenderedCount > 0;
+
+  if (canSmooth) {
+    // Update hanya candle terakhir → candle "tumbuh" halus
+    var lastCandle = candles[newCount - 1];
+    try {
+      S.candleSeries.update(lastCandle);
+      if (S.volumeSeries && S.showVolume) {
+        S.volumeSeries.update({
+          time: lastCandle.time,
+          value: lastCandle.volume,
+          color: lastCandle.close >= lastCandle.open
+            ? "rgba(22,163,74,0.35)"
+            : "rgba(220,38,38,0.35)"
+        });
+      }
+    } catch (e) {
+      S.candleSeries.setData(candles);
+      if (S.volumeSeries) {
+        S.volumeSeries.setData(S.showVolume ? candles.map(function(c){
+          return { time: c.time, value: c.volume, color: c.close >= c.open ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)" };
+        }) : []);
+      }
+    }
+  } else {
+    S.candleSeries.setData(candles);
+    if (S.volumeSeries) {
+      if (S.showVolume) {
+        S.volumeSeries.setData(candles.map(function(c){
+          return { time: c.time, value: c.volume, color: c.close >= c.open ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)" };
+        }));
+      } else S.volumeSeries.setData([]);
+    }
+    if (S._lastFitRange !== S.activeRange) {
+      S.chart.timeScale().fitContent();
+      S._lastFitRange = S.activeRange;
+    }
   }
-  if (S._lastFitRange !== S.activeRange) {
-    S.chart.timeScale().fitContent();
-    S._lastFitRange = S.activeRange;
-  }
+
+  _lastRenderedCount = newCount;
+  _lastRenderedTime = candles[newCount-1].time;
+
   updateIndicators(candles);
-  setTimeout(redrawAll, 50);
+  setTimeout(redrawAll, 80);
+}
+
+// ===== SMOOTH NUMBER COUNTER =====
+var _animPrice = { el: null, start: 0, end: 0, startTs: 0, running: false };
+function animatePrice(el, to) {
+  if (!el) return;
+  var currentText = el.textContent.replace(/\./g, "").replace(",", ".");
+  var from = parseFloat(currentText);
+  if (isNaN(from) || from === 0) from = to;
+
+  el.setAttribute("data-val", to);
+
+  if (_animPrice.running && _animPrice.el === el) {
+    _animPrice.end = to;
+    _animPrice.start = from;
+    _animPrice.startTs = performance.now();
+    return;
+  }
+  _animPrice.el = el;
+  _animPrice.start = from;
+  _animPrice.end = to;
+  _animPrice.startTs = performance.now();
+  if (!_animPrice.running) {
+    _animPrice.running = true;
+    requestAnimationFrame(_tickPrice);
+  }
+}
+function _tickPrice(ts) {
+  var dur = 900; // ms — makin besar, makin lambat & halus
+  var t = Math.min(1, (ts - _animPrice.startTs) / dur);
+  var e = 1 - Math.pow(1 - t, 4); // easeOutQuart
+  var val = _animPrice.start + (_animPrice.end - _animPrice.start) * e;
+  if (_animPrice.el) _animPrice.el.textContent = fmt(val);
+  if (t < 1) {
+    requestAnimationFrame(_tickPrice);
+  } else {
+    _animPrice.running = false;
+    if (_animPrice.el) _animPrice.el.textContent = fmt(_animPrice.end);
+  }
 }
 
 // ============ DRAWING ============
@@ -1504,7 +1608,8 @@ function renderPriceUI() {
   $("dashAssetName").textContent = s.assetName || "CAZO CARD";
   $("dashAssetSymbol").textContent = s.symbol || "CAZO";
   var price = hist.length > 0 ? hist[hist.length-1].price : s.currentPrice;
-  $("dashPrice").textContent = fmt(price);
+  // Animasi harga smooth
+  animatePrice($("dashPrice"), price);
 
   var change = 0, pct = 0;
   if (hist.length >= 2) {
@@ -1514,6 +1619,11 @@ function renderPriceUI() {
   }
   var isUp = change >= 0;
   $("dashPrice").className = "chart-price " + (isUp ? "up" : "down");
+  // Pulse effect kalau harga berubah signifikan
+  if (Math.abs(pct) > 0.1) {
+    $("dashPrice").classList.add("pulse");
+    setTimeout(function(){ $("dashPrice").classList.remove("pulse"); }, 1200);
+  }
   $("dashChange").textContent = (isUp ? "+" : "") + fmt(change);
   $("dashChange").className = "chart-change-val " + (isUp ? "up" : "down");
   $("dashChangePct").textContent = (isUp ? "+" : "") + fmt(pct) + "%";
@@ -1530,7 +1640,6 @@ function renderPriceUI() {
   var lastTs = hist.length ? hist[hist.length-1].timestamp : null;
   $("dashUpdate").textContent = lastTs ? ago(lastTs) : "—";
 
-  // FIX: Update trading panel
   var tpEl = $("tradePrice");
   if (tpEl) {
     tpEl.value = price.toFixed(2);
@@ -1769,7 +1878,6 @@ function subscribeUserData(uid) {
   });
   S.unsubsUser.push(function(){ uref.off(); });
 
-  // Payments (deposit + withdraw)
   var pref = S.db.ref("cazo/users/" + uid + "/payments").orderByChild("timestamp").limitToLast(100);
   pref.on("value", function(snap) {
     var arr = [];
@@ -1804,9 +1912,9 @@ function subscribePublicData() {
     });
     arr.sort(function(a, b){ return a.timestamp - b.timestamp; });
     S.history = arr;
-    S._lastChartKey = "";
+    // Jangan reset _lastChartKey — biar update() smooth dipakai
     renderPriceUI();
-    updateChart();
+    updateChart(); // throttle otomatis
     renderUserUI();
     if (S.histTab === "price") renderHistoryTab();
   });
@@ -1815,9 +1923,8 @@ function subscribePublicData() {
 function loadDemoMode() {
   S.settings = Object.assign({}, DEFAULT_SETTINGS);
   S.history = DEMO_HISTORY.map(function(h, i){ return Object.assign({ key: 'demo_' + i }, h, { timestamp: Date.now() - (7 - i) * 86400000 }); });
-  S._lastChartKey = "";
   renderPriceUI();
-  updateChart();
+  updateChart(true);
   renderUserUI();
   renderMarketList();
   renderIcons();
@@ -1875,13 +1982,13 @@ function doTrade(side) {
       S._trading = false; btn.disabled = false; btn.innerHTML = origHtml; renderIcons();
     });
   } else {
-    var pref = S.db.ref("cazo/users/" + uid + "/portfolio/CAZO");
-    pref.once("value").then(function(snap) {
+    var pref2 = S.db.ref("cazo/users/" + uid + "/portfolio/CAZO");
+    pref2.once("value").then(function(snap) {
       var cur = snap.val() || { qty: 0, avgPrice: 0 };
       if (cur.qty < qty) throw new Error("Unit tidak cukup");
       var newQty = cur.qty - qty;
-      if (newQty <= 0) return pref.remove();
-      return pref.set({ qty: newQty, avgPrice: cur.avgPrice, updatedAt: Date.now() });
+      if (newQty <= 0) return pref2.remove();
+      return pref2.set({ qty: newQty, avgPrice: cur.avgPrice, updatedAt: Date.now() });
     }).then(function() {
       return S.db.ref("cazo/users/" + uid + "/balance").transaction(function(bal) { return num(bal, 0) + total; });
     }).then(function() {
@@ -1896,7 +2003,7 @@ function doTrade(side) {
   }
 }
 
-// ============ PAYMENT SUBMIT ============
+// ============ PAYMENT ============
 function submitDeposit() {
   if (!requireLogin("payment")) return;
   if (S._depositing) return toast("Sedang diproses...", "warning");
@@ -1967,10 +2074,9 @@ function submitWithdraw() {
     status: "pending", timestamp: Date.now()
   };
 
-  // Transactional hold: kurangi saldo dulu
   S.db.ref("cazo/users/" + uid + "/balance").transaction(function(bal) {
     bal = num(bal, 0);
-    if (bal < amount) return; // abort
+    if (bal < amount) return;
     return bal - amount;
   }).then(function(result) {
     if (!result.committed) throw new Error("Saldo tidak cukup");
@@ -2054,14 +2160,16 @@ function bindEvents() {
       btn.classList.add("active");
       S.activeRange = btn.dataset.range;
       S._lastChartKey = ""; S._lastFitRange = null;
-      updateChart();
+      _lastRenderedCount = 0; _lastRenderedTime = 0;
+      updateChart(true);
     });
   });
 
   $("btnVolume").addEventListener("click", function(){
     S.showVolume = !S.showVolume;
     this.classList.toggle("active", S.showVolume);
-    S._lastChartKey = ""; updateChart();
+    S._lastChartKey = "";
+    updateChart(true);
   });
 
   $("btnFullscreen").addEventListener("click", function(){
@@ -2106,7 +2214,6 @@ function bindEvents() {
   $("sltpSL").addEventListener("input", updateSLTPHints);
   $("sltpTP").addEventListener("input", updateSLTPHints);
 
-  // Trading side tabs
   document.querySelectorAll(".order-tab[data-side]").forEach(function(tab){
     tab.addEventListener("click", function(){
       document.querySelectorAll(".order-tab[data-side]").forEach(function(t){ t.classList.remove("active"); });
@@ -2125,7 +2232,6 @@ function bindEvents() {
   var quickTradeBtn = $("btnQuickTrade");
   if (quickTradeBtn) quickTradeBtn.addEventListener("click", function(){ doTrade(S.tradeSide); });
 
-  // Payment tabs
   document.querySelectorAll(".pay-tab").forEach(function(tab){
     tab.addEventListener("click", function(){
       document.querySelectorAll(".pay-tab").forEach(function(t){ t.classList.remove("active"); });
@@ -2153,7 +2259,8 @@ function bindEvents() {
     S.activeRange = $("setRange").value;
     document.querySelectorAll("#rangeGroup .range-btn").forEach(function(b){ b.classList.toggle("active", b.dataset.range === S.activeRange); });
     S._lastChartKey = ""; S._lastFitRange = null;
-    updateChart();
+    _lastRenderedCount = 0; _lastRenderedTime = 0;
+    updateChart(true);
     toast("Pengaturan disimpan", "success");
   });
 
@@ -2213,7 +2320,7 @@ function boot() {
     var ok = initChart();
     if (ok) {
       console.log("[CAZO] Chart initialized");
-      setTimeout(function(){ renderPriceUI(); updateChart(); }, 300);
+      setTimeout(function(){ renderPriceUI(); updateChart(true); }, 300);
       return;
     }
     if (chartTries < 25) setTimeout(tryInitChart, 200);
