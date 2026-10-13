@@ -325,7 +325,6 @@ button{font-family:inherit}
 .pay-tab.withdraw.active{background:var(--warn);color:#fff}
 .pay-tab svg{width:16px;height:16px}
 
-/* ===== FINAL OVERFLOW FIX ===== */
 #page-settings, #page-settings .grid-2, #page-settings .card { max-width:100%; overflow-x:hidden; }
 #page-settings .card-b { overflow-x:hidden; }
 </style>
@@ -666,7 +665,7 @@ button{font-family:inherit}
         </div>
         <div class="card">
           <div class="card-h"><h2><i data-lucide="info"></i><span>Tentang CAZO</span></h2></div>
-          <div class="card-b"><p class="text-muted" style="line-height:1.7"><strong>CAZO</strong> adalah platform trading digital simulasi. Deposit & withdraw diproses manual oleh admin. Data harga real-time via Firebase.</p><div class="divider"></div><div style="font-size:12px;color:var(--txt-3)">Versi 2.6 • Smooth Trading</div></div>
+          <div class="card-b"><p class="text-muted" style="line-height:1.7"><strong>CAZO</strong> adalah platform trading digital simulasi. Deposit & withdraw diproses manual oleh admin. Data harga real-time via Firebase.</p><div class="divider"></div><div style="font-size:12px;color:var(--txt-3)">Versi 2.7 • Candle Growth Animation</div></div>
         </div>
       </div>
     </div>
@@ -685,7 +684,7 @@ button{font-family:inherit}
       </button>
       <button class="btn btn-ghost btn-block" style="margin-top:8px" id="btnCancelLogin" type="button">Nanti saja</button>
       <div class="login-features">
-        <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Saldo awal <strong>Rp 100.000</strong></span></div>
+        <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Saldo awal <strong>Rp 0</strong> — isi via deposit</span></div>
         <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Beli & jual aset CAZO</span></div>
         <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Deposit & withdraw via admin</span></div>
         <div class="login-feature"><i data-lucide="check-circle-2"></i><span>Riwayat & portfolio lengkap</span></div>
@@ -767,6 +766,7 @@ var FIREBASE_CONFIG = {
   messagingSenderId: "1003182873390",
   appId: "1:1003182873390:web:aabf3248f759cbc9d678bf"
 };
+// ===== SALDO AWAL AKUN BARU = 0 =====
 var DEFAULT_BALANCE = 0;
 var ASSET_ICON = "https://i.ibb.co.com/1YJQLcXZ/1791806617405.jpg";
 
@@ -1024,14 +1024,12 @@ function getFilteredHistory(range) {
   return filtered;
 }
 
-// ===== SMOOTH CHART ENGINE (diperhalus) =====
+// ===== SMOOTH CHART ENGINE dengan CANDLE GROWTH =====
 var _pendingChartUpdate = null;
 var _lastRenderedCount = 0;
 var _lastRenderedTime = 0;
 var _lastTickMs = 0;
-var MIN_TICK_GAP = 250; // throttle lebih pendek agar reaksi cepat tapi tetap halus
-var SMOOTH_FRAMES = 6;  // frame interpolasi untuk candle tumbuh halus
-var _lastCandleData = null;
+var MIN_TICK_GAP = 250;
 
 function updateChart(force) {
   if (!S.candleSeries || !S.chart) return;
@@ -1058,7 +1056,6 @@ function _doUpdateChart() {
     S.candleSeries.setData([]);
     if (S.volumeSeries) S.volumeSeries.setData([]);
     _lastRenderedCount = 0;
-    _lastCandleData = null;
     return;
   }
 
@@ -1078,7 +1075,6 @@ function _doUpdateChart() {
   var canSmooth = (isAppend || isUpdateLast || isReplaceLast) && _lastRenderedCount > 0;
 
   if (canSmooth) {
-    // Animasi candle terakhir tumbuh halus
     _smoothUpdateLastCandle(candles[newCount - 1]);
   } else {
     S.candleSeries.setData(candles);
@@ -1093,7 +1089,8 @@ function _doUpdateChart() {
       S.chart.timeScale().fitContent();
       S._lastFitRange = S.activeRange;
     }
-    _lastCandleData = candles[newCount - 1];
+    _candleAnim.current = Object.assign({}, candles[newCount-1]);
+    _candleAnim.target = Object.assign({}, candles[newCount-1]);
   }
 
   _lastRenderedCount = newCount;
@@ -1103,76 +1100,115 @@ function _doUpdateChart() {
   setTimeout(redrawAll, 60);
 }
 
-// Candle tumbuh halus dengan interpolasi 6 frame
+// ===== CANDLE GROWTH ANIMATION =====
+// Candle baru muncul dari open, lalu TUMBUH ke close secara smooth
+var _candleAnim = {
+  active: false,
+  current: null,      // posisi candle saat ini (yang ditampilkan)
+  target: null,       // posisi candle tujuan
+  growing: false
+};
+
 function _smoothUpdateLastCandle(target) {
-  if (!_lastCandleData) {
-    // Belum ada data sebelumnya, langsung update
-    S.candleSeries.update(target);
-    if (S.volumeSeries && S.showVolume) {
-      S.volumeSeries.update({
-        time: target.time, value: target.volume,
-        color: target.close >= target.open ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)"
-      });
-    }
-    _lastCandleData = Object.assign({}, target);
-    return;
-  }
+  _candleAnim.target = Object.assign({}, target);
 
-  // Kalau time berubah, langsung update (candle baru)
-  if (target.time !== _lastCandleData.time) {
-    S.candleSeries.update(target);
-    if (S.volumeSeries && S.showVolume) {
-      S.volumeSeries.update({
-        time: target.time, value: target.volume,
-        color: target.close >= target.open ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)"
-      });
-    }
-    _lastCandleData = Object.assign({}, target);
-    return;
-  }
-
-  // Interpolasi antara data lama dan data baru
-  var start = Object.assign({}, _lastCandleData);
-  var end = Object.assign({}, target);
-  var frame = 0;
-  var stepMs = 50; // 40ms × 6 frame = 240ms total
-
-  function nextFrame() {
-    frame++;
-    var t = frame / SMOOTH_FRAMES;
-    var e = 1 - Math.pow(1 - t, 2); // easeOutQuad
-
-    var mid = {
-      time: end.time,
-      open: +(start.open + (end.open - start.open) * e).toFixed(2),
-      high: +(start.high + (end.high - start.high) * e).toFixed(2),
-      low: +(start.low + (end.low - start.low) * e).toFixed(2),
-      close: +(start.close + (end.close - start.close) * e).toFixed(2)
+  // Kalau candle BARU (time beda) → mulai dari open (candle kecil/kosong)
+  if (!_candleAnim.current || _candleAnim.current.time !== target.time) {
+    _candleAnim.current = {
+      time: target.time,
+      open: target.open,
+      high: target.open,
+      low: target.open,
+      close: target.open
     };
-
+    _candleAnim.growing = true;
     try {
-      S.candleSeries.update(mid);
+      S.candleSeries.update(_candleAnim.current);
       if (S.volumeSeries && S.showVolume) {
         S.volumeSeries.update({
-          time: end.time,
-          value: end.volume,
-          color: mid.close >= mid.open ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)"
+          time: target.time,
+          value: 0,
+          color: "rgba(148,163,184,0.3)"
         });
       }
-    } catch (e) {
-      // Fallback
-      S.candleSeries.setData([]);
-      _lastCandleData = null;
-      return;
-    }
-
-    if (frame < SMOOTH_FRAMES) {
-      setTimeout(nextFrame, stepMs);
-    } else {
-      _lastCandleData = Object.assign({}, end);
-    }
+    } catch(e) {}
   }
-  nextFrame();
+
+  // Mulai loop animasi kalau belum jalan
+  if (!_candleAnim.active) {
+    _candleAnim.active = true;
+    _candleAnimLoop();
+  }
+}
+
+function _candleAnimLoop() {
+  var cur = _candleAnim.current;
+  var tgt = _candleAnim.target;
+  if (!cur || !tgt) { _candleAnim.active = false; return; }
+
+  // Kecepatan interpolasi: 0.06 = lambat (~5 detik), 0.10 = sedang (~3 detik)
+  // Candle akan TUMBUH dari open ke close secara smooth
+  var speed = 0.06;
+
+  // Interpolasi posisi candle saat ini menuju target
+  cur.open  += (tgt.open  - cur.open)  * speed;
+  cur.close += (tgt.close - cur.close) * speed;
+  cur.high  += (tgt.high  - cur.high)  * speed;
+  cur.low   += (tgt.low   - cur.low)   * speed;
+
+  // Bulatkan
+  cur.open  = +cur.open.toFixed(2);
+  cur.high  = +cur.high.toFixed(2);
+  cur.low   = +cur.low.toFixed(2);
+  cur.close = +cur.close.toFixed(2);
+
+  // Render frame ini
+  try {
+    S.candleSeries.update(cur);
+    var isUp = cur.close >= cur.open;
+    if (S.volumeSeries && S.showVolume) {
+      // Volume tumbuh seiring candle tumbuh
+      var range = Math.abs(tgt.close - tgt.open);
+      var progress = range > 0.01
+        ? Math.min(1, Math.abs(cur.close - tgt.open) / range)
+        : 1;
+      S.volumeSeries.update({
+        time: cur.time,
+        value: Math.round(tgt.volume * progress),
+        color: isUp ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)"
+      });
+    }
+  } catch(e) {
+    _candleAnim.active = false;
+    return;
+  }
+
+  // Cek apakah sudah cukup dekat dengan target
+  var diff = Math.abs(cur.close - tgt.close) +
+             Math.abs(cur.high - tgt.high) +
+             Math.abs(cur.low - tgt.low);
+
+  if (diff < 0.05) {
+    // Snap ke target sempurna
+    _candleAnim.current = Object.assign({}, tgt);
+    _candleAnim.growing = false;
+    try {
+      S.candleSeries.update(_candleAnim.current);
+      if (S.volumeSeries && S.showVolume) {
+        var isUpFinal = tgt.close >= tgt.open;
+        S.volumeSeries.update({
+          time: tgt.time,
+          value: tgt.volume,
+          color: isUpFinal ? "rgba(22,163,74,0.35)" : "rgba(220,38,38,0.35)"
+        });
+      }
+    } catch(e) {}
+    _candleAnim.active = false;
+    return;
+  }
+
+  // Frame berikutnya: 50ms = ~20 FPS (halus)
+  setTimeout(_candleAnimLoop, 50);
 }
 
 // ===== SMOOTH NUMBER COUNTER =====
@@ -1903,15 +1939,16 @@ function ensureUserProfile(user) {
   var uref = S.db.ref("cazo/users/" + user.uid);
   return uref.once("value").then(function(snap) {
     if (!snap.exists()) {
+      // Akun baru → saldo 0
       return uref.set({
         displayName: user.displayName || "Trader",
         email: user.email || "",
         photoURL: user.photoURL || "",
-        balance: DEFAULT_BALANCE,
+        balance: 0,
         createdAt: Date.now(),
         updatedAt: Date.now()
       }).then(function() {
-        toast("Selamat datang! Saldo awal " + fmtIDR(DEFAULT_BALANCE) + " diberikan.", "success", 5000);
+        toast("Akun berhasil dibuat. Saldo: Rp 0. Silakan deposit untuk mulai trading.", "info", 6000);
       });
     } else {
       return uref.update({
@@ -2015,7 +2052,7 @@ function doTrade(side) {
   if (side === "buy") {
     if (S.balance < total) {
       S._trading = false; btn.disabled = false; btn.innerHTML = origHtml; renderIcons();
-      return toast("Saldo tidak cukup.", "error", 5000);
+      return toast("Saldo tidak cukup. Silakan deposit terlebih dahulu.", "error", 5000);
     }
     S.db.ref("cazo/users/" + uid + "/balance").transaction(function(bal) {
       bal = num(bal, 0);
@@ -2218,7 +2255,8 @@ function bindEvents() {
       btn.classList.add("active");
       S.activeRange = btn.dataset.range;
       S._lastChartKey = ""; S._lastFitRange = null;
-      _lastRenderedCount = 0; _lastRenderedTime = 0; _lastCandleData = null;
+      _lastRenderedCount = 0; _lastRenderedTime = 0;
+      _candleAnim.current = null; _candleAnim.target = null; _candleAnim.active = false;
       updateChart(true);
     });
   });
@@ -2317,7 +2355,8 @@ function bindEvents() {
     S.activeRange = $("setRange").value;
     document.querySelectorAll("#rangeGroup .range-btn").forEach(function(b){ b.classList.toggle("active", b.dataset.range === S.activeRange); });
     S._lastChartKey = ""; S._lastFitRange = null;
-    _lastRenderedCount = 0; _lastRenderedTime = 0; _lastCandleData = null;
+    _lastRenderedCount = 0; _lastRenderedTime = 0;
+    _candleAnim.current = null; _candleAnim.target = null; _candleAnim.active = false;
     updateChart(true);
     toast("Pengaturan disimpan", "success");
   });
