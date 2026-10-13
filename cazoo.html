@@ -1135,7 +1135,7 @@ function _smoothUpdateLastCandle(target) {
   var start = Object.assign({}, _lastCandleData);
   var end = Object.assign({}, target);
   var frame = 0;
-  var stepMs = 40; // 40ms × 6 frame = 240ms total
+  var stepMs = 4000; // 40ms × 6 frame = 240ms total
 
   function nextFrame() {
     frame++;
